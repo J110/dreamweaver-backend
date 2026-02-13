@@ -1,0 +1,6 @@
+# GPU requirements — install these ON TOP of requirements.txt
+# on a machine with CUDA/GPU support for Chatterbox TTS
+# Usage: pip install -r requirements.txt -r requirements-gpu.txt
+chatterbox-tts>=0.1.6
+torch>=2.0.0
+torchaudio>=2.0.0

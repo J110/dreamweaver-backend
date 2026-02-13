@@ -1,0 +1,55 @@
+[
+  {
+    "tier": "free",
+    "name": "Stargazer",
+    "daily_limit": 1,
+    "max_favorites": 10,
+    "max_saves": 5,
+    "features": [
+      "1 new story per day",
+      "Basic voice selection",
+      "Save up to 5 stories",
+      "Standard audio quality"
+    ],
+    "price_usd": 0.0,
+    "description": "Perfect for trying DreamWeaver. Get one magical story every night!"
+  },
+  {
+    "tier": "premium",
+    "name": "Moonbeam",
+    "daily_limit": 5,
+    "max_favorites": 50,
+    "max_saves": 25,
+    "features": [
+      "5 new stories per day",
+      "All voices unlocked",
+      "Background music selection",
+      "Save up to 25 stories",
+      "Custom story themes",
+      "High quality audio"
+    ],
+    "price_usd": 4.99,
+    "description": "Unlock more dreams with 5 stories daily and premium features!"
+  },
+  {
+    "tier": "unlimited",
+    "name": "Dream Weaver",
+    "daily_limit": 999,
+    "max_favorites": 9999,
+    "max_saves": 9999,
+    "features": [
+      "Unlimited stories",
+      "All voices unlocked",
+      "All background music",
+      "Unlimited saves & favorites",
+      "Custom story prompts",
+      "Interactive Q&A mode",
+      "Mini-games during stories",
+      "Priority generation",
+      "Offline downloads",
+      "Premium audio quality"
+    ],
+    "price_usd": 9.99,
+    "description": "The ultimate DreamWeaver experience. Unlimited magic, every night!"
+  }
+]

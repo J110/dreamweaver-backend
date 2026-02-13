@@ -1,0 +1,1 @@
+"""Trending algorithm service module."""
