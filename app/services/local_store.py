@@ -55,6 +55,26 @@ class LocalStore:
                     self.collections[coll_name] = {
                         item[key_field]: item for item in items
                     }
+                # Merge new seed items + backfill missing fields on existing items
+                if seed_path.exists():
+                    with open(seed_path) as f:
+                        seed_items = json.load(f)
+                        changed = False
+                        for item in seed_items:
+                            item_id = item[key_field]
+                            if item_id not in self.collections[coll_name]:
+                                # New seed item — add it
+                                self.collections[coll_name][item_id] = item
+                                changed = True
+                            else:
+                                # Backfill missing fields from seed
+                                existing = self.collections[coll_name][item_id]
+                                for k, v in item.items():
+                                    if k not in existing:
+                                        existing[k] = v
+                                        changed = True
+                        if changed:
+                            self._persist_collection(coll_name)
             elif seed_path.exists():
                 # First boot: load seed data and persist it
                 with open(seed_path) as f:

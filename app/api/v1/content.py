@@ -42,6 +42,7 @@ HARDCODED_CATEGORIES = [
 async def list_content(
     content_type: Optional[str] = Query(None),
     category: Optional[str] = Query(None),
+    lang: Optional[str] = Query(None, description="Filter by language: 'en' or 'hi'"),
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     sort_by: str = Query("created_at"),
@@ -49,15 +50,16 @@ async def list_content(
 ) -> ContentListResponse:
     """
     List all content with optional filtering and pagination.
-    
+
     Args:
         content_type: Filter by content type
         category: Filter by category
+        lang: Filter by language ('en' or 'hi')
         page: Page number (1-indexed)
         page_size: Items per page
         sort_by: Sort field (created_at, view_count, like_count)
         db_client: Database client
-        
+
     Returns:
         ContentListResponse with paginated content list
     """
@@ -65,11 +67,15 @@ async def list_content(
         # Get all content
         content_docs = db_client.collection("content").get()
         items = [doc.to_dict() for doc in content_docs if doc.exists]
-        
+
+        # Filter by language
+        if lang:
+            items = [item for item in items if item.get("lang", "en") == lang]
+
         # Apply filters
         if content_type:
             items = [item for item in items if item.get("type") == content_type]
-        
+
         if category:
             items = [item for item in items if item.get("category") == category]
         

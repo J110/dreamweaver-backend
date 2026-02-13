@@ -1,6 +1,5 @@
 """Trending content endpoints."""
 
-from datetime import datetime
 from typing import Optional
 
 from fastapi import APIRouter, HTTPException, Depends, status, Query
@@ -31,15 +30,17 @@ def _calculate_trending_score(content: dict) -> float:
 @router.get("", response_model=TrendingResponse)
 async def get_trending(
     limit: int = Query(20, ge=1, le=100),
+    lang: Optional[str] = Query(None, description="Filter by language: 'en' or 'hi'"),
     db_client=Depends(get_db_client),
 ) -> TrendingResponse:
     """
     Get trending content sorted by engagement (likes * 5 + views).
-    
+
     Args:
         limit: Maximum number of items to return
+        lang: Optional language filter ('en' or 'hi')
         db_client: Database client
-        
+
     Returns:
         TrendingResponse with trending content list
     """
@@ -47,13 +48,17 @@ async def get_trending(
         # Get all content
         content_docs = db_client.collection("content").get()
         items = [doc.to_dict() for doc in content_docs if doc.exists]
-        
+
+        # Filter by language if specified
+        if lang:
+            items = [item for item in items if item.get("lang", "en") == lang]
+
         # Sort by trending score
         items.sort(key=_calculate_trending_score, reverse=True)
-        
+
         # Limit results
         items = items[:limit]
-        
+
         return TrendingResponse(
             success=True,
             data={
