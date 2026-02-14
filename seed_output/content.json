@@ -6,7 +6,7 @@
     "title": "The Sleepy Cloud",
     "cover": "/covers/sleepy-cloud.svg",
     "description": "A fluffy cloud drifts across the moonlit sky, collecting dreams for sleepy children.",
-    "text": "High above the rooftops, a fluffy little cloud named Nimbus floated gently through the night sky. Nimbus had the most important job in all the world \u2014 collecting sweet dreams from the stars and sprinkling them over sleeping children.\n\nTonight, the stars were especially sparkly. Nimbus reached out with soft, cottony arms and caught a dream about flying horses, another about a garden made entirely of candy, and one more about a friendly dragon who loved to share warm hugs.\n\nAs Nimbus drifted over your house, it gently shook its fluffy body, and the dreams floated down like tiny snowflakes. They landed softly on your pillow, waiting for you to close your eyes.\n\n\"Sweet dreams, little one,\" whispered Nimbus, as it continued its journey across the peaceful night sky, leaving a trail of starlight behind.",
+    "text": "High above the rooftops, a fluffy little cloud named Nimbus floated gently through the night sky. Nimbus had the most important job in all the world — collecting sweet dreams from the stars and sprinkling them over sleeping children.\n\nTonight, the stars were especially sparkly. Nimbus reached out with soft, cottony arms and caught a dream about flying horses, another about a garden made entirely of candy, and one more about a friendly dragon who loved to share warm hugs.\n\nAs Nimbus drifted over your house, it gently shook its fluffy body, and the dreams floated down like tiny snowflakes. They landed softly on your pillow, waiting for you to close your eyes.\n\n\"Sweet dreams, little one,\" whispered Nimbus, as it continued its journey across the peaceful night sky, leaving a trail of starlight behind.",
     "target_age": 4,
     "age_min": 2,
     "age_max": 6,
@@ -35,7 +35,28 @@
       "Even the smallest things can have the most important jobs"
     ],
     "has_qa": false,
-    "has_games": false
+    "has_games": false,
+    "annotated_text": "[GENTLE]High above the rooftops, a fluffy little cloud named Nimbus floated gently through the night sky.[PAUSE] Nimbus had the most important job in all the world — collecting sweet dreams from the stars and sprinkling them over sleeping children.\n\n[CALM]Tonight, the stars were especially sparkly.[PAUSE] Nimbus reached out with soft, cottony arms and caught a dream about flying horses,[PAUSE] another about a garden made entirely of candy,[PAUSE] and one more about a friendly dragon who loved to share warm hugs.\n\n[SLEEPY]As Nimbus drifted over your house, it gently shook its fluffy body, and the dreams floated down like tiny snowflakes.[PAUSE] They landed softly on your pillow, waiting for you to close your eyes.\n\n[WHISPERING]“Sweet dreams, little one,” whispered Nimbus,[PAUSE] as it continued its journey across the peaceful night sky, leaving a trail of starlight behind.",
+    "audio_variants": [
+      {
+        "voice": "luna",
+        "url": "/audio/pre-gen/7fe248e1_luna.mp3",
+        "duration_seconds": 63.88,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "whisper",
+        "url": "/audio/pre-gen/7fe248e1_whisper.mp3",
+        "duration_seconds": 66.4,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "atlas",
+        "url": "/audio/pre-gen/7fe248e1_atlas.mp3",
+        "duration_seconds": 62.08,
+        "provider": "chatterbox"
+      }
+    ]
   },
   {
     "id": "8e516449-aa48-423e-8b53-db5591ce9bed",
@@ -44,7 +65,7 @@
     "title": "The Brave Little Firefly",
     "cover": "/covers/brave-firefly.svg",
     "description": "A tiny firefly discovers its light can guide lost animals home through the dark forest.",
-    "text": "In the heart of Whispering Woods lived a tiny firefly named Flicker. Unlike the other fireflies who shone brilliant gold, Flicker's light was small and soft \u2014 more like a gentle candle than a blazing star.\n\n\"My light is too small to matter,\" sighed Flicker one evening, watching the other fireflies dance and sparkle above the meadow.\n\nBut that very night, a baby rabbit named Clover got lost in the darkest part of the forest. The tall trees blocked out all the moonlight, and Clover couldn't find the path home.\n\n\"Hello? Can anyone help me?\" whimpered Clover.\n\nFlicker heard the tiny voice and zipped through the branches. \"Follow my light!\" said Flicker. And though the glow was small, it was just enough for Clover to see each step of the way.\n\nTogether, they walked through the forest, Flicker lighting the path one step at a time, until they reached Clover's burrow where Mama Rabbit was waiting.\n\n\"Thank you, little light,\" said Clover with a sleepy yawn. \"You're the bravest firefly in all the woods.\"\n\nAnd from that night on, Flicker never felt small again. Because even the tiniest light can guide someone home.",
+    "text": "In the heart of Whispering Woods lived a tiny firefly named Flicker. Unlike the other fireflies who shone brilliant gold, Flicker's light was small and soft — more like a gentle candle than a blazing star.\n\n\"My light is too small to matter,\" sighed Flicker one evening, watching the other fireflies dance and sparkle above the meadow.\n\nBut that very night, a baby rabbit named Clover got lost in the darkest part of the forest. The tall trees blocked out all the moonlight, and Clover couldn't find the path home.\n\n\"Hello? Can anyone help me?\" whimpered Clover.\n\nFlicker heard the tiny voice and zipped through the branches. \"Follow my light!\" said Flicker. And though the glow was small, it was just enough for Clover to see each step of the way.\n\nTogether, they walked through the forest, Flicker lighting the path one step at a time, until they reached Clover's burrow where Mama Rabbit was waiting.\n\n\"Thank you, little light,\" said Clover with a sleepy yawn. \"You're the bravest firefly in all the woods.\"\n\nAnd from that night on, Flicker never felt small again. Because even the tiniest light can guide someone home.",
     "target_age": 5,
     "age_min": 3,
     "age_max": 7,
@@ -74,7 +95,28 @@
       "Never underestimate yourself"
     ],
     "has_qa": false,
-    "has_games": false
+    "has_games": false,
+    "annotated_text": "[GENTLE]In the heart of Whispering Woods lived a tiny firefly named Flicker. Unlike the other fireflies who shone brilliant gold, Flicker’s light was small and soft — more like a gentle candle than a blazing star.\n\n[CALM]“My light is too small to matter,” sighed Flicker one evening, watching the other fireflies dance and sparkle above the meadow.\n\n[DRAMATIC]But that very night, a baby rabbit named Clover got lost in the darkest part of the forest.[PAUSE] The tall trees blocked out all the moonlight, and Clover couldn’t find the path home.\n\n[WHISPERING]“Hello? Can anyone help me?” whimpered Clover.\n\n[ADVENTUROUS]Flicker heard the tiny voice and zipped through the branches.[PAUSE] “Follow my light!” said Flicker.[PAUSE] And though the glow was small, it was just enough for Clover to see each step of the way.\n\n[CALM]Together, they walked through the forest, Flicker lighting the path one step at a time, until they reached Clover’s burrow where Mama Rabbit was waiting.\n\n[SLEEPY]“Thank you, little light,” said Clover with a sleepy yawn.[PAUSE] “You’re the bravest firefly in all the woods.”\n\n[WHISPERING]And from that night on, Flicker never felt small again.[PAUSE] Because even the tiniest light can guide someone home.",
+    "audio_variants": [
+      {
+        "voice": "luna",
+        "url": "/audio/pre-gen/8e516449_luna.mp3",
+        "duration_seconds": 80.92,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "whisper",
+        "url": "/audio/pre-gen/8e516449_whisper.mp3",
+        "duration_seconds": 86.44,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "atlas",
+        "url": "/audio/pre-gen/8e516449_atlas.mp3",
+        "duration_seconds": 77.88,
+        "provider": "chatterbox"
+      }
+    ]
   },
   {
     "id": "30dec3e8-5354-41ff-aadf-90def8a35df4",
@@ -112,7 +154,28 @@
       "The world is peaceful and safe at night"
     ],
     "has_qa": false,
-    "has_games": false
+    "has_games": false,
+    "annotated_text": "[GENTLE]When the sun tucked itself behind the hills and the sky turned a deep, velvety blue, the Moon rose slowly, casting a soft silver glow over Willow Meadow.\n\n[CALM]Every night, the Moon had a special duty.[PAUSE] It would sing a lullaby so gentle, so sweet, that every creature in the meadow would drift off to sleep.\n\n[WHISPERING]“Hush now, little fox,” the Moon sang softly, and the fox curled up in its cozy den.\n\n[WHISPERING]“Rest now, little owl,” the Moon hummed, and the owl tucked its head under its wing.\n\n[WHISPERING]“Sleep now, little deer,” the Moon whispered, and the deer lay down in the soft grass beside its mother.\n\n[SLEEPY]One by one, every animal closed its eyes.[PAUSE] The crickets played a gentle accompaniment.[PAUSE] The wind rustled the leaves like a soft blanket being pulled up.\n\n[WHISPERING]And then the Moon looked down at you and sang the sweetest note of all:[PAUSE] “Goodnight, my little dreamer. The stars will watch over you until morning comes.”\n\n[SLEEPY]And with that, the whole world fell into a peaceful, happy sleep.",
+    "audio_variants": [
+      {
+        "voice": "luna",
+        "url": "/audio/pre-gen/30dec3e8_luna.mp3",
+        "duration_seconds": 73.48,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "whisper",
+        "url": "/audio/pre-gen/30dec3e8_whisper.mp3",
+        "duration_seconds": 78.2,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "atlas",
+        "url": "/audio/pre-gen/30dec3e8_atlas.mp3",
+        "duration_seconds": 72.48,
+        "provider": "chatterbox"
+      }
+    ]
   },
   {
     "id": "d73e9530-b77e-4372-9ad1-070f0fa108e3",
@@ -121,7 +184,7 @@
     "title": "Captain Stardust and the Comet Race",
     "cover": "/covers/captain-stardust.svg",
     "description": "An adventurous space explorer races comets across galaxies to deliver a birthday wish.",
-    "text": "Captain Stardust adjusted her sparkly helmet and gripped the controls of her starship, the Silver Dreamer. Tonight's mission was the most important one yet \u2014 she had to deliver a birthday wish to Planet Cakealot before midnight!\n\n\"Ready for launch!\" she called to her co-pilot, a fluffy space cat named Nebula, who meowed approvingly from the passenger seat.\n\nThe Silver Dreamer zoomed past the rings of Saturn, weaved through an asteroid field like a cosmic obstacle course, and even raced alongside a brilliant blue comet named Flash.\n\n\"Bet you can't keep up!\" Flash teased, streaking across the sky.\n\n\"Watch me!\" laughed Captain Stardust, pushing the engines to full speed. Stars blurred into streaks of light as they raced neck and neck through the Milky Way.\n\nThey arrived at Planet Cakealot just in time! The entire planet was shaped like a magnificent birthday cake, with candle-shaped towers that flickered with rainbow flames.\n\nCaptain Stardust delivered the wish \u2014 a glowing golden star that floated gently down to the birthday child below.\n\n\"Mission complete,\" she smiled, as Nebula purred contentedly. \"Now, let's head home. Even space explorers need their sleep.\"\n\nAnd as the Silver Dreamer sailed home through the quiet cosmos, the stars themselves seemed to dim their lights, whispering goodnight.",
+    "text": "Captain Stardust adjusted her sparkly helmet and gripped the controls of her starship, the Silver Dreamer. Tonight's mission was the most important one yet — she had to deliver a birthday wish to Planet Cakealot before midnight!\n\n\"Ready for launch!\" she called to her co-pilot, a fluffy space cat named Nebula, who meowed approvingly from the passenger seat.\n\nThe Silver Dreamer zoomed past the rings of Saturn, weaved through an asteroid field like a cosmic obstacle course, and even raced alongside a brilliant blue comet named Flash.\n\n\"Bet you can't keep up!\" Flash teased, streaking across the sky.\n\n\"Watch me!\" laughed Captain Stardust, pushing the engines to full speed. Stars blurred into streaks of light as they raced neck and neck through the Milky Way.\n\nThey arrived at Planet Cakealot just in time! The entire planet was shaped like a magnificent birthday cake, with candle-shaped towers that flickered with rainbow flames.\n\nCaptain Stardust delivered the wish — a glowing golden star that floated gently down to the birthday child below.\n\n\"Mission complete,\" she smiled, as Nebula purred contentedly. \"Now, let's head home. Even space explorers need their sleep.\"\n\nAnd as the Silver Dreamer sailed home through the quiet cosmos, the stars themselves seemed to dim their lights, whispering goodnight.",
     "target_age": 7,
     "age_min": 5,
     "age_max": 9,
@@ -150,7 +213,28 @@
       "Determination helps you reach your goals"
     ],
     "has_qa": false,
-    "has_games": false
+    "has_games": false,
+    "annotated_text": "[ADVENTUROUS]Captain Stardust adjusted her sparkly helmet and gripped the controls of her starship, the Silver Dreamer.[PAUSE] Tonight’s mission was the most important one yet — she had to deliver a birthday wish to Planet Cakealot before midnight!\n\n[EXCITED]“Ready for launch!” she called to her co-pilot, a fluffy space cat named Nebula, who meowed approvingly from the passenger seat.\n\n[ADVENTUROUS]The Silver Dreamer zoomed past the rings of Saturn, weaved through an asteroid field like a cosmic obstacle course,[PAUSE] and even raced alongside a brilliant blue comet named Flash.\n\n[EXCITED]“Bet you can’t keep up!” Flash teased, streaking across the sky.\n\n[JOYFUL]“Watch me!” laughed Captain Stardust, pushing the engines to full speed.[PAUSE] Stars blurred into streaks of light as they raced neck and neck through the Milky Way.\n\n[JOYFUL]They arrived at Planet Cakealot just in time![PAUSE] The entire planet was shaped like a magnificent birthday cake, with candle-shaped towers that flickered with rainbow flames.\n\n[GENTLE]Captain Stardust delivered the wish — a glowing golden star that floated gently down to the birthday child below.\n\n[CALM]“Mission complete,” she smiled, as Nebula purred contentedly.[PAUSE] “Now, let’s head home. Even space explorers need their sleep.”\n\n[SLEEPY]And as the Silver Dreamer sailed home through the quiet cosmos,[PAUSE] the stars themselves seemed to dim their lights, whispering goodnight.",
+    "audio_variants": [
+      {
+        "voice": "luna",
+        "url": "/audio/pre-gen/d73e9530_luna.mp3",
+        "duration_seconds": 93.64,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "whisper",
+        "url": "/audio/pre-gen/d73e9530_whisper.mp3",
+        "duration_seconds": 102.12,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "atlas",
+        "url": "/audio/pre-gen/d73e9530_atlas.mp3",
+        "duration_seconds": 90.36,
+        "provider": "chatterbox"
+      }
+    ]
   },
   {
     "id": "9fba7605-7ffa-488d-93bc-9cca2881cf97",
@@ -159,7 +243,7 @@
     "title": "The Garden of Whispers",
     "cover": "/covers/garden-whispers.svg",
     "description": "A magical garden where flowers tell stories to anyone who listens carefully.",
-    "text": "Behind the old stone wall at the edge of Grandmother's house, there was a garden that nobody talked about. Not because it was a secret, exactly \u2014 but because it was the kind of place you had to discover for yourself.\n\nMaya found it on a warm summer evening. She pushed open the ivy-covered gate and stepped into a world that shimmered with soft golden light. The flowers here were unlike any she'd ever seen \u2014 roses that glowed like lanterns, lilies that hummed gentle melodies, and sunflowers that slowly turned to face her as she walked past.\n\n\"Listen closely,\" whispered a tall purple orchid.\n\nMaya knelt down and put her ear near a patch of tiny blue forget-me-nots. And to her amazement, she heard a story \u2014 a tale about a girl who befriended a cloud and traveled across the sky.\n\nEach flower held a different story. The daisies told tales of brave mice. The tulips shared legends of ancient kindness. The lavender whispered poems about starlit nights.\n\nMaya visited the garden every evening after that, listening to one new story each night. And every story ended the same way \u2014 with a gentle reminder:\n\n\"Close your eyes now, dear listener. Tomorrow, there will be another story waiting just for you.\"\n\nAnd Maya would smile, walk home through the soft twilight, and drift off to sleep, dreaming of gardens and stories and magic.",
+    "text": "Behind the old stone wall at the edge of Grandmother's house, there was a garden that nobody talked about. Not because it was a secret, exactly — but because it was the kind of place you had to discover for yourself.\n\nMaya found it on a warm summer evening. She pushed open the ivy-covered gate and stepped into a world that shimmered with soft golden light. The flowers here were unlike any she'd ever seen — roses that glowed like lanterns, lilies that hummed gentle melodies, and sunflowers that slowly turned to face her as she walked past.\n\n\"Listen closely,\" whispered a tall purple orchid.\n\nMaya knelt down and put her ear near a patch of tiny blue forget-me-nots. And to her amazement, she heard a story — a tale about a girl who befriended a cloud and traveled across the sky.\n\nEach flower held a different story. The daisies told tales of brave mice. The tulips shared legends of ancient kindness. The lavender whispered poems about starlit nights.\n\nMaya visited the garden every evening after that, listening to one new story each night. And every story ended the same way — with a gentle reminder:\n\n\"Close your eyes now, dear listener. Tomorrow, there will be another story waiting just for you.\"\n\nAnd Maya would smile, walk home through the soft twilight, and drift off to sleep, dreaming of gardens and stories and magic.",
     "target_age": 8,
     "age_min": 6,
     "age_max": 10,
@@ -188,7 +272,28 @@
       "The best stories are found when you slow down and listen"
     ],
     "has_qa": false,
-    "has_games": false
+    "has_games": false,
+    "annotated_text": "[MYSTERIOUS]Behind the old stone wall at the edge of Grandmother’s house, there was a garden that nobody talked about.[PAUSE] Not because it was a secret, exactly — but because it was the kind of place you had to discover for yourself.\n\n[CURIOUS]Maya found it on a warm summer evening.[PAUSE] She pushed open the ivy-covered gate and stepped into a world that shimmered with soft golden light.[PAUSE] The flowers here were unlike any she’d ever seen — roses that glowed like lanterns, lilies that hummed gentle melodies, and sunflowers that slowly turned to face her as she walked past.\n\n[WHISPERING]“Listen closely,” whispered a tall purple orchid.\n\n[GENTLE]Maya knelt down and put her ear near a patch of tiny blue forget-me-nots.[PAUSE] And to her amazement, she heard a story — a tale about a girl who befriended a cloud and traveled across the sky.\n\n[CALM]Each flower held a different story.[PAUSE] The daisies told tales of brave mice.[PAUSE] The tulips shared legends of ancient kindness.[PAUSE] The lavender whispered poems about starlit nights.\n\n[GENTLE]Maya visited the garden every evening after that, listening to one new story each night.[PAUSE] And every story ended the same way — with a gentle reminder:\n\n[WHISPERING]“Close your eyes now, dear listener.[PAUSE] Tomorrow, there will be another story waiting just for you.”\n\n[SLEEPY]And Maya would smile, walk home through the soft twilight, and drift off to sleep, dreaming of gardens and stories and magic.",
+    "audio_variants": [
+      {
+        "voice": "luna",
+        "url": "/audio/pre-gen/9fba7605_luna.mp3",
+        "duration_seconds": 101.04,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "whisper",
+        "url": "/audio/pre-gen/9fba7605_whisper.mp3",
+        "duration_seconds": 109.8,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "atlas",
+        "url": "/audio/pre-gen/9fba7605_atlas.mp3",
+        "duration_seconds": 97.52,
+        "provider": "chatterbox"
+      }
+    ]
   },
   {
     "id": "c8796852-6d17-46e0-bcea-7985c4721d1c",
@@ -221,7 +326,28 @@
     "voice_id": "luna_gentle",
     "music_type": "ambient",
     "word_count": 79,
-    "style": "rhyming"
+    "style": "rhyming",
+    "annotated_text": "[RHYTHMIC]The stars above are blinking bright,\nThey guard your dreams throughout the night.\nThe moon is smiling, round and white,\nAnd wraps the world in silver light.\n\n[GENTLE]So close your eyes, my little one,\nThe day is done, the night’s begun.\nTomorrow brings a brand new sun,\nBut now it’s time for sleep and fun.\n\n[SLEEPY]In dreamland meadows, soft and green,\nThe prettiest sights you’ve ever seen.\nWith butterflies of gold and blue,\nAll dancing there, just for you.",
+    "audio_variants": [
+      {
+        "voice": "luna",
+        "url": "/audio/pre-gen/c8796852_luna.mp3",
+        "duration_seconds": 33.68,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "whisper",
+        "url": "/audio/pre-gen/c8796852_whisper.mp3",
+        "duration_seconds": 33.56,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "atlas",
+        "url": "/audio/pre-gen/c8796852_atlas.mp3",
+        "duration_seconds": 30.6,
+        "provider": "chatterbox"
+      }
+    ]
   },
   {
     "id": "e32eaee0-2c7a-4f65-ace6-1d3a2d3ad5b0",
@@ -230,7 +356,7 @@
     "title": "The Owl's Goodnight",
     "cover": "/covers/owl-goodnight.svg",
     "description": "A wise owl says goodnight to every creature in the forest.",
-    "text": "Hoo-hoo, says the owl from the old oak tree,\nGoodnight to the fish in the deep blue sea.\nGoodnight to the rabbits in burrows so snug,\nGoodnight to the ladybug under the rug.\n\nHoo-hoo, says the owl to the fox in its den,\nTo the duck and the drake and the little brown hen.\nGoodnight to the squirrel with acorns to keep,\nHoo-hoo, little darling \u2014 it's time now to sleep.",
+    "text": "Hoo-hoo, says the owl from the old oak tree,\nGoodnight to the fish in the deep blue sea.\nGoodnight to the rabbits in burrows so snug,\nGoodnight to the ladybug under the rug.\n\nHoo-hoo, says the owl to the fox in its den,\nTo the duck and the drake and the little brown hen.\nGoodnight to the squirrel with acorns to keep,\nHoo-hoo, little darling — it's time now to sleep.",
     "target_age": 2,
     "age_min": 0,
     "age_max": 4,
@@ -254,7 +380,28 @@
     "voice_id": "luna_gentle",
     "music_type": "ambient",
     "word_count": 71,
-    "style": "nursery"
+    "style": "nursery",
+    "annotated_text": "[GENTLE]Hoo-hoo, says the owl from the old oak tree,\nGoodnight to the fish in the deep blue sea.\nGoodnight to the rabbits in burrows so snug,\nGoodnight to the ladybug under the rug.\n\n[WHISPERING]Hoo-hoo, says the owl to the fox in its den,\nTo the duck and the drake and the little brown hen.\nGoodnight to the squirrel with acorns to keep,\nHoo-hoo, little darling — it’s time now to sleep.",
+    "audio_variants": [
+      {
+        "voice": "luna",
+        "url": "/audio/pre-gen/e32eaee0_luna.mp3",
+        "duration_seconds": 25.8,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "whisper",
+        "url": "/audio/pre-gen/e32eaee0_whisper.mp3",
+        "duration_seconds": 30.8,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "atlas",
+        "url": "/audio/pre-gen/e32eaee0_atlas.mp3",
+        "duration_seconds": 26.56,
+        "provider": "chatterbox"
+      }
+    ]
   },
   {
     "id": "a3945b7b-6b20-4a39-a051-b25dfaec1d8e",
@@ -292,6 +439,27 @@
       "piano",
       "harp",
       "soft strings"
+    ],
+    "annotated_text": "[SINGING]We’re sailing on a silver boat,\nAcross the moonlit sea.\nThe stars are singing lullabies,\nFor you and me.\n\n[JOYFUL]Dreamland, dreamland, just close your eyes,\nSail away under purple skies.\nDreamland, dreamland, the night is kind,\nLeave all your worries far behind.\n\n[HUMMING]The waves are made of cotton clouds,\nThe wind is warm and sweet.\nAnd every star that’s shining bright,\nWill guide our tiny fleet.\n\n[SLEEPY]Dreamland, dreamland, just close your eyes,\nSail away under purple skies.\nDreamland, dreamland, the night is kind,\nLeave all your worries far behind.",
+    "audio_variants": [
+      {
+        "voice": "luna",
+        "url": "/audio/pre-gen/a3945b7b_luna.mp3",
+        "duration_seconds": 40.84,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "whisper",
+        "url": "/audio/pre-gen/a3945b7b_whisper.mp3",
+        "duration_seconds": 41.8,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "atlas",
+        "url": "/audio/pre-gen/a3945b7b_atlas.mp3",
+        "duration_seconds": 39.44,
+        "provider": "chatterbox"
+      }
     ]
   },
   {
@@ -301,7 +469,7 @@
     "title": "Neendwala Badal",
     "cover": "/covers/sleepy-cloud.svg",
     "description": "Ek narm-mulaayam badal chaandni raat mein sapne baat-ta phirta hai.",
-    "text": "Chhat ke upar aasmaan mein, ek chhota sa mulaayam badal tha jiska naam tha Nimbus. Nimbus ka kaam duniya ka sabse khaas kaam tha \u2014 taaron se meethe sapne ikaththa karna aur sote hue bacchon pe chidakna.\n\nAaj raat taare khoob chamak rahe the. Nimbus ne apne narm haathon se ek sapna pakda \u2014 udne waale ghode ka, ek aur candy ke baag ka, aur ek pyaare dragon ka jo garam jhappi dena chahta tha.\n\nJab Nimbus tumhare ghar ke upar se guzra, usne apna phulphula badan hilaya, aur sapne chhoti chhoti barf ki phuhar ki tarah neeche aaye. Wo tumhare takkiye pe aaram se baith gaye, tumhara aankhein band karne ka intezaar kar rahe the.\n\n\"Meethe sapne dekho, chhote,\" Nimbus ne dheere se kaha, aur chaandni ki lakeer chhodta hua aage nikal gaya.",
+    "text": "Chhat ke upar aasmaan mein, ek chhota sa mulaayam badal tha jiska naam tha Nimbus. Nimbus ka kaam duniya ka sabse khaas kaam tha — taaron se meethe sapne ikaththa karna aur sote hue bacchon pe chidakna.\n\nAaj raat taare khoob chamak rahe the. Nimbus ne apne narm haathon se ek sapna pakda — udne waale ghode ka, ek aur candy ke baag ka, aur ek pyaare dragon ka jo garam jhappi dena chahta tha.\n\nJab Nimbus tumhare ghar ke upar se guzra, usne apna phulphula badan hilaya, aur sapne chhoti chhoti barf ki phuhar ki tarah neeche aaye. Wo tumhare takkiye pe aaram se baith gaye, tumhara aankhein band karne ka intezaar kar rahe the.\n\n\"Meethe sapne dekho, chhote,\" Nimbus ne dheere se kaha, aur chaandni ki lakeer chhodta hua aage nikal gaya.",
     "target_age": 4,
     "age_min": 2,
     "age_max": 6,
@@ -330,7 +498,28 @@
       "Chhoti si cheez bhi sabse bada kaam kar sakti hai"
     ],
     "has_qa": false,
-    "has_games": false
+    "has_games": false,
+    "annotated_text": "[GENTLE]Chhat ke upar aasmaan mein, ek chhota sa mulaayam badal tha jiska naam tha Nimbus.[PAUSE] Nimbus ka kaam duniya ka sabse khaas kaam tha — taaron se meethe sapne ikaththa karna aur sote hue bacchon pe chidakna.\n\n[CALM]Aaj raat taare khoob chamak rahe the.[PAUSE] Nimbus ne apne narm haathon se ek sapna pakda — udne waale ghode ka, ek aur candy ke baag ka,[PAUSE] aur ek pyaare dragon ka jo garam jhappi dena chahta tha.\n\n[SLEEPY]Jab Nimbus tumhare ghar ke upar se guzra, usne apna phulphula badan hilaya,[PAUSE] aur sapne chhoti chhoti barf ki phuhar ki tarah neeche aaye.[PAUSE] Wo tumhare takkiye pe aaram se baith gaye, tumhara aankhein band karne ka intezaar kar rahe the.\n\n[WHISPERING]“Meethe sapne dekho, chhote,” Nimbus ne dheere se kaha,[PAUSE] aur chaandni ki lakeer chhodta hua aage nikal gaya.",
+    "audio_variants": [
+      {
+        "voice": "luna_hi",
+        "url": "/audio/pre-gen/hi-neend_luna_hi.mp3",
+        "duration_seconds": 79.2,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "whisper_hi",
+        "url": "/audio/pre-gen/hi-neend_whisper_hi.mp3",
+        "duration_seconds": 103.96,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "atlas_hi",
+        "url": "/audio/pre-gen/hi-neend_atlas_hi.mp3",
+        "duration_seconds": 74.44,
+        "provider": "chatterbox"
+      }
+    ]
   },
   {
     "id": "hi-bahadur-jugnu",
@@ -339,7 +528,7 @@
     "title": "Bahadur Chhota Jugnu",
     "cover": "/covers/brave-firefly.svg",
     "description": "Ek chhota sa jugnu bhule hue jaanwaron ko ghar ka raasta dikhata hai.",
-    "text": "Gungunate Jungle ke beech mein ek chhota sa jugnu rehta tha jiska naam tha Flicker. Baaki jugnuon ki tarah uski roshni chamakdaar nahi thi \u2014 bilkul ek chhoti si mombatti jaisi.\n\nLekin usi raat, ek chhota khargosh Clover jungle ke sabse andhere hisse mein kho gaya. \"Meri roshni ke peeche aao!\" Flicker ne kaha. Roshni chhoti thi, lekin Clover ko har kadam dikhane ke liye kaafi thi.\n\nSaath mein chale, Flicker raasta dikhata raha, jab tak Clover apne ghar nahi pahunch gaya jahan Mamma Rabbit intezaar kar rahi thi.\n\n\"Shukriya, chhoti roshni,\" Clover ne unghaate hue kaha. \"Tum pure jungle ke sabse bahadur jugnu ho.\"\n\nAur us raat ke baad, Flicker ne kabhi khud ko chhota nahi samjha. Kyunki chhoti si roshni bhi kisi ko ghar pahuncha sakti hai.",
+    "text": "Gungunate Jungle ke beech mein ek chhota sa jugnu rehta tha jiska naam tha Flicker. Baaki jugnuon ki tarah uski roshni chamakdaar nahi thi — bilkul ek chhoti si mombatti jaisi.\n\nLekin usi raat, ek chhota khargosh Clover jungle ke sabse andhere hisse mein kho gaya. \"Meri roshni ke peeche aao!\" Flicker ne kaha. Roshni chhoti thi, lekin Clover ko har kadam dikhane ke liye kaafi thi.\n\nSaath mein chale, Flicker raasta dikhata raha, jab tak Clover apne ghar nahi pahunch gaya jahan Mamma Rabbit intezaar kar rahi thi.\n\n\"Shukriya, chhoti roshni,\" Clover ne unghaate hue kaha. \"Tum pure jungle ke sabse bahadur jugnu ho.\"\n\nAur us raat ke baad, Flicker ne kabhi khud ko chhota nahi samjha. Kyunki chhoti si roshni bhi kisi ko ghar pahuncha sakti hai.",
     "target_age": 5,
     "age_min": 3,
     "age_max": 7,
@@ -369,7 +558,28 @@
       "Khud ko kamzor mat samjho"
     ],
     "has_qa": false,
-    "has_games": false
+    "has_games": false,
+    "annotated_text": "[GENTLE]Gungunate Jungle ke beech mein ek chhota sa jugnu rehta tha jiska naam tha Flicker.[PAUSE] Baaki jugnuon ki tarah uski roshni chamakdaar nahi thi — bilkul ek chhoti si mombatti jaisi.\n\n[ADVENTUROUS]Lekin usi raat, ek chhota khargosh Clover jungle ke sabse andhere hisse mein kho gaya.[PAUSE] “Meri roshni ke peeche aao!” Flicker ne kaha.[PAUSE] Roshni chhoti thi, lekin Clover ko har kadam dikhane ke liye kaafi thi.\n\n[CALM]Saath mein chale, Flicker raasta dikhata raha, jab tak Clover apne ghar nahi pahunch gaya jahan Mamma Rabbit intezaar kar rahi thi.\n\n[SLEEPY]“Shukriya, chhoti roshni,” Clover ne unghaate hue kaha.[PAUSE] “Tum pure jungle ke sabse bahadur jugnu ho.”\n\n[WHISPERING]Aur us raat ke baad, Flicker ne kabhi khud ko chhota nahi samjha.[PAUSE] Kyunki chhoti si roshni bhi kisi ko ghar pahuncha sakti hai.",
+    "audio_variants": [
+      {
+        "voice": "luna_hi",
+        "url": "/audio/pre-gen/hi-bahad_luna_hi.mp3",
+        "duration_seconds": 82.2,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "whisper_hi",
+        "url": "/audio/pre-gen/hi-bahad_whisper_hi.mp3",
+        "duration_seconds": 105.08,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "atlas_hi",
+        "url": "/audio/pre-gen/hi-bahad_atlas_hi.mp3",
+        "duration_seconds": 75.08,
+        "provider": "chatterbox"
+      }
+    ]
   },
   {
     "id": "hi-chaand-ki-lori",
@@ -407,7 +617,28 @@
       "Raat mein duniya shaant aur surakshit hoti hai"
     ],
     "has_qa": false,
-    "has_games": false
+    "has_games": false,
+    "annotated_text": "[GENTLE]Jab suraj pahaadiyon ke peeche chala gaya, Chaand dheere-dheere uthha aur Willow Meadow pe chandi ki roshni bikher di.\n\n[WHISPERING]“Chup ho ja, chhoti lomdi,” Chaand ne gaaya, aur lomdi apni khoh mein simat gayi.\n\n[WHISPERING]“So ja, chhote ullu,” Chaand ne gungunaya, aur ullu ne apna sar apne pankh ke neeche chhupa liya.\n\n[WHISPERING]Phir Chaand ne tumhari taraf dekha aur sabse meetha sur gaaya:[PAUSE] “Shubh raatri, mere chhote sapne dekhne waale. Subah tak taare tumhara khayal rakhenge.”\n\n[SLEEPY]Aur bas phir, poori duniya sukoon se so gayi.",
+    "audio_variants": [
+      {
+        "voice": "luna_hi",
+        "url": "/audio/pre-gen/hi-chaan_luna_hi.mp3",
+        "duration_seconds": 60.0,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "whisper_hi",
+        "url": "/audio/pre-gen/hi-chaan_whisper_hi.mp3",
+        "duration_seconds": 73.32,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "atlas_hi",
+        "url": "/audio/pre-gen/hi-chaan_atlas_hi.mp3",
+        "duration_seconds": 46.36,
+        "provider": "chatterbox"
+      }
+    ]
   },
   {
     "id": "hi-captain-sitaara",
@@ -416,7 +647,7 @@
     "title": "Captain Sitaara aur Dhumketu ki Race",
     "cover": "/covers/captain-stardust.svg",
     "description": "Ek space explorer dhumketu se race lagati hai birthday wish dene ke liye.",
-    "text": "Captain Sitaara ne apna chamakdar helmet theek kiya aur apne starship Silver Dreamer ka control pakda. Aaj ki mission sabse zaroori thi \u2014 Planet Cakealot pe birthday wish pahunchana, aadhi raat se pehle!\n\nSilver Dreamer Saturn ke chhalon ke beech se nikli, asteroid field ko dodge kiya, aur ek neele dhumketu Flash ke saath race lagayi.\n\nWo bilkul sahi waqt pe pahunchi! Captain Sitaara ne wish deliver ki \u2014 ek chamakta sona sitaara.\n\n\"Mission poora hua,\" usne muskuraate hue kaha. \"Ab ghar chalein. Space explorers ko bhi neend aati hai.\"\n\nAur jab Silver Dreamer shaant aasmaan se ghar laut rahi thi, taaron ne bhi apni roshni dheemi ki aur shubh raatri kahi.",
+    "text": "Captain Sitaara ne apna chamakdar helmet theek kiya aur apne starship Silver Dreamer ka control pakda. Aaj ki mission sabse zaroori thi — Planet Cakealot pe birthday wish pahunchana, aadhi raat se pehle!\n\nSilver Dreamer Saturn ke chhalon ke beech se nikli, asteroid field ko dodge kiya, aur ek neele dhumketu Flash ke saath race lagayi.\n\nWo bilkul sahi waqt pe pahunchi! Captain Sitaara ne wish deliver ki — ek chamakta sona sitaara.\n\n\"Mission poora hua,\" usne muskuraate hue kaha. \"Ab ghar chalein. Space explorers ko bhi neend aati hai.\"\n\nAur jab Silver Dreamer shaant aasmaan se ghar laut rahi thi, taaron ne bhi apni roshni dheemi ki aur shubh raatri kahi.",
     "target_age": 7,
     "age_min": 5,
     "age_max": 9,
@@ -444,7 +675,28 @@
       "Lagan se manzil zaroor milti hai"
     ],
     "has_qa": false,
-    "has_games": false
+    "has_games": false,
+    "annotated_text": "[ADVENTUROUS]Captain Sitaara ne apna chamakdar helmet theek kiya aur apne starship Silver Dreamer ka control pakda.[PAUSE] Aaj ki mission sabse zaroori thi — Planet Cakealot pe birthday wish pahunchana, aadhi raat se pehle!\n\n[EXCITED]Silver Dreamer Saturn ke chhalon ke beech se nikli, asteroid field ko dodge kiya,[PAUSE] aur ek neele dhumketu Flash ke saath race lagayi.\n\n[JOYFUL]Wo bilkul sahi waqt pe pahunchi![PAUSE] Captain Sitaara ne wish deliver ki — ek chamakta sona sitaara.\n\n[CALM]“Mission poora hua,” usne muskuraate hue kaha.[PAUSE] “Ab ghar chalein. Space explorers ko bhi neend aati hai.”\n\n[SLEEPY]Aur jab Silver Dreamer shaant aasmaan se ghar laut rahi thi,[PAUSE] taaron ne bhi apni roshni dheemi ki aur shubh raatri kahi.",
+    "audio_variants": [
+      {
+        "voice": "luna_hi",
+        "url": "/audio/pre-gen/hi-capta_luna_hi.mp3",
+        "duration_seconds": 65.44,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "whisper_hi",
+        "url": "/audio/pre-gen/hi-capta_whisper_hi.mp3",
+        "duration_seconds": 84.96,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "atlas_hi",
+        "url": "/audio/pre-gen/hi-capta_atlas_hi.mp3",
+        "duration_seconds": 61.8,
+        "provider": "chatterbox"
+      }
+    ]
   },
   {
     "id": "hi-gungunata-baag",
@@ -453,7 +705,7 @@
     "title": "Gungunata Baag",
     "cover": "/covers/garden-whispers.svg",
     "description": "Ek jaadui baag jahan phool kahaniyan sunate hain.",
-    "text": "Daadi ke ghar ke peeche, Maya ko ek aisa baag mila jo sone ki roshni se chamak raha tha. Yahan ke phool jaadui the \u2014 gulaab jo lantern ki tarah chamakte the, lily jo dhun gaati thi.\n\nHar phool ke paas ek alag kahani thi. Daisy chuhon ki bahaduri ki kahani sunati thi. Tulip meherbaani ki puraani kathayein batati thi. Lavender chaandni raaton ki kavitayein sunata tha.\n\nHar kahani aise khatam hoti thi: \"Ab aankhein band karo, pyaare. Kal ek aur kahani tumhara intezaar kar rahi hogi.\"",
+    "text": "Daadi ke ghar ke peeche, Maya ko ek aisa baag mila jo sone ki roshni se chamak raha tha. Yahan ke phool jaadui the — gulaab jo lantern ki tarah chamakte the, lily jo dhun gaati thi.\n\nHar phool ke paas ek alag kahani thi. Daisy chuhon ki bahaduri ki kahani sunati thi. Tulip meherbaani ki puraani kathayein batati thi. Lavender chaandni raaton ki kavitayein sunata tha.\n\nHar kahani aise khatam hoti thi: \"Ab aankhein band karo, pyaare. Kal ek aur kahani tumhara intezaar kar rahi hogi.\"",
     "target_age": 8,
     "age_min": 6,
     "age_max": 10,
@@ -482,7 +734,28 @@
       "Sabse achhi kahaniyan tab milti hain jab aap dheere hoke sunein"
     ],
     "has_qa": false,
-    "has_games": false
+    "has_games": false,
+    "annotated_text": "[MYSTERIOUS]Daadi ke ghar ke peeche, Maya ko ek aisa baag mila jo sone ki roshni se chamak raha tha.[PAUSE] Yahan ke phool jaadui the — gulaab jo lantern ki tarah chamakte the, lily jo dhun gaati thi.\n\n[CURIOUS]Har phool ke paas ek alag kahani thi.[PAUSE] Daisy chuhon ki bahaduri ki kahani sunati thi.[PAUSE] Tulip meherbaani ki puraani kathayein batati thi.[PAUSE] Lavender chaandni raaton ki kavitayein sunata tha.\n\n[WHISPERING]Har kahani aise khatam hoti thi:[PAUSE] “Ab aankhein band karo, pyaare.[PAUSE] Kal ek aur kahani tumhara intezaar kar rahi hogi.”",
+    "audio_variants": [
+      {
+        "voice": "luna_hi",
+        "url": "/audio/pre-gen/hi-gungu_luna_hi.mp3",
+        "duration_seconds": 56.44,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "whisper_hi",
+        "url": "/audio/pre-gen/hi-gungu_whisper_hi.mp3",
+        "duration_seconds": 74.92,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "atlas_hi",
+        "url": "/audio/pre-gen/hi-gungu_atlas_hi.mp3",
+        "duration_seconds": 48.52,
+        "provider": "chatterbox"
+      }
+    ]
   },
   {
     "id": "hi-chamakta-sapna",
@@ -515,7 +788,28 @@
     "voice_id": "luna_gentle",
     "music_type": "ambient",
     "word_count": 79,
-    "style": "rhyming"
+    "style": "rhyming",
+    "annotated_text": "[RHYTHMIC]Taare jhilmil karte hain aasmaan mein,\nTumhare sapne basate hain unki chaan mein.\nChaanda muskuraye gol chamakdaar,\nChaandi mein lapet le saara sansaar.\n\n[SLEEPY]Aankhein moondo ab, mere pyaare taare,\nRaat aayi hai, jag uthe sitaare.\nKal subah suraj naya aayega,\nPar ab sapnon ka jahan le jaayega.",
+    "audio_variants": [
+      {
+        "voice": "luna_hi",
+        "url": "/audio/pre-gen/hi-chama_luna_hi.mp3",
+        "duration_seconds": 28.48,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "whisper_hi",
+        "url": "/audio/pre-gen/hi-chama_whisper_hi.mp3",
+        "duration_seconds": 38.36,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "atlas_hi",
+        "url": "/audio/pre-gen/hi-chama_atlas_hi.mp3",
+        "duration_seconds": 28.88,
+        "provider": "chatterbox"
+      }
+    ]
   },
   {
     "id": "hi-ullu-ki-shubhraatri",
@@ -524,7 +818,7 @@
     "title": "Ullu ki Shubh Raatri",
     "cover": "/covers/owl-goodnight.svg",
     "description": "Ek samajhdaar ullu jungle ke har praani ko shubh raatri kehta hai.",
-    "text": "Uhoo-uhoo, ullu bole budhe pedh se,\nShubh raatri machli ko neeli nadiya ke desh se.\nShubh raatri khargosh ko garm bistar mein,\nShubh raatri ladybug ko phoolon ke ghar mein.\n\nUhoo-uhoo, lomdi so ja apni khoh mein,\nBatakh aur murgi bhi sapnon ki choh mein.\nShubh raatri gilahri ko meethi neend aaye,\nUhoo-uhoo, mere bachche \u2014 ab chain se so jaaye.",
+    "text": "Uhoo-uhoo, ullu bole budhe pedh se,\nShubh raatri machli ko neeli nadiya ke desh se.\nShubh raatri khargosh ko garm bistar mein,\nShubh raatri ladybug ko phoolon ke ghar mein.\n\nUhoo-uhoo, lomdi so ja apni khoh mein,\nBatakh aur murgi bhi sapnon ki choh mein.\nShubh raatri gilahri ko meethi neend aaye,\nUhoo-uhoo, mere bachche — ab chain se so jaaye.",
     "target_age": 2,
     "age_min": 0,
     "age_max": 4,
@@ -548,7 +842,28 @@
     "voice_id": "luna_gentle",
     "music_type": "ambient",
     "word_count": 71,
-    "style": "nursery"
+    "style": "nursery",
+    "annotated_text": "[GENTLE]Uhoo-uhoo, ullu bole budhe pedh se,\nShubh raatri machli ko neeli nadiya ke desh se.\nShubh raatri khargosh ko garm bistar mein,\nShubh raatri ladybug ko phoolon ke ghar mein.\n\n[WHISPERING]Uhoo-uhoo, lomdi so ja apni khoh mein,\nBatakh aur murgi bhi sapnon ki choh mein.\nShubh raatri gilahri ko meethi neend aaye,\nUhoo-uhoo, mere bachche — ab chain se so jaaye.",
+    "audio_variants": [
+      {
+        "voice": "luna_hi",
+        "url": "/audio/pre-gen/hi-ullu-_luna_hi.mp3",
+        "duration_seconds": 39.68,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "whisper_hi",
+        "url": "/audio/pre-gen/hi-ullu-_whisper_hi.mp3",
+        "duration_seconds": 41.84,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "atlas_hi",
+        "url": "/audio/pre-gen/hi-ullu-_atlas_hi.mp3",
+        "duration_seconds": 32.96,
+        "provider": "chatterbox"
+      }
+    ]
   },
   {
     "id": "hi-sapnon-ki-naav",
@@ -586,6 +901,27 @@
       "piano",
       "harp",
       "soft strings"
+    ],
+    "annotated_text": "[SINGING]Chandi ki naav pe hum sawaar chalein,\nChaandni samundar ke paar chalein.\nTaare gaate hain lori meethi pyaari,\nLe chalein sapnon ki phulajhaari.\n\n[JOYFUL]Sapnon ka desh, sapnon ka desh, aao chalein,\nBaigani aasmaan mein udte chalein.\nSapnon ka desh, sapnon ka desh, raat suhaani,\nChintaon ko bhool jaao, suno yeh kahaani.",
+    "audio_variants": [
+      {
+        "voice": "luna_hi",
+        "url": "/audio/pre-gen/hi-sapno_luna_hi.mp3",
+        "duration_seconds": 29.48,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "whisper_hi",
+        "url": "/audio/pre-gen/hi-sapno_whisper_hi.mp3",
+        "duration_seconds": 29.56,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "atlas_hi",
+        "url": "/audio/pre-gen/hi-sapno_atlas_hi.mp3",
+        "duration_seconds": 22.96,
+        "provider": "chatterbox"
+      }
     ]
   }
 ]

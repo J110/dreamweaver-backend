@@ -43,3 +43,10 @@ logs/
 .coverage
 htmlcov/
 .pytest_cache/
+
+# Pre-generated audio (too large for git, deploy separately)
+audio/pre-gen/
+voice_references/*.mp3
+
+# Temp scripts
+add_annotations.py

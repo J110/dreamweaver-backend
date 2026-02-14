@@ -1,5 +1,6 @@
 """Audio processing utilities for TTS output."""
 
+import io
 import logging
 from typing import List, Optional
 
@@ -72,8 +73,6 @@ def concatenate_audio(audio_chunks: List[bytes], pause_ms: int = 500) -> bytes:
         raise ValueError("At least one audio chunk is required")
     
     try:
-        import io
-        
         # Load first chunk
         combined = AudioSegment.from_file(io.BytesIO(audio_chunks[0]))
         
@@ -119,8 +118,6 @@ def add_fade_in(audio_bytes: bytes, duration_ms: int = 1000) -> bytes:
         raise ValueError("Fade duration must be non-negative")
     
     try:
-        import io
-        
         audio = AudioSegment.from_file(io.BytesIO(audio_bytes))
         faded = audio.fade_in(duration_ms)
         
@@ -157,8 +154,6 @@ def add_fade_out(audio_bytes: bytes, duration_ms: int = 2000) -> bytes:
         raise ValueError("Fade duration must be non-negative")
     
     try:
-        import io
-        
         audio = AudioSegment.from_file(io.BytesIO(audio_bytes))
         faded = audio.fade_out(duration_ms)
         
@@ -198,8 +193,6 @@ def adjust_speed(audio_bytes: bytes, speed_factor: float) -> bytes:
         raise ValueError("Speed factor must be between 0.25 and 4.0")
     
     try:
-        import io
-        
         audio = AudioSegment.from_file(io.BytesIO(audio_bytes))
         
         # Speed adjustment via frame rate manipulation
@@ -234,8 +227,6 @@ def get_audio_duration(audio_bytes: bytes) -> float:
         raise ValueError("Audio bytes cannot be empty")
     
     try:
-        import io
-        
         audio = AudioSegment.from_file(io.BytesIO(audio_bytes))
         duration_seconds = len(audio) / 1000.0  # pydub uses milliseconds
         
@@ -269,8 +260,6 @@ def convert_to_mp3(audio_bytes: bytes, bitrate: str = "128k") -> bytes:
         raise ValueError(f"Bitrate must be one of {valid_bitrates}")
     
     try:
-        import io
-        
         audio = AudioSegment.from_file(io.BytesIO(audio_bytes))
         
         # Export as MP3
@@ -304,8 +293,6 @@ def mix_audio(foreground: bytes, background: bytes, bg_volume_db: float = -20) -
         raise ValueError("Both foreground and background audio required")
     
     try:
-        import io
-        
         fg_audio = AudioSegment.from_file(io.BytesIO(foreground))
         bg_audio = AudioSegment.from_file(io.BytesIO(background))
         
@@ -336,7 +323,3 @@ def mix_audio(foreground: bytes, background: bytes, bg_volume_db: float = -20) -
     except Exception as e:
         logger.error("Audio mixing failed: %s", str(e))
         raise ValueError(f"Failed to mix audio: {str(e)}") from e
-
-
-# Add missing import at module level
-import io

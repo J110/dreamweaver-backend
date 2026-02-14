@@ -79,6 +79,41 @@ VOICE_CONFIGS = {
     },
 }
 
+# Hindi voice references for Chatterbox voice cloning on Hindi stories
+HINDI_VOICE_CONFIGS = {
+    "luna_hi": {
+        "edge_voice": "hi-IN-SwaraNeural",
+        "text": (
+            "आओ बच्चों, आज मैं तुम्हें एक कहानी सुनाती हूँ। "
+            "अपनी आँखें बंद करो और सोचो एक ऐसी दुनिया जहाँ तारे फुसफुसाते हैं "
+            "और चाँद मीठी लोरियाँ गाता है। "
+            "इस जादुई जगह में सब कुछ नरम और गरम है, "
+            "और सपने हवा में पंखों की तरह तैरते हैं।"
+        ),
+    },
+    "whisper_hi": {
+        "edge_voice": "hi-IN-SwaraNeural",
+        "rate": "-15%",  # slower, calmer for whisper character
+        "text": (
+            "शश्श, सब शांत है अब। "
+            "रात का आसमान तारों से भरा है और दुनिया सो रही है। "
+            "धीरे से साँस लो, आराम से। "
+            "तुम सुरक्षित हो, तुम्हें प्यार किया जाता है। "
+            "चलो, सपनों की दुनिया में चलते हैं।"
+        ),
+    },
+    "atlas_hi": {
+        "edge_voice": "hi-IN-MadhurNeural",
+        "text": (
+            "सुनो बच्चों, आज की कहानी बहुत खास है। "
+            "यह एक बहादुर बच्चे की कहानी है "
+            "जिसने सीखा कि सबसे बड़ा खज़ाना सोना या हीरे नहीं, "
+            "बल्कि रास्ते में बने दोस्त होते हैं। "
+            "चलो, इस रोमांचक सफ़र पर साथ चलते हैं।"
+        ),
+    },
+}
+
 
 async def generate_reference(voice_id: str, config: dict) -> None:
     """Generate a single voice reference WAV file."""
@@ -100,8 +135,8 @@ async def generate_reference(voice_id: str, config: dict) -> None:
     communicate = edge_tts.Communicate(
         text=config["text"],
         voice=config["edge_voice"],
-        rate="-10%",
-        pitch="+0Hz",
+        rate=config.get("rate", "-10%"),
+        pitch=config.get("pitch", "+0Hz"),
     )
     # edge-tts outputs MP3 by default, save as mp3 first then note for user
     mp3_path = VOICE_REFERENCES_DIR / f"{voice_id}.mp3"
@@ -125,10 +160,12 @@ async def generate_reference(voice_id: str, config: dict) -> None:
 async def main():
     VOICE_REFERENCES_DIR.mkdir(parents=True, exist_ok=True)
 
-    print(f"Output directory: {VOICE_REFERENCES_DIR}")
-    print(f"Generating {len(VOICE_CONFIGS)} voice references...\n")
+    all_configs = {**VOICE_CONFIGS, **HINDI_VOICE_CONFIGS}
 
-    for voice_id, config in VOICE_CONFIGS.items():
+    print(f"Output directory: {VOICE_REFERENCES_DIR}")
+    print(f"Generating {len(all_configs)} voice references ({len(VOICE_CONFIGS)} EN + {len(HINDI_VOICE_CONFIGS)} HI)...\n")
+
+    for voice_id, config in all_configs.items():
         await generate_reference(voice_id, config)
 
     print("\nDone! Voice reference files generated.")

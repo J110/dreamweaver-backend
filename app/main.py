@@ -9,6 +9,7 @@ from pathlib import Path
 from fastapi import FastAPI, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 
 from app.config import get_settings
 from app.middleware.error_handler import ErrorHandlerMiddleware
@@ -121,6 +122,11 @@ app.add_middleware(
 from app.api.v1 import router as v1_router  # noqa: E402
 
 app.include_router(v1_router)
+
+# Mount pre-generated audio files
+pregen_dir = Path("audio/pre-gen")
+pregen_dir.mkdir(parents=True, exist_ok=True)
+app.mount("/audio/pre-gen", StaticFiles(directory="audio/pre-gen"), name="pre-gen-audio")
 
 
 @app.get(
