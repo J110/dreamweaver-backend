@@ -12,6 +12,7 @@ Usage:
 """
 
 import argparse
+import fcntl
 import io
 import json
 import logging
@@ -35,32 +36,40 @@ OUTPUT_DIR = BASE_DIR / "audio" / "pre-gen"
 CHATTERBOX_URL = "https://j110--dreamweaver-chatterbox-tts.modal.run"
 CHATTERBOX_HEALTH = "https://j110--dreamweaver-chatterbox-health.modal.run"
 
-# ── Emotion profiles (mirrored from chatterbox_service.py) ───────────────
+# ── Emotion profiles — BALANCED FOR QUALITY ──────────────────────────
+# Based on Chatterbox documentation recommendations:
+# - Default (0.5/0.5) is best for general purpose
+# - Expressive: exaggeration=0.7, cfg_weight=0.3
+# - Extreme values (>1.0 exag) cause artifacts
+# - Lower cfg_weight = slower pacing
+#
+# We keep values moderate to avoid degrading audio quality.
+# The quality of the voice reference matters MORE than extreme params.
 EMOTION_PROFILES: Dict[str, dict] = {
-    "sleepy":      {"exaggeration": 0.2, "cfg_weight": 0.3},
-    "gentle":      {"exaggeration": 0.3, "cfg_weight": 0.4},
-    "calm":        {"exaggeration": 0.3, "cfg_weight": 0.5},
-    "excited":     {"exaggeration": 0.8, "cfg_weight": 0.5},
-    "curious":     {"exaggeration": 0.5, "cfg_weight": 0.5},
-    "adventurous": {"exaggeration": 0.7, "cfg_weight": 0.45},
-    "mysterious":  {"exaggeration": 0.5, "cfg_weight": 0.35},
-    "joyful":      {"exaggeration": 0.7, "cfg_weight": 0.5},
-    "dramatic":    {"exaggeration": 0.8, "cfg_weight": 0.35},
-    "whispering":  {"exaggeration": 0.15, "cfg_weight": 0.3},
-    "rhythmic":    {"exaggeration": 0.4, "cfg_weight": 0.3},
-    "singing":     {"exaggeration": 0.85, "cfg_weight": 0.2},
-    "humming":     {"exaggeration": 0.3, "cfg_weight": 0.2},
+    "sleepy":      {"exaggeration": 0.3,  "cfg_weight": 0.3},    # slow, drowsy
+    "gentle":      {"exaggeration": 0.5,  "cfg_weight": 0.4},    # warm, natural
+    "calm":        {"exaggeration": 0.5,  "cfg_weight": 0.5},    # default pace
+    "excited":     {"exaggeration": 0.7,  "cfg_weight": 0.5},    # lively
+    "curious":     {"exaggeration": 0.6,  "cfg_weight": 0.5},    # interested
+    "adventurous": {"exaggeration": 0.7,  "cfg_weight": 0.4},    # bold
+    "mysterious":  {"exaggeration": 0.5,  "cfg_weight": 0.3},    # slow, suspenseful
+    "joyful":      {"exaggeration": 0.7,  "cfg_weight": 0.5},    # bright
+    "dramatic":    {"exaggeration": 0.7,  "cfg_weight": 0.3},    # intense but stable
+    "whispering":  {"exaggeration": 0.3,  "cfg_weight": 0.3},    # hushed
+    "rhythmic":    {"exaggeration": 0.5,  "cfg_weight": 0.3},    # musical cadence
+    "singing":     {"exaggeration": 0.7,  "cfg_weight": 0.3},    # expressive
+    "humming":     {"exaggeration": 0.4,  "cfg_weight": 0.3},    # soft, melodic
 }
 
 CONTENT_TYPE_PROFILES: Dict[str, dict] = {
-    "story": {"exaggeration": 0.6, "cfg_weight": 0.4},
-    "poem":  {"exaggeration": 0.4, "cfg_weight": 0.3},
-    "song":  {"exaggeration": 0.8, "cfg_weight": 0.25},
+    "story": {"exaggeration": 0.5, "cfg_weight": 0.5},   # default — let Chatterbox shine
+    "poem":  {"exaggeration": 0.5, "cfg_weight": 0.3},   # slightly slower for poems
+    "song":  {"exaggeration": 0.7, "cfg_weight": 0.3},   # more expressive for songs
 }
 
 PAUSE_MARKERS = {
-    "pause": 1000,
-    "dramatic_pause": 2000,
+    "pause": 800,             # natural pause
+    "dramatic_pause": 1500,   # longer dramatic pause
 }
 
 _MARKER_RE = re.compile(
@@ -73,9 +82,12 @@ _MARKER_RE = re.compile(
 )
 
 # ── Voice mapping per language ───────────────────────────────────────────
+# Using user-provided real voice recordings (female_1/2/3, male_1/2/3)
+# These are high-quality human voice samples converted to 24kHz WAV
+# Hindi voices have _hi suffix (separate Hindi voice recordings)
 VOICE_MAP = {
-    "en": ["luna", "whisper", "atlas"],
-    "hi": ["luna_hi", "whisper_hi", "atlas_hi"],
+    "en": ["female_1", "female_2", "male_1"],
+    "hi": ["female_1_hi", "female_2_hi", "male_1_hi"],
 }
 
 # ── Logging ──────────────────────────────────────────────────────────────
@@ -91,14 +103,24 @@ logger = logging.getLogger(__name__)
 # Audio helpers (using pydub + ffmpeg)
 # ═════════════════════════════════════════════════════════════════════════
 
+# Keep Chatterbox native sample rate (24kHz). Upsampling doesn't add real
+# frequency content and can introduce interpolation artifacts.
+NATIVE_SAMPLE_RATE = 24000
+
+
 def audio_from_bytes(audio_bytes: bytes) -> AudioSegment:
-    """Load audio bytes (MP3 or WAV) into an AudioSegment."""
-    return AudioSegment.from_file(io.BytesIO(audio_bytes))
+    """Load audio bytes (MP3 or WAV) into an AudioSegment.
+
+    Keeps native sample rate — no upsampling. Chatterbox outputs 24kHz
+    which is perfectly fine for speech. Upsampling only adds artifacts.
+    """
+    seg = AudioSegment.from_file(io.BytesIO(audio_bytes))
+    return seg
 
 
 def generate_silence(duration_ms: int) -> AudioSegment:
-    """Generate silence AudioSegment."""
-    return AudioSegment.silent(duration=duration_ms)
+    """Generate silence AudioSegment at native sample rate."""
+    return AudioSegment.silent(duration=duration_ms, frame_rate=NATIVE_SAMPLE_RATE)
 
 
 def get_mp3_duration(filepath: Path) -> float:
@@ -159,13 +181,14 @@ def generate_tts_for_segment(
     lang: str = "en",
     max_retries: int = 3,
 ) -> Optional[bytes]:
-    """Call Chatterbox Modal endpoint and return audio bytes (MP3)."""
+    """Call Chatterbox Modal endpoint and return audio bytes (WAV for lossless quality)."""
     params = {
         "text": text,
         "voice": voice,
         "lang": lang,
         "exaggeration": exaggeration,
         "cfg_weight": cfg_weight,
+        "format": "wav",  # Request lossless WAV — we do MP3 conversion ourselves
     }
     url = f"{CHATTERBOX_URL}?{urlencode(params)}"
 
@@ -210,7 +233,7 @@ def warm_up_chatterbox(client: httpx.Client) -> bool:
 
     logger.info("Sending warm-up TTS request...")
     try:
-        params = {"text": "Hello", "voice": "luna", "exaggeration": 0.3, "cfg_weight": 0.4}
+        params = {"text": "Hello", "voice": "female_1", "exaggeration": 0.3, "cfg_weight": 0.4}
         resp = client.get(f"{CHATTERBOX_URL}?{urlencode(params)}", timeout=180.0)
         logger.info("Warm-up: %d (%d bytes)", resp.status_code, len(resp.content))
         return resp.status_code == 200
@@ -287,12 +310,12 @@ def generate_story_variant(
                     logger.error("  Failed segment: %.50s...", seg["text"])
                     return None
 
-                # Delay between API calls
-                time.sleep(2)
+                # No delay — Modal auto-scales and we're paying per second
 
-        # Paragraph pause (except after last)
+        # Paragraph pause (except after last) — generous pause between paragraphs
+        # gives a natural storytelling feel, lets the listener process
         if i < len(paragraphs) - 1:
-            audio_segments.append(generate_silence(600))
+            audio_segments.append(generate_silence(1000))
 
     if not audio_segments:
         logger.error("  No audio segments for %s", story_id)
@@ -305,23 +328,34 @@ def generate_story_variant(
     for seg_audio in audio_segments[1:]:
         combined = combined + seg_audio
 
-    # Normalize
+    # NOTE: No warmth EQ — it degraded quality by cutting frequencies.
+    # The fix for audio quality is better voice references (WAV not MP3)
+    # and moderate Chatterbox parameters.
+
+    # Normalize to -16 dBFS (gentle level, good for bedtime)
     try:
-        target_db = -3.0
+        target_db = -16.0
         gain = target_db - combined.dBFS
         combined = combined.apply_gain(gain)
     except Exception as e:
         logger.warning("  Normalization failed (continuing): %s", e)
 
-    # Apply fade in/out
+    # Apply gentle fade in/out
     try:
-        combined = combined.fade_in(500).fade_out(1500)
+        fade_in_ms = min(500, len(combined) // 4)
+        fade_out_ms = min(1500, len(combined) // 3)
+        combined = combined.fade_in(fade_in_ms).fade_out(fade_out_ms)
     except Exception as e:
         logger.warning("  Fade failed (continuing): %s", e)
 
-    # Export as MP3
+    # Export as high-quality MP3 at 256kbps (native 24kHz sample rate)
+    # Do NOT upsample — keep Chatterbox's native 24kHz for cleanest output.
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    combined.export(str(output_path), format="mp3", bitrate="128k")
+    combined.export(
+        str(output_path),
+        format="mp3",
+        bitrate="256k",
+    )
 
     duration = len(combined) / 1000.0
     size_kb = output_path.stat().st_size / 1024
@@ -413,32 +447,39 @@ def main():
     results = {}
     success = failed = skipped = 0
 
+    lock_path = CONTENT_PATH.with_suffix(".lock")
+
     def save_content_json(new_results: dict):
-        """Incrementally save audio_variants to content.json."""
-        with open(CONTENT_PATH, "r", encoding="utf-8") as f:
-            all_stories = json.load(f)
+        """Incrementally save audio_variants to content.json (file-locked for concurrency)."""
+        with open(lock_path, "w") as lockf:
+            fcntl.flock(lockf, fcntl.LOCK_EX)
+            try:
+                with open(CONTENT_PATH, "r", encoding="utf-8") as f:
+                    all_stories = json.load(f)
 
-        updated = 0
-        for story in all_stories:
-            if story["id"] in new_results:
-                existing_variants = story.get("audio_variants", [])
-                existing_voices = {v["voice"] for v in existing_variants}
-                for nv in new_results[story["id"]]:
-                    if nv["voice"] in existing_voices:
-                        for j, ev in enumerate(existing_variants):
-                            if ev["voice"] == nv["voice"]:
-                                existing_variants[j] = nv
-                                break
-                    else:
-                        existing_variants.append(nv)
-                story["audio_variants"] = existing_variants
-                updated += 1
+                updated = 0
+                for story in all_stories:
+                    if story["id"] in new_results:
+                        existing_variants = story.get("audio_variants", [])
+                        existing_voices = {v["voice"] for v in existing_variants}
+                        for nv in new_results[story["id"]]:
+                            if nv["voice"] in existing_voices:
+                                for j, ev in enumerate(existing_variants):
+                                    if ev["voice"] == nv["voice"]:
+                                        existing_variants[j] = nv
+                                        break
+                            else:
+                                existing_variants.append(nv)
+                        story["audio_variants"] = existing_variants
+                        updated += 1
 
-        with open(CONTENT_PATH, "w", encoding="utf-8") as f:
-            json.dump(all_stories, f, ensure_ascii=False, indent=2)
-            f.write("\n")
+                with open(CONTENT_PATH, "w", encoding="utf-8") as f:
+                    json.dump(all_stories, f, ensure_ascii=False, indent=2)
+                    f.write("\n")
 
-        return updated
+                return updated
+            finally:
+                fcntl.flock(lockf, fcntl.LOCK_UN)
 
     for i, item in enumerate(plan):
         story = item["story"]
