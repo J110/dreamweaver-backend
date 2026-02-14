@@ -16,3 +16,9 @@ services:
         value: "false"
       - key: CORS_ORIGINS
         value: "*"
+      - key: CHATTERBOX_URL
+        sync: false
+      - key: KOKORO_URL
+        sync: false
+      - key: DEFAULT_TTS_PROVIDER
+        value: "edge-tts"
