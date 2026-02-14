@@ -48,7 +48,7 @@ VOICE_CONFIGS = {
         ),
     },
     "cosmo": {
-        "edge_voice": "en-US-DavisNeural",
+        "edge_voice": "en-US-ChristopherNeural",
         "text": (
             "Alright, explorers, are you ready for an adventure? "
             "Today we are going to discover a hidden cave "
@@ -85,6 +85,15 @@ async def generate_reference(voice_id: str, config: dict) -> None:
     import edge_tts
 
     output_path = VOICE_REFERENCES_DIR / f"{voice_id}.wav"
+    mp3_fallback = VOICE_REFERENCES_DIR / f"{voice_id}.mp3"
+
+    # Skip if already generated (either WAV or MP3)
+    if output_path.exists() and output_path.stat().st_size > 0:
+        print(f"Skipping {voice_id} (WAV already exists)")
+        return
+    if mp3_fallback.exists() and mp3_fallback.stat().st_size > 0:
+        print(f"Skipping {voice_id} (MP3 already exists)")
+        return
 
     print(f"Generating {voice_id} ({config['edge_voice']})...")
 
@@ -98,7 +107,7 @@ async def generate_reference(voice_id: str, config: dict) -> None:
     mp3_path = VOICE_REFERENCES_DIR / f"{voice_id}.mp3"
     await communicate.save(str(mp3_path))
 
-    # Convert MP3 to WAV using pydub if available
+    # Convert MP3 to WAV using pydub + ffmpeg if available
     try:
         from pydub import AudioSegment
 
@@ -106,10 +115,11 @@ async def generate_reference(voice_id: str, config: dict) -> None:
         audio = audio.set_frame_rate(24000).set_channels(1)
         audio.export(str(output_path), format="wav")
         mp3_path.unlink()
-        print(f"  Saved: {output_path} ({output_path.stat().st_size / 1024:.1f} KB)")
-    except ImportError:
-        # Keep MP3 if pydub not available
-        print(f"  Saved as MP3 (pydub not available for WAV conversion): {mp3_path}")
+        print(f"  Saved WAV: {output_path} ({output_path.stat().st_size / 1024:.1f} KB)")
+    except (ImportError, FileNotFoundError, Exception) as e:
+        # Keep MP3 if pydub/ffmpeg not available — MP3 works fine as voice reference
+        print(f"  Saved as MP3 (WAV conversion skipped: {type(e).__name__}): {mp3_path}")
+        print(f"  Size: {mp3_path.stat().st_size / 1024:.1f} KB")
 
 
 async def main():

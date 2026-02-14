@@ -54,6 +54,11 @@ class Settings:
         # Kokoro TTS (lightweight 82M model, runs on CPU)
         self.kokoro_lang_code: str = os.getenv("KOKORO_LANG_CODE", "a")  # 'a' = American English
 
+        # External TTS provider URLs (for multi-backend routing)
+        self.kokoro_url: str = os.getenv("KOKORO_URL", "")          # Google Cloud Run URL
+        self.chatterbox_url: str = os.getenv("CHATTERBOX_URL", "")  # Modal endpoint URL
+        self.default_tts_provider: str = os.getenv("DEFAULT_TTS_PROVIDER", "edge-tts")
+
         # Security
         self.secret_key: str = os.getenv("SECRET_KEY", "dreamweaver-dev-secret")
         self.algorithm: str = os.getenv("ALGORITHM", "HS256")

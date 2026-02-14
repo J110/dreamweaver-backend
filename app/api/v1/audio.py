@@ -1,13 +1,24 @@
-"""Audio and voice endpoints using edge-tts (Microsoft Neural Voices)."""
+"""Audio and voice endpoints with multi-backend TTS routing.
+
+Supports three TTS providers:
+  - edge-tts:    Microsoft Neural Voices (local, default)
+  - kokoro:      82M lightweight model on Google Cloud Run
+  - chatterbox:  Voice-cloning AI on Modal (GPU)
+
+The Render backend proxies requests to external services.
+Falls back to edge-tts automatically on failure.
+"""
 
 import hashlib
 import logging
+import time
 from pathlib import Path
 from typing import Optional
 
 import edge_tts
+import httpx
 from fastapi import APIRouter, BackgroundTasks, HTTPException, Query
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, Response
 from pydantic import BaseModel, Field
 
 from app.config import get_settings
@@ -25,6 +36,10 @@ TTS_CACHE_DIR.mkdir(parents=True, exist_ok=True)
 # Task status store (in-memory; use Redis in production)
 _task_store: dict[str, dict] = {}
 
+# Provider health cache (avoid pinging every request)
+_provider_health: dict[str, dict] = {}
+_HEALTH_CACHE_TTL = 60  # seconds
+
 PREVIEW_TEXT = (
     "Once upon a time, in a land of dreams and starlight, "
     "a gentle breeze whispered through the magical forest."
@@ -33,20 +48,20 @@ PREVIEW_TEXT = (
 # ── Edge-tts voice map (per language) ────────────────────────────────
 EDGE_VOICE_MAP = {
     "en": {
-        "luna":    "en-US-AnaNeural",      # Soft, child-friendly female voice
-        "atlas":   "en-US-GuyNeural",      # Warm male voice
-        "aria":    "en-US-JennyNeural",    # Clear, gentle female voice
-        "cosmo":   "en-US-BrandonNeural",  # Warm male voice
-        "whisper": "en-US-EmmaNeural",     # Soft, whispery female voice
-        "melody":  "en-US-SaraNeural",     # Musical, gentle female voice
+        "luna":    "en-US-AnaNeural",
+        "atlas":   "en-US-GuyNeural",
+        "aria":    "en-US-JennyNeural",
+        "cosmo":   "en-US-ChristopherNeural",
+        "whisper": "en-US-EmmaNeural",
+        "melody":  "en-US-SaraNeural",
     },
     "hi": {
-        "luna":    "hi-IN-SwaraNeural",    # Soft, warm Hindi female voice
-        "atlas":   "hi-IN-MadhurNeural",   # Calm Hindi male voice
-        "aria":    "hi-IN-SwaraNeural",    # Same gentle female
-        "cosmo":   "hi-IN-MadhurNeural",   # Same calm male
-        "whisper": "hi-IN-SwaraNeural",    # Gentle female
-        "melody":  "hi-IN-SwaraNeural",    # Musical female
+        "luna":    "hi-IN-SwaraNeural",
+        "atlas":   "hi-IN-MadhurNeural",
+        "aria":    "hi-IN-SwaraNeural",
+        "cosmo":   "hi-IN-MadhurNeural",
+        "whisper": "hi-IN-SwaraNeural",
+        "melody":  "hi-IN-SwaraNeural",
     },
 }
 DEFAULT_VOICE = {"en": "en-US-AnaNeural", "hi": "hi-IN-SwaraNeural"}
@@ -76,7 +91,7 @@ class AudioResponse(BaseModel):
     message: str
 
 
-# ── Helper ────────────────────────────────────────────────────────────
+# ── Helpers ───────────────────────────────────────────────────────────
 
 async def _edge_tts_synthesize(
     text: str, voice_id: str, tone: str, output_path: Path,
@@ -97,12 +112,109 @@ async def _edge_tts_synthesize(
     await communicate.save(str(output_path))
 
 
+async def _proxy_to_kokoro(text: str, voice: str, lang: str) -> bytes:
+    """Proxy TTS request to Kokoro on Google Cloud Run."""
+    url = settings.kokoro_url.rstrip("/") + "/tts"
+    params = {"text": text, "voice": voice, "lang": lang}
+
+    async with httpx.AsyncClient(timeout=90.0) as client:
+        resp = await client.get(url, params=params)
+        resp.raise_for_status()
+        return resp.content
+
+
+async def _proxy_to_chatterbox(
+    text: str, voice: str, lang: str,
+    exaggeration: float = 0.5, cfg_weight: float = 0.5,
+) -> bytes:
+    """Proxy TTS request to Chatterbox on Modal."""
+    url = settings.chatterbox_url
+    params = {
+        "text": text,
+        "voice": voice,
+        "lang": lang,
+        "exaggeration": str(exaggeration),
+        "cfg_weight": str(cfg_weight),
+    }
+
+    async with httpx.AsyncClient(timeout=180.0) as client:
+        resp = await client.get(url, params=params)
+        resp.raise_for_status()
+        return resp.content
+
+
+async def _check_provider_health(provider: str) -> bool:
+    """Check if an external provider is reachable (cached for 60s)."""
+    now = time.time()
+    cached = _provider_health.get(provider)
+    if cached and (now - cached["time"]) < _HEALTH_CACHE_TTL:
+        return cached["online"]
+
+    online = False
+    try:
+        if provider == "kokoro" and settings.kokoro_url:
+            url = settings.kokoro_url.rstrip("/") + "/health"
+            async with httpx.AsyncClient(timeout=5.0) as client:
+                resp = await client.get(url)
+                online = resp.status_code == 200
+        elif provider == "chatterbox" and settings.chatterbox_url:
+            # Modal health endpoint URL — same base but different function
+            health_url = settings.chatterbox_url.replace("-tts.", "-health.")
+            if health_url == settings.chatterbox_url:
+                health_url = settings.chatterbox_url
+            async with httpx.AsyncClient(timeout=5.0) as client:
+                resp = await client.get(health_url)
+                online = resp.status_code == 200
+    except Exception as e:
+        logger.debug(f"Health check failed for {provider}: {e}")
+        online = False
+
+    _provider_health[provider] = {"online": online, "time": now}
+    return online
+
+
 # ── Endpoints ─────────────────────────────────────────────────────────
 
 @router.get("/engine")
 async def get_engine_info():
-    """Report which TTS engine is active."""
-    return {"engine": "edge-tts", "gpu": False}
+    """Report available TTS providers and their status."""
+    providers = [
+        {
+            "id": "edge-tts",
+            "name": "Edge TTS",
+            "status": "online",
+            "description": "Microsoft Neural Voices (fast, reliable)",
+            "gpu": False,
+            "label": "Fast",
+        }
+    ]
+
+    if settings.kokoro_url:
+        kokoro_online = await _check_provider_health("kokoro")
+        providers.append({
+            "id": "kokoro",
+            "name": "Kokoro",
+            "status": "online" if kokoro_online else "offline",
+            "description": "82M lightweight AI voice model",
+            "gpu": False,
+            "label": "CPU",
+        })
+
+    if settings.chatterbox_url:
+        chatterbox_online = await _check_provider_health("chatterbox")
+        providers.append({
+            "id": "chatterbox",
+            "name": "Chatterbox",
+            "status": "online" if chatterbox_online else "offline",
+            "description": "AI voice cloning with emotion control",
+            "gpu": True,
+            "label": "HD",
+        })
+
+    return {
+        "providers": providers,
+        "default": settings.default_tts_provider,
+    }
 
 
 @router.get("/voices", response_model=AudioResponse)
@@ -166,11 +278,11 @@ async def get_tts_audio(
     lang: str = Query("en"),
     voice: str = Query("female"),
     rate: str = Query("-15%"),
+    provider: str = Query("edge-tts", description="TTS provider: edge-tts, kokoro, chatterbox"),
 ):
     """Synchronous GET endpoint for the web frontend.
 
-    The Next.js player sets ``audio.src`` to this URL directly, so we must
-    return the MP3 bytes in the response (no async polling).
+    Routes to the selected TTS provider. Falls back to edge-tts on failure.
     """
     if not text or not text.strip():
         raise HTTPException(status_code=400, detail="Text is required")
@@ -190,18 +302,71 @@ async def get_tts_audio(
         except (ValueError, AttributeError):
             pass
 
-    cache_key = hashlib.md5(f"get:{text}:{voice_id}:{tone}:{lang}".encode()).hexdigest()
+    # ── Unified cache key (includes provider) ────────────────────
+    cache_key = hashlib.md5(
+        f"{provider}:{text}:{voice}:{tone}:{lang}".encode()
+    ).hexdigest()
     cache_path = TTS_CACHE_DIR / f"{cache_key}.mp3"
 
     if cache_path.exists() and cache_path.stat().st_size > 0:
-        return FileResponse(path=str(cache_path), media_type="audio/mpeg")
+        return FileResponse(
+            path=str(cache_path),
+            media_type="audio/mpeg",
+            headers={"X-Provider": provider, "X-Cache": "hit"},
+        )
 
-    await _edge_tts_synthesize(text, voice_id, tone, cache_path, lang=lang)
+    # ── Route to provider ────────────────────────────────────────
+    used_provider = provider
 
-    if not cache_path.exists() or cache_path.stat().st_size == 0:
+    if provider == "kokoro" and settings.kokoro_url:
+        try:
+            mp3_bytes = await _proxy_to_kokoro(text, voice, lang)
+            cache_path.write_bytes(mp3_bytes)
+            return Response(
+                content=mp3_bytes,
+                media_type="audio/mpeg",
+                headers={"X-Provider": "kokoro", "X-Cache": "miss"},
+            )
+        except Exception as e:
+            logger.warning(f"Kokoro proxy failed, falling back to edge-tts: {e}")
+            used_provider = "edge-tts (fallback)"
+
+    elif provider == "chatterbox" and settings.chatterbox_url:
+        try:
+            mp3_bytes = await _proxy_to_chatterbox(text, voice, lang)
+            cache_path.write_bytes(mp3_bytes)
+            return Response(
+                content=mp3_bytes,
+                media_type="audio/mpeg",
+                headers={"X-Provider": "chatterbox", "X-Cache": "miss"},
+            )
+        except Exception as e:
+            logger.warning(f"Chatterbox proxy failed, falling back to edge-tts: {e}")
+            used_provider = "edge-tts (fallback)"
+
+    # ── Default / fallback: edge-tts ─────────────────────────────
+    edge_cache_key = hashlib.md5(
+        f"edge-tts:{text}:{voice}:{tone}:{lang}".encode()
+    ).hexdigest()
+    edge_cache_path = TTS_CACHE_DIR / f"{edge_cache_key}.mp3"
+
+    if edge_cache_path.exists() and edge_cache_path.stat().st_size > 0:
+        return FileResponse(
+            path=str(edge_cache_path),
+            media_type="audio/mpeg",
+            headers={"X-Provider": used_provider, "X-Cache": "hit"},
+        )
+
+    await _edge_tts_synthesize(text, voice_id, tone, edge_cache_path, lang=lang)
+
+    if not edge_cache_path.exists() or edge_cache_path.stat().st_size == 0:
         raise HTTPException(status_code=500, detail="TTS generation failed")
 
-    return FileResponse(path=str(cache_path), media_type="audio/mpeg")
+    return FileResponse(
+        path=str(edge_cache_path),
+        media_type="audio/mpeg",
+        headers={"X-Provider": used_provider, "X-Cache": "miss"},
+    )
 
 
 @router.post("/tts")
@@ -278,6 +443,7 @@ async def clear_tts_cache():
         except Exception:
             pass
     _task_store.clear()
+    _provider_health.clear()
     return {"success": True, "cleared": count}
 
 
