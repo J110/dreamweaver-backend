@@ -1,0 +1,1734 @@
+[
+  {
+    "id": "gen-6e675d15e1f5",
+    "type": "story",
+    "lang": "en",
+    "title": "Moonbeam's Ocean Friend",
+    "description": "A gentle moonbeam discovers friendship with sea waves in a futuristic underwater world.",
+    "text": "[GENTLE] Moonbeam shines down, down, down. [CALM] Into future ocean deep. Glowing fish swim by, by, by. [JOYFUL] Wave says 'Hello friend!' [chuckle] Moonbeam giggles soft and bright. [WHISPERING] 'Sleep now, ocean friend.' [SLEEPY] Together they rest, rest, rest.",
+    "annotated_text": "[GENTLE] Moonbeam shines down, down, down. [CALM] Into future ocean deep. Glowing fish swim by, by, by. [JOYFUL] Wave says 'Hello friend!' [chuckle] Moonbeam giggles soft and bright. [WHISPERING] 'Sleep now, ocean friend.' [SLEEPY] Together they rest, rest, rest.",
+    "target_age": 0,
+    "age_group": "0-1",
+    "word_count": 33,
+    "theme": "ocean",
+    "geography": "East Asia",
+    "lead_gender": "male",
+    "categories": [
+      "Ocean",
+      "Friendship",
+      "Bedtime"
+    ],
+    "morals": [
+      "Friendship brings comfort",
+      "Peaceful rest is shared joy"
+    ],
+    "cover": "/covers/moonbeam-ocean.svg",
+    "musicProfile": "ocean-drift",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "male_1",
+        "url": "/audio/pre-gen/gen-6e67_male_1.mp3",
+        "duration_seconds": 19.68,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-6e67_female_3.mp3",
+        "duration_seconds": 21.23,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-6e67_female_1.mp3",
+        "duration_seconds": 29.4,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-6e67_female_2.mp3",
+        "duration_seconds": 23.26,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_3",
+        "url": "/audio/pre-gen/gen-6e67_male_3.mp3",
+        "duration_seconds": 19.06,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-6e67_male_2.mp3",
+        "duration_seconds": 19.75,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-6e67_asmr.mp3",
+        "duration_seconds": 23.66,
+        "provider": "chatterbox"
+      }
+    ]
+  },
+  {
+    "id": "gen-3de58fd2aa2d",
+    "type": "story",
+    "lang": "en",
+    "title": "Bella's Soft Petal Bed",
+    "description": "A gentle butterfly finds the perfect flower to rest in as night falls over the magical garden.",
+    "text": "[GENTLE] Bella butterfly flies, flies, flies. [CALM] Pretty flowers dance, dance, dance. [CURIOUS] Which flower bed? Which flower bed? [JOYFUL] Soft rose petals, warm and red. [WHISPERING] Hush, hush, little wings. [GENTLE] Moonbeams sing sweet lullabies. [SLEEPY] Close tiny eyes, sleep tight. Sweet dreams in flower light.",
+    "annotated_text": "[GENTLE] Bella butterfly flies, flies, flies. [CALM] Pretty flowers dance, dance, dance. [CURIOUS] Which flower bed? Which flower bed? [JOYFUL] Soft rose petals, warm and red. [WHISPERING] Hush, hush, little wings. [GENTLE] Moonbeams sing sweet lullabies. [SLEEPY] Close tiny eyes, sleep tight. Sweet dreams in flower light.",
+    "target_age": 0,
+    "age_group": "0-1",
+    "word_count": 40,
+    "theme": "nature",
+    "geography": "Americas",
+    "lead_gender": "female",
+    "categories": [
+      "Nature",
+      "Sleep",
+      "Fantasy"
+    ],
+    "morals": [
+      "Finding comfort in nature",
+      "Rest is important"
+    ],
+    "cover": "/covers/petal-bed.svg",
+    "musicProfile": "moonlit-meadow",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-3de5_female_1.mp3",
+        "duration_seconds": 34.12,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-3de5_female_3.mp3",
+        "duration_seconds": 28.1,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-3de5_female_2.mp3",
+        "duration_seconds": 30.18,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-3de5_male_2.mp3",
+        "duration_seconds": 23.71,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_1",
+        "url": "/audio/pre-gen/gen-3de5_male_1.mp3",
+        "duration_seconds": 25.61,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_3",
+        "url": "/audio/pre-gen/gen-3de5_male_3.mp3",
+        "duration_seconds": 25.62,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-3de5_asmr.mp3",
+        "duration_seconds": 27.65,
+        "provider": "chatterbox"
+      }
+    ]
+  },
+  {
+    "id": "gen-4f3ff03979dc",
+    "type": "poem",
+    "lang": "en",
+    "title": "Arjun's Flying Robot Friend",
+    "description": "A brave little boy in futuristic India discovers a magical robot friend who teaches him about play and friendship through floating adventures.",
+    "text": "[RHYTHMIC] Little Arjun found a robot friend,\nShiny blue with lights that bend.\n\n[PAUSE]\n\n[GENTLE] Robot says, \"Let's float and play!\"\nUp they go, hooray, hooray!\n\n[PAUSE]\n\n[JOYFUL] Through the sky above Mumbai,\nFriends together, flying high.\n\n[PAUSE]\n\n[WHISPERING] Robot whispers, \"Time to rest,\nFriendship is the very best.\"\n\n[SLEEPY] Down they float to bed so deep,\nArjun smiles and falls asleep.",
+    "annotated_text": "[RHYTHMIC] Little Arjun found a robot friend,\nShiny blue with lights that bend.\n\n[PAUSE]\n\n[GENTLE] Robot says, \"Let's float and play!\"\nUp they go, hooray, hooray!\n\n[PAUSE]\n\n[JOYFUL] Through the sky above Mumbai,\nFriends together, flying high.\n\n[PAUSE]\n\n[WHISPERING] Robot whispers, \"Time to rest,\nFriendship is the very best.\"\n\n[SLEEPY] Down they float to bed so deep,\nArjun smiles and falls asleep.",
+    "target_age": 2,
+    "age_group": "1-3",
+    "word_count": 54,
+    "theme": "fantasy",
+    "geography": "India",
+    "lead_gender": "male",
+    "categories": [
+      "Fantasy",
+      "Friendship",
+      "Futuristic",
+      "Bedtime"
+    ],
+    "morals": [
+      "Friendship brings joy and adventure",
+      "Playing together creates special bonds"
+    ],
+    "cover": "/covers/flying-robot.svg",
+    "musicProfile": "enchanted-garden",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-4f3f_female_2.mp3",
+        "duration_seconds": 42.2,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-4f3f_female_1.mp3",
+        "duration_seconds": 51.71,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_1",
+        "url": "/audio/pre-gen/gen-4f3f_male_1.mp3",
+        "duration_seconds": 35.62,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-4f3f_female_3.mp3",
+        "duration_seconds": 37.69,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-4f3f_male_2.mp3",
+        "duration_seconds": 35.9,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-4f3f_asmr.mp3",
+        "duration_seconds": 44.51,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_3",
+        "url": "/audio/pre-gen/gen-4f3f_male_3.mp3",
+        "duration_seconds": 35.78,
+        "provider": "chatterbox"
+      }
+    ]
+  },
+  {
+    "id": "gen-a67cde9762b6",
+    "type": "poem",
+    "lang": "en",
+    "title": "Pepper's Garden Light",
+    "description": "A gentle ladybug named Pepper helps her vegetable garden family by finding the perfect nighttime glow. A soothing poem about problem-solving and caring for home.",
+    "text": "[RHYTHMIC] Little Pepper, red and round,\nIn the garden, safe and sound.\n\n[PAUSE]\n\n[GENTLE] Carrots sleepy, peas so tired,\nAll the veggies feeling wired.\n\n[PAUSE]\n\n[CALM] Pepper thinks, \"What can I do?\nMake them cozy, through and through.\"\n\n[PAUSE]\n\n[JOYFUL] Found a firefly's gentle gleam,\nSoft and warm, a golden dream.\n\n[PAUSE]\n\n[WHISPERING] Now the garden glows so bright,\nEveryone says, \"Good night, good night.\"\n\n[PAUSE]\n\n[SLEEPY] Pepper curls upon a leaf,\nGarden home brings sweet relief.",
+    "annotated_text": "[RHYTHMIC] Little Pepper, red and round,\nIn the garden, safe and sound.\n\n[PAUSE]\n\n[GENTLE] Carrots sleepy, peas so tired,\nAll the veggies feeling wired.\n\n[PAUSE]\n\n[CALM] Pepper thinks, \"What can I do?\nMake them cozy, through and through.\"\n\n[PAUSE]\n\n[JOYFUL] Found a firefly's gentle gleam,\nSoft and warm, a golden dream.\n\n[PAUSE]\n\n[WHISPERING] Now the garden glows so bright,\nEveryone says, \"Good night, good night.\"\n\n[PAUSE]\n\n[SLEEPY] Pepper curls upon a leaf,\nGarden home brings sweet relief.",
+    "target_age": 2,
+    "age_group": "1-3",
+    "word_count": 66,
+    "theme": "bedtime",
+    "geography": "Europe",
+    "lead_gender": "female",
+    "categories": [
+      "Problem Solving",
+      "Family",
+      "Nature"
+    ],
+    "morals": [
+      "Helping others makes everyone feel better",
+      "Home is where we care for each other"
+    ],
+    "cover": "/covers/garden-light.svg",
+    "musicProfile": "starlight-lullaby",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-a67c_female_1.mp3",
+        "duration_seconds": 60.78,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-a67c_female_2.mp3",
+        "duration_seconds": 52.93,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-a67c_female_3.mp3",
+        "duration_seconds": 48.85,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_1",
+        "url": "/audio/pre-gen/gen-a67c_male_1.mp3",
+        "duration_seconds": 43.52,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-a67c_male_2.mp3",
+        "duration_seconds": 45.41,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_3",
+        "url": "/audio/pre-gen/gen-a67c_male_3.mp3",
+        "duration_seconds": 48.63,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-a67c_asmr.mp3",
+        "duration_seconds": 52.55,
+        "provider": "chatterbox"
+      }
+    ]
+  },
+  {
+    "id": "gen-a8a2146a4f36",
+    "type": "poem",
+    "lang": "en",
+    "title": "The Forest's Digital Symphony",
+    "description": "A young fox and her woodland friends discover an ancient grove where nature and technology harmonize, teaching them that modern passions can coexist beautifully with the natural world.",
+    "text": "[RHYTHMIC] In the heart of the Pacific Northwest,\nWhere cedars touch the clouded sky,\nLive creatures with a modern quest—\nTo blend old wisdom with WiFi.\n\n[PAUSE]\n\n[GENTLE] Luna the fox codes by moonlight,\nWhile Sage the owl debugs her dreams,\nAnd River the raccoon streams midnight\nNature documentaries by streams.\n\n[PAUSE]\n\n[JOYFUL] Together they seek the Digital Grove,\nWhere legend says the ancients planned\nA place where circuits learn to love\nThe rhythm of the living land.\n\n[PAUSE]\n\n[CALM] Through fern-filled paths and mossy stones,\nThey follow signals in the breeze,\nUntil they find where nature owns\nThe harmony of code and trees.\n\n[PAUSE]\n\n[WHISPERING] Here algorithms dance with rain,\nAnd servers hum like cricket songs,\nProof that progress need not stain\nThe world where every heart belongs.\n\n[PAUSE]\n\n[RHYTHMIC] [SLEEPY] So rest now, knowing dreams can weave\nTechnology with nature's art,\nAnd every passion we believe\nCan honor both the mind and heart.",
+    "annotated_text": "[RHYTHMIC] In the heart of the Pacific Northwest,\nWhere cedars touch the clouded sky,\nLive creatures with a modern quest—\nTo blend old wisdom with WiFi.\n\n[PAUSE]\n\n[GENTLE] Luna the fox codes by moonlight,\nWhile Sage the owl debugs her dreams,\nAnd River the raccoon streams midnight\nNature documentaries by streams.\n\n[PAUSE]\n\n[JOYFUL] Together they seek the Digital Grove,\nWhere legend says the ancients planned\nA place where circuits learn to love\nThe rhythm of the living land.\n\n[PAUSE]\n\n[CALM] Through fern-filled paths and mossy stones,\nThey follow signals in the breeze,\nUntil they find where nature owns\nThe harmony of code and trees.\n\n[PAUSE]\n\n[WHISPERING] Here algorithms dance with rain,\nAnd servers hum like cricket songs,\nProof that progress need not stain\nThe world where every heart belongs.\n\n[PAUSE]\n\n[RHYTHMIC] [SLEEPY] So rest now, knowing dreams can weave\nTechnology with nature's art,\nAnd every passion we believe\nCan honor both the mind and heart.",
+    "target_age": 13,
+    "age_group": "12+",
+    "word_count": 143,
+    "theme": "nature",
+    "geography": "Americas",
+    "lead_gender": "neutral",
+    "categories": [
+      "Nature",
+      "Technology",
+      "Friendship",
+      "Adventure",
+      "Environmental Awareness"
+    ],
+    "morals": [
+      "Technology and nature can coexist harmoniously when approached with wisdom and respect",
+      "Following your passions while staying connected to the natural world creates the most fulfilling journey"
+    ],
+    "cover": "/covers/digital-forest.svg",
+    "musicProfile": "forest-night",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-a8a2_female_2.mp3",
+        "duration_seconds": 91.27,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-a8a2_female_1.mp3",
+        "duration_seconds": 109.14,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_1",
+        "url": "/audio/pre-gen/gen-a8a2_male_1.mp3",
+        "duration_seconds": 77.32,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-a8a2_female_3.mp3",
+        "duration_seconds": 87.05,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-a8a2_male_2.mp3",
+        "duration_seconds": 85.55,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_3",
+        "url": "/audio/pre-gen/gen-a8a2_male_3.mp3",
+        "duration_seconds": 87.55,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-a8a2_asmr.mp3",
+        "duration_seconds": 96.34,
+        "provider": "chatterbox"
+      }
+    ]
+  },
+  {
+    "id": "gen-9e44d4374d44",
+    "type": "poem",
+    "lang": "en",
+    "title": "Amara and the Star-Song Celebration",
+    "description": "A young prehistoric astronomer in ancient Africa discovers her unique gift for reading celestial patterns and leads her tribe in a celebration of the cosmos.",
+    "text": "[RHYTHMIC] In the cradle of humanity's dawn,\nWhere acacia trees stretched toward the sky,\nLived Amara, whose eyes were drawn\nTo the ancient stars wheeling by.\n\n[PAUSE]\n\n[RHYTHMIC] [GENTLE] Her grandmother spoke of stellar lore,\nHow constellations told the seasons' tale,\nBut Amara saw patterns no one saw before—\nCelestial rhythms that never fail.\n\n[PAUSE]\n\n[RHYTHMIC] [CALM] She traced the paths of wandering lights,\nThose planets dancing their orbital song,\nCalculating distances through countless nights,\nWondering where in this dance she belonged.\n\n[PAUSE]\n\n[RHYTHMIC] [JOYFUL] The elders gathered when she shared her sight,\nHow Venus rises before the dawn,\nHow Jupiter's moons eclipse its light,\nHow stellar wisdom can guide us on.\n\n[PAUSE]\n\n[RHYTHMIC] \"You are the keeper of cosmic truth,\"\nHer grandmother smiled with ancient grace,\n\"Your gift connects our people's youth\nTo the infinite wisdom of time and space.\"\n\n[PAUSE]\n\n[RHYTHMIC] [JOYFUL] The tribe prepared a celebration grand,\nWith drums that echoed the pulsar's beat,\nAnd Amara, with her steady hand,\nMade star-maps where science and spirit meet.\n\n[PAUSE]\n\n[RHYTHMIC] [WHISPERING] As firelight danced beneath the dome\nOf countless suns in velvet night,\nAmara knew she'd found her home—\nA bridge between earth's warmth and stellar light.\n\n[PAUSE]\n\n[RHYTHMIC] [SLEEPY] Now when you gaze at stars above,\nRemember Amara's gift so true:\nThat science blooms from wonder's love,\nAnd the cosmos celebrates in you.",
+    "annotated_text": "[RHYTHMIC] In the cradle of humanity's dawn,\nWhere acacia trees stretched toward the sky,\nLived Amara, whose eyes were drawn\nTo the ancient stars wheeling by.\n\n[PAUSE]\n\n[RHYTHMIC] [GENTLE] Her grandmother spoke of stellar lore,\nHow constellations told the seasons' tale,\nBut Amara saw patterns no one saw before—\nCelestial rhythms that never fail.\n\n[PAUSE]\n\n[RHYTHMIC] [CALM] She traced the paths of wandering lights,\nThose planets dancing their orbital song,\nCalculating distances through countless nights,\nWondering where in this dance she belonged.\n\n[PAUSE]\n\n[RHYTHMIC] [JOYFUL] The elders gathered when she shared her sight,\nHow Venus rises before the dawn,\nHow Jupiter's moons eclipse its light,\nHow stellar wisdom can guide us on.\n\n[PAUSE]\n\n[RHYTHMIC] \"You are the keeper of cosmic truth,\"\nHer grandmother smiled with ancient grace,\n\"Your gift connects our people's youth\nTo the infinite wisdom of time and space.\"\n\n[PAUSE]\n\n[RHYTHMIC] [JOYFUL] The tribe prepared a celebration grand,\nWith drums that echoed the pulsar's beat,\nAnd Amara, with her steady hand,\nMade star-maps where science and spirit meet.\n\n[PAUSE]\n\n[RHYTHMIC] [WHISPERING] As firelight danced beneath the dome\nOf countless suns in velvet night,\nAmara knew she'd found her home—\nA bridge between earth's warmth and stellar light.\n\n[PAUSE]\n\n[RHYTHMIC] [SLEEPY] Now when you gaze at stars above,\nRemember Amara's gift so true:\nThat science blooms from wonder's love,\nAnd the cosmos celebrates in you.",
+    "target_age": 13,
+    "age_group": "12+",
+    "word_count": 205,
+    "theme": "science",
+    "geography": "Africa",
+    "lead_gender": "female",
+    "categories": [
+      "Science",
+      "Self-Discovery",
+      "Cultural Celebration",
+      "Astronomy"
+    ],
+    "morals": [
+      "Your unique perspective and gifts are valuable to your community",
+      "Science and wonder can coexist beautifully in understanding our world"
+    ],
+    "cover": "/covers/star-celebration.svg",
+    "musicProfile": "cosmic-voyage",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-9e44_female_1.mp3",
+        "duration_seconds": 151.5,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-9e44_female_3.mp3",
+        "duration_seconds": 120.89,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-9e44_female_2.mp3",
+        "duration_seconds": 131.06,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_1",
+        "url": "/audio/pre-gen/gen-9e44_male_1.mp3",
+        "duration_seconds": 113.38,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-9e44_male_2.mp3",
+        "duration_seconds": 114.02,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_3",
+        "url": "/audio/pre-gen/gen-9e44_male_3.mp3",
+        "duration_seconds": 118.61,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-9e44_asmr.mp3",
+        "duration_seconds": 128.34,
+        "provider": "chatterbox"
+      }
+    ]
+  },
+  {
+    "id": "gen-b8847383ab32",
+    "type": "poem",
+    "lang": "en",
+    "title": "Nayeli's Arctic School Discovery",
+    "description": "A brave Inuit girl discovers a magical ice school where polar animals gather to learn together in the snowy wilderness.",
+    "text": "[RHYTHMIC] Long ago in the Arctic white,\nLived Nayeli, brave and bright.\nWith her sealskin boots so warm,\nShe walked through each snowy storm.\n\n[PAUSE]\n\n[GENTLE] One day while hunting for her meal,\nShe found tracks that looked so real.\nPolar bear paws in the snow,\nWhere could they possibly go?\n\n[PAUSE]\n\n[CALM] Following prints both big and small,\nShe climbed up an icy wall.\nThere behind the frozen peak,\nShe found what she came to seek.\n\n[PAUSE]\n\n[JOYFUL] A school made of crystal ice,\nWhere animals learned so nice!\nBear cubs counting fish to eat,\nSeals learning to swim so neat.\n\n[PAUSE]\n\n[WHISPERING] Arctic foxes shared their food,\nWhile walruses played and wooed.\nNayeli watched with wonder deep,\nAs creatures learned before they sleep.\n\n[PAUSE]\n\n[SLEEPY] Now when stars begin to glow,\nShe dreams of that school of snow.\nWhere all creatures, big and small,\nLearn together, one and all.",
+    "annotated_text": "[RHYTHMIC] Long ago in the Arctic white,\nLived Nayeli, brave and bright.\nWith her sealskin boots so warm,\nShe walked through each snowy storm.\n\n[PAUSE]\n\n[GENTLE] One day while hunting for her meal,\nShe found tracks that looked so real.\nPolar bear paws in the snow,\nWhere could they possibly go?\n\n[PAUSE]\n\n[CALM] Following prints both big and small,\nShe climbed up an icy wall.\nThere behind the frozen peak,\nShe found what she came to seek.\n\n[PAUSE]\n\n[JOYFUL] A school made of crystal ice,\nWhere animals learned so nice!\nBear cubs counting fish to eat,\nSeals learning to swim so neat.\n\n[PAUSE]\n\n[WHISPERING] Arctic foxes shared their food,\nWhile walruses played and wooed.\nNayeli watched with wonder deep,\nAs creatures learned before they sleep.\n\n[PAUSE]\n\n[SLEEPY] Now when stars begin to glow,\nShe dreams of that school of snow.\nWhere all creatures, big and small,\nLearn together, one and all.",
+    "target_age": 4,
+    "age_group": "4-5",
+    "word_count": 140,
+    "theme": "animals",
+    "geography": "Arctic/Polar",
+    "lead_gender": "female",
+    "categories": [
+      "Arctic Adventure",
+      "Animal Friends",
+      "Discovery",
+      "Learning"
+    ],
+    "morals": [
+      "Learning brings all creatures together",
+      "Curiosity leads to wonderful discoveries"
+    ],
+    "cover": "/covers/arctic-school.svg",
+    "musicProfile": "autumn-forest",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-b884_female_2.mp3",
+        "duration_seconds": 84.14,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-b884_female_1.mp3",
+        "duration_seconds": 96.63,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_1",
+        "url": "/audio/pre-gen/gen-b884_male_1.mp3",
+        "duration_seconds": 76.17,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-b884_female_3.mp3",
+        "duration_seconds": 80.38,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-b884_male_2.mp3",
+        "duration_seconds": 73.17,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-b884_asmr.mp3",
+        "duration_seconds": 85.93,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_3",
+        "url": "/audio/pre-gen/gen-b884_male_3.mp3",
+        "duration_seconds": 78.48,
+        "provider": "chatterbox"
+      }
+    ]
+  },
+  {
+    "id": "gen-6b4b4122c529",
+    "type": "poem",
+    "lang": "en",
+    "title": "Arjun's Magic Peacock Feather",
+    "description": "A young boy in ancient India discovers a magical peacock feather that transforms his world through play and wonder.",
+    "text": "[RHYTHMIC][GENTLE] Little Arjun found a feather bright,\nBlue and green with golden light.\nFrom Mayura, the peacock king,\nA gift that made his heart sing.\n\n[PAUSE]\n\n[RHYTHMIC][JOYFUL] When he waved it in the air,\nFlowers bloomed everywhere!\nRainbow colors filled the sky,\nAs magical birds came floating by.\n\n[PAUSE]\n\n[RHYTHMIC][CALM][WHISPERING] Through his play, the world grew new,\nFilled with wonder, green and blue.\nArjun learned with joy so deep,\nMagic lives in hearts that leap.\n\n[PAUSE]\n\n[RHYTHMIC][SLEEPY] Now he dreams of feathers bright,\nDancing softly through the night.",
+    "annotated_text": "[RHYTHMIC][GENTLE] Little Arjun found a feather bright,\nBlue and green with golden light.\nFrom Mayura, the peacock king,\nA gift that made his heart sing.\n\n[PAUSE]\n\n[RHYTHMIC][JOYFUL] When he waved it in the air,\nFlowers bloomed everywhere!\nRainbow colors filled the sky,\nAs magical birds came floating by.\n\n[PAUSE]\n\n[RHYTHMIC][CALM][WHISPERING] Through his play, the world grew new,\nFilled with wonder, green and blue.\nArjun learned with joy so deep,\nMagic lives in hearts that leap.\n\n[PAUSE]\n\n[RHYTHMIC][SLEEPY] Now he dreams of feathers bright,\nDancing softly through the night.",
+    "target_age": 4,
+    "age_group": "4-5",
+    "word_count": 81,
+    "theme": "fantasy",
+    "geography": "India",
+    "lead_gender": "male",
+    "categories": [
+      "Fantasy",
+      "Indian Culture",
+      "Transformation",
+      "Play"
+    ],
+    "morals": [
+      "Wonder and imagination make the world magical",
+      "Playing with curiosity leads to beautiful discoveries"
+    ],
+    "cover": "/covers/peacock-magic.svg",
+    "musicProfile": "moonlit-meadow",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-6b4b_female_2.mp3",
+        "duration_seconds": 51.88,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-6b4b_female_1.mp3",
+        "duration_seconds": 58.05,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-6b4b_female_3.mp3",
+        "duration_seconds": 48.21,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_1",
+        "url": "/audio/pre-gen/gen-6b4b_male_1.mp3",
+        "duration_seconds": 46.31,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-6b4b_male_2.mp3",
+        "duration_seconds": 45.84,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_3",
+        "url": "/audio/pre-gen/gen-6b4b_male_3.mp3",
+        "duration_seconds": 46.67,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-6b4b_asmr.mp3",
+        "duration_seconds": 51.66,
+        "provider": "chatterbox"
+      }
+    ]
+  },
+  {
+    "id": "gen-2fedd4d6a646",
+    "type": "poem",
+    "lang": "en",
+    "title": "Nayak and the Forgotten Ice Garden",
+    "description": "A young Inuit boy discovers a magical ice garden beneath his family's igloo, learning that nature's most precious treasures are often hidden in plain sight.",
+    "text": "[RHYTHMIC] Deep in the Arctic, where snowflakes dance,\nLived young Nayak in his family's stance,\nAn igloo warm with seal oil light,\nThat glowed like stars throughout the night.\n\n[PAUSE]\n\n[RHYTHMIC] [GENTLE] One morning while his parents slept,\nNayak found a crack that wept,\nWith crystal drops of purest blue,\nThat sparkled with a magic hue.\n\n[PAUSE]\n\n[RHYTHMIC] [CALM] He followed down the icy trail,\nThrough passages both narrow and frail,\nUntil he found a garden bright,\nWith frozen flowers, pure delight.\n\n[PAUSE]\n\n[RHYTHMIC] [JOYFUL] Ice tulips bloomed in silver rows,\nAnd crystal trees where arctic wind blows,\nThis secret world beneath their home,\nWhere winter's children freely roam.\n\n[PAUSE]\n\n[RHYTHMIC] [WHISPERING] He climbed back up with wonder true,\nTo share this gift of arctic blue,\nFor nature keeps her treasures near,\nIn places that we hold most dear.\n\n[PAUSE]\n\n[RHYTHMIC] [SLEEPY] Now Nayak dreams of gardens white,\nBeneath his family's loving light,\nWhere magic sleeps in ice and snow,\nAnd peaceful winter breezes blow.",
+    "annotated_text": "[RHYTHMIC] Deep in the Arctic, where snowflakes dance,\nLived young Nayak in his family's stance,\nAn igloo warm with seal oil light,\nThat glowed like stars throughout the night.\n\n[PAUSE]\n\n[RHYTHMIC] [GENTLE] One morning while his parents slept,\nNayak found a crack that wept,\nWith crystal drops of purest blue,\nThat sparkled with a magic hue.\n\n[PAUSE]\n\n[RHYTHMIC] [CALM] He followed down the icy trail,\nThrough passages both narrow and frail,\nUntil he found a garden bright,\nWith frozen flowers, pure delight.\n\n[PAUSE]\n\n[RHYTHMIC] [JOYFUL] Ice tulips bloomed in silver rows,\nAnd crystal trees where arctic wind blows,\nThis secret world beneath their home,\nWhere winter's children freely roam.\n\n[PAUSE]\n\n[RHYTHMIC] [WHISPERING] He climbed back up with wonder true,\nTo share this gift of arctic blue,\nFor nature keeps her treasures near,\nIn places that we hold most dear.\n\n[PAUSE]\n\n[RHYTHMIC] [SLEEPY] Now Nayak dreams of gardens white,\nBeneath his family's loving light,\nWhere magic sleeps in ice and snow,\nAnd peaceful winter breezes blow.",
+    "target_age": 7,
+    "age_group": "6-8",
+    "word_count": 149,
+    "theme": "nature",
+    "geography": "Arctic/Polar",
+    "lead_gender": "male",
+    "categories": [
+      "Nature",
+      "Family",
+      "Discovery",
+      "Arctic Adventure"
+    ],
+    "morals": [
+      "Nature holds wonderful surprises in unexpected places",
+      "Home is where we discover life's greatest treasures"
+    ],
+    "cover": "/covers/ice-garden.svg",
+    "musicProfile": "forest-night",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-2fed_female_3.mp3",
+        "duration_seconds": 85.24,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-2fed_female_2.mp3",
+        "duration_seconds": 92.22,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-2fed_female_1.mp3",
+        "duration_seconds": 105.08,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_1",
+        "url": "/audio/pre-gen/gen-2fed_male_1.mp3",
+        "duration_seconds": 79.97,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-2fed_male_2.mp3",
+        "duration_seconds": 83.84,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_3",
+        "url": "/audio/pre-gen/gen-2fed_male_3.mp3",
+        "duration_seconds": 84.85,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-2fed_asmr.mp3",
+        "duration_seconds": 91.4,
+        "provider": "chatterbox"
+      }
+    ]
+  },
+  {
+    "id": "gen-f23316834cfd",
+    "type": "poem",
+    "lang": "en",
+    "title": "Mei and the Moonlit Origami Festival",
+    "description": "A young girl and her forest friends work together to create magical origami creatures for the annual Moonlit Festival, learning that their different talents make the celebration truly special.",
+    "text": "[RHYTHMIC] In the bamboo forest where the moon shines bright,\nLived brave little Mei with paper folding might.\nShe loved making cranes that could dance and fly,\nBut the festival needed more beneath the sky.\n\n[PAUSE]\n\n[RHYTHMIC] [GENTLE] Her friend Hana painted with colors so true,\nWhile Kenji carved dragons from bamboo.\nTaro sang melodies sweet and clear,\nBut Mei felt worried the day drawing near.\n\n[PAUSE]\n\n[RHYTHMIC] [CALM] \"My origami won't be enough alone,\"\nShe sighed as she sat by the wishing stone.\nBut Hana heard her and had a bright thought,\n\"Together we'll make what cannot be bought!\"\n\n[PAUSE]\n\n[RHYTHMIC] [JOYFUL] They painted Mei's cranes in sunset hues,\nKenji carved holders in morning blues.\nTaro's songs made the paper dance,\nGiving each creature a magical chance.\n\n[PAUSE]\n\n[RHYTHMIC] [WHISPERING] When festival night came with silver light,\nTheir origami glowed warm and bright.\nThe village gasped at the wondrous sight,\nFriends working together made everything right.\n\n[PAUSE]\n\n[RHYTHMIC] [SLEEPY] Now Mei dreams of paper birds that soar,\nWith friends beside her, she could ask for no more.\nIn moonbeams soft, her origami rest,\nKnowing together, they always do their best.",
+    "annotated_text": "[RHYTHMIC] In the bamboo forest where the moon shines bright,\nLived brave little Mei with paper folding might.\nShe loved making cranes that could dance and fly,\nBut the festival needed more beneath the sky.\n\n[PAUSE]\n\n[RHYTHMIC] [GENTLE] Her friend Hana painted with colors so true,\nWhile Kenji carved dragons from bamboo.\nTaro sang melodies sweet and clear,\nBut Mei felt worried the day drawing near.\n\n[PAUSE]\n\n[RHYTHMIC] [CALM] \"My origami won't be enough alone,\"\nShe sighed as she sat by the wishing stone.\nBut Hana heard her and had a bright thought,\n\"Together we'll make what cannot be bought!\"\n\n[PAUSE]\n\n[RHYTHMIC] [JOYFUL] They painted Mei's cranes in sunset hues,\nKenji carved holders in morning blues.\nTaro's songs made the paper dance,\nGiving each creature a magical chance.\n\n[PAUSE]\n\n[RHYTHMIC] [WHISPERING] When festival night came with silver light,\nTheir origami glowed warm and bright.\nThe village gasped at the wondrous sight,\nFriends working together made everything right.\n\n[PAUSE]\n\n[RHYTHMIC] [SLEEPY] Now Mei dreams of paper birds that soar,\nWith friends beside her, she could ask for no more.\nIn moonbeams soft, her origami rest,\nKnowing together, they always do their best.",
+    "target_age": 7,
+    "age_group": "6-8",
+    "word_count": 175,
+    "theme": "friendship",
+    "geography": "East Asia",
+    "lead_gender": "female",
+    "categories": [
+      "Friendship",
+      "Teamwork",
+      "Creativity",
+      "Fantasy"
+    ],
+    "morals": [
+      "Working together makes us stronger than working alone",
+      "Everyone has unique talents that make the group special"
+    ],
+    "cover": "/covers/origami-festival.svg",
+    "musicProfile": "enchanted-garden",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-f233_female_2.mp3",
+        "duration_seconds": 103.58,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-f233_female_3.mp3",
+        "duration_seconds": 95.94,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-f233_female_1.mp3",
+        "duration_seconds": 119.33,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_1",
+        "url": "/audio/pre-gen/gen-f233_male_1.mp3",
+        "duration_seconds": 89.87,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-f233_male_2.mp3",
+        "duration_seconds": 94.03,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_3",
+        "url": "/audio/pre-gen/gen-f233_male_3.mp3",
+        "duration_seconds": 94.85,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-f233_asmr.mp3",
+        "duration_seconds": 113.18,
+        "provider": "chatterbox"
+      }
+    ]
+  },
+  {
+    "id": "gen-df0dbc9d6b74",
+    "type": "poem",
+    "lang": "en",
+    "title": "Coral's Journey Through the Healing Tides",
+    "description": "A young ocean spirit discovers how the microscopic world of plankton creates life-giving oxygen, transforming her understanding of the sea's healing powers.",
+    "text": "[RHYTHMIC] In ancient waters, deep and blue,\nLived Coral, spirit brave and true.\nShe swam through currents, swift and free,\nGuardian of the healing sea.\n\n[PAUSE]\n\n[RHYTHMIC] [GENTLE] But something strange began to show—\nThe waters dimmed, their healing glow\nGrew weak and pale. The fish felt ill,\nThe coral reefs grew cold and still.\n\n[PAUSE]\n\n[RHYTHMIC] [JOYFUL] Then Coral dove to depths unknown,\nWhere tiny plankton called their home.\nShe watched them dance, so small, so bright,\nCreating oxygen and light.\n\n[PAUSE]\n\n[RHYTHMIC] [CALM] \"We are the healers!\" they sang sweet,\n\"Through photosynthesis complete!\nWe breathe in sunlight, breathe out air,\nFor every creature, everywhere.\"\n\n[PAUSE]\n\n[RHYTHMIC] [WHISPERING] Now Coral understood at last—\nThe healing wisdom of the past.\nThe smallest life creates the whole,\nThe ocean's breath, the ocean's soul.\n\n[PAUSE]\n\n[RHYTHMIC] [SLEEPY] She guards the plankton, night and day,\nKeeping pollution far away.\nFor in their microscopic dance,\nLies healing's greatest, sweetest chance.",
+    "annotated_text": "[RHYTHMIC] In ancient waters, deep and blue,\nLived Coral, spirit brave and true.\nShe swam through currents, swift and free,\nGuardian of the healing sea.\n\n[PAUSE]\n\n[RHYTHMIC] [GENTLE] But something strange began to show—\nThe waters dimmed, their healing glow\nGrew weak and pale. The fish felt ill,\nThe coral reefs grew cold and still.\n\n[PAUSE]\n\n[RHYTHMIC] [JOYFUL] Then Coral dove to depths unknown,\nWhere tiny plankton called their home.\nShe watched them dance, so small, so bright,\nCreating oxygen and light.\n\n[PAUSE]\n\n[RHYTHMIC] [CALM] \"We are the healers!\" they sang sweet,\n\"Through photosynthesis complete!\nWe breathe in sunlight, breathe out air,\nFor every creature, everywhere.\"\n\n[PAUSE]\n\n[RHYTHMIC] [WHISPERING] Now Coral understood at last—\nThe healing wisdom of the past.\nThe smallest life creates the whole,\nThe ocean's breath, the ocean's soul.\n\n[PAUSE]\n\n[RHYTHMIC] [SLEEPY] She guards the plankton, night and day,\nKeeping pollution far away.\nFor in their microscopic dance,\nLies healing's greatest, sweetest chance.",
+    "target_age": 10,
+    "age_group": "8-12",
+    "word_count": 140,
+    "theme": "science",
+    "geography": "Ocean/Islands",
+    "lead_gender": "female",
+    "categories": [
+      "Science",
+      "Ocean",
+      "Transformation",
+      "Healing"
+    ],
+    "morals": [
+      "The smallest actions can have the greatest impact on healing and wellness",
+      "Understanding science helps us protect and nurture the natural world"
+    ],
+    "cover": "/covers/healing-tides.svg",
+    "musicProfile": "cosmic-voyage",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-df0d_female_1.mp3",
+        "duration_seconds": 109.21,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-df0d_female_3.mp3",
+        "duration_seconds": 87.9,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-df0d_female_2.mp3",
+        "duration_seconds": 97.73,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_1",
+        "url": "/audio/pre-gen/gen-df0d_male_1.mp3",
+        "duration_seconds": 85.78,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_3",
+        "url": "/audio/pre-gen/gen-df0d_male_3.mp3",
+        "duration_seconds": 85.92,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-df0d_male_2.mp3",
+        "duration_seconds": 90.24,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-df0d_asmr.mp3",
+        "duration_seconds": 101.16,
+        "provider": "chatterbox"
+      }
+    ]
+  },
+  {
+    "id": "gen-e77b10c51e8f",
+    "type": "poem",
+    "lang": "en",
+    "title": "Diego and the Star Map of the Ancient Temple",
+    "description": "A young Mayan boy discovers a celestial map in an ancient temple that reveals the connection between earthly friendships and the vast cosmos above.",
+    "text": "[RHYTHMIC] In the jungle green where temples rise,\nLived Diego with his curious eyes,\nHe loved to climb the pyramid stone,\nBut often felt he walked alone.\n\n[PAUSE]\n\n[RHYTHMIC] [GENTLE] One starlit night he found a door,\nHidden deep in temple floor,\nInside, the walls began to glow,\nWith constellations high and low.\n\n[PAUSE]\n\n[RHYTHMIC] [JOYFUL] The ancient map showed Venus bright,\nAnd Jupiter's majestic light,\nEach planet danced in painted gold,\nWith stories that the Maya told.\n\n[PAUSE]\n\n[RHYTHMIC] [CALM] As Diego traced each starry line,\nHe saw how all the stars align,\nLike friends who come from far and near,\nTo make the night sky bright and clear.\n\n[PAUSE]\n\n[RHYTHMIC] [WHISPERING] He learned that just like stars above,\nWe're connected through our love,\nEach friendship is a shining light,\nThat guides us through the darkest night.\n\n[PAUSE]\n\n[RHYTHMIC] [SLEEPY] Now Diego knows he's not alone,\nThe stars and friends have always shown,\nThat in this cosmic, vast embrace,\nWe each have found our special place.",
+    "annotated_text": "[RHYTHMIC] In the jungle green where temples rise,\nLived Diego with his curious eyes,\nHe loved to climb the pyramid stone,\nBut often felt he walked alone.\n\n[PAUSE]\n\n[RHYTHMIC] [GENTLE] One starlit night he found a door,\nHidden deep in temple floor,\nInside, the walls began to glow,\nWith constellations high and low.\n\n[PAUSE]\n\n[RHYTHMIC] [JOYFUL] The ancient map showed Venus bright,\nAnd Jupiter's majestic light,\nEach planet danced in painted gold,\nWith stories that the Maya told.\n\n[PAUSE]\n\n[RHYTHMIC] [CALM] As Diego traced each starry line,\nHe saw how all the stars align,\nLike friends who come from far and near,\nTo make the night sky bright and clear.\n\n[PAUSE]\n\n[RHYTHMIC] [WHISPERING] He learned that just like stars above,\nWe're connected through our love,\nEach friendship is a shining light,\nThat guides us through the darkest night.\n\n[PAUSE]\n\n[RHYTHMIC] [SLEEPY] Now Diego knows he's not alone,\nThe stars and friends have always shown,\nThat in this cosmic, vast embrace,\nWe each have found our special place.",
+    "target_age": 10,
+    "age_group": "8-12",
+    "word_count": 151,
+    "theme": "space",
+    "geography": "Americas",
+    "lead_gender": "male",
+    "categories": [
+      "Space",
+      "Friendship",
+      "Ancient Civilizations",
+      "Self-Discovery"
+    ],
+    "morals": [
+      "True friendship connects us like stars in the night sky",
+      "We are all part of something greater than ourselves"
+    ],
+    "cover": "/covers/star-temple.svg",
+    "musicProfile": "cosmic-voyage",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-e77b_female_1.mp3",
+        "duration_seconds": 101.39,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-e77b_female_2.mp3",
+        "duration_seconds": 91.83,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-e77b_female_3.mp3",
+        "duration_seconds": 82.05,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-e77b_male_2.mp3",
+        "duration_seconds": 79.96,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_3",
+        "url": "/audio/pre-gen/gen-e77b_male_3.mp3",
+        "duration_seconds": 81.55,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-e77b_asmr.mp3",
+        "duration_seconds": 95.09,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_1",
+        "url": "/audio/pre-gen/gen-e77b_male_1.mp3",
+        "duration_seconds": 76.33,
+        "provider": "chatterbox"
+      }
+    ]
+  },
+  {
+    "id": "gen-593c43ad1c11",
+    "type": "story",
+    "lang": "hi",
+    "title": "Nanha Sitara Aur Uski Neend Ki Lori",
+    "description": "Ek chhota sitara jungle mein sabko neend dilata hai apni komal roshni se.",
+    "text": "[GENTLE] Nanha sitara chamka. [CALM] Shh shh, neend aa rahi. [SLEEPY] Jungle sota, sitara jagta. [GENTLE] Komal roshni, komal roshni. [CALM] Patte hilte, hawa chalti. [SLEEPY] Shh shh, neend aa gayi. [GENTLE] Sitara muskaya, sab so gaye.",
+    "annotated_text": "[GENTLE] Nanha sitara chamka. [CALM] Shh shh, neend aa rahi. [SLEEPY] Jungle sota, sitara jagta. [GENTLE] Komal roshni, komal roshni. [CALM] Patte hilte, hawa chalti. [SLEEPY] Shh shh, neend aa gayi. [GENTLE] Sitara muskaya, sab so gaye.",
+    "target_age": 0,
+    "age_group": "0-1",
+    "word_count": 30,
+    "theme": "nature",
+    "geography": "Americas",
+    "lead_gender": "neutral",
+    "categories": [
+      "Nature",
+      "Fantasy",
+      "Sleep"
+    ],
+    "morals": [
+      "Doosron ki madad karna achhi baat hai",
+      "Prakriti humara khayal rakhti hai"
+    ],
+    "cover": "/covers/nanha-sitara.svg",
+    "musicProfile": "forest-night",
+    "music_type": "ambient",
+    "annotated_text_devanagari": "[GENTLE] नन्हा सितारा चमका। [CALM] शश शश, नींद आ रही। [SLEEPY] जंगल सोता, सितारा जगता। [GENTLE] कोमल रोशनी, कोमल रोशनी। [CALM] पत्ते हिलते, हवा चलती। [SLEEPY] शश शश, नींद आ गई। [GENTLE] सितारा मुस्काया, सब सो गए।",
+    "audio_variants": [
+      {
+        "voice": "female_1_hi",
+        "url": "/audio/pre-gen/gen-593c_female_1_hi.mp3",
+        "duration_seconds": 30.33,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2_hi",
+        "url": "/audio/pre-gen/gen-593c_female_2_hi.mp3",
+        "duration_seconds": 33.63,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3_hi",
+        "url": "/audio/pre-gen/gen-593c_female_3_hi.mp3",
+        "duration_seconds": 36.2,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_1_hi",
+        "url": "/audio/pre-gen/gen-593c_male_1_hi.mp3",
+        "duration_seconds": 32.72,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2_hi",
+        "url": "/audio/pre-gen/gen-593c_male_2_hi.mp3",
+        "duration_seconds": 48.34,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_3_hi",
+        "url": "/audio/pre-gen/gen-593c_male_3_hi.mp3",
+        "duration_seconds": 58.01,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr_hi",
+        "url": "/audio/pre-gen/gen-593c_asmr_hi.mp3",
+        "duration_seconds": 28.66,
+        "provider": "chatterbox"
+      }
+    ]
+  },
+  {
+    "id": "gen-b2e7514e8b8f",
+    "type": "story",
+    "lang": "hi",
+    "title": "Nano Khargosh Aur Samudri Dost",
+    "description": "Ek chhota khargosh aur uska naya samudri dost saath mein sote hain.",
+    "text": "[GENTLE] Nano khargosh. Neela paani. [CALM] Shh shh shh. Machli dost. [JOYFUL] Haan haan haan. Saath mein khel. [WHISPERING] Chup chup chup. Garam ret. [SLEEPY] So jao so jao. Meethe sapne.",
+    "annotated_text": "[GENTLE] Nano khargosh. Neela paani. [CALM] Shh shh shh. Machli dost. [JOYFUL] Haan haan haan. Saath mein khel. [WHISPERING] Chup chup chup. Garam ret. [SLEEPY] So jao so jao. Meethe sapne.",
+    "target_age": 0,
+    "age_group": "0-1",
+    "word_count": 26,
+    "theme": "ocean",
+    "geography": "East Asia",
+    "lead_gender": "neutral",
+    "categories": [
+      "Ocean Adventure",
+      "Friendship",
+      "Baby Sleep"
+    ],
+    "morals": [
+      "Dosti mein sukh hai",
+      "Saath mein sona accha"
+    ],
+    "cover": "/covers/samudri-dost.svg",
+    "musicProfile": "ocean-drift",
+    "music_type": "ambient",
+    "annotated_text_devanagari": "[GENTLE] नैनो खरगोश। नीला पानी। [CALM] श्श श्श श्श। मछली दोस्त। [JOYFUL] हां हां हां। साथ में खेल। [WHISPERING] चुप चुप चुप। गर्म रेत। [SLEEPY] सो जाओ सो जाओ। मीठे सपने।",
+    "audio_variants": [
+      {
+        "voice": "female_1_hi",
+        "url": "/audio/pre-gen/gen-b2e7_female_1_hi.mp3",
+        "duration_seconds": 26.05,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3_hi",
+        "url": "/audio/pre-gen/gen-b2e7_female_3_hi.mp3",
+        "duration_seconds": 22.14,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2_hi",
+        "url": "/audio/pre-gen/gen-b2e7_female_2_hi.mp3",
+        "duration_seconds": 32.3,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_1_hi",
+        "url": "/audio/pre-gen/gen-b2e7_male_1_hi.mp3",
+        "duration_seconds": 17.11,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2_hi",
+        "url": "/audio/pre-gen/gen-b2e7_male_2_hi.mp3",
+        "duration_seconds": 28.9,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_3_hi",
+        "url": "/audio/pre-gen/gen-b2e7_male_3_hi.mp3",
+        "duration_seconds": 25.68,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr_hi",
+        "url": "/audio/pre-gen/gen-b2e7_asmr_hi.mp3",
+        "duration_seconds": 22.8,
+        "provider": "chatterbox"
+      }
+    ]
+  },
+  {
+    "id": "gen-376993c8e295",
+    "type": "poem",
+    "lang": "hi",
+    "title": "Asha Ki Barf Mein Soft Bistar Ki Talash",
+    "description": "Ek brave ladki Asha Arctic mein apne polar bear dost ke saath sabse soft bistar dhundne ka journey karti hai.",
+    "text": "[RHYTHMIC] Asha ek brave ladki thi, barf mein rehti thi [PAUSE] [GENTLE] Polar bear dost ke saath, soft bistar dhundti thi [PAUSE] [CALM] Barf par chalte gaye, fluffy snow mein [PAUSE] [JOYFUL] Mil gaya cozy jagah, warm aur clean [PAUSE] [WHISPERING] Asha aur bear so gaye, soft barf ke bistar mein [PAUSE] [SLEEPY] Sapno mein udti rahi, Arctic ke sitaron mein",
+    "annotated_text": "[RHYTHMIC] Asha ek brave ladki thi, barf mein rehti thi [PAUSE] [GENTLE] Polar bear dost ke saath, soft bistar dhundti thi [PAUSE] [CALM] Barf par chalte gaye, fluffy snow mein [PAUSE] [JOYFUL] Mil gaya cozy jagah, warm aur clean [PAUSE] [WHISPERING] Asha aur bear so gaye, soft barf ke bistar mein [PAUSE] [SLEEPY] Sapno mein udti rahi, Arctic ke sitaron mein",
+    "target_age": 2,
+    "age_group": "1-3",
+    "word_count": 50,
+    "theme": "nature",
+    "geography": "Arctic/Polar",
+    "lead_gender": "female",
+    "categories": [
+      "Nature",
+      "Friendship",
+      "Adventure"
+    ],
+    "morals": [
+      "Dosti aur saath milkar koi bhi mushkil aasan ho jati hai",
+      "Nature mein sabse comfortable jagah mil sakti hai"
+    ],
+    "cover": "/covers/barf-bistar.svg",
+    "musicProfile": "moonlit-meadow",
+    "music_type": "ambient",
+    "annotated_text_devanagari": "[RHYTHMIC] आशा एक ब्रेव लड़की थी, बर्फ में रहती थी [PAUSE] [GENTLE] पोलर बेयर दोस्त के साथ, सॉफ्ट बिस्तर ढूंढती थी [PAUSE] [CALM] बर्फ पर चलते गए, फ्लफी स्नो में [PAUSE] [JOYFUL] मिल गया कोजी जगह, वार्म और क्लीन [PAUSE] [WHISPERING] आशा और बेयर सो गए, सॉफ्ट बर्फ के बिस्तर में [PAUSE] [SLEEPY] सपनों में उड़ती रही, आर्कटिक के सितारों में",
+    "audio_variants": [
+      {
+        "voice": "female_1_hi",
+        "url": "/audio/pre-gen/gen-3769_female_1_hi.mp3",
+        "duration_seconds": 38.05,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2_hi",
+        "url": "/audio/pre-gen/gen-3769_female_2_hi.mp3",
+        "duration_seconds": 44.73,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3_hi",
+        "url": "/audio/pre-gen/gen-3769_female_3_hi.mp3",
+        "duration_seconds": 37.64,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_1_hi",
+        "url": "/audio/pre-gen/gen-3769_male_1_hi.mp3",
+        "duration_seconds": 38.46,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_3_hi",
+        "url": "/audio/pre-gen/gen-3769_male_3_hi.mp3",
+        "duration_seconds": 44.71,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2_hi",
+        "url": "/audio/pre-gen/gen-3769_male_2_hi.mp3",
+        "duration_seconds": 35.9,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr_hi",
+        "url": "/audio/pre-gen/gen-3769_asmr_hi.mp3",
+        "duration_seconds": 32.3,
+        "provider": "chatterbox"
+      }
+    ]
+  },
+  {
+    "id": "gen-aad0a6e0c0c0",
+    "type": "poem",
+    "lang": "hi",
+    "title": "Kira Ka Samudri Ghar Ki Khoj",
+    "description": "Ek brave chhoti ladki Kira apne island ghar mein family ke saath naye kamre discover karti hai aur cozy sleeping jagah paati hai.",
+    "text": "[RHYTHMIC] Kira chhoti brave girl thi, island pe rehti thi\nFamily ke saath warm ghar mein, khushi se has rahi thi\n\n[PAUSE]\n\n[GENTLE] Mama Papa ke saath, naya room dhundha usne\nBamboo walls aur soft mats, dekha ocean view se\n\n[PAUSE]\n\n[JOYFUL] Grandma ne kaha 'dekho beta', shells aur pearls yahan\nFamily ka purana treasure, mil gaya hai ghar mein\n\n[PAUSE]\n\n[WHISPERING] Waves ki awaaz sun kar, Kira tired ho gayi\nSoft mat pe lie down karke, family ke paas so gayi\n\n[PAUSE]\n\n[CALM] Ocean breeze se lullaby, stars shining bright\nFamily ka love aur warmth, good night sweet night [SLEEPY]",
+    "annotated_text": "[RHYTHMIC] Kira chhoti brave girl thi, island pe rehti thi\nFamily ke saath warm ghar mein, khushi se has rahi thi\n\n[PAUSE]\n\n[GENTLE] Mama Papa ke saath, naya room dhundha usne\nBamboo walls aur soft mats, dekha ocean view se\n\n[PAUSE]\n\n[JOYFUL] Grandma ne kaha 'dekho beta', shells aur pearls yahan\nFamily ka purana treasure, mil gaya hai ghar mein\n\n[PAUSE]\n\n[WHISPERING] Waves ki awaaz sun kar, Kira tired ho gayi\nSoft mat pe lie down karke, family ke paas so gayi\n\n[PAUSE]\n\n[CALM] Ocean breeze se lullaby, stars shining bright\nFamily ka love aur warmth, good night sweet night [SLEEPY]",
+    "target_age": 2,
+    "age_group": "1-3",
+    "word_count": 91,
+    "theme": "family",
+    "geography": "Ocean/Islands",
+    "lead_gender": "female",
+    "categories": [
+      "Family",
+      "Adventure",
+      "Ocean",
+      "Home",
+      "Discovery"
+    ],
+    "morals": [
+      "Family ke saath explore karna safe aur fun hota hai",
+      "Ghar mein family ka love sabse important treasure hai"
+    ],
+    "cover": "/covers/samudri-ghar.svg",
+    "musicProfile": "dreamy-clouds",
+    "music_type": "ambient",
+    "annotated_text_devanagari": "[RHYTHMIC] किरा छोटी brave गर्ल थी, आइसलैंड पे रहती थी\nफैमिली के साथ warm घर में, खुशी से हंस रही थी\n\n[PAUSE]\n\n[GENTLE] मामा पापा के साथ, नया रूम ढूंढा उसने\nबैंबू वॉल्स और soft मैट्स, देखा ओशन व्यू से\n\n[PAUSE]\n\n[JOYFUL] ग्रैंडमा ने कहा 'देखो बेटा', शेल्स और पर्ल्स यहां\nफैमिली का पुराना ट्रेजर, मिल गया है घर में\n\n[PAUSE]\n\n[WHISPERING] वेव्स की आवाज़ सुन कर, किरा टायर्ड हो गई\nसॉफ्ट मैट पे lie down करके, फैमिली के पास सो गई\n\n[PAUSE]\n\n[CALM] ओशन ब्रीज़ से लुल्लाबी, स्टार्स शाइनिंग ब्राइट\nफैमिली का लव और वार्मथ, गुड नाइट स्वीट नाइट [SLEEPY]",
+    "audio_variants": [
+      {
+        "voice": "female_1_hi",
+        "url": "/audio/pre-gen/gen-aad0_female_1_hi.mp3",
+        "duration_seconds": 61.79,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2_hi",
+        "url": "/audio/pre-gen/gen-aad0_female_2_hi.mp3",
+        "duration_seconds": 62.84,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3_hi",
+        "url": "/audio/pre-gen/gen-aad0_female_3_hi.mp3",
+        "duration_seconds": 55.13,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_1_hi",
+        "url": "/audio/pre-gen/gen-aad0_male_1_hi.mp3",
+        "duration_seconds": 60.54,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2_hi",
+        "url": "/audio/pre-gen/gen-aad0_male_2_hi.mp3",
+        "duration_seconds": 60.59,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_3_hi",
+        "url": "/audio/pre-gen/gen-aad0_male_3_hi.mp3",
+        "duration_seconds": 51.6,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr_hi",
+        "url": "/audio/pre-gen/gen-aad0_asmr_hi.mp3",
+        "duration_seconds": 64.33,
+        "provider": "chatterbox"
+      }
+    ]
+  },
+  {
+    "id": "gen-ddc437037568",
+    "type": "story",
+    "lang": "hi",
+    "title": "Dosti ki Kahani",
+    "description": "Ek fantasy realm mein, Nova aur uske doston ne milkar ek mushkil ko hal kiya aur dosti ki sachchai samjhe. Ye kahani dosti, teamwork, aur samajh ki mahatta ko darshati hai.",
+    "text": "[GENTLE] Ek chhota sa shehar tha, jiska naam Aethoria tha, jahan par logon ke dil mein pyaar aur dosti bhar gayi thi. [CALM] Yahan par Nova, ek 15 saal ka non-binary teen, apne doston ke saath milkar ek anokha safar par nikal padta hai. [EXCITED] Unka pehla mission tha, ek purani mandir ki talash, jahan par ek pracheen khazana chhupa hua tha. [CURIOUS] Nova ke saath the uske dost, Zara, Arjun, aur Lila, jo apne-apne khaas hunar ke saath aaye the. [ADVENTUROUS] Saath milkar, ve sabhi ne mushkil raaston par chal kar mandir tak pahunchne ki koshish ki. [MYSTERIOUS] Lekin, jab ve andar ghuste hain, to unhe ek anokhi chunauti ka samna karna padta hai. [DRAMATIC_PAUSE] Unhe ek pracheen puzzle ko suljhana hota hai, jo keval tabhi suljhega jab ve apne hunar ko ek saath mila kar istemal karenge. [JOYFUL] Nova aur uske dost sabhi ne milkar kaam kiya, aur puzzle ko suljhaya. [SLEEPY] Ab, ve sabhi ghar waapas aane ke liye taiyaar hain, aur ek naye din ki shuruaat ke liye utsuk hain.",
+    "annotated_text": "[GENTLE] Ek chhota sa shehar tha, jiska naam Aethoria tha, jahan par logon ke dil mein pyaar aur dosti bhar gayi thi. [CALM] Yahan par Nova, ek 15 saal ka non-binary teen, apne doston ke saath milkar ek anokha safar par nikal padta hai. [EXCITED] Unka pehla mission tha, ek purani mandir ki talash, jahan par ek pracheen khazana chhupa hua tha. [CURIOUS] Nova ke saath the uske dost, Zara, Arjun, aur Lila, jo apne-apne khaas hunar ke saath aaye the. [ADVENTUROUS] Saath milkar, ve sabhi ne mushkil raaston par chal kar mandir tak pahunchne ki koshish ki. [MYSTERIOUS] Lekin, jab ve andar ghuste hain, to unhe ek anokhi chunauti ka samna karna padta hai. [DRAMATIC_PAUSE] Unhe ek pracheen puzzle ko suljhana hota hai, jo keval tabhi suljhega jab ve apne hunar ko ek saath mila kar istemal karenge. [JOYFUL] Nova aur uske dost sabhi ne milkar kaam kiya, aur puzzle ko suljhaya. [SLEEPY] Ab, ve sabhi ghar waapas aane ke liye taiyaar hain, aur ek naye din ki shuruaat ke liye utsuk hain.",
+    "target_age": 13,
+    "age_group": "12+",
+    "word_count": 165,
+    "theme": "friendship",
+    "geography": "Europe",
+    "lead_gender": "neutral",
+    "categories": [
+      "Fantasy",
+      "Dosti",
+      "Teamwork"
+    ],
+    "morals": [
+      "Dosti ki sachchai",
+      "Teamwork ki mahatta",
+      "Samajh ki zarurat"
+    ],
+    "cover": "/covers/dosti-kahani.svg",
+    "musicProfile": "autumn-forest",
+    "music_type": "ambient",
+    "annotated_text_devanagari": "[GENTLE] एक छोटा सा शहर था, जिसका नाम एथोरिया था, जहां पर लोगों के दिल में प्यार और दोस्ती भर गयी थी. [CALM] यहां पर नोवा, एक १५ साल का नॉन-बाइनरी टीन, अपने दोस्तों के साथ मिलकर एक अनोखा सफर पर निकल पड़ता है. [EXCITED] उनका पहला मिशन था, एक पुरानी मंदिर की तलाश, जहां पर एक प्राचीन खजाना छुपा हुआ था. [CURIOUS] नोवा के साथ थे उसके दोस्त, जारा, अर्जुन, और लीला, जो अपने-अपने खास हुनर के साथ आए थे. [ADVENTUROUS] साथ मिलकर, वे सभी ने मुश्किल रास्तों पर चलकर मंदिर तक पहुंचने की कोशिश की. [MYSTERIOUS] लेकिन, जब वे अंदर घुसते हैं, तो उन्हें एक अनोखी चुनौती का सामना करना पड़ता है. [DRAMATIC_PAUSE] उन्हें एक प्राचीन पज़ल को सुलझाना होता है, जो केवल तब ही सुलझेगा जब वे अपने हुनर को एक साथ मिलाकर इस्तेमाल करेंगे. [JOYFUL] नोवा और उसके दोस्त सभी ने मिलकर काम किया, और पज़ल को सुलझाया. [SLEEPY] अब, वे सभी घर वापस आने के लिए तैयार हैं, और एक नए दिन की शुरुआत के लिए उत्सुक हैं.",
+    "audio_variants": [
+      {
+        "voice": "female_1_hi",
+        "url": "/audio/pre-gen/gen-ddc4_female_1_hi.mp3",
+        "duration_seconds": 83.19,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2_hi",
+        "url": "/audio/pre-gen/gen-ddc4_female_2_hi.mp3",
+        "duration_seconds": 91.72,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3_hi",
+        "url": "/audio/pre-gen/gen-ddc4_female_3_hi.mp3",
+        "duration_seconds": 85.53,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_1_hi",
+        "url": "/audio/pre-gen/gen-ddc4_male_1_hi.mp3",
+        "duration_seconds": 84.76,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_3_hi",
+        "url": "/audio/pre-gen/gen-ddc4_male_3_hi.mp3",
+        "duration_seconds": 77.0,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2_hi",
+        "url": "/audio/pre-gen/gen-ddc4_male_2_hi.mp3",
+        "duration_seconds": 85.45,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr_hi",
+        "url": "/audio/pre-gen/gen-ddc4_asmr_hi.mp3",
+        "duration_seconds": 82.9,
+        "provider": "chatterbox"
+      }
+    ]
+  },
+  {
+    "id": "gen-2b9fdf8a1222",
+    "type": "poem",
+    "lang": "hi",
+    "title": "Riya ki Prakriti Yatra",
+    "description": "Riya, a brave child, embarks on a quest journey to appreciate nature and understand environmental awareness in the Americas, specifically in the contemporary world of North America.",
+    "text": "[RHYTHMIC] Riya ek chhote se jungle mein gayi, [GENTLE] jahaan pedon ke neeche ek sundar taal tha. [CALM] Usne dekha ki taal ke kinare par kayi janwar the, jo paani peene aaye the. [PAUSE] \n[RHYTHMIC] Riya ne socha ki prakriti kitni sundar hai, [JOYFUL] aur humein uski raksha karni chahiye. [WHISPERING] Usne apne aap se vaada kiya ki woh hamesha prakriti ki raksha karegi. [PAUSE] \n[RHYTHMIC] Ab Riya [SLEEPY] sone ja rahi hai, aur woh chahti hai ki tum bhi prakriti ki raksha karo.",
+    "annotated_text": "[RHYTHMIC] Riya ek chhote se jungle mein gayi, [GENTLE] jahaan pedon ke neeche ek sundar taal tha. [CALM] Usne dekha ki taal ke kinare par kayi janwar the, jo paani peene aaye the. [PAUSE] \n[RHYTHMIC] Riya ne socha ki prakriti kitni sundar hai, [JOYFUL] aur humein uski raksha karni chahiye. [WHISPERING] Usne apne aap se vaada kiya ki woh hamesha prakriti ki raksha karegi. [PAUSE] \n[RHYTHMIC] Ab Riya [SLEEPY] sone ja rahi hai, aur woh chahti hai ki tum bhi prakriti ki raksha karo.",
+    "target_age": 13,
+    "age_group": "12+",
+    "word_count": 74,
+    "theme": "nature",
+    "geography": "Americas",
+    "lead_gender": "female",
+    "categories": [
+      "Prakriti",
+      "Paryavaran"
+    ],
+    "morals": [
+      "Prakriti ki raksha karna humara kartavya hai",
+      "Humein hamesha prakriti ki raksha karni chahiye"
+    ],
+    "cover": "/covers/prakriti-yatra.svg",
+    "musicProfile": "forest-night",
+    "music_type": "ambient",
+    "annotated_text_devanagari": "[RHYTHMIC] रिया एक छोटे से जंगल में गयी, [GENTLE] जहां पेड़ों के नीचे एक सुंदर ताल था. [CALM] उसने देखा कि ताल के किनारे पर कई जानवर थे, जो पानी पीने आए थे. [PAUSE] \n[RHYTHMIC] रिया ने सोचा कि प्रकृति कितनी सुंदर है, [JOYFUL] और हमें उसकी रक्षा करनी चाहिए. [WHISPERING] उसने अपने आप से वादा किया कि वो हमेशा प्रकृति की रक्षा करेगी. [PAUSE] \n[RHYTHMIC] अब रिया [SLEEPY] सोने जा रही है, और वो चाहती है कि तुम भी प्रकृति की रक्षा करो.",
+    "audio_variants": [
+      {
+        "voice": "female_1_hi",
+        "url": "/audio/pre-gen/gen-2b9f_female_1_hi.mp3",
+        "duration_seconds": 45.1,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2_hi",
+        "url": "/audio/pre-gen/gen-2b9f_female_2_hi.mp3",
+        "duration_seconds": 43.06,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3_hi",
+        "url": "/audio/pre-gen/gen-2b9f_female_3_hi.mp3",
+        "duration_seconds": 44.31,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2_hi",
+        "url": "/audio/pre-gen/gen-2b9f_male_2_hi.mp3",
+        "duration_seconds": 50.72,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_1_hi",
+        "url": "/audio/pre-gen/gen-2b9f_male_1_hi.mp3",
+        "duration_seconds": 47.29,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr_hi",
+        "url": "/audio/pre-gen/gen-2b9f_asmr_hi.mp3",
+        "duration_seconds": 45.83,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_3_hi",
+        "url": "/audio/pre-gen/gen-2b9f_male_3_hi.mp3",
+        "duration_seconds": 43.19,
+        "provider": "chatterbox"
+      }
+    ]
+  },
+  {
+    "id": "gen-60370cf66525",
+    "type": "poem",
+    "lang": "hi",
+    "title": "Naina Ki Baraf Waley School Mein Seal Dost Ki Khoj",
+    "description": "Brave Naina discovers a magical Arctic school where she learns from friendly seals and makes wonderful new friends.",
+    "text": "[RHYTHMIC] [GENTLE] Baraf ke ghar mein ek din, Naina pahunchi school\nJahan seal machliyan padhti, barf ka yeh rule\n\n[PAUSE]\n\n[RHYTHMIC] [JOYFUL] Suno suno kehti seal, hum sikhayenge tumhe\nBaraf par kaise khelna, paani mein kaise rehna\n\n[PAUSE]\n\n[RHYTHMIC] [CALM] Naina ne sikha diving, seal ke saath khela\nArctic ke jaadui raaz, sabne mil kar dekha\n\n[PAUSE]\n\n[RHYTHMIC] [WHISPERING] Dost ban gaye sab milkar, baraf mein haskar\nNaina ki khushi dekho, seekh gayi nayi kala\n\n[PAUSE]\n\n[RHYTHMIC] [SLEEPY] Ab Naina sapno mein jaaye, seal dost ke saath\nBaraf waley school ki yaadein, leke jaaye saath",
+    "annotated_text": "[RHYTHMIC] [GENTLE] Baraf ke ghar mein ek din, Naina pahunchi school\nJahan seal machliyan padhti, barf ka yeh rule\n\n[PAUSE]\n\n[RHYTHMIC] [JOYFUL] Suno suno kehti seal, hum sikhayenge tumhe\nBaraf par kaise khelna, paani mein kaise rehna\n\n[PAUSE]\n\n[RHYTHMIC] [CALM] Naina ne sikha diving, seal ke saath khela\nArctic ke jaadui raaz, sabne mil kar dekha\n\n[PAUSE]\n\n[RHYTHMIC] [WHISPERING] Dost ban gaye sab milkar, baraf mein haskar\nNaina ki khushi dekho, seekh gayi nayi kala\n\n[PAUSE]\n\n[RHYTHMIC] [SLEEPY] Ab Naina sapno mein jaaye, seal dost ke saath\nBaraf waley school ki yaadein, leke jaaye saath",
+    "target_age": 4,
+    "age_group": "4-5",
+    "word_count": 81,
+    "theme": "animals",
+    "geography": "Arctic/Polar",
+    "lead_gender": "female",
+    "categories": [
+      "Animals",
+      "Friendship",
+      "Learning",
+      "Adventure"
+    ],
+    "morals": [
+      "Dusre jaanwaron se seekhna achhi baat hai",
+      "Naye dost banane mein khushi milti hai"
+    ],
+    "cover": "/covers/seal-school.svg",
+    "musicProfile": "autumn-forest",
+    "music_type": "ambient",
+    "annotated_text_devanagari": "[RHYTHMIC] [GENTLE] बर्फ के घर में एक दिन, नैना पहुंची स्कूल\nजहाँ सील मछलियाँ पढ़ती, बर्फ का यह रूल\n\n[PAUSE]\n\n[RHYTHMIC] [JOYFUL] सुनो सुनो कहती सील, हम सिखायेंगे तुम्हें\nबर्फ पर कैसे खेलना, पानी में कैसे रहना\n\n[PAUSE]\n\n[RHYTHMIC] [CALM] नैना ने सीखा डाइविंग, सील के साथ खेला\nआर्कटिक के जादुई राज़, सबने मिल कर देखा\n\n[PAUSE]\n\n[RHYTHMIC] [WHISPERING] दोस्त बन गए सब मिलकर, बर्फ में हंसकर\nनैना की खुशी देखो, सीख गई नई कला\n\n[PAUSE]\n\n[RHYTHMIC] [SLEEPY] अब नैना सपनों में जाये, सील दोस्त के साथ\nबर्फ वाले स्कूल की यादें, लेके जाये साथ",
+    "audio_variants": [
+      {
+        "voice": "female_1_hi",
+        "url": "/audio/pre-gen/gen-6037_female_1_hi.mp3",
+        "duration_seconds": 54.37,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2_hi",
+        "url": "/audio/pre-gen/gen-6037_female_2_hi.mp3",
+        "duration_seconds": 58.48,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3_hi",
+        "url": "/audio/pre-gen/gen-6037_female_3_hi.mp3",
+        "duration_seconds": 54.72,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_1_hi",
+        "url": "/audio/pre-gen/gen-6037_male_1_hi.mp3",
+        "duration_seconds": 54.95,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2_hi",
+        "url": "/audio/pre-gen/gen-6037_male_2_hi.mp3",
+        "duration_seconds": 49.56,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_3_hi",
+        "url": "/audio/pre-gen/gen-6037_male_3_hi.mp3",
+        "duration_seconds": 61.02,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr_hi",
+        "url": "/audio/pre-gen/gen-6037_asmr_hi.mp3",
+        "duration_seconds": 53.87,
+        "provider": "chatterbox"
+      }
+    ]
+  },
+  {
+    "id": "gen-032fdef6f753",
+    "type": "poem",
+    "lang": "hi",
+    "title": "Vaanar Mitra Ka Jaadui Khel Samrajya",
+    "description": "Ek chhote vaanar ka ek magical playground mein transformation ka safar, jahaan woh seekhta hai ki khel mein discovery ki shakti hai.",
+    "text": "[RHYTHMIC] [GENTLE] Ek chhota vaanar tha, Hannu naam ka pyaara\nEk jaadui van mein khelta, sapno ka nazaara\n\n[PAUSE]\n\n[RHYTHMIC] [JOYFUL] Jhoolon par naachta, rang badal jaate the\nHar khel mein kuch naya, sapne sach ho jaate the\n\n[PAUSE]\n\n[RHYTHMIC] [CALM] Patthar chhoote to titli, paani mein taarey\nHannu ka dil khushi se, bhar gaya sitarey\n\n[PAUSE]\n\n[RHYTHMIC] [WHISPERING] Khel khel mein seekha, duniya ki yeh baat\nHar cheez mein chhupa hai, kuch jaadui raat [SLEEPY]",
+    "annotated_text": "[RHYTHMIC] [GENTLE] Ek chhota vaanar tha, Hannu naam ka pyaara\nEk jaadui van mein khelta, sapno ka nazaara\n\n[PAUSE]\n\n[RHYTHMIC] [JOYFUL] Jhoolon par naachta, rang badal jaate the\nHar khel mein kuch naya, sapne sach ho jaate the\n\n[PAUSE]\n\n[RHYTHMIC] [CALM] Patthar chhoote to titli, paani mein taarey\nHannu ka dil khushi se, bhar gaya sitarey\n\n[PAUSE]\n\n[RHYTHMIC] [WHISPERING] Khel khel mein seekha, duniya ki yeh baat\nHar cheez mein chhupa hai, kuch jaadui raat [SLEEPY]",
+    "target_age": 4,
+    "age_group": "4-5",
+    "word_count": 64,
+    "theme": "fantasy",
+    "geography": "India",
+    "lead_gender": "neutral",
+    "categories": [
+      "Fantasy",
+      "Adventure",
+      "Transformation",
+      "Play"
+    ],
+    "morals": [
+      "Khel mein discovery ki shakti hai",
+      "Har cheez mein jaadu chhupa hota hai"
+    ],
+    "cover": "/covers/monkey-kingdom.svg",
+    "musicProfile": "moonlit-meadow",
+    "music_type": "ambient",
+    "annotated_text_devanagari": "[RHYTHMIC] [GENTLE] एक छोटा वानर था, हन्नू नाम का प्यारा\nएक जादुई वन में खेलता, सपनों का नज़ारा\n\n[PAUSE]\n\n[RHYTHMIC] [JOYFUL] झूलों पर नाचता, रंग बदल जाते थे\nहर खेल में कुछ नया, सपने सच हो जाते थे\n\n[PAUSE]\n\n[RHYTHMIC] [CALM] पत्थर छूते तो तितली, पानी में तारे\nहन्नू का दिल खुशी से, भर गया सितारे\n\n[PAUSE]\n\n[RHYTHMIC] [WHISPERING] खेल खेल में सीखा, दुनिया की यह बात\nहर चीज़ में छुपा है, कुछ जादुई रात [SLEEPY]",
+    "audio_variants": [
+      {
+        "voice": "female_1_hi",
+        "url": "/audio/pre-gen/gen-032f_female_1_hi.mp3",
+        "duration_seconds": 42.57,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2_hi",
+        "url": "/audio/pre-gen/gen-032f_female_2_hi.mp3",
+        "duration_seconds": 44.37,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3_hi",
+        "url": "/audio/pre-gen/gen-032f_female_3_hi.mp3",
+        "duration_seconds": 44.59,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_1_hi",
+        "url": "/audio/pre-gen/gen-032f_male_1_hi.mp3",
+        "duration_seconds": 45.35,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_3_hi",
+        "url": "/audio/pre-gen/gen-032f_male_3_hi.mp3",
+        "duration_seconds": 43.81,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2_hi",
+        "url": "/audio/pre-gen/gen-032f_male_2_hi.mp3",
+        "duration_seconds": 38.97,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr_hi",
+        "url": "/audio/pre-gen/gen-032f_asmr_hi.mp3",
+        "duration_seconds": 45.22,
+        "provider": "chatterbox"
+      }
+    ]
+  },
+  {
+    "id": "gen-febbf324eecb",
+    "type": "poem",
+    "lang": "hi",
+    "title": "Kiran Aur Samudar Ke Upar Ke Floating Islands Ki Dosti",
+    "description": "Bhavishya mein samudar ke upar tairte hue magical islands par rehne wala ek brave ladka Kiran apne robot dost ke saath naye friends banata hai.",
+    "text": "[RHYTHMIC] Samudar ke upar, aasman mein high,\nTairte hue islands, crystals ki light.\nKiran naam ka ladka, brave aur sweet,\nRobot dost Sparky ke saath, adventures complete.\n\n[PAUSE]\n\n[GENTLE] Floating gardens mein flowers glow karte,\nHolographic butterflies dance karte.\nKiran lonely feel karta tha sometimes,\nNaye friends ki search mein, climbing heights.\n\n[PAUSE]\n\n[JOYFUL] Ek din milе Luna, mermaid so kind,\nAur Zephyr wind-sprite, pure of mind.\nTogether they explored crystal caves deep,\nSharing stories, promises to keep.\n\n[PAUSE]\n\n[CALM] Floating bridges of light unhe connect karte,\nDifferent islands, hearts ko reflect karte.\nKiran ne sikha, friendship ka magic true,\nDistance doesn't matter, when hearts are blue.\n\n[PAUSE]\n\n[WHISPERING] Starfish lanterns light up the night,\nFriends gather 'round, everything's right.\nSamudar ki waves, gentle lullaby sing,\nDosti ki warmth, peaceful dreams bring.\n\n[PAUSE]\n\n[SLEEPY] Now Kiran sleeps on his island home,\nNo more alone, no need to roam.\nSapno mein friends, always near,\nFuture's bright, nothing to fear.",
+    "annotated_text": "[RHYTHMIC] Samudar ke upar, aasman mein high,\nTairte hue islands, crystals ki light.\nKiran naam ka ladka, brave aur sweet,\nRobot dost Sparky ke saath, adventures complete.\n\n[PAUSE]\n\n[GENTLE] Floating gardens mein flowers glow karte,\nHolographic butterflies dance karte.\nKiran lonely feel karta tha sometimes,\nNaye friends ki search mein, climbing heights.\n\n[PAUSE]\n\n[JOYFUL] Ek din milе Luna, mermaid so kind,\nAur Zephyr wind-sprite, pure of mind.\nTogether they explored crystal caves deep,\nSharing stories, promises to keep.\n\n[PAUSE]\n\n[CALM] Floating bridges of light unhe connect karte,\nDifferent islands, hearts ko reflect karte.\nKiran ne sikha, friendship ka magic true,\nDistance doesn't matter, when hearts are blue.\n\n[PAUSE]\n\n[WHISPERING] Starfish lanterns light up the night,\nFriends gather 'round, everything's right.\nSamudar ki waves, gentle lullaby sing,\nDosti ki warmth, peaceful dreams bring.\n\n[PAUSE]\n\n[SLEEPY] Now Kiran sleeps on his island home,\nNo more alone, no need to roam.\nSapno mein friends, always near,\nFuture's bright, nothing to fear.",
+    "target_age": 7,
+    "age_group": "6-8",
+    "word_count": 147,
+    "theme": "fantasy",
+    "geography": "Ocean/Islands",
+    "lead_gender": "male",
+    "categories": [
+      "Fantasy",
+      "Friendship",
+      "Adventure",
+      "Future",
+      "Magic"
+    ],
+    "morals": [
+      "True friendship transcends physical distance and differences",
+      "Being brave enough to reach out leads to meaningful connections"
+    ],
+    "cover": "/covers/floating-islands.svg",
+    "musicProfile": "moonlit-meadow",
+    "music_type": "ambient",
+    "annotated_text_devanagari": "[RHYTHMIC] समुद्र के ऊपर, आसमान में high,\nतैरते हुए islands, crystals की light।\nकिरण नाम का लड़का, brave और sweet,\nRobot दोस्त Sparky के साथ, adventures complete।\n\n[PAUSE]\n\n[GENTLE] Floating gardens में flowers glow करते,\nHolographic butterflies dance करते।\nकिरण lonely feel करता था sometimes,\nनये friends की search में, climbing heights।\n\n[PAUSE]\n\n[JOYFUL] एक दिन मिले Luna, mermaid so kind,\nऔर Zephyr wind-sprite, pure of mind।\nTogether they explored crystal caves deep,\nSharing stories, promises to keep।\n\n[PAUSE]\n\n[CALM] Floating bridges of light उन्हें connect करते,\nDifferent islands, hearts को reflect करते।\nकिरण ने सीखा, friendship का magic true,\nDistance doesn't matter, when hearts are blue।\n\n[PAUSE]\n\n[WHISPERING] Starfish lanterns light up the night,\nFriends gather 'round, everything's right।\nसमुद्र की waves, gentle lullaby sing,\nदोस्ती की warmth, peaceful dreams bring।\n\n[PAUSE]\n\n[SLEEPY] Now किरण sleeps on his island home,\nNo more alone, no need to roam।\nसपनों में friends, always near,\nFuture's bright, nothing to fear।",
+    "audio_variants": [
+      {
+        "voice": "female_1_hi",
+        "url": "/audio/pre-gen/gen-febb_female_1_hi.mp3",
+        "duration_seconds": 87.89,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2_hi",
+        "url": "/audio/pre-gen/gen-febb_female_2_hi.mp3",
+        "duration_seconds": 102.97,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_1_hi",
+        "url": "/audio/pre-gen/gen-febb_male_1_hi.mp3",
+        "duration_seconds": 101.04,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3_hi",
+        "url": "/audio/pre-gen/gen-febb_female_3_hi.mp3",
+        "duration_seconds": 108.68,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_3_hi",
+        "url": "/audio/pre-gen/gen-febb_male_3_hi.mp3",
+        "duration_seconds": 91.28,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2_hi",
+        "url": "/audio/pre-gen/gen-febb_male_2_hi.mp3",
+        "duration_seconds": 88.97,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr_hi",
+        "url": "/audio/pre-gen/gen-febb_asmr_hi.mp3",
+        "duration_seconds": 93.17,
+        "provider": "chatterbox"
+      }
+    ]
+  },
+  {
+    "id": "gen-230502b905ba",
+    "type": "poem",
+    "lang": "hi",
+    "title": "Priya Aur Vidya Devi Ki Jaadui Shiksha Yatra",
+    "description": "Ek brave bachhi Priya ek mythological gurukul mein jaadui gyan seekhti hai aur apne andar ki shakti discover karti hai.",
+    "text": "[RHYTHMIC] [GENTLE] Priya ek chhoti si bachhi thi, brave aur smart\nVidya Devi ke gurukul mein, seekhne gai art\n\n[PAUSE]\n\n[RHYTHMIC] [JOYFUL] Pahadon ke beech mein tha ye jaadui school\nYahan har bachha banta tha gyan ka jewel\n\n[PAUSE]\n\n[RHYTHMIC] [CALM] Devi ne kaha, \"Beta, tumhare andar hai light\nSabko sikhao, karo sab kuch right\"\n\n[PAUSE]\n\n[RHYTHMIC] [WHISPERING] Priya ne sikhayi dusron ko math aur song\nSabke saath milkar, bani friendship strong\n\n[PAUSE]\n\n[RHYTHMIC] [SLEEPY] Ab wo teacher ban gayi, kind aur wise\nSapno mein bhi sikhati, under starry skies",
+    "annotated_text": "[RHYTHMIC] [GENTLE] Priya ek chhoti si bachhi thi, brave aur smart\nVidya Devi ke gurukul mein, seekhne gai art\n\n[PAUSE]\n\n[RHYTHMIC] [JOYFUL] Pahadon ke beech mein tha ye jaadui school\nYahan har bachha banta tha gyan ka jewel\n\n[PAUSE]\n\n[RHYTHMIC] [CALM] Devi ne kaha, \"Beta, tumhare andar hai light\nSabko sikhao, karo sab kuch right\"\n\n[PAUSE]\n\n[RHYTHMIC] [WHISPERING] Priya ne sikhayi dusron ko math aur song\nSabke saath milkar, bani friendship strong\n\n[PAUSE]\n\n[RHYTHMIC] [SLEEPY] Ab wo teacher ban gayi, kind aur wise\nSapno mein bhi sikhati, under starry skies",
+    "target_age": 7,
+    "age_group": "6-8",
+    "word_count": 76,
+    "theme": "adventure",
+    "geography": "India",
+    "lead_gender": "female",
+    "categories": [
+      "Adventure",
+      "Mythology",
+      "School",
+      "Transformation"
+    ],
+    "morals": [
+      "Gyan share karne se wo aur badhta hai",
+      "Har bachche mein kuch special talent hota hai"
+    ],
+    "cover": "/covers/vidya-devi.svg",
+    "musicProfile": "autumn-forest",
+    "music_type": "ambient",
+    "annotated_text_devanagari": "[RHYTHMIC] [GENTLE] प्रिया एक छोटी सी बच्ची थी, brave और smart\nविद्या देवी के गुरुकुल में, सीखने गई art\n\n[PAUSE]\n\n[RHYTHMIC] [JOYFUL] पहाड़ों के बीच में था ये जादुई school\nयहाँ हर बच्चा बनता था ज्ञान का jewel\n\n[PAUSE]\n\n[RHYTHMIC] [CALM] देवी ने कहा, \"बेटा, तुम्हारे अंदर है light\nसबको सिखाओ, करो सब कुछ right\"\n\n[PAUSE]\n\n[RHYTHMIC] [WHISPERING] प्रिया ने सिखाई दूसरों को math और song\nसबके साथ मिलकर, बनी friendship strong\n\n[PAUSE]\n\n[RHYTHMIC] [SLEEPY] अब वो teacher बन गई, kind और wise\nसपनों में भी सिखाती, under starry skies",
+    "audio_variants": [
+      {
+        "voice": "female_1_hi",
+        "url": "/audio/pre-gen/gen-2305_female_1_hi.mp3",
+        "duration_seconds": 50.02,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2_hi",
+        "url": "/audio/pre-gen/gen-2305_female_2_hi.mp3",
+        "duration_seconds": 54.24,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3_hi",
+        "url": "/audio/pre-gen/gen-2305_female_3_hi.mp3",
+        "duration_seconds": 53.56,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_1_hi",
+        "url": "/audio/pre-gen/gen-2305_male_1_hi.mp3",
+        "duration_seconds": 57.09,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2_hi",
+        "url": "/audio/pre-gen/gen-2305_male_2_hi.mp3",
+        "duration_seconds": 52.83,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_3_hi",
+        "url": "/audio/pre-gen/gen-2305_male_3_hi.mp3",
+        "duration_seconds": 51.8,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr_hi",
+        "url": "/audio/pre-gen/gen-2305_asmr_hi.mp3",
+        "duration_seconds": 54.27,
+        "provider": "chatterbox"
+      }
+    ]
+  },
+  {
+    "id": "gen-bb82f62942d0",
+    "type": "poem",
+    "lang": "hi",
+    "title": "Samudra ki Chhupi Duniya",
+    "description": "Ek bahadur bachche ki kahani jo samudra ki gahrayi mein jaati hai aur wahaan ke jaadui jeevan ko dekhti hai",
+    "text": "[RHYTHMIC] Ek bahadur bachcha tha, jiska naam Aarav tha, [GENTLE] jo samudra ki kinare rehta tha. [PAUSE] \n[RHYTHMIC] Wahaan par usne paani ke neeche ki duniya ko dekha, [CALM] jahaan machhliyaan aur anya jeev rehte the. [PAUSE] \n[RHYTHMIC] Usne dekha ki kaise paani ki gati aur dheere-dheere badalne wali gati [JOYFUL] samudra ki lahron ko banati hai, [WHISPERING] aur kaise yeh sab kuch ek dusre se juda hua hai. [SLEEPY]",
+    "annotated_text": "[RHYTHMIC] Ek bahadur bachcha tha, jiska naam Aarav tha, [GENTLE] jo samudra ki kinare rehta tha. [PAUSE] \n[RHYTHMIC] Wahaan par usne paani ke neeche ki duniya ko dekha, [CALM] jahaan machhliyaan aur anya jeev rehte the. [PAUSE] \n[RHYTHMIC] Usne dekha ki kaise paani ki gati aur dheere-dheere badalne wali gati [JOYFUL] samudra ki lahron ko banati hai, [WHISPERING] aur kaise yeh sab kuch ek dusre se juda hua hai. [SLEEPY]",
+    "target_age": 10,
+    "age_group": "8-12",
+    "word_count": 60,
+    "theme": "science",
+    "geography": "Ocean/Islands",
+    "lead_gender": "male",
+    "categories": [
+      "Science",
+      "Mythology"
+    ],
+    "morals": [
+      "Bahaduri aur curiosty se hum naye cheezein seekh sakte hain",
+      "Prakriti ki sundarta aur jaadui duniya ko samajhna"
+    ],
+    "cover": "/covers/samudra-duniya.svg",
+    "musicProfile": "enchanted-garden",
+    "music_type": "ambient",
+    "annotated_text_devanagari": "[RHYTHMIC] एक बहादुर बच्चा था, जिसका नाम आरव था, [GENTLE] जो समुद्र की किनारे रहता था. [PAUSE] \n[RHYTHMIC] वहां पर उसने पानी के नीचे की दुनिया को देखा, [CALM] जहां मछलियां और अन्य जीव रहते थे. [PAUSE] \n[RHYTHMIC] उसने देखा कि कैसे पानी की गति और धीरे-धीरे बदलती गति [JOYFUL] समुद्र की लहरों को बनाती है, [WHISPERING] और कैसे यह सब कुछ एक दूसरे से जुड़ा हुआ है. [SLEEPY]",
+    "audio_variants": [
+      {
+        "voice": "female_1_hi",
+        "url": "/audio/pre-gen/gen-bb82_female_1_hi.mp3",
+        "duration_seconds": 31.57,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2_hi",
+        "url": "/audio/pre-gen/gen-bb82_female_2_hi.mp3",
+        "duration_seconds": 41.31,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3_hi",
+        "url": "/audio/pre-gen/gen-bb82_female_3_hi.mp3",
+        "duration_seconds": 42.71,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_1_hi",
+        "url": "/audio/pre-gen/gen-bb82_male_1_hi.mp3",
+        "duration_seconds": 33.78,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2_hi",
+        "url": "/audio/pre-gen/gen-bb82_male_2_hi.mp3",
+        "duration_seconds": 39.65,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_3_hi",
+        "url": "/audio/pre-gen/gen-bb82_male_3_hi.mp3",
+        "duration_seconds": 40.36,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr_hi",
+        "url": "/audio/pre-gen/gen-bb82_asmr_hi.mp3",
+        "duration_seconds": 40.47,
+        "provider": "chatterbox"
+      }
+    ]
+  },
+  {
+    "id": "gen-0027e1835f09",
+    "type": "story",
+    "lang": "hi",
+    "title": "Advait aur Uske Doston ki Bhavishya Yatra",
+    "description": "Ek 10 varsh ka ladka advait apne doston ke saath ek bhavishya yatra par jata hai, jaha unhe nayi cheezein seekhne aur apne doston ke saath masti karne ka mauka milta hai. Is yatra mein ve apne aaspas ke sansar ko samajhne aur apne lakshyon ko praapt karne ke liye kai chunautiyon ka saamna karte hain.",
+    "text": "[GENTLE] Advait ek chhote se ladakh monastery mein rehta tha, jaha usne apne doston ke saath mil kar kai nayi cheezein seekhi. [CALM] Ek din, unke shikshak ne unhein ek nayi yatra ke liye taiyaar kia, jaha ve bhavishya ke baare mein seekhne jaane wale the. [EXCITED] Advait aur uske doston ne apne bag pack kiye aur yatra ke liye taiyaar ho gaye. [CURIOUS] Ve ek bhavishya shahar mein pahunche, jaha unhe kai aisi cheezein mili jo ve pehle kabhi nahin dekhe the. [ADVENTUROUS] Unhone ek robots ke saath milkar ek maze mein se guzarna seekha, jaha unhe apne lakshyon ko praapt karne ke liye kai chunautiyon ka saamna karna pada. [MYSTERIOUS] Phir ve ek bhavishya ke park mein gaye, jaha unhe kai aisi cheezein mili jo us samay nahin thi. [JOYFUL] Advait aur uske doston ne ek saath khelte hue aur hashte hue kai pal bitaaye. [CALM] Lekin phir, unhe ek samasya ka saamna karna pada, jaha unhe apne doston ke saath milkar ek samadhan nikalna tha. [DRAMATIC_PAUSE] Aur tabhi, advait ne apne doston ke saath milkar ek aisa samadhan nikala jo unhe sabko khushi dila sakta tha. [SLEEPY] Ab advait aur uske doston ko apni yatra ke baare mein sochkar neend aa rahi thi, aur ve apne agle din ki yatra ke liye taiyaar ho rahe the.",
+    "annotated_text": "[GENTLE] Advait ek chhote se ladakh monastery mein rehta tha, jaha usne apne doston ke saath mil kar kai nayi cheezein seekhi. [CALM] Ek din, unke shikshak ne unhein ek nayi yatra ke liye taiyaar kia, jaha ve bhavishya ke baare mein seekhne jaane wale the. [EXCITED] Advait aur uske doston ne apne bag pack kiye aur yatra ke liye taiyaar ho gaye. [CURIOUS] Ve ek bhavishya shahar mein pahunche, jaha unhe kai aisi cheezein mili jo ve pehle kabhi nahin dekhe the. [ADVENTUROUS] Unhone ek robots ke saath milkar ek maze mein se guzarna seekha, jaha unhe apne lakshyon ko praapt karne ke liye kai chunautiyon ka saamna karna pada. [MYSTERIOUS] Phir ve ek bhavishya ke park mein gaye, jaha unhe kai aisi cheezein mili jo us samay nahin thi. [JOYFUL] Advait aur uske doston ne ek saath khelte hue aur hashte hue kai pal bitaaye. [CALM] Lekin phir, unhe ek samasya ka saamna karna pada, jaha unhe apne doston ke saath milkar ek samadhan nikalna tha. [DRAMATIC_PAUSE] Aur tabhi, advait ne apne doston ke saath milkar ek aisa samadhan nikala jo unhe sabko khushi dila sakta tha. [SLEEPY] Ab advait aur uske doston ko apni yatra ke baare mein sochkar neend aa rahi thi, aur ve apne agle din ki yatra ke liye taiyaar ho rahe the.",
+    "target_age": 10,
+    "age_group": "8-12",
+    "word_count": 209,
+    "theme": "adventure",
+    "geography": "East Asia",
+    "lead_gender": "male",
+    "categories": [
+      "भविष्य",
+      "दोस्ती",
+      "सीखना"
+    ],
+    "morals": [
+      "साथ मिलकर काम करने से बड़ी समस्याओं का समाधान निकाला जा सकता है",
+      "सीखने और अनुभव प्राप्त करने से जीवन में आगे बढ़ने में मदद मिलती है"
+    ],
+    "cover": "/covers/bhavishya-yatra.svg",
+    "musicProfile": "autumn-forest",
+    "music_type": "ambient",
+    "annotated_text_devanagari": "[GENTLE] अद्वैत एक छोटे से लद्दाख मठ में रहता था, जहाँ उसने अपने दोस्तों के साथ मिलकर काई नई चीजें सीखी. [CALM] एक दिन, उनके शिक्षक ने उन्हें एक नई यात्रा के लिए तैयार किया, जहाँ वे भविष्य के बारे में सीखने जाने वाले थे. [EXCITED] अद्वैत और उसके दोस्तों ने अपने बैग पैक किए और यात्रा के लिए तैयार हो गए. [CURIOUS] वे एक भविष्य के शहर में पहुँचे, जहाँ उन्हें काई ऐसी चीजें मिली जो वे पहले कभी नहीं देखे थे. [ADVENTUROUS] उन्होंने एक रोबोट्स के साथ मिलकर एक मेज़ में से गुजरना सीखा, जहाँ उन्हें अपने लक्ष्यों को प्राप्त करने के लिए काई चुनौतियों का सामना करना पड़ा. [MYSTERIOUS] फिर वे एक भविष्य के पार्क में गए, जहाँ उन्हें काई ऐसी चीजें मिली जो उस समय नहीं थी. [JOYFUL] अद्वैत और उसके दोस्तों ने एक साथ खेलते हुए और हँसते हुए काई पल बिताए. [CALM] लेकिन फिर, उन्हें एक समस्या का सामना करना पड़ा, जहाँ उन्हें अपने दोस्तों के साथ मिलकर एक समाधान निकालना था. [DRAMATIC_PAUSE] और तबhi, अद्वैत ने अपने दोस्तों के साथ मिलकर एक ऐसा समाधान निकाला जो उन्हें सबको खुशी दिला सकता था. [SLEEPY] अब अद्वैत और उसके दोस्तों को अपनी यात्रा के बारे में सोचकर नींद आ रही थी, और वे अपने अगले दिन की यात्रा के लिए तैयार हो रहे थे.",
+    "audio_variants": [
+      {
+        "voice": "female_1_hi",
+        "url": "/audio/pre-gen/gen-0027_female_1_hi.mp3",
+        "duration_seconds": 103.15,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3_hi",
+        "url": "/audio/pre-gen/gen-0027_female_3_hi.mp3",
+        "duration_seconds": 103.0,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_1_hi",
+        "url": "/audio/pre-gen/gen-0027_male_1_hi.mp3",
+        "duration_seconds": 101.48,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2_hi",
+        "url": "/audio/pre-gen/gen-0027_female_2_hi.mp3",
+        "duration_seconds": 108.8,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2_hi",
+        "url": "/audio/pre-gen/gen-0027_male_2_hi.mp3",
+        "duration_seconds": 105.89,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr_hi",
+        "url": "/audio/pre-gen/gen-0027_asmr_hi.mp3",
+        "duration_seconds": 104.36,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_3_hi",
+        "url": "/audio/pre-gen/gen-0027_male_3_hi.mp3",
+        "duration_seconds": 96.69,
+        "provider": "chatterbox"
+      }
+    ]
+  }
+]
