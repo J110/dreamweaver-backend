@@ -5451,5 +5451,174 @@
         }
       ]
     }
+  },
+  {
+    "id": "gen-586908c26fc2",
+    "type": "story",
+    "lang": "en",
+    "title": "Pina and the Whispering Lighthouse",
+    "cover": "/covers/default.svg",
+    "description": "A curious girl follows a trail of seashells to an old lighthouse, where she discovers a lantern and a letter from her great-grandmother.",
+    "text": "Pina pressed her nose against the window of her grandmother's cottage and stared at the old lighthouse perched on the cliff. Its light hadn't worked in years, but tonight, something flickered behind the glass.\n\n\"Abuela, did you see that?\" Pina whispered. But her grandmother was already asleep in her rocking chair, a book open on her lap.\n\nPina pulled on her boots and stepped into the salty night air. The path to the lighthouse was lined with smooth stones that glowed faintly under the moon. She noticed something odd. Every third stone had a tiny seashell placed on top of it, like someone was leaving a trail.\n\nShe followed the shells up the winding cliff path, counting as she went. Twelve shells led her to the lighthouse door, which was slightly open. Inside, the spiral staircase smelled of old wood and sea salt.\n\nAt the top, Pina found a small room with windows all around. On the floor sat an old brass lantern, polished until it gleamed. Beside it lay a folded note that read, \"For the one curious enough to follow the shells. This lantern belonged to your great-grandmother. She was the last lighthouse keeper. Light it when you need courage.\"\n\nPina smiled and held the lantern close. Through the windows, she could see the whole coastline, the fishing boats bobbing gently, the stars reflected in the calm sea.\n\nShe lit the lantern with a match from the shelf. A warm golden light filled the room, and for a moment, she felt as though her great-grandmother was standing right beside her.\n\nPina carried the lantern carefully back down the spiral stairs and along the moonlit path. When she reached the cottage, she placed it on the windowsill where it glowed softly through the night.\n\nShe climbed into bed and pulled the covers up to her chin. Outside, the waves whispered against the cliffs, and the lantern's light kept watch over her dreams.",
+    "annotated_text": "[GENTLE]Pina pressed her nose against the window of her grandmother's cottage and stared at the old lighthouse perched on the cliff. Its light hadn't worked in years, but tonight, something flickered behind the glass.\n\n[CALM]\"Abuela, did you see that?\" Pina whispered. But her grandmother was already asleep in her rocking chair, a book open on her lap.\n\n[CURIOUS]Pina pulled on her boots and stepped into the salty night air. The path to the lighthouse was lined with smooth stones that glowed faintly under the moon. She noticed something odd. Every third stone had a tiny seashell placed on top of it, like someone was leaving a trail.\n\n[MYSTERIOUS]She followed the shells up the winding cliff path, counting as she went. Twelve shells led her to the lighthouse door, which was slightly open. Inside, the spiral staircase smelled of old wood and sea salt.\n\n[DRAMATIC_PAUSE][CURIOUS]At the top, Pina found a small room with windows all around. On the floor sat an old brass lantern, polished until it gleamed. Beside it lay a folded note that read, \"For the one curious enough to follow the shells. This lantern belonged to your great-grandmother. She was the last lighthouse keeper. Light it when you need courage.\"\n\n[JOYFUL]Pina smiled and held the lantern close. Through the windows, she could see the whole coastline, the fishing boats bobbing gently, the stars reflected in the calm sea.\n\n[GENTLE]She lit the lantern with a match from the shelf. A warm golden light filled the room, and for a moment, she felt as though her great-grandmother was standing right beside her.\n\n[CALM]Pina carried the lantern carefully back down the spiral stairs and along the moonlit path. When she reached the cottage, she placed it on the windowsill where it glowed softly through the night.\n\n[SLEEPY]She climbed into bed and pulled the covers up to her chin. Outside, the waves whispered against the cliffs, and the lantern's light kept watch over her dreams.",
+    "target_age": 7,
+    "age_min": 6,
+    "age_max": 8,
+    "duration_seconds": 0,
+    "author_id": "system",
+    "created_at": "2026-02-17T18:32:38.275987",
+    "updated_at": "2026-02-17T18:32:38.276011",
+    "audio_url": null,
+    "album_art_url": null,
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "categories": [
+      "Mystery",
+      "Family",
+      "Discovery"
+    ],
+    "theme": "mystery",
+    "musicProfile": "moonlit-meadow",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "voice_id": null,
+    "music_type": "ambient",
+    "word_count": 323,
+    "morals": [
+      "Curiosity leads to wonderful discoveries",
+      "Family connections endure across generations"
+    ],
+    "has_qa": false,
+    "has_games": false,
+    "audio_variants": [
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-5869_female_3.mp3",
+        "duration_seconds": 134.74,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_1",
+        "url": "/audio/pre-gen/gen-5869_male_1.mp3",
+        "duration_seconds": 131.79,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-5869_male_2.mp3",
+        "duration_seconds": 126.42,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-5869_female_2.mp3",
+        "duration_seconds": 152.49,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-5869_female_1.mp3",
+        "duration_seconds": 167.13,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_3",
+        "url": "/audio/pre-gen/gen-5869_male_3.mp3",
+        "duration_seconds": 135.37,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-5869_asmr.mp3",
+        "duration_seconds": 178.21,
+        "provider": "chatterbox"
+      }
+    ]
+  },
+  {
+    "id": "gen-1a5a91def9ae",
+    "type": "poem",
+    "lang": "en",
+    "title": "Pina's Blanket of Stars",
+    "cover": "/covers/default.svg",
+    "description": "A warm bedtime poem about a girl and her mother sharing a quiet moment beneath the stars.",
+    "text": "Pina sits upon her bed,\na blanket pulled above her head.\nHer mother's voice is warm and low,\nlike candlelight with golden glow.\n\n\"Tell me, Mama, what do stars do\nwhen little girls like me sleep through?\"\nHer mother smiles and tucks her tight,\n\"They weave your dreams all through the night.\"\n\n\"They spin the clouds to pillows soft,\nand hang the moon up high aloft.\nThey hum a tune you cannot hear,\na lullaby for those held dear.\"\n\nPina peeks out from the sheet\nand wiggles her pajama feet.\n\"Do stars know that I love them too?\"\n\"Of course, my darling. Yes, they do.\"\n\nHer mother kisses Pina's cheek,\nthe floorboards give a gentle creak.\n\"Goodnight, my brave and curious one,\ntomorrow brings another sun.\"\n\nPina yawns and shuts her eyes,\nbeneath a blanket made of skies.\nThe stars above begin to gleam,\nand carry Pina to her dream.",
+    "annotated_text": "[RHYTHMIC][GENTLE]Pina sits upon her bed,\na blanket pulled above her head.\nHer mother's voice is warm and low,\nlike candlelight with golden glow.\n\n[PAUSE]\n\n[RHYTHMIC][CURIOUS]\"Tell me, Mama, what do stars do\nwhen little girls like me sleep through?\"\nHer mother smiles and tucks her tight,\n\"They weave your dreams all through the night.\"\n\n[PAUSE]\n\n[RHYTHMIC][GENTLE]\"They spin the clouds to pillows soft,\nand hang the moon up high aloft.\nThey hum a tune you cannot hear,\na lullaby for those held dear.\"\n\n[PAUSE]\n\n[RHYTHMIC][JOYFUL]Pina peeks out from the sheet\nand wiggles her pajama feet.\n\"Do stars know that I love them too?\"\n\"Of course, my darling. Yes, they do.\"\n\n[PAUSE]\n\n[RHYTHMIC][CALM]Her mother kisses Pina's cheek,\nthe floorboards give a gentle creak.\n\"Goodnight, my brave and curious one,\ntomorrow brings another sun.\"\n\n[PAUSE]\n\n[RHYTHMIC][SLEEPY]Pina yawns and shuts her eyes,\nbeneath a blanket made of skies.\nThe stars above begin to gleam,\nand carry Pina to her dream.",
+    "target_age": 7,
+    "age_min": 6,
+    "age_max": 8,
+    "duration_seconds": 0,
+    "author_id": "system",
+    "created_at": "2026-02-17T18:32:38.276211",
+    "updated_at": "2026-02-17T18:32:38.276228",
+    "audio_url": null,
+    "album_art_url": null,
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "categories": [
+      "Family",
+      "Bedtime",
+      "Love"
+    ],
+    "theme": "family",
+    "musicProfile": "dreamy-clouds",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "voice_id": null,
+    "music_type": "ambient",
+    "word_count": 150,
+    "style": "rhyming",
+    "morals": [
+      "Family love is the warmest blanket of all",
+      "The people who love us are always close, even in our dreams"
+    ],
+    "has_qa": false,
+    "has_games": false,
+    "audio_variants": [
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-1a5a_male_2.mp3",
+        "duration_seconds": 73.67,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-1a5a_female_3.mp3",
+        "duration_seconds": 75.57,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-1a5a_female_2.mp3",
+        "duration_seconds": 83.42,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-1a5a_female_1.mp3",
+        "duration_seconds": 94.42,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_1",
+        "url": "/audio/pre-gen/gen-1a5a_male_1.mp3",
+        "duration_seconds": 75.7,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_3",
+        "url": "/audio/pre-gen/gen-1a5a_male_3.mp3",
+        "duration_seconds": 76.17,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-1a5a_asmr.mp3",
+        "duration_seconds": 83.59,
+        "provider": "chatterbox"
+      }
+    ]
   }
 ]

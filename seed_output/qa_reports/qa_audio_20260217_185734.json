@@ -1,0 +1,185 @@
+{
+  "generated_at": "2026-02-17T18:57:34.139146",
+  "summary": {
+    "total": 7,
+    "passed": 4,
+    "warned": 3,
+    "failed": 0,
+    "avg_fidelity": 0.9033,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-586908c26fc2",
+      "title": "Pina and the Whispering Lighthouse",
+      "median_duration": 135.37,
+      "variants": [
+        {
+          "voice": "female_3",
+          "duration_seconds": 134.74,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9992,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.5,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.9997,
+            "word_overlap": 1.0,
+            "word_order_score": 0.997,
+            "combined": 0.9992
+          }
+        },
+        {
+          "voice": "male_1",
+          "duration_seconds": 131.79,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 1.0,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 2.6,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 1.0,
+            "word_overlap": 1.0,
+            "word_order_score": 1.0,
+            "combined": 1.0
+          }
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 126.42,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9986,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 6.6,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.9997,
+            "word_overlap": 0.9944,
+            "word_order_score": 0.997,
+            "combined": 0.9986
+          }
+        },
+        {
+          "voice": "female_2",
+          "duration_seconds": 152.49,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 1.0,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 12.6,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 1.0,
+            "word_overlap": 1.0,
+            "word_order_score": 1.0,
+            "combined": 1.0
+          }
+        },
+        {
+          "voice": "female_1",
+          "duration_seconds": 167.13,
+          "verdict": "WARN",
+          "reasons": [
+            "duration_outlier (23.5% off)"
+          ],
+          "text_fidelity_combined": 1.0,
+          "quality_average": 5.0,
+          "duration_outlier": true,
+          "duration_deviation_pct": 23.5,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 1.0,
+            "word_overlap": 1.0,
+            "word_order_score": 1.0,
+            "combined": 1.0
+          },
+          "transcript_snippet": "Pina pressed her nose against the window of her grandmother's cottage and stared at the old lighthouse perched on the cliff. Its light hadn't worked in years, but tonight something flickered behind the glass. Abuela, did you see that? Pina whispered. But her grandmother was already asleep in her roc"
+        },
+        {
+          "voice": "male_3",
+          "duration_seconds": 135.37,
+          "verdict": "WARN",
+          "reasons": [
+            "marginal_fidelity (0.65)"
+          ],
+          "text_fidelity_combined": 0.6546,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.311,
+            "ratio": 0.9989,
+            "word_overlap": 1.0,
+            "word_order_score": 0.997,
+            "combined": 0.6546
+          },
+          "transcript_snippet": "Pina pressed her nose against the window of her grandmother's cottage and stared at the old lighthouse perched on the cliff. Its light hadn't worked in years, but tonight something flickered behind a glass. Abuela, did you see that? Pina whispered. But her grandmother was already asleep in her rocki"
+        },
+        {
+          "voice": "asmr",
+          "duration_seconds": 178.21,
+          "verdict": "WARN",
+          "reasons": [
+            "duration_outlier (31.6% off)",
+            "marginal_fidelity (0.67)"
+          ],
+          "text_fidelity_combined": 0.6709,
+          "quality_average": 5.0,
+          "duration_outlier": true,
+          "duration_deviation_pct": 31.6,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.3689,
+            "ratio": 0.9863,
+            "word_overlap": 0.9617,
+            "word_order_score": 0.9695,
+            "combined": 0.6709
+          },
+          "transcript_snippet": "Pina pressed her nose against the window of her grandmother's cottage and stared at the old lighthouse perched on the cliff. Its light hadn't worked in years, but tonight, something flickered behind the glass. Abuela, did you see that? Pina whispered. But her grandmother was already asleep in her ro"
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Pina and the Whispering Lighthouse",
+      "story_id": "gen-586908c26fc2",
+      "voice": "female_1",
+      "verdict": "WARN",
+      "reasons": [
+        "duration_outlier (23.5% off)"
+      ],
+      "fidelity": 1.0,
+      "quality_avg": 5.0
+    },
+    {
+      "story": "Pina and the Whispering Lighthouse",
+      "story_id": "gen-586908c26fc2",
+      "voice": "male_3",
+      "verdict": "WARN",
+      "reasons": [
+        "marginal_fidelity (0.65)"
+      ],
+      "fidelity": 0.6546,
+      "quality_avg": 5.0
+    },
+    {
+      "story": "Pina and the Whispering Lighthouse",
+      "story_id": "gen-586908c26fc2",
+      "voice": "asmr",
+      "verdict": "WARN",
+      "reasons": [
+        "duration_outlier (31.6% off)",
+        "marginal_fidelity (0.67)"
+      ],
+      "fidelity": 0.6709,
+      "quality_avg": 5.0
+    }
+  ]
+}
