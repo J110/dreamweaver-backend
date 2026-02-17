@@ -1,14 +1,17 @@
 """Pre-generate audio for all stories using Chatterbox TTS via Modal.
 
-Generates 3 variants per story (luna/whisper/atlas for EN, luna_hi/whisper_hi/atlas_hi for HI).
+Generates 7 variants per story (female_1/2/3, male_1/2/3, asmr per language).
+Supports PARALLEL processing for fast generation across Modal GPU containers.
 Requires ffmpeg (brew install ffmpeg) for audio processing.
 
 Usage:
-    python3 scripts/generate_audio.py                     # Generate all 48
-    python3 scripts/generate_audio.py --story-id <id>     # Single story (3 variants)
-    python3 scripts/generate_audio.py --voice luna         # Single voice across all stories
+    python3 scripts/generate_audio.py                     # Generate all
+    python3 scripts/generate_audio.py --story-id <id>     # Single story (7 variants)
+    python3 scripts/generate_audio.py --voice female_1    # Single voice across all stories
+    python3 scripts/generate_audio.py --lang hi            # Single language
     python3 scripts/generate_audio.py --dry-run            # Show plan only
     python3 scripts/generate_audio.py --force              # Regenerate existing files
+    python3 scripts/generate_audio.py --workers 5          # Parallel workers (default 5)
 """
 
 import argparse
@@ -19,7 +22,9 @@ import logging
 import os
 import re
 import sys
+import threading
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Dict, List, Optional
 from urllib.parse import urlencode
@@ -86,8 +91,8 @@ _MARKER_RE = re.compile(
 # These are high-quality human voice samples converted to 24kHz WAV
 # Hindi voices have _hi suffix (separate Hindi voice recordings)
 VOICE_MAP = {
-    "en": ["female_1", "female_2", "male_1"],
-    "hi": ["female_1_hi", "female_2_hi", "male_1_hi"],
+    "en": ["female_1", "female_2", "female_3", "male_1", "male_2", "male_3", "asmr"],
+    "hi": ["female_1_hi", "female_2_hi", "female_3_hi", "male_1_hi", "male_2_hi", "male_3_hi", "asmr_hi"],
 }
 
 # ── Logging ──────────────────────────────────────────────────────────────
@@ -179,6 +184,7 @@ def generate_tts_for_segment(
     exaggeration: float,
     cfg_weight: float,
     lang: str = "en",
+    speed: float = 1.0,
     max_retries: int = 3,
 ) -> Optional[bytes]:
     """Call Chatterbox Modal endpoint and return audio bytes (WAV for lossless quality)."""
@@ -188,6 +194,7 @@ def generate_tts_for_segment(
         "lang": lang,
         "exaggeration": exaggeration,
         "cfg_weight": cfg_weight,
+        "speed": speed,
         "format": "wav",  # Request lossless WAV — we do MP3 conversion ourselves
     }
     url = f"{CHATTERBOX_URL}?{urlencode(params)}"
@@ -252,6 +259,7 @@ def generate_story_variant(
     voice: str,
     output_path: Path,
     force: bool = False,
+    speed: float = 1.0,
 ) -> Optional[dict]:
     """Generate a single audio variant for a story. Outputs MP3."""
     story_id = story["id"]
@@ -269,7 +277,12 @@ def generate_story_variant(
             "provider": "chatterbox",
         }
 
-    text = story.get("annotated_text", story.get("text", ""))
+    # For Hindi stories, prefer Devanagari text (better TTS pronunciation)
+    if lang == "hi" and story.get("annotated_text_devanagari"):
+        text = story["annotated_text_devanagari"]
+        logger.info("  Using Devanagari text for Hindi story")
+    else:
+        text = story.get("annotated_text", story.get("text", ""))
     if not text:
         logger.error("  No text for story %s", story_id)
         return None
@@ -298,6 +311,7 @@ def generate_story_variant(
                     exaggeration=seg["exaggeration"],
                     cfg_weight=seg["cfg_weight"],
                     lang=lang,
+                    speed=speed,
                 )
                 if audio_bytes:
                     try:
@@ -371,11 +385,14 @@ def generate_story_variant(
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Pre-generate story audio via Chatterbox")
+    parser = argparse.ArgumentParser(description="Pre-generate story audio via Chatterbox (parallel)")
     parser.add_argument("--story-id", help="Generate for a specific story ID only")
     parser.add_argument("--voice", help="Generate for a specific voice only")
     parser.add_argument("--dry-run", action="store_true", help="Show plan without generating")
     parser.add_argument("--force", action="store_true", help="Regenerate existing files")
+    parser.add_argument("--lang", help="Generate for a specific language only (en/hi)")
+    parser.add_argument("--speed", type=float, default=1.0, help="Playback speed 0.5-2.0 (0.8 for bedtime)")
+    parser.add_argument("--workers", type=int, default=5, help="Parallel workers (default 5)")
     args = parser.parse_args()
 
     # Ensure ffmpeg is available
@@ -400,6 +417,13 @@ def main():
             logger.error("Story not found: %s", args.story_id)
             sys.exit(1)
 
+    if args.lang:
+        stories = [s for s in stories if s.get("lang", "en") == args.lang]
+        if not stories:
+            logger.error("No stories found for language: %s", args.lang)
+            sys.exit(1)
+        logger.info("Filtered to %d %s stories", len(stories), args.lang)
+
     # Build plan
     plan = []
     for story in stories:
@@ -419,12 +443,18 @@ def main():
                 "exists": output_path.exists(),
             })
 
+    # Filter plan based on force flag
+    if not args.force:
+        actionable = [p for p in plan if not p["exists"]]
+    else:
+        actionable = plan
+
     logger.info("\n=== Generation Plan ===")
     logger.info("Total variants: %d", len(plan))
     existing = sum(1 for p in plan if p["exists"])
     new_count = len(plan) - existing
-    logger.info("Existing: %d, New: %d", existing, new_count)
-    logger.info("Will skip existing files (use --force to regenerate)")
+    logger.info("Existing: %d, New/Regen: %d", existing, len(actionable))
+    logger.info("Parallel workers: %d", args.workers)
 
     for item in plan:
         status = "EXISTS" if item["exists"] else "NEW"
@@ -439,15 +469,20 @@ def main():
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-    client = httpx.Client(timeout=180.0)
-    if not warm_up_chatterbox(client):
+    # Warm up with a single client first
+    warmup_client = httpx.Client(timeout=180.0)
+    if not warm_up_chatterbox(warmup_client):
         logger.error("Failed to warm up Chatterbox. Aborting.")
         sys.exit(1)
+    warmup_client.close()
 
+    # ── Thread-safe state ──
     results = {}
-    success = failed = skipped = 0
-
+    results_lock = threading.Lock()
+    counters = {"success": 0, "failed": 0, "skipped": 0}
+    counters_lock = threading.Lock()
     lock_path = CONTENT_PATH.with_suffix(".lock")
+    save_counter = {"count": 0}
 
     def save_content_json(new_results: dict):
         """Incrementally save audio_variants to content.json (file-locked for concurrency)."""
@@ -481,40 +516,83 @@ def main():
             finally:
                 fcntl.flock(lockf, fcntl.LOCK_UN)
 
-    for i, item in enumerate(plan):
+    def process_item(item, item_idx, total):
+        """Process a single story/voice variant (runs in thread pool)."""
         story = item["story"]
         voice = item["voice"]
         output_path = item["output_path"]
 
-        logger.info("\n[%d/%d] %s / %s", i + 1, len(plan), story["title"], voice)
+        # Each thread gets its own HTTP client for thread safety
+        thread_client = httpx.Client(timeout=180.0)
+        try:
+            logger.info("[%d/%d] %s / %s", item_idx + 1, total, story["title"], voice)
 
-        variant = generate_story_variant(client, story, voice, output_path, force=args.force)
+            variant = generate_story_variant(
+                thread_client, story, voice, output_path,
+                force=args.force, speed=args.speed,
+            )
 
-        if variant:
-            sid = story["id"]
-            results.setdefault(sid, []).append(variant)
-            if item["exists"] and not args.force:
-                skipped += 1
+            if variant:
+                sid = story["id"]
+                with results_lock:
+                    results.setdefault(sid, []).append(variant)
+                    current_results = dict(results)  # snapshot for saving
+
+                with counters_lock:
+                    if item["exists"] and not args.force:
+                        counters["skipped"] += 1
+                    else:
+                        counters["success"] += 1
+                    save_counter["count"] += 1
+
+                # Save content.json every 5 completions (crash-safe + not too frequent)
+                if save_counter["count"] % 5 == 0:
+                    try:
+                        n = save_content_json(current_results)
+                        logger.info("  💾 Saved content.json (%d stories)", n)
+                    except Exception as e:
+                        logger.warning("  content.json save failed: %s", e)
+
+                return True
             else:
-                success += 1
+                with counters_lock:
+                    counters["failed"] += 1
+                return False
+        finally:
+            thread_client.close()
 
-            # Save content.json after each successful variant (crash-safe)
+    # ── Parallel execution ──
+    logger.info("\n🚀 Starting parallel generation with %d workers...\n", args.workers)
+    start_time = time.time()
+
+    with ThreadPoolExecutor(max_workers=args.workers) as executor:
+        futures = {}
+        for idx, item in enumerate(actionable):
+            future = executor.submit(process_item, item, idx, len(actionable))
+            futures[future] = item
+
+        for future in as_completed(futures):
+            item = futures[future]
             try:
-                save_content_json(results)
-                logger.info("  Saved content.json (%d stories updated)", len(results))
+                future.result()
             except Exception as e:
-                logger.warning("  content.json save failed (will retry): %s", e)
-        else:
-            failed += 1
+                logger.error("Worker error for %s/%s: %s",
+                           item["story"]["title"], item["voice"], e)
+                with counters_lock:
+                    counters["failed"] += 1
 
-    client.close()
+    elapsed = time.time() - start_time
 
     # Final save of content.json
     logger.info("\n=== Final content.json update ===")
-    updated = save_content_json(results)
+    with results_lock:
+        final_results = dict(results)
+    updated = save_content_json(final_results)
     logger.info("Updated %d stories", updated)
     logger.info("\n=== Summary ===")
-    logger.info("Generated: %d, Skipped: %d, Failed: %d", success, skipped, failed)
+    logger.info("Generated: %d, Skipped: %d, Failed: %d",
+               counters["success"], counters["skipped"], counters["failed"])
+    logger.info("Time: %.0f seconds (%.1f min)", elapsed, elapsed / 60)
     logger.info("Total MP3 files: %d", len(list(OUTPUT_DIR.glob("*.mp3"))))
 
 
