@@ -5534,7 +5534,58 @@
         "duration_seconds": 178.21,
         "provider": "chatterbox"
       }
-    ]
+    ],
+    "musicParams": {
+      "key": "A",
+      "chordNotes": [
+        110.0,
+        138.59,
+        164.81,
+        220.0
+      ],
+      "padType": "fm",
+      "padGain": 0.0406,
+      "padFilter": 852,
+      "padLfo": 0.0824,
+      "noiseType": "pink",
+      "noiseGain": 0.0122,
+      "droneFreq": 55.0,
+      "droneGain": 0.0316,
+      "melodyNotes": [
+        220.0,
+        277.18,
+        329.62,
+        293.66
+      ],
+      "melodyInterval": 3329,
+      "melodyGain": 0.0177,
+      "bassNotes": [
+        55.0,
+        82.41,
+        69.3
+      ],
+      "bassInterval": 6434,
+      "counterNotes": [
+        346.48,
+        412.02,
+        275.0
+      ],
+      "counterInterval": 4778,
+      "events": [
+        {
+          "type": "sparkle",
+          "interval": 8886
+        },
+        {
+          "type": "windGust",
+          "interval": 12932
+        },
+        {
+          "type": "cricket",
+          "interval": 16162
+        }
+      ]
+    }
   },
   {
     "id": "gen-1a5a91def9ae",
@@ -5619,6 +5670,57 @@
         "duration_seconds": 83.59,
         "provider": "chatterbox"
       }
-    ]
+    ],
+    "musicParams": {
+      "key": "A",
+      "chordNotes": [
+        110.0,
+        138.59,
+        164.81,
+        220.0
+      ],
+      "padType": "simple",
+      "padGain": 0.0406,
+      "padFilter": 663,
+      "padLfo": 0.0824,
+      "noiseType": "pink",
+      "noiseGain": 0.0122,
+      "droneFreq": 55.0,
+      "droneGain": 0.0316,
+      "melodyNotes": [
+        220.0,
+        277.18,
+        329.62,
+        293.66
+      ],
+      "melodyInterval": 3329,
+      "melodyGain": 0.0177,
+      "bassNotes": [
+        55.0,
+        82.41,
+        69.3
+      ],
+      "bassInterval": 5939,
+      "counterNotes": [
+        346.48,
+        412.02,
+        275.0
+      ],
+      "counterInterval": 4778,
+      "events": [
+        {
+          "type": "heartbeat",
+          "interval": 8886
+        },
+        {
+          "type": "chimes",
+          "interval": 12932
+        },
+        {
+          "type": "sparkle",
+          "interval": 17958
+        }
+      ]
+    }
   }
 ]
