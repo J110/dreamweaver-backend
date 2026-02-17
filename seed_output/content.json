@@ -80,7 +80,62 @@
         "duration_seconds": 73.53,
         "provider": "chatterbox"
       }
-    ]
+    ],
+    "musicParams": {
+      "key": "F",
+      "chordNotes": [
+        174.61,
+        220.0,
+        261.63,
+        349.22
+      ],
+      "padType": "resonant",
+      "padGain": 0.05,
+      "padFilter": 800,
+      "padLfo": 0.08,
+      "noiseType": "pink",
+      "noiseGain": 0.01,
+      "droneFreq": 87.31,
+      "droneGain": 0.03,
+      "melodyNotes": [
+        349.22,
+        440.0,
+        523.26,
+        466.16
+      ],
+      "melodyInterval": 4000,
+      "melodyGain": 0.018,
+      "bassNotes": [
+        87.31,
+        130.81,
+        110.0
+      ],
+      "bassInterval": 6000,
+      "counterNotes": [
+        550.0,
+        654.08,
+        436.53
+      ],
+      "counterInterval": 5000,
+      "events": [
+        {
+          "type": "starTwinkle",
+          "interval": 12000
+        },
+        {
+          "type": "chimes",
+          "interval": 18000
+        },
+        {
+          "type": "waterDrop",
+          "interval": 22000
+        },
+        {
+          "type": "leaves",
+          "interval": 15000
+        }
+      ]
+    }
   },
   {
     "id": "8e516449-aa48-423e-8b53-db5591ce9bed",
@@ -164,7 +219,62 @@
         "duration_seconds": 105.02,
         "provider": "chatterbox"
       }
-    ]
+    ],
+    "musicParams": {
+      "key": "G",
+      "chordNotes": [
+        98.0,
+        123.47,
+        146.83,
+        196.0
+      ],
+      "padType": "resonant",
+      "padGain": 0.045,
+      "padFilter": 800,
+      "padLfo": 0.07,
+      "noiseType": "brown",
+      "noiseGain": 0.01,
+      "droneFreq": 49.0,
+      "droneGain": 0.03,
+      "melodyNotes": [
+        196.0,
+        246.94,
+        293.66,
+        261.62
+      ],
+      "melodyInterval": 4000,
+      "melodyGain": 0.018,
+      "bassNotes": [
+        49.0,
+        73.42,
+        61.73
+      ],
+      "bassInterval": 6000,
+      "counterNotes": [
+        308.68,
+        367.08,
+        245.0
+      ],
+      "counterInterval": 5000,
+      "events": [
+        {
+          "type": "starTwinkle",
+          "interval": 12000
+        },
+        {
+          "type": "cricket",
+          "interval": 8000
+        },
+        {
+          "type": "leaves",
+          "interval": 15000
+        },
+        {
+          "type": "sparkle",
+          "interval": 20000
+        }
+      ]
+    }
   },
   {
     "id": "30dec3e8-5354-41ff-aadf-90def8a35df4",
@@ -247,7 +357,62 @@
         "duration_seconds": 91.84,
         "provider": "chatterbox"
       }
-    ]
+    ],
+    "musicParams": {
+      "key": "E",
+      "chordNotes": [
+        164.81,
+        207.65,
+        246.94,
+        329.62
+      ],
+      "padType": "resonant",
+      "padGain": 0.045,
+      "padFilter": 800,
+      "padLfo": 0.07,
+      "noiseType": "pink",
+      "noiseGain": 0.01,
+      "droneFreq": 82.41,
+      "droneGain": 0.03,
+      "melodyNotes": [
+        329.62,
+        415.3,
+        493.88,
+        440.0
+      ],
+      "melodyInterval": 4000,
+      "melodyGain": 0.018,
+      "bassNotes": [
+        82.41,
+        123.47,
+        103.83
+      ],
+      "bassInterval": 6000,
+      "counterNotes": [
+        519.12,
+        617.35,
+        412.02
+      ],
+      "counterInterval": 5000,
+      "events": [
+        {
+          "type": "starTwinkle",
+          "interval": 12000
+        },
+        {
+          "type": "cricket",
+          "interval": 18000
+        },
+        {
+          "type": "chimes",
+          "interval": 22000
+        },
+        {
+          "type": "leaves",
+          "interval": 15000
+        }
+      ]
+    }
   },
   {
     "id": "d73e9530-b77e-4372-9ad1-070f0fa108e3",
@@ -330,7 +495,62 @@
         "duration_seconds": 119.75,
         "provider": "chatterbox"
       }
-    ]
+    ],
+    "musicParams": {
+      "key": "Dm",
+      "chordNotes": [
+        146.83,
+        174.61,
+        220.0,
+        293.66
+      ],
+      "padType": "resonant",
+      "padGain": 0.045,
+      "padFilter": 800,
+      "padLfo": 0.08,
+      "noiseType": "brown",
+      "noiseGain": 0.012,
+      "droneFreq": 73.42,
+      "droneGain": 0.03,
+      "melodyNotes": [
+        293.66,
+        349.22,
+        440.0,
+        392.0
+      ],
+      "melodyInterval": 3500,
+      "melodyGain": 0.018,
+      "bassNotes": [
+        73.42,
+        110.0,
+        87.31
+      ],
+      "bassInterval": 6000,
+      "counterNotes": [
+        436.53,
+        550.0,
+        367.08
+      ],
+      "counterInterval": 4500,
+      "events": [
+        {
+          "type": "starTwinkle",
+          "interval": 12000
+        },
+        {
+          "type": "radarPing",
+          "interval": 20000
+        },
+        {
+          "type": "chimes",
+          "interval": 15000
+        },
+        {
+          "type": "waveCycle",
+          "interval": 25000
+        }
+      ]
+    }
   },
   {
     "id": "9fba7605-7ffa-488d-93bc-9cca2881cf97",
@@ -413,7 +633,62 @@
         "duration_seconds": 127.66,
         "provider": "chatterbox"
       }
-    ]
+    ],
+    "musicParams": {
+      "key": "Am",
+      "chordNotes": [
+        110.0,
+        130.81,
+        164.81,
+        220.0
+      ],
+      "padType": "resonant",
+      "padGain": 0.05,
+      "padFilter": 800,
+      "padLfo": 0.08,
+      "noiseType": "pink",
+      "noiseGain": 0.01,
+      "droneFreq": 55.0,
+      "droneGain": 0.03,
+      "melodyNotes": [
+        220.0,
+        261.62,
+        329.62,
+        293.66
+      ],
+      "melodyInterval": 3500,
+      "melodyGain": 0.018,
+      "bassNotes": [
+        55.0,
+        82.41,
+        65.41
+      ],
+      "bassInterval": 6000,
+      "counterNotes": [
+        327.02,
+        412.02,
+        275.0
+      ],
+      "counterInterval": 4500,
+      "events": [
+        {
+          "type": "chimes",
+          "interval": 12000
+        },
+        {
+          "type": "starTwinkle",
+          "interval": 18000
+        },
+        {
+          "type": "leaves",
+          "interval": 22000
+        },
+        {
+          "type": "waterDrop",
+          "interval": 15000
+        }
+      ]
+    }
   },
   {
     "id": "c8796852-6d17-46e0-bcea-7985c4721d1c",
@@ -491,7 +766,62 @@
         "duration_seconds": 44.56,
         "provider": "chatterbox"
       }
-    ]
+    ],
+    "musicParams": {
+      "key": "Bb",
+      "chordNotes": [
+        116.54,
+        146.83,
+        174.61,
+        233.08
+      ],
+      "padType": "resonant",
+      "padGain": 0.045,
+      "padFilter": 800,
+      "padLfo": 0.07,
+      "noiseType": "pink",
+      "noiseGain": 0.01,
+      "droneFreq": 58.27,
+      "droneGain": 0.03,
+      "melodyNotes": [
+        233.08,
+        293.66,
+        349.22,
+        311.12
+      ],
+      "melodyInterval": 4000,
+      "melodyGain": 0.018,
+      "bassNotes": [
+        58.27,
+        87.31,
+        73.42
+      ],
+      "bassInterval": 6000,
+      "counterNotes": [
+        367.08,
+        436.53,
+        291.35
+      ],
+      "counterInterval": 5000,
+      "events": [
+        {
+          "type": "starTwinkle",
+          "interval": 12000
+        },
+        {
+          "type": "chimes",
+          "interval": 20000
+        },
+        {
+          "type": "waterDrop",
+          "interval": 15000
+        },
+        {
+          "type": "heartbeat",
+          "interval": 25000
+        }
+      ]
+    }
   },
   {
     "id": "e32eaee0-2c7a-4f65-ace6-1d3a2d3ad5b0",
@@ -569,7 +899,62 @@
         "duration_seconds": 30.03,
         "provider": "chatterbox"
       }
-    ]
+    ],
+    "musicParams": {
+      "key": "Em",
+      "chordNotes": [
+        82.41,
+        98.0,
+        123.47,
+        164.82
+      ],
+      "padType": "resonant",
+      "padGain": 0.045,
+      "padFilter": 800,
+      "padLfo": 0.08,
+      "noiseType": "brown",
+      "noiseGain": 0.01,
+      "droneFreq": 41.2,
+      "droneGain": 0.03,
+      "melodyNotes": [
+        164.82,
+        196.0,
+        246.94,
+        220.0
+      ],
+      "melodyInterval": 4000,
+      "melodyGain": 0.018,
+      "bassNotes": [
+        41.2,
+        61.73,
+        49.0
+      ],
+      "bassInterval": 6000,
+      "counterNotes": [
+        245.0,
+        308.68,
+        206.02
+      ],
+      "counterInterval": 5000,
+      "events": [
+        {
+          "type": "owl",
+          "interval": 18000
+        },
+        {
+          "type": "cricket",
+          "interval": 12000
+        },
+        {
+          "type": "leaves",
+          "interval": 22000
+        },
+        {
+          "type": "chimes",
+          "interval": 25000
+        }
+      ]
+    }
   },
   {
     "id": "a3945b7b-6b20-4a39-a051-b25dfaec1d8e",
@@ -652,7 +1037,62 @@
         "duration_seconds": 45.8,
         "provider": "chatterbox"
       }
-    ]
+    ],
+    "musicParams": {
+      "key": "Cm",
+      "chordNotes": [
+        130.81,
+        155.56,
+        196.0,
+        261.62
+      ],
+      "padType": "resonant",
+      "padGain": 0.05,
+      "padFilter": 800,
+      "padLfo": 0.08,
+      "noiseType": "brown",
+      "noiseGain": 0.015,
+      "droneFreq": 65.41,
+      "droneGain": 0.03,
+      "melodyNotes": [
+        261.62,
+        311.12,
+        392.0,
+        349.22
+      ],
+      "melodyInterval": 4000,
+      "melodyGain": 0.02,
+      "bassNotes": [
+        65.41,
+        98.0,
+        77.78
+      ],
+      "bassInterval": 6000,
+      "counterNotes": [
+        388.9,
+        490.0,
+        327.02
+      ],
+      "counterInterval": 5000,
+      "events": [
+        {
+          "type": "waveCycle",
+          "interval": 12000
+        },
+        {
+          "type": "starTwinkle",
+          "interval": 18000
+        },
+        {
+          "type": "waterDrop",
+          "interval": 20000
+        },
+        {
+          "type": "whaleCall",
+          "interval": 25000
+        }
+      ]
+    }
   },
   {
     "id": "hi-neendwala-badal",
@@ -736,7 +1176,62 @@
         "provider": "chatterbox"
       }
     ],
-    "annotated_text_devanagari": "[GENTLE]छत के ऊपर आसमान में, एक छोटा सा मुलायम बादल था जिसका नाम था निम्बस।[PAUSE] निम्बस का काम दुनिया का सबसे खास काम था — तारों से मीठे सपने इकट्ठा करना और सोते हुए बच्चों पे छिड़कना।\n\n[CALM]आज रात तारे खूब चमक रहे थे।[PAUSE] निम्बस ने अपने नर्म हाथों से एक सपना पकड़ा — उड़ने वाले घोड़े का, एक और कैंडी के बाग का,[PAUSE] और एक प्यारे ड्रैगन का जो गरम झप्पी देना चाहता था।\n\n[SLEEPY]जब निम्बस तुम्हारे घर के ऊपर से गुज़रा, उसने अपना फूला हुआ बदन हिलाया,[PAUSE] और सपने छोटी छोटी बर्फ की फुहार की तरह नीचे आये।[PAUSE] वो तुम्हारे तकिये पे आराम से बैठ गये, तुम्हारा आँखें बंद करने का इंतेज़ार कर रहे थे।\n\n[WHISPERING]\"मीठे सपने देखो, छोटे,\" निम्बस ने धीरे से कहा,[PAUSE] और चाँदनी की लकीर छोड़ता हुआ आगे निकल गया।"
+    "annotated_text_devanagari": "[GENTLE]छत के ऊपर आसमान में, एक छोटा सा मुलायम बादल था जिसका नाम था निम्बस।[PAUSE] निम्बस का काम दुनिया का सबसे खास काम था — तारों से मीठे सपने इकट्ठा करना और सोते हुए बच्चों पे छिड़कना।\n\n[CALM]आज रात तारे खूब चमक रहे थे।[PAUSE] निम्बस ने अपने नर्म हाथों से एक सपना पकड़ा — उड़ने वाले घोड़े का, एक और कैंडी के बाग का,[PAUSE] और एक प्यारे ड्रैगन का जो गरम झप्पी देना चाहता था।\n\n[SLEEPY]जब निम्बस तुम्हारे घर के ऊपर से गुज़रा, उसने अपना फूला हुआ बदन हिलाया,[PAUSE] और सपने छोटी छोटी बर्फ की फुहार की तरह नीचे आये।[PAUSE] वो तुम्हारे तकिये पे आराम से बैठ गये, तुम्हारा आँखें बंद करने का इंतेज़ार कर रहे थे।\n\n[WHISPERING]\"मीठे सपने देखो, छोटे,\" निम्बस ने धीरे से कहा,[PAUSE] और चाँदनी की लकीर छोड़ता हुआ आगे निकल गया।",
+    "musicParams": {
+      "key": "A",
+      "chordNotes": [
+        110.0,
+        138.59,
+        164.81,
+        220.0
+      ],
+      "padType": "resonant",
+      "padGain": 0.05,
+      "padFilter": 800,
+      "padLfo": 0.08,
+      "noiseType": "pink",
+      "noiseGain": 0.01,
+      "droneFreq": 55.0,
+      "droneGain": 0.03,
+      "melodyNotes": [
+        220.0,
+        277.18,
+        329.62,
+        293.66
+      ],
+      "melodyInterval": 4000,
+      "melodyGain": 0.018,
+      "bassNotes": [
+        55.0,
+        82.41,
+        69.3
+      ],
+      "bassInterval": 6000,
+      "counterNotes": [
+        346.48,
+        412.02,
+        275.0
+      ],
+      "counterInterval": 5000,
+      "events": [
+        {
+          "type": "starTwinkle",
+          "interval": 12000
+        },
+        {
+          "type": "chimes",
+          "interval": 18000
+        },
+        {
+          "type": "waterDrop",
+          "interval": 20000
+        },
+        {
+          "type": "leaves",
+          "interval": 25000
+        }
+      ]
+    }
   },
   {
     "id": "hi-bahadur-jugnu",
@@ -821,7 +1316,62 @@
         "provider": "chatterbox"
       }
     ],
-    "annotated_text_devanagari": "[GENTLE]गुनगुनाते जंगल के बीच में एक छोटा सा जुगनू रहता था जिसका नाम था फ्लिकर।[PAUSE] बाकी जुगनुओं की तरह उसकी रोशनी चमकदार नहीं थी — बिल्कुल एक छोटी सी मोमबत्ती जैसी।\n\n[ADVENTUROUS]लेकिन उसी रात, एक छोटा खरगोश क्लोवर जंगल के सबसे अंधेरे हिस्से में खो गया।[PAUSE] \"मेरी रोशनी के पीछे आओ!\" फ्लिकर ने कहा।[PAUSE] रोशनी छोटी थी, लेकिन क्लोवर को हर कदम दिखाने के लिये काफी थी।\n\n[CALM]साथ में चले, फ्लिकर रास्ता दिखाता रहा, जब तक क्लोवर अपने घर नहीं पहुँच गया जहाँ मम्मा रैबिट इंतेज़ार कर रही थी।\n\n[SLEEPY]\"शुक्रिया, छोटी रोशनी,\" क्लोवर ने उँघाते हुए कहा।[PAUSE] \"तुम पूरे जंगल के सबसे बहादुर जुगनू हो।\"\n\n[WHISPERING]और उस रात के बाद, फ्लिकर ने कभी खुद को छोटा नहीं समझा।[PAUSE] क्योंकि छोटी सी रोशनी भी किसी को घर पहुँचा सकती है।"
+    "annotated_text_devanagari": "[GENTLE]गुनगुनाते जंगल के बीच में एक छोटा सा जुगनू रहता था जिसका नाम था फ्लिकर।[PAUSE] बाकी जुगनुओं की तरह उसकी रोशनी चमकदार नहीं थी — बिल्कुल एक छोटी सी मोमबत्ती जैसी।\n\n[ADVENTUROUS]लेकिन उसी रात, एक छोटा खरगोश क्लोवर जंगल के सबसे अंधेरे हिस्से में खो गया।[PAUSE] \"मेरी रोशनी के पीछे आओ!\" फ्लिकर ने कहा।[PAUSE] रोशनी छोटी थी, लेकिन क्लोवर को हर कदम दिखाने के लिये काफी थी।\n\n[CALM]साथ में चले, फ्लिकर रास्ता दिखाता रहा, जब तक क्लोवर अपने घर नहीं पहुँच गया जहाँ मम्मा रैबिट इंतेज़ार कर रही थी।\n\n[SLEEPY]\"शुक्रिया, छोटी रोशनी,\" क्लोवर ने उँघाते हुए कहा।[PAUSE] \"तुम पूरे जंगल के सबसे बहादुर जुगनू हो।\"\n\n[WHISPERING]और उस रात के बाद, फ्लिकर ने कभी खुद को छोटा नहीं समझा।[PAUSE] क्योंकि छोटी सी रोशनी भी किसी को घर पहुँचा सकती है।",
+    "musicParams": {
+      "key": "F",
+      "chordNotes": [
+        174.61,
+        220.0,
+        261.63,
+        349.22
+      ],
+      "padType": "resonant",
+      "padGain": 0.045,
+      "padFilter": 800,
+      "padLfo": 0.07,
+      "noiseType": "brown",
+      "noiseGain": 0.01,
+      "droneFreq": 87.31,
+      "droneGain": 0.03,
+      "melodyNotes": [
+        349.22,
+        440.0,
+        523.26,
+        466.16
+      ],
+      "melodyInterval": 3500,
+      "melodyGain": 0.018,
+      "bassNotes": [
+        87.31,
+        130.81,
+        110.0
+      ],
+      "bassInterval": 6000,
+      "counterNotes": [
+        550.0,
+        654.08,
+        436.53
+      ],
+      "counterInterval": 5000,
+      "events": [
+        {
+          "type": "starTwinkle",
+          "interval": 12000
+        },
+        {
+          "type": "cricket",
+          "interval": 8000
+        },
+        {
+          "type": "leaves",
+          "interval": 15000
+        },
+        {
+          "type": "sparkle",
+          "interval": 20000
+        }
+      ]
+    }
   },
   {
     "id": "hi-chaand-ki-lori",
@@ -905,7 +1455,62 @@
         "provider": "chatterbox"
       }
     ],
-    "annotated_text_devanagari": "[GENTLE]जब सूरज पहाड़ियों के पीछे चला गया, चाँद धीरे-धीरे उठा और विलो मेडो पे चाँदी की रोशनी बिखेर दी।\n\n[WHISPERING]\"चुप हो जा, छोटी लोमड़ी,\" चाँद ने गाया, और लोमड़ी अपनी खोह में सिमट गयी।\n\n[WHISPERING]\"सो जा, छोटे उल्लू,\" चाँद ने गुनगुनाया, और उल्लू ने अपना सर अपने पंख के नीचे छुपा लिया।\n\n[WHISPERING]फिर चाँद ने तुम्हारी तरफ देखा और सबसे मीठा सुर गाया:[PAUSE] \"शुभ रात्रि, मेरे छोटे सपने देखने वाले। सुबह तक तारे तुम्हारा ख्याल रखेंगे।\"\n\n[SLEEPY]और बस फिर, पूरी दुनिया सुकून से सो गयी।"
+    "annotated_text_devanagari": "[GENTLE]जब सूरज पहाड़ियों के पीछे चला गया, चाँद धीरे-धीरे उठा और विलो मेडो पे चाँदी की रोशनी बिखेर दी।\n\n[WHISPERING]\"चुप हो जा, छोटी लोमड़ी,\" चाँद ने गाया, और लोमड़ी अपनी खोह में सिमट गयी।\n\n[WHISPERING]\"सो जा, छोटे उल्लू,\" चाँद ने गुनगुनाया, और उल्लू ने अपना सर अपने पंख के नीचे छुपा लिया।\n\n[WHISPERING]फिर चाँद ने तुम्हारी तरफ देखा और सबसे मीठा सुर गाया:[PAUSE] \"शुभ रात्रि, मेरे छोटे सपने देखने वाले। सुबह तक तारे तुम्हारा ख्याल रखेंगे।\"\n\n[SLEEPY]और बस फिर, पूरी दुनिया सुकून से सो गयी।",
+    "musicParams": {
+      "key": "G",
+      "chordNotes": [
+        98.0,
+        123.47,
+        146.83,
+        196.0
+      ],
+      "padType": "resonant",
+      "padGain": 0.045,
+      "padFilter": 800,
+      "padLfo": 0.07,
+      "noiseType": "pink",
+      "noiseGain": 0.01,
+      "droneFreq": 49.0,
+      "droneGain": 0.03,
+      "melodyNotes": [
+        196.0,
+        246.94,
+        293.66,
+        261.62
+      ],
+      "melodyInterval": 4000,
+      "melodyGain": 0.018,
+      "bassNotes": [
+        49.0,
+        73.42,
+        61.73
+      ],
+      "bassInterval": 6000,
+      "counterNotes": [
+        308.68,
+        367.08,
+        245.0
+      ],
+      "counterInterval": 5000,
+      "events": [
+        {
+          "type": "starTwinkle",
+          "interval": 12000
+        },
+        {
+          "type": "chimes",
+          "interval": 18000
+        },
+        {
+          "type": "cricket",
+          "interval": 20000
+        },
+        {
+          "type": "leaves",
+          "interval": 25000
+        }
+      ]
+    }
   },
   {
     "id": "hi-captain-sitaara",
@@ -988,7 +1593,62 @@
         "provider": "chatterbox"
       }
     ],
-    "annotated_text_devanagari": "[ADVENTUROUS]कैप्टन सितारा ने अपना चमकदार हेलमेट ठीक किया और अपने स्टारशिप सिल्वर ड्रीमर का कंट्रोल पकड़ा।[PAUSE] आज की मिशन सबसे ज़रूरी थी — प्लैनेट केकलॉट पे बर्थडे विश पहुँचाना, आधी रात से पहले!\n\n[EXCITED]सिल्वर ड्रीमर सैटर्न के छल्लों के बीच से निकली, एस्टेरॉइड फील्ड को डॉज किया,[PAUSE] और एक नीले धूमकेतु फ्लैश के साथ रेस लगायी।\n\n[JOYFUL]वो बिल्कुल सही वक़्त पे पहुँची![PAUSE] कैप्टन सितारा ने विश डिलीवर की — एक चमकता सोना सितारा।\n\n[CALM]\"मिशन पूरा हुआ,\" उसने मुस्कुराते हुए कहा।[PAUSE] \"अब घर चलें। स्पेस एक्सप्लोरर्स को भी नींद आती है।\"\n\n[SLEEPY]और जब सिल्वर ड्रीमर शांत आसमान से घर लौट रही थी,[PAUSE] तारों ने भी अपनी रोशनी धीमी की और शुभ रात्रि कही।"
+    "annotated_text_devanagari": "[ADVENTUROUS]कैप्टन सितारा ने अपना चमकदार हेलमेट ठीक किया और अपने स्टारशिप सिल्वर ड्रीमर का कंट्रोल पकड़ा।[PAUSE] आज की मिशन सबसे ज़रूरी थी — प्लैनेट केकलॉट पे बर्थडे विश पहुँचाना, आधी रात से पहले!\n\n[EXCITED]सिल्वर ड्रीमर सैटर्न के छल्लों के बीच से निकली, एस्टेरॉइड फील्ड को डॉज किया,[PAUSE] और एक नीले धूमकेतु फ्लैश के साथ रेस लगायी।\n\n[JOYFUL]वो बिल्कुल सही वक़्त पे पहुँची![PAUSE] कैप्टन सितारा ने विश डिलीवर की — एक चमकता सोना सितारा।\n\n[CALM]\"मिशन पूरा हुआ,\" उसने मुस्कुराते हुए कहा।[PAUSE] \"अब घर चलें। स्पेस एक्सप्लोरर्स को भी नींद आती है।\"\n\n[SLEEPY]और जब सिल्वर ड्रीमर शांत आसमान से घर लौट रही थी,[PAUSE] तारों ने भी अपनी रोशनी धीमी की और शुभ रात्रि कही।",
+    "musicParams": {
+      "key": "Gm",
+      "chordNotes": [
+        98.0,
+        116.54,
+        146.83,
+        196.0
+      ],
+      "padType": "resonant",
+      "padGain": 0.05,
+      "padFilter": 800,
+      "padLfo": 0.08,
+      "noiseType": "brown",
+      "noiseGain": 0.01,
+      "droneFreq": 49.0,
+      "droneGain": 0.03,
+      "melodyNotes": [
+        196.0,
+        233.08,
+        293.66,
+        261.62
+      ],
+      "melodyInterval": 4000,
+      "melodyGain": 0.018,
+      "bassNotes": [
+        49.0,
+        73.42,
+        58.27
+      ],
+      "bassInterval": 6000,
+      "counterNotes": [
+        291.35,
+        367.08,
+        245.0
+      ],
+      "counterInterval": 5000,
+      "events": [
+        {
+          "type": "starTwinkle",
+          "interval": 12000
+        },
+        {
+          "type": "radarPing",
+          "interval": 20000
+        },
+        {
+          "type": "chimes",
+          "interval": 15000
+        },
+        {
+          "type": "whaleCall",
+          "interval": 25000
+        }
+      ]
+    }
   },
   {
     "id": "hi-gungunata-baag",
@@ -1072,7 +1732,62 @@
         "provider": "chatterbox"
       }
     ],
-    "annotated_text_devanagari": "[MYSTERIOUS]दादी के घर के पीछे, माया को एक ऐसा बाग मिला जो सोने की रोशनी से चमक रहा था।[PAUSE] यहाँ के फूल जादुई थे — गुलाब जो लालटेन की तरह चमकते थे, लिली जो धुन गाती थी।\n\n[CURIOUS]हर फूल के पास एक अलग कहानी थी।[PAUSE] डेज़ी चूहों की बहादुरी की कहानी सुनाती थी।[PAUSE] ट्यूलिप मेहरबानी की पुरानी कथाएँ बताती थी।[PAUSE] लैवेंडर चाँदनी रातों की कविताएँ सुनाता था।\n\n[WHISPERING]हर कहानी ऐसे ख़त्म होती थी:[PAUSE] \"अब आँखें बंद करो, प्यारे।[PAUSE] कल एक और कहानी तुम्हारा इंतेज़ार कर रही होगी।\""
+    "annotated_text_devanagari": "[MYSTERIOUS]दादी के घर के पीछे, माया को एक ऐसा बाग मिला जो सोने की रोशनी से चमक रहा था।[PAUSE] यहाँ के फूल जादुई थे — गुलाब जो लालटेन की तरह चमकते थे, लिली जो धुन गाती थी।\n\n[CURIOUS]हर फूल के पास एक अलग कहानी थी।[PAUSE] डेज़ी चूहों की बहादुरी की कहानी सुनाती थी।[PAUSE] ट्यूलिप मेहरबानी की पुरानी कथाएँ बताती थी।[PAUSE] लैवेंडर चाँदनी रातों की कविताएँ सुनाता था।\n\n[WHISPERING]हर कहानी ऐसे ख़त्म होती थी:[PAUSE] \"अब आँखें बंद करो, प्यारे।[PAUSE] कल एक और कहानी तुम्हारा इंतेज़ार कर रही होगी।\"",
+    "musicParams": {
+      "key": "Dm",
+      "chordNotes": [
+        146.83,
+        174.61,
+        220.0,
+        293.66
+      ],
+      "padType": "resonant",
+      "padGain": 0.045,
+      "padFilter": 800,
+      "padLfo": 0.08,
+      "noiseType": "brown",
+      "noiseGain": 0.01,
+      "droneFreq": 73.42,
+      "droneGain": 0.03,
+      "melodyNotes": [
+        293.66,
+        349.22,
+        440.0,
+        392.0
+      ],
+      "melodyInterval": 4000,
+      "melodyGain": 0.018,
+      "bassNotes": [
+        73.42,
+        110.0,
+        87.31
+      ],
+      "bassInterval": 6000,
+      "counterNotes": [
+        436.53,
+        550.0,
+        367.08
+      ],
+      "counterInterval": 5000,
+      "events": [
+        {
+          "type": "starTwinkle",
+          "interval": 18000
+        },
+        {
+          "type": "leaves",
+          "interval": 12000
+        },
+        {
+          "type": "chimes",
+          "interval": 22000
+        },
+        {
+          "type": "waterDrop",
+          "interval": 15000
+        }
+      ]
+    }
   },
   {
     "id": "hi-chamakta-sapna",
@@ -1151,7 +1866,62 @@
         "provider": "chatterbox"
       }
     ],
-    "annotated_text_devanagari": "[RHYTHMIC]तारे झिलमिल करते हैं आसमान में,\nतुम्हारे सपने बसते हैं उनकी छाँव में।\nचाँदा मुस्कुराये गोल चमकदार,\nचाँदी में लपेट ले सारा संसार।\n\n[SLEEPY]आँखें मूँदो अब, मेरे प्यारे तारे,\nरात आयी है, जग उठे सितारे।\nकल सुबह सूरज नया आयेगा,\nपर अब सपनों का जहाँ ले जायेगा।"
+    "annotated_text_devanagari": "[RHYTHMIC]तारे झिलमिल करते हैं आसमान में,\nतुम्हारे सपने बसते हैं उनकी छाँव में।\nचाँदा मुस्कुराये गोल चमकदार,\nचाँदी में लपेट ले सारा संसार।\n\n[SLEEPY]आँखें मूँदो अब, मेरे प्यारे तारे,\nरात आयी है, जग उठे सितारे।\nकल सुबह सूरज नया आयेगा,\nपर अब सपनों का जहाँ ले जायेगा।",
+    "musicParams": {
+      "key": "E",
+      "chordNotes": [
+        164.81,
+        207.65,
+        246.94,
+        329.62
+      ],
+      "padType": "resonant",
+      "padGain": 0.05,
+      "padFilter": 800,
+      "padLfo": 0.08,
+      "noiseType": "pink",
+      "noiseGain": 0.01,
+      "droneFreq": 82.41,
+      "droneGain": 0.03,
+      "melodyNotes": [
+        329.62,
+        415.3,
+        493.88,
+        440.0
+      ],
+      "melodyInterval": 4000,
+      "melodyGain": 0.018,
+      "bassNotes": [
+        82.41,
+        123.47,
+        103.83
+      ],
+      "bassInterval": 6000,
+      "counterNotes": [
+        519.12,
+        617.35,
+        412.02
+      ],
+      "counterInterval": 5000,
+      "events": [
+        {
+          "type": "starTwinkle",
+          "interval": 12000
+        },
+        {
+          "type": "chimes",
+          "interval": 18000
+        },
+        {
+          "type": "waterDrop",
+          "interval": 20000
+        },
+        {
+          "type": "owl",
+          "interval": 25000
+        }
+      ]
+    }
   },
   {
     "id": "hi-ullu-ki-shubhraatri",
@@ -1230,7 +2000,62 @@
         "provider": "chatterbox"
       }
     ],
-    "annotated_text_devanagari": "[GENTLE]ऊहू-ऊहू, उल्लू बोले बूढ़े पेड़ से,\nशुभ रात्रि मछली को नीली नदिया के देश से।\nशुभ रात्रि खरगोश को गर्म बिस्तर में,\nशुभ रात्रि लेडीबग को फूलों के घर में।\n\n[WHISPERING]ऊहू-ऊहू, लोमड़ी सो जा अपनी खोह में,\nबतख और मुर्गी भी सपनों की छोह में।\nशुभ रात्रि गिलहरी को मीठी नींद आये,\nऊहू-ऊहू, मेरे बच्चे — अब चैन से सो जाये।"
+    "annotated_text_devanagari": "[GENTLE]ऊहू-ऊहू, उल्लू बोले बूढ़े पेड़ से,\nशुभ रात्रि मछली को नीली नदिया के देश से।\nशुभ रात्रि खरगोश को गर्म बिस्तर में,\nशुभ रात्रि लेडीबग को फूलों के घर में।\n\n[WHISPERING]ऊहू-ऊहू, लोमड़ी सो जा अपनी खोह में,\nबतख और मुर्गी भी सपनों की छोह में।\nशुभ रात्रि गिलहरी को मीठी नींद आये,\nऊहू-ऊहू, मेरे बच्चे — अब चैन से सो जाये।",
+    "musicParams": {
+      "key": "Bb",
+      "chordNotes": [
+        116.54,
+        146.83,
+        174.61,
+        233.08
+      ],
+      "padType": "resonant",
+      "padGain": 0.045,
+      "padFilter": 800,
+      "padLfo": 0.08,
+      "noiseType": "brown",
+      "noiseGain": 0.01,
+      "droneFreq": 58.27,
+      "droneGain": 0.03,
+      "melodyNotes": [
+        233.08,
+        293.66,
+        349.22,
+        311.12
+      ],
+      "melodyInterval": 4000,
+      "melodyGain": 0.018,
+      "bassNotes": [
+        58.27,
+        87.31,
+        73.42
+      ],
+      "bassInterval": 6000,
+      "counterNotes": [
+        367.08,
+        436.53,
+        291.35
+      ],
+      "counterInterval": 5000,
+      "events": [
+        {
+          "type": "owl",
+          "interval": 15000
+        },
+        {
+          "type": "cricket",
+          "interval": 12000
+        },
+        {
+          "type": "leaves",
+          "interval": 20000
+        },
+        {
+          "type": "chimes",
+          "interval": 25000
+        }
+      ]
+    }
   },
   {
     "id": "hi-sapnon-ki-naav",
@@ -1314,7 +2139,62 @@
         "provider": "chatterbox"
       }
     ],
-    "annotated_text_devanagari": "[SINGING]चाँदी की नाव पे हम सवार चलें,\nचाँदनी समंदर के पार चलें।\nतारे गाते हैं लोरी मीठी प्यारी,\nले चलें सपनों की फुलझड़ी।\n\n[JOYFUL]सपनों का देश, सपनों का देश, आओ चलें,\nबैंगनी आसमान में उड़ते चलें।\nसपनों का देश, सपनों का देश, रात सुहानी,\nचिंताओं को भूल जाओ, सुनो ये कहानी।"
+    "annotated_text_devanagari": "[SINGING]चाँदी की नाव पे हम सवार चलें,\nचाँदनी समंदर के पार चलें।\nतारे गाते हैं लोरी मीठी प्यारी,\nले चलें सपनों की फुलझड़ी।\n\n[JOYFUL]सपनों का देश, सपनों का देश, आओ चलें,\nबैंगनी आसमान में उड़ते चलें।\nसपनों का देश, सपनों का देश, रात सुहानी,\nचिंताओं को भूल जाओ, सुनो ये कहानी।",
+    "musicParams": {
+      "key": "Em",
+      "chordNotes": [
+        82.41,
+        98.0,
+        123.47,
+        164.82
+      ],
+      "padType": "resonant",
+      "padGain": 0.05,
+      "padFilter": 800,
+      "padLfo": 0.08,
+      "noiseType": "brown",
+      "noiseGain": 0.01,
+      "droneFreq": 41.2,
+      "droneGain": 0.03,
+      "melodyNotes": [
+        164.82,
+        196.0,
+        246.94,
+        220.0
+      ],
+      "melodyInterval": 4000,
+      "melodyGain": 0.018,
+      "bassNotes": [
+        41.2,
+        61.73,
+        49.0
+      ],
+      "bassInterval": 6000,
+      "counterNotes": [
+        245.0,
+        308.68,
+        206.02
+      ],
+      "counterInterval": 5000,
+      "events": [
+        {
+          "type": "starTwinkle",
+          "interval": 12000
+        },
+        {
+          "type": "chimes",
+          "interval": 18000
+        },
+        {
+          "type": "waterDrop",
+          "interval": 22000
+        },
+        {
+          "type": "leaves",
+          "interval": 15000
+        }
+      ]
+    }
   },
   {
     "id": "gen-6e675d15e1f5",
@@ -1398,7 +2278,62 @@
         "duration_seconds": 23.66,
         "provider": "chatterbox"
       }
-    ]
+    ],
+    "musicParams": {
+      "key": "Cm",
+      "chordNotes": [
+        130.81,
+        155.56,
+        196.0,
+        261.62
+      ],
+      "padType": "resonant",
+      "padGain": 0.05,
+      "padFilter": 800,
+      "padLfo": 0.08,
+      "noiseType": "brown",
+      "noiseGain": 0.015,
+      "droneFreq": 65.41,
+      "droneGain": 0.03,
+      "melodyNotes": [
+        261.62,
+        311.12,
+        392.0,
+        349.22
+      ],
+      "melodyInterval": 4000,
+      "melodyGain": 0.018,
+      "bassNotes": [
+        65.41,
+        98.0,
+        77.78
+      ],
+      "bassInterval": 6000,
+      "counterNotes": [
+        388.9,
+        490.0,
+        327.02
+      ],
+      "counterInterval": 5000,
+      "events": [
+        {
+          "type": "waveCycle",
+          "interval": 12000
+        },
+        {
+          "type": "whaleCall",
+          "interval": 20000
+        },
+        {
+          "type": "starTwinkle",
+          "interval": 15000
+        },
+        {
+          "type": "waterDrop",
+          "interval": 8000
+        }
+      ]
+    }
   },
   {
     "id": "gen-3de58fd2aa2d",
@@ -1482,7 +2417,62 @@
         "duration_seconds": 27.65,
         "provider": "chatterbox"
       }
-    ]
+    ],
+    "musicParams": {
+      "key": "A",
+      "chordNotes": [
+        110.0,
+        138.59,
+        164.81,
+        220.0
+      ],
+      "padType": "resonant",
+      "padGain": 0.045,
+      "padFilter": 800,
+      "padLfo": 0.07,
+      "noiseType": "pink",
+      "noiseGain": 0.01,
+      "droneFreq": 55.0,
+      "droneGain": 0.03,
+      "melodyNotes": [
+        220.0,
+        277.18,
+        329.62,
+        293.66
+      ],
+      "melodyInterval": 4000,
+      "melodyGain": 0.018,
+      "bassNotes": [
+        55.0,
+        82.41,
+        69.3
+      ],
+      "bassInterval": 6000,
+      "counterNotes": [
+        346.48,
+        412.02,
+        275.0
+      ],
+      "counterInterval": 5000,
+      "events": [
+        {
+          "type": "starTwinkle",
+          "interval": 12000
+        },
+        {
+          "type": "leaves",
+          "interval": 8000
+        },
+        {
+          "type": "cricket",
+          "interval": 15000
+        },
+        {
+          "type": "waterDrop",
+          "interval": 20000
+        }
+      ]
+    }
   },
   {
     "id": "gen-4f3ff03979dc",
@@ -1567,7 +2557,62 @@
         "duration_seconds": 35.78,
         "provider": "chatterbox"
       }
-    ]
+    ],
+    "musicParams": {
+      "key": "F",
+      "chordNotes": [
+        174.61,
+        220.0,
+        261.63,
+        349.22
+      ],
+      "padType": "resonant",
+      "padGain": 0.05,
+      "padFilter": 800,
+      "padLfo": 0.08,
+      "noiseType": "pink",
+      "noiseGain": 0.01,
+      "droneFreq": 87.31,
+      "droneGain": 0.03,
+      "melodyNotes": [
+        349.22,
+        440.0,
+        523.26,
+        466.16
+      ],
+      "melodyInterval": 4000,
+      "melodyGain": 0.018,
+      "bassNotes": [
+        87.31,
+        130.81,
+        110.0
+      ],
+      "bassInterval": 6000,
+      "counterNotes": [
+        550.0,
+        654.08,
+        436.53
+      ],
+      "counterInterval": 5000,
+      "events": [
+        {
+          "type": "starTwinkle",
+          "interval": 12000
+        },
+        {
+          "type": "radarPing",
+          "interval": 20000
+        },
+        {
+          "type": "chimes",
+          "interval": 15000
+        },
+        {
+          "type": "waterDrop",
+          "interval": 8000
+        }
+      ]
+    }
   },
   {
     "id": "gen-a67cde9762b6",
@@ -1651,7 +2696,62 @@
         "duration_seconds": 52.55,
         "provider": "chatterbox"
       }
-    ]
+    ],
+    "musicParams": {
+      "key": "Fm",
+      "chordNotes": [
+        174.61,
+        207.65,
+        261.63,
+        349.22
+      ],
+      "padType": "resonant",
+      "padGain": 0.045,
+      "padFilter": 800,
+      "padLfo": 0.07,
+      "noiseType": "pink",
+      "noiseGain": 0.01,
+      "droneFreq": 87.31,
+      "droneGain": 0.03,
+      "melodyNotes": [
+        349.22,
+        415.3,
+        523.26,
+        466.16
+      ],
+      "melodyInterval": 4000,
+      "melodyGain": 0.018,
+      "bassNotes": [
+        87.31,
+        130.81,
+        103.83
+      ],
+      "bassInterval": 6000,
+      "counterNotes": [
+        519.12,
+        654.08,
+        436.53
+      ],
+      "counterInterval": 5000,
+      "events": [
+        {
+          "type": "starTwinkle",
+          "interval": 12000
+        },
+        {
+          "type": "cricket",
+          "interval": 8000
+        },
+        {
+          "type": "leaves",
+          "interval": 18000
+        },
+        {
+          "type": "waterDrop",
+          "interval": 22000
+        }
+      ]
+    }
   },
   {
     "id": "gen-a8a2146a4f36",
@@ -1737,7 +2837,62 @@
         "duration_seconds": 96.34,
         "provider": "chatterbox"
       }
-    ]
+    ],
+    "musicParams": {
+      "key": "Gm",
+      "chordNotes": [
+        98.0,
+        116.54,
+        146.83,
+        196.0
+      ],
+      "padType": "resonant",
+      "padGain": 0.05,
+      "padFilter": 800,
+      "padLfo": 0.08,
+      "noiseType": "brown",
+      "noiseGain": 0.01,
+      "droneFreq": 49.0,
+      "droneGain": 0.03,
+      "melodyNotes": [
+        196.0,
+        233.08,
+        293.66,
+        261.62
+      ],
+      "melodyInterval": 4000,
+      "melodyGain": 0.018,
+      "bassNotes": [
+        49.0,
+        73.42,
+        58.27
+      ],
+      "bassInterval": 6000,
+      "counterNotes": [
+        291.35,
+        367.08,
+        245.0
+      ],
+      "counterInterval": 5000,
+      "events": [
+        {
+          "type": "starTwinkle",
+          "interval": 12000
+        },
+        {
+          "type": "radarPing",
+          "interval": 20000
+        },
+        {
+          "type": "leaves",
+          "interval": 8000
+        },
+        {
+          "type": "chimes",
+          "interval": 15000
+        }
+      ]
+    }
   },
   {
     "id": "gen-9e44d4374d44",
@@ -1822,7 +2977,62 @@
         "duration_seconds": 128.34,
         "provider": "chatterbox"
       }
-    ]
+    ],
+    "musicParams": {
+      "key": "Dm",
+      "chordNotes": [
+        146.83,
+        174.61,
+        220.0,
+        293.66
+      ],
+      "padType": "resonant",
+      "padGain": 0.05,
+      "padFilter": 800,
+      "padLfo": 0.08,
+      "noiseType": "brown",
+      "noiseGain": 0.01,
+      "droneFreq": 73.42,
+      "droneGain": 0.03,
+      "melodyNotes": [
+        293.66,
+        349.22,
+        440.0,
+        392.0
+      ],
+      "melodyInterval": 4000,
+      "melodyGain": 0.02,
+      "bassNotes": [
+        73.42,
+        110.0,
+        87.31
+      ],
+      "bassInterval": 6000,
+      "counterNotes": [
+        436.53,
+        550.0,
+        367.08
+      ],
+      "counterInterval": 5000,
+      "events": [
+        {
+          "type": "starTwinkle",
+          "interval": 12000
+        },
+        {
+          "type": "cricket",
+          "interval": 8000
+        },
+        {
+          "type": "chimes",
+          "interval": 20000
+        },
+        {
+          "type": "radarPing",
+          "interval": 25000
+        }
+      ]
+    }
   },
   {
     "id": "gen-b8847383ab32",
@@ -1907,7 +3117,62 @@
         "duration_seconds": 78.48,
         "provider": "chatterbox"
       }
-    ]
+    ],
+    "musicParams": {
+      "key": "Gm",
+      "chordNotes": [
+        98.0,
+        116.54,
+        146.83,
+        196.0
+      ],
+      "padType": "resonant",
+      "padGain": 0.05,
+      "padFilter": 800,
+      "padLfo": 0.08,
+      "noiseType": "brown",
+      "noiseGain": 0.01,
+      "droneFreq": 49.0,
+      "droneGain": 0.03,
+      "melodyNotes": [
+        196.0,
+        233.08,
+        293.66,
+        261.62
+      ],
+      "melodyInterval": 4000,
+      "melodyGain": 0.018,
+      "bassNotes": [
+        49.0,
+        73.42,
+        58.27
+      ],
+      "bassInterval": 6000,
+      "counterNotes": [
+        291.35,
+        367.08,
+        245.0
+      ],
+      "counterInterval": 5000,
+      "events": [
+        {
+          "type": "whaleCall",
+          "interval": 20000
+        },
+        {
+          "type": "starTwinkle",
+          "interval": 12000
+        },
+        {
+          "type": "chimes",
+          "interval": 15000
+        },
+        {
+          "type": "windGust",
+          "interval": 25000
+        }
+      ]
+    }
   },
   {
     "id": "gen-6b4b4122c529",
@@ -1992,7 +3257,62 @@
         "duration_seconds": 51.66,
         "provider": "chatterbox"
       }
-    ]
+    ],
+    "musicParams": {
+      "key": "G",
+      "chordNotes": [
+        98.0,
+        123.47,
+        146.83,
+        196.0
+      ],
+      "padType": "resonant",
+      "padGain": 0.05,
+      "padFilter": 800,
+      "padLfo": 0.08,
+      "noiseType": "brown",
+      "noiseGain": 0.01,
+      "droneFreq": 49.0,
+      "droneGain": 0.03,
+      "melodyNotes": [
+        196.0,
+        246.94,
+        293.66,
+        261.62
+      ],
+      "melodyInterval": 4000,
+      "melodyGain": 0.018,
+      "bassNotes": [
+        49.0,
+        73.42,
+        61.73
+      ],
+      "bassInterval": 6000,
+      "counterNotes": [
+        308.68,
+        367.08,
+        245.0
+      ],
+      "counterInterval": 5000,
+      "events": [
+        {
+          "type": "starTwinkle",
+          "interval": 12000
+        },
+        {
+          "type": "birdChirp",
+          "interval": 18000
+        },
+        {
+          "type": "chimes",
+          "interval": 25000
+        },
+        {
+          "type": "leaves",
+          "interval": 15000
+        }
+      ]
+    }
   },
   {
     "id": "gen-2fedd4d6a646",
@@ -2077,7 +3397,62 @@
         "duration_seconds": 91.4,
         "provider": "chatterbox"
       }
-    ]
+    ],
+    "musicParams": {
+      "key": "Bb",
+      "chordNotes": [
+        116.54,
+        146.83,
+        174.61,
+        233.08
+      ],
+      "padType": "resonant",
+      "padGain": 0.045,
+      "padFilter": 800,
+      "padLfo": 0.08,
+      "noiseType": "brown",
+      "noiseGain": 0.015,
+      "droneFreq": 58.27,
+      "droneGain": 0.03,
+      "melodyNotes": [
+        233.08,
+        293.66,
+        349.22,
+        311.12
+      ],
+      "melodyInterval": 4000,
+      "melodyGain": 0.018,
+      "bassNotes": [
+        58.27,
+        87.31,
+        73.42
+      ],
+      "bassInterval": 6000,
+      "counterNotes": [
+        367.08,
+        436.53,
+        291.35
+      ],
+      "counterInterval": 5000,
+      "events": [
+        {
+          "type": "starTwinkle",
+          "interval": 18000
+        },
+        {
+          "type": "waterDrop",
+          "interval": 12000
+        },
+        {
+          "type": "chimes",
+          "interval": 22000
+        },
+        {
+          "type": "whaleCall",
+          "interval": 25000
+        }
+      ]
+    }
   },
   {
     "id": "gen-f23316834cfd",
@@ -2162,7 +3537,62 @@
         "duration_seconds": 113.18,
         "provider": "chatterbox"
       }
-    ]
+    ],
+    "musicParams": {
+      "key": "E",
+      "chordNotes": [
+        164.81,
+        207.65,
+        246.94,
+        329.62
+      ],
+      "padType": "resonant",
+      "padGain": 0.045,
+      "padFilter": 800,
+      "padLfo": 0.08,
+      "noiseType": "pink",
+      "noiseGain": 0.01,
+      "droneFreq": 82.41,
+      "droneGain": 0.03,
+      "melodyNotes": [
+        329.62,
+        415.3,
+        493.88,
+        440.0
+      ],
+      "melodyInterval": 3500,
+      "melodyGain": 0.018,
+      "bassNotes": [
+        82.41,
+        123.47,
+        103.83
+      ],
+      "bassInterval": 6000,
+      "counterNotes": [
+        519.12,
+        617.35,
+        412.02
+      ],
+      "counterInterval": 4500,
+      "events": [
+        {
+          "type": "starTwinkle",
+          "interval": 12000
+        },
+        {
+          "type": "chimes",
+          "interval": 18000
+        },
+        {
+          "type": "cricket",
+          "interval": 22000
+        },
+        {
+          "type": "leaves",
+          "interval": 15000
+        }
+      ]
+    }
   },
   {
     "id": "gen-df0dbc9d6b74",
@@ -2247,7 +3677,62 @@
         "duration_seconds": 101.16,
         "provider": "chatterbox"
       }
-    ]
+    ],
+    "musicParams": {
+      "key": "Am",
+      "chordNotes": [
+        110.0,
+        130.81,
+        164.81,
+        220.0
+      ],
+      "padType": "resonant",
+      "padGain": 0.045,
+      "padFilter": 800,
+      "padLfo": 0.08,
+      "noiseType": "brown",
+      "noiseGain": 0.015,
+      "droneFreq": 55.0,
+      "droneGain": 0.03,
+      "melodyNotes": [
+        220.0,
+        261.62,
+        329.62,
+        293.66
+      ],
+      "melodyInterval": 4000,
+      "melodyGain": 0.018,
+      "bassNotes": [
+        55.0,
+        82.41,
+        65.41
+      ],
+      "bassInterval": 6000,
+      "counterNotes": [
+        327.02,
+        412.02,
+        275.0
+      ],
+      "counterInterval": 5000,
+      "events": [
+        {
+          "type": "waveCycle",
+          "interval": 12000
+        },
+        {
+          "type": "waterDrop",
+          "interval": 8000
+        },
+        {
+          "type": "whaleCall",
+          "interval": 25000
+        },
+        {
+          "type": "starTwinkle",
+          "interval": 18000
+        }
+      ]
+    }
   },
   {
     "id": "gen-e77b10c51e8f",
@@ -2332,16 +3817,71 @@
         "duration_seconds": 76.33,
         "provider": "chatterbox"
       }
-    ]
+    ],
+    "musicParams": {
+      "key": "Em",
+      "chordNotes": [
+        82.41,
+        98.0,
+        123.47,
+        164.82
+      ],
+      "padType": "resonant",
+      "padGain": 0.045,
+      "padFilter": 800,
+      "padLfo": 0.08,
+      "noiseType": "brown",
+      "noiseGain": 0.01,
+      "droneFreq": 41.2,
+      "droneGain": 0.03,
+      "melodyNotes": [
+        164.82,
+        196.0,
+        246.94,
+        220.0
+      ],
+      "melodyInterval": 3500,
+      "melodyGain": 0.018,
+      "bassNotes": [
+        41.2,
+        61.73,
+        49.0
+      ],
+      "bassInterval": 6000,
+      "counterNotes": [
+        245.0,
+        308.68,
+        206.02
+      ],
+      "counterInterval": 4500,
+      "events": [
+        {
+          "type": "starTwinkle",
+          "interval": 12000
+        },
+        {
+          "type": "chimes",
+          "interval": 18000
+        },
+        {
+          "type": "radarPing",
+          "interval": 25000
+        },
+        {
+          "type": "owl",
+          "interval": 20000
+        }
+      ]
+    }
   },
   {
     "id": "gen-593c43ad1c11",
     "type": "story",
     "lang": "hi",
-    "title": "Nanha Sitara Aur Uski Neend Ki Lori",
+    "title": "Nanha Tara Aur Neend Ki Lori",
     "cover": "/covers/nanha-sitara.svg",
-    "description": "Ek chhota sitara jungle mein sabko neend dilata hai apni komal roshni se.",
-    "text": "[GENTLE] Nanha sitara chamka. [CALM] Shh shh, neend aa rahi. [SLEEPY] Jungle sota, sitara jagta. [GENTLE] Komal roshni, komal roshni. [CALM] Patte hilte, hawa chalti. [SLEEPY] Shh shh, neend aa gayi. [GENTLE] Sitara muskaya, sab so gaye.",
+    "description": "Ek chhota sa tara jungle ko apni komal roshni se sulaata hai. Sab so jaate hain, uski pyari lori sun kar.",
+    "text": "[GENTLE] Aasmaan mein, ek nanha tara chamka. [SLEEPY] Shh shh, shh shh. [RHYTHMIC] Neend aa rahi hai, neend aa rahi hai. [WHISPERING] Jungle so raha hai, patte hil rahe hain. [CALM] Hawa chalti hai, shh shh, shh shh. [PAUSE] Tara muskaya. [GENTLE] Sab so gaye, sab so gaye.",
     "target_age": 0,
     "age_min": 0,
     "age_max": 1,
@@ -2365,14 +3905,14 @@
     "generation_quality": "excellent",
     "voice_id": null,
     "music_type": "ambient",
-    "word_count": 30,
+    "word_count": 41,
     "morals": [
-      "Doosron ki madad karna achhi baat hai",
-      "Prakriti humara khayal rakhti hai"
+      "Prakriti ki goad mein, sabko neend bahut pyari lagti hai.",
+      "Chhoti chhoti cheezon mein bhi bahut sukoon chhupa hota hai."
     ],
     "has_qa": false,
     "has_games": false,
-    "annotated_text": "[GENTLE] Nanha sitara chamka. [CALM] Shh shh, neend aa rahi. [SLEEPY] Jungle sota, sitara jagta. [GENTLE] Komal roshni, komal roshni. [CALM] Patte hilte, hawa chalti. [SLEEPY] Shh shh, neend aa gayi. [GENTLE] Sitara muskaya, sab so gaye.",
+    "annotated_text": "[GENTLE] Aasmaan mein, ek nanha tara chamka. [SLEEPY] Shh shh, shh shh. [RHYTHMIC] Neend aa rahi hai, neend aa rahi hai. [WHISPERING] Jungle so raha hai, patte hil rahe hain. [CALM] Hawa chalti hai, shh shh, shh shh. [PAUSE] Tara muskaya. [GENTLE] Sab so gaye, sab so gaye.",
     "audio_variants": [
       {
         "voice": "female_1_hi",
@@ -2417,16 +3957,71 @@
         "provider": "chatterbox"
       }
     ],
-    "annotated_text_devanagari": "[GENTLE] नन्हा सितारा चमका। [CALM] शश शश, नींद आ रही। [SLEEPY] जंगल सोता, सितारा जगता। [GENTLE] कोमल रोशनी, कोमल रोशनी। [CALM] पत्ते हिलते, हवा चलती। [SLEEPY] शश शश, नींद आ गई। [GENTLE] सितारा मुस्काया, सब सो गए।"
+    "annotated_text_devanagari": "[GENTLE] आसमान में, एक नन्हा तारा चमका। [SLEEPY] श्श श्श, श्श श्श। [RHYTHMIC] नींद आ रही है, नींद आ रही है। [WHISPERING] जंगल सो रहा है, पत्ते हिल रहे हैं। [CALM] हवा चलती है, श्श श्श, श्श श्श। [PAUSE] तारा मुस्काया। [GENTLE] सब सो गए, सब सो गए।",
+    "musicParams": {
+      "key": "F",
+      "chordNotes": [
+        174.61,
+        220.0,
+        261.63,
+        349.22
+      ],
+      "padType": "resonant",
+      "padGain": 0.045,
+      "padFilter": 800,
+      "padLfo": 0.07,
+      "noiseType": "brown",
+      "noiseGain": 0.01,
+      "droneFreq": 87.31,
+      "droneGain": 0.03,
+      "melodyNotes": [
+        349.22,
+        440.0,
+        523.26,
+        466.16
+      ],
+      "melodyInterval": 4000,
+      "melodyGain": 0.018,
+      "bassNotes": [
+        87.31,
+        130.81,
+        110.0
+      ],
+      "bassInterval": 6000,
+      "counterNotes": [
+        550.0,
+        654.08,
+        436.53
+      ],
+      "counterInterval": 5000,
+      "events": [
+        {
+          "type": "starTwinkle",
+          "interval": 12000
+        },
+        {
+          "type": "leaves",
+          "interval": 18000
+        },
+        {
+          "type": "cricket",
+          "interval": 22000
+        },
+        {
+          "type": "waterDrop",
+          "interval": 15000
+        }
+      ]
+    }
   },
   {
     "id": "gen-b2e7514e8b8f",
     "type": "story",
     "lang": "hi",
-    "title": "Nano Khargosh Aur Samudri Dost",
+    "title": "Nanhe Khargosh Aur Samudra Ka Dost",
     "cover": "/covers/samudri-dost.svg",
-    "description": "Ek chhota khargosh aur uska naya samudri dost saath mein sote hain.",
-    "text": "[GENTLE] Nano khargosh. Neela paani. [CALM] Shh shh shh. Machli dost. [JOYFUL] Haan haan haan. Saath mein khel. [WHISPERING] Chup chup chup. Garam ret. [SLEEPY] So jao so jao. Meethe sapne.",
+    "description": "Ek chhota khargosh aur uska naya samudri dost milkar saath mein so jaate hain, samudra ki lori sunte hue.",
+    "text": "[GENTLE] Nanha khargosh, chhota sa, ret par koodta, thumak thumak. [CALM] Neela samudra, shh shh shh, leheron ki aahat. [CURIOUS] Machli aayi, haan haan haan, dost ban gayi. [JOYFUL] Saath mein khele, chhup chhup chhup, ret par lete. [SLEEPY] Garam ret, meethi dhoop, so jao, so jao. [WHISPERING] Shh shh shh, samudra ga raha, meethe sapne aao.",
     "target_age": 0,
     "age_min": 0,
     "age_max": 1,
@@ -2450,14 +4045,14 @@
     "generation_quality": "excellent",
     "voice_id": null,
     "music_type": "ambient",
-    "word_count": 26,
+    "word_count": 51,
     "morals": [
-      "Dosti mein sukh hai",
-      "Saath mein sona accha"
+      "Dosti sabse badi khushi hoti hai",
+      "Samudra ki goonj bhi ek lori hai"
     ],
     "has_qa": false,
     "has_games": false,
-    "annotated_text": "[GENTLE] Nano khargosh. Neela paani. [CALM] Shh shh shh. Machli dost. [JOYFUL] Haan haan haan. Saath mein khel. [WHISPERING] Chup chup chup. Garam ret. [SLEEPY] So jao so jao. Meethe sapne.",
+    "annotated_text": "[GENTLE] Nanha khargosh, chhota sa, ret par koodta, thumak thumak. [CALM] Neela samudra, shh shh shh, leheron ki aahat. [CURIOUS] Machli aayi, haan haan haan, dost ban gayi. [JOYFUL] Saath mein khele, chhup chhup chhup, ret par lete. [SLEEPY] Garam ret, meethi dhoop, so jao, so jao. [WHISPERING] Shh shh shh, samudra ga raha, meethe sapne aao.",
     "audio_variants": [
       {
         "voice": "female_1_hi",
@@ -2502,16 +4097,71 @@
         "provider": "chatterbox"
       }
     ],
-    "annotated_text_devanagari": "[GENTLE] नैनो खरगोश। नीला पानी। [CALM] श्श श्श श्श। मछली दोस्त। [JOYFUL] हां हां हां। साथ में खेल। [WHISPERING] चुप चुप चुप। गर्म रेत। [SLEEPY] सो जाओ सो जाओ। मीठे सपने।"
+    "annotated_text_devanagari": "[GENTLE] नन्हा खरगोश, छोटा सा, रेत पर कूदता, ठुमक ठुमक। [CALM] नीला समुद्र, श्श श्श श्श, लहरों की आहट। [CURIOUS] मछली आई, हाँ हाँ हाँ, दोस्त बन गई। [JOYFUL] साथ में खेले, छुप छुप छुप, रेत पर लेटे। [SLEEPY] गरम रेत, मीठी धूप, सो जाओ, सो जाओ। [WHISPERING] श्श श्श श्श, समुद्र गा रहा, मीठे सपने आओ।",
+    "musicParams": {
+      "key": "Cm",
+      "chordNotes": [
+        130.81,
+        155.56,
+        196.0,
+        261.62
+      ],
+      "padType": "resonant",
+      "padGain": 0.045,
+      "padFilter": 800,
+      "padLfo": 0.07,
+      "noiseType": "brown",
+      "noiseGain": 0.015,
+      "droneFreq": 65.41,
+      "droneGain": 0.03,
+      "melodyNotes": [
+        261.62,
+        311.12,
+        392.0,
+        349.22
+      ],
+      "melodyInterval": 4000,
+      "melodyGain": 0.018,
+      "bassNotes": [
+        65.41,
+        98.0,
+        77.78
+      ],
+      "bassInterval": 6000,
+      "counterNotes": [
+        388.9,
+        490.0,
+        327.02
+      ],
+      "counterInterval": 5000,
+      "events": [
+        {
+          "type": "waveCycle",
+          "interval": 12000
+        },
+        {
+          "type": "whaleCall",
+          "interval": 20000
+        },
+        {
+          "type": "waterDrop",
+          "interval": 8000
+        },
+        {
+          "type": "starTwinkle",
+          "interval": 15000
+        }
+      ]
+    }
   },
   {
     "id": "gen-376993c8e295",
     "type": "poem",
     "lang": "hi",
-    "title": "Asha Ki Barf Mein Soft Bistar Ki Talash",
+    "title": "Asha Ki Narm Bistar Ki Khoj",
     "cover": "/covers/barf-bistar.svg",
-    "description": "Ek brave ladki Asha Arctic mein apne polar bear dost ke saath sabse soft bistar dhundne ka journey karti hai.",
-    "text": "[RHYTHMIC] Asha ek brave ladki thi, barf mein rehti thi [PAUSE] [GENTLE] Polar bear dost ke saath, soft bistar dhundti thi [PAUSE] [CALM] Barf par chalte gaye, fluffy snow mein [PAUSE] [JOYFUL] Mil gaya cozy jagah, warm aur clean [PAUSE] [WHISPERING] Asha aur bear so gaye, soft barf ke bistar mein [PAUSE] [SLEEPY] Sapno mein udti rahi, Arctic ke sitaron mein",
+    "description": "Ek bahadur bachchi Asha, Dhruv Pradesh mein apne bhालू dost ke saath sabse narm bistar dhundne nikalti hai. Barf ke desh mein unhe sapno ka ghar milta hai.",
+    "text": "[ADVENTUROUS] Asha chali, thandi hawa mein,\n[CURIOUS] Bhālū bola, \"Chal, dekhein kahin!\"\n[RHYTHMIC] Kadam badhe, safed barf par,\n[MYSTERIOUS] Kya milega, narm bistar?\n\n[GENTLE] Barf si chadar, bohot pyaari,\n[JOYFUL] Dono baithe, thodi si saari.\n[SLEEPY] Aankhen mudi, sapne aaye,\n[WHISPERING] Taare bole, \"Sone do bachhe.\"",
     "target_age": 2,
     "age_min": 1,
     "age_max": 3,
@@ -2535,14 +4185,14 @@
     "generation_quality": "excellent",
     "voice_id": null,
     "music_type": "ambient",
-    "word_count": 50,
+    "word_count": 38,
     "morals": [
-      "Dosti aur saath milkar koi bhi mushkil aasan ho jati hai",
-      "Nature mein sabse comfortable jagah mil sakti hai"
+      "Prakriti mein har jagah sukh aur aaram chhupa hota hai.",
+      "Dost ke saath safar karne se mushkilen halki lagti hain."
     ],
     "has_qa": false,
     "has_games": false,
-    "annotated_text": "[RHYTHMIC] Asha ek brave ladki thi, barf mein rehti thi [PAUSE] [GENTLE] Polar bear dost ke saath, soft bistar dhundti thi [PAUSE] [CALM] Barf par chalte gaye, fluffy snow mein [PAUSE] [JOYFUL] Mil gaya cozy jagah, warm aur clean [PAUSE] [WHISPERING] Asha aur bear so gaye, soft barf ke bistar mein [PAUSE] [SLEEPY] Sapno mein udti rahi, Arctic ke sitaron mein",
+    "annotated_text": "[ADVENTUROUS] Asha chali, thandi hawa mein,\n[CURIOUS] Bhālū bola, \"Chal, dekhein kahin!\"\n[RHYTHMIC] Kadam badhe, safed barf par,\n[MYSTERIOUS] Kya milega, narm bistar?\n\n[GENTLE] Barf si chadar, bohot pyaari,\n[JOYFUL] Dono baithe, thodi si saari.\n[SLEEPY] Aankhen mudi, sapne aaye,\n[WHISPERING] Taare bole, \"Sone do bachhe.\"",
     "audio_variants": [
       {
         "voice": "female_1_hi",
@@ -2587,16 +4237,71 @@
         "provider": "chatterbox"
       }
     ],
-    "annotated_text_devanagari": "[RHYTHMIC] आशा एक ब्रेव लड़की थी, बर्फ में रहती थी [PAUSE] [GENTLE] पोलर बेयर दोस्त के साथ, सॉफ्ट बिस्तर ढूंढती थी [PAUSE] [CALM] बर्फ पर चलते गए, फ्लफी स्नो में [PAUSE] [JOYFUL] मिल गया कोजी जगह, वार्म और क्लीन [PAUSE] [WHISPERING] आशा और बेयर सो गए, सॉफ्ट बर्फ के बिस्तर में [PAUSE] [SLEEPY] सपनों में उड़ती रही, आर्कटिक के सितारों में"
+    "annotated_text_devanagari": "[ADVENTUROUS] आशा चली, ठंडी हवा में,\n[CURIOUS] भालू बोला, \"चल, देखें कहीं!\"\n[RHYTHMIC] कदम बढ़े, सफ़ेद बर्फ़ पर,\n[MYSTERIOUS] क्या मिलेगा, नर्म बिस्तर?\n\n[GENTLE] बर्फ़ सी चादर, बहुत प्यारी,\n[JOYFUL] दोनों बैठे, थोड़ी सी सारी।\n[SLEEPY] आँखें मूँदी, सपने आए,\n[WHISPERING] तारे बोले, \"सोने दो बच्चे।\"",
+    "musicParams": {
+      "key": "Dm",
+      "chordNotes": [
+        146.83,
+        174.61,
+        220.0,
+        293.66
+      ],
+      "padType": "resonant",
+      "padGain": 0.05,
+      "padFilter": 800,
+      "padLfo": 0.08,
+      "noiseType": "brown",
+      "noiseGain": 0.015,
+      "droneFreq": 73.42,
+      "droneGain": 0.04,
+      "melodyNotes": [
+        293.66,
+        349.22,
+        440.0,
+        392.0
+      ],
+      "melodyInterval": 4000,
+      "melodyGain": 0.02,
+      "bassNotes": [
+        73.42,
+        110.0,
+        87.31
+      ],
+      "bassInterval": 6000,
+      "counterNotes": [
+        436.53,
+        550.0,
+        367.08
+      ],
+      "counterInterval": 5000,
+      "events": [
+        {
+          "type": "starTwinkle",
+          "interval": 12000
+        },
+        {
+          "type": "windGust",
+          "interval": 18000
+        },
+        {
+          "type": "leaves",
+          "interval": 22000
+        },
+        {
+          "type": "chimes",
+          "interval": 15000
+        }
+      ]
+    }
   },
   {
     "id": "gen-aad0a6e0c0c0",
     "type": "poem",
     "lang": "hi",
-    "title": "Kira Ka Samudri Ghar Ki Khoj",
+    "title": "Kira Ki Samudri Ghar Ki Khoj",
     "cover": "/covers/samudri-ghar.svg",
-    "description": "Ek brave chhoti ladki Kira apne island ghar mein family ke saath naye kamre discover karti hai aur cozy sleeping jagah paati hai.",
-    "text": "[RHYTHMIC] Kira chhoti brave girl thi, island pe rehti thi\nFamily ke saath warm ghar mein, khushi se has rahi thi\n\n[PAUSE]\n\n[GENTLE] Mama Papa ke saath, naya room dhundha usne\nBamboo walls aur soft mats, dekha ocean view se\n\n[PAUSE]\n\n[JOYFUL] Grandma ne kaha 'dekho beta', shells aur pearls yahan\nFamily ka purana treasure, mil gaya hai ghar mein\n\n[PAUSE]\n\n[WHISPERING] Waves ki awaaz sun kar, Kira tired ho gayi\nSoft mat pe lie down karke, family ke paas so gayi\n\n[PAUSE]\n\n[CALM] Ocean breeze se lullaby, stars shining bright\nFamily ka love aur warmth, good night sweet night [SLEEPY]",
+    "description": "Ek chhoti si bahadur ladki Kira apne samudri ghar mein naye kamre dhundhti hai aur apne parivar ke saath ek naya sukhdaayak sthaan paati hai.",
+    "text": "[JOYFUL] Kira chhoti si, bahadur thi,\nDweep pe rehti, khushiyon bhari thi,\nMaa-pita ke sang, ghoomti phirti,\nNaye kamre ki khoj mein lage karti.\n\n[CURIOUS] Bans ki deewarein, chikne galeche,\nSamundar ka drishya, sundar dikhe,\nDadi ne kaha, \"Beta dekh yahaan,\nSeepiyan, moti hain, khoob rahe yahaan.\"\n\n[ADVENTUROUS] Parivar ka khajana, mil gaya yahin,\nLeheron ki aawaaz, sun sun kar,\nKira thak gayi, neend aa gayi,\nGaleche pe leti, sapne saj gayi.\n\n[CALM] Samundar ki hawa, lori sunaye,\nTare chamakte, raat jagmagaaye,\nParivar ka pyaar, gahre sannate,\nShanti se soye, Kira sapne bunne.",
     "target_age": 2,
     "age_min": 1,
     "age_max": 3,
@@ -2622,14 +4327,14 @@
     "generation_quality": "excellent",
     "voice_id": null,
     "music_type": "ambient",
-    "word_count": 91,
+    "word_count": 89,
     "morals": [
-      "Family ke saath explore karna safe aur fun hota hai",
-      "Ghar mein family ka love sabse important treasure hai"
+      "Parivar ke saath har khoj nayi khushi laati hai.",
+      "Ghar ki har cheez mein pyaar aur yaadein chhupi hoti hain."
     ],
     "has_qa": false,
     "has_games": false,
-    "annotated_text": "[RHYTHMIC] Kira chhoti brave girl thi, island pe rehti thi\nFamily ke saath warm ghar mein, khushi se has rahi thi\n\n[PAUSE]\n\n[GENTLE] Mama Papa ke saath, naya room dhundha usne\nBamboo walls aur soft mats, dekha ocean view se\n\n[PAUSE]\n\n[JOYFUL] Grandma ne kaha 'dekho beta', shells aur pearls yahan\nFamily ka purana treasure, mil gaya hai ghar mein\n\n[PAUSE]\n\n[WHISPERING] Waves ki awaaz sun kar, Kira tired ho gayi\nSoft mat pe lie down karke, family ke paas so gayi\n\n[PAUSE]\n\n[CALM] Ocean breeze se lullaby, stars shining bright\nFamily ka love aur warmth, good night sweet night [SLEEPY]",
+    "annotated_text": "[JOYFUL] Kira chhoti si, bahadur thi,\nDweep pe rehti, khushiyon bhari thi,\nMaa-pita ke sang, ghoomti phirti,\nNaye kamre ki khoj mein lage karti.\n\n[CURIOUS] Bans ki deewarein, chikne galeche,\nSamundar ka drishya, sundar dikhe,\nDadi ne kaha, \"Beta dekh yahaan,\nSeepiyan, moti hain, khoob rahe yahaan.\"\n\n[ADVENTUROUS] Parivar ka khajana, mil gaya yahin,\nLeheron ki aawaaz, sun sun kar,\nKira thak gayi, neend aa gayi,\nGaleche pe leti, sapne saj gayi.\n\n[CALM] Samundar ki hawa, lori sunaye,\nTare chamakte, raat jagmagaaye,\nParivar ka pyaar, gahre sannate,\nShanti se soye, Kira sapne bunne.",
     "audio_variants": [
       {
         "voice": "female_1_hi",
@@ -2674,16 +4379,71 @@
         "provider": "chatterbox"
       }
     ],
-    "annotated_text_devanagari": "[RHYTHMIC] किरा छोटी brave गर्ल थी, आइसलैंड पे रहती थी\nफैमिली के साथ warm घर में, खुशी से हंस रही थी\n\n[PAUSE]\n\n[GENTLE] मामा पापा के साथ, नया रूम ढूंढा उसने\nबैंबू वॉल्स और soft मैट्स, देखा ओशन व्यू से\n\n[PAUSE]\n\n[JOYFUL] ग्रैंडमा ने कहा 'देखो बेटा', शेल्स और पर्ल्स यहां\nफैमिली का पुराना ट्रेजर, मिल गया है घर में\n\n[PAUSE]\n\n[WHISPERING] वेव्स की आवाज़ सुन कर, किरा टायर्ड हो गई\nसॉफ्ट मैट पे lie down करके, फैमिली के पास सो गई\n\n[PAUSE]\n\n[CALM] ओशन ब्रीज़ से लुल्लाबी, स्टार्स शाइनिंग ब्राइट\nफैमिली का लव और वार्मथ, गुड नाइट स्वीट नाइट [SLEEPY]"
+    "annotated_text_devanagari": "[JOYFUL] किरा छोटी सी, बहादुर थी,\nद्वीप पे रहती, खुशियों भरी थी,\nमाँ-पिता के संग, घूमती फिरती,\nनए कमरे की खोज में लगे करती।\n\n[CURIOUS] बाँस की दीवारें, चिकने गलचे,\nसमुंदर का दृश्य, सुंदर दिखे,\nदादी ने कहा, \"बेटा देख यहाँ,\nसीपियाँ, मोती हैं, खूब रहे यहाँ।\"\n\n[ADVENTUROUS] परिवार का खजाना, मिल गया यहीं,\nलहरों की आवाज़, सुन सुन कर,\nकिरा थक गई, नींद आ गई,\nगलचे पे लेटी, सपने सज गई।\n\n[CALM] समुंदर की हवा, लोरी सुनाए,\nतारे चमकते, रात जगमगाए,\nपरिवार का प्यार, गहरे सन्नाटे,\nशांति से सोई, किरा सपने बुनने।",
+    "musicParams": {
+      "key": "D",
+      "chordNotes": [
+        146.83,
+        185.0,
+        220.0,
+        293.66
+      ],
+      "padType": "resonant",
+      "padGain": 0.045,
+      "padFilter": 800,
+      "padLfo": 0.07,
+      "noiseType": "brown",
+      "noiseGain": 0.01,
+      "droneFreq": 73.42,
+      "droneGain": 0.03,
+      "melodyNotes": [
+        293.66,
+        370.0,
+        440.0,
+        392.0
+      ],
+      "melodyInterval": 4000,
+      "melodyGain": 0.018,
+      "bassNotes": [
+        73.42,
+        110.0,
+        92.5
+      ],
+      "bassInterval": 6000,
+      "counterNotes": [
+        462.5,
+        550.0,
+        367.08
+      ],
+      "counterInterval": 5000,
+      "events": [
+        {
+          "type": "waveCycle",
+          "interval": 18000
+        },
+        {
+          "type": "whaleCall",
+          "interval": 22000
+        },
+        {
+          "type": "starTwinkle",
+          "interval": 12000
+        },
+        {
+          "type": "waterDrop",
+          "interval": 8000
+        }
+      ]
+    }
   },
   {
     "id": "gen-ddc437037568",
     "type": "story",
     "lang": "hi",
-    "title": "Dosti ki Kahani",
+    "title": "Sapno ka Aethoria: Dosti ki Aag",
     "cover": "/covers/dosti-kahani.svg",
-    "description": "Ek fantasy realm mein, Nova aur uske doston ne milkar ek mushkil ko hal kiya aur dosti ki sachchai samjhe. Ye kahani dosti, teamwork, aur samajh ki mahatta ko darshati hai.",
-    "text": "[GENTLE] Ek chhota sa shehar tha, jiska naam Aethoria tha, jahan par logon ke dil mein pyaar aur dosti bhar gayi thi. [CALM] Yahan par Nova, ek 15 saal ka non-binary teen, apne doston ke saath milkar ek anokha safar par nikal padta hai. [EXCITED] Unka pehla mission tha, ek purani mandir ki talash, jahan par ek pracheen khazana chhupa hua tha. [CURIOUS] Nova ke saath the uske dost, Zara, Arjun, aur Lila, jo apne-apne khaas hunar ke saath aaye the. [ADVENTUROUS] Saath milkar, ve sabhi ne mushkil raaston par chal kar mandir tak pahunchne ki koshish ki. [MYSTERIOUS] Lekin, jab ve andar ghuste hain, to unhe ek anokhi chunauti ka samna karna padta hai. [DRAMATIC_PAUSE] Unhe ek pracheen puzzle ko suljhana hota hai, jo keval tabhi suljhega jab ve apne hunar ko ek saath mila kar istemal karenge. [JOYFUL] Nova aur uske dost sabhi ne milkar kaam kiya, aur puzzle ko suljhaya. [SLEEPY] Ab, ve sabhi ghar waapas aane ke liye taiyaar hain, aur ek naye din ki shuruaat ke liye utsuk hain.",
+    "description": "Aethoria ke rahasyamay sansar mein, Nova aur uske doston ka safar, jo dosti, sahyog aur apne aap ko pehchanne ki kahani hai.",
+    "text": "[GENTLE] Aethoria, ek aisa nagar tha, jo sapnon ke paron par basa hua tha, jahan har ek dil, pyaar aur dosti ki khushboo se bhara hua tha. [PAUSE] Is nagar ki galiyon mein, ek aisee kahani chhipi thi, jo ab tak kisi ne poori tarah nahi samjhi thi—Nova ki kahani. [CURIOUS] Nova, ek pandrah saal ka jawan, jo na ladka tha na ladki, balki dono se alag, apne aap mein ek poora sansar sameta hua tha. [PAUSE] Uske saath the, Zara, jiski akal ki tez dhaar, har samasya ko chakku ki tarah kaat deti thi, Arjun, jiska haath har cheez ko jodne mein mahir tha, aur Lila, jiski awaaz mein itni sakti thi ki patthar bhi uske geet sun kar pighal jaate the. [ADVENTUROUS] Ek din, jab chand ki roshni ne aasmaan ko chum liya, Nova ne apne doston ko ek raaz ki baat batayi—ek aisa mandir, jo sirf unhi logon ko dikhai deta hai, jo sachche dil se dosti ka matlab samajhte hain. [EXCITED] Us mandir mein, ek aisa khazana chhupa hua tha, jo sirf dhan-daulat nahi, balki ek aisi cheez thi, jo unke jeevan ko badal sakti thi—ek aisa raaz, jo unhe unki asli pehchaan bata sakta tha. [DRAMATIC_PAUSE] Par rasta aasan nahi tha. [MYSTERIOUS] Jungle ki gehraiyon mein, unhe kai chunautiyon ka samna karna pada—kuch to aisi thi, jo unki himmat ko aazma rahi thi, aur kuch aisi, jo unki dosti ki parakh kar rahi thi. [PAUSE] Mandir ke darwaaze par pahunch kar, unhe ek pracheen puzzle mila, jiska hal sirf tabhi mumkin tha, jab ve sab apne hunar ko ek saath mila kar istemal karte. [WHISPERING] Nova ne socha, \"Agar hum sab alag-alag hain, to phir kaise ek saath kaam karenge?\" [CALM] Lekin Zara ne muskurate hue kaha, \"Kyunki hum alag-alag hain, isliye hi to hum ek doosre ke kamiyon ko poora kar sakte hain.\" [JOYFUL] Aur phir, ve sab ne apne-apne hunar ka istemal kiya—Zara ne apni akal se rasta nikala, Arjun ne apne haathon se puzzle ke tukde jode, aur Lila ne apni awaaz se ek aisa geet gaaya, jo mandir ki deewaron ko bhi rula diya. [PAUSE] Puzzle suljha, aur mandir ke andar se ek aisi roshni nikli, jo unke chehre ko chamka di. [SLEEPY] Us roshni mein, unhe apni asli pehchaan dikhai di—ek aisa ehsaas, jo unhe batata tha ki ve sirf ek nahi, balki ek doosre ke bina adhoore hain. [GENTLE] Ghar waapas aate hue, Nova ne socha, \"Dosti sirf ek rishta nahi, balki ek aisa safar hai, jisme hum ek doosre ko poora karte hain.\" [RHYTHMIC] Aur aise hi, Aethoria ki galiyon mein, ek nayi kahani ka aaghaaz hua—ek aisi kahani, jo dosti ki aag ko hamesha jalta rakhegi.",
     "target_age": 13,
     "age_min": 12,
     "age_max": 18,
@@ -2707,15 +4467,15 @@
     "generation_quality": "excellent",
     "voice_id": null,
     "music_type": "ambient",
-    "word_count": 165,
+    "word_count": 434,
     "morals": [
-      "Dosti ki sachchai",
-      "Teamwork ki mahatta",
-      "Samajh ki zarurat"
+      "Dosti ek aisa rishta hai, jo alag-alag hone par bhi ek doosre ko poora karta hai.",
+      "Sahyog aur samajh se har mushkil asaan ho jaati hai, chahe vo kitni bhi badi kyun na ho.",
+      "Apni pehchaan dhoondhne ka safar tabhi poora hota hai, jab hum apne aap ko doosron ke saath mila kar dekhte hain."
     ],
     "has_qa": false,
     "has_games": false,
-    "annotated_text": "[GENTLE] Ek chhota sa shehar tha, jiska naam Aethoria tha, jahan par logon ke dil mein pyaar aur dosti bhar gayi thi. [CALM] Yahan par Nova, ek 15 saal ka non-binary teen, apne doston ke saath milkar ek anokha safar par nikal padta hai. [EXCITED] Unka pehla mission tha, ek purani mandir ki talash, jahan par ek pracheen khazana chhupa hua tha. [CURIOUS] Nova ke saath the uske dost, Zara, Arjun, aur Lila, jo apne-apne khaas hunar ke saath aaye the. [ADVENTUROUS] Saath milkar, ve sabhi ne mushkil raaston par chal kar mandir tak pahunchne ki koshish ki. [MYSTERIOUS] Lekin, jab ve andar ghuste hain, to unhe ek anokhi chunauti ka samna karna padta hai. [DRAMATIC_PAUSE] Unhe ek pracheen puzzle ko suljhana hota hai, jo keval tabhi suljhega jab ve apne hunar ko ek saath mila kar istemal karenge. [JOYFUL] Nova aur uske dost sabhi ne milkar kaam kiya, aur puzzle ko suljhaya. [SLEEPY] Ab, ve sabhi ghar waapas aane ke liye taiyaar hain, aur ek naye din ki shuruaat ke liye utsuk hain.",
+    "annotated_text": "[GENTLE] Aethoria, ek aisa nagar tha, jo sapnon ke paron par basa hua tha, jahan har ek dil, pyaar aur dosti ki khushboo se bhara hua tha. [PAUSE] Is nagar ki galiyon mein, ek aisee kahani chhipi thi, jo ab tak kisi ne poori tarah nahi samjhi thi—Nova ki kahani. [CURIOUS] Nova, ek pandrah saal ka jawan, jo na ladka tha na ladki, balki dono se alag, apne aap mein ek poora sansar sameta hua tha. [PAUSE] Uske saath the, Zara, jiski akal ki tez dhaar, har samasya ko chakku ki tarah kaat deti thi, Arjun, jiska haath har cheez ko jodne mein mahir tha, aur Lila, jiski awaaz mein itni sakti thi ki patthar bhi uske geet sun kar pighal jaate the. [ADVENTUROUS] Ek din, jab chand ki roshni ne aasmaan ko chum liya, Nova ne apne doston ko ek raaz ki baat batayi—ek aisa mandir, jo sirf unhi logon ko dikhai deta hai, jo sachche dil se dosti ka matlab samajhte hain. [EXCITED] Us mandir mein, ek aisa khazana chhupa hua tha, jo sirf dhan-daulat nahi, balki ek aisi cheez thi, jo unke jeevan ko badal sakti thi—ek aisa raaz, jo unhe unki asli pehchaan bata sakta tha. [DRAMATIC_PAUSE] Par rasta aasan nahi tha. [MYSTERIOUS] Jungle ki gehraiyon mein, unhe kai chunautiyon ka samna karna pada—kuch to aisi thi, jo unki himmat ko aazma rahi thi, aur kuch aisi, jo unki dosti ki parakh kar rahi thi. [PAUSE] Mandir ke darwaaze par pahunch kar, unhe ek pracheen puzzle mila, jiska hal sirf tabhi mumkin tha, jab ve sab apne hunar ko ek saath mila kar istemal karte. [WHISPERING] Nova ne socha, \"Agar hum sab alag-alag hain, to phir kaise ek saath kaam karenge?\" [CALM] Lekin Zara ne muskurate hue kaha, \"Kyunki hum alag-alag hain, isliye hi to hum ek doosre ke kamiyon ko poora kar sakte hain.\" [JOYFUL] Aur phir, ve sab ne apne-apne hunar ka istemal kiya—Zara ne apni akal se rasta nikala, Arjun ne apne haathon se puzzle ke tukde jode, aur Lila ne apni awaaz se ek aisa geet gaaya, jo mandir ki deewaron ko bhi rula diya. [PAUSE] Puzzle suljha, aur mandir ke andar se ek aisi roshni nikli, jo unke chehre ko chamka di. [SLEEPY] Us roshni mein, unhe apni asli pehchaan dikhai di—ek aisa ehsaas, jo unhe batata tha ki ve sirf ek nahi, balki ek doosre ke bina adhoore hain. [GENTLE] Ghar waapas aate hue, Nova ne socha, \"Dosti sirf ek rishta nahi, balki ek aisa safar hai, jisme hum ek doosre ko poora karte hain.\" [RHYTHMIC] Aur aise hi, Aethoria ki galiyon mein, ek nayi kahani ka aaghaaz hua—ek aisi kahani, jo dosti ki aag ko hamesha jalta rakhegi.",
     "audio_variants": [
       {
         "voice": "female_1_hi",
@@ -2760,7 +4520,62 @@
         "provider": "chatterbox"
       }
     ],
-    "annotated_text_devanagari": "[GENTLE] एक छोटा सा शहर था, जिसका नाम एथोरिया था, जहां पर लोगों के दिल में प्यार और दोस्ती भर गयी थी. [CALM] यहां पर नोवा, एक १५ साल का नॉन-बाइनरी टीन, अपने दोस्तों के साथ मिलकर एक अनोखा सफर पर निकल पड़ता है. [EXCITED] उनका पहला मिशन था, एक पुरानी मंदिर की तलाश, जहां पर एक प्राचीन खजाना छुपा हुआ था. [CURIOUS] नोवा के साथ थे उसके दोस्त, जारा, अर्जुन, और लीला, जो अपने-अपने खास हुनर के साथ आए थे. [ADVENTUROUS] साथ मिलकर, वे सभी ने मुश्किल रास्तों पर चलकर मंदिर तक पहुंचने की कोशिश की. [MYSTERIOUS] लेकिन, जब वे अंदर घुसते हैं, तो उन्हें एक अनोखी चुनौती का सामना करना पड़ता है. [DRAMATIC_PAUSE] उन्हें एक प्राचीन पज़ल को सुलझाना होता है, जो केवल तब ही सुलझेगा जब वे अपने हुनर को एक साथ मिलाकर इस्तेमाल करेंगे. [JOYFUL] नोवा और उसके दोस्त सभी ने मिलकर काम किया, और पज़ल को सुलझाया. [SLEEPY] अब, वे सभी घर वापस आने के लिए तैयार हैं, और एक नए दिन की शुरुआत के लिए उत्सुक हैं."
+    "annotated_text_devanagari": "[GENTLE] ऐथोरिया, एक ऐसा नगर था, जो सपनों के परों पर बसा हुआ था, जहाँ हर एक दिल, प्यार और दोस्ती की खुशबू से भरा हुआ था। [PAUSE] इस नगर की गलियों में, एक ऐसी कहानी छिपी थी, जो अब तक किसी ने पूरी तरह नहीं समझी थी—नोवा की कहानी। [CURIOUS] नोवा, एक पंद्रह साल का जवान, जो ना लड़का था ना लड़की, बल्कि दोनों से अलग, अपने आप में एक पूरा संसार समेटा हुआ था। [PAUSE] उसके साथ थे, ज़रा, जिसकी अक़्ल की तेज धार, हर समस्या को चाकू की तरह काट देती थी, अर्जुन, जिसका हाथ हर चीज़ को जोड़ने में माहिर था, और लीला, जिसकी आवाज़ में इतनी शक्ति थी कि पत्थर भी उसके गीत सुन कर पिघल जाते थे। [ADVENTUROUS] एक दिन, जब चाँद की रोशनी ने आसमान को चूम लिया, नोवा ने अपने दोस्तों को एक राज़ की बात बताई—एक ऐसा मंदिर, जो सिर्फ उन्हीं लोगों को दिखाई देता है, जो सच्चे दिल से दोस्ती का मतलब समझते हैं। [EXCITED] उस मंदिर में, एक ऐसा ख़ज़ाना छुपा हुआ था, जो सिर्फ धन-दौलत नहीं, बल्कि एक ऐसी चीज़ थी, जो उनके जीवन को बदल सकती थी—एक ऐसा राज़, जो उन्हें उनकी असली पहचान बता सकता था। [DRAMATIC_PAUSE] पर रास्ता आसान नहीं था। [MYSTERIOUS] जंगल की गहराइयों में, उन्हें कई चुनौतियों का सामना करना पड़ा—कुछ तो ऐसी थी, जो उनकी हिम्मत को आज़मा रही थी, और कुछ ऐसी, जो उनकी दोस्ती की परख कर रही थी। [PAUSE] मंदिर के दरवाज़े पर पहुँच कर, उन्हें एक प्राचीन पहेली मिली, जिसका हल सिर्फ तब ही मुमकिन था, जब वे सब अपने हुनर को एक साथ मिला कर इस्तेमाल करते। [WHISPERING] नोवा ने सोचा, \"अगर हम सब अलग-अलग हैं, तो फिर कैसे एक साथ काम करेंगे?\" [CALM] लेकिन ज़रा ने मुस्कुराते हुए कहा, \"क्योंकि हम अलग-अलग हैं, इसलिए ही तो हम एक दूसरे की कमियों को पूरा कर सकते हैं।\" [JOYFUL] और फिर, वे सब ने अपने-अपने हुनर का इस्तेमाल किया—ज़रा ने अपनी अक़्ल से रास्ता निकाला, अर्जुन ने अपने हाथों से पहेली के टुकड़े जोड़े, और लीला ने अपनी आवाज़ से एक ऐसा गीत गाया, जो मंदिर की दीवारों को भी रुला दिया। [PAUSE] पहेली सुलझी, और मंदिर के अंदर से एक ऐसी रोशनी निकली, जो उनके चेहरे को चमका दी। [SLEEPY] उस रोशनी में, उन्हें अपनी असली पहचान दिखाई दी—एक ऐसा एहसास, जो उन्हें बताता था कि वे सिर्फ एक नहीं, बल्कि एक दूसरे के बिना अधूरे हैं। [GENTLE] घर वापस आते हुए, नोवा ने सोचा, \"दोस्ती सिर्फ एक रिश्ता नहीं, बल्कि एक ऐसा सफर है, जिसमें हम एक दूसरे को पूरा करते हैं।\" [RHYTHMIC] और ऐसे ही, ऐथोरिया की गलियों में, एक नई कहानी का आग़ाज़ हुआ—एक ऐसी कहानी, जो दोस्ती की आग को हमेशा जलाए रखेगी।",
+    "musicParams": {
+      "key": "Gm",
+      "chordNotes": [
+        98.0,
+        116.54,
+        146.83,
+        196.0
+      ],
+      "padType": "resonant",
+      "padGain": 0.045,
+      "padFilter": 800,
+      "padLfo": 0.07,
+      "noiseType": "brown",
+      "noiseGain": 0.01,
+      "droneFreq": 49.0,
+      "droneGain": 0.03,
+      "melodyNotes": [
+        196.0,
+        233.08,
+        293.66,
+        261.62
+      ],
+      "melodyInterval": 3800,
+      "melodyGain": 0.018,
+      "bassNotes": [
+        49.0,
+        73.42,
+        58.27
+      ],
+      "bassInterval": 6000,
+      "counterNotes": [
+        291.35,
+        367.08,
+        245.0
+      ],
+      "counterInterval": 4500,
+      "events": [
+        {
+          "type": "starTwinkle",
+          "interval": 18000
+        },
+        {
+          "type": "leaves",
+          "interval": 12000
+        },
+        {
+          "type": "chimes",
+          "interval": 22000
+        },
+        {
+          "type": "heartbeat",
+          "interval": 25000
+        }
+      ]
+    }
   },
   {
     "id": "gen-2b9fdf8a1222",
@@ -2768,8 +4583,8 @@
     "lang": "hi",
     "title": "Riya ki Prakriti Yatra",
     "cover": "/covers/prakriti-yatra.svg",
-    "description": "Riya, a brave child, embarks on a quest journey to appreciate nature and understand environmental awareness in the Americas, specifically in the contemporary world of North America.",
-    "text": "[RHYTHMIC] Riya ek chhote se jungle mein gayi, [GENTLE] jahaan pedon ke neeche ek sundar taal tha. [CALM] Usne dekha ki taal ke kinare par kayi janwar the, jo paani peene aaye the. [PAUSE] \n[RHYTHMIC] Riya ne socha ki prakriti kitni sundar hai, [JOYFUL] aur humein uski raksha karni chahiye. [WHISPERING] Usne apne aap se vaada kiya ki woh hamesha prakriti ki raksha karegi. [PAUSE] \n[RHYTHMIC] Ab Riya [SLEEPY] sone ja rahi hai, aur woh chahti hai ki tum bhi prakriti ki raksha karo.",
+    "description": "Ek balika ka safar jo America ke vishal vanon aur nadiyon se hokar prakriti ke raaz samajhne ka hai, jisme uske mann mein prithvi ke prati prem aur jimmedari jagti hai.",
+    "text": "[ADVENTUROUS] Riya chali, pathharon pe chhan-chhan, jungle ki galiyon se guzri, thandi hawa ne liye uske aanchal ko apne ghere mein. [CURIOUS] Pedon ke neeche, ek taal tha chhupa, uske paani mein chamak rahe the chandrama ke tukde, jaise koi raaz chhupa ho andhere mein. [JOYFUL] Usne dekhe, janwar aate paani peene, har ek ke chehre par thi shanti, har ek ke kadmon mein thi dharti ki meherbaani. [PAUSE] [WHISPERING] Riya ne socha, \"Yeh toh hai ek anmol khajana, jo humein mila hai sapno ke badle.\" [DRAMATIC_PAUSE] Usne apne dil se kaha, \"Main rakhungi iski raksha, har ek patte ko, har ek nadi ko, har ek parvat ko.\" [RHYTHMIC] Ab raat aayi, taare chamke, Riya soyi, sapne dekhe, un sapnon mein thi ek nayi duniya, jahan har insaan ho jaata hai prakriti ka rakshak. [SLEEPY] Aur tum? Tum bhi chalo, is yatra mein shamil ho jao, dharti ki raksha ka vaada nibhao.",
     "target_age": 13,
     "age_min": 12,
     "age_max": 18,
@@ -2792,14 +4607,14 @@
     "generation_quality": "excellent",
     "voice_id": null,
     "music_type": "ambient",
-    "word_count": 74,
+    "word_count": 144,
     "morals": [
-      "Prakriti ki raksha karna humara kartavya hai",
-      "Humein hamesha prakriti ki raksha karni chahiye"
+      "Prakriti humara anmol uphaar hai, uski raksha karna hamara kartavya hai.",
+      "Har chhota kadam bhi badal sakta hai duniya ko, bas zarurat hai ek nishchay ki."
     ],
     "has_qa": false,
     "has_games": false,
-    "annotated_text": "[RHYTHMIC] Riya ek chhote se jungle mein gayi, [GENTLE] jahaan pedon ke neeche ek sundar taal tha. [CALM] Usne dekha ki taal ke kinare par kayi janwar the, jo paani peene aaye the. [PAUSE] \n[RHYTHMIC] Riya ne socha ki prakriti kitni sundar hai, [JOYFUL] aur humein uski raksha karni chahiye. [WHISPERING] Usne apne aap se vaada kiya ki woh hamesha prakriti ki raksha karegi. [PAUSE] \n[RHYTHMIC] Ab Riya [SLEEPY] sone ja rahi hai, aur woh chahti hai ki tum bhi prakriti ki raksha karo.",
+    "annotated_text": "[ADVENTUROUS] Riya chali, pathharon pe chhan-chhan, jungle ki galiyon se guzri, thandi hawa ne liye uske aanchal ko apne ghere mein. [CURIOUS] Pedon ke neeche, ek taal tha chhupa, uske paani mein chamak rahe the chandrama ke tukde, jaise koi raaz chhupa ho andhere mein. [JOYFUL] Usne dekhe, janwar aate paani peene, har ek ke chehre par thi shanti, har ek ke kadmon mein thi dharti ki meherbaani. [PAUSE] [WHISPERING] Riya ne socha, \"Yeh toh hai ek anmol khajana, jo humein mila hai sapno ke badle.\" [DRAMATIC_PAUSE] Usne apne dil se kaha, \"Main rakhungi iski raksha, har ek patte ko, har ek nadi ko, har ek parvat ko.\" [RHYTHMIC] Ab raat aayi, taare chamke, Riya soyi, sapne dekhe, un sapnon mein thi ek nayi duniya, jahan har insaan ho jaata hai prakriti ka rakshak. [SLEEPY] Aur tum? Tum bhi chalo, is yatra mein shamil ho jao, dharti ki raksha ka vaada nibhao.",
     "audio_variants": [
       {
         "voice": "female_1_hi",
@@ -2844,16 +4659,71 @@
         "provider": "chatterbox"
       }
     ],
-    "annotated_text_devanagari": "[RHYTHMIC] रिया एक छोटे से जंगल में गयी, [GENTLE] जहां पेड़ों के नीचे एक सुंदर ताल था. [CALM] उसने देखा कि ताल के किनारे पर कई जानवर थे, जो पानी पीने आए थे. [PAUSE] \n[RHYTHMIC] रिया ने सोचा कि प्रकृति कितनी सुंदर है, [JOYFUL] और हमें उसकी रक्षा करनी चाहिए. [WHISPERING] उसने अपने आप से वादा किया कि वो हमेशा प्रकृति की रक्षा करेगी. [PAUSE] \n[RHYTHMIC] अब रिया [SLEEPY] सोने जा रही है, और वो चाहती है कि तुम भी प्रकृति की रक्षा करो."
+    "annotated_text_devanagari": "[ADVENTUROUS] रिया चली, पत्थरों पे छन-छन, जंगल की गलियों से गुज़री, ठंडी हवा ने लिए उसके आँचल को अपने घेरे में। [CURIOUS] पेड़ों के नीचे, एक ताल था छुपा, उसके पानी में चमक रहे थे चंद्रमाँ के टुकड़े, जैसे कोई राज़ छुपा हो अंधेरे में। [JOYFUL] उसने देखे, जानवर आते पानी पीने, हर एक के चेहरे पर थी शांति, हर एक के क़दमों में थी धरती की मेहरबानी। [PAUSE] [WHISPERING] रिया ने सोचा, \"ये तो है एक अनमोल ख़ज़ाना, जो हमें मिला है सपनों के बदले।\" [DRAMATIC_PAUSE] उसने अपने दिल से कहा, \"मैं रखूँगी इसकी रक्षा, हर एक पत्ते को, हर एक नदी को, हर एक पर्वत को।\" [RHYTHMIC] अब रात आई, तारे चमके, रिया सोयी, सपने देखे, उन सपनों में थी एक नयी दुनिया, जहाँ हर इंसान हो जाता है प्रकृति का रक्षक। [SLEEPY] और तुम? तुम भी चलो, इस यात्रा में शामिल हो जाओ, धरती की रक्षा का वादा निभाओ।",
+    "musicParams": {
+      "key": "Bb",
+      "chordNotes": [
+        116.54,
+        146.83,
+        174.61,
+        233.08
+      ],
+      "padType": "resonant",
+      "padGain": 0.045,
+      "padFilter": 800,
+      "padLfo": 0.08,
+      "noiseType": "brown",
+      "noiseGain": 0.012,
+      "droneFreq": 58.27,
+      "droneGain": 0.03,
+      "melodyNotes": [
+        233.08,
+        293.66,
+        349.22,
+        311.12
+      ],
+      "melodyInterval": 4000,
+      "melodyGain": 0.018,
+      "bassNotes": [
+        58.27,
+        87.31,
+        73.42
+      ],
+      "bassInterval": 6000,
+      "counterNotes": [
+        367.08,
+        436.53,
+        291.35
+      ],
+      "counterInterval": 5000,
+      "events": [
+        {
+          "type": "leaves",
+          "interval": 12000
+        },
+        {
+          "type": "waterDrop",
+          "interval": 18000
+        },
+        {
+          "type": "cricket",
+          "interval": 22000
+        },
+        {
+          "type": "starTwinkle",
+          "interval": 25000
+        }
+      ]
+    }
   },
   {
     "id": "gen-60370cf66525",
     "type": "poem",
     "lang": "hi",
-    "title": "Naina Ki Baraf Waley School Mein Seal Dost Ki Khoj",
+    "title": "Naina Aur Barf Ke Vidyalay Mein Seal Dost",
     "cover": "/covers/seal-school.svg",
-    "description": "Brave Naina discovers a magical Arctic school where she learns from friendly seals and makes wonderful new friends.",
-    "text": "[RHYTHMIC] [GENTLE] Baraf ke ghar mein ek din, Naina pahunchi school\nJahan seal machliyan padhti, barf ka yeh rule\n\n[PAUSE]\n\n[RHYTHMIC] [JOYFUL] Suno suno kehti seal, hum sikhayenge tumhe\nBaraf par kaise khelna, paani mein kaise rehna\n\n[PAUSE]\n\n[RHYTHMIC] [CALM] Naina ne sikha diving, seal ke saath khela\nArctic ke jaadui raaz, sabne mil kar dekha\n\n[PAUSE]\n\n[RHYTHMIC] [WHISPERING] Dost ban gaye sab milkar, baraf mein haskar\nNaina ki khushi dekho, seekh gayi nayi kala\n\n[PAUSE]\n\n[RHYTHMIC] [SLEEPY] Ab Naina sapno mein jaaye, seal dost ke saath\nBaraf waley school ki yaadein, leke jaaye saath",
+    "description": "Ek bahadur ladki Naina barf ke jaadui vidyalay mein pahunchti hai, jahaan seal uske dost ban jaate hain aur unse nayi cheezen sikhate hain.",
+    "text": "[GENTLE] Ek din Naina, barf ke desh mein chali gayi,\n[CURIOUS] Jahaan ek vidyalay, chamchamati dhoop mein khada tha,\n[EXCITED] Wahaan seal bachche, paani mein khel rahe the,\n[ADVENTUROUS] Naina ko dekha, toh haath hilaakar bulaaya tha.\n\n[RHYTHMIC] Seal ne kaha, \"Aao, hum tumhein sikhayenge,\n[JOYFUL] Barf par kaise nachna, paani mein kaise ghumna,\n[PAUSE] Diving ka raaz, aur leheron se khelna,\n[WHISPERING] Yeh sab seekh lo, phir ho jaoge humsa tum.\"\n\n[DRAMATIC_PAUSE] Naina ne koshish ki, pehle thodi dar gayi,\n[MYSTERIOUS] Lekin seal dost ne, hath pakadkar sambhaala,\n[EXCITED] Ab woh bhi unke saath, paani mein ghoomne lagi,\n[JOYFUL] Barf ke rang, aur dhoop ki chamak ne dil behlaaya.\n\n[SLEEPY] Shaam hui, Naina ko thakaan si lagne lagi,\n[GENTLE] Seal ne pyaar se, usko ghar pahunchaya,\n[CALM] Sapne mein ab woh, phir se unke saath khelegi,\n[WHISPERING] Barf ke vidyalay ki, yaadein saath lekar soyi.",
     "target_age": 4,
     "age_min": 4,
     "age_max": 5,
@@ -2878,14 +4748,14 @@
     "generation_quality": "excellent",
     "voice_id": null,
     "music_type": "ambient",
-    "word_count": 81,
+    "word_count": 130,
     "morals": [
-      "Dusre jaanwaron se seekhna achhi baat hai",
-      "Naye dost banane mein khushi milti hai"
+      "Dost banane se zindagi mein khushi aur seekhne ka avsar milta hai.",
+      "Nayi cheezon ko seekhne ke liye himmat aur doston ka saath zaroori hai."
     ],
     "has_qa": false,
     "has_games": false,
-    "annotated_text": "[RHYTHMIC] [GENTLE] Baraf ke ghar mein ek din, Naina pahunchi school\nJahan seal machliyan padhti, barf ka yeh rule\n\n[PAUSE]\n\n[RHYTHMIC] [JOYFUL] Suno suno kehti seal, hum sikhayenge tumhe\nBaraf par kaise khelna, paani mein kaise rehna\n\n[PAUSE]\n\n[RHYTHMIC] [CALM] Naina ne sikha diving, seal ke saath khela\nArctic ke jaadui raaz, sabne mil kar dekha\n\n[PAUSE]\n\n[RHYTHMIC] [WHISPERING] Dost ban gaye sab milkar, baraf mein haskar\nNaina ki khushi dekho, seekh gayi nayi kala\n\n[PAUSE]\n\n[RHYTHMIC] [SLEEPY] Ab Naina sapno mein jaaye, seal dost ke saath\nBaraf waley school ki yaadein, leke jaaye saath",
+    "annotated_text": "[GENTLE] Ek din Naina, barf ke desh mein chali gayi,\n[CURIOUS] Jahaan ek vidyalay, chamchamati dhoop mein khada tha,\n[EXCITED] Wahaan seal bachche, paani mein khel rahe the,\n[ADVENTUROUS] Naina ko dekha, toh haath hilaakar bulaaya tha.\n\n[RHYTHMIC] Seal ne kaha, \"Aao, hum tumhein sikhayenge,\n[JOYFUL] Barf par kaise nachna, paani mein kaise ghumna,\n[PAUSE] Diving ka raaz, aur leheron se khelna,\n[WHISPERING] Yeh sab seekh lo, phir ho jaoge humsa tum.\"\n\n[DRAMATIC_PAUSE] Naina ne koshish ki, pehle thodi dar gayi,\n[MYSTERIOUS] Lekin seal dost ne, hath pakadkar sambhaala,\n[EXCITED] Ab woh bhi unke saath, paani mein ghoomne lagi,\n[JOYFUL] Barf ke rang, aur dhoop ki chamak ne dil behlaaya.\n\n[SLEEPY] Shaam hui, Naina ko thakaan si lagne lagi,\n[GENTLE] Seal ne pyaar se, usko ghar pahunchaya,\n[CALM] Sapne mein ab woh, phir se unke saath khelegi,\n[WHISPERING] Barf ke vidyalay ki, yaadein saath lekar soyi.",
     "audio_variants": [
       {
         "voice": "female_1_hi",
@@ -2930,16 +4800,71 @@
         "provider": "chatterbox"
       }
     ],
-    "annotated_text_devanagari": "[RHYTHMIC] [GENTLE] बर्फ के घर में एक दिन, नैना पहुंची स्कूल\nजहाँ सील मछलियाँ पढ़ती, बर्फ का यह रूल\n\n[PAUSE]\n\n[RHYTHMIC] [JOYFUL] सुनो सुनो कहती सील, हम सिखायेंगे तुम्हें\nबर्फ पर कैसे खेलना, पानी में कैसे रहना\n\n[PAUSE]\n\n[RHYTHMIC] [CALM] नैना ने सीखा डाइविंग, सील के साथ खेला\nआर्कटिक के जादुई राज़, सबने मिल कर देखा\n\n[PAUSE]\n\n[RHYTHMIC] [WHISPERING] दोस्त बन गए सब मिलकर, बर्फ में हंसकर\nनैना की खुशी देखो, सीख गई नई कला\n\n[PAUSE]\n\n[RHYTHMIC] [SLEEPY] अब नैना सपनों में जाये, सील दोस्त के साथ\nबर्फ वाले स्कूल की यादें, लेके जाये साथ"
+    "annotated_text_devanagari": "[GENTLE] एक दिन नैना, बर्फ के देश में चली गई,\n[CURIOUS] जहाँ एक विद्यालय, चमचमाती धूप में खड़ा था,\n[EXCITED] वहाँ सील बच्चे, पानी में खेल रहे थे,\n[ADVENTUROUS] नैना को देखा, तो हाथ हिलाकर बुलाया था।\n\n[RHYTHMIC] सील ने कहा, \"आओ, हम तुम्हें सिखाएंगे,\n[JOYFUL] बर्फ पर कैसे नाचना, पानी में कैसे घूमना,\n[PAUSE] डाइविंग का राज, और लहरों से खेलना,\n[WHISPERING] ये सब सीख लो, फिर हो जाओगे हमसा तुम।\"\n\n[DRAMATIC_PAUSE] नैना ने कोशिश की, पहले थोड़ी डर गई,\n[MYSTERIOUS] लेकिन सील दोस्त ने, हाथ पकड़कर संभाला,\n[EXCITED] अब वह भी उनके साथ, पानी में घूमने लगी,\n[JOYFUL] बर्फ के रंग, और धूप की चमक ने दिल बहलाया।\n\n[SLEEPY] शाम हुई, नैना को थकान सी लगने लगी,\n[GENTLE] सील ने प्यार से, उसको घर पहुंचाया,\n[CALM] सपने में अब वह, फिर से उनके साथ खेलेगी,\n[WHISPERING] बर्फ के विद्यालय की, यादें साथ लेकर सोई।",
+    "musicParams": {
+      "key": "G",
+      "chordNotes": [
+        98.0,
+        123.47,
+        146.83,
+        196.0
+      ],
+      "padType": "resonant",
+      "padGain": 0.05,
+      "padFilter": 800,
+      "padLfo": 0.08,
+      "noiseType": "pink",
+      "noiseGain": 0.01,
+      "droneFreq": 49.0,
+      "droneGain": 0.03,
+      "melodyNotes": [
+        196.0,
+        246.94,
+        293.66,
+        261.62
+      ],
+      "melodyInterval": 4000,
+      "melodyGain": 0.018,
+      "bassNotes": [
+        49.0,
+        73.42,
+        61.73
+      ],
+      "bassInterval": 6000,
+      "counterNotes": [
+        308.68,
+        367.08,
+        245.0
+      ],
+      "counterInterval": 5000,
+      "events": [
+        {
+          "type": "starTwinkle",
+          "interval": 12000
+        },
+        {
+          "type": "waterDrop",
+          "interval": 8000
+        },
+        {
+          "type": "owl",
+          "interval": 20000
+        },
+        {
+          "type": "chimes",
+          "interval": 15000
+        }
+      ]
+    }
   },
   {
     "id": "gen-032fdef6f753",
     "type": "poem",
     "lang": "hi",
-    "title": "Vaanar Mitra Ka Jaadui Khel Samrajya",
+    "title": "Hannu Ka Jaadui Khel Mahal",
     "cover": "/covers/monkey-kingdom.svg",
-    "description": "Ek chhote vaanar ka ek magical playground mein transformation ka safar, jahaan woh seekhta hai ki khel mein discovery ki shakti hai.",
-    "text": "[RHYTHMIC] [GENTLE] Ek chhota vaanar tha, Hannu naam ka pyaara\nEk jaadui van mein khelta, sapno ka nazaara\n\n[PAUSE]\n\n[RHYTHMIC] [JOYFUL] Jhoolon par naachta, rang badal jaate the\nHar khel mein kuch naya, sapne sach ho jaate the\n\n[PAUSE]\n\n[RHYTHMIC] [CALM] Patthar chhoote to titli, paani mein taarey\nHannu ka dil khushi se, bhar gaya sitarey\n\n[PAUSE]\n\n[RHYTHMIC] [WHISPERING] Khel khel mein seekha, duniya ki yeh baat\nHar cheez mein chhupa hai, kuch jaadui raat [SLEEPY]",
+    "description": "Ek chhote vaanar Hannu ka jaadui khel mahal mein anokha safar, jahaan har khel mein naye raaz chhupay hain.",
+    "text": "[GENTLE] Hannu naam ka, ek chhota vaanar tha,\nVan mein khelta, sapnon ka sahaara tha.\n[CURIOUS] Ek din usne, paaya ek darwaaza,\nJaadui tha woh, rangon ka saaraaza.\n\n[EXCITED] Jhoole par baitha, toh hawa ho gayi,\nPhoolon mein badla, titli si dhoom machayi.\n[JOYFUL] Patthar chhoo liya, toh taare chamke,\nPaani mein dekhe, sapne jaise damke.\n\n[ADVENTUROUS] Khel-khel mein seekha, yeh raaz naya,\nHar cheez mein chhupa, kuch jaadu hai pyaara.\n[RHYTHMIC] Chhote se haath mein, hai badi shakti,\nKhelne se milti, nayi duniya ki raah.\n\n[CALM] Shaam hui, taare chamke aasmaan,\nHannu soya, sapnon mein phir jaan.\n[SLEEPY] Sochta raha, kal kya khel khelega,\nJaadui mahal mein, phir kya dekhega?",
     "target_age": 4,
     "age_min": 4,
     "age_max": 5,
@@ -2964,14 +4889,14 @@
     "generation_quality": "excellent",
     "voice_id": null,
     "music_type": "ambient",
-    "word_count": 64,
+    "word_count": 103,
     "morals": [
-      "Khel mein discovery ki shakti hai",
-      "Har cheez mein jaadu chhupa hota hai"
+      "Khelne se nayi cheezon ki khoj hoti hai.",
+      "Har chhoti cheez mein bhi koi jaadu chhupa ho sakta hai."
     ],
     "has_qa": false,
     "has_games": false,
-    "annotated_text": "[RHYTHMIC] [GENTLE] Ek chhota vaanar tha, Hannu naam ka pyaara\nEk jaadui van mein khelta, sapno ka nazaara\n\n[PAUSE]\n\n[RHYTHMIC] [JOYFUL] Jhoolon par naachta, rang badal jaate the\nHar khel mein kuch naya, sapne sach ho jaate the\n\n[PAUSE]\n\n[RHYTHMIC] [CALM] Patthar chhoote to titli, paani mein taarey\nHannu ka dil khushi se, bhar gaya sitarey\n\n[PAUSE]\n\n[RHYTHMIC] [WHISPERING] Khel khel mein seekha, duniya ki yeh baat\nHar cheez mein chhupa hai, kuch jaadui raat [SLEEPY]",
+    "annotated_text": "[GENTLE] Hannu naam ka, ek chhota vaanar tha,\nVan mein khelta, sapnon ka sahaara tha.\n[CURIOUS] Ek din usne, paaya ek darwaaza,\nJaadui tha woh, rangon ka saaraaza.\n\n[EXCITED] Jhoole par baitha, toh hawa ho gayi,\nPhoolon mein badla, titli si dhoom machayi.\n[JOYFUL] Patthar chhoo liya, toh taare chamke,\nPaani mein dekhe, sapne jaise damke.\n\n[ADVENTUROUS] Khel-khel mein seekha, yeh raaz naya,\nHar cheez mein chhupa, kuch jaadu hai pyaara.\n[RHYTHMIC] Chhote se haath mein, hai badi shakti,\nKhelne se milti, nayi duniya ki raah.\n\n[CALM] Shaam hui, taare chamke aasmaan,\nHannu soya, sapnon mein phir jaan.\n[SLEEPY] Sochta raha, kal kya khel khelega,\nJaadui mahal mein, phir kya dekhega?",
     "audio_variants": [
       {
         "voice": "female_1_hi",
@@ -3016,16 +4941,71 @@
         "provider": "chatterbox"
       }
     ],
-    "annotated_text_devanagari": "[RHYTHMIC] [GENTLE] एक छोटा वानर था, हन्नू नाम का प्यारा\nएक जादुई वन में खेलता, सपनों का नज़ारा\n\n[PAUSE]\n\n[RHYTHMIC] [JOYFUL] झूलों पर नाचता, रंग बदल जाते थे\nहर खेल में कुछ नया, सपने सच हो जाते थे\n\n[PAUSE]\n\n[RHYTHMIC] [CALM] पत्थर छूते तो तितली, पानी में तारे\nहन्नू का दिल खुशी से, भर गया सितारे\n\n[PAUSE]\n\n[RHYTHMIC] [WHISPERING] खेल खेल में सीखा, दुनिया की यह बात\nहर चीज़ में छुपा है, कुछ जादुई रात [SLEEPY]"
+    "annotated_text_devanagari": "[GENTLE] हन्नू नाम का, एक छोटा वानर था,\nवन में खेलता, सपनों का सहारा था।\n[CURIOUS] एक दिन उसने, पाया एक दरवाज़ा,\nजादुई था वो, रंगों का साराज़ा।\n\n[EXCITED] झूले पर बैठा, तो हवा हो गई,\nफूलों में बदला, तितली सी धूम मचाई।\n[JOYFUL] पत्थर छू लिया, तो तारे चमके,\nपानी में देखे, सपने जैसे दमके।\n\n[ADVENTUROUS] खेल-खेल में सीखा, यह राज नया,\nहर चीज़ में छुपा, कुछ जादू है प्यारा।\n[RHYTHMIC] छोटे से हाथ में, है बड़ी शक्ति,\nखेलने से मिलती, नई दुनिया की राह।\n\n[CALM] शाम हुई, तारे चमके आसमान,\nहन्नू सोया, सपनों में फिर जान।\n[SLEEPY] सोचता रहा, कल क्या खेल खेलेगा,\nजादुई महल में, फिर क्या देखेगा?",
+    "musicParams": {
+      "key": "A",
+      "chordNotes": [
+        110.0,
+        138.59,
+        164.81,
+        220.0
+      ],
+      "padType": "resonant",
+      "padGain": 0.05,
+      "padFilter": 800,
+      "padLfo": 0.08,
+      "noiseType": "pink",
+      "noiseGain": 0.01,
+      "droneFreq": 55.0,
+      "droneGain": 0.03,
+      "melodyNotes": [
+        220.0,
+        277.18,
+        329.62,
+        293.66
+      ],
+      "melodyInterval": 4000,
+      "melodyGain": 0.018,
+      "bassNotes": [
+        55.0,
+        82.41,
+        69.3
+      ],
+      "bassInterval": 6000,
+      "counterNotes": [
+        346.48,
+        412.02,
+        275.0
+      ],
+      "counterInterval": 5000,
+      "events": [
+        {
+          "type": "starTwinkle",
+          "interval": 12000
+        },
+        {
+          "type": "chimes",
+          "interval": 18000
+        },
+        {
+          "type": "waterDrop",
+          "interval": 20000
+        },
+        {
+          "type": "leaves",
+          "interval": 15000
+        }
+      ]
+    }
   },
   {
     "id": "gen-febbf324eecb",
     "type": "poem",
     "lang": "hi",
-    "title": "Kiran Aur Samudar Ke Upar Ke Floating Islands Ki Dosti",
+    "title": "Kiran aur Samudra ke Taairte Dweep",
     "cover": "/covers/floating-islands.svg",
-    "description": "Bhavishya mein samudar ke upar tairte hue magical islands par rehne wala ek brave ladka Kiran apne robot dost ke saath naye friends banata hai.",
-    "text": "[RHYTHMIC] Samudar ke upar, aasman mein high,\nTairte hue islands, crystals ki light.\nKiran naam ka ladka, brave aur sweet,\nRobot dost Sparky ke saath, adventures complete.\n\n[PAUSE]\n\n[GENTLE] Floating gardens mein flowers glow karte,\nHolographic butterflies dance karte.\nKiran lonely feel karta tha sometimes,\nNaye friends ki search mein, climbing heights.\n\n[PAUSE]\n\n[JOYFUL] Ek din milе Luna, mermaid so kind,\nAur Zephyr wind-sprite, pure of mind.\nTogether they explored crystal caves deep,\nSharing stories, promises to keep.\n\n[PAUSE]\n\n[CALM] Floating bridges of light unhe connect karte,\nDifferent islands, hearts ko reflect karte.\nKiran ne sikha, friendship ka magic true,\nDistance doesn't matter, when hearts are blue.\n\n[PAUSE]\n\n[WHISPERING] Starfish lanterns light up the night,\nFriends gather 'round, everything's right.\nSamudar ki waves, gentle lullaby sing,\nDosti ki warmth, peaceful dreams bring.\n\n[PAUSE]\n\n[SLEEPY] Now Kiran sleeps on his island home,\nNo more alone, no need to roam.\nSapno mein friends, always near,\nFuture's bright, nothing to fear.",
+    "description": "Bhavishya mein samudra ke upar taairte hue jaadui dweepon par ek bahadur bachcha Kiran apne robot mitra ke saath naye dost banata hai aur dosti ka jaadu seekhta hai.",
+    "text": "[ADVENTUROUS] Samudra ke oopar, aasmaan ke neeche, taairte dweep hain, jaise sapne ke chehre. [CURIOUS] Kiran un par rehta, dil mein hौसला, Sparky saath mein, saara jag sahela. [JOYFUL] Phool chamakte hain, jaise taare dhare, titliyaan naachti, rang birange pyare. [GENTLE] Par kabhi-kabhi, akela lagta tha, naye dost ki talash mein, chahat jagta tha. [EXCITED] Ek din mili Luna, samudra ki raani, Zephyr hawa ka, sundar saathi saaf niyaati. [MYSTERIOUS] Saath mein khoje, moti ke gufaon ko, kahaniyaan suni, vaade kiye poore. [RHYTHMIC] Roshni ke pul, jodte sabko, alag dweepon ko, ek dil banaate. [DRAMATIC_PAUSE] Kiran ne seekha, dosti ka raaz, doori se kya, jab dil mile aapas. [CALM] Tara machhliyaan, jagmagati raat ko, dost jama hote, sab sukh paate. [SLEEPY] Samudra gaata, lori si meethi, Kiran so jaata, sapne suhaane. [WHISPERING] Ab na akela, na gham ka saaya, dosti ke saath, bhavishya hai naya.",
     "target_age": 7,
     "age_min": 6,
     "age_max": 8,
@@ -3051,14 +5031,14 @@
     "generation_quality": "excellent",
     "voice_id": null,
     "music_type": "ambient",
-    "word_count": 147,
+    "word_count": 134,
     "morals": [
-      "True friendship transcends physical distance and differences",
-      "Being brave enough to reach out leads to meaningful connections"
+      "Dosti sabse bada khajana hai, jo dil ko khushiyan deta hai.",
+      "Doori se kya hota hai, jab dil ek ho jaate hain."
     ],
     "has_qa": false,
     "has_games": false,
-    "annotated_text": "[RHYTHMIC] Samudar ke upar, aasman mein high,\nTairte hue islands, crystals ki light.\nKiran naam ka ladka, brave aur sweet,\nRobot dost Sparky ke saath, adventures complete.\n\n[PAUSE]\n\n[GENTLE] Floating gardens mein flowers glow karte,\nHolographic butterflies dance karte.\nKiran lonely feel karta tha sometimes,\nNaye friends ki search mein, climbing heights.\n\n[PAUSE]\n\n[JOYFUL] Ek din milе Luna, mermaid so kind,\nAur Zephyr wind-sprite, pure of mind.\nTogether they explored crystal caves deep,\nSharing stories, promises to keep.\n\n[PAUSE]\n\n[CALM] Floating bridges of light unhe connect karte,\nDifferent islands, hearts ko reflect karte.\nKiran ne sikha, friendship ka magic true,\nDistance doesn't matter, when hearts are blue.\n\n[PAUSE]\n\n[WHISPERING] Starfish lanterns light up the night,\nFriends gather 'round, everything's right.\nSamudar ki waves, gentle lullaby sing,\nDosti ki warmth, peaceful dreams bring.\n\n[PAUSE]\n\n[SLEEPY] Now Kiran sleeps on his island home,\nNo more alone, no need to roam.\nSapno mein friends, always near,\nFuture's bright, nothing to fear.",
+    "annotated_text": "[ADVENTUROUS] Samudra ke oopar, aasmaan ke neeche, taairte dweep hain, jaise sapne ke chehre. [CURIOUS] Kiran un par rehta, dil mein hौसला, Sparky saath mein, saara jag sahela. [JOYFUL] Phool chamakte hain, jaise taare dhare, titliyaan naachti, rang birange pyare. [GENTLE] Par kabhi-kabhi, akela lagta tha, naye dost ki talash mein, chahat jagta tha. [EXCITED] Ek din mili Luna, samudra ki raani, Zephyr hawa ka, sundar saathi saaf niyaati. [MYSTERIOUS] Saath mein khoje, moti ke gufaon ko, kahaniyaan suni, vaade kiye poore. [RHYTHMIC] Roshni ke pul, jodte sabko, alag dweepon ko, ek dil banaate. [DRAMATIC_PAUSE] Kiran ne seekha, dosti ka raaz, doori se kya, jab dil mile aapas. [CALM] Tara machhliyaan, jagmagati raat ko, dost jama hote, sab sukh paate. [SLEEPY] Samudra gaata, lori si meethi, Kiran so jaata, sapne suhaane. [WHISPERING] Ab na akela, na gham ka saaya, dosti ke saath, bhavishya hai naya.",
     "audio_variants": [
       {
         "voice": "female_1_hi",
@@ -3103,7 +5083,62 @@
         "provider": "chatterbox"
       }
     ],
-    "annotated_text_devanagari": "[RHYTHMIC] समुद्र के ऊपर, आसमान में high,\nतैरते हुए islands, crystals की light।\nकिरण नाम का लड़का, brave और sweet,\nRobot दोस्त Sparky के साथ, adventures complete।\n\n[PAUSE]\n\n[GENTLE] Floating gardens में flowers glow करते,\nHolographic butterflies dance करते।\nकिरण lonely feel करता था sometimes,\nनये friends की search में, climbing heights।\n\n[PAUSE]\n\n[JOYFUL] एक दिन मिले Luna, mermaid so kind,\nऔर Zephyr wind-sprite, pure of mind।\nTogether they explored crystal caves deep,\nSharing stories, promises to keep।\n\n[PAUSE]\n\n[CALM] Floating bridges of light उन्हें connect करते,\nDifferent islands, hearts को reflect करते।\nकिरण ने सीखा, friendship का magic true,\nDistance doesn't matter, when hearts are blue।\n\n[PAUSE]\n\n[WHISPERING] Starfish lanterns light up the night,\nFriends gather 'round, everything's right।\nसमुद्र की waves, gentle lullaby sing,\nदोस्ती की warmth, peaceful dreams bring।\n\n[PAUSE]\n\n[SLEEPY] Now किरण sleeps on his island home,\nNo more alone, no need to roam।\nसपनों में friends, always near,\nFuture's bright, nothing to fear।"
+    "annotated_text_devanagari": "[ADVENTUROUS] समुद्र के ऊपर, आसमान के नीचे, तैरते द्वीप हैं, जैसे सपने के चेहरे। [CURIOUS] किरण उन पर रहता, दिल में हौसला, स्पार्की साथ में, सारा जग सहेला। [JOYFUL] फूल चमकते हैं, जैसे तारे धरे, तितलियाँ नाचती, रंग बिरंगे प्यारे। [GENTLE] पर कभी-कभी, अकेला लगता था, नए दोस्त की तलाश में, चाहत जगता था। [EXCITED] एक दिन मिली लूना, समुद्र की रानी, ज़ेफ़िर हवा का, सुंदर साथी साफ़ नियति। [MYSTERIOUS] साथ में खोजे, मोती की गुफाओं को, कहानियाँ सुनी, वादे किए पूरे। [RHYTHMIC] रोशनी के पुल, जोड़ते सबको, अलग द्वीपों को, एक दिल बनाते। [DRAMATIC_PAUSE] किरण ने सीखा, दोस्ती का राज़, दूरी से क्या, जब दिल मिले आपस। [CALM] तारा मछलियाँ, जगमगाती रात को, दोस्त जमा होते, सब सुख पाते। [SLEEPY] समुद्र गाता, लोरी सी मीठी, किरण सो जाता, सपने सुहाने। [WHISPERING] अब न अकेला, न ग़म का साया, दोस्ती के साथ, भविष्य है नया।",
+    "musicParams": {
+      "key": "Em",
+      "chordNotes": [
+        82.41,
+        98.0,
+        123.47,
+        164.82
+      ],
+      "padType": "resonant",
+      "padGain": 0.045,
+      "padFilter": 800,
+      "padLfo": 0.08,
+      "noiseType": "brown",
+      "noiseGain": 0.015,
+      "droneFreq": 41.2,
+      "droneGain": 0.03,
+      "melodyNotes": [
+        164.82,
+        196.0,
+        246.94,
+        220.0
+      ],
+      "melodyInterval": 4000,
+      "melodyGain": 0.018,
+      "bassNotes": [
+        41.2,
+        61.73,
+        49.0
+      ],
+      "bassInterval": 6000,
+      "counterNotes": [
+        245.0,
+        308.68,
+        206.02
+      ],
+      "counterInterval": 5000,
+      "events": [
+        {
+          "type": "waveCycle",
+          "interval": 18000
+        },
+        {
+          "type": "starTwinkle",
+          "interval": 22000
+        },
+        {
+          "type": "whaleCall",
+          "interval": 30000
+        },
+        {
+          "type": "chimes",
+          "interval": 15000
+        }
+      ]
+    }
   },
   {
     "id": "gen-230502b905ba",
@@ -3111,8 +5146,8 @@
     "lang": "hi",
     "title": "Priya Aur Vidya Devi Ki Jaadui Shiksha Yatra",
     "cover": "/covers/vidya-devi.svg",
-    "description": "Ek brave bachhi Priya ek mythological gurukul mein jaadui gyan seekhti hai aur apne andar ki shakti discover karti hai.",
-    "text": "[RHYTHMIC] [GENTLE] Priya ek chhoti si bachhi thi, brave aur smart\nVidya Devi ke gurukul mein, seekhne gai art\n\n[PAUSE]\n\n[RHYTHMIC] [JOYFUL] Pahadon ke beech mein tha ye jaadui school\nYahan har bachha banta tha gyan ka jewel\n\n[PAUSE]\n\n[RHYTHMIC] [CALM] Devi ne kaha, \"Beta, tumhare andar hai light\nSabko sikhao, karo sab kuch right\"\n\n[PAUSE]\n\n[RHYTHMIC] [WHISPERING] Priya ne sikhayi dusron ko math aur song\nSabke saath milkar, bani friendship strong\n\n[PAUSE]\n\n[RHYTHMIC] [SLEEPY] Ab wo teacher ban gayi, kind aur wise\nSapno mein bhi sikhati, under starry skies",
+    "description": "Ek bahadur bachhi Priya ek adbhut gurukul mein jaadui gyan paati hai aur apni antarik shakti ko pahchaanti hai.",
+    "text": "[ADVENTUROUS] Pahadon ki choti si raani, Priya thi chanchal si jaani,\nVidya Devi ke gurukul mein, jaane ko thi uski manmaani,\nJaise hi vahan pahunchi, dekha ek alaukik nazaara,\n[MYSTERIOUS] Pedon pe chamke moti, chandani ka tha saara samara.\n\n[CURIOUS] Devi boli, \"Beti, andar dekho, tum mein hai ek roshni,\nJo jagmagaye, sabko sikhaaye, ban jaaye ek prashnsi.\"\nPriya ne sikhaya ganit ka raaz, geet ka saath,\n[JOYFUL] Sab bachche milkar gaye, bani ek pyaari baat.\n\n[GENTLE] Raat hui, taaron ne dekha, Priya ne seekhaaya,\nChand ke neeche, sapnon mein bhi, uska gyan hi jaaya,\n[DRAMATIC_PAUSE] Ab wo ban gayi guru, dayal aur buddhimaan,\n[EXCITED] Har bachche ke dil mein, basi ek nayi pehchaan.",
     "target_age": 7,
     "age_min": 6,
     "age_max": 8,
@@ -3137,14 +5172,14 @@
     "generation_quality": "excellent",
     "voice_id": null,
     "music_type": "ambient",
-    "word_count": 76,
+    "word_count": 107,
     "morals": [
-      "Gyan share karne se wo aur badhta hai",
-      "Har bachche mein kuch special talent hota hai"
+      "Har bacche ke andar ek alag shakti chhupi hoti hai, usse pehchaan kar uska vistaar karna chahiye.",
+      "Gyan baantne se badhta hai, aur sabke saath milkar seekhne se dosti aur pyaar badhta hai."
     ],
     "has_qa": false,
     "has_games": false,
-    "annotated_text": "[RHYTHMIC] [GENTLE] Priya ek chhoti si bachhi thi, brave aur smart\nVidya Devi ke gurukul mein, seekhne gai art\n\n[PAUSE]\n\n[RHYTHMIC] [JOYFUL] Pahadon ke beech mein tha ye jaadui school\nYahan har bachha banta tha gyan ka jewel\n\n[PAUSE]\n\n[RHYTHMIC] [CALM] Devi ne kaha, \"Beta, tumhare andar hai light\nSabko sikhao, karo sab kuch right\"\n\n[PAUSE]\n\n[RHYTHMIC] [WHISPERING] Priya ne sikhayi dusron ko math aur song\nSabke saath milkar, bani friendship strong\n\n[PAUSE]\n\n[RHYTHMIC] [SLEEPY] Ab wo teacher ban gayi, kind aur wise\nSapno mein bhi sikhati, under starry skies",
+    "annotated_text": "[ADVENTUROUS] Pahadon ki choti si raani, Priya thi chanchal si jaani,\nVidya Devi ke gurukul mein, jaane ko thi uski manmaani,\nJaise hi vahan pahunchi, dekha ek alaukik nazaara,\n[MYSTERIOUS] Pedon pe chamke moti, chandani ka tha saara samara.\n\n[CURIOUS] Devi boli, \"Beti, andar dekho, tum mein hai ek roshni,\nJo jagmagaye, sabko sikhaaye, ban jaaye ek prashnsi.\"\nPriya ne sikhaya ganit ka raaz, geet ka saath,\n[JOYFUL] Sab bachche milkar gaye, bani ek pyaari baat.\n\n[GENTLE] Raat hui, taaron ne dekha, Priya ne seekhaaya,\nChand ke neeche, sapnon mein bhi, uska gyan hi jaaya,\n[DRAMATIC_PAUSE] Ab wo ban gayi guru, dayal aur buddhimaan,\n[EXCITED] Har bachche ke dil mein, basi ek nayi pehchaan.",
     "audio_variants": [
       {
         "voice": "female_1_hi",
@@ -3189,16 +5224,71 @@
         "provider": "chatterbox"
       }
     ],
-    "annotated_text_devanagari": "[RHYTHMIC] [GENTLE] प्रिया एक छोटी सी बच्ची थी, brave और smart\nविद्या देवी के गुरुकुल में, सीखने गई art\n\n[PAUSE]\n\n[RHYTHMIC] [JOYFUL] पहाड़ों के बीच में था ये जादुई school\nयहाँ हर बच्चा बनता था ज्ञान का jewel\n\n[PAUSE]\n\n[RHYTHMIC] [CALM] देवी ने कहा, \"बेटा, तुम्हारे अंदर है light\nसबको सिखाओ, करो सब कुछ right\"\n\n[PAUSE]\n\n[RHYTHMIC] [WHISPERING] प्रिया ने सिखाई दूसरों को math और song\nसबके साथ मिलकर, बनी friendship strong\n\n[PAUSE]\n\n[RHYTHMIC] [SLEEPY] अब वो teacher बन गई, kind और wise\nसपनों में भी सिखाती, under starry skies"
+    "annotated_text_devanagari": "[ADVENTUROUS] पहाड़ों की छोटी सी रानी, प्रिया थी चंचल सी जानी,\nविद्या देवी के गुरुकुल में, जाने को थी उसकी मनमानी,\nजैसे ही वहाँ पहुँची, देखा एक अलौकिक नज़ारा,\n[MYSTERIOUS] पेड़ों पे चमके मोती, चाँदनी का था सारा समाँरा।\n\n[CURIOUS] देवी बोलीं, \"बेटी, अंदर देखो, तुम में है एक रोशनी,\nजो जगमगाए, सबको सिखाए, बन जाए एक प्रशंसी।\"\nप्रिया ने सिखाया गणित का राज़, गीत का साथ,\n[JOYFUL] सब बच्चे मिलकर गाए, बनी एक प्यारी बात।\n\n[GENTLE] रात हुई, तारों ने देखा, प्रिया ने सिखाया,\nचाँद के नीचे, सपनों में भी, उसका ज्ञान ही जाया,\n[DRAMATIC_PAUSE] अब वो बन गई गुरु, दयाल और बुद्धिमान,\n[EXCITED] हर बच्चे के दिल में, बसी एक नई पहचान।",
+    "musicParams": {
+      "key": "Fm",
+      "chordNotes": [
+        174.61,
+        207.65,
+        261.63,
+        349.22
+      ],
+      "padType": "resonant",
+      "padGain": 0.045,
+      "padFilter": 800,
+      "padLfo": 0.08,
+      "noiseType": "brown",
+      "noiseGain": 0.01,
+      "droneFreq": 87.31,
+      "droneGain": 0.03,
+      "melodyNotes": [
+        349.22,
+        415.3,
+        523.26,
+        466.16
+      ],
+      "melodyInterval": 4000,
+      "melodyGain": 0.018,
+      "bassNotes": [
+        87.31,
+        130.81,
+        103.83
+      ],
+      "bassInterval": 6000,
+      "counterNotes": [
+        519.12,
+        654.08,
+        436.53
+      ],
+      "counterInterval": 5000,
+      "events": [
+        {
+          "type": "starTwinkle",
+          "interval": 18000
+        },
+        {
+          "type": "chimes",
+          "interval": 12000
+        },
+        {
+          "type": "leaves",
+          "interval": 22000
+        },
+        {
+          "type": "owl",
+          "interval": 25000
+        }
+      ]
+    }
   },
   {
     "id": "gen-bb82f62942d0",
     "type": "poem",
     "lang": "hi",
-    "title": "Samudra ki Chhupi Duniya",
+    "title": "Samudra ki Gahrai Mein",
     "cover": "/covers/samudra-duniya.svg",
-    "description": "Ek bahadur bachche ki kahani jo samudra ki gahrayi mein jaati hai aur wahaan ke jaadui jeevan ko dekhti hai",
-    "text": "[RHYTHMIC] Ek bahadur bachcha tha, jiska naam Aarav tha, [GENTLE] jo samudra ki kinare rehta tha. [PAUSE] \n[RHYTHMIC] Wahaan par usne paani ke neeche ki duniya ko dekha, [CALM] jahaan machhliyaan aur anya jeev rehte the. [PAUSE] \n[RHYTHMIC] Usne dekha ki kaise paani ki gati aur dheere-dheere badalne wali gati [JOYFUL] samudra ki lahron ko banati hai, [WHISPERING] aur kaise yeh sab kuch ek dusre se juda hua hai. [SLEEPY]",
+    "description": "Ek bahadur bachche ki kahani jo samudra ki athah gahrayi mein jaata hai aur wahan ke jaadui jeevon aur rahasyon ko dhoondhta hai.",
+    "text": "[ADVENTUROUS] Aarav tha ek balak, dil mein tha sapna gahra,\nSamudra ke kinaare, rehta tha woh hamesha saath uske.\n[CURIOUS] Ek din usne socha, kya hai neeche ki duniya?\nMachhliyon ki baatein, leheron ka hai raaz kya?\n\n[MYSTERIOUS] Paani mein utra, gehri neeli chhaon,\nSaanson ko rok ke, dekhi ek nayi jaan.\n[EXCITED] Chamakti machhliyan, rang-birangi,\nUdte hue kachhue, leheron ke sangi.\n\n[RHYTHMIC] Dheere-dheere badle, paani ki gatiyaan,\nBanati hain lehren, jaise koi geet gaatiyaan.\n[GENTLE] Saagar ki aawaaz, sunai deti hai,\nEk nayi kahani, har pal sunati hai.\n\n[DRAMATIC_PAUSE] Aarav ne dekha, ek anokha nazaara,\nJeevan ka rang, samudra ne saara.\n[JOYFUL] Woh samajh gaya, sab kuch hai juda,\nPar ek doosre se, hai yeh sab mila.\n\n[WHISPERING] Ab har raat, sapne mein aati hai,\nSamudra ki duniya, usko bulati hai.\n[SLEEPY] So jaa balak, kal phir se jaana,\nNayi kahani, nayi duniya paana.",
     "target_age": 10,
     "age_min": 8,
     "age_max": 12,
@@ -3221,14 +5311,14 @@
     "generation_quality": "excellent",
     "voice_id": null,
     "music_type": "ambient",
-    "word_count": 60,
+    "word_count": 135,
     "morals": [
-      "Bahaduri aur curiosty se hum naye cheezein seekh sakte hain",
-      "Prakriti ki sundarta aur jaadui duniya ko samajhna"
+      "Sahas aur jigyasa se hi nayi duniyaon ki khoj hoti hai.",
+      "Prakriti ke har ang mein ek anokha raaz chhupa hota hai, jise samajhne ke liye dhairya aur drishti ki zarurat hoti hai."
     ],
     "has_qa": false,
     "has_games": false,
-    "annotated_text": "[RHYTHMIC] Ek bahadur bachcha tha, jiska naam Aarav tha, [GENTLE] jo samudra ki kinare rehta tha. [PAUSE] \n[RHYTHMIC] Wahaan par usne paani ke neeche ki duniya ko dekha, [CALM] jahaan machhliyaan aur anya jeev rehte the. [PAUSE] \n[RHYTHMIC] Usne dekha ki kaise paani ki gati aur dheere-dheere badalne wali gati [JOYFUL] samudra ki lahron ko banati hai, [WHISPERING] aur kaise yeh sab kuch ek dusre se juda hua hai. [SLEEPY]",
+    "annotated_text": "[ADVENTUROUS] Aarav tha ek balak, dil mein tha sapna gahra,\nSamudra ke kinaare, rehta tha woh hamesha saath uske.\n[CURIOUS] Ek din usne socha, kya hai neeche ki duniya?\nMachhliyon ki baatein, leheron ka hai raaz kya?\n\n[MYSTERIOUS] Paani mein utra, gehri neeli chhaon,\nSaanson ko rok ke, dekhi ek nayi jaan.\n[EXCITED] Chamakti machhliyan, rang-birangi,\nUdte hue kachhue, leheron ke sangi.\n\n[RHYTHMIC] Dheere-dheere badle, paani ki gatiyaan,\nBanati hain lehren, jaise koi geet gaatiyaan.\n[GENTLE] Saagar ki aawaaz, sunai deti hai,\nEk nayi kahani, har pal sunati hai.\n\n[DRAMATIC_PAUSE] Aarav ne dekha, ek anokha nazaara,\nJeevan ka rang, samudra ne saara.\n[JOYFUL] Woh samajh gaya, sab kuch hai juda,\nPar ek doosre se, hai yeh sab mila.\n\n[WHISPERING] Ab har raat, sapne mein aati hai,\nSamudra ki duniya, usko bulati hai.\n[SLEEPY] So jaa balak, kal phir se jaana,\nNayi kahani, nayi duniya paana.",
     "audio_variants": [
       {
         "voice": "female_1_hi",
@@ -3273,16 +5363,71 @@
         "provider": "chatterbox"
       }
     ],
-    "annotated_text_devanagari": "[RHYTHMIC] एक बहादुर बच्चा था, जिसका नाम आरव था, [GENTLE] जो समुद्र की किनारे रहता था. [PAUSE] \n[RHYTHMIC] वहां पर उसने पानी के नीचे की दुनिया को देखा, [CALM] जहां मछलियां और अन्य जीव रहते थे. [PAUSE] \n[RHYTHMIC] उसने देखा कि कैसे पानी की गति और धीरे-धीरे बदलती गति [JOYFUL] समुद्र की लहरों को बनाती है, [WHISPERING] और कैसे यह सब कुछ एक दूसरे से जुड़ा हुआ है. [SLEEPY]"
+    "annotated_text_devanagari": "[ADVENTUROUS] आरव था एक बालक, दिल में था सपना गहरा,\nसमुद्र के किनारे, रहता था वो हमेशा साथ उसके।\n[CURIOUS] एक दिन उसने सोचा, क्या है नीचे की दुनिया?\nमछलियों की बातें, लहरों का है राज क्या?\n\n[MYSTERIOUS] पानी में उतरा, गहरी नीली छाँव,\nसाँसों को रोक के, देखी एक नई जान।\n[EXCITED] चमकती मछलियाँ, रंग-बिरंगी,\nउड़ते हुए कछुए, लहरों के संगी।\n\n[RHYTHMIC] धीरे-धीरे बदले, पानी की गतियाँ,\nबनाती हैं लहरें, जैसे कोई गीत गातीं।\n[GENTLE] सागर की आवाज़, सुनाई देती है,\nएक नई कहानी, हर पल सुनाती है।\n\n[DRAMATIC_PAUSE] आरव ने देखा, एक अनोखा नज़ारा,\nजीवन का रंग, समुद्र ने सारा।\n[JOYFUL] वो समझ गया, सब कुछ है जुड़ा,\nपर एक दूसरे से, है ये सब मिला।\n\n[WHISPERING] अब हर रात, सपने में आती है,\nसमुद्र की दुनिया, उसको बुलाती है।\n[SLEEPY] सो जा बालक, कल फिर से जाना,\nनई कहानी, नई दुनिया पाना।",
+    "musicParams": {
+      "key": "F",
+      "chordNotes": [
+        174.61,
+        220.0,
+        261.63,
+        349.22
+      ],
+      "padType": "resonant",
+      "padGain": 0.05,
+      "padFilter": 800,
+      "padLfo": 0.08,
+      "noiseType": "brown",
+      "noiseGain": 0.015,
+      "droneFreq": 87.31,
+      "droneGain": 0.03,
+      "melodyNotes": [
+        349.22,
+        440.0,
+        523.26,
+        466.16
+      ],
+      "melodyInterval": 4000,
+      "melodyGain": 0.02,
+      "bassNotes": [
+        87.31,
+        130.81,
+        110.0
+      ],
+      "bassInterval": 6000,
+      "counterNotes": [
+        550.0,
+        654.08,
+        436.53
+      ],
+      "counterInterval": 5000,
+      "events": [
+        {
+          "type": "waveCycle",
+          "interval": 12000
+        },
+        {
+          "type": "whaleCall",
+          "interval": 20000
+        },
+        {
+          "type": "waterDrop",
+          "interval": 8000
+        },
+        {
+          "type": "starTwinkle",
+          "interval": 15000
+        }
+      ]
+    }
   },
   {
     "id": "gen-0027e1835f09",
     "type": "story",
     "lang": "hi",
-    "title": "Advait aur Uske Doston ki Bhavishya Yatra",
+    "title": "Advait aur Uske Sahayogiyon ki Bhavishya Yatra",
     "cover": "/covers/bhavishya-yatra.svg",
-    "description": "Ek 10 varsh ka ladka advait apne doston ke saath ek bhavishya yatra par jata hai, jaha unhe nayi cheezein seekhne aur apne doston ke saath masti karne ka mauka milta hai. Is yatra mein ve apne aaspas ke sansar ko samajhne aur apne lakshyon ko praapt karne ke liye kai chunautiyon ka saamna karte hain.",
-    "text": "[GENTLE] Advait ek chhote se ladakh monastery mein rehta tha, jaha usne apne doston ke saath mil kar kai nayi cheezein seekhi. [CALM] Ek din, unke shikshak ne unhein ek nayi yatra ke liye taiyaar kia, jaha ve bhavishya ke baare mein seekhne jaane wale the. [EXCITED] Advait aur uske doston ne apne bag pack kiye aur yatra ke liye taiyaar ho gaye. [CURIOUS] Ve ek bhavishya shahar mein pahunche, jaha unhe kai aisi cheezein mili jo ve pehle kabhi nahin dekhe the. [ADVENTUROUS] Unhone ek robots ke saath milkar ek maze mein se guzarna seekha, jaha unhe apne lakshyon ko praapt karne ke liye kai chunautiyon ka saamna karna pada. [MYSTERIOUS] Phir ve ek bhavishya ke park mein gaye, jaha unhe kai aisi cheezein mili jo us samay nahin thi. [JOYFUL] Advait aur uske doston ne ek saath khelte hue aur hashte hue kai pal bitaaye. [CALM] Lekin phir, unhe ek samasya ka saamna karna pada, jaha unhe apne doston ke saath milkar ek samadhan nikalna tha. [DRAMATIC_PAUSE] Aur tabhi, advait ne apne doston ke saath milkar ek aisa samadhan nikala jo unhe sabko khushi dila sakta tha. [SLEEPY] Ab advait aur uske doston ko apni yatra ke baare mein sochkar neend aa rahi thi, aur ve apne agle din ki yatra ke liye taiyaar ho rahe the.",
+    "description": "Das varsha ka Advait apne doston ke saath ek anokhi bhavishya yatra par nikalta hai, jahan unhe anokhe anubhavon ke saath-saath apne lakshya aur dostana ki shakti ka bhi anubhav hota hai.",
+    "text": "[GENTLE] Himalaya ki god mein, ek chhoti si goomphi thi, jahan Advait apne doston ke saath rehta tha. [CALM] Wahan ki subahon mein, hawayein sard aur meethi hoti thi, aur unki awaaz, jaise koi purani kahani sunati ho. [CURIOUS] Ek din, unke guruji ne unhein ek ajab sa sapna sunaya—ek aisa sapna, jo unhein bhavishya ki or le ja sakta tha. [EXCITED] \"Chalo, bachcho,\" guruji ne muskurate hue kaha, \"aaj hum ek yatra par ja rahe hain, jahan tumhe aisi cheezein dekhne ko milengi, jo tumne kabhi socha bhi nahi hoga!\" [ADVENTUROUS] Advait aur uske doston—Riya, Arjun, aur Chintu—ne jhat se apne thailon mein zaruri cheezein bhari, aur unki yatra shuru ho gayi.  [MYSTERIOUS] Unka pehla rukav tha—ek aisa shahar, jahan ghar pedon par bante the, aur sadkein aasmaan se guzarti thi. [CURIOUS] Wahan, unhe ek robot mila, jiska naam 'Drishti' tha. Drishti ne unhein ek bhulbhulaiya mein le jaya, jahan har rasta ek nayi chunauti lekar aata tha. [DRAMATIC_PAUSE] \"Yahan se nikalne ke liye,\" Drishti ne kaha, \"tumhe ek-dusre par bharosa karna hoga.\" [PAUSE] Advait ne apne doston ki or dekha—Riya ki aankhon mein dhairya tha, Arjun ke chehre par ek chutkula, aur Chintu ka haath, jise usne pakad liya. [JOYFUL] \"Chalo, milkar nikalte hain!\" Advait ne kaha, aur sabne ek saath kadam badha diye.  [ADVENTUROUS] Bhulbhulaiya ke baad, ve ek aise udyan mein pahunche, jahan phool raat ko chamakte the, aur pedon ki pattiyan geet gaati thi. [WHISPERING] \"Yeh toh jaise koi sapna ho,\" Riya ne kaha. [EXCITED] Wahan, unhe ek aisi machine mili, jo unke sochne se bhi tez thi—usne unke khayalon ko chitraon mein badal diya! [JOYFUL] Sabne apne-apne khayalon ko banaya, aur unke chehre par muskurahat phail gayi.  [DRAMATIC_PAUSE] Lekin phir, ek samasya aa gayi. [PAUSE] Udyan ki ek machine kharab ho gayi, aur uske karan, poora shahar andhere mein doobne laga. [GENTLE] \"Ab hum kya karein?\" Chintu ne darte-darte poochha. [CALM] Advait ne socha, phir bola, \"Hum sabke paas kuch na kuch toh hai, jo is samasya ka samadhan ho sakta hai.\" [ADVENTUROUS] Riya ne apni vigyan ki kitaab nikali, Arjun ne apne hath se kaam kiya, aur Chintu ne apni chaturai se sabko sahayata di. [JOYFUL] Milkar, unhone machine ko theek kiya, aur phir se shahar jagmaga utha.  [SLEEPY] Raat hone par, sab thak kar ek chabutre par baith gaye. [GENTLE] \"Aaj ki yatra toh yaadgar rahegi,\" Arjun ne kaha. [CALM] Advait ne muskurate hue kaha, \"Haan, lekin sabse badi baat yeh hai ki humne seekha—milkar kisi bhi chunauti ka saamna kiya ja sakta hai.\" [RHYTHMIC] Taron ki chamak aur hawayon ki sargam ke beech, sab so gaye, apne agle din ki nayi kahani ke liye taiyaar hote hue.",
     "target_age": 10,
     "age_min": 8,
     "age_max": 12,
@@ -3306,14 +5451,14 @@
     "generation_quality": "excellent",
     "voice_id": null,
     "music_type": "ambient",
-    "word_count": 209,
+    "word_count": 422,
     "morals": [
-      "साथ मिलकर काम करने से बड़ी समस्याओं का समाधान निकाला जा सकता है",
-      "सीखने और अनुभव प्राप्त करने से जीवन में आगे बढ़ने में मदद मिलती है"
+      "Dostana aur sahyog se har chunauti ka samadhan nikala ja sakta hai.",
+      "Har nayi yatra ek nayi seekh aur anubhav lekar aati hai."
     ],
     "has_qa": false,
     "has_games": false,
-    "annotated_text": "[GENTLE] Advait ek chhote se ladakh monastery mein rehta tha, jaha usne apne doston ke saath mil kar kai nayi cheezein seekhi. [CALM] Ek din, unke shikshak ne unhein ek nayi yatra ke liye taiyaar kia, jaha ve bhavishya ke baare mein seekhne jaane wale the. [EXCITED] Advait aur uske doston ne apne bag pack kiye aur yatra ke liye taiyaar ho gaye. [CURIOUS] Ve ek bhavishya shahar mein pahunche, jaha unhe kai aisi cheezein mili jo ve pehle kabhi nahin dekhe the. [ADVENTUROUS] Unhone ek robots ke saath milkar ek maze mein se guzarna seekha, jaha unhe apne lakshyon ko praapt karne ke liye kai chunautiyon ka saamna karna pada. [MYSTERIOUS] Phir ve ek bhavishya ke park mein gaye, jaha unhe kai aisi cheezein mili jo us samay nahin thi. [JOYFUL] Advait aur uske doston ne ek saath khelte hue aur hashte hue kai pal bitaaye. [CALM] Lekin phir, unhe ek samasya ka saamna karna pada, jaha unhe apne doston ke saath milkar ek samadhan nikalna tha. [DRAMATIC_PAUSE] Aur tabhi, advait ne apne doston ke saath milkar ek aisa samadhan nikala jo unhe sabko khushi dila sakta tha. [SLEEPY] Ab advait aur uske doston ko apni yatra ke baare mein sochkar neend aa rahi thi, aur ve apne agle din ki yatra ke liye taiyaar ho rahe the.",
+    "annotated_text": "[GENTLE] Himalaya ki god mein, ek chhoti si goomphi thi, jahan Advait apne doston ke saath rehta tha. [CALM] Wahan ki subahon mein, hawayein sard aur meethi hoti thi, aur unki awaaz, jaise koi purani kahani sunati ho. [CURIOUS] Ek din, unke guruji ne unhein ek ajab sa sapna sunaya—ek aisa sapna, jo unhein bhavishya ki or le ja sakta tha. [EXCITED] \"Chalo, bachcho,\" guruji ne muskurate hue kaha, \"aaj hum ek yatra par ja rahe hain, jahan tumhe aisi cheezein dekhne ko milengi, jo tumne kabhi socha bhi nahi hoga!\" [ADVENTUROUS] Advait aur uske doston—Riya, Arjun, aur Chintu—ne jhat se apne thailon mein zaruri cheezein bhari, aur unki yatra shuru ho gayi.  [MYSTERIOUS] Unka pehla rukav tha—ek aisa shahar, jahan ghar pedon par bante the, aur sadkein aasmaan se guzarti thi. [CURIOUS] Wahan, unhe ek robot mila, jiska naam 'Drishti' tha. Drishti ne unhein ek bhulbhulaiya mein le jaya, jahan har rasta ek nayi chunauti lekar aata tha. [DRAMATIC_PAUSE] \"Yahan se nikalne ke liye,\" Drishti ne kaha, \"tumhe ek-dusre par bharosa karna hoga.\" [PAUSE] Advait ne apne doston ki or dekha—Riya ki aankhon mein dhairya tha, Arjun ke chehre par ek chutkula, aur Chintu ka haath, jise usne pakad liya. [JOYFUL] \"Chalo, milkar nikalte hain!\" Advait ne kaha, aur sabne ek saath kadam badha diye.  [ADVENTUROUS] Bhulbhulaiya ke baad, ve ek aise udyan mein pahunche, jahan phool raat ko chamakte the, aur pedon ki pattiyan geet gaati thi. [WHISPERING] \"Yeh toh jaise koi sapna ho,\" Riya ne kaha. [EXCITED] Wahan, unhe ek aisi machine mili, jo unke sochne se bhi tez thi—usne unke khayalon ko chitraon mein badal diya! [JOYFUL] Sabne apne-apne khayalon ko banaya, aur unke chehre par muskurahat phail gayi.  [DRAMATIC_PAUSE] Lekin phir, ek samasya aa gayi. [PAUSE] Udyan ki ek machine kharab ho gayi, aur uske karan, poora shahar andhere mein doobne laga. [GENTLE] \"Ab hum kya karein?\" Chintu ne darte-darte poochha. [CALM] Advait ne socha, phir bola, \"Hum sabke paas kuch na kuch toh hai, jo is samasya ka samadhan ho sakta hai.\" [ADVENTUROUS] Riya ne apni vigyan ki kitaab nikali, Arjun ne apne hath se kaam kiya, aur Chintu ne apni chaturai se sabko sahayata di. [JOYFUL] Milkar, unhone machine ko theek kiya, aur phir se shahar jagmaga utha.  [SLEEPY] Raat hone par, sab thak kar ek chabutre par baith gaye. [GENTLE] \"Aaj ki yatra toh yaadgar rahegi,\" Arjun ne kaha. [CALM] Advait ne muskurate hue kaha, \"Haan, lekin sabse badi baat yeh hai ki humne seekha—milkar kisi bhi chunauti ka saamna kiya ja sakta hai.\" [RHYTHMIC] Taron ki chamak aur hawayon ki sargam ke beech, sab so gaye, apne agle din ki nayi kahani ke liye taiyaar hote hue.",
     "audio_variants": [
       {
         "voice": "female_1_hi",
@@ -3358,6 +5503,61 @@
         "provider": "chatterbox"
       }
     ],
-    "annotated_text_devanagari": "[GENTLE] अद्वैत एक छोटे से लद्दाख मठ में रहता था, जहाँ उसने अपने दोस्तों के साथ मिलकर काई नई चीजें सीखी. [CALM] एक दिन, उनके शिक्षक ने उन्हें एक नई यात्रा के लिए तैयार किया, जहाँ वे भविष्य के बारे में सीखने जाने वाले थे. [EXCITED] अद्वैत और उसके दोस्तों ने अपने बैग पैक किए और यात्रा के लिए तैयार हो गए. [CURIOUS] वे एक भविष्य के शहर में पहुँचे, जहाँ उन्हें काई ऐसी चीजें मिली जो वे पहले कभी नहीं देखे थे. [ADVENTUROUS] उन्होंने एक रोबोट्स के साथ मिलकर एक मेज़ में से गुजरना सीखा, जहाँ उन्हें अपने लक्ष्यों को प्राप्त करने के लिए काई चुनौतियों का सामना करना पड़ा. [MYSTERIOUS] फिर वे एक भविष्य के पार्क में गए, जहाँ उन्हें काई ऐसी चीजें मिली जो उस समय नहीं थी. [JOYFUL] अद्वैत और उसके दोस्तों ने एक साथ खेलते हुए और हँसते हुए काई पल बिताए. [CALM] लेकिन फिर, उन्हें एक समस्या का सामना करना पड़ा, जहाँ उन्हें अपने दोस्तों के साथ मिलकर एक समाधान निकालना था. [DRAMATIC_PAUSE] और तबhi, अद्वैत ने अपने दोस्तों के साथ मिलकर एक ऐसा समाधान निकाला जो उन्हें सबको खुशी दिला सकता था. [SLEEPY] अब अद्वैत और उसके दोस्तों को अपनी यात्रा के बारे में सोचकर नींद आ रही थी, और वे अपने अगले दिन की यात्रा के लिए तैयार हो रहे थे."
+    "annotated_text_devanagari": "[GENTLE] हिमालय की गोद में, एक छोटी सी गूम्फी थी, जहाँ आद्वैत अपने दोस्तों के साथ रहता था। [CALM] वहाँ की सुबहों में, हवाएँ सर्द और मीठी होती थीं, और उनकी आवाज़, जैसे कोई पुरानी कहानी सुनाती हो। [CURIOUS] एक दिन, उनके गुरुजी ने उन्हें एक अजब सा सपना सुनाया—एक ऐसा सपना, जो उन्हें भविष्य की ओर ले जा सकता था। [EXCITED] \"चलो, बच्चो,\" गुरुजी ने मुस्कुराते हुए कहा, \"आज हम एक यात्रा पर जा रहे हैं, जहाँ तुम्हें ऐसी चीज़ें देखने को मिलेंगी, जो तुमने कभी सोचा भी नहीं होगा!\" [ADVENTUROUS] आद्वैत और उसके दोस्तों—रिया, अर्जुन, और चिंटू—ने झट से अपने थैलों में ज़रूरी चीज़ें भरीं, और उनकी यात्रा शुरू हो गई।  [MYSTERIOUS] उनका पहला रुकाव था—एक ऐसा शहर, जहाँ घर पेड़ों पर बनते थे, और सड़कें आसमान से गुज़रती थीं। [CURIOUS] वहाँ, उन्हें एक रोबोट मिला, जिसका नाम 'दृष्टि' था। दृष्टि ने उन्हें एक भूलभुलैया में ले जाया, जहाँ हर रास्ता एक नई चुनौती लेकर आता था। [DRAMATIC_PAUSE] \"यहाँ से निकलने के लिए,\" दृष्टि ने कहा, \"तुम्हें एक-दूसरे पर भरोसा करना होगा।\" [PAUSE] आद्वैत ने अपने दोस्तों की ओर देखा—रिया की आँखों में धैर्य था, अर्जुन के चेहरे पर एक चुटकुला, और चिंटू का हाथ, जिसे उसने पकड़ लिया। [JOYFUL] \"चलो, मिलकर निकलते हैं!\" आद्वैत ने कहा, और सबने एक साथ कदम बढ़ा दिए।  [ADVENTUROUS] भूलभुलैया के बाद, वे एक ऐसे उद्यान में पहुँचे, जहाँ फूल रात को चमकते थे, और पेड़ों की पत्तियाँ गीत गाती थीं। [WHISPERING] \"ये तो जैसे कोई सपना हो,\" रिया ने कहा। [EXCITED] वहाँ, उन्हें एक ऐसी मशीन मिली, जो उनके सोचने से भी तेज़ थी—उसने उनके ख़यालों को चित्रों में बदल दिया! [JOYFUL] सबने अपने-अपने ख़यालों को बनाया, और उनके चेहरों पर मुस्कुराहट फैल गई।  [DRAMATIC_PAUSE] लेकिन फिर, एक समस्या आ गई। [PAUSE] उद्यान की एक मशीन ख़राब हो गई, और उसके कारण, पूरा शहर अंधेरे में डूबने लगा। [GENTLE] \"अब हम क्या करें?\" चिंटू ने डरते-डरते पूछा। [CALM] आद्वैत ने सोचा, फिर बोला, \"हम सबके पास कुछ न कुछ तो है, जो इस समस्या का समाधान हो सकता है।\" [ADVENTUROUS] रिया ने अपनी विज्ञान की किताब निकाली, अर्जुन ने अपने हाथ से काम किया, और चिंटू ने अपनी चतुराई से सबको सहायता दी। [JOYFUL] मिलकर, उन्होंने मशीन को ठीक किया, और फिर से शहर जगमगा उठा।  [SLEEPY] रात होने पर, सब थक कर एक चबूतरे पर बैठ गए। [GENTLE] \"आज की यात्रा तो यादगार रहेगी,\" अर्जुन ने कहा। [CALM] आद्वैत ने मुस्कुराते हुए कहा, \"हाँ, लेकिन सबसे बड़ी बात ये है कि हमने सीखा—मिलकर किसी भी चुनौती का सामना किया जा सकता है।\" [RHYTHMIC] तारों की चमक और हवाओं की सरगम के बीच, सब सो गए, अपने अगले दिन की नई कहानी के लिए तैयार होते हुए।",
+    "musicParams": {
+      "key": "Am",
+      "chordNotes": [
+        110.0,
+        130.81,
+        164.81,
+        220.0
+      ],
+      "padType": "resonant",
+      "padGain": 0.05,
+      "padFilter": 800,
+      "padLfo": 0.08,
+      "noiseType": "brown",
+      "noiseGain": 0.01,
+      "droneFreq": 55.0,
+      "droneGain": 0.03,
+      "melodyNotes": [
+        220.0,
+        261.62,
+        329.62,
+        293.66
+      ],
+      "melodyInterval": 4000,
+      "melodyGain": 0.018,
+      "bassNotes": [
+        55.0,
+        82.41,
+        65.41
+      ],
+      "bassInterval": 6000,
+      "counterNotes": [
+        327.02,
+        412.02,
+        275.0
+      ],
+      "counterInterval": 5000,
+      "events": [
+        {
+          "type": "starTwinkle",
+          "interval": 12000
+        },
+        {
+          "type": "windGust",
+          "interval": 20000
+        },
+        {
+          "type": "chimes",
+          "interval": 15000
+        },
+        {
+          "type": "leaves",
+          "interval": 25000
+        }
+      ]
+    }
   }
 ]
