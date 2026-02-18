@@ -13,6 +13,7 @@ Usage:
 import json
 import re
 import sys
+from datetime import date
 from pathlib import Path
 
 CONTENT_PATH = Path(__file__).parent.parent / "seed_output" / "content.json"
@@ -72,12 +73,15 @@ def _build_new_entry_js(story: dict) -> str:
     # Build audio_variants
     av_js = _build_audio_variants_js(audio_variants) if audio_variants else "[]"
 
+    added_at = story.get("created_at", date.today().isoformat())[:10]
+
     entry = f"""    {{
       id: "{_js_escape(sid)}",
       type: "{stype}",
       title: "{_js_escape(title)}",
       description: "{_js_escape(desc)}",
       cover: "/covers/default.svg",
+      addedAt: "{added_at}",
       text: "{_js_escape(text)}",
       target_age: {target_age},
       duration: {duration},
