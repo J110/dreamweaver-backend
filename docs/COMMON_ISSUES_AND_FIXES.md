@@ -18,6 +18,7 @@
 10. [Git Push Fails in Pipeline](#10-git-push-fails-in-pipeline)
 11. [Production Deploy Static Assets Missing](#11-production-deploy-static-assets-missing)
 12. [Modal Endpoint Cold Start Timeout](#12-modal-endpoint-cold-start-timeout)
+13. [New Story Not Appearing First / Missing NEW Tag](#13-new-story-not-appearing-first--missing-new-tag)
 
 ---
 
@@ -268,6 +269,37 @@ curl -s "https://anmol-71634--dreamweaver-chatterbox-health.modal.run" | python3
 ```
 
 **Prevention**: The pipeline could add a health check at the start of the audio step. Consider adding a warmup call in `step_audio()`.
+
+---
+
+## 13. New Story Not Appearing First / Missing NEW Tag
+
+**Symptom**: A newly published story/poem doesn't appear at the top of the feed, and/or is missing the pink "NEW" badge on its card.
+
+**Root Cause — Sorting**: The feed sorts unlistened stories by `addedAt` date (newest first). If a story is missing the `addedAt` field in seedData.js, it gets a sort value of 0 and sinks to the bottom.
+
+**Root Cause — NEW tag**: The "NEW" badge is based on listening history (`isListened()` — has the user played ≥20% of this story). It's per-device/browser, stored in localStorage. If the user's browser has listening history for the story ID, the badge won't show.
+
+**Fix — Sorting**:
+```javascript
+// In seedData.js, ensure the new entry has addedAt:
+{
+  id: "gen-xxxx",
+  title: "Story Title",
+  addedAt: "2026-02-18",   // ← THIS FIELD IS REQUIRED
+  // ...
+}
+```
+
+**Fix — NEW tag**: The NEW tag should show automatically for any unlistened story. If it doesn't show on a fresh browser, check that the story's `id` in seedData.js is not colliding with another entry.
+
+**Prevention**: `sync_seed_data.py` now auto-generates `addedAt` (from `content.json`'s `created_at` or today's date) for all new entries. This was added on 2026-02-18.
+
+**Verify**:
+```bash
+# Check which entries have addedAt
+grep -n "addedAt" ../dreamweaver-web/src/utils/seedData.js
+```
 
 ---
 
