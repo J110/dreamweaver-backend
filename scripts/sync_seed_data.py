@@ -129,9 +129,12 @@ def update_existing(seed_js: str, stories: list) -> tuple:
     return seed_js, replacements
 
 
-def add_new_entries(seed_js: str, stories: list) -> tuple:
+def add_new_entries(seed_js: str, stories: list, lang_filter: str = "en") -> tuple:
     """Add stories that don't exist in seedData.js yet.
     Returns (updated_seed_js, add_count).
+
+    Args:
+        lang_filter: Only add entries for this language ("en", "hi", or "all").
     """
     # Collect all titles already in seedData.js
     existing_titles = set(re.findall(r'title:\s*"([^"]+)"', seed_js))
@@ -148,9 +151,11 @@ def add_new_entries(seed_js: str, stories: list) -> tuple:
             continue
         lang = story.get("lang", "en")
         if lang == "hi":
-            new_hi.append(story)
+            if lang_filter in ("hi", "all"):
+                new_hi.append(story)
         else:
-            new_en.append(story)
+            if lang_filter in ("en", "all"):
+                new_en.append(story)
 
     added = 0
 
@@ -188,6 +193,8 @@ def main():
     parser = argparse.ArgumentParser(description="Sync content.json → seedData.js")
     parser.add_argument("--add-only", action="store_true", help="Only add new entries")
     parser.add_argument("--update-only", action="store_true", help="Only update existing audio")
+    parser.add_argument("--lang", default="en", choices=["en", "hi", "all"],
+                        help="Language filter for adding new entries (default: en)")
     args = parser.parse_args()
 
     # Load content.json
@@ -210,7 +217,7 @@ def main():
 
     # Step 2: Add new entries
     if not args.update_only:
-        seed_js, add_count = add_new_entries(seed_js, stories)
+        seed_js, add_count = add_new_entries(seed_js, stories, lang_filter=args.lang)
         if add_count:
             changed = True
             print(f"\n  Added {add_count} new entries")
