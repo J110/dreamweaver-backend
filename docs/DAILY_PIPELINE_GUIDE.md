@@ -7,15 +7,18 @@
 ## Architecture Overview
 
 ```
-GCP VM (dreamvalley-prod) runs pipeline_run.py daily via cron:
+GCP VM (dreamvalley-prod) runs pipeline_run.py daily via cron (7 days/week):
 
+  PREFLIGHT → Warm Modal + test Mistral + check disk + kill stale processes
   1. GENERATE  → Mistral Large (free tier)         → 1 story + 1 poem
   2. AUDIO GEN → Modal Chatterbox TTS (free $30/mo) → 14 MP3 files
   3. AUDIO QA  → Voxtral transcription (free tier)  → PASS/FAIL
   4. ENRICH    → Mistral Large (free tier)          → unique musicParams
-  5. SYNC      → content.json → seedData.js + copy audio to web public/
-  6. PUBLISH   → git push both repos → Render/Vercel auto-deploy
-  7. LOG       → pipeline summary → logs/
+  5. COVERS    → Mistral Large (free tier)          → animated SVG cover per story
+  6. SYNC      → content.json → seedData.js + copy audio/covers to web public/
+  7. PUBLISH   → git push both repos → Render/Vercel auto-deploy
+  POSTFLIGHT → Cost estimate + disk usage summary
+  NOTIFY     → Email via Resend (ALWAYS — success or failure)
 ```
 
 ### Cost per Run: ~$0.43 from free Modal credits, $0.00 elsewhere
@@ -26,7 +29,9 @@ GCP VM (dreamvalley-prod) runs pipeline_run.py daily via cron:
 | Audio generation (14 variants) | Modal T4 GPU (~43.5 GPU-min) | ~$0.43 (free credits) |
 | Audio QA (transcription + fidelity) | Voxtral via Mistral API (free tier) | $0.00 |
 | Music params | Mistral Large (free tier) | $0.00 |
-| **Monthly at daily cadence** | | **~$13 from $30 free credits** |
+| Cover SVG generation | Mistral Large (free tier) | $0.00 |
+| Email notification | Resend (free tier, 100 emails/day) | $0.00 |
+| **Monthly (daily, 7 days/week)** | | **~$13 from $30 free credits** |
 
 ---
 
@@ -54,7 +59,7 @@ git clone https://github.com/J110/dreamweaver-backend.git /opt/dreamweaver-backe
 ```bash
 cd /opt/dreamweaver-backend
 pip3 install -r requirements.txt
-pip3 install mistralai httpx pydub
+pip3 install mistralai httpx pydub python-dotenv
 ```
 
 ### 4. Set Environment Variables
@@ -62,8 +67,11 @@ pip3 install mistralai httpx pydub
 Create `/opt/dreamweaver-backend/.env`:
 
 ```env
-# Mistral AI — free experiment tier (text generation + QA + music params)
+# Mistral AI — free experiment tier (text generation + QA + music params + covers)
 MISTRAL_API_KEY=your_mistral_api_key_here
+
+# Resend — email notifications (pipeline status reports)
+RESEND_API_KEY=your_resend_api_key_here
 
 # Modal — Chatterbox TTS endpoint (auto-deployed, no token needed for HTTP calls)
 # The Modal endpoint URL is baked into generate_audio.py
@@ -75,6 +83,12 @@ MISTRAL_API_KEY=your_mistral_api_key_here
 2. Create an account (no credit card required)
 3. Go to API Keys → Create new key
 4. Free experiment tier: 1B tokens/month, 2 req/min
+
+**Getting your Resend API key:**
+1. Go to https://resend.com/
+2. Create account → API Keys → Generate
+3. Verify sending domain (dreamvalley.app) or use their test domain
+4. Free tier: 100 emails/day (more than enough for daily pipeline)
 
 ### 5. Set Up Modal Token (for deploying/updating the TTS endpoint)
 
@@ -103,17 +117,19 @@ The pipeline syncs `seedData.js` to the frontend repo. Ensure it's cloned:
 ls /opt/dreamweaver-web  # Should exist from production deployment
 ```
 
-### 8. Set Up Daily Cron
+### 8. Set Up Daily Cron (7 days/week)
 
 ```bash
 crontab -e
 ```
 
-Add this line to run the pipeline daily at 2:00 AM IST:
+Add this line to run the pipeline daily at 2:00 AM IST (every day, including weekends):
 
 ```cron
 0 2 * * * cd /opt/dreamweaver-backend && /usr/bin/python3 scripts/pipeline_run.py --lang en >> /opt/dreamweaver-backend/logs/cron.log 2>&1
 ```
+
+**Note**: The cron uses `0 2 * * *` (every day at 2 AM). If the server timezone is UTC, use `30 20 * * *` (20:30 UTC = 2:00 AM IST next day). Check timezone with `timedatectl`.
 
 ---
 
@@ -153,6 +169,7 @@ python3 scripts/pipeline_run.py --step generate   # Only content generation
 python3 scripts/pipeline_run.py --step audio       # Only audio generation
 python3 scripts/pipeline_run.py --step qa          # Only QA
 python3 scripts/pipeline_run.py --step enrich      # Only music params
+python3 scripts/pipeline_run.py --step covers      # Only SVG cover generation
 python3 scripts/pipeline_run.py --step sync        # Only seed data sync
 python3 scripts/pipeline_run.py --step publish     # Only git push
 ```
@@ -165,13 +182,87 @@ python3 scripts/pipeline_run.py --skip-publish
 
 ---
 
+## Email Notifications
+
+The pipeline sends an email notification via Resend API **on every run** — both success and failure.
+
+**From**: `Dream Valley Pipeline <support@dreamvalley.app>`
+**To**: `mohan.anmol@gmail.com`
+**Subject**: `[OK] Dream Valley Pipeline — 2026-02-19 — 2 new items` or `[FAIL] Dream Valley Pipeline — 2026-02-19`
+
+### Email Contents
+
+| Field | Description |
+|-------|-------------|
+| Generated | Number of new stories/poems generated |
+| Audio QA | X passed, Y failed |
+| Covers | X generated, Y fallback (default.svg) |
+| Elapsed | Total pipeline run time |
+| Est. Cost | Modal GPU cost estimate for this run |
+| Disk | Total audio files + cover count |
+| New Content | List of generated story/poem titles |
+| Log tail (failure only) | Last 20 lines of the pipeline log |
+
+### Test Email Notification
+
+```bash
+python3 scripts/pipeline_notify.py --test
+```
+
+### Debugging Email Issues
+
+1. Check `RESEND_API_KEY` is set: `grep RESEND .env`
+2. Test standalone: `python3 scripts/pipeline_notify.py --test`
+3. Check Resend dashboard: https://resend.com/emails
+4. Verify domain: `support@dreamvalley.app` must be verified in Resend
+
+---
+
+## Cover SVG Generation
+
+The pipeline auto-generates animated SVG covers using Mistral Large. Each cover is unique, themed to the story.
+
+### How It Works
+
+1. Pipeline reads `content.json` for items needing covers (missing or `default.svg`)
+2. For each: sends a detailed prompt to Mistral with story title, description, theme
+3. Prompt includes full design rules (7-layer structure, CSS animations, viewBox 512x512)
+4. Response is validated (XML parse, @keyframes count, file size)
+5. Saved to `dreamweaver-web/public/covers/{slug}.svg`
+6. `content.json` updated with the cover path
+7. On failure: retry once (35s wait), then fallback to `default.svg`
+
+### Manual Cover Generation
+
+```bash
+# Generate cover for a specific story
+python3 scripts/generate_cover_svg.py --id gen-xxx
+
+# Preview what would be generated
+python3 scripts/generate_cover_svg.py --dry-run
+
+# Only items that have never had a cover
+python3 scripts/generate_cover_svg.py --new-only
+```
+
+### Cover Design Rules
+
+- viewBox: `0 0 512 512`
+- 7 layers: sky → far bg → mid bg → middle ground → main character → sparkles → vignette
+- CSS @keyframes only (no JavaScript)
+- Unique 2-letter ID prefix per cover (e.g., `fm-skyGrad`)
+- Target size: 10-45KB
+- Guide: `dreamweaver-web/public/covers/COVER_DESIGN_GUIDE.md`
+
+---
+
 ## Known Limitations (Manual Steps)
 
 | Step | Status | Notes |
 |------|--------|-------|
-| Cover SVG generation | **Manual** | Each new story needs a custom SVG cover. Pipeline sets `default.svg` as placeholder. Must be created manually following `COVER_DESIGN_GUIDE.md` and registered in seedData.js COVERS object. |
 | Production deploy | **Manual** | Pipeline publishes to Vercel/Render test only. GCP production deploy requires manual approval and `git pull && npm run build && pm2 restart`. |
 | Content review | **Recommended** | While QA catches audio issues, human review of story text quality is recommended before production deploy. |
+| Cover quality review | **Recommended** | AI-generated covers may occasionally need manual refinement. Check the Vercel test app. |
 
 ---
 
@@ -184,8 +275,10 @@ The pipeline is fully self-contained on the GCP server. No local machine depende
 | Voice references | Modal persistent volume (`/data/voices/`) | Via HTTP (Chatterbox endpoint) |
 | Content files | GCP VM (`/opt/dreamweaver-backend/seed_output/`) | Local filesystem |
 | Audio files | GCP VM (`/opt/dreamweaver-backend/audio/pre-gen/`) | Local filesystem |
+| Cover SVGs | GCP VM (`/opt/dreamweaver-web/public/covers/`) | Local filesystem |
 | Mistral AI | Cloud API | HTTP (MISTRAL_API_KEY in .env) |
 | Modal TTS | Cloud endpoint | HTTP (no local GPU needed) |
+| Resend Email | Cloud API | HTTP (RESEND_API_KEY in .env) |
 | Git repos | GitHub | `git push` from GCP VM |
 
 ### Voice References
@@ -247,16 +340,19 @@ cat /opt/dreamweaver-backend/seed_output/pipeline_state.json
 |-------|----------|
 | `MISTRAL_API_KEY not set` | Add key to `/opt/dreamweaver-backend/.env` |
 | Mistral rate limited | Wait 30s and resume. Free tier = 2 req/min |
-| Modal endpoint cold start | First call takes ~60s. Health check warms it up. |
+| Modal endpoint cold start | Preflight warms it up. First call still takes ~60s. |
 | Modal credits exhausted | Check https://modal.com/billing. $30/mo free. |
 | Audio QA fails | Check fidelity scores in logs. May need to regenerate audio. |
 | Git push fails | Check SSH keys / GitHub token. Run `git push` manually. |
 | `content.json` corrupt | Restore from git: `git checkout -- seed_output/content.json` |
-| Audio not playing on deployed app | Audio files must be in BOTH `backend/audio/pre-gen/` AND `web/public/audio/pre-gen/`. The pipeline auto-copies during sync step. If missing, run: `cp backend/audio/pre-gen/XXXX*.mp3 web/public/audio/pre-gen/` |
-| New story has no cover image | New entries get `cover: "/covers/default.svg"` which doesn't exist. Create a custom SVG cover and update the cover path in seedData.js. See `COVER_DESIGN_GUIDE.md`. |
-| `dotenv` not loading env vars | All scripts require `from dotenv import load_dotenv` near the top. Verify with: `grep -l "load_dotenv" scripts/*.py` |
-| Hindi content appearing unexpectedly | Pipeline defaults to `--lang en`. Verify with `python3 scripts/pipeline_run.py --lang en`. sync_seed_data.py also filters by `--lang en` by default. |
-| New story not appearing first in feed | Missing `addedAt` field in seedData.js. sync_seed_data.py now auto-generates this. Verify: `grep addedAt ../dreamweaver-web/src/utils/seedData.js` |
+| Audio not playing on deployed app | Audio files must be in BOTH repos. Pipeline auto-copies during sync. If missing: `cp backend/audio/pre-gen/XXXX*.mp3 web/public/audio/pre-gen/` |
+| New story has no cover image | Cover generation may have failed — check logs. Run manually: `python3 scripts/generate_cover_svg.py --id STORY_ID` |
+| Cover shows as blank | SVG validation failed. Check logs for XML parse errors. May need manual SVG creation per `COVER_DESIGN_GUIDE.md`. |
+| `dotenv` not loading env vars | All scripts load dotenv. Verify: `grep -l "load_dotenv" scripts/*.py` |
+| Hindi content appearing unexpectedly | Pipeline defaults to `--lang en`. sync_seed_data.py also filters by `--lang en`. |
+| New story not appearing first in feed | Missing `addedAt` field. sync_seed_data.py auto-generates this from `created_at`. |
+| Email notification not received | Check `RESEND_API_KEY` in `.env`. Test: `python3 scripts/pipeline_notify.py --test`. Check Resend dashboard. |
+| Pipeline runs but no email | Notification module import may fail. Check: `python3 -c "from scripts.pipeline_notify import send_pipeline_notification; print('OK')"` |
 
 ### Modal Health Check
 
@@ -282,11 +378,13 @@ print(r.choices[0].message.content)
 
 | File | Purpose |
 |------|---------|
-| `scripts/pipeline_run.py` | Main orchestrator (this pipeline) |
+| `scripts/pipeline_run.py` | Main orchestrator (preflight → 7 steps → postflight → notify) |
+| `scripts/pipeline_notify.py` | Email notifications via Resend API |
 | `scripts/generate_content_matrix.py` | Story/poem generation with diversity matrix |
 | `scripts/generate_audio.py` | Chatterbox TTS audio generation |
 | `scripts/qa_audio.py` | Audio QA (duration + fidelity) |
 | `scripts/generate_music_params.py` | Unique ambient music parameters per story |
+| `scripts/generate_cover_svg.py` | AI-powered animated SVG cover generation |
 | `scripts/sync_seed_data.py` | Sync content.json to seedData.js |
 | `seed_output/content.json` | Master content file (backend) |
 | `seed_output/content_expanded.json` | Generated content output |
@@ -297,6 +395,7 @@ print(r.choices[0].message.content)
 | `docs/WORD_FIDELITY_QA_GUIDELINES.md` | QA pipeline specifications |
 | `../dreamweaver-web/public/audio/pre-gen/` | Frontend audio files (copied from backend during sync) |
 | `../dreamweaver-web/public/covers/` | Cover SVG illustrations |
+| `../dreamweaver-web/public/covers/default.svg` | Fallback cover (dreamy night sky) |
 | `../dreamweaver-web/public/covers/COVER_DESIGN_GUIDE.md` | SVG cover design system |
 
 ---
@@ -304,16 +403,25 @@ print(r.choices[0].message.content)
 ## Deployment Flow
 
 ```
-Pipeline generates content
+Pipeline generates content (runs daily at 2 AM IST)
+       │
+       ├── PREFLIGHT: Warm Modal, test Mistral, check disk
+       │
+       ├── GENERATE → AUDIO → QA → ENRICH → COVERS
        │
        ├── SYNC: content.json → seedData.js
        │         + copy audio MP3s to web/public/audio/pre-gen/
+       │         + cover paths read from content.json (AI-generated or default.svg)
        │
        ├── git push backend → Render auto-deploys backend API
        │     (includes: seed_output/content.json, audio/ files)
        │
-       └── git push frontend → Vercel auto-deploys web app
-             (includes: seedData.js, public/audio/pre-gen/*.mp3, public/covers/*.svg)
+       ├── git push frontend → Vercel auto-deploys web app
+       │     (includes: seedData.js, public/audio/pre-gen/*.mp3, public/covers/*.svg)
+       │
+       ├── POSTFLIGHT: Cost estimate + disk usage
+       │
+       └── NOTIFY: Email sent (success or failure, with cost estimate)
                                      │
                           (User reviews on Vercel test app)
                                      │
@@ -332,6 +440,20 @@ Pipeline generates content
 6. **Text is correct**: Story reads well, no garbled text or truncated content
 7. **Categories correct**: Story appears in appropriate browse categories
 
+### Production Deploy (after review)
+
+```bash
+gcloud compute ssh dreamvalley-prod --project=strong-harbor-472607-n4 --zone=asia-south1-a
+
+# Backend
+cd /opt/dreamweaver-backend && git pull
+
+# Frontend
+cd /opt/dreamweaver-web && git pull && npm run build
+cp -r public .next/standalone/public && cp -r .next/static .next/standalone/.next/static
+pm2 restart all
+```
+
 ---
 
 ## Weekly Content Target
@@ -343,9 +465,9 @@ Pipeline generates content
 | Wed | 1 | 1 | 2 |
 | Thu | 1 | 1 | 2 |
 | Fri | 1 | 1 | 2 |
-| Sat | 0 | 0 | 0 (off) |
-| Sun | 0 | 0 | 0 (off) |
-| **Weekly** | **5** | **5** | **10** |
-| **Monthly** | **~22** | **~22** | **~44** |
+| Sat | 1 | 1 | 2 |
+| Sun | 1 | 1 | 2 |
+| **Weekly** | **7** | **7** | **14** |
+| **Monthly** | **~30** | **~30** | **~60** |
 
-At daily cadence: ~$13/month in Modal free credits. All text generation is $0 (Mistral free tier).
+At daily cadence (7 days/week): ~$13/month in Modal free credits. All text generation, covers, and email are $0 (Mistral free tier + Resend free tier).

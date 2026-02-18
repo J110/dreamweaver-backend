@@ -9,9 +9,10 @@ Pipeline flow:
   2. AUDIO GEN → Modal Chatterbox TTS ($30 free credits) → 14 MP3 files per 2 items
   3. AUDIO QA  → Voxtral transcription + fidelity (free tier) → PASS/FAIL
   4. ENRICH    → Mistral Large (free tier) → musicParams for new items
-  5. SYNC      → sync content.json → seedData.js
-  6. PUBLISH   → git push → Render/Vercel auto-deploy (test only)
-  7. NOTIFY    → log summary
+  5. COVERS    → Mistral Large (free tier) → animated SVG covers
+  6. SYNC      → sync content.json → seedData.js + copy audio/covers to web
+  7. PUBLISH   → git push → Render/Vercel auto-deploy (test only)
+  8. NOTIFY    → email via Resend (success or failure)
 
 Usage:
     python3 scripts/pipeline_run.py                           # Full pipeline
@@ -28,6 +29,7 @@ import argparse
 import json
 import logging
 import os
+import shutil
 import subprocess
 import sys
 import time
@@ -66,7 +68,9 @@ logging.basicConfig(
 logger = logging.getLogger("pipeline")
 
 # ── Pipeline steps ───────────────────────────────────────────────────────
-STEPS = ["generate", "audio", "qa", "enrich", "sync", "publish"]
+STEPS = ["generate", "audio", "qa", "enrich", "covers", "sync", "publish"]
+
+CHATTERBOX_HEALTH = "https://anmol-71634--dreamweaver-chatterbox-health.modal.run"
 
 
 def load_state() -> dict:
@@ -346,10 +350,53 @@ def step_enrich(args, state: dict) -> bool:
     return True
 
 
-def step_sync(args, state: dict) -> bool:
-    """Step 5: Sync content.json → seedData.js for the web frontend."""
+def step_covers(args, state: dict) -> bool:
+    """Step 5: Generate animated SVG covers for new stories via Mistral AI."""
     logger.info("\n╔══════════════════════════════════════╗")
-    logger.info("║  STEP 5: SYNC SEED DATA              ║")
+    logger.info("║  STEP 5: GENERATE COVERS             ║")
+    logger.info("╚══════════════════════════════════════╝")
+
+    qa_passed = state.get("qa_passed", [])
+    if not qa_passed:
+        logger.info("  No QA-passed stories to generate covers for. Skipping.")
+        state["step_covers"] = "skipped"
+        state["covers_generated"] = []
+        state["covers_failed"] = []
+        save_state(state)
+        return True
+
+    covers_generated = []
+    covers_failed = []
+
+    for sid in qa_passed:
+        cmd = [
+            sys.executable, str(SCRIPTS_DIR / "generate_cover_svg.py"),
+            "--id", sid,
+        ]
+        if args.dry_run:
+            cmd += ["--dry-run"]
+
+        ok, stdout, stderr, elapsed = run_command(
+            cmd, f"Cover: {sid[:8]}...", timeout=600
+        )
+        if ok and "OK:" in stdout:
+            covers_generated.append(sid)
+        else:
+            covers_failed.append(sid)
+            logger.warning("  Cover generation failed for %s (will use default.svg)", sid)
+
+    state["covers_generated"] = covers_generated
+    state["covers_failed"] = covers_failed
+    state["step_covers"] = "done"
+    save_state(state)
+    logger.info("  Covers: %d generated, %d fallback", len(covers_generated), len(covers_failed))
+    return True
+
+
+def step_sync(args, state: dict) -> bool:
+    """Step 6: Sync content.json → seedData.js for the web frontend."""
+    logger.info("\n╔══════════════════════════════════════╗")
+    logger.info("║  STEP 6: SYNC SEED DATA              ║")
     logger.info("╚══════════════════════════════════════╝")
 
     if not WEB_DIR.exists():
@@ -394,9 +441,9 @@ def step_sync(args, state: dict) -> bool:
 
 
 def step_publish(args, state: dict) -> bool:
-    """Step 6: Git commit + push to trigger auto-deploy (Render/Vercel ONLY)."""
+    """Step 7: Git commit + push to trigger auto-deploy (Render/Vercel ONLY)."""
     logger.info("\n╔══════════════════════════════════════╗")
-    logger.info("║  STEP 6: PUBLISH (git push)          ║")
+    logger.info("║  STEP 7: PUBLISH (git push)          ║")
     logger.info("╚══════════════════════════════════════╝")
 
     if args.skip_publish or args.dry_run:
@@ -448,6 +495,139 @@ def step_publish(args, state: dict) -> bool:
 
 
 # ═══════════════════════════════════════════════════════════════════════
+# PREFLIGHT / POSTFLIGHT
+# ═══════════════════════════════════════════════════════════════════════
+
+def preflight_checks(args) -> bool:
+    """Run pre-pipeline health checks. Returns True if safe to proceed."""
+    logger.info("\n╔══════════════════════════════════════╗")
+    logger.info("║  PREFLIGHT CHECKS                    ║")
+    logger.info("╚══════════════════════════════════════╝")
+
+    all_ok = True
+
+    # 1. Kill stale pipeline processes (older than 3 hours)
+    try:
+        import signal
+        result = subprocess.run(
+            ["pgrep", "-f", "pipeline_run.py"],
+            capture_output=True, text=True, timeout=10
+        )
+        if result.stdout.strip():
+            pids = [int(p) for p in result.stdout.strip().split("\n") if p.strip()]
+            my_pid = os.getpid()
+            for pid in pids:
+                if pid != my_pid:
+                    try:
+                        # Check age — only kill if older than 3 hours
+                        stat_result = subprocess.run(
+                            ["ps", "-o", "etimes=", "-p", str(pid)],
+                            capture_output=True, text=True, timeout=5
+                        )
+                        elapsed = int(stat_result.stdout.strip()) if stat_result.stdout.strip() else 0
+                        if elapsed > 10800:  # 3 hours
+                            os.kill(pid, signal.SIGTERM)
+                            logger.warning("  Killed stale pipeline process PID %d (age: %ds)", pid, elapsed)
+                    except (ValueError, ProcessLookupError, OSError):
+                        pass
+    except Exception as e:
+        logger.debug("  Stale process check skipped: %s", e)
+
+    # 2. Check disk space (warn if <1GB free)
+    try:
+        stat = os.statvfs(str(BASE_DIR))
+        free_gb = (stat.f_bavail * stat.f_frsize) / (1024 ** 3)
+        logger.info("  Disk free: %.1f GB", free_gb)
+        if free_gb < 1.0:
+            logger.warning("  LOW DISK SPACE: %.1f GB free. Pipeline may fail.", free_gb)
+            all_ok = False
+    except Exception as e:
+        logger.debug("  Disk check skipped: %s", e)
+
+    # 3. Warm up Modal Chatterbox endpoint (avoid cold start during audio step)
+    if not args.dry_run:
+        try:
+            import httpx
+            logger.info("  Warming up Modal Chatterbox endpoint...")
+            resp = httpx.get(CHATTERBOX_HEALTH, timeout=90)
+            if resp.status_code == 200:
+                logger.info("  Modal health: OK")
+            else:
+                logger.warning("  Modal health: HTTP %d", resp.status_code)
+        except Exception as e:
+            logger.warning("  Modal warmup failed: %s (will retry during audio step)", e)
+
+    # 4. Quick Mistral API connectivity test
+    if not args.dry_run:
+        try:
+            from mistralai import Mistral
+            client = Mistral(api_key=os.environ.get("MISTRAL_API_KEY", ""))
+            resp = client.chat.complete(
+                model="mistral-large-latest",
+                messages=[{"role": "user", "content": "Say OK"}],
+                max_tokens=5,
+            )
+            logger.info("  Mistral API: OK")
+        except Exception as e:
+            logger.error("  Mistral API check failed: %s", e)
+            all_ok = False
+
+    logger.info("  Preflight: %s", "PASS" if all_ok else "WARNINGS (proceeding)")
+    return True  # Always proceed — warnings are non-fatal
+
+
+def postflight_checks(state: dict):
+    """Gather cost estimates and disk usage for the notification email."""
+    logger.info("\n╔══════════════════════════════════════╗")
+    logger.info("║  POSTFLIGHT: COST & DISK SUMMARY     ║")
+    logger.info("╚══════════════════════════════════════╝")
+
+    # Count audio files and disk usage
+    audio_dir = BASE_DIR / "audio" / "pre-gen"
+    web_audio_dir = WEB_DIR / "public" / "audio" / "pre-gen"
+    total_audio = 0
+    total_bytes = 0
+    for d in [audio_dir, web_audio_dir]:
+        if d.exists():
+            for f in d.glob("*.mp3"):
+                total_audio += 1
+                total_bytes += f.stat().st_size
+
+    audio_gb = total_bytes / (1024 ** 3)
+    logger.info("  Audio files: %d (%.2f GB total across both repos)", total_audio, audio_gb)
+
+    # Count cover SVGs
+    covers_dir = WEB_DIR / "public" / "covers"
+    cover_count = len(list(covers_dir.glob("*.svg"))) if covers_dir.exists() else 0
+    logger.info("  Cover SVGs: %d", cover_count)
+
+    # Estimate cost: ~$0.43 per run (14 audio variants on Modal T4 GPU)
+    # Covers + text generation = $0 (Mistral free tier)
+    n_items = len(state.get("generated_ids", []))
+    n_variants = n_items * 7  # 7 voices per story
+    modal_cost = n_variants * 0.031  # ~$0.031 per variant (43.5 GPU-min / 14 variants × $0.01/min)
+    cost_str = f"~${modal_cost:.2f} Modal GPU ({n_variants} audio variants)"
+    if modal_cost == 0:
+        cost_str = "$0.00 (no audio generated)"
+
+    state["cost_estimate"] = cost_str
+    state["disk_info"] = f"Audio: {total_audio} files ({audio_gb:.2f} GB), Covers: {cover_count} SVGs"
+
+    # Collect generated titles for email
+    if CONTENT_PATH.exists():
+        try:
+            content = json.loads(CONTENT_PATH.read_text())
+            id_set = set(state.get("generated_ids", []))
+            titles = [s["title"] for s in content if s.get("id") in id_set]
+            state["generated_titles"] = titles
+        except Exception:
+            pass
+
+    logger.info("  Cost estimate: %s", cost_str)
+    logger.info("  Disk: %s", state["disk_info"])
+
+
+# ═══════════════════════════════════════════════════════════════════════
 # SUMMARY
 # ═══════════════════════════════════════════════════════════════════════
 
@@ -460,9 +640,13 @@ def print_summary(state: dict, total_elapsed: float):
     logger.info("  Audio gen:  %s", state.get("step_audio", "not run"))
     logger.info("  QA passed:  %d", len(state.get("qa_passed", [])))
     logger.info("  QA failed:  %d", len(state.get("qa_failed", [])))
+    logger.info("  Covers:     %d generated, %d fallback",
+                len(state.get("covers_generated", [])),
+                len(state.get("covers_failed", [])))
     logger.info("  Enriched:   %s", state.get("step_enrich", "not run"))
     logger.info("  Synced:     %s", state.get("step_sync", "not run"))
     logger.info("  Published:  %s", state.get("step_publish", "not run"))
+    logger.info("  Cost:       %s", state.get("cost_estimate", "unknown"))
     logger.info("  Total time: %.0f seconds (%.1f min)", total_elapsed, total_elapsed / 60)
     logger.info("  Log file:   %s", log_file)
     logger.info("=" * 50)
@@ -524,12 +708,16 @@ def main():
 
     total_start = time.time()
 
+    # ── Preflight checks ──
+    preflight_checks(args)
+
     # Define step sequence
     step_funcs = {
         "generate": step_generate,
         "audio": step_audio,
         "qa": step_qa,
         "enrich": step_enrich,
+        "covers": step_covers,
         "sync": step_sync,
         "publish": step_publish,
     }
@@ -558,7 +746,27 @@ def main():
         save_state(state)
 
     total_elapsed = time.time() - total_start
+
+    # ── Postflight: cost + disk summary ──
+    postflight_checks(state)
+
+    # ── Summary ──
     print_summary(state, total_elapsed)
+
+    # ── Email notification (ALWAYS — success or failure) ──
+    try:
+        from pipeline_notify import send_pipeline_notification
+        send_pipeline_notification(state, str(log_file), total_elapsed)
+    except ImportError:
+        # Try with full path
+        try:
+            sys.path.insert(0, str(SCRIPTS_DIR))
+            from pipeline_notify import send_pipeline_notification
+            send_pipeline_notification(state, str(log_file), total_elapsed)
+        except Exception as e:
+            logger.warning("  Email notification failed: %s", e)
+    except Exception as e:
+        logger.warning("  Email notification failed: %s", e)
 
 
 if __name__ == "__main__":

@@ -63,6 +63,7 @@ def _build_new_entry_js(story: dict) -> str:
     theme = story.get("theme", "fantasy")
     music_params = story.get("musicParams", {})
     audio_variants = story.get("audio_variants", [])
+    cover = story.get("cover", "/covers/default.svg")
 
     # Build categories JS array
     cats_js = "[" + ", ".join(f'"{c}"' for c in categories) + "]"
@@ -80,7 +81,7 @@ def _build_new_entry_js(story: dict) -> str:
       type: "{stype}",
       title: "{_js_escape(title)}",
       description: "{_js_escape(desc)}",
-      cover: "/covers/default.svg",
+      cover: "{cover}",
       addedAt: "{added_at}",
       text: "{_js_escape(text)}",
       target_age: {target_age},
