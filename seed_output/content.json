@@ -82,53 +82,53 @@
       }
     ],
     "musicParams": {
-      "key": "Am",
+      "key": "Dm",
       "chordNotes": [
-        110.0,
-        130.81,
-        164.81,
-        220.0
-      ],
-      "padType": "fm",
-      "padGain": 0.0415,
-      "padFilter": 824,
-      "padLfo": 0.0681,
-      "noiseType": "pink",
-      "noiseGain": 0.0119,
-      "droneFreq": 55.0,
-      "droneGain": 0.0307,
-      "melodyNotes": [
+        146.83,
+        174.61,
         220.0,
-        261.62,
-        329.62,
         293.66
       ],
-      "melodyInterval": 3641,
-      "melodyGain": 0.0168,
+      "padType": "fm",
+      "padGain": 0.0508,
+      "padFilter": 862,
+      "padLfo": 0.071,
+      "noiseType": "pink",
+      "noiseGain": 0.0125,
+      "droneFreq": 73.42,
+      "droneGain": 0.0367,
+      "melodyNotes": [
+        293.66,
+        349.22,
+        440.0,
+        392.0
+      ],
+      "melodyInterval": 4136,
+      "melodyGain": 0.018,
       "bassNotes": [
-        55.0,
-        82.41,
-        65.41
+        73.42,
+        110.0,
+        87.31
       ],
-      "bassInterval": 6769,
+      "bassInterval": 6492,
       "counterNotes": [
-        327.02,
-        412.02,
-        275.0
+        436.53,
+        550.0,
+        367.08
       ],
-      "counterInterval": 5203,
+      "counterInterval": 4580,
       "events": [
         {
-          "type": "starTwinkle",
-          "interval": 21697
-        },
-        {
           "type": "chimes",
-          "interval": 12675
+          "interval": 10343
         },
         {
           "type": "heartbeat",
-          "interval": 9017
+          "interval": 7837
+        },
+        {
+          "type": "starTwinkle",
+          "interval": 20827
         }
       ]
     }
@@ -217,57 +217,53 @@
       }
     ],
     "musicParams": {
-      "key": "F",
+      "key": "G",
       "chordNotes": [
-        174.61,
-        220.0,
-        261.63,
-        349.22
+        98.0,
+        123.47,
+        146.83,
+        196.0
       ],
       "padType": "plucked",
-      "padGain": 0.0397,
-      "padFilter": 1008,
-      "padLfo": 0.0896,
+      "padGain": 0.0439,
+      "padFilter": 811,
+      "padLfo": 0.0888,
       "noiseType": "brown",
-      "noiseGain": 0.0125,
-      "droneFreq": 87.31,
-      "droneGain": 0.0229,
+      "noiseGain": 0.0128,
+      "droneFreq": 49.0,
+      "droneGain": 0.0278,
       "melodyNotes": [
-        349.22,
-        440.0,
-        523.26,
-        466.16
+        196.0,
+        246.94,
+        293.66,
+        261.62
       ],
-      "melodyInterval": 3163,
-      "melodyGain": 0.0173,
+      "melodyInterval": 3463,
+      "melodyGain": 0.0191,
       "bassNotes": [
-        87.31,
-        130.81,
-        110.0
+        49.0,
+        73.42,
+        61.73
       ],
-      "bassInterval": 6614,
+      "bassInterval": 6399,
       "counterNotes": [
-        550.0,
-        654.08,
-        436.53
+        308.68,
+        367.08,
+        245.0
       ],
-      "counterInterval": 4933,
+      "counterInterval": 4863,
       "events": [
         {
-          "type": "leaves",
-          "interval": 11728
-        },
-        {
           "type": "birdChirp",
-          "interval": 7400
+          "interval": 12993
         },
         {
-          "type": "sparkle",
-          "interval": 19865
+          "type": "owl",
+          "interval": 20219
         },
         {
-          "type": "windGust",
-          "interval": 20015
+          "type": "leaves",
+          "interval": 8725
         }
       ]
     }
@@ -355,53 +351,53 @@
       }
     ],
     "musicParams": {
-      "key": "A",
+      "key": "G",
       "chordNotes": [
-        110.0,
-        138.59,
-        164.81,
-        220.0
+        98.0,
+        123.47,
+        146.83,
+        196.0
       ],
       "padType": "plucked",
-      "padGain": 0.0412,
-      "padFilter": 1114,
-      "padLfo": 0.0753,
+      "padGain": 0.0478,
+      "padFilter": 1029,
+      "padLfo": 0.0805,
       "noiseType": "white",
-      "noiseGain": 0.0134,
-      "droneFreq": 55.0,
-      "droneGain": 0.0273,
+      "noiseGain": 0.0118,
+      "droneFreq": 49.0,
+      "droneGain": 0.0284,
       "melodyNotes": [
-        220.0,
-        277.18,
-        329.62,
-        293.66
+        196.0,
+        246.94,
+        293.66,
+        261.62
       ],
-      "melodyInterval": 4422,
-      "melodyGain": 0.0185,
+      "melodyInterval": 4617,
+      "melodyGain": 0.0177,
       "bassNotes": [
-        55.0,
-        82.41,
-        69.3
+        49.0,
+        73.42,
+        61.73
       ],
-      "bassInterval": 6878,
+      "bassInterval": 6909,
       "counterNotes": [
-        346.48,
-        412.02,
-        275.0
+        308.68,
+        367.08,
+        245.0
       ],
-      "counterInterval": 4726,
+      "counterInterval": 5469,
       "events": [
         {
-          "type": "chimes",
-          "interval": 12081
-        },
-        {
           "type": "birdChirp",
-          "interval": 7881
+          "interval": 11892
         },
         {
           "type": "leaves",
-          "interval": 17691
+          "interval": 7780
+        },
+        {
+          "type": "sparkle",
+          "interval": 18926
         }
       ]
     }
@@ -503,7 +499,7 @@
       "noiseType": "white",
       "noiseGain": 0.0125,
       "droneFreq": 87.31,
-      "droneGain": 0.028,
+      "droneGain": 0.0326,
       "melodyNotes": [
         349.22,
         440.0,
@@ -530,12 +526,12 @@
           "interval": 13098
         },
         {
-          "type": "sparkle",
-          "interval": 7763
+          "type": "whaleCall",
+          "interval": 21348
         },
         {
           "type": "starTwinkle",
-          "interval": 19137
+          "interval": 15657
         }
       ]
     }
@@ -623,53 +619,53 @@
       }
     ],
     "musicParams": {
-      "key": "D",
+      "key": "Fm",
       "chordNotes": [
-        146.83,
-        185.0,
-        220.0,
-        293.66
+        174.61,
+        207.65,
+        261.63,
+        349.22
       ],
       "padType": "plucked",
-      "padGain": 0.0499,
-      "padFilter": 1209,
-      "padLfo": 0.0813,
+      "padGain": 0.0427,
+      "padFilter": 935,
+      "padLfo": 0.0855,
       "noiseType": "white",
-      "noiseGain": 0.0126,
-      "droneFreq": 73.42,
-      "droneGain": 0.0275,
+      "noiseGain": 0.0128,
+      "droneFreq": 87.31,
+      "droneGain": 0.0312,
       "melodyNotes": [
-        293.66,
-        370.0,
-        440.0,
-        392.0
+        349.22,
+        415.3,
+        523.26,
+        466.16
       ],
-      "melodyInterval": 3070,
-      "melodyGain": 0.02,
+      "melodyInterval": 3191,
+      "melodyGain": 0.0167,
       "bassNotes": [
-        73.42,
-        110.0,
-        92.5
+        87.31,
+        130.81,
+        103.83
       ],
-      "bassInterval": 6603,
+      "bassInterval": 6133,
       "counterNotes": [
-        462.5,
-        550.0,
-        367.08
+        519.12,
+        654.08,
+        436.53
       ],
-      "counterInterval": 5042,
+      "counterInterval": 4558,
       "events": [
         {
           "type": "waterDrop",
-          "interval": 8595
+          "interval": 12849
         },
         {
           "type": "chimes",
-          "interval": 10406
+          "interval": 6946
         },
         {
           "type": "windGust",
-          "interval": 20505
+          "interval": 18882
         }
       ]
     }
@@ -752,53 +748,53 @@
       }
     ],
     "musicParams": {
-      "key": "Cm",
+      "key": "A",
       "chordNotes": [
-        130.81,
-        155.56,
-        196.0,
-        261.62
+        110.0,
+        138.59,
+        164.81,
+        220.0
       ],
-      "padType": "chorus",
-      "padGain": 0.0527,
-      "padFilter": 656,
-      "padLfo": 0.0777,
+      "padType": "fm",
+      "padGain": 0.0413,
+      "padFilter": 556,
+      "padLfo": 0.0813,
       "noiseType": "brown",
-      "noiseGain": 0.012,
-      "droneFreq": 65.41,
-      "droneGain": 0.0391,
+      "noiseGain": 0.0108,
+      "droneFreq": 55.0,
+      "droneGain": 0.0335,
       "melodyNotes": [
-        261.62,
-        311.12,
-        392.0,
-        349.22
+        220.0,
+        277.18,
+        329.62,
+        293.66
       ],
-      "melodyInterval": 4951,
-      "melodyGain": 0.0182,
+      "melodyInterval": 4547,
+      "melodyGain": 0.0178,
       "bassNotes": [
-        65.41,
-        98.0,
-        77.78
+        55.0,
+        82.41,
+        69.3
       ],
-      "bassInterval": 7370,
+      "bassInterval": 6003,
       "counterNotes": [
-        388.9,
-        490.0,
-        327.02
+        346.48,
+        412.02,
+        275.0
       ],
-      "counterInterval": 5156,
+      "counterInterval": 5332,
       "events": [
         {
-          "type": "heartbeat",
-          "interval": 7668
+          "type": "starTwinkle",
+          "interval": 21989
         },
         {
-          "type": "starTwinkle",
-          "interval": 23693
+          "type": "heartbeat",
+          "interval": 8520
         },
         {
           "type": "windGust",
-          "interval": 14527
+          "interval": 14037
         }
       ]
     }
@@ -881,57 +877,57 @@
       }
     ],
     "musicParams": {
-      "key": "A",
+      "key": "F",
       "chordNotes": [
-        110.0,
-        138.59,
-        164.81,
-        220.0
+        174.61,
+        220.0,
+        261.63,
+        349.22
       ],
       "padType": "resonant",
-      "padGain": 0.0413,
-      "padFilter": 556,
-      "padLfo": 0.0609,
+      "padGain": 0.0404,
+      "padFilter": 580,
+      "padLfo": 0.0885,
       "noiseType": "pink",
-      "noiseGain": 0.0108,
-      "droneFreq": 55.0,
-      "droneGain": 0.0391,
+      "noiseGain": 0.0115,
+      "droneFreq": 87.31,
+      "droneGain": 0.0374,
       "melodyNotes": [
-        220.0,
-        277.18,
-        329.62,
-        293.66
+        349.22,
+        440.0,
+        523.26,
+        466.16
       ],
-      "melodyInterval": 4547,
-      "melodyGain": 0.0149,
+      "melodyInterval": 4004,
+      "melodyGain": 0.0159,
       "bassNotes": [
-        55.0,
-        82.41,
-        69.3
+        87.31,
+        130.81,
+        110.0
       ],
-      "bassInterval": 6003,
+      "bassInterval": 6794,
       "counterNotes": [
-        346.48,
-        412.02,
-        275.0
+        550.0,
+        654.08,
+        436.53
       ],
-      "counterInterval": 5332,
+      "counterInterval": 5337,
       "events": [
         {
           "type": "owl",
-          "interval": 11994
-        },
-        {
-          "type": "frog",
-          "interval": 19170
+          "interval": 12288
         },
         {
           "type": "cricket",
-          "interval": 8021
+          "interval": 8384
+        },
+        {
+          "type": "frog",
+          "interval": 19972
         },
         {
           "type": "waterDrop",
-          "interval": 20505
+          "interval": 21647
         }
       ]
     }
@@ -1019,53 +1015,53 @@
       }
     ],
     "musicParams": {
-      "key": "Fm",
+      "key": "G",
       "chordNotes": [
-        174.61,
-        207.65,
-        261.63,
-        349.22
+        98.0,
+        123.47,
+        146.83,
+        196.0
       ],
-      "padType": "simple",
-      "padGain": 0.0397,
-      "padFilter": 590,
-      "padLfo": 0.0542,
+      "padType": "fm",
+      "padGain": 0.0477,
+      "padFilter": 889,
+      "padLfo": 0.0819,
       "noiseType": "pink",
-      "noiseGain": 0.0134,
-      "droneFreq": 87.31,
-      "droneGain": 0.033,
+      "noiseGain": 0.0127,
+      "droneFreq": 49.0,
+      "droneGain": 0.0316,
       "melodyNotes": [
-        349.22,
-        415.3,
-        523.26,
-        466.16
+        196.0,
+        246.94,
+        293.66,
+        261.62
       ],
-      "melodyInterval": 3672,
-      "melodyGain": 0.0194,
+      "melodyInterval": 3357,
+      "melodyGain": 0.0212,
       "bassNotes": [
-        87.31,
-        130.81,
-        103.83
+        49.0,
+        73.42,
+        61.73
       ],
-      "bassInterval": 6484,
+      "bassInterval": 5611,
       "counterNotes": [
-        519.12,
-        654.08,
-        436.53
+        308.68,
+        367.08,
+        245.0
       ],
-      "counterInterval": 4748,
+      "counterInterval": 4169,
       "events": [
         {
-          "type": "heartbeat",
-          "interval": 7352
+          "type": "chimes",
+          "interval": 12142
         },
         {
-          "type": "chimes",
-          "interval": 13087
+          "type": "heartbeat",
+          "interval": 9132
         },
         {
           "type": "waveCycle",
-          "interval": 18314
+          "interval": 18167
         }
       ]
     }
@@ -1154,53 +1150,53 @@
     ],
     "annotated_text_devanagari": "[GENTLE]छत के ऊपर आसमान में, एक छोटा सा मुलायम बादल था जिसका नाम था निम्बस।[PAUSE] निम्बस का काम दुनिया का सबसे खास काम था — तारों से मीठे सपने इकट्ठा करना और सोते हुए बच्चों पे छिड़कना।\n\n[CALM]आज रात तारे खूब चमक रहे थे।[PAUSE] निम्बस ने अपने नर्म हाथों से एक सपना पकड़ा — उड़ने वाले घोड़े का, एक और कैंडी के बाग का,[PAUSE] और एक प्यारे ड्रैगन का जो गरम झप्पी देना चाहता था।\n\n[SLEEPY]जब निम्बस तुम्हारे घर के ऊपर से गुज़रा, उसने अपना फूला हुआ बदन हिलाया,[PAUSE] और सपने छोटी छोटी बर्फ की फुहार की तरह नीचे आये।[PAUSE] वो तुम्हारे तकिये पे आराम से बैठ गये, तुम्हारा आँखें बंद करने का इंतेज़ार कर रहे थे।\n\n[WHISPERING]\"मीठे सपने देखो, छोटे,\" निम्बस ने धीरे से कहा,[PAUSE] और चाँदनी की लकीर छोड़ता हुआ आगे निकल गया।",
     "musicParams": {
-      "key": "Bb",
+      "key": "Bbm",
       "chordNotes": [
         116.54,
-        146.83,
+        138.59,
         174.61,
         233.08
       ],
-      "padType": "fm",
-      "padGain": 0.0535,
-      "padFilter": 688,
-      "padLfo": 0.0904,
+      "padType": "chorus",
+      "padGain": 0.0533,
+      "padFilter": 636,
+      "padLfo": 0.0859,
       "noiseType": "brown",
-      "noiseGain": 0.012,
+      "noiseGain": 0.0126,
       "droneFreq": 58.27,
-      "droneGain": 0.0323,
+      "droneGain": 0.0322,
       "melodyNotes": [
         233.08,
-        293.66,
+        277.18,
         349.22,
         311.12
       ],
-      "melodyInterval": 3635,
-      "melodyGain": 0.0171,
+      "melodyInterval": 3713,
+      "melodyGain": 0.0187,
       "bassNotes": [
         58.27,
         87.31,
-        73.42
+        69.3
       ],
-      "bassInterval": 6613,
+      "bassInterval": 6917,
       "counterNotes": [
-        367.08,
+        346.48,
         436.53,
         291.35
       ],
-      "counterInterval": 5499,
+      "counterInterval": 5481,
       "events": [
         {
-          "type": "chimes",
-          "interval": 11963
+          "type": "heartbeat",
+          "interval": 11983
         },
         {
-          "type": "heartbeat",
-          "interval": 7157
+          "type": "chimes",
+          "interval": 15500
         },
         {
           "type": "sparkle",
-          "interval": 20231
+          "interval": 22015
         }
       ]
     }
@@ -1299,7 +1295,7 @@
       ],
       "padType": "fm",
       "padGain": 0.0463,
-      "padFilter": 751,
+      "padFilter": 804,
       "padLfo": 0.0819,
       "noiseType": "brown",
       "noiseGain": 0.0126,
@@ -1311,7 +1307,7 @@
         246.94,
         220.0
       ],
-      "melodyInterval": 3310,
+      "melodyInterval": 3026,
       "melodyGain": 0.0171,
       "bassNotes": [
         41.2,
@@ -1335,7 +1331,7 @@
           "interval": 11201
         },
         {
-          "type": "windGust",
+          "type": "sparkle",
           "interval": 18733
         }
       ]
@@ -1434,7 +1430,7 @@
       ],
       "padType": "plucked",
       "padGain": 0.0424,
-      "padFilter": 814,
+      "padFilter": 915,
       "padLfo": 0.0895,
       "noiseType": "pink",
       "noiseGain": 0.0117,
@@ -1453,7 +1449,7 @@
         82.41,
         65.41
       ],
-      "bassInterval": 5509,
+      "bassInterval": 5968,
       "counterNotes": [
         327.02,
         412.02,
@@ -1463,15 +1459,15 @@
       "events": [
         {
           "type": "chimes",
-          "interval": 10595
+          "interval": 7063
         },
         {
           "type": "sparkle",
-          "interval": 8306
+          "interval": 12459
         },
         {
-          "type": "birdChirp",
-          "interval": 19577
+          "type": "windGust",
+          "interval": 21752
         }
       ]
     }
@@ -1559,53 +1555,53 @@
     ],
     "annotated_text_devanagari": "[ADVENTUROUS]कैप्टन सितारा ने अपना चमकदार हेलमेट ठीक किया और अपने स्टारशिप सिल्वर ड्रीमर का कंट्रोल पकड़ा।[PAUSE] आज की मिशन सबसे ज़रूरी थी — प्लैनेट केकलॉट पे बर्थडे विश पहुँचाना, आधी रात से पहले!\n\n[EXCITED]सिल्वर ड्रीमर सैटर्न के छल्लों के बीच से निकली, एस्टेरॉइड फील्ड को डॉज किया,[PAUSE] और एक नीले धूमकेतु फ्लैश के साथ रेस लगायी।\n\n[JOYFUL]वो बिल्कुल सही वक़्त पे पहुँची![PAUSE] कैप्टन सितारा ने विश डिलीवर की — एक चमकता सोना सितारा।\n\n[CALM]\"मिशन पूरा हुआ,\" उसने मुस्कुराते हुए कहा।[PAUSE] \"अब घर चलें। स्पेस एक्सप्लोरर्स को भी नींद आती है।\"\n\n[SLEEPY]और जब सिल्वर ड्रीमर शांत आसमान से घर लौट रही थी,[PAUSE] तारों ने भी अपनी रोशनी धीमी की और शुभ रात्रि कही।",
     "musicParams": {
-      "key": "Cm",
+      "key": "Gm",
       "chordNotes": [
-        130.81,
-        155.56,
-        196.0,
-        261.62
+        98.0,
+        116.54,
+        146.83,
+        196.0
       ],
       "padType": "fm",
-      "padGain": 0.0567,
-      "padFilter": 869,
-      "padLfo": 0.0983,
-      "noiseType": "brown",
-      "noiseGain": 0.013,
-      "droneFreq": 65.41,
-      "droneGain": 0.0316,
+      "padGain": 0.0433,
+      "padFilter": 934,
+      "padLfo": 0.0885,
+      "noiseType": "white",
+      "noiseGain": 0.012,
+      "droneFreq": 49.0,
+      "droneGain": 0.0329,
       "melodyNotes": [
-        261.62,
-        311.12,
-        392.0,
-        349.22
+        196.0,
+        233.08,
+        293.66,
+        261.62
       ],
-      "melodyInterval": 3297,
-      "melodyGain": 0.0182,
+      "melodyInterval": 3461,
+      "melodyGain": 0.0161,
       "bassNotes": [
-        65.41,
-        98.0,
-        77.78
+        49.0,
+        73.42,
+        58.27
       ],
-      "bassInterval": 5869,
+      "bassInterval": 6161,
       "counterNotes": [
-        388.9,
-        490.0,
-        327.02
+        291.35,
+        367.08,
+        245.0
       ],
-      "counterInterval": 4593,
+      "counterInterval": 5329,
       "events": [
         {
+          "type": "starTwinkle",
+          "interval": 18991
+        },
+        {
           "type": "whaleCall",
-          "interval": 19369
+          "interval": 17101
         },
         {
           "type": "radarPing",
-          "interval": 11051
-        },
-        {
-          "type": "starTwinkle",
-          "interval": 21382
+          "interval": 10671
         }
       ]
     }
@@ -1694,57 +1690,53 @@
     ],
     "annotated_text_devanagari": "[MYSTERIOUS]दादी के घर के पीछे, माया को एक ऐसा बाग मिला जो सोने की रोशनी से चमक रहा था।[PAUSE] यहाँ के फूल जादुई थे — गुलाब जो लालटेन की तरह चमकते थे, लिली जो धुन गाती थी।\n\n[CURIOUS]हर फूल के पास एक अलग कहानी थी।[PAUSE] डेज़ी चूहों की बहादुरी की कहानी सुनाती थी।[PAUSE] ट्यूलिप मेहरबानी की पुरानी कथाएँ बताती थी।[PAUSE] लैवेंडर चाँदनी रातों की कविताएँ सुनाता था।\n\n[WHISPERING]हर कहानी ऐसे ख़त्म होती थी:[PAUSE] \"अब आँखें बंद करो, प्यारे।[PAUSE] कल एक और कहानी तुम्हारा इंतेज़ार कर रही होगी।\"",
     "musicParams": {
-      "key": "Am",
+      "key": "Bbm",
       "chordNotes": [
-        110.0,
-        130.81,
-        164.81,
-        220.0
+        116.54,
+        138.59,
+        174.61,
+        233.08
       ],
       "padType": "plucked",
-      "padGain": 0.0417,
-      "padFilter": 1062,
-      "padLfo": 0.0887,
+      "padGain": 0.0434,
+      "padFilter": 902,
+      "padLfo": 0.0843,
       "noiseType": "pink",
-      "noiseGain": 0.0133,
-      "droneFreq": 55.0,
-      "droneGain": 0.0237,
+      "noiseGain": 0.013,
+      "droneFreq": 58.27,
+      "droneGain": 0.0288,
       "melodyNotes": [
-        220.0,
-        261.62,
-        329.62,
-        293.66
+        233.08,
+        277.18,
+        349.22,
+        311.12
       ],
-      "melodyInterval": 3291,
-      "melodyGain": 0.0176,
+      "melodyInterval": 2898,
+      "melodyGain": 0.0196,
       "bassNotes": [
-        55.0,
-        82.41,
-        65.41
+        58.27,
+        87.31,
+        69.3
       ],
-      "bassInterval": 6577,
+      "bassInterval": 6190,
       "counterNotes": [
-        327.02,
-        412.02,
-        275.0
+        346.48,
+        436.53,
+        291.35
       ],
-      "counterInterval": 4533,
+      "counterInterval": 4573,
       "events": [
         {
           "type": "birdChirp",
-          "interval": 13581
+          "interval": 9161
         },
         {
-          "type": "waterDrop",
-          "interval": 17692
-        },
-        {
-          "type": "sparkle",
-          "interval": 9129
+          "type": "chimes",
+          "interval": 10338
         },
         {
           "type": "windGust",
-          "interval": 22589
+          "interval": 20579
         }
       ]
     }
@@ -1828,53 +1820,53 @@
     ],
     "annotated_text_devanagari": "[RHYTHMIC]तारे झिलमिल करते हैं आसमान में,\nतुम्हारे सपने बसते हैं उनकी छाँव में।\nचाँदा मुस्कुराये गोल चमकदार,\nचाँदी में लपेट ले सारा संसार।\n\n[SLEEPY]आँखें मूँदो अब, मेरे प्यारे तारे,\nरात आयी है, जग उठे सितारे।\nकल सुबह सूरज नया आयेगा,\nपर अब सपनों का जहाँ ले जायेगा।",
     "musicParams": {
-      "key": "Bb",
+      "key": "Am",
       "chordNotes": [
-        116.54,
-        146.83,
-        174.61,
-        233.08
+        110.0,
+        130.81,
+        164.81,
+        220.0
       ],
-      "padType": "chorus",
-      "padGain": 0.0555,
-      "padFilter": 602,
-      "padLfo": 0.0692,
-      "noiseType": "pink",
+      "padType": "fm",
+      "padGain": 0.0426,
+      "padFilter": 504,
+      "padLfo": 0.0749,
+      "noiseType": "brown",
       "noiseGain": 0.0113,
-      "droneFreq": 58.27,
-      "droneGain": 0.0325,
+      "droneFreq": 55.0,
+      "droneGain": 0.0287,
       "melodyNotes": [
-        233.08,
-        293.66,
-        349.22,
-        311.12
+        220.0,
+        261.62,
+        329.62,
+        293.66
       ],
-      "melodyInterval": 4163,
-      "melodyGain": 0.0193,
+      "melodyInterval": 4839,
+      "melodyGain": 0.0164,
       "bassNotes": [
-        58.27,
-        87.31,
-        73.42
+        55.0,
+        82.41,
+        65.41
       ],
-      "bassInterval": 6201,
+      "bassInterval": 6151,
       "counterNotes": [
-        367.08,
-        436.53,
-        291.35
+        327.02,
+        412.02,
+        275.0
       ],
-      "counterInterval": 5488,
+      "counterInterval": 5194,
       "events": [
         {
           "type": "heartbeat",
-          "interval": 8229
+          "interval": 8495
+        },
+        {
+          "type": "chimes",
+          "interval": 10431
         },
         {
           "type": "sparkle",
-          "interval": 13620
-        },
-        {
-          "type": "windGust",
-          "interval": 22349
+          "interval": 19446
         }
       ]
     }
@@ -1958,57 +1950,57 @@
     ],
     "annotated_text_devanagari": "[GENTLE]ऊहू-ऊहू, उल्लू बोले बूढ़े पेड़ से,\nशुभ रात्रि मछली को नीली नदिया के देश से।\nशुभ रात्रि खरगोश को गर्म बिस्तर में,\nशुभ रात्रि लेडीबग को फूलों के घर में।\n\n[WHISPERING]ऊहू-ऊहू, लोमड़ी सो जा अपनी खोह में,\nबतख और मुर्गी भी सपनों की छोह में।\nशुभ रात्रि गिलहरी को मीठी नींद आये,\nऊहू-ऊहू, मेरे बच्चे — अब चैन से सो जाये।",
     "musicParams": {
-      "key": "G",
+      "key": "Gm",
       "chordNotes": [
         98.0,
-        123.47,
+        116.54,
         146.83,
         196.0
       ],
       "padType": "plucked",
-      "padGain": 0.044,
-      "padFilter": 771,
-      "padLfo": 0.0794,
+      "padGain": 0.0447,
+      "padFilter": 766,
+      "padLfo": 0.0761,
       "noiseType": "pink",
-      "noiseGain": 0.0132,
+      "noiseGain": 0.0126,
       "droneFreq": 49.0,
-      "droneGain": 0.0291,
+      "droneGain": 0.0311,
       "melodyNotes": [
         196.0,
-        246.94,
+        233.08,
         293.66,
         261.62
       ],
-      "melodyInterval": 4610,
-      "melodyGain": 0.0193,
+      "melodyInterval": 4495,
+      "melodyGain": 0.0195,
       "bassNotes": [
         49.0,
         73.42,
-        61.73
+        58.27
       ],
-      "bassInterval": 6698,
+      "bassInterval": 6967,
       "counterNotes": [
-        308.68,
+        291.35,
         367.08,
         245.0
       ],
-      "counterInterval": 4652,
+      "counterInterval": 4880,
       "events": [
         {
+          "type": "owl",
+          "interval": 11340
+        },
+        {
           "type": "cricket",
-          "interval": 9116
+          "interval": 8525
         },
         {
           "type": "frog",
-          "interval": 10654
+          "interval": 19401
         },
         {
-          "type": "owl",
-          "interval": 22792
-        },
-        {
-          "type": "birdChirp",
-          "interval": 9496
+          "type": "sparkle",
+          "interval": 24458
         }
       ]
     }
@@ -2104,46 +2096,46 @@
         261.63,
         349.22
       ],
-      "padType": "chorus",
-      "padGain": 0.0612,
-      "padFilter": 871,
-      "padLfo": 0.0846,
+      "padType": "simple",
+      "padGain": 0.0407,
+      "padFilter": 513,
+      "padLfo": 0.0564,
       "noiseType": "brown",
-      "noiseGain": 0.0124,
+      "noiseGain": 0.0106,
       "droneFreq": 87.31,
-      "droneGain": 0.038,
+      "droneGain": 0.0287,
       "melodyNotes": [
         349.22,
         440.0,
         523.26,
         466.16
       ],
-      "melodyInterval": 4068,
-      "melodyGain": 0.0217,
+      "melodyInterval": 3463,
+      "melodyGain": 0.0174,
       "bassNotes": [
         87.31,
         130.81,
         110.0
       ],
-      "bassInterval": 6832,
+      "bassInterval": 6410,
       "counterNotes": [
         550.0,
         654.08,
         436.53
       ],
-      "counterInterval": 4817,
+      "counterInterval": 4744,
       "events": [
         {
           "type": "heartbeat",
-          "interval": 12787
+          "interval": 7789
         },
         {
           "type": "starTwinkle",
-          "interval": 23712
+          "interval": 23200
         },
         {
-          "type": "chimes",
-          "interval": 20011
+          "type": "windGust",
+          "interval": 12656
         }
       ]
     }
@@ -2232,53 +2224,53 @@
       }
     ],
     "musicParams": {
-      "key": "D",
+      "key": "Bbm",
       "chordNotes": [
-        146.83,
-        185.0,
-        220.0,
-        293.66
+        116.54,
+        138.59,
+        174.61,
+        233.08
       ],
       "padType": "chorus",
-      "padGain": 0.0434,
-      "padFilter": 476,
-      "padLfo": 0.0747,
+      "padGain": 0.0453,
+      "padFilter": 493,
+      "padLfo": 0.0859,
       "noiseType": "brown",
-      "noiseGain": 0.0123,
-      "droneFreq": 73.42,
-      "droneGain": 0.0327,
+      "noiseGain": 0.0115,
+      "droneFreq": 58.27,
+      "droneGain": 0.0367,
       "melodyNotes": [
-        293.66,
-        370.0,
-        440.0,
-        392.0
+        233.08,
+        277.18,
+        349.22,
+        311.12
       ],
-      "melodyInterval": 5056,
-      "melodyGain": 0.0151,
+      "melodyInterval": 4771,
+      "melodyGain": 0.0141,
       "bassNotes": [
-        73.42,
-        110.0,
-        92.5
+        58.27,
+        87.31,
+        69.3
       ],
-      "bassInterval": 7506,
+      "bassInterval": 6469,
       "counterNotes": [
-        462.5,
-        550.0,
-        367.08
+        346.48,
+        436.53,
+        291.35
       ],
-      "counterInterval": 5690,
+      "counterInterval": 5162,
       "events": [
         {
           "type": "waveCycle",
-          "interval": 11663
+          "interval": 10630
         },
         {
           "type": "whaleCall",
-          "interval": 24397
+          "interval": 22237
         },
         {
           "type": "heartbeat",
-          "interval": 16598
+          "interval": 8629
         }
       ]
     }
@@ -2367,53 +2359,53 @@
       }
     ],
     "musicParams": {
-      "key": "A",
+      "key": "Dm",
       "chordNotes": [
-        110.0,
-        138.59,
-        164.81,
-        220.0
-      ],
-      "padType": "resonant",
-      "padGain": 0.0407,
-      "padFilter": 467,
-      "padLfo": 0.047,
-      "noiseType": "pink",
-      "noiseGain": 0.0106,
-      "droneFreq": 55.0,
-      "droneGain": 0.0335,
-      "melodyNotes": [
+        146.83,
+        174.61,
         220.0,
-        277.18,
-        329.62,
         293.66
       ],
-      "melodyInterval": 4556,
-      "melodyGain": 0.0145,
+      "padType": "resonant",
+      "padGain": 0.0397,
+      "padFilter": 530,
+      "padLfo": 0.056,
+      "noiseType": "pink",
+      "noiseGain": 0.0125,
+      "droneFreq": 73.42,
+      "droneGain": 0.0275,
+      "melodyNotes": [
+        293.66,
+        349.22,
+        440.0,
+        392.0
+      ],
+      "melodyInterval": 4942,
+      "melodyGain": 0.0144,
       "bassNotes": [
-        55.0,
-        82.41,
-        69.3
+        73.42,
+        110.0,
+        87.31
       ],
-      "bassInterval": 7889,
+      "bassInterval": 8140,
       "counterNotes": [
-        346.48,
-        412.02,
-        275.0
+        436.53,
+        550.0,
+        367.08
       ],
-      "counterInterval": 5693,
+      "counterInterval": 6167,
       "events": [
         {
           "type": "leaves",
-          "interval": 7789
+          "interval": 7818
+        },
+        {
+          "type": "cricket",
+          "interval": 11100
         },
         {
           "type": "birdChirp",
-          "interval": 12654
-        },
-        {
-          "type": "windGust",
-          "interval": 16272
+          "interval": 22072
         }
       ]
     }
@@ -2503,53 +2495,53 @@
       }
     ],
     "musicParams": {
-      "key": "F",
+      "key": "Bbm",
       "chordNotes": [
+        116.54,
+        138.59,
         174.61,
-        220.0,
-        261.63,
-        349.22
+        233.08
       ],
-      "padType": "chorus",
-      "padGain": 0.0536,
-      "padFilter": 655,
-      "padLfo": 0.0779,
-      "noiseType": "white",
-      "noiseGain": 0.0111,
-      "droneFreq": 87.31,
-      "droneGain": 0.0331,
+      "padType": "plucked",
+      "padGain": 0.0475,
+      "padFilter": 1034,
+      "padLfo": 0.0755,
+      "noiseType": "pink",
+      "noiseGain": 0.0134,
+      "droneFreq": 58.27,
+      "droneGain": 0.0259,
       "melodyNotes": [
+        233.08,
+        277.18,
         349.22,
-        440.0,
-        523.26,
-        466.16
+        311.12
       ],
-      "melodyInterval": 4437,
-      "melodyGain": 0.0176,
+      "melodyInterval": 4148,
+      "melodyGain": 0.0181,
       "bassNotes": [
+        58.27,
         87.31,
-        130.81,
-        110.0
+        69.3
       ],
-      "bassInterval": 6204,
+      "bassInterval": 6007,
       "counterNotes": [
-        550.0,
-        654.08,
-        436.53
+        346.48,
+        436.53,
+        291.35
       ],
-      "counterInterval": 5235,
+      "counterInterval": 4725,
       "events": [
         {
-          "type": "sparkle",
-          "interval": 11093
-        },
-        {
           "type": "chimes",
-          "interval": 16160
+          "interval": 7611
         },
         {
-          "type": "windGust",
-          "interval": 23328
+          "type": "waterDrop",
+          "interval": 12318
+        },
+        {
+          "type": "sparkle",
+          "interval": 16543
         }
       ]
     }
@@ -2638,53 +2630,53 @@
       }
     ],
     "musicParams": {
-      "key": "Fm",
+      "key": "G",
       "chordNotes": [
-        174.61,
-        207.65,
-        261.63,
-        349.22
+        98.0,
+        123.47,
+        146.83,
+        196.0
       ],
       "padType": "simple",
-      "padGain": 0.0413,
-      "padFilter": 468,
-      "padLfo": 0.0503,
-      "noiseType": "pink",
-      "noiseGain": 0.0124,
-      "droneFreq": 87.31,
-      "droneGain": 0.0308,
+      "padGain": 0.0434,
+      "padFilter": 523,
+      "padLfo": 0.0467,
+      "noiseType": "brown",
+      "noiseGain": 0.0123,
+      "droneFreq": 49.0,
+      "droneGain": 0.0327,
       "melodyNotes": [
-        349.22,
-        415.3,
-        523.26,
-        466.16
+        196.0,
+        246.94,
+        293.66,
+        261.62
       ],
-      "melodyInterval": 5203,
-      "melodyGain": 0.0192,
+      "melodyInterval": 4247,
+      "melodyGain": 0.0151,
       "bassNotes": [
-        87.31,
-        130.81,
-        103.83
+        49.0,
+        73.42,
+        61.73
       ],
-      "bassInterval": 6454,
+      "bassInterval": 5629,
       "counterNotes": [
-        519.12,
-        654.08,
-        436.53
+        308.68,
+        367.08,
+        245.0
       ],
-      "counterInterval": 5326,
+      "counterInterval": 4741,
       "events": [
         {
           "type": "heartbeat",
-          "interval": 8222
+          "interval": 7775
         },
         {
           "type": "cricket",
-          "interval": 11360
+          "interval": 12199
         },
         {
-          "type": "sparkle",
-          "interval": 18473
+          "type": "waterDrop",
+          "interval": 18442
         }
       ]
     }
@@ -2775,57 +2767,57 @@
       }
     ],
     "musicParams": {
-      "key": "A",
+      "key": "F",
       "chordNotes": [
-        110.0,
-        138.59,
-        164.81,
-        220.0
-      ],
-      "padType": "simple",
-      "padGain": 0.0458,
-      "padFilter": 896,
-      "padLfo": 0.0906,
-      "noiseType": "pink",
-      "noiseGain": 0.0114,
-      "droneFreq": 55.0,
-      "droneGain": 0.0341,
-      "melodyNotes": [
+        174.61,
         220.0,
-        277.18,
-        329.62,
-        293.66
+        261.63,
+        349.22
       ],
-      "melodyInterval": 4529,
-      "melodyGain": 0.0195,
+      "padType": "resonant",
+      "padGain": 0.052,
+      "padFilter": 825,
+      "padLfo": 0.0783,
+      "noiseType": "brown",
+      "noiseGain": 0.0131,
+      "droneFreq": 87.31,
+      "droneGain": 0.0323,
+      "melodyNotes": [
+        349.22,
+        440.0,
+        523.26,
+        466.16
+      ],
+      "melodyInterval": 3999,
+      "melodyGain": 0.0173,
       "bassNotes": [
-        55.0,
-        82.41,
-        69.3
+        87.31,
+        130.81,
+        110.0
       ],
-      "bassInterval": 6550,
+      "bassInterval": 6441,
       "counterNotes": [
-        346.48,
-        412.02,
-        275.0
+        550.0,
+        654.08,
+        436.53
       ],
-      "counterInterval": 5235,
+      "counterInterval": 4838,
       "events": [
         {
-          "type": "leaves",
-          "interval": 8720
-        },
-        {
           "type": "cricket",
-          "interval": 13432
+          "interval": 8911
         },
         {
           "type": "owl",
-          "interval": 21922
+          "interval": 20536
         },
         {
-          "type": "sparkle",
-          "interval": 16774
+          "type": "leaves",
+          "interval": 13624
+        },
+        {
+          "type": "radarPing",
+          "interval": 27341
         }
       ]
     }
@@ -2915,53 +2907,53 @@
       }
     ],
     "musicParams": {
-      "key": "Em",
+      "key": "Bb",
       "chordNotes": [
-        82.41,
-        98.0,
-        123.47,
-        164.82
+        116.54,
+        146.83,
+        174.61,
+        233.08
       ],
-      "padType": "fm",
-      "padGain": 0.0466,
-      "padFilter": 905,
-      "padLfo": 0.0904,
+      "padType": "simple",
+      "padGain": 0.0496,
+      "padFilter": 951,
+      "padLfo": 0.0779,
       "noiseType": "white",
-      "noiseGain": 0.0131,
-      "droneFreq": 41.2,
-      "droneGain": 0.0382,
+      "noiseGain": 0.0125,
+      "droneFreq": 58.27,
+      "droneGain": 0.037,
       "melodyNotes": [
-        164.82,
-        196.0,
-        246.94,
-        220.0
+        233.08,
+        293.66,
+        349.22,
+        311.12
       ],
-      "melodyInterval": 4090,
+      "melodyInterval": 3988,
       "melodyGain": 0.0165,
       "bassNotes": [
-        41.2,
-        61.73,
-        49.0
+        58.27,
+        87.31,
+        73.42
       ],
-      "bassInterval": 6934,
+      "bassInterval": 6762,
       "counterNotes": [
-        245.0,
-        308.68,
-        206.02
+        367.08,
+        436.53,
+        291.35
       ],
-      "counterInterval": 5204,
+      "counterInterval": 4883,
       "events": [
         {
-          "type": "radarPing",
-          "interval": 12402
+          "type": "starTwinkle",
+          "interval": 18956
         },
         {
-          "type": "starTwinkle",
-          "interval": 22923
+          "type": "radarPing",
+          "interval": 17842
         },
         {
           "type": "waterDrop",
-          "interval": 8370
+          "interval": 10918
         }
       ]
     }
@@ -3051,57 +3043,57 @@
       }
     ],
     "musicParams": {
-      "key": "F",
+      "key": "Am",
       "chordNotes": [
-        174.61,
-        220.0,
-        261.63,
-        349.22
+        110.0,
+        130.81,
+        164.81,
+        220.0
       ],
       "padType": "resonant",
-      "padGain": 0.0503,
-      "padFilter": 820,
-      "padLfo": 0.0746,
+      "padGain": 0.0454,
+      "padFilter": 601,
+      "padLfo": 0.0712,
       "noiseType": "brown",
-      "noiseGain": 0.0108,
-      "droneFreq": 87.31,
-      "droneGain": 0.0332,
+      "noiseGain": 0.0116,
+      "droneFreq": 55.0,
+      "droneGain": 0.0314,
       "melodyNotes": [
-        349.22,
-        440.0,
-        523.26,
-        466.16
+        220.0,
+        261.62,
+        329.62,
+        293.66
       ],
-      "melodyInterval": 3340,
-      "melodyGain": 0.0172,
+      "melodyInterval": 3606,
+      "melodyGain": 0.0171,
       "bassNotes": [
-        87.31,
-        130.81,
-        110.0
+        55.0,
+        82.41,
+        65.41
       ],
-      "bassInterval": 6552,
+      "bassInterval": 5926,
       "counterNotes": [
-        550.0,
-        654.08,
-        436.53
+        327.02,
+        412.02,
+        275.0
       ],
-      "counterInterval": 4638,
+      "counterInterval": 4539,
       "events": [
         {
           "type": "sparkle",
-          "interval": 11033
-        },
-        {
-          "type": "frog",
-          "interval": 21164
+          "interval": 11289
         },
         {
           "type": "owl",
-          "interval": 28000
+          "interval": 25193
         },
         {
           "type": "cricket",
-          "interval": 13039
+          "interval": 8737
+        },
+        {
+          "type": "waterDrop",
+          "interval": 18156
         }
       ]
     }
@@ -3191,53 +3183,57 @@
       }
     ],
     "musicParams": {
-      "key": "Gm",
+      "key": "D",
       "chordNotes": [
-        98.0,
-        116.54,
         146.83,
-        196.0
+        185.0,
+        220.0,
+        293.66
       ],
       "padType": "plucked",
-      "padGain": 0.0494,
-      "padFilter": 908,
-      "padLfo": 0.088,
+      "padGain": 0.0397,
+      "padFilter": 1067,
+      "padLfo": 0.0861,
       "noiseType": "pink",
-      "noiseGain": 0.0122,
-      "droneFreq": 49.0,
-      "droneGain": 0.0275,
+      "noiseGain": 0.013,
+      "droneFreq": 73.42,
+      "droneGain": 0.0333,
       "melodyNotes": [
-        196.0,
-        233.08,
         293.66,
-        261.62
+        370.0,
+        440.0,
+        392.0
       ],
-      "melodyInterval": 2962,
-      "melodyGain": 0.0172,
+      "melodyInterval": 3738,
+      "melodyGain": 0.0191,
       "bassNotes": [
-        49.0,
         73.42,
-        58.27
+        110.0,
+        92.5
       ],
-      "bassInterval": 6479,
+      "bassInterval": 6560,
       "counterNotes": [
-        291.35,
-        367.08,
-        245.0
+        462.5,
+        550.0,
+        367.08
       ],
-      "counterInterval": 4767,
+      "counterInterval": 5103,
       "events": [
         {
           "type": "sparkle",
-          "interval": 8866
+          "interval": 7329
         },
         {
-          "type": "chimes",
-          "interval": 13436
+          "type": "birdChirp",
+          "interval": 10990
+        },
+        {
+          "type": "windGust",
+          "interval": 19615
         },
         {
           "type": "waterDrop",
-          "interval": 16434
+          "interval": 12881
         }
       ]
     }
@@ -3327,53 +3323,57 @@
       }
     ],
     "musicParams": {
-      "key": "F",
+      "key": "Fm",
       "chordNotes": [
         174.61,
-        220.0,
+        207.65,
         261.63,
         349.22
       ],
       "padType": "resonant",
-      "padGain": 0.0475,
-      "padFilter": 658,
-      "padLfo": 0.0755,
-      "noiseType": "brown",
-      "noiseGain": 0.0134,
+      "padGain": 0.0496,
+      "padFilter": 907,
+      "padLfo": 0.0853,
+      "noiseType": "pink",
+      "noiseGain": 0.0127,
       "droneFreq": 87.31,
-      "droneGain": 0.0363,
+      "droneGain": 0.0364,
       "melodyNotes": [
         349.22,
-        440.0,
+        415.3,
         523.26,
         466.16
       ],
-      "melodyInterval": 3160,
-      "melodyGain": 0.0181,
+      "melodyInterval": 3113,
+      "melodyGain": 0.0161,
       "bassNotes": [
         87.31,
         130.81,
-        110.0
+        103.83
       ],
-      "bassInterval": 5545,
+      "bassInterval": 6197,
       "counterNotes": [
-        550.0,
+        519.12,
         654.08,
         436.53
       ],
-      "counterInterval": 4725,
+      "counterInterval": 4830,
       "events": [
         {
           "type": "cricket",
-          "interval": 11417
+          "interval": 7553
         },
         {
-          "type": "owl",
-          "interval": 22583
+          "type": "leaves",
+          "interval": 13253
         },
         {
-          "type": "waterDrop",
-          "interval": 7352
+          "type": "birdChirp",
+          "interval": 19187
+        },
+        {
+          "type": "sparkle",
+          "interval": 23502
         }
       ]
     }
@@ -3463,53 +3463,57 @@
       }
     ],
     "musicParams": {
-      "key": "G",
+      "key": "F",
       "chordNotes": [
-        98.0,
-        123.47,
-        146.83,
-        196.0
+        174.61,
+        220.0,
+        261.63,
+        349.22
       ],
-      "padType": "chorus",
-      "padGain": 0.0499,
-      "padFilter": 830,
-      "padLfo": 0.0767,
-      "noiseType": "white",
-      "noiseGain": 0.0134,
-      "droneFreq": 49.0,
-      "droneGain": 0.0322,
+      "padType": "simple",
+      "padGain": 0.0442,
+      "padFilter": 860,
+      "padLfo": 0.074,
+      "noiseType": "pink",
+      "noiseGain": 0.0132,
+      "droneFreq": 87.31,
+      "droneGain": 0.0296,
       "melodyNotes": [
-        196.0,
-        246.94,
-        293.66,
-        261.62
+        349.22,
+        440.0,
+        523.26,
+        466.16
       ],
-      "melodyInterval": 3033,
-      "melodyGain": 0.0169,
+      "melodyInterval": 3431,
+      "melodyGain": 0.0182,
       "bassNotes": [
-        49.0,
-        73.42,
-        61.73
+        87.31,
+        130.81,
+        110.0
       ],
-      "bassInterval": 6588,
+      "bassInterval": 5461,
       "counterNotes": [
-        308.68,
-        367.08,
-        245.0
+        550.0,
+        654.08,
+        436.53
       ],
-      "counterInterval": 4579,
+      "counterInterval": 5499,
       "events": [
         {
-          "type": "leaves",
-          "interval": 8557
+          "type": "birdChirp",
+          "interval": 13210
         },
         {
-          "type": "birdChirp",
-          "interval": 13138
+          "type": "leaves",
+          "interval": 9126
         },
         {
           "type": "chimes",
-          "interval": 22868
+          "interval": 22558
+        },
+        {
+          "type": "sparkle",
+          "interval": 16569
         }
       ]
     }
@@ -3599,53 +3603,53 @@
       }
     ],
     "musicParams": {
-      "key": "Em",
+      "key": "A",
       "chordNotes": [
-        82.41,
-        98.0,
-        123.47,
-        164.82
-      ],
-      "padType": "simple",
-      "padGain": 0.0499,
-      "padFilter": 852,
-      "padLfo": 0.0755,
-      "noiseType": "brown",
-      "noiseGain": 0.0129,
-      "droneFreq": 41.2,
-      "droneGain": 0.032,
-      "melodyNotes": [
-        164.82,
-        196.0,
-        246.94,
+        110.0,
+        138.59,
+        164.81,
         220.0
       ],
-      "melodyInterval": 3819,
-      "melodyGain": 0.0201,
+      "padType": "fm",
+      "padGain": 0.0492,
+      "padFilter": 998,
+      "padLfo": 0.0864,
+      "noiseType": "white",
+      "noiseGain": 0.0115,
+      "droneFreq": 55.0,
+      "droneGain": 0.0285,
+      "melodyNotes": [
+        220.0,
+        277.18,
+        329.62,
+        293.66
+      ],
+      "melodyInterval": 3913,
+      "melodyGain": 0.0159,
       "bassNotes": [
-        41.2,
-        61.73,
-        49.0
+        55.0,
+        82.41,
+        69.3
       ],
-      "bassInterval": 6645,
+      "bassInterval": 6789,
       "counterNotes": [
-        245.0,
-        308.68,
-        206.02
+        346.48,
+        412.02,
+        275.0
       ],
-      "counterInterval": 5268,
+      "counterInterval": 5220,
       "events": [
         {
-          "type": "radarPing",
-          "interval": 11839
+          "type": "waterDrop",
+          "interval": 9133
         },
         {
-          "type": "waterDrop",
-          "interval": 8927
+          "type": "radarPing",
+          "interval": 19415
         },
         {
           "type": "whaleCall",
-          "interval": 22499
+          "interval": 25058
         }
       ]
     }
@@ -3735,53 +3739,53 @@
       }
     ],
     "musicParams": {
-      "key": "Fm",
+      "key": "Cm",
       "chordNotes": [
-        174.61,
-        207.65,
-        261.63,
+        130.81,
+        155.56,
+        196.0,
+        261.62
+      ],
+      "padType": "chorus",
+      "padGain": 0.0527,
+      "padFilter": 985,
+      "padLfo": 0.0777,
+      "noiseType": "white",
+      "noiseGain": 0.012,
+      "droneFreq": 65.41,
+      "droneGain": 0.0391,
+      "melodyNotes": [
+        261.62,
+        311.12,
+        392.0,
         349.22
       ],
-      "padType": "simple",
-      "padGain": 0.0478,
-      "padFilter": 842,
-      "padLfo": 0.0805,
-      "noiseType": "white",
-      "noiseGain": 0.0118,
-      "droneFreq": 87.31,
-      "droneGain": 0.0331,
-      "melodyNotes": [
-        349.22,
-        415.3,
-        523.26,
-        466.16
-      ],
-      "melodyInterval": 4617,
-      "melodyGain": 0.0177,
+      "melodyInterval": 4332,
+      "melodyGain": 0.0182,
       "bassNotes": [
-        87.31,
-        130.81,
-        103.83
+        65.41,
+        98.0,
+        77.78
       ],
-      "bassInterval": 6909,
+      "bassInterval": 6387,
       "counterNotes": [
-        519.12,
-        654.08,
-        436.53
+        388.9,
+        490.0,
+        327.02
       ],
-      "counterInterval": 5469,
+      "counterInterval": 4688,
       "events": [
         {
           "type": "starTwinkle",
-          "interval": 21802
-        },
-        {
-          "type": "radarPing",
-          "interval": 17505
+          "interval": 21088
         },
         {
           "type": "whaleCall",
-          "interval": 26497
+          "interval": 19385
+        },
+        {
+          "type": "radarPing",
+          "interval": 12451
         }
       ]
     }
@@ -3871,53 +3875,53 @@
     ],
     "annotated_text_devanagari": "[GENTLE] आसमान में, एक नन्हा तारा चमका। [SLEEPY] श्श श्श, श्श श्श। [RHYTHMIC] नींद आ रही है, नींद आ रही है। [WHISPERING] जंगल सो रहा है, पत्ते हिल रहे हैं। [CALM] हवा चलती है, श्श श्श, श्श श्श। [PAUSE] तारा मुस्काया। [GENTLE] सब सो गए, सब सो गए।",
     "musicParams": {
-      "key": "A",
+      "key": "Cm",
       "chordNotes": [
-        110.0,
-        138.59,
-        164.81,
-        220.0
+        130.81,
+        155.56,
+        196.0,
+        261.62
       ],
       "padType": "resonant",
-      "padGain": 0.0426,
-      "padFilter": 471,
-      "padLfo": 0.0476,
+      "padGain": 0.0423,
+      "padFilter": 534,
+      "padLfo": 0.0518,
       "noiseType": "brown",
-      "noiseGain": 0.0125,
-      "droneFreq": 55.0,
-      "droneGain": 0.038,
+      "noiseGain": 0.0112,
+      "droneFreq": 65.41,
+      "droneGain": 0.0348,
       "melodyNotes": [
-        220.0,
-        277.18,
-        329.62,
-        293.66
+        261.62,
+        311.12,
+        392.0,
+        349.22
       ],
-      "melodyInterval": 5005,
-      "melodyGain": 0.0141,
+      "melodyInterval": 4614,
+      "melodyGain": 0.0166,
       "bassNotes": [
-        55.0,
-        82.41,
-        69.3
+        65.41,
+        98.0,
+        77.78
       ],
-      "bassInterval": 8653,
+      "bassInterval": 6951,
       "counterNotes": [
-        346.48,
-        412.02,
-        275.0
+        388.9,
+        490.0,
+        327.02
       ],
-      "counterInterval": 5461,
+      "counterInterval": 4756,
       "events": [
         {
           "type": "cricket",
-          "interval": 8322
+          "interval": 7685
         },
         {
           "type": "owl",
-          "interval": 21976
+          "interval": 20635
         },
         {
           "type": "leaves",
-          "interval": 10359
+          "interval": 13669
         }
       ]
     }
@@ -4007,53 +4011,53 @@
     ],
     "annotated_text_devanagari": "[GENTLE] नन्हा खरगोश, छोटा सा, रेत पर कूदता, ठुमक ठुमक। [CALM] नीला समुद्र, श्श श्श श्श, लहरों की आहट। [CURIOUS] मछली आई, हाँ हाँ हाँ, दोस्त बन गई। [JOYFUL] साथ में खेले, छुप छुप छुप, रेत पर लेटे। [SLEEPY] गरम रेत, मीठी धूप, सो जाओ, सो जाओ। [WHISPERING] श्श श्श श्श, समुद्र गा रहा, मीठे सपने आओ।",
     "musicParams": {
-      "key": "Cm",
+      "key": "Em",
       "chordNotes": [
-        130.81,
-        155.56,
-        196.0,
-        261.62
+        82.41,
+        98.0,
+        123.47,
+        164.82
       ],
       "padType": "chorus",
-      "padGain": 0.0417,
-      "padFilter": 509,
-      "padLfo": 0.055,
-      "noiseType": "pink",
-      "noiseGain": 0.0113,
-      "droneFreq": 65.41,
-      "droneGain": 0.0262,
+      "padGain": 0.0436,
+      "padFilter": 505,
+      "padLfo": 0.0783,
+      "noiseType": "brown",
+      "noiseGain": 0.0107,
+      "droneFreq": 41.2,
+      "droneGain": 0.0339,
       "melodyNotes": [
-        261.62,
-        311.12,
-        392.0,
-        349.22
+        164.82,
+        196.0,
+        246.94,
+        220.0
       ],
-      "melodyInterval": 4802,
-      "melodyGain": 0.0157,
+      "melodyInterval": 5433,
+      "melodyGain": 0.0167,
       "bassNotes": [
-        65.41,
-        98.0,
-        77.78
+        41.2,
+        61.73,
+        49.0
       ],
-      "bassInterval": 7428,
+      "bassInterval": 6356,
       "counterNotes": [
-        388.9,
-        490.0,
-        327.02
+        245.0,
+        308.68,
+        206.02
       ],
-      "counterInterval": 5296,
+      "counterInterval": 5344,
       "events": [
         {
           "type": "waveCycle",
-          "interval": 12237
+          "interval": 12655
         },
         {
           "type": "whaleCall",
-          "interval": 18971
+          "interval": 21002
         },
         {
-          "type": "waterDrop",
-          "interval": 8079
+          "type": "heartbeat",
+          "interval": 7649
         }
       ]
     }
@@ -4143,57 +4147,53 @@
     ],
     "annotated_text_devanagari": "[ADVENTUROUS] आशा चली, ठंडी हवा में,\n[CURIOUS] भालू बोला, \"चल, देखें कहीं!\"\n[RHYTHMIC] कदम बढ़े, सफ़ेद बर्फ़ पर,\n[MYSTERIOUS] क्या मिलेगा, नर्म बिस्तर?\n\n[GENTLE] बर्फ़ सी चादर, बहुत प्यारी,\n[JOYFUL] दोनों बैठे, थोड़ी सी सारी।\n[SLEEPY] आँखें मूँदी, सपने आए,\n[WHISPERING] तारे बोले, \"सोने दो बच्चे।\"",
     "musicParams": {
-      "key": "Dm",
+      "key": "Gm",
       "chordNotes": [
+        98.0,
+        116.54,
         146.83,
-        174.61,
-        220.0,
-        293.66
+        196.0
       ],
-      "padType": "resonant",
-      "padGain": 0.0454,
-      "padFilter": 575,
-      "padLfo": 0.0892,
+      "padType": "chorus",
+      "padGain": 0.0458,
+      "padFilter": 514,
+      "padLfo": 0.0805,
       "noiseType": "pink",
-      "noiseGain": 0.0122,
-      "droneFreq": 73.42,
-      "droneGain": 0.0328,
+      "noiseGain": 0.0124,
+      "droneFreq": 49.0,
+      "droneGain": 0.0308,
       "melodyNotes": [
+        196.0,
+        233.08,
         293.66,
-        349.22,
-        440.0,
-        392.0
+        261.62
       ],
-      "melodyInterval": 4177,
-      "melodyGain": 0.0176,
+      "melodyInterval": 4552,
+      "melodyGain": 0.016,
       "bassNotes": [
+        49.0,
         73.42,
-        110.0,
-        87.31
+        58.27
       ],
-      "bassInterval": 5513,
+      "bassInterval": 5958,
       "counterNotes": [
-        436.53,
-        550.0,
-        367.08
+        291.35,
+        367.08,
+        245.0
       ],
-      "counterInterval": 5159,
+      "counterInterval": 5326,
       "events": [
         {
-          "type": "windGust",
-          "interval": 11475
-        },
-        {
           "type": "cricket",
-          "interval": 7787
+          "interval": 8222
         },
         {
           "type": "owl",
-          "interval": 24401
+          "interval": 18934
         },
         {
-          "type": "sparkle",
-          "interval": 15593
+          "type": "windGust",
+          "interval": 11084
         }
       ]
     }
@@ -4285,57 +4285,53 @@
     ],
     "annotated_text_devanagari": "[JOYFUL] किरा छोटी सी, बहादुर थी,\nद्वीप पे रहती, खुशियों भरी थी,\nमाँ-पिता के संग, घूमती फिरती,\nनए कमरे की खोज में लगे करती।\n\n[CURIOUS] बाँस की दीवारें, चिकने गलचे,\nसमुंदर का दृश्य, सुंदर दिखे,\nदादी ने कहा, \"बेटा देख यहाँ,\nसीपियाँ, मोती हैं, खूब रहे यहाँ।\"\n\n[ADVENTUROUS] परिवार का खजाना, मिल गया यहीं,\nलहरों की आवाज़, सुन सुन कर,\nकिरा थक गई, नींद आ गई,\nगलचे पे लेटी, सपने सज गई।\n\n[CALM] समुंदर की हवा, लोरी सुनाए,\nतारे चमकते, रात जगमगाए,\nपरिवार का प्यार, गहरे सन्नाटे,\nशांति से सोई, किरा सपने बुनने।",
     "musicParams": {
-      "key": "Bbm",
+      "key": "Fm",
       "chordNotes": [
-        116.54,
-        138.59,
         174.61,
-        233.08
+        207.65,
+        261.63,
+        349.22
       ],
       "padType": "simple",
-      "padGain": 0.0439,
-      "padFilter": 506,
-      "padLfo": 0.0429,
+      "padGain": 0.0415,
+      "padFilter": 458,
+      "padLfo": 0.0425,
       "noiseType": "brown",
-      "noiseGain": 0.0124,
-      "droneFreq": 58.27,
-      "droneGain": 0.0274,
+      "noiseGain": 0.0119,
+      "droneFreq": 87.31,
+      "droneGain": 0.0307,
       "melodyNotes": [
-        233.08,
-        277.18,
         349.22,
-        311.12
+        415.3,
+        523.26,
+        466.16
       ],
-      "melodyInterval": 4168,
-      "melodyGain": 0.0134,
+      "melodyInterval": 4025,
+      "melodyGain": 0.014,
       "bassNotes": [
-        58.27,
         87.31,
-        69.3
+        130.81,
+        103.83
       ],
-      "bassInterval": 5855,
+      "bassInterval": 6248,
       "counterNotes": [
-        346.48,
-        436.53,
-        291.35
+        519.12,
+        654.08,
+        436.53
       ],
-      "counterInterval": 4712,
+      "counterInterval": 5203,
       "events": [
         {
           "type": "heartbeat",
-          "interval": 7584
+          "interval": 7890
         },
         {
           "type": "chimes",
-          "interval": 12940
+          "interval": 12675
         },
         {
-          "type": "waterDrop",
-          "interval": 17347
-        },
-        {
-          "type": "windGust",
-          "interval": 25814
+          "type": "waveCycle",
+          "interval": 22543
         }
       ]
     }
@@ -4426,53 +4422,53 @@
     ],
     "annotated_text_devanagari": "[GENTLE] ऐथोरिया, एक ऐसा नगर था, जो सपनों के परों पर बसा हुआ था, जहाँ हर एक दिल, प्यार और दोस्ती की खुशबू से भरा हुआ था। [PAUSE] इस नगर की गलियों में, एक ऐसी कहानी छिपी थी, जो अब तक किसी ने पूरी तरह नहीं समझी थी—नोवा की कहानी। [CURIOUS] नोवा, एक पंद्रह साल का जवान, जो ना लड़का था ना लड़की, बल्कि दोनों से अलग, अपने आप में एक पूरा संसार समेटा हुआ था। [PAUSE] उसके साथ थे, ज़रा, जिसकी अक़्ल की तेज धार, हर समस्या को चाकू की तरह काट देती थी, अर्जुन, जिसका हाथ हर चीज़ को जोड़ने में माहिर था, और लीला, जिसकी आवाज़ में इतनी शक्ति थी कि पत्थर भी उसके गीत सुन कर पिघल जाते थे। [ADVENTUROUS] एक दिन, जब चाँद की रोशनी ने आसमान को चूम लिया, नोवा ने अपने दोस्तों को एक राज़ की बात बताई—एक ऐसा मंदिर, जो सिर्फ उन्हीं लोगों को दिखाई देता है, जो सच्चे दिल से दोस्ती का मतलब समझते हैं। [EXCITED] उस मंदिर में, एक ऐसा ख़ज़ाना छुपा हुआ था, जो सिर्फ धन-दौलत नहीं, बल्कि एक ऐसी चीज़ थी, जो उनके जीवन को बदल सकती थी—एक ऐसा राज़, जो उन्हें उनकी असली पहचान बता सकता था। [DRAMATIC_PAUSE] पर रास्ता आसान नहीं था। [MYSTERIOUS] जंगल की गहराइयों में, उन्हें कई चुनौतियों का सामना करना पड़ा—कुछ तो ऐसी थी, जो उनकी हिम्मत को आज़मा रही थी, और कुछ ऐसी, जो उनकी दोस्ती की परख कर रही थी। [PAUSE] मंदिर के दरवाज़े पर पहुँच कर, उन्हें एक प्राचीन पहेली मिली, जिसका हल सिर्फ तब ही मुमकिन था, जब वे सब अपने हुनर को एक साथ मिला कर इस्तेमाल करते। [WHISPERING] नोवा ने सोचा, \"अगर हम सब अलग-अलग हैं, तो फिर कैसे एक साथ काम करेंगे?\" [CALM] लेकिन ज़रा ने मुस्कुराते हुए कहा, \"क्योंकि हम अलग-अलग हैं, इसलिए ही तो हम एक दूसरे की कमियों को पूरा कर सकते हैं।\" [JOYFUL] और फिर, वे सब ने अपने-अपने हुनर का इस्तेमाल किया—ज़रा ने अपनी अक़्ल से रास्ता निकाला, अर्जुन ने अपने हाथों से पहेली के टुकड़े जोड़े, और लीला ने अपनी आवाज़ से एक ऐसा गीत गाया, जो मंदिर की दीवारों को भी रुला दिया। [PAUSE] पहेली सुलझी, और मंदिर के अंदर से एक ऐसी रोशनी निकली, जो उनके चेहरे को चमका दी। [SLEEPY] उस रोशनी में, उन्हें अपनी असली पहचान दिखाई दी—एक ऐसा एहसास, जो उन्हें बताता था कि वे सिर्फ एक नहीं, बल्कि एक दूसरे के बिना अधूरे हैं। [GENTLE] घर वापस आते हुए, नोवा ने सोचा, \"दोस्ती सिर्फ एक रिश्ता नहीं, बल्कि एक ऐसा सफर है, जिसमें हम एक दूसरे को पूरा करते हैं।\" [RHYTHMIC] और ऐसे ही, ऐथोरिया की गलियों में, एक नई कहानी का आग़ाज़ हुआ—एक ऐसी कहानी, जो दोस्ती की आग को हमेशा जलाए रखेगी।",
     "musicParams": {
-      "key": "Bbm",
+      "key": "A",
       "chordNotes": [
-        116.54,
+        110.0,
         138.59,
-        174.61,
-        233.08
+        164.81,
+        220.0
       ],
       "padType": "simple",
-      "padGain": 0.0498,
-      "padFilter": 913,
-      "padLfo": 0.0819,
-      "noiseType": "pink",
-      "noiseGain": 0.0107,
-      "droneFreq": 58.27,
-      "droneGain": 0.0315,
+      "padGain": 0.0495,
+      "padFilter": 832,
+      "padLfo": 0.0712,
+      "noiseType": "white",
+      "noiseGain": 0.0119,
+      "droneFreq": 55.0,
+      "droneGain": 0.0353,
       "melodyNotes": [
-        233.08,
+        220.0,
         277.18,
-        349.22,
-        311.12
+        329.62,
+        293.66
       ],
-      "melodyInterval": 4332,
-      "melodyGain": 0.0183,
+      "melodyInterval": 4249,
+      "melodyGain": 0.0172,
       "bassNotes": [
-        58.27,
-        87.31,
+        55.0,
+        82.41,
         69.3
       ],
-      "bassInterval": 6261,
+      "bassInterval": 6832,
       "counterNotes": [
         346.48,
-        436.53,
-        291.35
+        412.02,
+        275.0
       ],
-      "counterInterval": 4761,
+      "counterInterval": 4943,
       "events": [
         {
-          "type": "sparkle",
-          "interval": 12611
-        },
-        {
           "type": "leaves",
-          "interval": 7554
+          "interval": 8756
         },
         {
           "type": "birdChirp",
-          "interval": 16734
+          "interval": 13411
+        },
+        {
+          "type": "windGust",
+          "interval": 19560
         }
       ]
     }
@@ -4561,57 +4557,57 @@
     ],
     "annotated_text_devanagari": "[ADVENTUROUS] रिया चली, पत्थरों पे छन-छन, जंगल की गलियों से गुज़री, ठंडी हवा ने लिए उसके आँचल को अपने घेरे में। [CURIOUS] पेड़ों के नीचे, एक ताल था छुपा, उसके पानी में चमक रहे थे चंद्रमाँ के टुकड़े, जैसे कोई राज़ छुपा हो अंधेरे में। [JOYFUL] उसने देखे, जानवर आते पानी पीने, हर एक के चेहरे पर थी शांति, हर एक के क़दमों में थी धरती की मेहरबानी। [PAUSE] [WHISPERING] रिया ने सोचा, \"ये तो है एक अनमोल ख़ज़ाना, जो हमें मिला है सपनों के बदले।\" [DRAMATIC_PAUSE] उसने अपने दिल से कहा, \"मैं रखूँगी इसकी रक्षा, हर एक पत्ते को, हर एक नदी को, हर एक पर्वत को।\" [RHYTHMIC] अब रात आई, तारे चमके, रिया सोयी, सपने देखे, उन सपनों में थी एक नयी दुनिया, जहाँ हर इंसान हो जाता है प्रकृति का रक्षक। [SLEEPY] और तुम? तुम भी चलो, इस यात्रा में शामिल हो जाओ, धरती की रक्षा का वादा निभाओ।",
     "musicParams": {
-      "key": "Em",
+      "key": "C",
       "chordNotes": [
-        82.41,
-        98.0,
-        123.47,
-        164.82
+        130.81,
+        164.81,
+        196.0,
+        261.62
       ],
       "padType": "resonant",
-      "padGain": 0.0429,
-      "padFilter": 937,
-      "padLfo": 0.071,
+      "padGain": 0.0468,
+      "padFilter": 832,
+      "padLfo": 0.0894,
       "noiseType": "pink",
-      "noiseGain": 0.0107,
-      "droneFreq": 41.2,
-      "droneGain": 0.0313,
+      "noiseGain": 0.0113,
+      "droneFreq": 65.41,
+      "droneGain": 0.0358,
       "melodyNotes": [
-        164.82,
-        196.0,
-        246.94,
-        220.0
+        261.62,
+        329.62,
+        392.0,
+        349.22
       ],
-      "melodyInterval": 4025,
-      "melodyGain": 0.0199,
+      "melodyInterval": 4300,
+      "melodyGain": 0.0177,
       "bassNotes": [
-        41.2,
-        61.73,
-        49.0
+        65.41,
+        98.0,
+        82.41
       ],
-      "bassInterval": 7193,
+      "bassInterval": 6609,
       "counterNotes": [
-        245.0,
-        308.68,
-        206.02
+        412.02,
+        490.0,
+        327.02
       ],
-      "counterInterval": 5253,
+      "counterInterval": 5023,
       "events": [
         {
-          "type": "leaves",
-          "interval": 5285
-        },
-        {
           "type": "cricket",
-          "interval": 10244
-        },
-        {
-          "type": "windGust",
-          "interval": 16835
+          "interval": 9043
         },
         {
           "type": "owl",
-          "interval": 24840
+          "interval": 16403
+        },
+        {
+          "type": "leaves",
+          "interval": 6389
+        },
+        {
+          "type": "waterDrop",
+          "interval": 11059
         }
       ]
     }
@@ -4702,57 +4698,57 @@
     ],
     "annotated_text_devanagari": "[GENTLE] एक दिन नैना, बर्फ के देश में चली गई,\n[CURIOUS] जहाँ एक विद्यालय, चमचमाती धूप में खड़ा था,\n[EXCITED] वहाँ सील बच्चे, पानी में खेल रहे थे,\n[ADVENTUROUS] नैना को देखा, तो हाथ हिलाकर बुलाया था।\n\n[RHYTHMIC] सील ने कहा, \"आओ, हम तुम्हें सिखाएंगे,\n[JOYFUL] बर्फ पर कैसे नाचना, पानी में कैसे घूमना,\n[PAUSE] डाइविंग का राज, और लहरों से खेलना,\n[WHISPERING] ये सब सीख लो, फिर हो जाओगे हमसा तुम।\"\n\n[DRAMATIC_PAUSE] नैना ने कोशिश की, पहले थोड़ी डर गई,\n[MYSTERIOUS] लेकिन सील दोस्त ने, हाथ पकड़कर संभाला,\n[EXCITED] अब वह भी उनके साथ, पानी में घूमने लगी,\n[JOYFUL] बर्फ के रंग, और धूप की चमक ने दिल बहलाया।\n\n[SLEEPY] शाम हुई, नैना को थकान सी लगने लगी,\n[GENTLE] सील ने प्यार से, उसको घर पहुंचाया,\n[CALM] सपने में अब वह, फिर से उनके साथ खेलेगी,\n[WHISPERING] बर्फ के विद्यालय की, यादें साथ लेकर सोई।",
     "musicParams": {
-      "key": "E",
+      "key": "Am",
       "chordNotes": [
+        110.0,
+        130.81,
         164.81,
-        207.65,
-        246.94,
-        329.62
+        220.0
       ],
       "padType": "resonant",
-      "padGain": 0.0401,
-      "padFilter": 592,
-      "padLfo": 0.0805,
-      "noiseType": "brown",
-      "noiseGain": 0.0129,
-      "droneFreq": 82.41,
-      "droneGain": 0.0313,
+      "padGain": 0.0402,
+      "padFilter": 651,
+      "padLfo": 0.0815,
+      "noiseType": "pink",
+      "noiseGain": 0.0114,
+      "droneFreq": 55.0,
+      "droneGain": 0.0391,
       "melodyNotes": [
+        220.0,
+        261.62,
         329.62,
-        415.3,
-        493.88,
-        440.0
+        293.66
       ],
-      "melodyInterval": 3808,
-      "melodyGain": 0.019,
+      "melodyInterval": 3233,
+      "melodyGain": 0.0191,
       "bassNotes": [
+        55.0,
         82.41,
-        123.47,
-        103.83
+        65.41
       ],
-      "bassInterval": 5636,
+      "bassInterval": 6128,
       "counterNotes": [
-        519.12,
-        617.35,
-        412.02
+        327.02,
+        412.02,
+        275.0
       ],
-      "counterInterval": 4931,
+      "counterInterval": 5291,
       "events": [
         {
           "type": "sparkle",
-          "interval": 13616
+          "interval": 11012
         },
         {
           "type": "frog",
-          "interval": 9010
+          "interval": 8054
         },
         {
           "type": "owl",
-          "interval": 20739
+          "interval": 19703
         },
         {
           "type": "cricket",
-          "interval": 10490
+          "interval": 5897
         }
       ]
     }
@@ -4843,53 +4839,53 @@
     ],
     "annotated_text_devanagari": "[GENTLE] हन्नू नाम का, एक छोटा वानर था,\nवन में खेलता, सपनों का सहारा था।\n[CURIOUS] एक दिन उसने, पाया एक दरवाज़ा,\nजादुई था वो, रंगों का साराज़ा।\n\n[EXCITED] झूले पर बैठा, तो हवा हो गई,\nफूलों में बदला, तितली सी धूम मचाई।\n[JOYFUL] पत्थर छू लिया, तो तारे चमके,\nपानी में देखे, सपने जैसे दमके।\n\n[ADVENTUROUS] खेल-खेल में सीखा, यह राज नया,\nहर चीज़ में छुपा, कुछ जादू है प्यारा।\n[RHYTHMIC] छोटे से हाथ में, है बड़ी शक्ति,\nखेलने से मिलती, नई दुनिया की राह।\n\n[CALM] शाम हुई, तारे चमके आसमान,\nहन्नू सोया, सपनों में फिर जान।\n[SLEEPY] सोचता रहा, कल क्या खेल खेलेगा,\nजादुई महल में, फिर क्या देखेगा?",
     "musicParams": {
-      "key": "Cm",
+      "key": "G",
       "chordNotes": [
-        130.81,
-        155.56,
-        196.0,
-        261.62
+        98.0,
+        123.47,
+        146.83,
+        196.0
       ],
       "padType": "fm",
-      "padGain": 0.0521,
-      "padFilter": 973,
-      "padLfo": 0.0828,
+      "padGain": 0.0508,
+      "padFilter": 883,
+      "padLfo": 0.088,
       "noiseType": "white",
       "noiseGain": 0.0114,
-      "droneFreq": 65.41,
-      "droneGain": 0.0354,
+      "droneFreq": 49.0,
+      "droneGain": 0.0279,
       "melodyNotes": [
-        261.62,
-        311.12,
-        392.0,
-        349.22
+        196.0,
+        246.94,
+        293.66,
+        261.62
       ],
-      "melodyInterval": 3150,
-      "melodyGain": 0.0171,
+      "melodyInterval": 4017,
+      "melodyGain": 0.0205,
       "bassNotes": [
-        65.41,
-        98.0,
-        77.78
+        49.0,
+        73.42,
+        61.73
       ],
-      "bassInterval": 5916,
+      "bassInterval": 6269,
       "counterNotes": [
-        388.9,
-        490.0,
-        327.02
+        308.68,
+        367.08,
+        245.0
       ],
-      "counterInterval": 5080,
+      "counterInterval": 4942,
       "events": [
         {
-          "type": "birdChirp",
-          "interval": 12557
+          "type": "chimes",
+          "interval": 12632
         },
         {
-          "type": "chimes",
-          "interval": 17811
+          "type": "birdChirp",
+          "interval": 8027
         },
         {
           "type": "sparkle",
-          "interval": 21618
+          "interval": 19586
         }
       ]
     }
@@ -4981,57 +4977,53 @@
     ],
     "annotated_text_devanagari": "[ADVENTUROUS] समुद्र के ऊपर, आसमान के नीचे, तैरते द्वीप हैं, जैसे सपने के चेहरे। [CURIOUS] किरण उन पर रहता, दिल में हौसला, स्पार्की साथ में, सारा जग सहेला। [JOYFUL] फूल चमकते हैं, जैसे तारे धरे, तितलियाँ नाचती, रंग बिरंगे प्यारे। [GENTLE] पर कभी-कभी, अकेला लगता था, नए दोस्त की तलाश में, चाहत जगता था। [EXCITED] एक दिन मिली लूना, समुद्र की रानी, ज़ेफ़िर हवा का, सुंदर साथी साफ़ नियति। [MYSTERIOUS] साथ में खोजे, मोती की गुफाओं को, कहानियाँ सुनी, वादे किए पूरे। [RHYTHMIC] रोशनी के पुल, जोड़ते सबको, अलग द्वीपों को, एक दिल बनाते। [DRAMATIC_PAUSE] किरण ने सीखा, दोस्ती का राज़, दूरी से क्या, जब दिल मिले आपस। [CALM] तारा मछलियाँ, जगमगाती रात को, दोस्त जमा होते, सब सुख पाते। [SLEEPY] समुद्र गाता, लोरी सी मीठी, किरण सो जाता, सपने सुहाने। [WHISPERING] अब न अकेला, न ग़म का साया, दोस्ती के साथ, भविष्य है नया।",
     "musicParams": {
-      "key": "G",
+      "key": "D",
       "chordNotes": [
-        98.0,
-        123.47,
         146.83,
-        196.0
+        185.0,
+        220.0,
+        293.66
       ],
       "padType": "chorus",
-      "padGain": 0.0546,
-      "padFilter": 945,
-      "padLfo": 0.0864,
+      "padGain": 0.0503,
+      "padFilter": 818,
+      "padLfo": 0.1031,
       "noiseType": "pink",
-      "noiseGain": 0.0115,
-      "droneFreq": 49.0,
-      "droneGain": 0.0285,
+      "noiseGain": 0.0123,
+      "droneFreq": 73.42,
+      "droneGain": 0.0373,
       "melodyNotes": [
-        196.0,
-        246.94,
         293.66,
-        261.62
+        370.0,
+        440.0,
+        392.0
       ],
-      "melodyInterval": 2981,
-      "melodyGain": 0.0159,
+      "melodyInterval": 3171,
+      "melodyGain": 0.0197,
       "bassNotes": [
-        49.0,
         73.42,
-        61.73
+        110.0,
+        92.5
       ],
-      "bassInterval": 6267,
+      "bassInterval": 6598,
       "counterNotes": [
-        308.68,
-        367.08,
-        245.0
+        462.5,
+        550.0,
+        367.08
       ],
-      "counterInterval": 5220,
+      "counterInterval": 5218,
       "events": [
         {
-          "type": "waterDrop",
-          "interval": 9133
+          "type": "windGust",
+          "interval": 11582
         },
         {
           "type": "chimes",
-          "interval": 12943
+          "interval": 7759
         },
         {
-          "type": "windGust",
-          "interval": 20046
-        },
-        {
-          "type": "sparkle",
-          "interval": 13229
+          "type": "waterDrop",
+          "interval": 16097
         }
       ]
     }
@@ -5122,57 +5114,57 @@
     ],
     "annotated_text_devanagari": "[ADVENTUROUS] पहाड़ों की छोटी सी रानी, प्रिया थी चंचल सी जानी,\nविद्या देवी के गुरुकुल में, जाने को थी उसकी मनमानी,\nजैसे ही वहाँ पहुँची, देखा एक अलौकिक नज़ारा,\n[MYSTERIOUS] पेड़ों पे चमके मोती, चाँदनी का था सारा समाँरा।\n\n[CURIOUS] देवी बोलीं, \"बेटी, अंदर देखो, तुम में है एक रोशनी,\nजो जगमगाए, सबको सिखाए, बन जाए एक प्रशंसी।\"\nप्रिया ने सिखाया गणित का राज़, गीत का साथ,\n[JOYFUL] सब बच्चे मिलकर गाए, बनी एक प्यारी बात।\n\n[GENTLE] रात हुई, तारों ने देखा, प्रिया ने सिखाया,\nचाँद के नीचे, सपनों में भी, उसका ज्ञान ही जाया,\n[DRAMATIC_PAUSE] अब वो बन गई गुरु, दयाल और बुद्धिमान,\n[EXCITED] हर बच्चे के दिल में, बसी एक नई पहचान।",
     "musicParams": {
-      "key": "Gm",
+      "key": "Cm",
       "chordNotes": [
-        98.0,
-        116.54,
-        146.83,
-        196.0
-      ],
-      "padType": "fm",
-      "padGain": 0.0531,
-      "padFilter": 981,
-      "padLfo": 0.0728,
-      "noiseType": "brown",
-      "noiseGain": 0.0106,
-      "droneFreq": 49.0,
-      "droneGain": 0.0321,
-      "melodyNotes": [
+        130.81,
+        155.56,
         196.0,
-        233.08,
-        293.66,
         261.62
       ],
-      "melodyInterval": 2961,
-      "melodyGain": 0.0187,
+      "padType": "chorus",
+      "padGain": 0.0484,
+      "padFilter": 868,
+      "padLfo": 0.0685,
+      "noiseType": "brown",
+      "noiseGain": 0.0132,
+      "droneFreq": 65.41,
+      "droneGain": 0.0382,
+      "melodyNotes": [
+        261.62,
+        311.12,
+        392.0,
+        349.22
+      ],
+      "melodyInterval": 3412,
+      "melodyGain": 0.0191,
       "bassNotes": [
-        49.0,
-        73.42,
-        58.27
+        65.41,
+        98.0,
+        77.78
       ],
-      "bassInterval": 6077,
+      "bassInterval": 5470,
       "counterNotes": [
-        291.35,
-        367.08,
-        245.0
+        388.9,
+        490.0,
+        327.02
       ],
-      "counterInterval": 4718,
+      "counterInterval": 5378,
       "events": [
         {
-          "type": "leaves",
-          "interval": 8479
+          "type": "owl",
+          "interval": 20414
         },
         {
-          "type": "owl",
-          "interval": 21601
+          "type": "windGust",
+          "interval": 10508
         },
         {
           "type": "birdChirp",
-          "interval": 10804
+          "interval": 7966
         },
         {
           "type": "sparkle",
-          "interval": 18579
+          "interval": 19157
         }
       ]
     }
@@ -5261,53 +5253,53 @@
     ],
     "annotated_text_devanagari": "[ADVENTUROUS] आरव था एक बालक, दिल में था सपना गहरा,\nसमुद्र के किनारे, रहता था वो हमेशा साथ उसके।\n[CURIOUS] एक दिन उसने सोचा, क्या है नीचे की दुनिया?\nमछलियों की बातें, लहरों का है राज क्या?\n\n[MYSTERIOUS] पानी में उतरा, गहरी नीली छाँव,\nसाँसों को रोक के, देखी एक नई जान।\n[EXCITED] चमकती मछलियाँ, रंग-बिरंगी,\nउड़ते हुए कछुए, लहरों के संगी।\n\n[RHYTHMIC] धीरे-धीरे बदले, पानी की गतियाँ,\nबनाती हैं लहरें, जैसे कोई गीत गातीं।\n[GENTLE] सागर की आवाज़, सुनाई देती है,\nएक नई कहानी, हर पल सुनाती है।\n\n[DRAMATIC_PAUSE] आरव ने देखा, एक अनोखा नज़ारा,\nजीवन का रंग, समुद्र ने सारा।\n[JOYFUL] वो समझ गया, सब कुछ है जुड़ा,\nपर एक दूसरे से, है ये सब मिला।\n\n[WHISPERING] अब हर रात, सपने में आती है,\nसमुद्र की दुनिया, उसको बुलाती है।\n[SLEEPY] सो जा बालक, कल फिर से जाना,\nनई कहानी, नई दुनिया पाना।",
     "musicParams": {
-      "key": "E",
+      "key": "Dm",
       "chordNotes": [
-        164.81,
-        207.65,
-        246.94,
-        329.62
+        146.83,
+        174.61,
+        220.0,
+        293.66
       ],
-      "padType": "fm",
-      "padGain": 0.0508,
-      "padFilter": 910,
-      "padLfo": 0.0799,
+      "padType": "simple",
+      "padGain": 0.0417,
+      "padFilter": 917,
+      "padLfo": 0.0879,
       "noiseType": "white",
-      "noiseGain": 0.0125,
-      "droneFreq": 82.41,
+      "noiseGain": 0.0113,
+      "droneFreq": 73.42,
       "droneGain": 0.0367,
       "melodyNotes": [
-        329.62,
-        415.3,
-        493.88,
-        440.0
+        293.66,
+        349.22,
+        440.0,
+        392.0
       ],
-      "melodyInterval": 4572,
-      "melodyGain": 0.018,
+      "melodyInterval": 4033,
+      "melodyGain": 0.0188,
       "bassNotes": [
-        82.41,
-        123.47,
-        103.83
+        73.42,
+        110.0,
+        87.31
       ],
-      "bassInterval": 6991,
+      "bassInterval": 6897,
       "counterNotes": [
-        519.12,
-        617.35,
-        412.02
+        436.53,
+        550.0,
+        367.08
       ],
-      "counterInterval": 4580,
+      "counterInterval": 5296,
       "events": [
         {
-          "type": "radarPing",
-          "interval": 15515
+          "type": "waterDrop",
+          "interval": 8158
         },
         {
-          "type": "waterDrop",
-          "interval": 11755
+          "type": "radarPing",
+          "interval": 15522
         },
         {
           "type": "whaleCall",
-          "interval": 23667
+          "interval": 22216
         }
       ]
     }
@@ -5397,57 +5389,53 @@
     ],
     "annotated_text_devanagari": "[GENTLE] हिमालय की गोद में, एक छोटी सी गूम्फी थी, जहाँ आद्वैत अपने दोस्तों के साथ रहता था। [CALM] वहाँ की सुबहों में, हवाएँ सर्द और मीठी होती थीं, और उनकी आवाज़, जैसे कोई पुरानी कहानी सुनाती हो। [CURIOUS] एक दिन, उनके गुरुजी ने उन्हें एक अजब सा सपना सुनाया—एक ऐसा सपना, जो उन्हें भविष्य की ओर ले जा सकता था। [EXCITED] \"चलो, बच्चो,\" गुरुजी ने मुस्कुराते हुए कहा, \"आज हम एक यात्रा पर जा रहे हैं, जहाँ तुम्हें ऐसी चीज़ें देखने को मिलेंगी, जो तुमने कभी सोचा भी नहीं होगा!\" [ADVENTUROUS] आद्वैत और उसके दोस्तों—रिया, अर्जुन, और चिंटू—ने झट से अपने थैलों में ज़रूरी चीज़ें भरीं, और उनकी यात्रा शुरू हो गई।  [MYSTERIOUS] उनका पहला रुकाव था—एक ऐसा शहर, जहाँ घर पेड़ों पर बनते थे, और सड़कें आसमान से गुज़रती थीं। [CURIOUS] वहाँ, उन्हें एक रोबोट मिला, जिसका नाम 'दृष्टि' था। दृष्टि ने उन्हें एक भूलभुलैया में ले जाया, जहाँ हर रास्ता एक नई चुनौती लेकर आता था। [DRAMATIC_PAUSE] \"यहाँ से निकलने के लिए,\" दृष्टि ने कहा, \"तुम्हें एक-दूसरे पर भरोसा करना होगा।\" [PAUSE] आद्वैत ने अपने दोस्तों की ओर देखा—रिया की आँखों में धैर्य था, अर्जुन के चेहरे पर एक चुटकुला, और चिंटू का हाथ, जिसे उसने पकड़ लिया। [JOYFUL] \"चलो, मिलकर निकलते हैं!\" आद्वैत ने कहा, और सबने एक साथ कदम बढ़ा दिए।  [ADVENTUROUS] भूलभुलैया के बाद, वे एक ऐसे उद्यान में पहुँचे, जहाँ फूल रात को चमकते थे, और पेड़ों की पत्तियाँ गीत गाती थीं। [WHISPERING] \"ये तो जैसे कोई सपना हो,\" रिया ने कहा। [EXCITED] वहाँ, उन्हें एक ऐसी मशीन मिली, जो उनके सोचने से भी तेज़ थी—उसने उनके ख़यालों को चित्रों में बदल दिया! [JOYFUL] सबने अपने-अपने ख़यालों को बनाया, और उनके चेहरों पर मुस्कुराहट फैल गई।  [DRAMATIC_PAUSE] लेकिन फिर, एक समस्या आ गई। [PAUSE] उद्यान की एक मशीन ख़राब हो गई, और उसके कारण, पूरा शहर अंधेरे में डूबने लगा। [GENTLE] \"अब हम क्या करें?\" चिंटू ने डरते-डरते पूछा। [CALM] आद्वैत ने सोचा, फिर बोला, \"हम सबके पास कुछ न कुछ तो है, जो इस समस्या का समाधान हो सकता है।\" [ADVENTUROUS] रिया ने अपनी विज्ञान की किताब निकाली, अर्जुन ने अपने हाथ से काम किया, और चिंटू ने अपनी चतुराई से सबको सहायता दी। [JOYFUL] मिलकर, उन्होंने मशीन को ठीक किया, और फिर से शहर जगमगा उठा।  [SLEEPY] रात होने पर, सब थक कर एक चबूतरे पर बैठ गए। [GENTLE] \"आज की यात्रा तो यादगार रहेगी,\" अर्जुन ने कहा। [CALM] आद्वैत ने मुस्कुराते हुए कहा, \"हाँ, लेकिन सबसे बड़ी बात ये है कि हमने सीखा—मिलकर किसी भी चुनौती का सामना किया जा सकता है।\" [RHYTHMIC] तारों की चमक और हवाओं की सरगम के बीच, सब सो गए, अपने अगले दिन की नई कहानी के लिए तैयार होते हुए।",
     "musicParams": {
-      "key": "D",
+      "key": "G",
       "chordNotes": [
+        98.0,
+        123.47,
         146.83,
-        185.0,
-        220.0,
-        293.66
+        196.0
       ],
-      "padType": "plucked",
-      "padGain": 0.0453,
-      "padFilter": 887,
-      "padLfo": 0.0859,
+      "padType": "chorus",
+      "padGain": 0.0555,
+      "padFilter": 940,
+      "padLfo": 0.0892,
       "noiseType": "brown",
-      "noiseGain": 0.0115,
-      "droneFreq": 73.42,
-      "droneGain": 0.0315,
+      "noiseGain": 0.0122,
+      "droneFreq": 49.0,
+      "droneGain": 0.0328,
       "melodyNotes": [
+        196.0,
+        246.94,
         293.66,
-        370.0,
-        440.0,
-        392.0
+        261.62
       ],
-      "melodyInterval": 3626,
-      "melodyGain": 0.0169,
+      "melodyInterval": 3779,
+      "melodyGain": 0.0176,
       "bassNotes": [
+        49.0,
         73.42,
-        110.0,
-        92.5
+        61.73
       ],
-      "bassInterval": 6007,
+      "bassInterval": 5973,
       "counterNotes": [
-        462.5,
-        550.0,
-        367.08
+        308.68,
+        367.08,
+        245.0
       ],
-      "counterInterval": 4693,
+      "counterInterval": 5159,
       "events": [
         {
           "type": "leaves",
-          "interval": 7087
+          "interval": 7650
         },
         {
           "type": "owl",
-          "interval": 20215
+          "interval": 21413
         },
         {
-          "type": "birdChirp",
-          "interval": 12944
-        },
-        {
-          "type": "sparkle",
-          "interval": 16300
+          "type": "windGust",
+          "interval": 15528
         }
       ]
     }
@@ -5536,53 +5524,57 @@
       }
     ],
     "musicParams": {
-      "key": "A",
+      "key": "Em",
       "chordNotes": [
-        110.0,
-        138.59,
-        164.81,
+        82.41,
+        98.0,
+        123.47,
+        164.82
+      ],
+      "padType": "chorus",
+      "padGain": 0.0457,
+      "padFilter": 765,
+      "padLfo": 0.0886,
+      "noiseType": "white",
+      "noiseGain": 0.0126,
+      "droneFreq": 41.2,
+      "droneGain": 0.0335,
+      "melodyNotes": [
+        164.82,
+        196.0,
+        246.94,
         220.0
       ],
-      "padType": "fm",
-      "padGain": 0.0406,
-      "padFilter": 852,
-      "padLfo": 0.0824,
-      "noiseType": "pink",
-      "noiseGain": 0.0122,
-      "droneFreq": 55.0,
-      "droneGain": 0.0316,
-      "melodyNotes": [
-        220.0,
-        277.18,
-        329.62,
-        293.66
-      ],
-      "melodyInterval": 3329,
-      "melodyGain": 0.0177,
+      "melodyInterval": 3499,
+      "melodyGain": 0.0161,
       "bassNotes": [
-        55.0,
-        82.41,
-        69.3
+        41.2,
+        61.73,
+        49.0
       ],
-      "bassInterval": 6434,
+      "bassInterval": 6326,
       "counterNotes": [
-        346.48,
-        412.02,
-        275.0
+        245.0,
+        308.68,
+        206.02
       ],
-      "counterInterval": 4778,
+      "counterInterval": 4762,
       "events": [
         {
-          "type": "sparkle",
-          "interval": 8886
-        },
-        {
-          "type": "windGust",
-          "interval": 12932
+          "type": "frog",
+          "interval": 10250
         },
         {
           "type": "cricket",
-          "interval": 16162
+          "interval": 8088
+        },
+        {
+          "type": "waveCycle",
+          "interval": 19729
+        },
+        {
+          "type": "owl",
+          "interval": 26296
         }
       ]
     }
@@ -5672,53 +5664,57 @@
       }
     ],
     "musicParams": {
-      "key": "A",
+      "key": "G",
       "chordNotes": [
-        110.0,
-        138.59,
-        164.81,
-        220.0
+        98.0,
+        123.47,
+        146.83,
+        196.0
       ],
-      "padType": "simple",
-      "padGain": 0.0406,
-      "padFilter": 663,
-      "padLfo": 0.0824,
+      "padType": "fm",
+      "padGain": 0.0483,
+      "padFilter": 864,
+      "padLfo": 0.085,
       "noiseType": "pink",
-      "noiseGain": 0.0122,
-      "droneFreq": 55.0,
-      "droneGain": 0.0316,
+      "noiseGain": 0.0109,
+      "droneFreq": 49.0,
+      "droneGain": 0.0267,
       "melodyNotes": [
-        220.0,
-        277.18,
-        329.62,
-        293.66
+        196.0,
+        246.94,
+        293.66,
+        261.62
       ],
-      "melodyInterval": 3329,
-      "melodyGain": 0.0177,
+      "melodyInterval": 2915,
+      "melodyGain": 0.0171,
       "bassNotes": [
-        55.0,
-        82.41,
-        69.3
+        49.0,
+        73.42,
+        61.73
       ],
-      "bassInterval": 5939,
+      "bassInterval": 6533,
       "counterNotes": [
-        346.48,
-        412.02,
-        275.0
+        308.68,
+        367.08,
+        245.0
       ],
-      "counterInterval": 4778,
+      "counterInterval": 4624,
       "events": [
         {
           "type": "heartbeat",
-          "interval": 8886
+          "interval": 8607
         },
         {
           "type": "chimes",
-          "interval": 12932
+          "interval": 10569
         },
         {
-          "type": "sparkle",
-          "interval": 17958
+          "type": "windGust",
+          "interval": 15366
+        },
+        {
+          "type": "starTwinkle",
+          "interval": 23383
         }
       ]
     }
