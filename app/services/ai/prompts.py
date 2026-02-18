@@ -110,83 +110,115 @@ Return the generated content as a JSON object with the following structure:
 def get_age_instructions(age: int) -> str:
     """
     Get age-specific writing guidelines.
-    
+
     Args:
         age: Child's age in years
-        
+
     Returns:
         Age-specific instruction string
     """
-    age_ranges = {
-        (0, 2): """AGE GROUP: 0-2 years
-        - Use very simple, repetitive language
-        - Maximum 150 words
-        - Focus on soothing sounds and rhythm
-        - Use familiar objects and actions (sleeping, animals, moon)
-        - Employ rhyming patterns for musicality
-        - Create a sense of comfort and safety
-        - Include gentle, soft descriptions
-        - Avoid complex plot - simple narrative only
+    return get_age_group_instructions(_age_to_group(age))
+
+
+def _age_to_group(age: int) -> str:
+    """Map a numeric age to an age group string."""
+    if age <= 1:
+        return "0-1"
+    elif age <= 3:
+        return "1-3"
+    elif age <= 5:
+        return "4-5"
+    elif age <= 8:
+        return "6-8"
+    elif age <= 12:
+        return "8-12"
+    else:
+        return "12+"
+
+
+# ── Age group instructions (used by both API and batch generation) ─────
+
+AGE_GROUP_INSTRUCTIONS = {
+    "0-1": """AGE GROUP: 0-1 years (Baby)
+        - Pure rhythmic sounds, onomatopoeia, repetitive syllables
+        - Extremely simple: moon, stars, mama, papa, sleep, hush
+        - NO plot — just sensory and rhythmic experience
+        - Focus on soothing sounds: shh, hush, gentle humming patterns
+        - Very short sentences (3-6 words each)
+        - Repetition is essential — repeat key phrases 2-3 times
+        - Use soft, warm imagery: blankets, moonlight, gentle breezes
+        - Rhyming is strongly preferred
+        - End with sleep/closing eyes imagery
         """,
-        (3, 4): """AGE GROUP: 3-4 years
-        - Use simple vocabulary and short sentences
-        - Maximum 300 words
-        - Include friendly animals as main characters
-        - Create simple, linear plots with clear beginning, middle, end
-        - Use repetitive phrases and patterns
-        - Include basic emotions (happy, tired, cozy)
+    "1-3": """AGE GROUP: 1-3 years (Toddler)
+        - Very simple words, lots of repetition, short sentences
+        - Familiar objects: animals, toys, family members, food, bedtime
+        - Simple cause-and-effect ("the bunny was tired, so he closed his eyes")
+        - Friendly animals as main characters
+        - Use repetitive phrases and patterns children can anticipate
+        - Basic emotions only: happy, sleepy, cozy, safe
+        - No conflict or tension — pure comfort and warmth
+        - Gentle rhythm and rhyme when possible
+        """,
+    "4-5": """AGE GROUP: 4-5 years (Preschool)
+        - Simple vocabulary appropriate for early learners
+        - Linear plots with clear beginning, middle, end
         - Friendly adventure with gentle surprises
-        - Emphasize comfort, home, family themes
-        """,
-        (5, 6): """AGE GROUP: 5-6 years
-        - Use slightly more complex vocabulary (appropriate for early readers)
-        - Maximum 500 words
-        - Include adventure elements with safe challenges
-        - Clear moral lessons woven naturally into story
-        - Introduce character development (characters learn/grow)
-        - Use descriptive language but keep it soothing
+        - Animals, children, or fantasy creatures as characters
+        - Clear moral lessons woven naturally
         - Can include mild magical elements
-        - Themes: friendship, courage, curiosity, kindness
+        - Use descriptive but simple language
+        - Themes: kindness, sharing, curiosity, bravery, family
+        - Comfortable resolution — everyone ends up safe and happy
         """,
-        (7, 8): """AGE GROUP: 7-8 years
-        - Use engaging, descriptive language
-        - Maximum 800 words
-        - Include plot development and character growth
-        - Introduce mild suspense (resolved positively)
-        - More complex magical or fantasy elements acceptable
+    "6-8": """AGE GROUP: 6-8 years (Explorer)
+        - Engaging, descriptive language for early readers
+        - Plot development with character growth
+        - Mild suspense that resolves positively
         - Multiple characters with distinct personalities
-        - Clear themes and lessons without being preachy
-        - Can explore emotions like worry (with resolution)
+        - More complex magical or fantasy elements
+        - Can explore emotions like worry, loneliness (with positive resolution)
+        - Clear themes without being preachy
+        - Themes: friendship, courage, identity, teamwork, perseverance
+        - World-building: describe settings vividly
         """,
-        (9, 10): """AGE GROUP: 9-10 years
-        - Use sophisticated vocabulary and complex sentences
-        - Maximum 1000 words
+    "8-12": """AGE GROUP: 8-12 years (Adventurer)
+        - Sophisticated vocabulary and complex sentences
         - Rich, detailed world-building
         - Complex plots with multiple threads
         - Nuanced character development and emotions
-        - Introduce mythology, legends, or fantasy elements
-        - Can include mild suspense with satisfying resolution
-        - Deeper exploration of themes: identity, belonging, growth
+        - Mythology, legends, history, or advanced fantasy
+        - Can include real suspense with satisfying resolution
+        - Deeper exploration: identity, belonging, growth, resilience
+        - Characters face real challenges and grow through them
+        - Can reference school, hobbies, ambitions, relationships
         """,
-        (11, 14): """AGE GROUP: 11-14 years
-        - Use mature, sophisticated language and complex narratives
-        - Maximum 1500 words
-        - Complex, layered plots with multiple character arcs
+    "12+": """AGE GROUP: 12+ years (Teen)
+        - Mature, sophisticated language and complex narratives
+        - Layered plots with multiple character arcs
         - Rich world-building and immersive settings
-        - Exploration of complex emotions and relationships
-        - Mythology, legends, and advanced fantasy concepts
-        - Themes: identity, purpose, belonging, resilience, compassion
-        - Can include mild conflict with thoughtful resolution
+        - Complex emotions: self-doubt, ambition, love, purpose
+        - Philosophical themes woven naturally
+        - Mythology, science fiction, historical fiction elements
+        - Themes: identity, purpose, resilience, compassion, dreams
+        - Can include conflict with thoughtful resolution
+        - Characters navigate real-world challenges (school, relationships, self-discovery)
+        - Still ends on a calming, hopeful note (it's bedtime!)
         """,
-    }
-    
-    # Find appropriate age range
-    for (min_age, max_age), instructions in age_ranges.items():
-        if min_age <= age <= max_age:
-            return instructions
-    
-    # Default to oldest age group for ages outside range
-    return age_ranges[(11, 14)]
+}
+
+
+def get_age_group_instructions(age_group: str) -> str:
+    """
+    Get age-group-specific writing guidelines.
+
+    Args:
+        age_group: Age group string ('0-1', '1-3', '4-5', '6-8', '8-12', '12+')
+
+    Returns:
+        Age-specific instruction string
+    """
+    return AGE_GROUP_INSTRUCTIONS.get(age_group, AGE_GROUP_INSTRUCTIONS["6-8"])
 
 
 def get_theme_instructions(theme: str) -> str:
@@ -270,8 +302,39 @@ def get_theme_instructions(theme: str) -> str:
         - Satisfying, positive resolution
         - No scary or dark elements
         """,
+        "bedtime": """This is a bedtime/sleep story. Include:
+        - Calm, soothing atmosphere throughout
+        - Nighttime settings: moonlight, stars, cozy beds, warm blankets
+        - Characters getting sleepy and winding down
+        - Gentle, repetitive patterns that induce drowsiness
+        - A peaceful, sleep-inducing ending
+        """,
+        "family": """This story focuses on family. Include:
+        - Warm family relationships (parents, siblings, grandparents)
+        - Home and domestic settings
+        - Love, care, and togetherness
+        - Everyday family moments made special
+        - Comfort and security of family bonds
+        """,
+        "science": """This is a science-themed bedtime story. Include:
+        - Real scientific concepts explained through story (physics, biology, chemistry, astronomy)
+        - A curious character who discovers how things work
+        - Accurate science woven naturally into the narrative
+        - Sense of wonder at the natural world
+        - Experiments, observations, or discoveries as plot elements
+        - Famous scientists or inventors can appear as characters
+        - Make complex ideas accessible and exciting
+        - Still calming and bedtime-appropriate — curiosity fading into peaceful wonder
+        """,
+        "ocean": """This is an ocean/sea story. Include:
+        - Ocean, sea, or underwater settings
+        - Sea creatures and marine life
+        - Water-based adventures
+        - Exploration of aquatic environments
+        - Wonder at marine ecosystems
+        """,
     }
-    
+
     return theme_guidelines.get(
         theme.lower(),
         f"Write a {theme}-themed story appropriate for the child's age group."

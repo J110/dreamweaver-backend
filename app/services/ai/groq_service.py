@@ -72,7 +72,7 @@ class GroqService:
     
     # Available models
     FAST_MODEL = "llama-3.1-8b-instant"
-    QUALITY_MODEL = "llama-3.1-70b-versatile"
+    QUALITY_MODEL = "llama-3.3-70b-versatile"
     AVAILABLE_MODELS = [FAST_MODEL, QUALITY_MODEL]
     
     # Default parameters
