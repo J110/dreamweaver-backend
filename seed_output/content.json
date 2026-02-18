@@ -5718,5 +5718,148 @@
         }
       ]
     }
+  },
+  {
+    "id": "gen-ae9ed8804fa7",
+    "type": "poem",
+    "lang": "en",
+    "title": "Finn's Frozen Melody",
+    "description": "A young dolphin discovers the magic of Arctic ice melodies and forges an unlikely friendship with a lonely narwhal, learning that true passion can bridge even the coldest divides.",
+    "text": "[RHYTHMIC]Beneath the Northern Lights so bright,\nFinn danced through waves of silver light.\nHis clicks and songs, a joyful art,\nEchoed soft through icy heart.\n[PAUSE]\n\n[GENTLE]One eve he heard a mournful tune,\nA lonely hum beneath the moon.\nA narwhal’s horn, so tall and grand,\nPlayed melodies of frozen land.\n[PAUSE]\n\n[JOYFUL]Finn swam close with curious cheer,\n\"Your music’s magic—can I hear?\"\nThe narwhal sighed, \"It’s cold up here,\nNo friend to sing, no one to near.\"\n[PAUSE]\n\n[CALM]So Finn shared his ocean’s song,\nWarm and deep, a thrilling throng.\nThe narwhal laughed, his horn did gleam,\nTheir voices wove a shared dream.\n[PAUSE]\n\n[WHISPERING]Now side by side, they sing and play,\nThrough endless night and Arctic day.\nFor passions shared can melt the snow,\nAnd friendships bloom where hearts still glow.\n[PAUSE]\n\n[SLEEPY]So rest, young dreamer, soft and deep,\nWhere Arctic winds their lullabies keep.",
+    "annotated_text": "[RHYTHMIC]Beneath the Northern Lights so bright,\nFinn danced through waves of silver light.\nHis clicks and songs, a joyful art,\nEchoed soft through icy heart.\n[PAUSE]\n\n[GENTLE]One eve he heard a mournful tune,\nA lonely hum beneath the moon.\nA narwhal’s horn, so tall and grand,\nPlayed melodies of frozen land.\n[PAUSE]\n\n[JOYFUL]Finn swam close with curious cheer,\n\"Your music’s magic—can I hear?\"\nThe narwhal sighed, \"It’s cold up here,\nNo friend to sing, no one to near.\"\n[PAUSE]\n\n[CALM]So Finn shared his ocean’s song,\nWarm and deep, a thrilling throng.\nThe narwhal laughed, his horn did gleam,\nTheir voices wove a shared dream.\n[PAUSE]\n\n[WHISPERING]Now side by side, they sing and play,\nThrough endless night and Arctic day.\nFor passions shared can melt the snow,\nAnd friendships bloom where hearts still glow.\n[PAUSE]\n\n[SLEEPY]So rest, young dreamer, soft and deep,\nWhere Arctic winds their lullabies keep.",
+    "target_age": 10,
+    "age_min": 8,
+    "age_max": 12,
+    "age_group": "8-12",
+    "length": "SHORT",
+    "word_count": 142,
+    "duration_seconds": 0,
+    "categories": [
+      "Mythological Adventure",
+      "Arctic Exploration",
+      "Friendship Story",
+      "Animal Tales"
+    ],
+    "theme": "adventure",
+    "morals": [
+      "Friendship can blossom in the most unexpected places when we share our passions.",
+      "Kindness and curiosity can warm even the coldest of hearts."
+    ],
+    "cover": "",
+    "musicProfile": "autumn-forest",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-ae9e_female_3.mp3",
+        "duration_seconds": 78.13,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-ae9e_female_2.mp3",
+        "duration_seconds": 84.39,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-ae9e_female_1.mp3",
+        "duration_seconds": 96.68,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_1",
+        "url": "/audio/pre-gen/gen-ae9e_male_1.mp3",
+        "duration_seconds": 75.86,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-ae9e_male_2.mp3",
+        "duration_seconds": 81.97,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_3",
+        "url": "/audio/pre-gen/gen-ae9e_male_3.mp3",
+        "duration_seconds": 76.69,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-ae9e_asmr.mp3",
+        "duration_seconds": 88.3,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "male",
+    "lead_character_type": "sea_creature",
+    "universe": "mythological",
+    "geography": "Arctic/Polar",
+    "life_aspect": "hobbies_passions",
+    "plot_archetype": "friendship_bonding",
+    "created_at": "2026-02-18T12:52:28.840178",
+    "updated_at": "2026-02-18T12:52:28.840178",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "musicParams": {
+      "key": "A",
+      "chordNotes": [
+        110.0,
+        138.59,
+        164.81,
+        220.0
+      ],
+      "padType": "fm",
+      "padGain": 0.0451,
+      "padFilter": 852,
+      "padLfo": 0.0824,
+      "noiseType": "brown",
+      "noiseGain": 0.0122,
+      "droneFreq": 55.0,
+      "droneGain": 0.0368,
+      "melodyNotes": [
+        220.0,
+        277.18,
+        329.62,
+        293.66
+      ],
+      "melodyInterval": 3329,
+      "melodyGain": 0.0177,
+      "bassNotes": [
+        55.0,
+        82.41,
+        69.3
+      ],
+      "bassInterval": 6434,
+      "counterNotes": [
+        346.48,
+        412.02,
+        275.0
+      ],
+      "counterInterval": 4587,
+      "events": [
+        {
+          "type": "windGust",
+          "interval": 13329
+        },
+        {
+          "type": "leaves",
+          "interval": 19398
+        },
+        {
+          "type": "whaleCall",
+          "interval": 19754
+        },
+        {
+          "type": "sparkle",
+          "interval": 7814
+        }
+      ]
+    }
   }
 ]

@@ -38,8 +38,8 @@ CONTENT_PATH = BASE_DIR / "seed_output" / "content.json"
 OUTPUT_DIR = BASE_DIR / "audio" / "pre-gen"
 
 # ── Chatterbox Modal endpoint ────────────────────────────────────────────
-CHATTERBOX_URL = "https://j110--dreamweaver-chatterbox-tts.modal.run"
-CHATTERBOX_HEALTH = "https://j110--dreamweaver-chatterbox-health.modal.run"
+CHATTERBOX_URL = "https://anmol-71634--dreamweaver-chatterbox-tts.modal.run"
+CHATTERBOX_HEALTH = "https://anmol-71634--dreamweaver-chatterbox-health.modal.run"
 
 # ── Emotion profiles — BALANCED FOR QUALITY ──────────────────────────
 # Based on Chatterbox documentation recommendations:

@@ -1,0 +1,28 @@
+{
+  "started_at": "2026-02-18T18:21:06.559147",
+  "args": {
+    "count_stories": 1,
+    "count_poems": 1,
+    "lang": "en",
+    "dry_run": false,
+    "skip_publish": true,
+    "resume": false,
+    "step": null
+  },
+  "last_step": "publish",
+  "generated_ids": [
+    "gen-ae9ed8804fa7"
+  ],
+  "step_generate": "done",
+  "step_audio": "done",
+  "qa_passed": [
+    "gen-ae9ed8804fa7"
+  ],
+  "qa_failed": [],
+  "step_qa": "done",
+  "step_enrich": "done",
+  "step_sync": "done",
+  "step_publish": "skipped",
+  "status": "completed",
+  "completed_at": "2026-02-18T19:45:51.441203"
+}

@@ -59,7 +59,33 @@ Every batch of new content MUST be checked against these dimensions. The goal is
 
 Count lead characters across each batch and adjust. "Neutral" includes animals, clouds, stars, robots, or stories with no named lead.
 
-### 2.3 Cultural Representation & Geography
+### 2.3 Lead Character Entity Type (NEW — Diversity Dimension)
+
+Not every story should have a human lead. Rotate across these entity types to keep the catalog imaginative and diverse:
+
+| Entity Type | Examples | Target % |
+|-------------|----------|----------|
+| **Human Child/Teen** | Aria, Leo, Priya, Kai | ~30% |
+| **Animal (land)** | Fox, tiger cub, tortoise, deer | ~12% |
+| **Bird** | Hummingbird, robin, eagle, cuckoo | ~6% |
+| **Sea/River Creature** | Seahorse, baby whale, dolphin, otter | ~6% |
+| **Insect/Bug** | Firefly, bee, ladybug, caterpillar | ~4% |
+| **Plant/Flower/Tree** | Sunflower, lotus, oak tree, fern | ~6% |
+| **Celestial Body** | Star, moon, planet, comet | ~6% |
+| **Weather/Atmospheric** | Snowflake, raindrop, breeze, wave | ~6% |
+| **Mythical Creature** | Dragon, unicorn, phoenix, fairy | ~6% |
+| **Everyday Object** | Lantern, teacup, kite, music box | ~6% |
+| **Alien/Extraterrestrial** | Friendly alien, space traveler | ~6% |
+| **Robot/AI/Machine** | Toy robot, garden robot, repair bot | ~6% |
+
+**Rules**:
+- Non-human leads should have personality, emotions, and a distinct voice
+- The story should be told from the entity's perspective or centered on its journey
+- Non-human characters can still explore human themes (friendship, courage, identity)
+- For ages 0-3, animals and simple objects work best. Aliens and complex entities for ages 4+.
+- Ensure each entity type gets representation across different themes and age groups
+
+### 2.4 Cultural Representation & Geography
 
 Rotate evenly across these geographies:
 
@@ -75,7 +101,7 @@ Rotate evenly across these geographies:
 
 **Rule**: No geography should exceed 25% of the catalog. Each should have at least 10%.
 
-### 2.4 Universe / Era Settings
+### 2.5 Universe / Era Settings
 
 Rotate across:
 - **Contemporary** — modern day, schools, cities, parks
@@ -85,7 +111,7 @@ Rotate across:
 - **Fantasy realm** — entirely invented magical worlds
 - **Prehistoric** — dinosaurs, ancient oceans, cave dwellers
 
-### 2.5 Plot Archetypes
+### 2.6 Plot Archetypes
 
 Distribute across:
 - **Quest / Journey** — character travels somewhere, learns something
@@ -94,7 +120,7 @@ Distribute across:
 - **Overcoming fear** — character faces a gentle challenge
 - **Celebration** — character appreciates what they have
 
-### 2.6 Age Group Coverage
+### 2.7 Age Group Coverage
 
 Target roughly equal content per age group:
 
