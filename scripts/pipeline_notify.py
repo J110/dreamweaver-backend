@@ -63,7 +63,8 @@ def _build_html(state: dict, log_file: str = "", elapsed: float = 0) -> str:
     covers_ok = state.get("covers_generated", [])
     covers_fail = state.get("covers_failed", [])
     disk_info = state.get("disk_info", "")
-    cost_estimate = state.get("cost_estimate", "")
+    cost_this_run = state.get("cost_this_run", "")
+    cost_monthly = state.get("cost_monthly", "")
 
     status_color = "#22c55e" if is_success else "#ef4444"
     status_label = "SUCCESS" if is_success else "FAILED"
@@ -77,8 +78,10 @@ def _build_html(state: dict, log_file: str = "", elapsed: float = 0) -> str:
     <tr><td><b>Covers</b></td><td>{len(covers_ok)} generated, {len(covers_fail)} fallback</td></tr>
     <tr><td><b>Elapsed</b></td><td>{_fmt_duration(elapsed)}</td></tr>
     """
-    if cost_estimate:
-        rows += f'<tr><td><b>Est. Cost</b></td><td>{cost_estimate}</td></tr>'
+    if cost_this_run:
+        rows += f'<tr><td><b>This Run</b></td><td>{cost_this_run}</td></tr>'
+    if cost_monthly:
+        rows += f'<tr><td><b>Monthly Est.</b></td><td>{cost_monthly}</td></tr>'
     if disk_info:
         rows += f'<tr><td><b>Disk</b></td><td>{disk_info}</td></tr>'
     if failed_step:
@@ -182,8 +185,9 @@ if __name__ == "__main__":
             "qa_failed": [],
             "covers_generated": ["test-001"],
             "covers_failed": ["test-002"],
-            "cost_estimate": "~$0.43 (Modal free credits)",
-            "disk_info": "Audio: 304 files (1.2 GB), Covers: 12 files",
+            "cost_this_run": "~$0.97",
+            "cost_monthly": "~$29.13/mo (GCP $16.13 + Modal ~$13.00 from $30 free credits)",
+            "disk_info": "Audio: 304 files (1.2 GB), Covers: 12 SVGs",
         }
         ok = send_pipeline_notification(test_state, "", 325.7)
         sys.exit(0 if ok else 1)

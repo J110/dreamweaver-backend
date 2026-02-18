@@ -21,17 +21,40 @@ GCP VM (dreamvalley-prod) runs pipeline_run.py daily via cron (7 days/week):
   NOTIFY     → Email via Resend (ALWAYS — success or failure)
 ```
 
-### Cost per Run: ~$0.43 from free Modal credits, $0.00 elsewhere
+### Cost Summary
+
+#### Per-Run Costs (variable)
 
 | Step | Service | Cost |
 |------|---------|------|
 | Content generation | Mistral Large (free experiment tier) | $0.00 |
-| Audio generation (14 variants) | Modal T4 GPU (~43.5 GPU-min) | ~$0.43 (free credits) |
+| Audio generation (14 variants) | Modal T4 GPU (~43.5 GPU-min) | ~$0.43 (from $30/mo free credits) |
 | Audio QA (transcription + fidelity) | Voxtral via Mistral API (free tier) | $0.00 |
 | Music params | Mistral Large (free tier) | $0.00 |
 | Cover SVG generation | Mistral Large (free tier) | $0.00 |
 | Email notification | Resend (free tier, 100 emails/day) | $0.00 |
-| **Monthly (daily, 7 days/week)** | | **~$13 from $30 free credits** |
+| **Per-run total** | | **~$0.43** |
+
+#### Infrastructure Costs (fixed monthly)
+
+| Resource | Spec | Cost/Month |
+|----------|------|-----------|
+| GCP VM | e2-small (2 vCPU shared, 2GB RAM), asia-south1 | $14.69 |
+| GCP Disk | 30GB standard persistent disk | $1.44 |
+| Render (backend) | Free tier | $0.00 |
+| Vercel (frontend) | Free tier | $0.00 |
+| **Infrastructure total** | | **$16.13/mo** |
+
+#### Monthly Total (daily runs, 7 days/week)
+
+| Component | Monthly Cost |
+|-----------|-------------|
+| GCP infrastructure (VM + disk) | $16.13 |
+| Modal GPU (~30 runs × $0.43) | ~$13.00 (from $30 free credits) |
+| Mistral, Resend, Render, Vercel | $0.00 |
+| **Total** | **~$29.13/mo** ($16.13 cash + ~$13 free credits) |
+
+> **Note**: Modal provides $30/month in free credits. The ~$13 Modal cost is covered by free credits, so actual cash spend is **~$16.13/month** (GCP only). Consider a 1-year CUD commitment to reduce GCP to ~$10.69/mo.
 
 ---
 
@@ -470,4 +493,4 @@ pm2 restart all
 | **Weekly** | **7** | **7** | **14** |
 | **Monthly** | **~30** | **~30** | **~60** |
 
-At daily cadence (7 days/week): ~$13/month in Modal free credits. All text generation, covers, and email are $0 (Mistral free tier + Resend free tier).
+**Monthly cost**: ~$29.13/mo total ($16.13 GCP cash + ~$13 Modal from free credits). Actual cash spend: **~$16.13/mo** (GCP VM + disk only). All text generation, covers, and email are $0 (free tiers).

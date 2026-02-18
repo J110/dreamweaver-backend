@@ -601,16 +601,37 @@ def postflight_checks(state: dict):
     cover_count = len(list(covers_dir.glob("*.svg"))) if covers_dir.exists() else 0
     logger.info("  Cover SVGs: %d", cover_count)
 
-    # Estimate cost: ~$0.43 per run (14 audio variants on Modal T4 GPU)
-    # Covers + text generation = $0 (Mistral free tier)
+    # ── Cost estimates ──────────────────────────────────────────────────
+    # GCP infrastructure (always-on, fixed monthly cost)
+    #   e2-small instance (asia-south1): $14.69/mo
+    #   30GB standard persistent disk:   $1.44/mo
+    #   Total GCP infra:                 $16.13/mo
+    GCP_MONTHLY = 16.13
+    gcp_daily = GCP_MONTHLY / 30.0  # ~$0.54/day
+
+    # Modal GPU (variable per run — 7 audio variants per item)
     n_items = len(state.get("generated_ids", []))
     n_variants = n_items * 7  # 7 voices per story
     modal_cost = n_variants * 0.031  # ~$0.031 per variant (43.5 GPU-min / 14 variants × $0.01/min)
-    cost_str = f"~${modal_cost:.2f} Modal GPU ({n_variants} audio variants)"
-    if modal_cost == 0:
-        cost_str = "$0.00 (no audio generated)"
+
+    # Mistral, Resend, Vercel, Render = $0 (free tiers)
+    total_run_cost = modal_cost + gcp_daily
+
+    # Build cost string for this run
+    parts = []
+    parts.append(f"Modal GPU: ${modal_cost:.2f} ({n_variants} audio variants)")
+    parts.append(f"GCP VM: ${gcp_daily:.2f}/day (${GCP_MONTHLY:.2f}/mo e2-small + 30GB disk)")
+    parts.append(f"Mistral/Resend/Render/Vercel: $0.00 (free tiers)")
+    cost_str = " | ".join(parts)
+
+    # Monthly projection
+    modal_monthly = modal_cost * 30  # assumes daily runs
+    total_monthly = GCP_MONTHLY + modal_monthly
+    monthly_str = f"~${total_monthly:.2f}/mo (GCP ${GCP_MONTHLY:.2f} + Modal ~${modal_monthly:.2f} from $30 free credits)"
 
     state["cost_estimate"] = cost_str
+    state["cost_monthly"] = monthly_str
+    state["cost_this_run"] = f"~${total_run_cost:.2f}"
     state["disk_info"] = f"Audio: {total_audio} files ({audio_gb:.2f} GB), Covers: {cover_count} SVGs"
 
     # Collect generated titles for email
@@ -623,8 +644,9 @@ def postflight_checks(state: dict):
         except Exception:
             pass
 
-    logger.info("  Cost estimate: %s", cost_str)
-    logger.info("  Disk: %s", state["disk_info"])
+    logger.info("  This run:  ~$%.2f (Modal $%.2f + GCP $%.2f/day)", total_run_cost, modal_cost, gcp_daily)
+    logger.info("  Monthly:   %s", monthly_str)
+    logger.info("  Disk:      %s", state["disk_info"])
 
 
 # ═══════════════════════════════════════════════════════════════════════
