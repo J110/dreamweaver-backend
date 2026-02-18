@@ -34,6 +34,14 @@ from pydub import AudioSegment
 
 # ── Paths ────────────────────────────────────────────────────────────────
 BASE_DIR = Path(__file__).parent.parent
+
+# ── Load .env ────────────────────────────────────────────────────────────
+try:
+    from dotenv import load_dotenv
+    load_dotenv(BASE_DIR / ".env", override=True)
+except ImportError:
+    pass  # pipeline_run.py or shell environment should have set env vars
+
 CONTENT_PATH = BASE_DIR / "seed_output" / "content.json"
 OUTPUT_DIR = BASE_DIR / "audio" / "pre-gen"
 

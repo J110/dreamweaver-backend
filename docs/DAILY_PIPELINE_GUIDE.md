@@ -13,8 +13,8 @@ GCP VM (dreamvalley-prod) runs pipeline_run.py daily via cron:
   2. AUDIO GEN → Modal Chatterbox TTS (free $30/mo) → 14 MP3 files
   3. AUDIO QA  → Voxtral transcription (free tier)  → PASS/FAIL
   4. ENRICH    → Mistral Large (free tier)          → unique musicParams
-  5. SYNC      → content.json → seedData.js
-  6. PUBLISH   → git push → Render/Vercel auto-deploy
+  5. SYNC      → content.json → seedData.js + copy audio to web public/
+  6. PUBLISH   → git push both repos → Render/Vercel auto-deploy
   7. LOG       → pipeline summary → logs/
 ```
 
@@ -165,6 +165,16 @@ python3 scripts/pipeline_run.py --skip-publish
 
 ---
 
+## Known Limitations (Manual Steps)
+
+| Step | Status | Notes |
+|------|--------|-------|
+| Cover SVG generation | **Manual** | Each new story needs a custom SVG cover. Pipeline sets `default.svg` as placeholder. Must be created manually following `COVER_DESIGN_GUIDE.md` and registered in seedData.js COVERS object. |
+| Production deploy | **Manual** | Pipeline publishes to Vercel/Render test only. GCP production deploy requires manual approval and `git pull && npm run build && pm2 restart`. |
+| Content review | **Recommended** | While QA catches audio issues, human review of story text quality is recommended before production deploy. |
+
+---
+
 ## Server Independence
 
 The pipeline is fully self-contained on the GCP server. No local machine dependencies:
@@ -242,6 +252,10 @@ cat /opt/dreamweaver-backend/seed_output/pipeline_state.json
 | Audio QA fails | Check fidelity scores in logs. May need to regenerate audio. |
 | Git push fails | Check SSH keys / GitHub token. Run `git push` manually. |
 | `content.json` corrupt | Restore from git: `git checkout -- seed_output/content.json` |
+| Audio not playing on deployed app | Audio files must be in BOTH `backend/audio/pre-gen/` AND `web/public/audio/pre-gen/`. The pipeline auto-copies during sync step. If missing, run: `cp backend/audio/pre-gen/XXXX*.mp3 web/public/audio/pre-gen/` |
+| New story has no cover image | New entries get `cover: "/covers/default.svg"` which doesn't exist. Create a custom SVG cover and update the cover path in seedData.js. See `COVER_DESIGN_GUIDE.md`. |
+| `dotenv` not loading env vars | All scripts require `from dotenv import load_dotenv` near the top. Verify with: `grep -l "load_dotenv" scripts/*.py` |
+| Hindi content appearing unexpectedly | Pipeline defaults to `--lang en`. Verify with `python3 scripts/pipeline_run.py --lang en`. sync_seed_data.py also filters by `--lang en` by default. |
 
 ### Modal Health Check
 
@@ -280,6 +294,9 @@ print(r.choices[0].message.content)
 | `docs/CONTENT_GENERATION_GUIDELINES.md` | Content quality and diversity rules |
 | `docs/AUDIO_GENERATION_GUIDELINES.md` | Audio generation specs |
 | `docs/WORD_FIDELITY_QA_GUIDELINES.md` | QA pipeline specifications |
+| `../dreamweaver-web/public/audio/pre-gen/` | Frontend audio files (copied from backend during sync) |
+| `../dreamweaver-web/public/covers/` | Cover SVG illustrations |
+| `../dreamweaver-web/public/covers/COVER_DESIGN_GUIDE.md` | SVG cover design system |
 
 ---
 
@@ -288,9 +305,14 @@ print(r.choices[0].message.content)
 ```
 Pipeline generates content
        │
+       ├── SYNC: content.json → seedData.js
+       │         + copy audio MP3s to web/public/audio/pre-gen/
+       │
        ├── git push backend → Render auto-deploys backend API
+       │     (includes: seed_output/content.json, audio/ files)
        │
        └── git push frontend → Vercel auto-deploys web app
+             (includes: seedData.js, public/audio/pre-gen/*.mp3, public/covers/*.svg)
                                      │
                           (User reviews on Vercel test app)
                                      │
@@ -298,6 +320,14 @@ Pipeline generates content
 ```
 
 **IMPORTANT**: The pipeline publishes to **test only** (Render/Vercel). Production deployment (GCP/dreamvalley.app) is manual and requires explicit approval.
+
+### Post-Pipeline Checklist (Manual Review Before Production Deploy)
+
+1. **Audio plays**: Open Vercel test app → new story → tap play → hear audio
+2. **Cover shows**: New story card has a custom SVG cover (not blank)
+3. **Music is unique**: Play story → ambient music sounds distinct from other stories
+4. **Text is correct**: Story reads well, no garbled text or truncated content
+5. **Categories correct**: Story appears in appropriate browse categories
 
 ---
 

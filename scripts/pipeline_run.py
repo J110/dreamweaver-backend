@@ -366,9 +366,31 @@ def step_sync(args, state: dict) -> bool:
         return True
 
     ok, stdout, stderr, elapsed = run_command(cmd, "Sync seed data", timeout=60)
-    state["step_sync"] = "done" if ok else "failed"
+    if not ok:
+        state["step_sync"] = "failed"
+        save_state(state)
+        return False
+
+    # Copy new audio files to web public folder so Next.js can serve them
+    web_audio_dir = WEB_DIR / "public" / "audio" / "pre-gen"
+    backend_audio_dir = BASE_DIR / "audio" / "pre-gen"
+    if web_audio_dir.exists() and backend_audio_dir.exists():
+        import shutil
+        qa_passed = state.get("qa_passed", [])
+        copied = 0
+        for story_id in qa_passed:
+            short_id = story_id[:8]
+            for mp3 in backend_audio_dir.glob(f"{short_id}*.mp3"):
+                dest = web_audio_dir / mp3.name
+                if not dest.exists() or mp3.stat().st_mtime > dest.stat().st_mtime:
+                    shutil.copy2(mp3, dest)
+                    copied += 1
+        if copied:
+            logger.info("  Copied %d audio files to web public folder", copied)
+
+    state["step_sync"] = "done"
     save_state(state)
-    return ok
+    return True
 
 
 def step_publish(args, state: dict) -> bool:
@@ -409,7 +431,7 @@ def step_publish(args, state: dict) -> bool:
     if WEB_DIR.exists() and state.get("step_sync") == "done":
         logger.info("  Committing frontend changes...")
         for cmd_str in [
-            "git add src/utils/seedData.js",
+            "git add src/utils/seedData.js public/audio/pre-gen/ public/covers/",
             f'git commit -m "{commit_msg}" --allow-empty',
             "git push origin main",
         ]:
