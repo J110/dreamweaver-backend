@@ -15,8 +15,8 @@ logger = get_logger(__name__)
 router = APIRouter()
 
 RESEND_ENDPOINT = "https://api.resend.com/emails"
-FROM_EMAIL = "Dream Valley Reports <reports@turings.xyz>"
-TO_EMAIL = "anmol@turings.xyz"
+FROM_EMAIL = "Dream Valley <onboarding@resend.dev>"
+TO_EMAIL = "mohan.anmol@gmail.com"
 
 
 def _get_resend_key() -> str:
