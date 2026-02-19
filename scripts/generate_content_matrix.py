@@ -461,7 +461,7 @@ Return ONLY a valid JSON object with these fields (no markdown, no extra text):
 {
     "title": "The story/poem title",
     "description": "A 1-2 sentence summary",
-    "text": "The FULL story/poem text with emotion markers embedded",
+    "text": "The FULL story/poem text with emotion markers. MUST use \\n\\n between paragraphs/stanzas for readability.",
     "morals": ["Moral 1", "Moral 2"],
     "categories": ["Category1", "Category2"]
 }
@@ -603,6 +603,66 @@ def parse_json_response(text: str) -> Optional[Dict]:
             except json.JSONDecodeError:
                 pass
     return None
+
+
+def ensure_paragraph_breaks(text: str, content_type: str = "story") -> str:
+    """Ensure text has paragraph breaks for readability.
+
+    If the text has fewer than 2 paragraph breaks (double newlines) and is longer
+    than 200 chars, insert breaks at emotion marker boundaries. This fixes LLM
+    responses that produce one continuous block of text.
+    """
+    if not text:
+        return text
+    # Already has good paragraph structure
+    if text.count("\n\n") >= 2:
+        return text
+    # Short text doesn't need breaks
+    if len(text) < 200:
+        return text
+
+    if content_type == "poem":
+        # For poems: break at [PAUSE] markers or [RHYTHMIC] markers
+        text = re.sub(r"\s*\[PAUSE\]\s*", "\n\n", text)
+        # If still no breaks, split at [RHYTHMIC]
+        if text.count("\n\n") < 2:
+            text = re.sub(r"\s+(\[RHYTHMIC\])", r"\n\n\1", text)
+    else:
+        # For stories: break before emotion markers that start new beats
+        # Pattern: insert \n\n before [MARKER] when preceded by sentence-ending punctuation
+        markers = r"\[(?:GENTLE|CALM|EXCITED|CURIOUS|ADVENTUROUS|MYSTERIOUS|JOYFUL|SLEEPY|DRAMATIC|WHISPERING|DRAMATIC_PAUSE)\]"
+        # Split at emotion markers that follow sentence endings
+        parts = re.split(rf'(\s+)({markers})', text)
+        if len(parts) > 3:
+            # Rejoin with paragraph breaks every 2-4 markers
+            result = []
+            marker_count = 0
+            for part in parts:
+                if re.match(markers, part):
+                    marker_count += 1
+                    # Insert paragraph break every 2-3 markers
+                    if marker_count > 1 and marker_count % 3 == 1:
+                        result.append("\n\n")
+                    result.append(part)
+                elif part.strip() == "":
+                    # Skip whitespace-only parts between markers (we add our own breaks)
+                    if not result or not result[-1].endswith("\n\n"):
+                        result.append(" ")
+                else:
+                    result.append(part)
+            text = "".join(result).strip()
+
+        # If still no breaks, force them every ~3 sentences
+        if text.count("\n\n") < 2:
+            sentences = re.split(r'(?<=[.!?])\s+', text)
+            if len(sentences) >= 4:
+                chunk_size = max(2, len(sentences) // 4)
+                chunks = []
+                for i in range(0, len(sentences), chunk_size):
+                    chunks.append(" ".join(sentences[i:i+chunk_size]))
+                text = "\n\n".join(chunks)
+
+    return text.strip()
 
 
 def count_words(text: str) -> int:
@@ -781,6 +841,11 @@ def generate_one(client, item: Dict, existing_titles: List[str],
                 logger.warning("  Attempt %d: Missing title or text", attempt + 1)
                 time.sleep(2)
                 continue
+
+            # Ensure paragraph breaks for readability
+            text = ensure_paragraph_breaks(text, item["type"])
+            if text_devanagari:
+                text_devanagari = ensure_paragraph_breaks(text_devanagari, item["type"])
 
             # Validate word count
             wc = count_words(text)

@@ -35,7 +35,15 @@ Rules for markers:
 - Always end with [SLEEPY] for the final paragraph
 - Use [DRAMATIC_PAUSE] before key reveals or plot twists
 - Vary markers naturally — do not repeat the same one consecutively
-- Place markers at the start of a new emotional beat, not on every sentence"""
+- Place markers at the start of a new emotional beat, not on every sentence
+
+PARAGRAPH FORMATTING (CRITICAL):
+- Split the story into short paragraphs of 2-4 sentences each
+- Separate every paragraph with a blank line (double newline)
+- NEVER write the entire story as one continuous block of text
+- Each paragraph should be a natural scene break, dialogue beat, or emotional shift
+- Aim for 4-8 paragraphs depending on story length
+- This is essential for readability on mobile screens"""
 
 POEM_SYSTEM_PROMPT = """You are a talented children's poet specializing in bedtime poetry.
 Create rhythmic, soothing poems that are perfect for relaxation and sleep.
@@ -56,7 +64,13 @@ Rules for markers:
 - Place [RHYTHMIC] at the start of every stanza
 - Place [PAUSE] between each stanza (after a blank line)
 - End the final stanza with [SLEEPY]
-- Vary the emotional markers across stanzas for natural flow"""
+- Vary the emotional markers across stanzas for natural flow
+
+STANZA FORMATTING (CRITICAL):
+- Separate each stanza with a blank line (double newline)
+- Each stanza should be 2-6 lines
+- NEVER write the entire poem as one continuous block of text
+- This is essential for readability on mobile screens"""
 
 SONG_SYSTEM_PROMPT = """You are a songwriter creating lullabies and calming songs for children.
 Write lyrics that are repetitive, rhythmic, and soothing - perfect for bedtime.

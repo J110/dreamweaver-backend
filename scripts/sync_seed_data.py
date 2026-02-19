@@ -166,8 +166,9 @@ def add_new_entries(seed_js: str, stories: list, lang_filter: str = "en") -> tup
 
     # Add English entries before the `],` that closes `en: [`
     if new_en:
-        # Find the closing of the en array: `  ],\n  hi: [`
-        en_close = re.search(r'(\n\s*\},?\s*\n\s*)\],\s*\n\s*hi:\s*\[', seed_js)
+        # Find the closing of the en array before `hi: [`
+        # Handles both `},],\n  hi: [` and `},\n  ],\n  hi: [` formats
+        en_close = re.search(r'(\},?\s*)\],?\s*\n\s*hi:\s*\[', seed_js)
         if en_close:
             insert_pos = en_close.start() + len(en_close.group(1))
             new_entries_js = ""
@@ -179,8 +180,8 @@ def add_new_entries(seed_js: str, stories: list, lang_filter: str = "en") -> tup
 
     # Add Hindi entries before the closing `],` of the hi array
     if new_hi:
-        # Find the closing of the hi array: last `],\n};` pattern
-        hi_close = re.search(r'(\n\s*\},?\s*\n\s*)\],\s*\n\};', seed_js)
+        # Find the closing of the hi array: handles `},],\n};` and `},\n  ],\n};`
+        hi_close = re.search(r'(\},?\s*)\],?\s*\n\};', seed_js)
         if hi_close:
             insert_pos = hi_close.start() + len(hi_close.group(1))
             new_entries_js = ""
