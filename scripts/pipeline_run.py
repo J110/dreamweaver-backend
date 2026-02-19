@@ -89,7 +89,7 @@ def save_state(state: dict):
     STATE_PATH.write_text(json.dumps(state, indent=2, default=str) + "\n")
 
 
-def run_command(cmd: list, label: str, timeout: int = 3600) -> tuple:
+def run_command(cmd: list, label: str, timeout: int = 3600, cwd: str = None) -> tuple:
     """Run a subprocess command, return (success, stdout, stderr, elapsed)."""
     logger.info("━━━ %s ━━━", label)
     logger.info("Command: %s", " ".join(cmd))
@@ -101,7 +101,7 @@ def run_command(cmd: list, label: str, timeout: int = 3600) -> tuple:
             capture_output=True,
             text=True,
             timeout=timeout,
-            cwd=str(BASE_DIR),
+            cwd=cwd or str(BASE_DIR),
         )
         elapsed = time.time() - start
 
@@ -462,36 +462,53 @@ def step_publish(args, state: dict) -> bool:
     date_str = datetime.now().strftime("%Y-%m-%d")
     commit_msg = f"pipeline: add {len(qa_passed)} new content items ({date_str})"
 
-    # Commit and push backend (triggers Render auto-deploy)
-    logger.info("  Committing backend changes...")
-    for cmd_str in [
-        "git add seed_output/content.json seed_output/content_expanded.json audio/",
-        f'git commit -m "{commit_msg}" --allow-empty',
-        "git push origin main",
-    ]:
-        cmd = cmd_str.split()
-        ok, _, stderr, _ = run_command(cmd, f"Backend: {cmd_str[:40]}...", timeout=60)
-        if not ok and "nothing to commit" not in str(stderr):
-            logger.warning("  Backend git command failed: %s", cmd_str)
+    backend_ok = False
+    frontend_ok = False
 
-    # If web dir exists and was synced, commit and push frontend (triggers Vercel auto-deploy)
+    # ── Commit and push backend (triggers Render auto-deploy) ──
+    logger.info("  Committing backend changes...")
+    backend_cmds = [
+        (["git", "add", "seed_output/content.json",
+          "seed_output/content_expanded.json", "audio/"], "Backend: git add"),
+        (["git", "commit", "-m", commit_msg, "--allow-empty"], "Backend: git commit"),
+        (["git", "push", "origin", "main"], "Backend: git push"),
+    ]
+    for cmd, label in backend_cmds:
+        ok, _, stderr, _ = run_command(cmd, label, timeout=60)
+        if not ok and "nothing to commit" not in str(stderr):
+            logger.warning("  %s failed", label)
+            break
+    else:
+        backend_ok = True
+
+    # ── Commit and push frontend (triggers Vercel auto-deploy) ──
     if WEB_DIR.exists() and state.get("step_sync") == "done":
         logger.info("  Committing frontend changes...")
-        for cmd_str in [
-            "git add src/utils/seedData.js public/audio/pre-gen/ public/covers/",
-            f'git commit -m "{commit_msg}" --allow-empty',
-            "git push origin main",
-        ]:
-            cmd = cmd_str.split()
-            ok, _, stderr, _ = run_command(
-                cmd, f"Frontend: {cmd_str[:40]}...", timeout=60
-            )
+        web_cwd = str(WEB_DIR)
+        frontend_cmds = [
+            (["git", "add", "src/utils/seedData.js",
+              "public/audio/pre-gen/", "public/covers/"], "Frontend: git add"),
+            (["git", "commit", "-m", commit_msg, "--allow-empty"], "Frontend: git commit"),
+            (["git", "push", "origin", "main"], "Frontend: git push"),
+        ]
+        for cmd, label in frontend_cmds:
+            ok, _, stderr, _ = run_command(cmd, label, timeout=60, cwd=web_cwd)
             if not ok and "nothing to commit" not in str(stderr):
-                logger.warning("  Frontend git command failed: %s", cmd_str)
+                logger.warning("  %s failed", label)
+                break
+        else:
+            frontend_ok = True
 
-    state["step_publish"] = "done"
+    if backend_ok or frontend_ok:
+        state["step_publish"] = "done"
+        state["publish_backend"] = "ok" if backend_ok else "failed"
+        state["publish_frontend"] = "ok" if frontend_ok else "failed"
+    else:
+        state["step_publish"] = "failed"
+        logger.error("  Both backend and frontend publish failed!")
+
     save_state(state)
-    return True
+    return backend_ok or frontend_ok
 
 
 # ═══════════════════════════════════════════════════════════════════════
