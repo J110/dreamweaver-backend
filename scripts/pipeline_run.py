@@ -242,6 +242,7 @@ def step_audio(args, state: dict) -> bool:
         return True
 
     # Generate audio for each new story
+    audio_total_seconds = 0
     for sid in new_ids:
         cmd = [
             sys.executable, str(SCRIPTS_DIR / "generate_audio.py"),
@@ -255,11 +256,13 @@ def step_audio(args, state: dict) -> bool:
         ok, stdout, stderr, elapsed = run_command(
             cmd, f"Audio: {sid[:8]}...", timeout=1200
         )
+        audio_total_seconds += elapsed
         if not ok:
             logger.error("  Audio generation failed for %s", sid)
             # Continue with other stories — don't abort entire pipeline
             state.setdefault("audio_failures", []).append(sid)
 
+    state["audio_elapsed_seconds"] = audio_total_seconds
     state["step_audio"] = "done"
     save_state(state)
     return True
@@ -462,6 +465,14 @@ def step_publish(args, state: dict) -> bool:
     date_str = datetime.now().strftime("%Y-%m-%d")
     commit_msg = f"pipeline: add {len(qa_passed)} new content items ({date_str})"
 
+    # Ensure git identity is configured (required for commit on server)
+    for repo_dir in [str(BASE_DIR), str(WEB_DIR)]:
+        if Path(repo_dir).exists():
+            subprocess.run(["git", "config", "user.email", "pipeline@dreamvalley.app"],
+                           cwd=repo_dir, capture_output=True)
+            subprocess.run(["git", "config", "user.name", "Dream Valley Pipeline"],
+                           cwd=repo_dir, capture_output=True)
+
     backend_ok = False
     frontend_ok = False
 
@@ -618,7 +629,7 @@ def postflight_checks(state: dict):
     cover_count = len(list(covers_dir.glob("*.svg"))) if covers_dir.exists() else 0
     logger.info("  Cover SVGs: %d", cover_count)
 
-    # ── Cost estimates ──────────────────────────────────────────────────
+    # ── Cost calculation ────────────────────────────────────────────────
     # GCP infrastructure (always-on, fixed monthly cost)
     #   e2-small instance (asia-south1): $14.69/mo
     #   30GB standard persistent disk:   $1.44/mo
@@ -626,30 +637,30 @@ def postflight_checks(state: dict):
     GCP_MONTHLY = 16.13
     gcp_daily = GCP_MONTHLY / 30.0  # ~$0.54/day
 
-    # Modal GPU (variable per run — 7 audio variants per item)
-    n_items = len(state.get("generated_ids", []))
-    n_variants = n_items * 7  # 7 voices per story
-    modal_cost = n_variants * 0.031  # ~$0.031 per variant (43.5 GPU-min / 14 variants × $0.01/min)
+    # Modal GPU cost — calculated from ACTUAL audio generation time
+    # Modal T4 GPU pricing: $0.000221/sec ($0.796/hr)
+    # Source: https://modal.com/pricing (T4 on-demand)
+    MODAL_T4_PER_SEC = 0.000221
+    audio_secs = state.get("audio_elapsed_seconds", 0)
+    modal_cost = audio_secs * MODAL_T4_PER_SEC
+    audio_mins = audio_secs / 60.0
 
     # Mistral, Resend, Vercel, Render = $0 (free tiers)
     total_run_cost = modal_cost + gcp_daily
 
-    # Build cost string for this run
-    parts = []
-    parts.append(f"Modal GPU: ${modal_cost:.2f} ({n_variants} audio variants)")
-    parts.append(f"GCP VM: ${gcp_daily:.2f}/day (${GCP_MONTHLY:.2f}/mo e2-small + 30GB disk)")
-    parts.append(f"Mistral/Resend/Render/Vercel: $0.00 (free tiers)")
-    cost_str = " | ".join(parts)
-
-    # Monthly projection
-    modal_monthly = modal_cost * 30  # assumes daily runs
-    total_monthly = GCP_MONTHLY + modal_monthly
-    monthly_str = f"~${total_monthly:.2f}/mo (GCP ${GCP_MONTHLY:.2f} + Modal ~${modal_monthly:.2f} from $30 free credits)"
-
-    state["cost_estimate"] = cost_str
-    state["cost_monthly"] = monthly_str
-    state["cost_this_run"] = f"~${total_run_cost:.2f}"
+    # Build cost breakdown for this run
+    state["cost_this_run"] = f"${total_run_cost:.2f}"
+    state["cost_modal"] = f"${modal_cost:.2f} ({audio_mins:.1f} GPU-min)"
+    state["cost_gcp_daily"] = f"${gcp_daily:.2f}"
     state["disk_info"] = f"Audio: {total_audio} files ({audio_gb:.2f} GB), Covers: {cover_count} SVGs"
+
+    # Monthly projection (estimated — uses this run's Modal cost × 30)
+    modal_monthly_est = modal_cost * 30
+    total_monthly_est = GCP_MONTHLY + modal_monthly_est
+    state["cost_monthly"] = (
+        f"~${total_monthly_est:.2f}/mo est. "
+        f"(GCP ${GCP_MONTHLY:.2f} + Modal ~${modal_monthly_est:.2f} from $30 free credits)"
+    )
 
     # Collect generated titles for email
     if CONTENT_PATH.exists():
@@ -661,8 +672,10 @@ def postflight_checks(state: dict):
         except Exception:
             pass
 
-    logger.info("  This run:  ~$%.2f (Modal $%.2f + GCP $%.2f/day)", total_run_cost, modal_cost, gcp_daily)
-    logger.info("  Monthly:   %s", monthly_str)
+    logger.info("  Modal GPU: ${:.2f} ({:.1f} min actual GPU time)".format(modal_cost, audio_mins))
+    logger.info("  GCP VM:    ${:.2f}/day (${:.2f}/mo)".format(gcp_daily, GCP_MONTHLY))
+    logger.info("  This run:  ${:.2f} total".format(total_run_cost))
+    logger.info("  Monthly:   %s", state["cost_monthly"])
     logger.info("  Disk:      %s", state["disk_info"])
 
 
@@ -685,7 +698,10 @@ def print_summary(state: dict, total_elapsed: float):
     logger.info("  Enriched:   %s", state.get("step_enrich", "not run"))
     logger.info("  Synced:     %s", state.get("step_sync", "not run"))
     logger.info("  Published:  %s", state.get("step_publish", "not run"))
-    logger.info("  Cost:       %s", state.get("cost_estimate", "unknown"))
+    logger.info("  Cost:       %s (Modal %s + GCP %s/day)",
+                state.get("cost_this_run", "?"),
+                state.get("cost_modal", "?"),
+                state.get("cost_gcp_daily", "?"))
     logger.info("  Total time: %.0f seconds (%.1f min)", total_elapsed, total_elapsed / 60)
     logger.info("  Log file:   %s", log_file)
     logger.info("=" * 50)

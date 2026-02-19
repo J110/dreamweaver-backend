@@ -64,6 +64,8 @@ def _build_html(state: dict, log_file: str = "", elapsed: float = 0) -> str:
     covers_fail = state.get("covers_failed", [])
     disk_info = state.get("disk_info", "")
     cost_this_run = state.get("cost_this_run", "")
+    cost_modal = state.get("cost_modal", "")
+    cost_gcp_daily = state.get("cost_gcp_daily", "")
     cost_monthly = state.get("cost_monthly", "")
 
     status_color = "#22c55e" if is_success else "#ef4444"
@@ -78,10 +80,14 @@ def _build_html(state: dict, log_file: str = "", elapsed: float = 0) -> str:
     <tr><td><b>Covers</b></td><td>{len(covers_ok)} generated, {len(covers_fail)} fallback</td></tr>
     <tr><td><b>Elapsed</b></td><td>{_fmt_duration(elapsed)}</td></tr>
     """
+    # Cost section — actual costs, not estimates
     if cost_this_run:
-        rows += f'<tr><td><b>This Run</b></td><td>{cost_this_run}</td></tr>'
+        rows += f'<tr><td colspan="2" style="padding-top:8px"><b>💰 Cost Breakdown</b></td></tr>'
+        rows += f'<tr><td>&nbsp;&nbsp;Modal GPU</td><td>{cost_modal}</td></tr>'
+        rows += f'<tr><td>&nbsp;&nbsp;GCP VM</td><td>{cost_gcp_daily}/day</td></tr>'
+        rows += f'<tr><td>&nbsp;&nbsp;<b>Total this run</b></td><td><b>{cost_this_run}</b></td></tr>'
     if cost_monthly:
-        rows += f'<tr><td><b>Monthly Est.</b></td><td>{cost_monthly}</td></tr>'
+        rows += f'<tr><td>&nbsp;&nbsp;Monthly proj.</td><td>{cost_monthly}</td></tr>'
     if disk_info:
         rows += f'<tr><td><b>Disk</b></td><td>{disk_info}</td></tr>'
     if failed_step:
@@ -185,8 +191,10 @@ if __name__ == "__main__":
             "qa_failed": [],
             "covers_generated": ["test-001"],
             "covers_failed": ["test-002"],
-            "cost_this_run": "~$0.97",
-            "cost_monthly": "~$29.13/mo (GCP $16.13 + Modal ~$13.00 from $30 free credits)",
+            "cost_this_run": "$1.07",
+            "cost_modal": "$0.53 (40.2 GPU-min)",
+            "cost_gcp_daily": "$0.54",
+            "cost_monthly": "~$32.03/mo est. (GCP $16.13 + Modal ~$15.90 from $30 free credits)",
             "disk_info": "Audio: 304 files (1.2 GB), Covers: 12 SVGs",
         }
         ok = send_pipeline_notification(test_state, "", 325.7)
