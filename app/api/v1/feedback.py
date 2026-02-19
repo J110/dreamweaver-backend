@@ -14,10 +14,14 @@ from app.utils.logger import get_logger
 logger = get_logger(__name__)
 router = APIRouter()
 
-RESEND_API_KEY = os.getenv("RESEND_API_KEY", "")
 RESEND_ENDPOINT = "https://api.resend.com/emails"
 FROM_EMAIL = "Dream Valley <onboarding@resend.dev>"
 TO_EMAIL = "anmol@turings.xyz"
+
+
+def _get_resend_key() -> str:
+    """Get Resend API key at call time (env may be loaded lazily)."""
+    return os.getenv("RESEND_API_KEY", "")
 
 
 # ── Request / Response Models ────────────────────────────────────────
@@ -141,7 +145,8 @@ async def submit_report(
         logger.warning(f"Failed to store report in Firestore: {e}")
 
     # Send email via Resend
-    if not RESEND_API_KEY:
+    resend_key = _get_resend_key()
+    if not resend_key:
         logger.warning("RESEND_API_KEY not set — skipping report email")
         return ReportResponse(success=True, message="Report submitted (email skipped)")
 
@@ -154,7 +159,7 @@ async def submit_report(
             resp = await client.post(
                 RESEND_ENDPOINT,
                 headers={
-                    "Authorization": f"Bearer {RESEND_API_KEY}",
+                    "Authorization": f"Bearer {resend_key}",
                     "Content-Type": "application/json",
                 },
                 json={
