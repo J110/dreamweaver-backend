@@ -5861,5 +5861,423 @@
         }
       ]
     }
+  },
+  {
+    "id": "gen-be475c98edb5",
+    "type": "poem",
+    "lang": "en",
+    "title": "Aria and the Starlight Cipher",
+    "description": "In a futuristic city where playgrounds float among the clouds, Aria discovers an ancient puzzle hidden in the glow of starlight—a mystery that holds the key to her forgotten passion.",
+    "text": "[RHYTHMIC]The city hums with neon light,\nA playground drifts in silver flight.\nAria walks where dreams unfold,\nBeneath the stars, a tale untold.\n[PAUSE]\n\n[GENTLE]The swings still sway though none are near,\nThe carousel hums soft and clear.\nA whisper rides the evening breeze,\nA riddle spun in twilight’s ease.\n[PAUSE]\n\n[CALM]\"Find the glow that does not fade,\nWhere footsteps dance in light’s parade.\nThree keys will turn the lock so tight,\nUnseen by day, revealed by night.\"\n[PAUSE]\n\n[RHYTHMIC]Aria kneels where fireflies gleam,\nTracing patterns in a dream.\nThe first key shines—a silver thread,\nWoven where the old paths led.\n[PAUSE]\n\n[JOYFUL]The second hums in laughter’s sound,\nA melody the merry-go-round\nPlays when no one’s there to hear,\nA song of joy, both bright and clear.\n[PAUSE]\n\n[WHISPERING]The third lies deep in shadows cast,\nBy slides that gleam from ages past.\nA handprint glows where none have been,\nA mark unseen by eyes unkeen.\n[PAUSE]\n\n[RHYTHMIC]She fits the keys, the lock gives way,\nA chest of light begins to play.\nInside, a brush of starlight hue,\nAnd paints that dance in colors new.\n[PAUSE]\n\n[CALM]Her fingers trace the vibrant art,\nA passion lost, now found at heart.\nThe playground sighs, the stars align,\nA mystery solved, a soul divine.\n[PAUSE]\n\n[SLEEPY]The city sleeps, the night grows deep,\nAria dreams where secrets keep.\nThe starlight fades, the dawn draws near,\nBut in her heart, the magic’s here.",
+    "annotated_text": "[RHYTHMIC]The city hums with neon light,\nA playground drifts in silver flight.\nAria walks where dreams unfold,\nBeneath the stars, a tale untold.\n[PAUSE]\n\n[GENTLE]The swings still sway though none are near,\nThe carousel hums soft and clear.\nA whisper rides the evening breeze,\nA riddle spun in twilight’s ease.\n[PAUSE]\n\n[CALM]\"Find the glow that does not fade,\nWhere footsteps dance in light’s parade.\nThree keys will turn the lock so tight,\nUnseen by day, revealed by night.\"\n[PAUSE]\n\n[RHYTHMIC]Aria kneels where fireflies gleam,\nTracing patterns in a dream.\nThe first key shines—a silver thread,\nWoven where the old paths led.\n[PAUSE]\n\n[JOYFUL]The second hums in laughter’s sound,\nA melody the merry-go-round\nPlays when no one’s there to hear,\nA song of joy, both bright and clear.\n[PAUSE]\n\n[WHISPERING]The third lies deep in shadows cast,\nBy slides that gleam from ages past.\nA handprint glows where none have been,\nA mark unseen by eyes unkeen.\n[PAUSE]\n\n[RHYTHMIC]She fits the keys, the lock gives way,\nA chest of light begins to play.\nInside, a brush of starlight hue,\nAnd paints that dance in colors new.\n[PAUSE]\n\n[CALM]Her fingers trace the vibrant art,\nA passion lost, now found at heart.\nThe playground sighs, the stars align,\nA mystery solved, a soul divine.\n[PAUSE]\n\n[SLEEPY]The city sleeps, the night grows deep,\nAria dreams where secrets keep.\nThe starlight fades, the dawn draws near,\nBut in her heart, the magic’s here.",
+    "target_age": 13,
+    "age_min": 12,
+    "age_max": 18,
+    "age_group": "12+",
+    "length": "LONG",
+    "word_count": 229,
+    "duration_seconds": 0,
+    "categories": [
+      "Mystery",
+      "Science Fiction",
+      "Self-Discovery"
+    ],
+    "theme": "mystery",
+    "morals": [
+      "Curiosity and patience unlock hidden wonders.",
+      "Passions forgotten can still guide us home."
+    ],
+    "cover": "/covers/aria-and-the-starlight-cipher.svg",
+    "musicProfile": "moonlit-meadow",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-be47_female_2.mp3",
+        "duration_seconds": 136.24,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-be47_female_3.mp3",
+        "duration_seconds": 126.95,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-be47_female_1.mp3",
+        "duration_seconds": 160.8,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_1",
+        "url": "/audio/pre-gen/gen-be47_male_1.mp3",
+        "duration_seconds": 119.08,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_3",
+        "url": "/audio/pre-gen/gen-be47_male_3.mp3",
+        "duration_seconds": 124.86,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-be47_male_2.mp3",
+        "duration_seconds": 128.83,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-be47_asmr.mp3",
+        "duration_seconds": 134.22,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "female",
+    "lead_character_type": "human",
+    "universe": "futuristic",
+    "geography": "Americas",
+    "life_aspect": "hobbies_passions",
+    "plot_archetype": "discovery",
+    "created_at": "2026-02-19T01:31:03.104828",
+    "updated_at": "2026-02-19T01:31:03.104828",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "musicParams": {
+      "key": "A",
+      "chordNotes": [
+        110.0,
+        138.59,
+        164.81,
+        220.0
+      ],
+      "padType": "fm",
+      "padGain": 0.0451,
+      "padFilter": 1041,
+      "padLfo": 0.0928,
+      "noiseType": "pink",
+      "noiseGain": 0.0122,
+      "droneFreq": 55.0,
+      "droneGain": 0.0368,
+      "melodyNotes": [
+        220.0,
+        277.18,
+        329.62,
+        293.66
+      ],
+      "melodyInterval": 4369,
+      "melodyGain": 0.0177,
+      "bassNotes": [
+        55.0,
+        82.41,
+        69.3
+      ],
+      "bassInterval": 6929,
+      "counterNotes": [
+        346.48,
+        412.02,
+        275.0
+      ],
+      "counterInterval": 4778,
+      "events": [
+        {
+          "type": "sparkle",
+          "interval": 8886
+        },
+        {
+          "type": "windGust",
+          "interval": 12932
+        },
+        {
+          "type": "cricket",
+          "interval": 16162
+        },
+        {
+          "type": "starTwinkle",
+          "interval": 24420
+        }
+      ]
+    }
+  },
+  {
+    "id": "gen-f9e33d4db1bd",
+    "type": "story",
+    "lang": "en",
+    "title": "Tiko's Arctic Lullaby",
+    "description": "A little boy named Tiko discovers the gentle magic of the Arctic night as his family winds down for sleep under the shimmering stars.",
+    "text": "[GENTLE] Hush, little Tiko, hush now, hush. [CALM] Moon glows soft on snowy brush. [SLEEPY] Mama hums, a gentle tune, [CALM] Papa’s breath like warm lagoon. [GENTLE] Shh, shh, the wind sings low, [CALM] Whispering secrets in the snow. [SLEEPY] Stars above begin to blink, [CALM] Twinkle, twinkle, soft and pink. [GENTLE] Tiko yawns, so big, so wide, [CALM] Blanket wraps him, safe inside. [SLEEPY] Dream now, little one, so sweet, [CALM] Arctic night will guard your feet. [GENTLE] Hush, hush, the world is still, [SLEEPY] Sleep, my Tiko, sleep until...",
+    "annotated_text": "[GENTLE] Hush, little Tiko, hush now, hush. [CALM] Moon glows soft on snowy brush. [SLEEPY] Mama hums, a gentle tune, [CALM] Papa’s breath like warm lagoon. [GENTLE] Shh, shh, the wind sings low, [CALM] Whispering secrets in the snow. [SLEEPY] Stars above begin to blink, [CALM] Twinkle, twinkle, soft and pink. [GENTLE] Tiko yawns, so big, so wide, [CALM] Blanket wraps him, safe inside. [SLEEPY] Dream now, little one, so sweet, [CALM] Arctic night will guard your feet. [GENTLE] Hush, hush, the world is still, [SLEEPY] Sleep, my Tiko, sleep until...",
+    "target_age": 0,
+    "age_min": 0,
+    "age_max": 1,
+    "age_group": "0-1",
+    "length": "MEDIUM",
+    "word_count": 77,
+    "duration_seconds": 0,
+    "categories": [
+      "Bedtime",
+      "Family",
+      "Nature"
+    ],
+    "theme": "bedtime",
+    "morals": [
+      "The world is full of gentle wonders that lull us to sleep.",
+      "Family and warmth make the darkest nights feel safe."
+    ],
+    "cover": "/covers/tikos-arctic-lullaby.svg",
+    "musicProfile": "starlight-lullaby",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-f9e3_female_3.mp3",
+        "duration_seconds": 45.43,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-f9e3_female_1.mp3",
+        "duration_seconds": 59.97,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-f9e3_female_2.mp3",
+        "duration_seconds": 54.15,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_1",
+        "url": "/audio/pre-gen/gen-f9e3_male_1.mp3",
+        "duration_seconds": 43.07,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-f9e3_male_2.mp3",
+        "duration_seconds": 45.0,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_3",
+        "url": "/audio/pre-gen/gen-f9e3_male_3.mp3",
+        "duration_seconds": 42.43,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-f9e3_asmr.mp3",
+        "duration_seconds": 53.97,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "male",
+    "lead_character_type": "human",
+    "universe": "prehistoric",
+    "geography": "Arctic/Polar",
+    "life_aspect": "family_home",
+    "plot_archetype": "discovery",
+    "created_at": "2026-02-19T01:30:17.164921",
+    "updated_at": "2026-02-19T01:30:17.164921",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "musicParams": {
+      "key": "A",
+      "chordNotes": [
+        110.0,
+        138.59,
+        164.81,
+        220.0
+      ],
+      "padType": "simple",
+      "padGain": 0.0406,
+      "padFilter": 473,
+      "padLfo": 0.0515,
+      "noiseType": "pink",
+      "noiseGain": 0.0122,
+      "droneFreq": 55.0,
+      "droneGain": 0.0368,
+      "melodyNotes": [
+        220.0,
+        277.18,
+        329.62,
+        293.66
+      ],
+      "melodyInterval": 5201,
+      "melodyGain": 0.0177,
+      "bassNotes": [
+        55.0,
+        82.41,
+        69.3
+      ],
+      "bassInterval": 7919,
+      "counterNotes": [
+        346.48,
+        412.02,
+        275.0
+      ],
+      "counterInterval": 5734,
+      "events": [
+        {
+          "type": "heartbeat",
+          "interval": 6665
+        },
+        {
+          "type": "chimes",
+          "interval": 12932
+        },
+        {
+          "type": "starTwinkle",
+          "interval": 17958
+        }
+      ]
+    }
+  },
+  {
+    "id": "gen-292e9eadf56e",
+    "type": "story",
+    "lang": "en",
+    "title": "Pebble and the Whispering Willow",
+    "description": "A gentle tortoise named Pebble embarks on a magical journey to find the legendary Whispering Willow, learning the true meaning of friendship along the way.",
+    "text": "[GENTLE] Under the golden sun of the Riverbank Kingdom, a little tortoise named Pebble stretched his neck and sighed. [CALM] The warm breeze carried the scent of wildflowers and the soft murmur of the river, but something felt missing. [CURIOUS] 'What’s beyond the reeds?' he wondered aloud. [WHISPERING] Just then, an old heron named Horace landed beside him. 'Ah, young Pebble,' he said with a knowing smile. 'The Whispering Willow seeks a friend. Perhaps that’s you.' [EXCITED] Pebble’s heart fluttered. 'A real adventure?' [laugh] 'Indeed!' chuckled Horace. 'But you’ll need help. The path is full of wonders—and a few puzzles.' [ADVENTUROUS] And so, Pebble set off, his shell glinting in the sunlight as he waddled toward the unknown. [DRAMATIC_PAUSE] --- Little did he know, his greatest discovery wouldn’t be the willow, but the friends he’d meet along the way. [MYSTERIOUS] The first challenge appeared as a shimmering bridge made of fireflies. 'Only those who share kindness may cross,' hummed the fireflies. [DRAMATIC] Pebble hesitated, then turned to a shy rabbit hiding in the bushes. 'May I help you?' he asked. [JOYFUL] The rabbit, named Thistle, beamed. 'Together, we can cross!' Hand in paw (or claw), they stepped forward—and the fireflies parted like a curtain of stars. [CALM] Next, they met a chatty squirrel named Pip, who was stuck in a tree. 'I lost my acorn collection!' he fretted. [ADVENTUROUS] Pebble and Thistle searched the undergrowth until—[EXCITED] 'Found them!' cried Thistle. Pip’s eyes sparkled. 'You’re the best friends ever!' [GENTLE] As the sun dipped low, the trio reached a clearing where the Whispering Willow stood, its leaves rustling secrets. [WHISPERING] 'We did it,' breathed Pebble. But the willow’s voice was softer than expected. 'The real magic was your kindness,' it murmured. 'Friendship is the greatest adventure of all.' [SLEEPY] With hearts full and shells warm, Pebble, Thistle, and Pip curled up under the willow’s branches, dreaming of tomorrow’s journeys—and the friends who made them possible.",
+    "annotated_text": "[GENTLE] Under the golden sun of the Riverbank Kingdom, a little tortoise named Pebble stretched his neck and sighed. [CALM] The warm breeze carried the scent of wildflowers and the soft murmur of the river, but something felt missing. [CURIOUS] 'What’s beyond the reeds?' he wondered aloud. [WHISPERING] Just then, an old heron named Horace landed beside him. 'Ah, young Pebble,' he said with a knowing smile. 'The Whispering Willow seeks a friend. Perhaps that’s you.' [EXCITED] Pebble’s heart fluttered. 'A real adventure?' [laugh] 'Indeed!' chuckled Horace. 'But you’ll need help. The path is full of wonders—and a few puzzles.' [ADVENTUROUS] And so, Pebble set off, his shell glinting in the sunlight as he waddled toward the unknown. [DRAMATIC_PAUSE] --- Little did he know, his greatest discovery wouldn’t be the willow, but the friends he’d meet along the way. [MYSTERIOUS] The first challenge appeared as a shimmering bridge made of fireflies. 'Only those who share kindness may cross,' hummed the fireflies. [DRAMATIC] Pebble hesitated, then turned to a shy rabbit hiding in the bushes. 'May I help you?' he asked. [JOYFUL] The rabbit, named Thistle, beamed. 'Together, we can cross!' Hand in paw (or claw), they stepped forward—and the fireflies parted like a curtain of stars. [CALM] Next, they met a chatty squirrel named Pip, who was stuck in a tree. 'I lost my acorn collection!' he fretted. [ADVENTUROUS] Pebble and Thistle searched the undergrowth until—[EXCITED] 'Found them!' cried Thistle. Pip’s eyes sparkled. 'You’re the best friends ever!' [GENTLE] As the sun dipped low, the trio reached a clearing where the Whispering Willow stood, its leaves rustling secrets. [WHISPERING] 'We did it,' breathed Pebble. But the willow’s voice was softer than expected. 'The real magic was your kindness,' it murmured. 'Friendship is the greatest adventure of all.' [SLEEPY] With hearts full and shells warm, Pebble, Thistle, and Pip curled up under the willow’s branches, dreaming of tomorrow’s journeys—and the friends who made them possible.",
+    "target_age": 7,
+    "age_min": 6,
+    "age_max": 8,
+    "age_group": "6-8",
+    "length": "SHORT",
+    "word_count": 308,
+    "duration_seconds": 0,
+    "categories": [
+      "Fantasy",
+      "Adventure",
+      "Friendship"
+    ],
+    "theme": "adventure",
+    "morals": [
+      "Friendship grows when we help others without expecting anything in return.",
+      "The journey is just as important as the destination, especially when shared with friends."
+    ],
+    "cover": "/covers/pebble-and-the-whispering-willow.svg",
+    "musicProfile": "enchanted-garden",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-292e_female_3.mp3",
+        "duration_seconds": 142.8,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-292e_female_2.mp3",
+        "duration_seconds": 157.94,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-292e_female_1.mp3",
+        "duration_seconds": 180.72,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_1",
+        "url": "/audio/pre-gen/gen-292e_male_1.mp3",
+        "duration_seconds": 138.7,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-292e_male_2.mp3",
+        "duration_seconds": 137.22,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_3",
+        "url": "/audio/pre-gen/gen-292e_male_3.mp3",
+        "duration_seconds": 141.96,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-292e_asmr.mp3",
+        "duration_seconds": 167.26,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "male",
+    "lead_character_type": "animal",
+    "universe": "fantasy_realm",
+    "geography": "Europe",
+    "life_aspect": "friendship",
+    "plot_archetype": "friendship_bonding",
+    "created_at": "2026-02-19T02:26:25.330046",
+    "updated_at": "2026-02-19T02:26:25.330046",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "musicParams": {
+      "key": "A",
+      "chordNotes": [
+        110.0,
+        138.59,
+        164.81,
+        220.0
+      ],
+      "padType": "fm",
+      "padGain": 0.0469,
+      "padFilter": 899,
+      "padLfo": 0.0824,
+      "noiseType": "brown",
+      "noiseGain": 0.0122,
+      "droneFreq": 55.0,
+      "droneGain": 0.0368,
+      "melodyNotes": [
+        220.0,
+        277.18,
+        329.62,
+        293.66
+      ],
+      "melodyInterval": 3329,
+      "melodyGain": 0.0177,
+      "bassNotes": [
+        55.0,
+        82.41,
+        69.3
+      ],
+      "bassInterval": 6434,
+      "counterNotes": [
+        346.48,
+        412.02,
+        275.0
+      ],
+      "counterInterval": 4587,
+      "events": [
+        {
+          "type": "windGust",
+          "interval": 13329
+        },
+        {
+          "type": "leaves",
+          "interval": 8621
+        },
+        {
+          "type": "birdChirp",
+          "interval": 13468
+        }
+      ]
+    }
   }
 ]
