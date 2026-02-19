@@ -302,18 +302,27 @@ async def get_user_likes(
     """
     try:
         user_id = current_user["uid"]
-        
+
         # Get all like interactions for user
         interactions = db_client.collection("interactions").where("user_id", "==", user_id).where("type", "==", "like").get()
-        
+
         liked_ids = [interaction.to_dict().get("content_id") for interaction in interactions]
-        
+
+        # Fetch full content objects for each liked ID
+        items = []
+        for cid in liked_ids:
+            content_doc = db_client.collection("content").document(cid).get()
+            if content_doc.exists:
+                content_data = content_doc.to_dict()
+                content_data["is_liked"] = True
+                items.append(content_data)
+
         return InteractionResponse(
             success=True,
-            data={"liked_content_ids": liked_ids, "total": len(liked_ids)},
+            data={"items": items, "liked_content_ids": liked_ids, "total": len(items)},
             message="User likes retrieved successfully"
         )
-        
+
     except Exception as e:
         logger.error(f"Error getting user likes: {str(e)}")
         raise HTTPException(
@@ -339,18 +348,27 @@ async def get_user_saves(
     """
     try:
         user_id = current_user["uid"]
-        
+
         # Get all save interactions for user
         interactions = db_client.collection("interactions").where("user_id", "==", user_id).where("type", "==", "save").get()
-        
+
         saved_ids = [interaction.to_dict().get("content_id") for interaction in interactions]
-        
+
+        # Fetch full content objects for each saved ID
+        items = []
+        for cid in saved_ids:
+            content_doc = db_client.collection("content").document(cid).get()
+            if content_doc.exists:
+                content_data = content_doc.to_dict()
+                content_data["is_saved"] = True
+                items.append(content_data)
+
         return InteractionResponse(
             success=True,
-            data={"saved_content_ids": saved_ids, "total": len(saved_ids)},
+            data={"items": items, "saved_content_ids": saved_ids, "total": len(items)},
             message="User saves retrieved successfully"
         )
-        
+
     except Exception as e:
         logger.error(f"Error getting user saves: {str(e)}")
         raise HTTPException(

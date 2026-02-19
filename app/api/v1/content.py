@@ -164,7 +164,16 @@ async def get_content(
         
         # Update local copy
         content_data["view_count"] = current_views + 1
-        
+
+        # Add user interaction status if authenticated
+        if current_user:
+            user_id = current_user["uid"]
+            save_id = f"{user_id}_{content_id}_save"
+            save_doc = db_client.collection("interactions").document(save_id).get()
+            content_data["is_saved"] = save_doc.exists
+        else:
+            content_data["is_saved"] = False
+
         return ContentResponse(
             success=True,
             data=content_data,
