@@ -11,6 +11,7 @@ from .subscriptions import router as subscriptions_router
 from .search import router as search_router
 from .generation import router as generation_router
 from .audio import router as audio_router
+from .feedback import router as feedback_router
 
 # Main v1 router
 router = APIRouter(prefix="/api/v1")
@@ -25,5 +26,6 @@ router.include_router(subscriptions_router, prefix="/subscriptions", tags=["Subs
 router.include_router(search_router, prefix="/search", tags=["Search"])
 router.include_router(generation_router, prefix="/generate", tags=["Generation"])
 router.include_router(audio_router, prefix="/audio", tags=["Audio"])
+router.include_router(feedback_router, prefix="/feedback", tags=["Feedback"])
 
 __all__ = ["router"]
