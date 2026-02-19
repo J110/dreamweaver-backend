@@ -221,7 +221,8 @@ The pipeline sends an email notification via Resend API **on every run** — bot
 | Audio QA | X passed, Y failed |
 | Covers | X generated, Y fallback (default.svg) |
 | Elapsed | Total pipeline run time |
-| Est. Cost | Modal GPU cost estimate for this run |
+| Cost Breakdown | Modal GPU (actual from elapsed time), GCP VM daily, total this run |
+| Monthly Projection | Extrapolated from actual run cost × 30 |
 | Disk | Total audio files + cover count |
 | New Content | List of generated story/poem titles |
 | Log tail (failure only) | Last 20 lines of the pipeline log |
@@ -366,7 +367,10 @@ cat /opt/dreamweaver-backend/seed_output/pipeline_state.json
 | Modal endpoint cold start | Preflight warms it up. First call still takes ~60s. |
 | Modal credits exhausted | Check https://modal.com/billing. $30/mo free. |
 | Audio QA fails | Check fidelity scores in logs. May need to regenerate audio. |
-| Git push fails | Check SSH keys / GitHub token. Run `git push` manually. |
+| Git push fails (auth) | Check SSH keys / GitHub token. Run `git push` manually. |
+| Git push fails (identity) | Run `git config user.email 'pipeline@dreamvalley.app'` and `git config user.name 'Dream Valley Pipeline'` in both repo dirs. Pipeline auto-configures this since 2026-02-19. |
+| Publish runs from wrong directory | Frontend git commands must use `cwd=WEB_DIR`. Fixed in `step_publish()` on 2026-02-19 — no longer uses string splitting. |
+| Story text is one big block (no paragraphs) | LLM sometimes generates text without newlines. Fixed: (1) prompts now mandate paragraph breaks, (2) `ensure_paragraph_breaks()` post-processor auto-fixes. |
 | `content.json` corrupt | Restore from git: `git checkout -- seed_output/content.json` |
 | Audio not playing on deployed app | Audio files must be in BOTH repos. Pipeline auto-copies during sync. If missing: `cp backend/audio/pre-gen/XXXX*.mp3 web/public/audio/pre-gen/` |
 | New story has no cover image | Cover generation may have failed — check logs. Run manually: `python3 scripts/generate_cover_svg.py --id STORY_ID` |

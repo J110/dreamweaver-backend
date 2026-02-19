@@ -19,6 +19,10 @@
 11. [Production Deploy Static Assets Missing](#11-production-deploy-static-assets-missing)
 12. [Modal Endpoint Cold Start Timeout](#12-modal-endpoint-cold-start-timeout)
 13. [New Story Not Appearing First / Missing NEW Tag](#13-new-story-not-appearing-first--missing-new-tag)
+14. [Publish Step Fails Silently](#14-publish-step-fails-silently)
+15. [Git Identity Not Configured on Server](#15-git-identity-not-configured-on-server)
+16. [Story Text Rendered as One Big Block](#16-story-text-rendered-as-one-big-block)
+17. [Cost Email Shows Estimated Instead of Actual Cost](#17-cost-email-shows-estimated-instead-of-actual-cost)
 
 ---
 
@@ -330,4 +334,105 @@ python3 -c "from mistralai import Mistral; import os; c=Mistral(api_key=os.envir
 
 ---
 
-*Last updated: 2026-02-18. Add new issues as they're discovered.*
+---
+
+## 14. Publish Step Fails Silently
+
+**Symptom**: Pipeline completes all content steps, email says success, but no new content appears on test app (Vercel/Render). Pipeline state shows `step_publish: done` but git repos have no new commits.
+
+**Root Cause** (3 bugs fixed 2026-02-19):
+1. **`cmd_str.split()` broke quoted commit messages** — `"pipeline: add 2 new content items (2026-02-19)"` was split at every space, so git saw `"pipeline:` as the message and `add`, `2`, `new` as pathspecs.
+2. **Frontend git commands ran from backend directory** — `run_command()` hardcoded `cwd=BASE_DIR` (backend). Frontend needs `cwd=WEB_DIR`.
+3. **Step marked "done" even when git commands failed** — The loop logged warnings but never returned `False`.
+
+**Fix**: All 3 bugs are fixed in `pipeline_run.py` as of 2026-02-19:
+- Git commands now use **list-based args** (never string splitting): `["git", "commit", "-m", commit_msg]`
+- `run_command()` accepts optional `cwd` parameter
+- `step_publish()` tracks `backend_ok`/`frontend_ok` and only marks done if at least one succeeds
+
+**Manual recovery** (if publish already failed):
+```bash
+# On GCP server, push manually:
+cd /opt/dreamweaver-backend
+git add seed_output/ audio/ && git commit -m "pipeline: add N items" && git push origin main
+
+cd /opt/dreamweaver-web
+git add src/utils/seedData.js public/audio/ public/covers/ && git commit -m "pipeline: add N items" && git push origin main
+```
+
+---
+
+## 15. Git Identity Not Configured on Server
+
+**Symptom**: Publish step fails with `fatal: empty ident name (for <user@hostname>) not allowed`.
+
+**Root Cause**: Git on the GCP server has no `user.email` or `user.name` configured. Git refuses to create commits without identity.
+
+**Fix**: The pipeline now auto-configures git identity before each publish:
+```python
+subprocess.run(["git", "config", "user.email", "pipeline@dreamvalley.app"], cwd=repo_dir)
+subprocess.run(["git", "config", "user.name", "Dream Valley Pipeline"], cwd=repo_dir)
+```
+
+**Manual fix** (if needed):
+```bash
+cd /opt/dreamweaver-backend
+git config user.email "pipeline@dreamvalley.app"
+git config user.name "Dream Valley Pipeline"
+
+cd /opt/dreamweaver-web
+git config user.email "pipeline@dreamvalley.app"
+git config user.name "Dream Valley Pipeline"
+```
+
+---
+
+## 16. Story Text Rendered as One Big Block
+
+**Symptom**: A story's text appears as one continuous wall of text on the app with no paragraph breaks. Hard to read, especially for longer stories.
+
+**Root Cause**: The LLM (Mistral) sometimes generates story text with all sentences on a single line, with no `\n\n` paragraph separators. The frontend uses `white-space: pre-line` CSS, which preserves newlines but cannot create breaks that don't exist in the source text.
+
+**Fix** (applied 2026-02-19):
+1. **System prompts updated** — `STORY_SYSTEM_PROMPT` and `POEM_SYSTEM_PROMPT` in `app/services/ai/prompts.py` now include explicit `PARAGRAPH FORMATTING (CRITICAL)` instructions requiring 2-4 sentences per paragraph with blank lines between them.
+2. **Post-processor added** — `ensure_paragraph_breaks()` in `generate_content_matrix.py` auto-fixes text that lacks paragraph breaks by inserting them at emotion marker boundaries or every 2-3 sentences.
+3. **FORMAT_JSON updated** — The JSON schema hint now specifies `\\n\\n` between paragraphs.
+
+**Manual fix for existing stories**:
+```bash
+# Re-run with the fixed prompt (generates new text):
+python3 scripts/generate_content_matrix.py --api mistral --count-stories 1
+
+# Or manually edit content.json to add \n\n between paragraphs,
+# then re-sync: python3 scripts/sync_seed_data.py
+```
+
+**Verify**:
+```bash
+# Check if a story has paragraph breaks
+python3 -c "
+import json
+data = json.load(open('seed_output/content.json'))
+for s in data[-3:]:
+    breaks = s['text'].count('\n\n')
+    print(f'{s[\"title\"][:40]:40s} paragraphs: {breaks+1}')
+"
+```
+
+---
+
+## 17. Cost Email Shows Estimated Instead of Actual Cost
+
+**Symptom**: Pipeline email always shows "$0.43" for Modal cost regardless of actual GPU usage.
+
+**Root Cause**: Cost was hardcoded as `$0.031 × number_of_variants`. Actual Modal T4 GPU time varies significantly.
+
+**Fix** (applied 2026-02-19):
+- `step_audio()` now tracks total `audio_elapsed_seconds`
+- `postflight_checks()` calculates actual cost: `elapsed_seconds × $0.000221/sec` (Modal T4 rate)
+- Email shows: `Modal GPU: $X.XX (Y.Y GPU-min)`, `GCP VM: $0.54/day`, `Total: $X.XX`
+- Monthly projection uses actual run cost × 30 (not hardcoded estimate)
+
+---
+
+*Last updated: 2026-02-19. Add new issues as they're discovered.*
