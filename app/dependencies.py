@@ -160,10 +160,11 @@ def local_login(username: str, password: str) -> Optional[dict]:
         if user.get("username") != username:
             continue
         stored_pw = user.get("password", "")
-        # Support both hashed (new) and plaintext (legacy) passwords
-        if stored_pw == pw_hash or stored_pw == password:
-            # Upgrade plaintext password to hash if needed
-            if stored_pw == password and stored_pw != pw_hash:
+
+        # Match: hashed pw, plaintext pw, OR no stored password (pre-fix user)
+        if stored_pw == pw_hash or stored_pw == password or not stored_pw:
+            # Persist/upgrade password hash for this user
+            if stored_pw != pw_hash:
                 user["password"] = pw_hash
                 try:
                     from app.services.local_store import get_local_store
