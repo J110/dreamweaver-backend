@@ -58,7 +58,16 @@ def _build_new_entry_js(story: dict) -> str:
     desc = story.get("description", "")
     text = story.get("text", "")
     target_age = story.get("target_age", 5)
-    duration = story.get("duration", 5)
+    duration = story.get("duration")
+    if not duration:
+        # Compute from audio_variants average
+        avs = story.get("audio_variants", [])
+        durs = [v.get("duration_seconds") for v in avs if v.get("duration_seconds")]
+        if durs:
+            import math
+            duration = max(1, math.ceil(sum(durs) / len(durs) / 60))
+        else:
+            duration = 5  # fallback default
     categories = story.get("categories", [])
     theme = story.get("theme", "fantasy")
     music_params = story.get("musicParams", {})
@@ -98,19 +107,22 @@ def _build_new_entry_js(story: dict) -> str:
 
 
 def update_existing(seed_js: str, stories: list) -> tuple:
-    """Update audio_variants for stories that already exist in seedData.js.
+    """Update audio_variants and duration for stories that already exist in seedData.js.
     Returns (updated_seed_js, update_count).
     """
     title_map = {}
     for story in stories:
         title = story["title"]
         variants = story.get("audio_variants", [])
+        duration = story.get("duration")
         if variants:
-            title_map[title] = variants
+            title_map[title] = {"variants": variants, "duration": duration}
 
     replacements = 0
 
-    for title, variants in title_map.items():
+    for title, info in title_map.items():
+        variants = info["variants"]
+        duration = info["duration"]
         if not variants:
             continue
 
@@ -130,6 +142,19 @@ def update_existing(seed_js: str, stories: list) -> tuple:
             seed_js = seed_js.replace(old_full, new_full)
             replacements += 1
             print(f"  Updated: {title} ({len(variants)} variants)")
+
+        # Also update duration if available
+        if duration is not None:
+            dur_pattern = (
+                r'(title:\s*"' + escaped_title + r'".*?)'
+                r'duration:\s*\d+,'
+            )
+            dur_match = re.search(dur_pattern, seed_js, re.DOTALL)
+            if dur_match:
+                old_dur = dur_match.group(0)
+                dur_prefix = dur_match.group(1)
+                new_dur = dur_prefix + f"duration: {duration},"
+                seed_js = seed_js.replace(old_dur, new_dur)
 
     return seed_js, replacements
 

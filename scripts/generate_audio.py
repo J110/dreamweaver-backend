@@ -18,6 +18,7 @@ import argparse
 import fcntl
 import io
 import json
+import math
 import logging
 import os
 import re
@@ -514,6 +515,10 @@ def main():
                             else:
                                 existing_variants.append(nv)
                         story["audio_variants"] = existing_variants
+                        # Auto-compute duration (minutes) from average audio length
+                        durs = [v.get("duration_seconds") for v in existing_variants if v.get("duration_seconds")]
+                        if durs:
+                            story["duration"] = max(1, math.ceil(sum(durs) / len(durs) / 60))
                         updated += 1
 
                 with open(CONTENT_PATH, "w", encoding="utf-8") as f:

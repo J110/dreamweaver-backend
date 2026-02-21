@@ -131,7 +131,8 @@
           "interval": 20827
         }
       ]
-    }
+    },
+    "duration": 2
   },
   {
     "id": "8e516449-aa48-423e-8b53-db5591ce9bed",
@@ -266,7 +267,8 @@
           "interval": 8725
         }
       ]
-    }
+    },
+    "duration": 2
   },
   {
     "id": "30dec3e8-5354-41ff-aadf-90def8a35df4",
@@ -400,7 +402,8 @@
           "interval": 18926
         }
       ]
-    }
+    },
+    "duration": 2
   },
   {
     "id": "d73e9530-b77e-4372-9ad1-070f0fa108e3",
@@ -534,7 +537,8 @@
           "interval": 15657
         }
       ]
-    }
+    },
+    "duration": 2
   },
   {
     "id": "9fba7605-7ffa-488d-93bc-9cca2881cf97",
@@ -668,7 +672,8 @@
           "interval": 18882
         }
       ]
-    }
+    },
+    "duration": 3
   },
   {
     "id": "c8796852-6d17-46e0-bcea-7985c4721d1c",
@@ -797,7 +802,8 @@
           "interval": 14037
         }
       ]
-    }
+    },
+    "duration": 1
   },
   {
     "id": "e32eaee0-2c7a-4f65-ace6-1d3a2d3ad5b0",
@@ -930,7 +936,8 @@
           "interval": 21647
         }
       ]
-    }
+    },
+    "duration": 1
   },
   {
     "id": "a3945b7b-6b20-4a39-a051-b25dfaec1d8e",
@@ -1064,7 +1071,8 @@
           "interval": 18167
         }
       ]
-    }
+    },
+    "duration": 1
   },
   {
     "id": "hi-neendwala-badal",
@@ -1199,7 +1207,8 @@
           "interval": 22015
         }
       ]
-    }
+    },
+    "duration": 2
   },
   {
     "id": "hi-bahadur-jugnu",
@@ -1335,7 +1344,8 @@
           "interval": 18733
         }
       ]
-    }
+    },
+    "duration": 2
   },
   {
     "id": "hi-chaand-ki-lori",
@@ -1470,7 +1480,8 @@
           "interval": 21752
         }
       ]
-    }
+    },
+    "duration": 1
   },
   {
     "id": "hi-captain-sitaara",
@@ -1604,7 +1615,8 @@
           "interval": 10671
         }
       ]
-    }
+    },
+    "duration": 2
   },
   {
     "id": "hi-gungunata-baag",
@@ -1739,7 +1751,8 @@
           "interval": 20579
         }
       ]
-    }
+    },
+    "duration": 1
   },
   {
     "id": "hi-chamakta-sapna",
@@ -1869,7 +1882,8 @@
           "interval": 19446
         }
       ]
-    }
+    },
+    "duration": 1
   },
   {
     "id": "hi-ullu-ki-shubhraatri",
@@ -2003,7 +2017,8 @@
           "interval": 24458
         }
       ]
-    }
+    },
+    "duration": 1
   },
   {
     "id": "hi-sapnon-ki-naav",
@@ -2138,7 +2153,8 @@
           "interval": 12656
         }
       ]
-    }
+    },
+    "duration": 1
   },
   {
     "id": "gen-6e675d15e1f5",
@@ -2273,7 +2289,8 @@
           "interval": 8629
         }
       ]
-    }
+    },
+    "duration": 1
   },
   {
     "id": "gen-3de58fd2aa2d",
@@ -2408,7 +2425,8 @@
           "interval": 22072
         }
       ]
-    }
+    },
+    "duration": 1
   },
   {
     "id": "gen-4f3ff03979dc",
@@ -2544,7 +2562,8 @@
           "interval": 16543
         }
       ]
-    }
+    },
+    "duration": 1
   },
   {
     "id": "gen-a67cde9762b6",
@@ -2679,7 +2698,8 @@
           "interval": 18442
         }
       ]
-    }
+    },
+    "duration": 1
   },
   {
     "id": "gen-a8a2146a4f36",
@@ -2820,7 +2840,8 @@
           "interval": 27341
         }
       ]
-    }
+    },
+    "duration": 2
   },
   {
     "id": "gen-9e44d4374d44",
@@ -2956,7 +2977,8 @@
           "interval": 10918
         }
       ]
-    }
+    },
+    "duration": 3
   },
   {
     "id": "gen-b8847383ab32",
@@ -3096,7 +3118,8 @@
           "interval": 18156
         }
       ]
-    }
+    },
+    "duration": 2
   },
   {
     "id": "gen-6b4b4122c529",
@@ -3236,7 +3259,8 @@
           "interval": 12881
         }
       ]
-    }
+    },
+    "duration": 1
   },
   {
     "id": "gen-2fedd4d6a646",
@@ -3376,7 +3400,8 @@
           "interval": 23502
         }
       ]
-    }
+    },
+    "duration": 2
   },
   {
     "id": "gen-f23316834cfd",
@@ -3516,7 +3541,8 @@
           "interval": 16569
         }
       ]
-    }
+    },
+    "duration": 2
   },
   {
     "id": "gen-df0dbc9d6b74",
@@ -3652,7 +3678,8 @@
           "interval": 25058
         }
       ]
-    }
+    },
+    "duration": 2
   },
   {
     "id": "gen-e77b10c51e8f",
@@ -3788,7 +3815,8 @@
           "interval": 12451
         }
       ]
-    }
+    },
+    "duration": 2
   },
   {
     "id": "gen-593c43ad1c11",
@@ -3924,7 +3952,8 @@
           "interval": 13669
         }
       ]
-    }
+    },
+    "duration": 1
   },
   {
     "id": "gen-b2e7514e8b8f",
@@ -4060,7 +4089,8 @@
           "interval": 7649
         }
       ]
-    }
+    },
+    "duration": 1
   },
   {
     "id": "gen-376993c8e295",
@@ -4196,7 +4226,8 @@
           "interval": 11084
         }
       ]
-    }
+    },
+    "duration": 1
   },
   {
     "id": "gen-aad0a6e0c0c0",
@@ -4334,7 +4365,8 @@
           "interval": 22543
         }
       ]
-    }
+    },
+    "duration": 1
   },
   {
     "id": "gen-ddc437037568",
@@ -4471,7 +4503,8 @@
           "interval": 19560
         }
       ]
-    }
+    },
+    "duration": 3
   },
   {
     "id": "gen-2b9fdf8a1222",
@@ -4610,7 +4643,8 @@
           "interval": 11059
         }
       ]
-    }
+    },
+    "duration": 2
   },
   {
     "id": "gen-60370cf66525",
@@ -4751,7 +4785,8 @@
           "interval": 5897
         }
       ]
-    }
+    },
+    "duration": 2
   },
   {
     "id": "gen-032fdef6f753",
@@ -4888,7 +4923,8 @@
           "interval": 19586
         }
       ]
-    }
+    },
+    "duration": 1
   },
   {
     "id": "gen-febbf324eecb",
@@ -5026,7 +5062,8 @@
           "interval": 16097
         }
       ]
-    }
+    },
+    "duration": 2
   },
   {
     "id": "gen-230502b905ba",
@@ -5167,7 +5204,8 @@
           "interval": 19157
         }
       ]
-    }
+    },
+    "duration": 1
   },
   {
     "id": "gen-bb82f62942d0",
@@ -5302,7 +5340,8 @@
           "interval": 22216
         }
       ]
-    }
+    },
+    "duration": 2
   },
   {
     "id": "gen-0027e1835f09",
@@ -5438,7 +5477,8 @@
           "interval": 15528
         }
       ]
-    }
+    },
+    "duration": 4
   },
   {
     "id": "gen-586908c26fc2",
@@ -5577,7 +5617,8 @@
           "interval": 26296
         }
       ]
-    }
+    },
+    "duration": 3
   },
   {
     "id": "gen-1a5a91def9ae",
@@ -5717,7 +5758,8 @@
           "interval": 23383
         }
       ]
-    }
+    },
+    "duration": 2
   },
   {
     "id": "gen-ae9ed8804fa7",
@@ -5860,7 +5902,8 @@
           "interval": 7814
         }
       ]
-    }
+    },
+    "duration": 2
   },
   {
     "id": "gen-be475c98edb5",
@@ -6002,7 +6045,8 @@
           "interval": 24420
         }
       ]
-    }
+    },
+    "duration": 3
   },
   {
     "id": "gen-f9e33d4db1bd",
@@ -6140,7 +6184,8 @@
           "interval": 17958
         }
       ]
-    }
+    },
+    "duration": 1
   },
   {
     "id": "gen-292e9eadf56e",
@@ -6278,7 +6323,8 @@
           "interval": 13468
         }
       ]
-    }
+    },
+    "duration": 3
   },
   {
     "id": "gen-76b0227cc919",
@@ -6416,7 +6462,8 @@
           "interval": 17958
         }
       ]
-    }
+    },
+    "duration": 1
   },
   {
     "id": "gen-7cf84ff11c04",
@@ -6556,7 +6603,8 @@
           "interval": 17958
         }
       ]
-    }
+    },
+    "duration": 2
   },
   {
     "id": "gen-b5438a861ba4",
@@ -6696,7 +6744,8 @@
           "interval": 17958
         }
       ]
-    }
+    },
+    "duration": 2
   },
   {
     "id": "gen-caa3a14bb706",
@@ -6838,6 +6887,7 @@
           "interval": 19536
         }
       ]
-    }
+    },
+    "duration": 2
   }
 ]
