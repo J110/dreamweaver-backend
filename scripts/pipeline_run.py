@@ -5,14 +5,15 @@ Runs the full pipeline as subprocesses for isolation and crash safety.
 Designed to run autonomously on the GCP production server (daily cron).
 
 Pipeline flow:
-  1. GENERATE  → Mistral Large (free tier) → stories + poems
-  2. AUDIO GEN → Modal Chatterbox TTS ($30 free credits) → 14 MP3 files per 2 items
-  3. AUDIO QA  → Voxtral transcription + fidelity (free tier) → PASS/FAIL
-  4. ENRICH    → Mistral Large (free tier) → musicParams for new items
-  5. COVERS    → Mistral Large (free tier) → animated SVG covers
-  6. SYNC      → sync content.json → seedData.js + copy audio/covers to web
-  7. PUBLISH   → git push → Render/Vercel auto-deploy (test only)
-  8. NOTIFY    → email via Resend (success or failure)
+  1. GENERATE    → Mistral Large (free tier) → stories + poems
+  2. AUDIO GEN   → Modal Chatterbox TTS ($30 free credits) → 14 MP3 files per 2 items
+  3. AUDIO QA    → Voxtral transcription + fidelity (free tier) → PASS/FAIL
+  4. ENRICH      → Mistral Large (free tier) → musicParams for new items
+  5. COVERS      → Mistral Large (free tier) → animated SVG covers
+  6. SYNC        → sync content.json → seedData.js + copy audio/covers to web
+  7. PUBLISH     → git push → Render/Vercel auto-deploy (test only)
+  8. DEPLOY PROD → rebuild frontend + restart backend on local GCP VM
+  9. NOTIFY      → email via Resend (success or failure)
 
 Usage:
     python3 scripts/pipeline_run.py                           # Full pipeline
@@ -68,7 +69,7 @@ logging.basicConfig(
 logger = logging.getLogger("pipeline")
 
 # ── Pipeline steps ───────────────────────────────────────────────────────
-STEPS = ["generate", "audio", "qa", "enrich", "covers", "sync", "publish"]
+STEPS = ["generate", "audio", "qa", "enrich", "covers", "sync", "publish", "deploy_prod"]
 
 CHATTERBOX_HEALTH = "https://anmol-71634--dreamweaver-chatterbox-health.modal.run"
 
@@ -522,6 +523,69 @@ def step_publish(args, state: dict) -> bool:
     return backend_ok or frontend_ok
 
 
+def step_deploy_prod(args, state: dict) -> bool:
+    """Step 8: Deploy to local production (frontend rebuild + backend restart)."""
+    logger.info("\n╔══════════════════════════════════════╗")
+    logger.info("║  STEP 8: DEPLOY PROD (local)         ║")
+    logger.info("╚══════════════════════════════════════╝")
+
+    if getattr(args, "skip_deploy_prod", False) or args.dry_run:
+        logger.info("  Skipping deploy_prod")
+        state["step_deploy_prod"] = "skipped"
+        save_state(state)
+        return True
+
+    qa_passed = state.get("qa_passed", [])
+    if not qa_passed:
+        logger.info("  No QA-passed content. Skipping prod deploy.")
+        state["step_deploy_prod"] = "skipped"
+        save_state(state)
+        return True
+
+    frontend_ok = False
+    backend_ok = False
+
+    # ── Frontend: build + copy static + restart PM2 ──
+    if WEB_DIR.exists():
+        logger.info("  Building frontend...")
+        web_cwd = str(WEB_DIR)
+        frontend_cmds = [
+            (["npm", "run", "build"], "Frontend: npm build", 300),
+            (["bash", "-c",
+              "cp -r public .next/standalone/public && "
+              "cp -r .next/static .next/standalone/.next/static"],
+             "Frontend: copy static assets", 30),
+            (["pm2", "restart", "all"], "Frontend: pm2 restart", 30),
+        ]
+        for cmd, label, timeout in frontend_cmds:
+            ok, _, stderr, _ = run_command(cmd, label, timeout=timeout, cwd=web_cwd)
+            if not ok:
+                logger.error("  %s failed: %s", label, stderr)
+                break
+        else:
+            frontend_ok = True
+            logger.info("  Frontend deployed successfully")
+
+    # ── Backend: restart Docker container (seed_output is volume-mounted) ──
+    logger.info("  Restarting backend Docker...")
+    ok, _, stderr, _ = run_command(
+        ["sudo", "docker", "restart", "dreamweaver-backend"],
+        "Backend: docker restart",
+        timeout=30,
+    )
+    if ok:
+        backend_ok = True
+        logger.info("  Backend deployed successfully")
+    else:
+        logger.error("  Backend restart failed: %s", stderr)
+
+    state["step_deploy_prod"] = "done" if (frontend_ok or backend_ok) else "failed"
+    state["deploy_prod_frontend"] = "ok" if frontend_ok else "failed"
+    state["deploy_prod_backend"] = "ok" if backend_ok else "failed"
+    save_state(state)
+    return frontend_ok or backend_ok
+
+
 # ═══════════════════════════════════════════════════════════════════════
 # PREFLIGHT / POSTFLIGHT
 # ═══════════════════════════════════════════════════════════════════════
@@ -698,6 +762,7 @@ def print_summary(state: dict, total_elapsed: float):
     logger.info("  Enriched:   %s", state.get("step_enrich", "not run"))
     logger.info("  Synced:     %s", state.get("step_sync", "not run"))
     logger.info("  Published:  %s", state.get("step_publish", "not run"))
+    logger.info("  Deployed:   %s", state.get("step_deploy_prod", "not run"))
     logger.info("  Cost:       %s (Modal %s + GCP %s/day)",
                 state.get("cost_this_run", "?"),
                 state.get("cost_modal", "?"),
@@ -726,6 +791,8 @@ def main():
                         help="Show plan without making API calls")
     parser.add_argument("--skip-publish", action="store_true",
                         help="Skip git push step")
+    parser.add_argument("--skip-deploy-prod", action="store_true",
+                        help="Skip production deployment step")
     parser.add_argument("--resume", action="store_true",
                         help="Resume from last checkpoint")
     parser.add_argument("--step", choices=STEPS,
@@ -775,6 +842,7 @@ def main():
         "covers": step_covers,
         "sync": step_sync,
         "publish": step_publish,
+        "deploy_prod": step_deploy_prod,
     }
 
     steps_to_run = [args.step] if args.step else STEPS
