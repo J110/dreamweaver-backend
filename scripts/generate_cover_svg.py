@@ -124,9 +124,10 @@ STRICT SVG REQUIREMENTS (follow ALL of these exactly):
 7. End with vignette: <rect width="512" height="512" fill="url(#{prefix}-vignette)" opacity="0.4"/>
 8. Color palette: dreamy, nighttime, calming. Use deep background colors with warm/magical accent colors (#ffd700 gold, soft glows)
 9. Main character should be in the center area (x:200-310, y:180-300) and occupy ~30% of the scene
-10. File should be 300-600 lines. No JavaScript — CSS animations only.
-11. All animations must be infinite with ease-in-out easing
-12. NO text elements in the SVG — illustration only
+10. CRITICAL: Never put both a CSS animation class AND a transform="translate/rotate/scale(...)" on the same element. CSS transform overrides SVG transform, breaking positioning. Use nested groups: outer <g transform="translate(x,y)"> for position, inner <g class="animation-class"> for animation. Example: <g transform="translate(256,240)"><g class="character-bob">...content...</g></g>
+11. File should be 300-600 lines. No JavaScript — CSS animations only.
+12. All animations must be infinite with ease-in-out easing
+13. NO text elements in the SVG — illustration only
 
 OUTPUT: Return ONLY the complete SVG code starting with <svg and ending with </svg>. No explanation, no markdown code blocks."""
 
