@@ -91,8 +91,8 @@ class LocalStore:
                     }
                 self._persist_collection(coll_name)
 
-        # Load users and interactions from persistent storage
-        for coll_name in ["users", "interactions"]:
+        # Load users, interactions, and tokens from persistent storage
+        for coll_name in ["users", "interactions", "tokens"]:
             persistent_path = self._data_dir / f"{coll_name}.json"
             if persistent_path.exists():
                 with open(persistent_path) as f:

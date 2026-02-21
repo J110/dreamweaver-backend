@@ -83,6 +83,48 @@ _local_users: Dict[str, dict] = {}
 _local_tokens: Dict[str, str] = {}  # token -> uid
 
 
+def _persist_token(token: str, uid: str):
+    """Persist a token to LocalStore so it survives Docker restarts."""
+    try:
+        from app.services.local_store import get_local_store
+        store = get_local_store()
+        store.collection("tokens").document(token).set({
+            "id": token,
+            "token": token,
+            "uid": uid,
+            "created_at": time.time(),
+        })
+    except Exception:
+        pass  # Don't crash if persist fails
+
+
+def _load_persisted_tokens():
+    """Load persisted tokens from LocalStore on first use."""
+    global _local_tokens, _local_users
+    if _local_tokens:
+        return  # Already loaded
+    try:
+        from app.services.local_store import get_local_store
+        store = get_local_store()
+        token_docs = store.collection("tokens").get()
+        for doc in token_docs:
+            data = doc.to_dict()
+            tok = data.get("token")
+            uid = data.get("uid")
+            if tok and uid:
+                _local_tokens[tok] = uid
+
+        # Also reload users from LocalStore into _local_users cache
+        user_docs = store.collection("users").get()
+        for doc in user_docs:
+            data = doc.to_dict()
+            uid = data.get("uid") or data.get("id")
+            if uid:
+                _local_users[uid] = data
+    except Exception:
+        pass  # Don't crash on load failure
+
+
 def local_create_user(username: str, password: str) -> dict:
     uid = hashlib.sha256(username.encode()).hexdigest()[:28]
     _local_users[uid] = {
@@ -93,19 +135,23 @@ def local_create_user(username: str, password: str) -> dict:
     }
     token = hashlib.sha256(f"{uid}:{time.time()}".encode()).hexdigest()
     _local_tokens[token] = uid
+    _persist_token(token, uid)
     return {"uid": uid, "token": token, "username": username}
 
 
 def local_login(username: str, password: str) -> Optional[dict]:
+    _load_persisted_tokens()
     for uid, user in _local_users.items():
         if user["username"] == username and user["password"] == password:
             token = hashlib.sha256(f"{uid}:{time.time()}".encode()).hexdigest()
             _local_tokens[token] = uid
+            _persist_token(token, uid)
             return {"uid": uid, "token": token, "username": username}
     return None
 
 
 def local_verify_token(token: str) -> Optional[dict]:
+    _load_persisted_tokens()
     uid = _local_tokens.get(token)
     if uid and uid in _local_users:
         return _local_users[uid]
