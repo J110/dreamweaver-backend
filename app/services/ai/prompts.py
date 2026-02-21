@@ -138,16 +138,12 @@ def _age_to_group(age: int) -> str:
     """Map a numeric age to an age group string."""
     if age <= 1:
         return "0-1"
-    elif age <= 3:
-        return "1-3"
     elif age <= 5:
-        return "4-5"
+        return "2-5"
     elif age <= 8:
         return "6-8"
-    elif age <= 12:
-        return "8-12"
     else:
-        return "12+"
+        return "9-12"
 
 
 # ── Age group instructions (used by both API and batch generation) ─────
@@ -164,26 +160,19 @@ AGE_GROUP_INSTRUCTIONS = {
         - Rhyming is strongly preferred
         - End with sleep/closing eyes imagery
         """,
-    "1-3": """AGE GROUP: 1-3 years (Toddler)
-        - Very simple words, lots of repetition, short sentences
+    "2-5": """AGE GROUP: 2-5 years (Preschool)
+        - Simple vocabulary with lots of repetition
         - Familiar objects: animals, toys, family members, food, bedtime
-        - Simple cause-and-effect ("the bunny was tired, so he closed his eyes")
-        - Friendly animals as main characters
-        - Use repetitive phrases and patterns children can anticipate
-        - Basic emotions only: happy, sleepy, cozy, safe
-        - No conflict or tension — pure comfort and warmth
-        - Gentle rhythm and rhyme when possible
-        """,
-    "4-5": """AGE GROUP: 4-5 years (Preschool)
-        - Simple vocabulary appropriate for early learners
-        - Linear plots with clear beginning, middle, end
+        - For younger end (2-3): simple cause-and-effect, friendly animals, basic emotions (happy, sleepy, cozy, safe)
+        - For older end (4-5): linear plots with clear beginning, middle, end
         - Friendly adventure with gentle surprises
         - Animals, children, or fantasy creatures as characters
-        - Clear moral lessons woven naturally
+        - Use repetitive phrases and patterns children can anticipate
         - Can include mild magical elements
-        - Use descriptive but simple language
+        - Clear moral lessons woven naturally
         - Themes: kindness, sharing, curiosity, bravery, family
-        - Comfortable resolution — everyone ends up safe and happy
+        - No real conflict or tension — comfortable resolution where everyone ends up safe and happy
+        - Gentle rhythm and rhyme when possible
         """,
     "6-8": """AGE GROUP: 6-8 years (Explorer)
         - Engaging, descriptive language for early readers
@@ -196,7 +185,7 @@ AGE_GROUP_INSTRUCTIONS = {
         - Themes: friendship, courage, identity, teamwork, perseverance
         - World-building: describe settings vividly
         """,
-    "8-12": """AGE GROUP: 8-12 years (Adventurer)
+    "9-12": """AGE GROUP: 9-12 years (Adventurer)
         - Sophisticated vocabulary and complex sentences
         - Rich, detailed world-building
         - Complex plots with multiple threads
@@ -206,17 +195,6 @@ AGE_GROUP_INSTRUCTIONS = {
         - Deeper exploration: identity, belonging, growth, resilience
         - Characters face real challenges and grow through them
         - Can reference school, hobbies, ambitions, relationships
-        """,
-    "12+": """AGE GROUP: 12+ years (Teen)
-        - Mature, sophisticated language and complex narratives
-        - Layered plots with multiple character arcs
-        - Rich world-building and immersive settings
-        - Complex emotions: self-doubt, ambition, love, purpose
-        - Philosophical themes woven naturally
-        - Mythology, science fiction, historical fiction elements
-        - Themes: identity, purpose, resilience, compassion, dreams
-        - Can include conflict with thoughtful resolution
-        - Characters navigate real-world challenges (school, relationships, self-discovery)
         - Still ends on a calming, hopeful note (it's bedtime!)
         """,
 }

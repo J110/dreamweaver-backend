@@ -77,31 +77,25 @@ logger = logging.getLogger(__name__)
 
 AGE_GROUPS = {
     "0-1": {"age_min": 0, "age_max": 1, "target_age": 0, "label": "Baby"},
-    "1-3": {"age_min": 1, "age_max": 3, "target_age": 2, "label": "Toddler"},
-    "4-5": {"age_min": 4, "age_max": 5, "target_age": 4, "label": "Preschool"},
+    "2-5": {"age_min": 2, "age_max": 5, "target_age": 3, "label": "Preschool"},
     "6-8": {"age_min": 6, "age_max": 8, "target_age": 7, "label": "Explorer"},
-    "8-12": {"age_min": 8, "age_max": 12, "target_age": 10, "label": "Adventurer"},
-    "12+": {"age_min": 12, "age_max": 18, "target_age": 13, "label": "Teen"},
+    "9-12": {"age_min": 9, "age_max": 12, "target_age": 10, "label": "Adventurer"},
 }
 
 # Themes available per age group
 THEMES_BY_AGE = {
     "0-1": ["bedtime", "animals", "nature", "family", "ocean"],
-    "1-3": ["bedtime", "animals", "nature", "family", "fantasy"],
-    "4-5": ["bedtime", "animals", "nature", "fantasy", "adventure", "space"],
+    "2-5": ["bedtime", "animals", "nature", "family", "fantasy", "adventure", "space"],
     "6-8": ["animals", "nature", "fantasy", "adventure", "friendship", "space"],
-    "8-12": ["nature", "fantasy", "adventure", "friendship", "space", "mystery", "science"],
-    "12+": ["nature", "fantasy", "adventure", "friendship", "mystery", "science"],
+    "9-12": ["nature", "fantasy", "adventure", "friendship", "space", "mystery", "science"],
 }
 
 # Lengths available per age group
 LENGTHS_BY_AGE = {
     "0-1": ["SHORT", "MEDIUM"],
-    "1-3": ["SHORT", "MEDIUM"],
-    "4-5": ["SHORT", "MEDIUM", "LONG"],
+    "2-5": ["SHORT", "MEDIUM", "LONG"],
     "6-8": ["SHORT", "MEDIUM", "LONG"],
-    "8-12": ["SHORT", "MEDIUM", "LONG"],
-    "12+": ["SHORT", "MEDIUM", "LONG"],
+    "9-12": ["SHORT", "MEDIUM", "LONG"],
 }
 
 # Word count ranges: (age_group, content_type, length) -> (min, max)
@@ -109,37 +103,27 @@ WORD_COUNTS = {
     # Stories
     ("0-1", "story", "SHORT"): (30, 60),
     ("0-1", "story", "MEDIUM"): (60, 120),
-    ("1-3", "story", "SHORT"): (60, 120),
-    ("1-3", "story", "MEDIUM"): (120, 250),
-    ("4-5", "story", "SHORT"): (150, 250),
-    ("4-5", "story", "MEDIUM"): (250, 500),
-    ("4-5", "story", "LONG"): (500, 800),
+    ("2-5", "story", "SHORT"): (60, 250),
+    ("2-5", "story", "MEDIUM"): (120, 500),
+    ("2-5", "story", "LONG"): (500, 800),
     ("6-8", "story", "SHORT"): (200, 400),
     ("6-8", "story", "MEDIUM"): (400, 700),
     ("6-8", "story", "LONG"): (700, 1200),
-    ("8-12", "story", "SHORT"): (300, 500),
-    ("8-12", "story", "MEDIUM"): (500, 900),
-    ("8-12", "story", "LONG"): (900, 1500),
-    ("12+", "story", "SHORT"): (400, 600),
-    ("12+", "story", "MEDIUM"): (600, 1100),
-    ("12+", "story", "LONG"): (1100, 2000),
+    ("9-12", "story", "SHORT"): (300, 500),
+    ("9-12", "story", "MEDIUM"): (500, 900),
+    ("9-12", "story", "LONG"): (900, 1500),
     # Poems
     ("0-1", "poem", "SHORT"): (20, 40),
     ("0-1", "poem", "MEDIUM"): (40, 70),
-    ("1-3", "poem", "SHORT"): (30, 60),
-    ("1-3", "poem", "MEDIUM"): (60, 100),
-    ("4-5", "poem", "SHORT"): (50, 80),
-    ("4-5", "poem", "MEDIUM"): (80, 130),
-    ("4-5", "poem", "LONG"): (130, 200),
+    ("2-5", "poem", "SHORT"): (30, 80),
+    ("2-5", "poem", "MEDIUM"): (60, 130),
+    ("2-5", "poem", "LONG"): (130, 200),
     ("6-8", "poem", "SHORT"): (60, 100),
     ("6-8", "poem", "MEDIUM"): (100, 180),
     ("6-8", "poem", "LONG"): (180, 300),
-    ("8-12", "poem", "SHORT"): (80, 130),
-    ("8-12", "poem", "MEDIUM"): (130, 220),
-    ("8-12", "poem", "LONG"): (220, 400),
-    ("12+", "poem", "SHORT"): (100, 160),
-    ("12+", "poem", "MEDIUM"): (160, 280),
-    ("12+", "poem", "LONG"): (280, 500),
+    ("9-12", "poem", "SHORT"): (80, 130),
+    ("9-12", "poem", "MEDIUM"): (130, 220),
+    ("9-12", "poem", "LONG"): (220, 400),
 }
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -176,11 +160,9 @@ PLOT_ARCHETYPES = [
 
 LIFE_ASPECTS_BY_AGE = {
     "0-1": ["sleep_comfort", "family_home"],
-    "1-3": ["sleep_comfort", "family_home", "play_discovery"],
-    "4-5": ["family_home", "play_discovery", "friendship", "school_learning"],
+    "2-5": ["sleep_comfort", "family_home", "play_discovery", "friendship", "school_learning"],
     "6-8": ["friendship", "school_learning", "hobbies_passions", "health_wellness", "family_home"],
-    "8-12": ["friendship", "school_learning", "hobbies_passions", "dreams_ambitions", "relationships", "self_identity", "health_wellness"],
-    "12+": ["dreams_ambitions", "relationships", "self_identity", "career_purpose", "hobbies_passions", "friendship", "health_wellness"],
+    "9-12": ["friendship", "school_learning", "hobbies_passions", "dreams_ambitions", "relationships", "self_identity", "health_wellness"],
 }
 
 # Lead gender distribution (mixed pool - all stories work for everyone)
@@ -259,15 +241,13 @@ CHARACTER_BANK = {
         ("Lamb", "little lamb", "a green hill"), ("Bear Cub", "bear cub", "a warm den"),
         ("Butterfly", "butterfly", "a flower garden"), ("Moonbeam", "moonbeam", "a bedroom window"),
     ],
-    "1-3": [
+    "2-5": [
         ("Milo", "puppy", "a friendly neighborhood"), ("Lily", "kitten", "a flower garden"),
         ("Bubbles", "goldfish", "a coral pond"), ("Pepper", "ladybug", "a vegetable patch"),
         ("Sunny", "sunflower", "a meadow"), ("Whiskers", "mouse", "a cozy kitchen"),
         ("Tinker", "toy robot", "a playroom"), ("Maple", "squirrel", "an oak tree"),
         ("Puddle", "frog", "a rainy day"), ("Cookie", "teddy bear", "a child's bedroom"),
         ("Breezy", "bluebird", "a backyard"), ("Nutmeg", "hamster", "a cozy cage"),
-    ],
-    "4-5": [
         ("Aria", "girl (age 5)", "a magical playground"), ("Leo", "boy (age 4)", "a treehouse"),
         ("Pip", "baby dragon", "a cloud kingdom"), ("Zara", "girl (age 5)", "an enchanted garden"),
         ("Finn", "boy (age 4)", "a pirate cove"), ("Sparkle", "unicorn", "a rainbow valley"),
@@ -288,26 +268,20 @@ CHARACTER_BANK = {
         ("Diego", "boy (age 7)", "a Mexican rainforest"), ("Emi", "girl (age 6)", "a futuristic Tokyo"),
         ("Atlas", "shape-shifting fox", "a mythical forest"), ("Noor", "girl (age 8)", "a Mughal garden"),
     ],
-    "8-12": [
+    "9-12": [
         ("Advait", "boy (age 10)", "a Ladakh monastery"), ("Zara", "girl (age 11)", "a Moroccan medina"),
         ("Ethan", "boy (age 9)", "a NASA space center"), ("Kavya", "girl (age 12)", "a temple in Tamil Nadu"),
         ("Chen", "boy (age 10)", "a village in Yunnan"), ("Iris", "girl (age 9)", "an Icelandic glacier"),
         ("Vikram", "boy (age 11)", "a warrior's training ground"), ("Lila", "girl (age 10)", "a Victorian London"),
-        ("Ash", "non-binary teen (age 11)", "a cyberpunk city"), ("Nyala", "girl (age 12)", "a Kenyan wildlife reserve"),
+        ("Ash", "non-binary child (age 11)", "a cyberpunk city"), ("Nyala", "girl (age 12)", "a Kenyan wildlife reserve"),
         ("Rohan", "boy (age 10)", "a Maratha hill fort"), ("Saoirse", "girl (age 9)", "an Irish cliffside"),
         ("Aiden", "boy (age 12)", "a submarine in the Mariana Trench"), ("Mei", "girl (age 11)", "ancient Silk Road"),
         ("Kian", "boy (age 9)", "a Persian palace"), ("Tara", "girl (age 10)", "a Tibetan plateau"),
         ("Phoenix", "mythical bird", "between worlds"), ("Sage", "young inventor (age 11)", "a secret lab"),
-    ],
-    "12+": [
-        ("Arjun", "teenage boy (age 14)", "a Varanasi ghaat at dawn"), ("Zoya", "teenage girl (age 13)", "a Silk Route caravan"),
-        ("Kai", "teenage boy (age 15)", "a climate research station in Antarctica"), ("Aisha", "teenage girl (age 14)", "a bustling Istanbul bazaar"),
-        ("Leo", "teenage boy (age 13)", "a Renaissance Florence workshop"), ("Mira", "teenage girl (age 15)", "a quantum physics lab"),
-        ("Neel", "teenage boy (age 14)", "a Bengal tiger reserve"), ("Sofia", "teenage girl (age 13)", "a Patagonian glacier"),
-        ("Ryu", "teenage boy (age 15)", "a samurai dojo in Kyoto"), ("Ananya", "teenage girl (age 14)", "an ISRO mission control"),
-        ("Miles", "teenage boy (age 13)", "a jazz club in New Orleans"), ("Leela", "teenage girl (age 15)", "a Kathakali stage in Kerala"),
-        ("Zain", "teenage boy (age 14)", "a refugee camp turned art studio"), ("Nova", "non-binary teen (age 15)", "a space colony"),
-        ("Jai", "teenage boy (age 13)", "a Bollywood film set"), ("Wren", "teenage girl (age 14)", "a Pacific island observatory"),
+        ("Arjun", "boy (age 12)", "a Varanasi ghaat at dawn"), ("Zoya", "girl (age 12)", "a Silk Route caravan"),
+        ("Aisha", "girl (age 12)", "a bustling Istanbul bazaar"), ("Neel", "boy (age 12)", "a Bengal tiger reserve"),
+        ("Sofia", "girl (age 11)", "a Patagonian glacier"), ("Ananya", "girl (age 12)", "an ISRO mission control"),
+        ("Leela", "girl (age 12)", "a Kathakali stage in Kerala"), ("Nova", "non-binary child (age 12)", "a space colony"),
     ],
 }
 
@@ -948,7 +922,7 @@ def show_stats(content: List[Dict]):
         ag = c.get("age_group", "unknown")
         by_age[ag] = by_age.get(ag, 0) + 1
     print(f"\nBy Age Group:")
-    for ag in ["0-1", "1-3", "4-5", "6-8", "8-12", "12+"]:
+    for ag in ["0-1", "2-5", "6-8", "9-12"]:
         count = by_age.get(ag, 0)
         print(f"  {ag}: {count}")
 

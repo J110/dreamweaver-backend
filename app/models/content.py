@@ -47,7 +47,7 @@ class ContentModel(BaseModel):
     title: str = Field(min_length=1, max_length=200, description="Content title")
     description: str = Field(max_length=500, description="Content description")
     text: str = Field(description="Main content text")
-    target_age: int = Field(ge=0, le=14, description="Target age for content")
+    target_age: int = Field(ge=0, le=12, description="Target age for content")
     duration_seconds: int = Field(ge=0, description="Duration in seconds")
     author_id: str = Field(description="Author/Creator ID")
     created_at: datetime = Field(default_factory=datetime.utcnow, description="Creation timestamp")

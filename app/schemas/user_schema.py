@@ -22,8 +22,8 @@ class SignUpRequest(BaseModel):
     )
     child_age: int = Field(
         ge=0,
-        le=14,
-        description="Child's age (0-14 years)"
+        le=12,
+        description="Child's age (0-12 years)"
     )
     
     @field_validator("username")

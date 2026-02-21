@@ -25,7 +25,7 @@ class SignupRequest(BaseModel):
     """Request model for user signup."""
     username: str = Field(..., min_length=3, max_length=50)
     password: str = Field(..., min_length=6)
-    child_age: int = Field(..., ge=2, le=18)
+    child_age: int = Field(..., ge=0, le=12)
 
 
 class LoginRequest(BaseModel):

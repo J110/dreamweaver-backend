@@ -33,7 +33,7 @@ class UserModel(BaseModel):
     
     uid: str = Field(description="Unique user ID (from Firebase Auth)")
     username: str = Field(min_length=3, max_length=20, description="Username")
-    child_age: int = Field(ge=0, le=14, description="Child's age in years")
+    child_age: int = Field(ge=0, le=12, description="Child's age in years")
     subscription_tier: str = Field(default="FREE", description="Subscription tier (FREE, PREMIUM, UNLIMITED)")
     created_at: datetime = Field(default_factory=datetime.utcnow, description="Account creation timestamp")
     subscription_expires_at: Optional[datetime] = Field(default=None, description="Subscription expiration timestamp")

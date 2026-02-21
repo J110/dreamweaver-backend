@@ -67,6 +67,8 @@ class GenerationResponse(BaseModel):
 def _build_age_appropriate_prompt(child_age: int, content_type: str, theme: str, length: str, custom_prompt: Optional[str]) -> str:
     """Build an age-appropriate prompt for Groq API."""
     age_guidance = {
+        0: "Very simple rhythmic sounds and repetition, 2-3 sentences",
+        1: "Very simple rhythmic sounds and repetition, 2-3 sentences",
         2: "Very simple, 2-3 sentence story with simple words",
         3: "Simple 3-5 sentence story with basic vocabulary",
         4: "4-6 sentence story with easy vocabulary",
@@ -78,12 +80,6 @@ def _build_age_appropriate_prompt(child_age: int, content_type: str, theme: str,
         10: "12-18 sentence story with more complex plot",
         11: "15-20 sentence story with character development",
         12: "18-25 sentence story with deeper themes",
-        13: "20-30 sentence story appropriate for older kids",
-        14: "25-35 sentence story for young teenagers",
-        15: "30-40 sentence story with mature themes",
-        16: "35-50 sentence story for teenagers",
-        17: "40-60 sentence story with complex narrative",
-        18: "50-80 sentence story with sophisticated themes",
     }
     
     age_desc = age_guidance.get(child_age, age_guidance[10])

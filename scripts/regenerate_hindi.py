@@ -56,15 +56,11 @@ def clean_markers(text):
 def get_age_label(target_age):
     if target_age <= 1:
         return "0-1"
-    if target_age <= 3:
-        return "1-3"
     if target_age <= 5:
-        return "4-5"
+        return "2-5"
     if target_age <= 8:
         return "6-8"
-    if target_age <= 12:
-        return "8-12"
-    return "12+"
+    return "9-12"
 
 
 def call_mistral(prompt, max_tokens=4000, temperature=0.7, max_retries=5):
@@ -180,37 +176,27 @@ def build_hindi_story_prompt(story):
     if content_type == "story":
         if age_label == "0-1":
             min_w, max_w = 30, 80
-        elif age_label == "1-3":
-            min_w, max_w = 60, 150
-        elif age_label == "4-5":
-            min_w, max_w = 150, 350
+        elif age_label == "2-5":
+            min_w, max_w = 60, 350
         elif age_label == "6-8":
             min_w, max_w = 250, 600
-        elif age_label == "8-12":
+        else:  # 9-12
             min_w, max_w = 400, 800
-        else:  # 12+
-            min_w, max_w = 500, 1000
     else:  # poem
         if age_label == "0-1":
             min_w, max_w = 20, 50
-        elif age_label == "1-3":
-            min_w, max_w = 30, 80
-        elif age_label == "4-5":
-            min_w, max_w = 50, 120
+        elif age_label == "2-5":
+            min_w, max_w = 30, 120
         elif age_label == "6-8":
             min_w, max_w = 80, 200
-        elif age_label == "8-12":
+        else:  # 9-12
             min_w, max_w = 100, 300
-        else:  # 12+
-            min_w, max_w = 150, 400
 
     age_instructions = {
         "0-1": "Baby (0-1 years): Use extremely simple words, lots of repetition, sound words (onomatopoeia), soothing rhythm. Short sentences of 3-5 words. Very gentle, comforting tone.",
-        "1-3": "Toddler (1-3 years): Simple vocabulary, repetitive patterns, familiar objects (animals, food, family). Sentences of 5-8 words. Playful, warm, reassuring.",
-        "4-5": "Preschool (4-5 years): Slightly richer vocabulary, simple plot with beginning-middle-end. Named characters. Use of colors, counting, emotions. Engaging and imaginative.",
+        "2-5": "Preschool (2-5 years): Simple vocabulary, repetitive patterns, familiar objects. For younger end (2-3): sentences of 5-8 words, playful and warm. For older end (4-5): slightly richer vocabulary, simple plot with beginning-middle-end, named characters, colors, emotions. Engaging and imaginative.",
         "6-8": "Explorer (6-8 years): Developed vocabulary, clear narrative arc, relatable characters with names. Descriptive language, some suspense, moral lessons woven naturally. Vivid imagery.",
-        "8-12": "Adventurer (8-12 years): Rich vocabulary, complex plots with subplots. Well-developed characters, themes of courage, friendship, discovery. Literary devices like metaphor and simile.",
-        "12+": "Teen (12+): Sophisticated vocabulary, nuanced themes (identity, purpose, dreams). Literary Hindi with Urdu/Persian-origin words where natural. Layered storytelling, philosophical depth, emotional complexity.",
+        "9-12": "Adventurer (9-12 years): Rich vocabulary, complex plots with subplots. Well-developed characters, themes of courage, friendship, discovery. Literary devices like metaphor and simile.",
     }
 
     poem_extra = ""
