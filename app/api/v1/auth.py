@@ -1,5 +1,6 @@
 """Authentication endpoints for signup, login, and token management."""
 
+import hashlib
 from datetime import datetime
 from typing import Optional
 
@@ -84,11 +85,12 @@ async def signup(
             uid = auth_result["uid"]
             token = auth_result["token"]
             
-            # Create user document in database
+            # Create user document in database (include password hash for login persistence)
             user_data = {
                 "id": uid,
                 "uid": uid,
                 "username": request.username,
+                "password": hashlib.sha256(request.password.encode()).hexdigest(),
                 "child_age": request.child_age,
                 "subscription_tier": "free",
                 "created_at": datetime.utcnow(),

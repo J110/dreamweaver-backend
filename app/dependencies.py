@@ -127,12 +127,26 @@ def _load_persisted_tokens():
 
 def local_create_user(username: str, password: str) -> dict:
     uid = hashlib.sha256(username.encode()).hexdigest()[:28]
+    pw_hash = hashlib.sha256(password.encode()).hexdigest()
     _local_users[uid] = {
         "uid": uid,
         "username": username,
-        "password": password,
+        "password": pw_hash,
         "email": f"{username}@dreamweaver.app",
     }
+    # Also persist password hash to the users collection so login
+    # survives Docker restarts (LocalStore reloads from disk).
+    try:
+        from app.services.local_store import get_local_store
+        store = get_local_store()
+        user_doc = store.collection("users").document(uid).get()
+        if user_doc.exists:
+            store.collection("users").document(uid).set({
+                **user_doc.to_dict(),
+                "password": pw_hash,
+            })
+    except Exception:
+        pass
     token = hashlib.sha256(f"{uid}:{time.time()}".encode()).hexdigest()
     _local_tokens[token] = uid
     _persist_token(token, uid)
@@ -141,8 +155,26 @@ def local_create_user(username: str, password: str) -> dict:
 
 def local_login(username: str, password: str) -> Optional[dict]:
     _load_persisted_tokens()
+    pw_hash = hashlib.sha256(password.encode()).hexdigest()
     for uid, user in _local_users.items():
-        if user["username"] == username and user["password"] == password:
+        if user.get("username") != username:
+            continue
+        stored_pw = user.get("password", "")
+        # Support both hashed (new) and plaintext (legacy) passwords
+        if stored_pw == pw_hash or stored_pw == password:
+            # Upgrade plaintext password to hash if needed
+            if stored_pw == password and stored_pw != pw_hash:
+                user["password"] = pw_hash
+                try:
+                    from app.services.local_store import get_local_store
+                    store = get_local_store()
+                    doc = store.collection("users").document(uid).get()
+                    if doc.exists:
+                        store.collection("users").document(uid).set({
+                            **doc.to_dict(), "password": pw_hash,
+                        })
+                except Exception:
+                    pass
             token = hashlib.sha256(f"{uid}:{time.time()}".encode()).hexdigest()
             _local_tokens[token] = uid
             _persist_token(token, uid)
