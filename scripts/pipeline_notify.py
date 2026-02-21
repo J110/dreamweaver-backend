@@ -27,7 +27,7 @@ except ImportError:
 
 RESEND_API_KEY = os.getenv("RESEND_API_KEY", "")
 RESEND_ENDPOINT = "https://api.resend.com/emails"
-FROM_EMAIL = "Dream Valley Pipeline <onboarding@resend.dev>"
+FROM_EMAIL = "Dream Valley Pipeline <support@dreamvalley.app>"
 TO_EMAIL = "mohan.anmol@gmail.com"
 
 
