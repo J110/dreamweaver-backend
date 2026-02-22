@@ -397,22 +397,26 @@ LULLABY_STYLES = {
     "female_1": {
         "name": "Piano Lullaby",
         "mode": "full",
-        "description": "gentle lullaby, {gender} vocal, warm, soft, piano, soft strings, slow tempo 60 bpm, dreamy, peaceful, bedtime",
+        "description": "gentle lullaby, {gender} vocal, warm, soft, relaxed, unhurried, piano, soft strings, slow tempo 55 bpm, dreamy, peaceful, bedtime",
+        "duration": 120,
     },
     "female_3": {
         "name": "Guitar Lullaby",
         "mode": "full",
-        "description": "acoustic lullaby, {gender} vocal, sweet, tender, acoustic guitar, fingerpicking, slow tempo 65 bpm, cozy, folk, bedtime",
+        "description": "acoustic lullaby, {gender} vocal, sweet, tender, relaxed, unhurried, acoustic guitar, fingerpicking, slow tempo 55 bpm, cozy, folk, bedtime",
+        "duration": 120,
     },
     "male_1": {
         "name": "Music Box Lullaby",
         "mode": "full",
-        "description": "delicate lullaby, {gender} vocal, soft, gentle, music box, bells, chimes, very slow tempo 55 bpm, magical, enchanting, bedtime",
+        "description": "delicate lullaby, {gender} vocal, soft, gentle, relaxed, unhurried, music box, bells, chimes, very slow tempo 50 bpm, magical, enchanting, bedtime",
+        "duration": 120,
     },
     "male_2": {
         "name": "A Cappella",
         "mode": "vocal",
-        "description": "{gender} vocal, warm, intimate, gentle lullaby, slow tempo 65 bpm, soothing, bedtime",
+        "description": "{gender} vocal, warm, intimate, relaxed, unhurried, gentle lullaby, slow tempo 55 bpm, soothing, bedtime",
+        "duration": 120,
     },
 }
 # Hindi variants use the same styles
@@ -476,12 +480,13 @@ def generate_song_variant(
     # POST to ACE-Step Modal endpoint
     # Use voice-based seed so each variant gets a unique performance
     voice_seed = hash(voice) % 999999 + 1
+    style_duration = style.get("duration", 90) if style else 90
     payload = {
         "lyrics": lyrics,
         "description": description,
         "mode": mode,
         "format": "mp3",
-        "duration": 90,    # Lullabies ~90 seconds
+        "duration": style_duration,
         "seed": voice_seed,
     }
 
