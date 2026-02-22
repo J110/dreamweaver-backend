@@ -142,6 +142,32 @@ THEME_EVENT_POOLS = {
     "science":    ["radarPing", "starTwinkle", "sparkle", "waterDrop"],
 }
 
+# ── v4: Theme → Soundscape + Music Loop mapping ──
+THEME_SOUNDSCAPE_MAP = {
+    "ocean":      {"soundscapePreset": "ocean",      "musicLoop": "oceanMelody"},
+    "animals":    {"soundscapePreset": "forest",     "musicLoop": "forestFlute"},
+    "nature":     {"soundscapePreset": "garden",     "musicLoop": "gentleGuitar"},
+    "fantasy":    {"soundscapePreset": "starryNight", "musicLoop": "etherealPad"},
+    "adventure":  {"soundscapePreset": "wind",       "musicLoop": "gentleGuitar"},
+    "space":      {"soundscapePreset": "starryNight", "musicLoop": "cosmicSynth"},
+    "bedtime":    {"soundscapePreset": "rain",       "musicLoop": "pianoLullaby"},
+    "friendship": {"soundscapePreset": "garden",     "musicLoop": "softStrings"},
+    "mystery":    {"soundscapePreset": "forest",     "musicLoop": "nightPiano"},
+    "science":    {"soundscapePreset": "river",      "musicLoop": "etherealPad"},
+    "family":     {"soundscapePreset": "fireplace",  "musicLoop": "calmHarp"},
+    "dreamy":     {"soundscapePreset": "rain",       "musicLoop": "pianoLullaby"},
+    "fairy_tale": {"soundscapePreset": "garden",     "musicLoop": "musicBox"},
+}
+BABY_SOUNDSCAPE = {"soundscapePreset": "heartbeat", "musicLoop": "musicBox"}
+
+
+def _get_soundscape_preset(theme, target_age=5):
+    """Return soundscapePreset + musicLoop for a given theme & age."""
+    if target_age <= 1:
+        return dict(BABY_SOUNDSCAPE)
+    return dict(THEME_SOUNDSCAPE_MAP.get(theme, THEME_SOUNDSCAPE_MAP["bedtime"]))
+
+
 # ── Diversity tracking ──
 class DiversityTracker:
     """Tracks what has been used across all stories to enforce variety."""
@@ -457,6 +483,9 @@ Respond with ONLY a JSON object (no explanation, no markdown):
                 "type": evt_type,
                 "interval": 10000 + round(random.random() * 10000),
             })
+
+    # v4: Add soundscape and music loop presets based on theme
+    params.update(_get_soundscape_preset(theme, target_age))
 
     # Record in diversity tracker
     tracker.record(params)

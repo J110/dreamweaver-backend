@@ -130,7 +130,9 @@
           "type": "starTwinkle",
           "interval": 20827
         }
-      ]
+      ],
+      "soundscapePreset": "rain",
+      "musicLoop": "pianoLullaby"
     },
     "duration": 2
   },
@@ -266,7 +268,9 @@
           "type": "leaves",
           "interval": 8725
         }
-      ]
+      ],
+      "soundscapePreset": "wind",
+      "musicLoop": "gentleGuitar"
     },
     "duration": 2
   },
@@ -401,7 +405,9 @@
           "type": "sparkle",
           "interval": 18926
         }
-      ]
+      ],
+      "soundscapePreset": "garden",
+      "musicLoop": "musicBox"
     },
     "duration": 2
   },
@@ -536,7 +542,9 @@
           "type": "starTwinkle",
           "interval": 15657
         }
-      ]
+      ],
+      "soundscapePreset": "starryNight",
+      "musicLoop": "cosmicSynth"
     },
     "duration": 2
   },
@@ -671,7 +679,9 @@
           "type": "windGust",
           "interval": 18882
         }
-      ]
+      ],
+      "soundscapePreset": "starryNight",
+      "musicLoop": "etherealPad"
     },
     "duration": 3
   },
@@ -801,7 +811,9 @@
           "type": "windGust",
           "interval": 14037
         }
-      ]
+      ],
+      "soundscapePreset": "rain",
+      "musicLoop": "pianoLullaby"
     },
     "duration": 1
   },
@@ -935,7 +947,9 @@
           "type": "waterDrop",
           "interval": 21647
         }
-      ]
+      ],
+      "soundscapePreset": "forest",
+      "musicLoop": "forestFlute"
     },
     "duration": 1
   },
@@ -1070,7 +1084,9 @@
           "type": "waveCycle",
           "interval": 18167
         }
-      ]
+      ],
+      "soundscapePreset": "rain",
+      "musicLoop": "pianoLullaby"
     },
     "duration": 1
   },
@@ -1206,7 +1222,9 @@
           "type": "sparkle",
           "interval": 22015
         }
-      ]
+      ],
+      "soundscapePreset": "rain",
+      "musicLoop": "pianoLullaby"
     },
     "duration": 2
   },
@@ -1343,7 +1361,9 @@
           "type": "sparkle",
           "interval": 18733
         }
-      ]
+      ],
+      "soundscapePreset": "wind",
+      "musicLoop": "gentleGuitar"
     },
     "duration": 2
   },
@@ -1479,7 +1499,9 @@
           "type": "windGust",
           "interval": 21752
         }
-      ]
+      ],
+      "soundscapePreset": "garden",
+      "musicLoop": "musicBox"
     },
     "duration": 1
   },
@@ -1614,7 +1636,9 @@
           "type": "radarPing",
           "interval": 10671
         }
-      ]
+      ],
+      "soundscapePreset": "starryNight",
+      "musicLoop": "cosmicSynth"
     },
     "duration": 2
   },
@@ -1750,7 +1774,9 @@
           "type": "windGust",
           "interval": 20579
         }
-      ]
+      ],
+      "soundscapePreset": "starryNight",
+      "musicLoop": "etherealPad"
     },
     "duration": 1
   },
@@ -1881,7 +1907,9 @@
           "type": "sparkle",
           "interval": 19446
         }
-      ]
+      ],
+      "soundscapePreset": "rain",
+      "musicLoop": "pianoLullaby"
     },
     "duration": 1
   },
@@ -2016,7 +2044,9 @@
           "type": "sparkle",
           "interval": 24458
         }
-      ]
+      ],
+      "soundscapePreset": "forest",
+      "musicLoop": "forestFlute"
     },
     "duration": 1
   },
@@ -2152,7 +2182,9 @@
           "type": "windGust",
           "interval": 12656
         }
-      ]
+      ],
+      "soundscapePreset": "rain",
+      "musicLoop": "pianoLullaby"
     },
     "duration": 1
   },
@@ -2288,7 +2320,9 @@
           "type": "heartbeat",
           "interval": 8629
         }
-      ]
+      ],
+      "soundscapePreset": "ocean",
+      "musicLoop": "oceanMelody"
     },
     "duration": 1
   },
@@ -2424,7 +2458,9 @@
           "type": "birdChirp",
           "interval": 22072
         }
-      ]
+      ],
+      "soundscapePreset": "garden",
+      "musicLoop": "gentleGuitar"
     },
     "duration": 1
   },
@@ -2561,7 +2597,9 @@
           "type": "sparkle",
           "interval": 16543
         }
-      ]
+      ],
+      "soundscapePreset": "starryNight",
+      "musicLoop": "etherealPad"
     },
     "duration": 1
   },
@@ -2697,7 +2735,9 @@
           "type": "waterDrop",
           "interval": 18442
         }
-      ]
+      ],
+      "soundscapePreset": "rain",
+      "musicLoop": "pianoLullaby"
     },
     "duration": 1
   },
@@ -2839,7 +2879,9 @@
           "type": "radarPing",
           "interval": 27341
         }
-      ]
+      ],
+      "soundscapePreset": "garden",
+      "musicLoop": "gentleGuitar"
     },
     "duration": 2
   },
@@ -2976,7 +3018,9 @@
           "type": "waterDrop",
           "interval": 10918
         }
-      ]
+      ],
+      "soundscapePreset": "river",
+      "musicLoop": "etherealPad"
     },
     "duration": 3
   },
@@ -3117,7 +3161,9 @@
           "type": "waterDrop",
           "interval": 18156
         }
-      ]
+      ],
+      "soundscapePreset": "forest",
+      "musicLoop": "forestFlute"
     },
     "duration": 2
   },
@@ -3258,7 +3304,9 @@
           "type": "waterDrop",
           "interval": 12881
         }
-      ]
+      ],
+      "soundscapePreset": "starryNight",
+      "musicLoop": "etherealPad"
     },
     "duration": 1
   },
@@ -3399,7 +3447,9 @@
           "type": "sparkle",
           "interval": 23502
         }
-      ]
+      ],
+      "soundscapePreset": "garden",
+      "musicLoop": "gentleGuitar"
     },
     "duration": 2
   },
@@ -3540,7 +3590,9 @@
           "type": "sparkle",
           "interval": 16569
         }
-      ]
+      ],
+      "soundscapePreset": "garden",
+      "musicLoop": "softStrings"
     },
     "duration": 2
   },
@@ -3677,7 +3729,9 @@
           "type": "whaleCall",
           "interval": 25058
         }
-      ]
+      ],
+      "soundscapePreset": "river",
+      "musicLoop": "etherealPad"
     },
     "duration": 2
   },
@@ -3814,7 +3868,9 @@
           "type": "radarPing",
           "interval": 12451
         }
-      ]
+      ],
+      "soundscapePreset": "starryNight",
+      "musicLoop": "cosmicSynth"
     },
     "duration": 2
   },
@@ -3951,7 +4007,9 @@
           "type": "leaves",
           "interval": 13669
         }
-      ]
+      ],
+      "soundscapePreset": "garden",
+      "musicLoop": "gentleGuitar"
     },
     "duration": 1
   },
@@ -4088,7 +4146,9 @@
           "type": "heartbeat",
           "interval": 7649
         }
-      ]
+      ],
+      "soundscapePreset": "ocean",
+      "musicLoop": "oceanMelody"
     },
     "duration": 1
   },
@@ -4225,7 +4285,9 @@
           "type": "windGust",
           "interval": 11084
         }
-      ]
+      ],
+      "soundscapePreset": "garden",
+      "musicLoop": "gentleGuitar"
     },
     "duration": 1
   },
@@ -4364,7 +4426,9 @@
           "type": "waveCycle",
           "interval": 22543
         }
-      ]
+      ],
+      "soundscapePreset": "fireplace",
+      "musicLoop": "calmHarp"
     },
     "duration": 1
   },
@@ -4502,7 +4566,9 @@
           "type": "windGust",
           "interval": 19560
         }
-      ]
+      ],
+      "soundscapePreset": "garden",
+      "musicLoop": "softStrings"
     },
     "duration": 3
   },
@@ -4642,7 +4708,9 @@
           "type": "waterDrop",
           "interval": 11059
         }
-      ]
+      ],
+      "soundscapePreset": "garden",
+      "musicLoop": "gentleGuitar"
     },
     "duration": 2
   },
@@ -4784,7 +4852,9 @@
           "type": "cricket",
           "interval": 5897
         }
-      ]
+      ],
+      "soundscapePreset": "forest",
+      "musicLoop": "forestFlute"
     },
     "duration": 2
   },
@@ -4922,7 +4992,9 @@
           "type": "sparkle",
           "interval": 19586
         }
-      ]
+      ],
+      "soundscapePreset": "starryNight",
+      "musicLoop": "etherealPad"
     },
     "duration": 1
   },
@@ -5061,7 +5133,9 @@
           "type": "waterDrop",
           "interval": 16097
         }
-      ]
+      ],
+      "soundscapePreset": "starryNight",
+      "musicLoop": "etherealPad"
     },
     "duration": 2
   },
@@ -5203,7 +5277,9 @@
           "type": "sparkle",
           "interval": 19157
         }
-      ]
+      ],
+      "soundscapePreset": "wind",
+      "musicLoop": "gentleGuitar"
     },
     "duration": 1
   },
@@ -5339,7 +5415,9 @@
           "type": "whaleCall",
           "interval": 22216
         }
-      ]
+      ],
+      "soundscapePreset": "river",
+      "musicLoop": "etherealPad"
     },
     "duration": 2
   },
@@ -5476,7 +5554,9 @@
           "type": "windGust",
           "interval": 15528
         }
-      ]
+      ],
+      "soundscapePreset": "wind",
+      "musicLoop": "gentleGuitar"
     },
     "duration": 4
   },
@@ -5616,7 +5696,9 @@
           "type": "owl",
           "interval": 26296
         }
-      ]
+      ],
+      "soundscapePreset": "forest",
+      "musicLoop": "nightPiano"
     },
     "duration": 3
   },
@@ -5757,7 +5839,9 @@
           "type": "starTwinkle",
           "interval": 23383
         }
-      ]
+      ],
+      "soundscapePreset": "fireplace",
+      "musicLoop": "calmHarp"
     },
     "duration": 2
   },
@@ -5901,7 +5985,9 @@
           "type": "sparkle",
           "interval": 7814
         }
-      ]
+      ],
+      "soundscapePreset": "wind",
+      "musicLoop": "gentleGuitar"
     },
     "duration": 2
   },
@@ -6044,7 +6130,9 @@
           "type": "starTwinkle",
           "interval": 24420
         }
-      ]
+      ],
+      "soundscapePreset": "forest",
+      "musicLoop": "nightPiano"
     },
     "duration": 3
   },
@@ -6183,7 +6271,9 @@
           "type": "starTwinkle",
           "interval": 17958
         }
-      ]
+      ],
+      "soundscapePreset": "rain",
+      "musicLoop": "pianoLullaby"
     },
     "duration": 1
   },
@@ -6322,7 +6412,9 @@
           "type": "birdChirp",
           "interval": 13468
         }
-      ]
+      ],
+      "soundscapePreset": "wind",
+      "musicLoop": "gentleGuitar"
     },
     "duration": 3
   },
@@ -6461,7 +6553,9 @@
           "type": "starTwinkle",
           "interval": 17958
         }
-      ]
+      ],
+      "soundscapePreset": "rain",
+      "musicLoop": "pianoLullaby"
     },
     "duration": 1
   },
@@ -6602,7 +6696,9 @@
           "type": "windGust",
           "interval": 17958
         }
-      ]
+      ],
+      "soundscapePreset": "starryNight",
+      "musicLoop": "etherealPad"
     },
     "duration": 2
   },
@@ -6743,7 +6839,9 @@
           "type": "sparkle",
           "interval": 17958
         }
-      ]
+      ],
+      "soundscapePreset": "fireplace",
+      "musicLoop": "calmHarp"
     },
     "duration": 2
   },
@@ -6886,7 +6984,9 @@
           "type": "sparkle",
           "interval": 19536
         }
-      ]
+      ],
+      "soundscapePreset": "garden",
+      "musicLoop": "gentleGuitar"
     },
     "duration": 2
   },
