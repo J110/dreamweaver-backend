@@ -219,6 +219,17 @@ def step_generate(args, state: dict) -> bool:
     new_ids = get_new_story_ids(before_ids)
     logger.info("  New items generated: %d", len(new_ids))
 
+    # Log story vs poem breakdown
+    if new_ids and CONTENT_EXPANDED_PATH.exists():
+        try:
+            expanded = json.loads(CONTENT_EXPANDED_PATH.read_text())
+            new_items = [s for s in expanded if s["id"] in set(new_ids)]
+            story_count = sum(1 for s in new_items if s.get("type") == "story")
+            poem_count = sum(1 for s in new_items if s.get("type") == "poem")
+            logger.info("  Breakdown: %d stories, %d poems", story_count, poem_count)
+        except Exception:
+            pass
+
     # Merge into content.json
     if new_ids and not args.dry_run:
         merge_expanded_to_content(new_ids)

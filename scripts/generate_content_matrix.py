@@ -784,6 +784,9 @@ def generate_one(client, item: Dict, existing_titles: List[str],
     # Determine max_tokens based on word count range
     max_tokens = min(8192, max(1024, item["max_words"] * 4))
 
+    # Mistral free tier = 2 req/min — need longer waits between retries
+    retry_delay = 35 if api == "mistral" else 2
+
     for attempt in range(max_retries):
         try:
             if api == "mistral":
@@ -794,14 +797,14 @@ def generate_one(client, item: Dict, existing_titles: List[str],
                 raw = _call_claude(client, prompt, max_tokens)
             if not raw:
                 logger.warning("  Attempt %d: No response from API", attempt + 1)
-                time.sleep(2)
+                time.sleep(retry_delay)
                 continue
 
             parsed = parse_json_response(raw)
 
             if not parsed:
                 logger.warning("  Attempt %d: Failed to parse JSON", attempt + 1)
-                time.sleep(2)
+                time.sleep(retry_delay)
                 continue
 
             title = parsed.get("title", "").strip()
@@ -813,7 +816,7 @@ def generate_one(client, item: Dict, existing_titles: List[str],
 
             if not title or not text:
                 logger.warning("  Attempt %d: Missing title or text", attempt + 1)
-                time.sleep(2)
+                time.sleep(retry_delay)
                 continue
 
             # Ensure paragraph breaks for readability
@@ -830,7 +833,7 @@ def generate_one(client, item: Dict, existing_titles: List[str],
                 logger.warning("  Attempt %d: Word count %d outside range [%d-%d]",
                                attempt + 1, wc, item["min_words"], item["max_words"])
                 if attempt < max_retries - 1:
-                    time.sleep(2)
+                    time.sleep(retry_delay)
                     continue
                 # Accept on last attempt anyway
                 logger.warning("  Accepting anyway on final attempt")
@@ -839,7 +842,7 @@ def generate_one(client, item: Dict, existing_titles: List[str],
             if title.lower() in [t.lower() for t in existing_titles]:
                 logger.warning("  Attempt %d: Duplicate title '%s'", attempt + 1, title)
                 if attempt < max_retries - 1:
-                    time.sleep(2)
+                    time.sleep(retry_delay)
                     continue
 
             # Build content object
@@ -1186,14 +1189,14 @@ def main():
             logger.info("  OK: '%s' (%d words)", result["title"], wc)
             success += 1
         else:
-            logger.error("  FAILED after all retries")
+            logger.error("  FAILED [%s] after all retries", item["type"])
             failed += 1
 
-        # Rate limiting: Mistral free tier = 2 req/min, so wait 35s between items
-        # Other APIs have higher limits, so shorter delay
+        # Rate limiting: Mistral free tier = 2 req/min, so wait 45s between items
+        # (35s was too tight — retries within generate_one can exhaust the quota)
         if args.api == "mistral":
-            logger.info("  Waiting 35s for Mistral rate limit (2 req/min)...")
-            time.sleep(35)
+            logger.info("  Waiting 45s for Mistral rate limit (2 req/min)...")
+            time.sleep(45)
         else:
             time.sleep(2)
 
