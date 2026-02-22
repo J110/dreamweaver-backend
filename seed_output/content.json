@@ -6889,5 +6889,149 @@
       ]
     },
     "duration": 2
+  },
+  {
+    "id": "gen-01f0b88dc42d",
+    "type": "story",
+    "lang": "en",
+    "title": "Rusty’s Starlight Path Home",
+    "description": "A little fox named Rusty follows glowing stars through a futuristic forest to find the coziest spot for sleep.",
+    "text": "[GENTLE] Hush, hush, little fox. \nRusty’s paws go tip-tap, tip-tap. \nMoonlight shines so soft and bright. \nStars hum a sleepy night-night song.\n\n[CALM] Twinkle, twinkle, glowing guide. \nRusty follows, side to side. \nLeaves go shh, shh, gentle breeze. \nSnuggle close, just doze with ease.\n\n[SLEEPY] Rusty curls in silver light. \nDreamy stars say, \"Sleep so tight.\" \nHush, hush, now close your eyes. \nMoon sings soft lullabies.",
+    "annotated_text": "[GENTLE] Hush, hush, little fox. \nRusty’s paws go tip-tap, tip-tap. \nMoonlight shines so soft and bright. \nStars hum a sleepy night-night song.\n\n[CALM] Twinkle, twinkle, glowing guide. \nRusty follows, side to side. \nLeaves go shh, shh, gentle breeze. \nSnuggle close, just doze with ease.\n\n[SLEEPY] Rusty curls in silver light. \nDreamy stars say, \"Sleep so tight.\" \nHush, hush, now close your eyes. \nMoon sings soft lullabies.",
+    "target_age": 0,
+    "age_min": 0,
+    "age_max": 1,
+    "age_group": "0-1",
+    "length": "SHORT",
+    "word_count": 63,
+    "duration_seconds": 0,
+    "categories": [
+      "Bedtime",
+      "Animals",
+      "Futuristic",
+      "Nature"
+    ],
+    "theme": "animals",
+    "morals": [
+      "Even the smallest journey can lead to warmth and comfort.",
+      "Following gentle guides helps us find peace."
+    ],
+    "cover": "/covers/rusty-s-starlight-path-home.svg",
+    "musicProfile": "autumn-forest",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-01f0_female_1.mp3",
+        "duration_seconds": 52.41,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-01f0_female_2.mp3",
+        "duration_seconds": 45.65,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-01f0_female_3.mp3",
+        "duration_seconds": 40.72,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_1",
+        "url": "/audio/pre-gen/gen-01f0_male_1.mp3",
+        "duration_seconds": 39.12,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-01f0_male_2.mp3",
+        "duration_seconds": 38.5,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_3",
+        "url": "/audio/pre-gen/gen-01f0_male_3.mp3",
+        "duration_seconds": 37.53,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-01f0_asmr.mp3",
+        "duration_seconds": 46.87,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "neutral",
+    "lead_character_type": "animal",
+    "universe": "futuristic",
+    "geography": "Americas",
+    "life_aspect": "sleep_comfort",
+    "plot_archetype": "quest_journey",
+    "created_at": "2026-02-22T01:30:18.616035",
+    "updated_at": "2026-02-22T01:30:18.616035",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 1,
+    "musicParams": {
+      "key": "A",
+      "chordNotes": [
+        110.0,
+        138.59,
+        164.81,
+        220.0
+      ],
+      "padType": "resonant",
+      "padGain": 0.0406,
+      "padFilter": 473,
+      "padLfo": 0.0515,
+      "noiseType": "pink",
+      "noiseGain": 0.0122,
+      "droneFreq": 55.0,
+      "droneGain": 0.0316,
+      "melodyNotes": [
+        220.0,
+        277.18,
+        329.62,
+        293.66
+      ],
+      "melodyInterval": 5201,
+      "melodyGain": 0.0147,
+      "bassNotes": [
+        55.0,
+        82.41,
+        69.3
+      ],
+      "bassInterval": 7919,
+      "counterNotes": [
+        346.48,
+        412.02,
+        275.0
+      ],
+      "counterInterval": 5734,
+      "events": [
+        {
+          "type": "cricket",
+          "interval": 8886
+        },
+        {
+          "type": "owl",
+          "interval": 21553
+        },
+        {
+          "type": "heartbeat",
+          "interval": 10775
+        },
+        {
+          "type": "sparkle",
+          "interval": 14652
+        }
+      ]
+    }
   }
 ]

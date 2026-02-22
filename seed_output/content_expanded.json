@@ -10689,5 +10689,50 @@
     "view_count": 0,
     "like_count": 0,
     "save_count": 0
+  },
+  {
+    "id": "gen-01f0b88dc42d",
+    "type": "story",
+    "lang": "en",
+    "title": "Rusty’s Starlight Path Home",
+    "description": "A little fox named Rusty follows glowing stars through a futuristic forest to find the coziest spot for sleep.",
+    "text": "[GENTLE] Hush, hush, little fox. \nRusty’s paws go tip-tap, tip-tap. \nMoonlight shines so soft and bright. \nStars hum a sleepy night-night song.\n\n[CALM] Twinkle, twinkle, glowing guide. \nRusty follows, side to side. \nLeaves go shh, shh, gentle breeze. \nSnuggle close, just doze with ease.\n\n[SLEEPY] Rusty curls in silver light. \nDreamy stars say, \"Sleep so tight.\" \nHush, hush, now close your eyes. \nMoon sings soft lullabies.",
+    "annotated_text": "[GENTLE] Hush, hush, little fox. \nRusty’s paws go tip-tap, tip-tap. \nMoonlight shines so soft and bright. \nStars hum a sleepy night-night song.\n\n[CALM] Twinkle, twinkle, glowing guide. \nRusty follows, side to side. \nLeaves go shh, shh, gentle breeze. \nSnuggle close, just doze with ease.\n\n[SLEEPY] Rusty curls in silver light. \nDreamy stars say, \"Sleep so tight.\" \nHush, hush, now close your eyes. \nMoon sings soft lullabies.",
+    "target_age": 0,
+    "age_min": 0,
+    "age_max": 1,
+    "age_group": "0-1",
+    "length": "SHORT",
+    "word_count": 63,
+    "duration_seconds": 0,
+    "categories": [
+      "Bedtime",
+      "Animals",
+      "Futuristic",
+      "Nature"
+    ],
+    "theme": "animals",
+    "morals": [
+      "Even the smallest journey can lead to warmth and comfort.",
+      "Following gentle guides helps us find peace."
+    ],
+    "cover": "",
+    "musicProfile": "autumn-forest",
+    "music_type": "ambient",
+    "audio_variants": [],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "neutral",
+    "lead_character_type": "animal",
+    "universe": "futuristic",
+    "geography": "Americas",
+    "life_aspect": "sleep_comfort",
+    "plot_archetype": "quest_journey",
+    "created_at": "2026-02-22T01:30:18.616035",
+    "updated_at": "2026-02-22T01:30:18.616035",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0
   }
 ]
