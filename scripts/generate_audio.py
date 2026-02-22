@@ -432,12 +432,15 @@ def generate_song_variant(
 
     # POST to ACE-Step Modal endpoint
     # ACE-Step uses prompt-based mode control: "a cappella" in description = vocal only
+    # Use voice-based seed so each variant gets a unique performance
+    voice_seed = hash(voice) % 999999 + 1
     payload = {
         "lyrics": lyrics,
         "description": description,
         "mode": "vocal",   # Adds "a cappella" prefix to prompt for vocal-only
         "format": "mp3",   # ACE-Step returns MP3 directly
         "duration": 90,    # Lullabies ~90 seconds
+        "seed": voice_seed,
     }
 
     try:
