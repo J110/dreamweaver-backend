@@ -7131,7 +7131,9 @@
           "type": "sparkle",
           "interval": 14652
         }
-      ]
+      ],
+      "soundscapePreset": "heartbeat",
+      "musicLoop": "musicBox"
     }
   }
 ]
