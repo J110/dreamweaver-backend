@@ -654,11 +654,25 @@ def preflight_checks(args) -> bool:
             logger.info("  Warming up Modal Chatterbox endpoint...")
             resp = httpx.get(CHATTERBOX_HEALTH, timeout=90)
             if resp.status_code == 200:
-                logger.info("  Modal health: OK")
+                logger.info("  Modal Chatterbox health: OK")
             else:
-                logger.warning("  Modal health: HTTP %d", resp.status_code)
+                logger.warning("  Modal Chatterbox health: HTTP %d", resp.status_code)
         except Exception as e:
-            logger.warning("  Modal warmup failed: %s (will retry during audio step)", e)
+            logger.warning("  Modal Chatterbox warmup failed: %s (will retry during audio step)", e)
+
+    # 3b. Warm up SongGen endpoint (for song audio generation)
+    songgen_health = os.environ.get("SONGGEN_HEALTH", "")
+    if songgen_health and not args.dry_run:
+        try:
+            import httpx
+            logger.info("  Warming up Modal SongGen endpoint...")
+            resp = httpx.get(songgen_health, timeout=90)
+            if resp.status_code == 200:
+                logger.info("  Modal SongGen health: OK")
+            else:
+                logger.warning("  Modal SongGen health: HTTP %d", resp.status_code)
+        except Exception as e:
+            logger.warning("  Modal SongGen warmup failed: %s (songs will fallback to Chatterbox)", e)
 
     # 4. Quick Mistral API connectivity test
     if not args.dry_run:

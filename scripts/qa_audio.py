@@ -407,6 +407,13 @@ def phase2_transcription_fidelity(
     for story in stories:
         story_id = story["id"]
         title = story.get("title", "untitled")
+
+        # Skip fidelity check for songs — singing distorts pronunciation,
+        # making transcription-based comparison unreliable
+        if story.get("type") == "song":
+            logger.info("  [SKIP] %s — song (fidelity QA not applicable for singing)", title)
+            continue
+
         source_text = story.get("annotated_text_devanagari", "")
         if not source_text:
             source_text = story.get("annotated_text", story.get("text", ""))

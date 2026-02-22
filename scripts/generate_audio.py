@@ -50,6 +50,10 @@ OUTPUT_DIR = BASE_DIR / "audio" / "pre-gen"
 CHATTERBOX_URL = "https://anmol-71634--dreamweaver-chatterbox-tts.modal.run"
 CHATTERBOX_HEALTH = "https://anmol-71634--dreamweaver-chatterbox-health.modal.run"
 
+# ── SongGen Modal endpoint (for singing voice generation) ────────────────
+SONGGEN_URL = os.getenv("SONGGEN_URL", "")
+SONGGEN_HEALTH = os.getenv("SONGGEN_HEALTH", "")
+
 # ── Emotion profiles — BALANCED FOR QUALITY ──────────────────────────
 # Based on Chatterbox documentation recommendations:
 # - Default (0.5/0.5) is best for general purpose
@@ -102,6 +106,12 @@ _MARKER_RE = re.compile(
 VOICE_MAP = {
     "en": ["female_1", "female_2", "female_3", "male_1", "male_2", "male_3", "asmr"],
     "hi": ["female_1_hi", "female_2_hi", "female_3_hi", "male_1_hi", "male_2_hi", "male_3_hi", "asmr_hi"],
+}
+
+# Fewer variants for songs (more expensive to generate via SongGen)
+SONG_VOICE_MAP = {
+    "en": ["female_1", "female_3", "male_1", "male_2"],
+    "hi": ["female_1_hi", "female_3_hi", "male_1_hi", "male_2_hi"],
 }
 
 # ── Logging ──────────────────────────────────────────────────────────────
@@ -256,6 +266,232 @@ def warm_up_chatterbox(client: httpx.Client) -> bool:
     except Exception as e:
         logger.error("Warm-up failed: %s", e)
         return False
+
+
+# ═════════════════════════════════════════════════════════════════════════
+# Song generation via SongGen (LeVo)
+# ═════════════════════════════════════════════════════════════════════════
+
+# Regex to strip TTS emotion markers from song text
+_EMOTION_MARKER_RE = re.compile(
+    r"\[(?:SINGING|HUMMING|GENTLE|CALM|JOYFUL|SLEEPY|EXCITED|DRAMATIC|"
+    r"WHISPERING|CURIOUS|ADVENTUROUS|MYSTERIOUS|RHYTHMIC|PAUSE|DRAMATIC_PAUSE)\]\s*",
+    re.IGNORECASE,
+)
+
+
+def prepare_lyrics_for_songgen(story: dict) -> str:
+    """Convert story text to SongGen-compatible lyrics format.
+
+    Uses the raw `text` field (which has [Verse 1]/[Chorus] structure) and
+    converts to LeVo tags: [verse], [chorus], [bridge], [intro-short], [outro-short].
+    Sections separated by ;, sentences within sections separated by .
+    """
+    text = story.get("text", "")
+    if not text:
+        return ""
+
+    # Strip any TTS emotion markers that might be in the text
+    text = _EMOTION_MARKER_RE.sub("", text)
+
+    # Split into sections by double newline
+    sections = [s.strip() for s in text.split("\n\n") if s.strip()]
+
+    levo_parts = ["[intro-short]"]  # Always start with a short intro
+
+    for section in sections:
+        lines = section.split("\n")
+        header = lines[0].strip() if lines else ""
+
+        # Detect section type from header
+        if re.match(r"\[?Verse\s*\d*\]?", header, re.IGNORECASE):
+            tag = "[verse]"
+            lyrics_lines = lines[1:] if len(lines) > 1 else lines
+        elif re.match(r"\[?Chorus\]?", header, re.IGNORECASE):
+            tag = "[chorus]"
+            lyrics_lines = lines[1:] if len(lines) > 1 else lines
+        elif re.match(r"\[?Bridge\]?", header, re.IGNORECASE):
+            tag = "[bridge]"
+            lyrics_lines = lines[1:] if len(lines) > 1 else lines
+        else:
+            # No section header — treat as a verse
+            tag = "[verse]"
+            lyrics_lines = lines
+
+        # Join lines with periods (SongGen uses . as sentence separator)
+        lyric_text = ". ".join(line.strip().rstrip(".") for line in lyrics_lines if line.strip())
+        if lyric_text:
+            levo_parts.append(f"{tag} {lyric_text}")
+
+    levo_parts.append("[outro-short]")
+
+    return " ; ".join(levo_parts)
+
+
+def build_song_description(story: dict, voice: str) -> str:
+    """Build SongGen description from song metadata to match the song's theme.
+
+    The description controls the musical style, instruments, mood, and tempo
+    so the generated singing matches the text content.
+    """
+    parts = []
+
+    # Voice gender
+    if "female" in voice:
+        parts.append("female vocal")
+    elif "male" in voice:
+        parts.append("male vocal")
+    else:
+        parts.append("female vocal")  # default
+
+    # Vocal qualities for lullabies
+    parts.append("warm")
+    parts.append("soft")
+
+    # Genre from metadata
+    genre = story.get("music_genre", "lullaby")
+    parts.append(genre)
+
+    # Theme-based mood descriptors
+    theme = story.get("theme", "dreamy")
+    theme_moods = {
+        "dreamy": "ethereal, dreamy, floating",
+        "ocean": "oceanic, wavy, flowing",
+        "animals": "playful, gentle, nature",
+        "nature": "pastoral, peaceful, organic",
+        "fantasy": "magical, whimsical, enchanting",
+        "adventure": "uplifting, hopeful, spirited",
+        "space": "cosmic, spacey, twinkling",
+        "bedtime": "sleepy, cozy, hushed",
+        "friendship": "heartfelt, warm, tender",
+        "mystery": "mystical, atmospheric, intriguing",
+        "science": "curious, wonder, bright",
+        "family": "comforting, loving, nurturing",
+    }
+    mood = theme_moods.get(theme, "gentle, soothing")
+    parts.append(mood)
+
+    # Instruments from metadata
+    instruments = story.get("instruments", [])
+    if instruments:
+        parts.append(", ".join(instruments))
+    else:
+        # Default lullaby instruments
+        parts.append("piano, soft strings")
+
+    # Story description for additional context
+    desc = story.get("description", "")
+    if desc:
+        # Extract key mood words from the story description
+        parts.append(desc[:80])
+
+    # Always end with tempo and bedtime context
+    parts.append("slow tempo")
+    parts.append("bedtime lullaby for children")
+
+    return ", ".join(parts)
+
+
+def generate_song_variant(
+    client: httpx.Client,
+    story: dict,
+    voice: str,
+    output_path: Path,
+    force: bool = False,
+) -> Optional[dict]:
+    """Generate singing audio for a song using SongGen (LeVo) on Modal.
+
+    Unlike stories (segment-by-segment via Chatterbox), songs are generated
+    as a single piece for musical coherence.
+    """
+    story_id = story["id"]
+    title = story["title"]
+
+    if output_path.exists() and not force:
+        logger.info("  Skipping %s (exists)", output_path.name)
+        duration = get_mp3_duration(output_path)
+        return {
+            "voice": voice,
+            "url": f"/audio/pre-gen/{output_path.name}",
+            "duration_seconds": round(duration, 2),
+            "provider": "songgen",
+        }
+
+    if not SONGGEN_URL:
+        logger.warning("  SONGGEN_URL not configured, falling back to Chatterbox for song")
+        return generate_story_variant(client, story, voice, output_path, force)
+
+    # Prepare lyrics and description for SongGen
+    lyrics = prepare_lyrics_for_songgen(story)
+    description = build_song_description(story, voice)
+
+    if not lyrics:
+        logger.error("  No lyrics for song %s", story_id)
+        return None
+
+    logger.info("  Generating song %s / %s via SongGen...", title, voice)
+    logger.info("  Description: %s", description[:100])
+
+    # POST to SongGen Modal endpoint
+    payload = {
+        "lyrics": lyrics,
+        "description": description,
+        "mode": "vocal",   # Vocal-only; background music handled by musicParams
+        "format": "wav",   # Get lossless, we'll convert to MP3 locally
+    }
+
+    try:
+        resp = client.post(SONGGEN_URL, json=payload, timeout=300.0)
+        if resp.status_code != 200:
+            logger.error("  SongGen HTTP %d: %s", resp.status_code, resp.text[:200])
+            return None
+        audio_bytes = resp.content
+    except Exception as e:
+        logger.error("  SongGen request failed: %s", e)
+        return None
+
+    if not audio_bytes or len(audio_bytes) < 1000:
+        logger.error("  SongGen returned empty/tiny audio (%d bytes)", len(audio_bytes))
+        return None
+
+    # Load and post-process
+    try:
+        audio = audio_from_bytes(audio_bytes)
+    except Exception as e:
+        logger.error("  Failed to decode SongGen audio: %s", e)
+        return None
+
+    # Normalize to -16 dBFS (gentle level, good for bedtime)
+    try:
+        target_db = -16.0
+        gain = target_db - audio.dBFS
+        audio = audio.apply_gain(gain)
+    except Exception as e:
+        logger.warning("  Normalization failed (continuing): %s", e)
+
+    # Apply gentle fade in/out
+    try:
+        fade_in_ms = min(500, len(audio) // 4)
+        fade_out_ms = min(1500, len(audio) // 3)
+        audio = audio.fade_in(fade_in_ms).fade_out(fade_out_ms)
+    except Exception as e:
+        logger.warning("  Fade failed (continuing): %s", e)
+
+    # Export as MP3 at 256kbps
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    audio.export(str(output_path), format="mp3", bitrate="256k")
+
+    duration = len(audio) / 1000.0
+    size_kb = output_path.stat().st_size / 1024
+
+    logger.info("  Saved %s (%.0f KB, %.1f sec)", output_path.name, size_kb, duration)
+
+    return {
+        "voice": voice,
+        "url": f"/audio/pre-gen/{output_path.name}",
+        "duration_seconds": round(duration, 2),
+        "provider": "songgen",
+    }
 
 
 # ═════════════════════════════════════════════════════════════════════════
@@ -437,7 +673,12 @@ def main():
     plan = []
     for story in stories:
         lang = story.get("lang", "en")
-        voices = VOICE_MAP.get(lang, VOICE_MAP["en"])
+        content_type = story.get("type", "story")
+        # Songs use fewer voice variants (SongGen is more expensive)
+        if content_type == "song" and SONGGEN_URL:
+            voices = SONG_VOICE_MAP.get(lang, SONG_VOICE_MAP["en"])
+        else:
+            voices = VOICE_MAP.get(lang, VOICE_MAP["en"])
         if args.voice:
             voices = [v for v in voices if v == args.voice]
             if not voices:
@@ -534,16 +775,24 @@ def main():
         story = item["story"]
         voice = item["voice"]
         output_path = item["output_path"]
+        content_type = story.get("type", "story")
 
         # Each thread gets its own HTTP client for thread safety
-        thread_client = httpx.Client(timeout=180.0)
+        thread_client = httpx.Client(timeout=300.0)
         try:
-            logger.info("[%d/%d] %s / %s", item_idx + 1, total, story["title"], voice)
+            logger.info("[%d/%d] %s / %s [%s]", item_idx + 1, total, story["title"], voice, content_type)
 
-            variant = generate_story_variant(
-                thread_client, story, voice, output_path,
-                force=args.force, speed=args.speed,
-            )
+            # Route songs to SongGen, everything else to Chatterbox
+            if content_type == "song" and SONGGEN_URL:
+                variant = generate_song_variant(
+                    thread_client, story, voice, output_path,
+                    force=args.force,
+                )
+            else:
+                variant = generate_story_variant(
+                    thread_client, story, voice, output_path,
+                    force=args.force, speed=args.speed,
+                )
 
             if variant:
                 sid = story["id"]
