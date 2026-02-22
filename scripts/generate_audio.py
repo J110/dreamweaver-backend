@@ -281,11 +281,11 @@ _EMOTION_MARKER_RE = re.compile(
 
 
 def prepare_lyrics_for_songgen(story: dict) -> str:
-    """Convert story text to SongGen-compatible lyrics format.
+    """Convert story text to ACE-Step-compatible lyrics format.
 
     Uses the raw `text` field (which has [Verse 1]/[Chorus] structure) and
-    converts to LeVo tags: [verse], [chorus], [bridge], [intro-short], [outro-short].
-    Sections separated by ;, sentences within sections separated by .
+    converts to ACE-Step tags: [verse], [chorus], [bridge].
+    Sections separated by blank lines, lyrics as newline-separated lines.
     """
     text = story.get("text", "")
     if not text:
@@ -297,7 +297,7 @@ def prepare_lyrics_for_songgen(story: dict) -> str:
     # Split into sections by double newline
     sections = [s.strip() for s in text.split("\n\n") if s.strip()]
 
-    levo_parts = ["[intro-short]"]  # Always start with a short intro
+    ace_parts = []
 
     for section in sections:
         lines = section.split("\n")
@@ -318,18 +318,16 @@ def prepare_lyrics_for_songgen(story: dict) -> str:
             tag = "[verse]"
             lyrics_lines = lines
 
-        # Join lines with periods (SongGen uses . as sentence separator)
-        lyric_text = ". ".join(line.strip().rstrip(".") for line in lyrics_lines if line.strip())
+        # ACE-Step uses newline-separated lyrics under each tag
+        lyric_text = "\n".join(line.strip() for line in lyrics_lines if line.strip())
         if lyric_text:
-            levo_parts.append(f"{tag} {lyric_text}")
+            ace_parts.append(f"{tag}\n{lyric_text}")
 
-    levo_parts.append("[outro-short]")
-
-    return " ; ".join(levo_parts)
+    return "\n\n".join(ace_parts)
 
 
 def build_song_description(story: dict, voice: str) -> str:
-    """Build SongGen description from song metadata to match the song's theme.
+    """Build ACE-Step description from song metadata to match the song's theme.
 
     The description controls the musical style, instruments, mood, and tempo
     so the generated singing matches the text content.
@@ -399,7 +397,7 @@ def generate_song_variant(
     output_path: Path,
     force: bool = False,
 ) -> Optional[dict]:
-    """Generate singing audio for a song using SongGen (LeVo) on Modal.
+    """Generate singing audio for a song using ACE-Step on Modal.
 
     Unlike stories (segment-by-segment via Chatterbox), songs are generated
     as a single piece for musical coherence.
@@ -414,14 +412,14 @@ def generate_song_variant(
             "voice": voice,
             "url": f"/audio/pre-gen/{output_path.name}",
             "duration_seconds": round(duration, 2),
-            "provider": "songgen",
+            "provider": "ace-step",
         }
 
     if not SONGGEN_URL:
         logger.warning("  SONGGEN_URL not configured, falling back to Chatterbox for song")
         return generate_story_variant(client, story, voice, output_path, force)
 
-    # Prepare lyrics and description for SongGen
+    # Prepare lyrics and description for ACE-Step
     lyrics = prepare_lyrics_for_songgen(story)
     description = build_song_description(story, voice)
 
@@ -429,36 +427,38 @@ def generate_song_variant(
         logger.error("  No lyrics for song %s", story_id)
         return None
 
-    logger.info("  Generating song %s / %s via SongGen...", title, voice)
+    logger.info("  Generating song %s / %s via ACE-Step...", title, voice)
     logger.info("  Description: %s", description[:100])
 
-    # POST to SongGen Modal endpoint
+    # POST to ACE-Step Modal endpoint
+    # ACE-Step uses prompt-based mode control: "a cappella" in description = vocal only
     payload = {
         "lyrics": lyrics,
         "description": description,
-        "mode": "vocal",   # Vocal-only; background music handled by musicParams
-        "format": "wav",   # Get lossless, we'll convert to MP3 locally
+        "mode": "vocal",   # Adds "a cappella" prefix to prompt for vocal-only
+        "format": "mp3",   # ACE-Step returns MP3 directly
+        "duration": 90,    # Lullabies ~90 seconds
     }
 
     try:
-        resp = client.post(SONGGEN_URL, json=payload, timeout=300.0)
+        resp = client.post(SONGGEN_URL, json=payload, timeout=600.0)
         if resp.status_code != 200:
-            logger.error("  SongGen HTTP %d: %s", resp.status_code, resp.text[:200])
+            logger.error("  ACE-Step HTTP %d: %s", resp.status_code, resp.text[:200])
             return None
         audio_bytes = resp.content
     except Exception as e:
-        logger.error("  SongGen request failed: %s", e)
+        logger.error("  ACE-Step request failed: %s", e)
         return None
 
     if not audio_bytes or len(audio_bytes) < 1000:
-        logger.error("  SongGen returned empty/tiny audio (%d bytes)", len(audio_bytes))
+        logger.error("  ACE-Step returned empty/tiny audio (%d bytes)", len(audio_bytes))
         return None
 
     # Load and post-process
     try:
         audio = audio_from_bytes(audio_bytes)
     except Exception as e:
-        logger.error("  Failed to decode SongGen audio: %s", e)
+        logger.error("  Failed to decode ACE-Step audio: %s", e)
         return None
 
     # Normalize to -16 dBFS (gentle level, good for bedtime)
@@ -490,7 +490,7 @@ def generate_song_variant(
         "voice": voice,
         "url": f"/audio/pre-gen/{output_path.name}",
         "duration_seconds": round(duration, 2),
-        "provider": "songgen",
+        "provider": "ace-step",
     }
 
 
