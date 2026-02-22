@@ -441,7 +441,7 @@ def generate_song_variant(
     }
 
     try:
-        resp = client.post(SONGGEN_URL, json=payload, timeout=600.0)
+        resp = client.post(SONGGEN_URL, json=payload, timeout=600.0, follow_redirects=True)
         if resp.status_code != 200:
             logger.error("  ACE-Step HTTP %d: %s", resp.status_code, resp.text[:200])
             return None
