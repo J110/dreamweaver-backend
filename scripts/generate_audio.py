@@ -390,6 +390,37 @@ def build_song_description(story: dict, voice: str) -> str:
     return ", ".join(parts)
 
 
+# ── Lullaby style variations for songs ──────────────────────────────────
+# Each voice slot maps to a distinct musical style, giving users meaningfully
+# different listening experiences instead of identical a cappella variants.
+LULLABY_STYLES = {
+    "female_1": {
+        "name": "Piano Lullaby",
+        "mode": "full",
+        "description": "gentle lullaby, {gender} vocal, warm, soft, piano, soft strings, slow tempo 60 bpm, dreamy, peaceful, bedtime",
+    },
+    "female_3": {
+        "name": "Guitar Lullaby",
+        "mode": "full",
+        "description": "acoustic lullaby, {gender} vocal, sweet, tender, acoustic guitar, fingerpicking, slow tempo 65 bpm, cozy, folk, bedtime",
+    },
+    "male_1": {
+        "name": "Music Box Lullaby",
+        "mode": "full",
+        "description": "delicate lullaby, {gender} vocal, soft, gentle, music box, bells, chimes, very slow tempo 55 bpm, magical, enchanting, bedtime",
+    },
+    "male_2": {
+        "name": "A Cappella",
+        "mode": "vocal",
+        "description": "{gender} vocal, warm, intimate, gentle lullaby, slow tempo 65 bpm, soothing, bedtime",
+    },
+}
+# Hindi variants use the same styles
+LULLABY_STYLES.update({
+    f"{k}_hi": v for k, v in LULLABY_STYLES.items()
+})
+
+
 def generate_song_variant(
     client: httpx.Client,
     story: dict,
@@ -400,7 +431,8 @@ def generate_song_variant(
     """Generate singing audio for a song using ACE-Step on Modal.
 
     Unlike stories (segment-by-segment via Chatterbox), songs are generated
-    as a single piece for musical coherence.
+    as a single piece for musical coherence. Each voice slot maps to a distinct
+    lullaby style (piano, guitar, music box, a cappella) via LULLABY_STYLES.
     """
     story_id = story["id"]
     title = story["title"]
@@ -419,26 +451,36 @@ def generate_song_variant(
         logger.warning("  SONGGEN_URL not configured, falling back to Chatterbox for song")
         return generate_story_variant(client, story, voice, output_path, force)
 
-    # Prepare lyrics and description for ACE-Step
+    # Prepare lyrics for ACE-Step
     lyrics = prepare_lyrics_for_songgen(story)
-    description = build_song_description(story, voice)
 
     if not lyrics:
         logger.error("  No lyrics for song %s", story_id)
         return None
 
-    logger.info("  Generating song %s / %s via ACE-Step...", title, voice)
-    logger.info("  Description: %s", description[:100])
+    # Use lullaby style variation if available, otherwise fall back to generic
+    voice_base = voice.replace("_hi", "")
+    gender = "female" if "female" in voice else "male"
+    style = LULLABY_STYLES.get(voice)
+
+    if style:
+        description = style["description"].format(gender=gender)
+        mode = style["mode"]
+        logger.info("  Generating song %s / %s [%s] via ACE-Step...", title, voice, style["name"])
+    else:
+        description = build_song_description(story, voice)
+        mode = "vocal"
+        logger.info("  Generating song %s / %s via ACE-Step...", title, voice)
+    logger.info("  Mode: %s | Description: %s", mode, description[:100])
 
     # POST to ACE-Step Modal endpoint
-    # ACE-Step uses prompt-based mode control: "a cappella" in description = vocal only
     # Use voice-based seed so each variant gets a unique performance
     voice_seed = hash(voice) % 999999 + 1
     payload = {
         "lyrics": lyrics,
         "description": description,
-        "mode": "vocal",   # Adds "a cappella" prefix to prompt for vocal-only
-        "format": "mp3",   # ACE-Step returns MP3 directly
+        "mode": mode,
+        "format": "mp3",
         "duration": 90,    # Lullabies ~90 seconds
         "seed": voice_seed,
     }
