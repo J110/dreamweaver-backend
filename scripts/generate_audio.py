@@ -88,13 +88,16 @@ CONTENT_TYPE_PROFILES: Dict[str, dict] = {
 PAUSE_MARKERS = {
     "pause": 800,             # natural pause
     "dramatic_pause": 1500,   # longer dramatic pause
+    "long_pause": 4000,       # extended pause for sleep phase dissolving
+    "breath_cue": 2000,       # breathing cue pause
 }
 
 _MARKER_RE = re.compile(
     r"\["
     r"(SLEEPY|GENTLE|CALM|EXCITED|CURIOUS|ADVENTUROUS|MYSTERIOUS|"
     r"JOYFUL|DRAMATIC|WHISPERING|DRAMATIC_PAUSE|RHYTHMIC|SINGING|"
-    r"HUMMING|PAUSE|laugh|chuckle)"
+    r"HUMMING|PAUSE|CHAR_START|CHAR_END|PHASE_2|PHASE_3|LONG_PAUSE|"
+    r"BREATH_CUE|laugh|chuckle)"
     r"\]",
     re.IGNORECASE,
 )
@@ -161,10 +164,18 @@ def get_mp3_duration(filepath: Path) -> float:
 # ═════════════════════════════════════════════════════════════════════════
 
 def parse_annotated_text(text: str, content_type: str = "story") -> List[dict]:
-    """Parse annotated text into segments with emotion parameters."""
+    """Parse annotated text into segments with emotion parameters.
+
+    Supports character voice switching via [CHAR_START]/[CHAR_END] markers
+    and phase-based pacing via [PHASE_2]/[PHASE_3] markers.
+    These are backward-compatible — existing stories without these markers
+    parse identically to before.
+    """
     segments = []
     base_profile = CONTENT_TYPE_PROFILES.get(content_type, CONTENT_TYPE_PROFILES["story"])
     current_profile = dict(base_profile)
+    in_character_voice = False
+    current_phase = 1
 
     parts = _MARKER_RE.split(text)
     for part in parts:
@@ -173,7 +184,26 @@ def parse_annotated_text(text: str, content_type: str = "story") -> List[dict]:
             continue
 
         marker_lower = part_stripped.lower()
-        if marker_lower in PAUSE_MARKERS:
+
+        # Character voice switching
+        if marker_lower == "char_start":
+            in_character_voice = True
+            continue
+        elif marker_lower == "char_end":
+            in_character_voice = False
+            continue
+        # Phase transitions
+        elif marker_lower == "phase_2":
+            current_phase = 2
+            segments.append({"type": "pause", "duration_ms": 3000})
+            current_profile = dict(EMOTION_PROFILES["calm"])
+            continue
+        elif marker_lower == "phase_3":
+            current_phase = 3
+            segments.append({"type": "pause", "duration_ms": 4000})
+            current_profile = dict(EMOTION_PROFILES["whispering"])
+            continue
+        elif marker_lower in PAUSE_MARKERS:
             segments.append({"type": "pause", "duration_ms": PAUSE_MARKERS[marker_lower]})
         elif marker_lower in EMOTION_PROFILES:
             current_profile = dict(EMOTION_PROFILES[marker_lower])
@@ -182,12 +212,16 @@ def parse_annotated_text(text: str, content_type: str = "story") -> List[dict]:
         else:
             clean_text = part_stripped.strip()
             if clean_text:
-                segments.append({
+                seg = {
                     "type": "speech",
                     "text": clean_text,
                     "exaggeration": current_profile["exaggeration"],
                     "cfg_weight": current_profile["cfg_weight"],
-                })
+                    "phase": current_phase,
+                }
+                if in_character_voice:
+                    seg["voice_override"] = "character_voice"
+                segments.append(seg)
 
     return segments
 
@@ -542,6 +576,125 @@ def generate_song_variant(
 # Story variant generation
 # ═════════════════════════════════════════════════════════════════════════
 
+# ── Lullaby stitching cache ────────────────────────────────────────────
+# Cache generated lullaby AudioSegments so we generate only 2 (female + male)
+# and reuse them across narrator variants.
+_lullaby_cache: Dict[str, AudioSegment] = {}
+_lullaby_cache_lock = threading.Lock()
+
+
+def generate_lullaby_audio(
+    client: httpx.Client,
+    lyrics: str,
+    voice_gender: str,
+    story_title: str,
+) -> Optional[AudioSegment]:
+    """Generate a lullaby via ACE-Step and return as AudioSegment.
+
+    Uses a cache so we only generate 2 lullabies (female + male) total,
+    then reuse the appropriate one for each narrator variant.
+    """
+    cache_key = voice_gender  # "female" or "male"
+    with _lullaby_cache_lock:
+        if cache_key in _lullaby_cache:
+            logger.info("  Reusing cached %s lullaby", cache_key)
+            return _lullaby_cache[cache_key]
+
+    if not SONGGEN_URL:
+        logger.warning("  SONGGEN_URL not set, skipping lullaby generation")
+        return None
+
+    # Build description based on gender
+    if voice_gender == "female":
+        description = (
+            "gentle lullaby, female vocal, warm, soft, relaxed, unhurried, "
+            "piano, soft strings, slow tempo 55 bpm, dreamy, peaceful, bedtime"
+        )
+    else:
+        description = (
+            "acoustic lullaby, male vocal, warm, tender, relaxed, unhurried, "
+            "acoustic guitar, fingerpicking, slow tempo 55 bpm, cozy, folk, bedtime"
+        )
+
+    voice_seed = hash(f"lullaby_{voice_gender}_{story_title}") % 999999 + 1
+    payload = {
+        "lyrics": lyrics,
+        "description": description,
+        "mode": "full",
+        "format": "mp3",
+        "duration": 120,  # 2 minutes
+        "seed": voice_seed,
+    }
+
+    logger.info("  Generating %s lullaby via ACE-Step for '%s'...", voice_gender, story_title)
+    try:
+        resp = client.post(SONGGEN_URL, json=payload, timeout=600.0, follow_redirects=True)
+        if resp.status_code != 200:
+            logger.error("  ACE-Step lullaby HTTP %d: %s", resp.status_code, resp.text[:200])
+            return None
+        audio_bytes = resp.content
+    except Exception as e:
+        logger.error("  ACE-Step lullaby request failed: %s", e)
+        return None
+
+    if not audio_bytes or len(audio_bytes) < 1000:
+        logger.error("  ACE-Step lullaby returned empty audio (%d bytes)", len(audio_bytes))
+        return None
+
+    try:
+        lullaby = audio_from_bytes(audio_bytes)
+    except Exception as e:
+        logger.error("  Failed to decode lullaby audio: %s", e)
+        return None
+
+    # Normalize to slightly quieter than narration (-19 dBFS vs -16 dBFS)
+    try:
+        target_db = -19.0
+        gain = target_db - lullaby.dBFS
+        lullaby = lullaby.apply_gain(gain)
+    except Exception:
+        pass
+
+    # Fade in over 5 seconds
+    try:
+        lullaby = lullaby.fade_in(5000).fade_out(3000)
+    except Exception:
+        pass
+
+    logger.info("  Generated %s lullaby: %.1f sec", voice_gender, len(lullaby) / 1000.0)
+
+    with _lullaby_cache_lock:
+        _lullaby_cache[cache_key] = lullaby
+
+    return lullaby
+
+
+def stitch_lullaby(
+    story_audio: AudioSegment,
+    lullaby_audio: AudioSegment,
+    crossfade_ms: int = 10000,
+) -> AudioSegment:
+    """Crossfade lullaby onto the end of story audio.
+
+    The lullaby fades in under the last `crossfade_ms` of the story,
+    creating a seamless transition from narration to singing.
+    """
+    # Ensure crossfade doesn't exceed either audio length
+    crossfade_ms = min(crossfade_ms, len(story_audio) // 2, len(lullaby_audio) // 2)
+
+    # Overlay lullaby start with story end
+    combined = story_audio.overlay(
+        lullaby_audio[:crossfade_ms],
+        position=len(story_audio) - crossfade_ms,
+    )
+    # Append remaining lullaby after overlap
+    remaining = lullaby_audio[crossfade_ms:]
+    if len(remaining) > 0:
+        combined = combined + remaining
+
+    return combined
+
+
 def generate_story_variant(
     client: httpx.Client,
     story: dict,
@@ -593,14 +746,26 @@ def generate_story_variant(
             if seg["type"] == "pause":
                 audio_segments.append(generate_silence(seg["duration_ms"]))
             elif seg["type"] == "speech":
+                # Use character voice override if present, otherwise narrator voice
+                segment_voice = seg.get("voice_override", voice)
+
+                # Phase-based speed adjustment (slows down through phases)
+                phase = seg.get("phase", 1)
+                if phase == 1:
+                    phase_speed = speed           # normal
+                elif phase == 2:
+                    phase_speed = speed * 0.92    # slightly slower
+                else:
+                    phase_speed = speed * 0.85    # notably slower for sleep phase
+
                 audio_bytes = generate_tts_for_segment(
                     client,
                     text=seg["text"],
-                    voice=voice,
+                    voice=segment_voice,
                     exaggeration=seg["exaggeration"],
                     cfg_weight=seg["cfg_weight"],
                     lang=lang,
-                    speed=speed,
+                    speed=phase_speed,
                 )
                 if audio_bytes:
                     try:
@@ -616,9 +781,11 @@ def generate_story_variant(
                 # No delay — Modal auto-scales and we're paying per second
 
         # Paragraph pause (except after last) — generous pause between paragraphs
-        # gives a natural storytelling feel, lets the listener process
+        # Phase-based: longer pauses as story progresses toward sleep
+        last_phase = para_segments[-1].get("phase", 1) if para_segments else 1
+        para_pause_ms = {1: 1000, 2: 1500, 3: 2500}.get(last_phase, 1000)
         if i < len(paragraphs) - 1:
-            audio_segments.append(generate_silence(1000))
+            audio_segments.append(generate_silence(para_pause_ms))
 
     if not audio_segments:
         logger.error("  No audio segments for %s", story_id)
@@ -642,6 +809,16 @@ def generate_story_variant(
         combined = combined.apply_gain(gain)
     except Exception as e:
         logger.warning("  Normalization failed (continuing): %s", e)
+
+    # ── Lullaby stitching (for stories with lullaby_lyrics) ──────────
+    lullaby_lyrics = story.get("lullaby_lyrics")
+    if lullaby_lyrics and SONGGEN_URL:
+        voice_gender = "female" if "female" in voice or voice == "asmr" else "male"
+        lullaby_audio = generate_lullaby_audio(client, lullaby_lyrics, voice_gender, title)
+        if lullaby_audio:
+            logger.info("  Stitching %s lullaby onto %s variant...", voice_gender, voice)
+            combined = stitch_lullaby(combined, lullaby_audio, crossfade_ms=10000)
+            logger.info("  Combined duration with lullaby: %.1f sec", len(combined) / 1000.0)
 
     # Apply gentle fade in/out
     try:
