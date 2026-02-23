@@ -7359,7 +7359,7 @@
   },
   {
     "id": "gen-308d5f0d1268",
-    "type": "story",
+    "type": "long_story",
     "lang": "en",
     "title": "Lumi and the Glowing Tide",
     "description": "Join Lumi, a tiny glowing jellyfish, as she discovers a magical underwater world that gently lulls her to sleep under the shimmering ocean stars.",
@@ -7448,43 +7448,43 @@
       {
         "voice": "female_2",
         "url": "/audio/pre-gen/gen-308d_female_2.mp3",
-        "duration_seconds": 568.39,
+        "duration_seconds": 582.09,
         "provider": "chatterbox"
       },
       {
         "voice": "male_1",
         "url": "/audio/pre-gen/gen-308d_male_1.mp3",
-        "duration_seconds": 513.98,
+        "duration_seconds": 525.21,
         "provider": "chatterbox"
       },
       {
         "voice": "female_1",
         "url": "/audio/pre-gen/gen-308d_female_1.mp3",
-        "duration_seconds": 637.16,
+        "duration_seconds": 651.76,
         "provider": "chatterbox"
       },
       {
         "voice": "female_3",
         "url": "/audio/pre-gen/gen-308d_female_3.mp3",
-        "duration_seconds": 531.6,
+        "duration_seconds": 543.66,
         "provider": "chatterbox"
       },
       {
         "voice": "male_2",
         "url": "/audio/pre-gen/gen-308d_male_2.mp3",
-        "duration_seconds": 525.14,
+        "duration_seconds": 537.12,
         "provider": "chatterbox"
       },
       {
         "voice": "male_3",
         "url": "/audio/pre-gen/gen-308d_male_3.mp3",
-        "duration_seconds": 516.84,
+        "duration_seconds": 528.97,
         "provider": "chatterbox"
       },
       {
         "voice": "asmr",
         "url": "/audio/pre-gen/gen-308d_asmr.mp3",
-        "duration_seconds": 577.76,
+        "duration_seconds": 592.99,
         "provider": "chatterbox"
       }
     ],

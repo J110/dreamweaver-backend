@@ -174,7 +174,6 @@ def parse_annotated_text(text: str, content_type: str = "story") -> List[dict]:
     segments = []
     base_profile = CONTENT_TYPE_PROFILES.get(content_type, CONTENT_TYPE_PROFILES["story"])
     current_profile = dict(base_profile)
-    in_character_voice = False
     current_phase = 1
 
     parts = _MARKER_RE.split(text)
@@ -185,12 +184,8 @@ def parse_annotated_text(text: str, content_type: str = "story") -> List[dict]:
 
         marker_lower = part_stripped.lower()
 
-        # Character voice switching
-        if marker_lower == "char_start":
-            in_character_voice = True
-            continue
-        elif marker_lower == "char_end":
-            in_character_voice = False
+        # Character voice markers — strip only (narrator voice used for all)
+        if marker_lower in ("char_start", "char_end"):
             continue
         # Phase transitions
         elif marker_lower == "phase_2":
@@ -219,8 +214,6 @@ def parse_annotated_text(text: str, content_type: str = "story") -> List[dict]:
                     "cfg_weight": current_profile["cfg_weight"],
                     "phase": current_phase,
                 }
-                if in_character_voice:
-                    seg["voice_override"] = "character_voice"
                 segments.append(seg)
 
     return segments
@@ -612,8 +605,9 @@ def generate_lullaby_audio(
         )
     else:
         description = (
-            "acoustic lullaby, male vocal, warm, tender, relaxed, unhurried, "
-            "acoustic guitar, fingerpicking, slow tempo 55 bpm, cozy, folk, bedtime"
+            "gentle lullaby, male vocal, soft, whispered, very slow, hushed, "
+            "minimal piano, ambient pads, slow tempo 50 bpm, dreamy, peaceful, bedtime, "
+            "quiet, intimate, sleepy, fade to silence"
         )
 
     voice_seed = hash(f"lullaby_{voice_gender}_{story_title}") % 999999 + 1
@@ -674,25 +668,18 @@ def stitch_lullaby(
     lullaby_audio: AudioSegment,
     crossfade_ms: int = 10000,
 ) -> AudioSegment:
-    """Crossfade lullaby onto the end of story audio.
+    """Append lullaby after story with fade-out / silence gap / fade-in.
 
-    The lullaby fades in under the last `crossfade_ms` of the story,
-    creating a seamless transition from narration to singing.
+    Avoids overlay so narration and lullaby never play simultaneously.
     """
-    # Ensure crossfade doesn't exceed either audio length
     crossfade_ms = min(crossfade_ms, len(story_audio) // 2, len(lullaby_audio) // 2)
 
-    # Overlay lullaby start with story end
-    combined = story_audio.overlay(
-        lullaby_audio[:crossfade_ms],
-        position=len(story_audio) - crossfade_ms,
-    )
-    # Append remaining lullaby after overlap
-    remaining = lullaby_audio[crossfade_ms:]
-    if len(remaining) > 0:
-        combined = combined + remaining
+    # Fade out story ending, add silence gap, fade in lullaby
+    story_faded = story_audio.fade_out(crossfade_ms)
+    lullaby_faded = lullaby_audio.fade_in(crossfade_ms)
+    silence = AudioSegment.silent(duration=3000)
 
-    return combined
+    return story_faded + silence + lullaby_faded
 
 
 def generate_story_variant(
@@ -746,22 +733,19 @@ def generate_story_variant(
             if seg["type"] == "pause":
                 audio_segments.append(generate_silence(seg["duration_ms"]))
             elif seg["type"] == "speech":
-                # Use character voice override if present, otherwise narrator voice
-                segment_voice = seg.get("voice_override", voice)
-
                 # Phase-based speed adjustment (slows down through phases)
                 phase = seg.get("phase", 1)
                 if phase == 1:
-                    phase_speed = speed           # normal
+                    phase_speed = speed           # normal (80% at base 0.8)
                 elif phase == 2:
-                    phase_speed = speed * 0.92    # slightly slower
+                    phase_speed = speed * 0.875   # 70% at base 0.8
                 else:
-                    phase_speed = speed * 0.85    # notably slower for sleep phase
+                    phase_speed = speed * 0.75    # 60% at base 0.8
 
                 audio_bytes = generate_tts_for_segment(
                     client,
                     text=seg["text"],
-                    voice=segment_voice,
+                    voice=voice,
                     exaggeration=seg["exaggeration"],
                     cfg_weight=seg["cfg_weight"],
                     lang=lang,
