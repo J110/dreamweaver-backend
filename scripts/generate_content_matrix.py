@@ -52,6 +52,7 @@ from app.services.ai.prompts import (
     AGE_GROUP_INSTRUCTIONS,
     POEM_SYSTEM_PROMPT,
     SAFETY_GUIDELINES,
+    SONG_SYSTEM_PROMPT,
     STORY_SYSTEM_PROMPT,
     get_age_group_instructions,
     get_theme_instructions,
@@ -124,6 +125,18 @@ WORD_COUNTS = {
     ("9-12", "poem", "SHORT"): (80, 130),
     ("9-12", "poem", "MEDIUM"): (130, 220),
     ("9-12", "poem", "LONG"): (220, 400),
+    # Songs (Lullabies) — shorter lyrics with verse/chorus structure
+    ("0-1", "song", "SHORT"): (30, 60),
+    ("0-1", "song", "MEDIUM"): (50, 100),
+    ("2-5", "song", "SHORT"): (50, 100),
+    ("2-5", "song", "MEDIUM"): (80, 150),
+    ("2-5", "song", "LONG"): (120, 200),
+    ("6-8", "song", "SHORT"): (60, 120),
+    ("6-8", "song", "MEDIUM"): (100, 180),
+    ("6-8", "song", "LONG"): (150, 250),
+    ("9-12", "song", "SHORT"): (80, 140),
+    ("9-12", "song", "MEDIUM"): (120, 200),
+    ("9-12", "song", "LONG"): (180, 300),
 }
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -467,7 +480,12 @@ def build_generation_prompt(item: Dict, existing_titles: List[str]) -> str:
     max_words = item["max_words"]
 
     # Base system prompt
-    base_prompt = STORY_SYSTEM_PROMPT if content_type == "story" else POEM_SYSTEM_PROMPT
+    if content_type == "story":
+        base_prompt = STORY_SYSTEM_PROMPT
+    elif content_type == "song":
+        base_prompt = SONG_SYSTEM_PROMPT
+    else:
+        base_prompt = POEM_SYSTEM_PROMPT
 
     # Age instructions
     age_inst = get_age_group_instructions(age_group)
@@ -985,8 +1003,9 @@ def show_stats(content: List[Dict]):
 # ═══════════════════════════════════════════════════════════════════════
 
 def build_fresh_plan(count_stories: int = 1, count_poems: int = 1,
+                     count_lullabies: int = 0,
                      lang: str = "en", existing: list = None) -> list:
-    """Build a plan for N new stories + M new poems with full diversity randomization.
+    """Build a plan for N stories + M poems + L lullabies with full diversity randomization.
 
     Unlike the matrix-based plan, this generates fresh items regardless
     of what's already been produced. Used by the daily pipeline.
@@ -999,8 +1018,14 @@ def build_fresh_plan(count_stories: int = 1, count_poems: int = 1,
     plan = []
     age_groups_list = list(AGE_GROUPS.keys())
 
-    for i in range(count_stories + count_poems):
-        content_type = "story" if i < count_stories else "poem"
+    total = count_stories + count_poems + count_lullabies
+    for i in range(total):
+        if i < count_stories:
+            content_type = "story"
+        elif i < count_stories + count_poems:
+            content_type = "poem"
+        else:
+            content_type = "song"
 
         # Pick random diversity dimensions
         age_group = _rng.choice(age_groups_list)
@@ -1074,6 +1099,8 @@ def main():
                         help="Generate N fresh stories (bypasses matrix, for daily pipeline)")
     parser.add_argument("--count-poems", type=int, default=0,
                         help="Generate N fresh poems (bypasses matrix, for daily pipeline)")
+    parser.add_argument("--count-lullabies", type=int, default=0,
+                        help="Generate N fresh lullabies (bypasses matrix, for daily pipeline)")
     args = parser.parse_args()
 
     # Load existing content
@@ -1084,18 +1111,20 @@ def main():
         return
 
     # Fresh count mode (for daily pipeline) vs. matrix mode
-    use_fresh_mode = args.count_stories > 0 or args.count_poems > 0
+    use_fresh_mode = args.count_stories > 0 or args.count_poems > 0 or args.count_lullabies > 0
 
     if use_fresh_mode:
         lang = args.lang or "en"
         new_plan = build_fresh_plan(
             count_stories=args.count_stories,
             count_poems=args.count_poems,
+            count_lullabies=args.count_lullabies,
             lang=lang,
             existing=existing,
         )
         logger.info("=== Fresh Generation Plan ===")
-        logger.info("Stories: %d, Poems: %d, Lang: %s", args.count_stories, args.count_poems, lang)
+        logger.info("Stories: %d, Poems: %d, Lullabies: %d, Lang: %s",
+                     args.count_stories, args.count_poems, args.count_lullabies, lang)
         logger.info("To generate: %d", len(new_plan))
     else:
         # Matrix mode — fill in missing cells

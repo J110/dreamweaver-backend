@@ -1,6 +1,6 @@
 # Dream Valley — Daily Content Pipeline Guide
 
-> **Purpose**: Automate daily publication of new bedtime stories and poems with zero manual intervention. Runs entirely on the GCP production server with no local device dependencies.
+> **Purpose**: Automate daily publication of new bedtime stories, poems, and lullabies with zero manual intervention. Runs entirely on the GCP production server with no local device dependencies.
 
 ---
 
@@ -10,8 +10,8 @@
 GCP VM (dreamvalley-prod) runs pipeline_run.py daily via cron (7 days/week):
 
   PREFLIGHT → Warm Modal + test Mistral + check disk + kill stale processes
-  1. GENERATE  → Mistral Large (free tier)         → 1 story + 1 poem
-  2. AUDIO GEN → Modal Chatterbox TTS (free $30/mo) → 14 MP3 files
+  1. GENERATE  → Mistral Large (free tier)         → 1 story + 1 poem + 1 lullaby
+  2. AUDIO GEN → Modal Chatterbox TTS + ACE-Step   → 14 MP3s (Chatterbox) + 3 MP3s (ACE-Step)
   3. AUDIO QA  → Voxtral transcription (free tier)  → PASS/FAIL
   4. ENRICH    → Mistral Large (free tier)          → unique musicParams
   5. COVERS    → Mistral Large (free tier)          → animated SVG cover per story
@@ -28,12 +28,12 @@ GCP VM (dreamvalley-prod) runs pipeline_run.py daily via cron (7 days/week):
 | Step | Service | Cost |
 |------|---------|------|
 | Content generation | Mistral Large (free experiment tier) | $0.00 |
-| Audio generation (14 variants) | Modal T4 GPU (~43.5 GPU-min) | ~$0.43 (from $30/mo free credits) |
+| Audio generation (14 story/poem + 3 lullaby variants) | Modal T4 GPU (~51 GPU-min) | ~$0.68 (from $30/mo free credits) |
 | Audio QA (transcription + fidelity) | Voxtral via Mistral API (free tier) | $0.00 |
 | Music params | Mistral Large (free tier) | $0.00 |
 | Cover SVG generation | Mistral Large (free tier) | $0.00 |
 | Email notification | Resend (free tier, 100 emails/day) | $0.00 |
-| **Per-run total** | | **~$0.43** |
+| **Per-run total** | | **~$0.68** |
 
 #### Infrastructure Costs (fixed monthly)
 
@@ -50,11 +50,11 @@ GCP VM (dreamvalley-prod) runs pipeline_run.py daily via cron (7 days/week):
 | Component | Monthly Cost |
 |-----------|-------------|
 | GCP infrastructure (VM + disk) | $16.13 |
-| Modal GPU (~30 runs × $0.43) | ~$13.00 (from $30 free credits) |
+| Modal GPU (~30 runs × $0.68) | ~$20.40 (from $30 free credits) |
 | Mistral, Resend, Render, Vercel | $0.00 |
-| **Total** | **~$29.13/mo** ($16.13 cash + ~$13 free credits) |
+| **Total** | **~$36.53/mo** ($16.13 cash + ~$20.40 free credits) |
 
-> **Note**: Modal provides $30/month in free credits. The ~$13 Modal cost is covered by free credits, so actual cash spend is **~$16.13/month** (GCP only). Consider a 1-year CUD commitment to reduce GCP to ~$10.69/mo.
+> **Note**: Modal provides $30/month in free credits. The ~$20.40 Modal cost is covered by free credits, so actual cash spend is **~$16.13/month** (GCP only). Consider a 1-year CUD commitment to reduce GCP to ~$10.69/mo.
 
 ---
 
@@ -99,6 +99,10 @@ RESEND_API_KEY=your_resend_api_key_here
 # Modal — Chatterbox TTS endpoint (auto-deployed, no token needed for HTTP calls)
 # The Modal endpoint URL is baked into generate_audio.py
 # Voice references are stored in Modal persistent volume (already uploaded)
+
+# Modal — ACE-Step SongGen endpoint (for lullaby audio generation)
+SONGGEN_URL=https://anmol-71634--dreamweaver-songgen-sing.modal.run
+SONGGEN_HEALTH=https://anmol-71634--dreamweaver-songgen-health.modal.run
 ```
 
 **Getting your Mistral API key:**
@@ -149,7 +153,7 @@ crontab -e
 Add this line to run the pipeline daily at 2:00 AM IST (every day, including weekends):
 
 ```cron
-0 2 * * * cd /opt/dreamweaver-backend && /usr/bin/python3 scripts/pipeline_run.py --lang en >> /opt/dreamweaver-backend/logs/cron.log 2>&1
+0 2 * * * cd /opt/dreamweaver-backend && /usr/bin/python3 scripts/pipeline_run.py --lang en --count-lullabies 1 >> /opt/dreamweaver-backend/logs/cron.log 2>&1
 ```
 
 **Note**: The cron uses `0 2 * * *` (every day at 2 AM). If the server timezone is UTC, use `30 20 * * *` (20:30 UTC = 2:00 AM IST next day). Check timezone with `timedatectl`.
@@ -158,7 +162,7 @@ Add this line to run the pipeline daily at 2:00 AM IST (every day, including wee
 
 ## Running the Pipeline
 
-### Full Run (Default: 1 story + 1 poem)
+### Full Run (Default: 1 story + 1 poem + 1 lullaby)
 
 ```bash
 cd /opt/dreamweaver-backend
@@ -174,7 +178,7 @@ python3 scripts/pipeline_run.py --dry-run
 ### Custom Counts
 
 ```bash
-python3 scripts/pipeline_run.py --count-stories 3 --count-poems 2 --lang en
+python3 scripts/pipeline_run.py --count-stories 3 --count-poems 2 --count-lullabies 1 --lang en
 ```
 
 ### Resume After Failure
@@ -217,7 +221,7 @@ The pipeline sends an email notification via Resend API **on every run** — bot
 
 | Field | Description |
 |-------|-------------|
-| Generated | Number of new stories/poems generated |
+| Generated | Number of new stories/poems/lullabies generated (with per-type breakdown) |
 | Audio QA | X passed, Y failed |
 | Covers | X generated, Y fallback (default.svg) |
 | Elapsed | Total pipeline run time |
@@ -381,10 +385,14 @@ cat /opt/dreamweaver-backend/seed_output/pipeline_state.json
 | Email notification not received | Check `RESEND_API_KEY` in `.env`. Test: `python3 scripts/pipeline_notify.py --test`. Check Resend dashboard. |
 | Pipeline runs but no email | Notification module import may fail. Check: `python3 -c "from scripts.pipeline_notify import send_pipeline_notification; print('OK')"` |
 
-### Modal Health Check
+### Modal Health Checks
 
 ```bash
+# Chatterbox TTS (stories/poems)
 curl -s "https://anmol-71634--dreamweaver-chatterbox-health.modal.run" | python3 -m json.tool
+
+# ACE-Step SongGen (lullabies)
+curl -s "https://anmol-71634--dreamweaver-songgen-health.modal.run" | python3 -m json.tool
 ```
 
 ### Mistral API Check
@@ -408,7 +416,7 @@ print(r.choices[0].message.content)
 | `scripts/pipeline_run.py` | Main orchestrator (preflight → 7 steps → postflight → notify) |
 | `scripts/pipeline_notify.py` | Email notifications via Resend API |
 | `scripts/generate_content_matrix.py` | Story/poem generation with diversity matrix |
-| `scripts/generate_audio.py` | Chatterbox TTS audio generation |
+| `scripts/generate_audio.py` | Audio generation (Chatterbox TTS for stories/poems, ACE-Step for lullabies) |
 | `scripts/qa_audio.py` | Audio QA (duration + fidelity) |
 | `scripts/generate_music_params.py` | Unique ambient music parameters per story |
 | `scripts/generate_cover_svg.py` | AI-powered animated SVG cover generation |
@@ -430,7 +438,7 @@ print(r.choices[0].message.content)
 ## Deployment Flow
 
 ```
-Pipeline generates content (runs daily at 2 AM IST)
+Pipeline generates content (runs daily at 2 AM IST, 1 story + 1 poem + 1 lullaby)
        │
        ├── PREFLIGHT: Warm Modal, test Mistral, check disk
        │
@@ -485,16 +493,16 @@ pm2 restart all
 
 ## Weekly Content Target
 
-| Day | Stories | Poems | Total New Items |
-|-----|---------|-------|-----------------|
-| Mon | 1 | 1 | 2 |
-| Tue | 1 | 1 | 2 |
-| Wed | 1 | 1 | 2 |
-| Thu | 1 | 1 | 2 |
-| Fri | 1 | 1 | 2 |
-| Sat | 1 | 1 | 2 |
-| Sun | 1 | 1 | 2 |
-| **Weekly** | **7** | **7** | **14** |
-| **Monthly** | **~30** | **~30** | **~60** |
+| Day | Stories | Poems | Lullabies | Total New Items |
+|-----|---------|-------|-----------|-----------------|
+| Mon | 1 | 1 | 1 | 3 |
+| Tue | 1 | 1 | 1 | 3 |
+| Wed | 1 | 1 | 1 | 3 |
+| Thu | 1 | 1 | 1 | 3 |
+| Fri | 1 | 1 | 1 | 3 |
+| Sat | 1 | 1 | 1 | 3 |
+| Sun | 1 | 1 | 1 | 3 |
+| **Weekly** | **7** | **7** | **7** | **21** |
+| **Monthly** | **~30** | **~30** | **~30** | **~90** |
 
-**Monthly cost**: ~$29.13/mo total ($16.13 GCP cash + ~$13 Modal from free credits). Actual cash spend: **~$16.13/mo** (GCP VM + disk only). All text generation, covers, and email are $0 (free tiers).
+**Monthly cost**: ~$36.53/mo total ($16.13 GCP cash + ~$20.40 Modal from free credits). Actual cash spend: **~$16.13/mo** (GCP VM + disk only). All text generation, covers, and email are $0 (free tiers).

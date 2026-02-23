@@ -110,8 +110,8 @@ VOICE_MAP = {
 
 # Fewer variants for songs (more expensive to generate via SongGen)
 SONG_VOICE_MAP = {
-    "en": ["female_1", "female_3", "male_1", "male_2"],
-    "hi": ["female_1_hi", "female_3_hi", "male_1_hi", "male_2_hi"],
+    "en": ["female_1", "female_3", "male_1"],
+    "hi": ["female_1_hi", "female_3_hi", "male_1_hi"],
 }
 
 # ── Logging ──────────────────────────────────────────────────────────────
@@ -410,12 +410,6 @@ LULLABY_STYLES = {
         "name": "Music Box Lullaby",
         "mode": "full",
         "description": "delicate lullaby, {gender} vocal, soft, gentle, relaxed, unhurried, music box, bells, chimes, very slow tempo 50 bpm, magical, enchanting, bedtime",
-        "duration": 120,
-    },
-    "male_2": {
-        "name": "A Cappella",
-        "mode": "vocal",
-        "description": "{gender} vocal, warm, intimate, relaxed, unhurried, gentle lullaby, slow tempo 55 bpm, soothing, bedtime",
         "duration": 120,
     },
 }

@@ -68,6 +68,16 @@ def _build_html(state: dict, log_file: str = "", elapsed: float = 0) -> str:
     cost_gcp_daily = state.get("cost_gcp_daily", "")
     cost_monthly = state.get("cost_monthly", "")
 
+    # Per-type breakdown for email
+    stories_n = state.get("generated_stories", 0)
+    poems_n = state.get("generated_poems", 0)
+    lullabies_n = state.get("generated_lullabies", 0)
+    type_parts = []
+    if stories_n: type_parts.append(f"{stories_n} {'story' if stories_n == 1 else 'stories'}")
+    if poems_n: type_parts.append(f"{poems_n} {'poem' if poems_n == 1 else 'poems'}")
+    if lullabies_n: type_parts.append(f"{lullabies_n} {'lullaby' if lullabies_n == 1 else 'lullabies'}")
+    type_detail = f" ({', '.join(type_parts)})" if type_parts else ""
+
     status_color = "#22c55e" if is_success else "#ef4444"
     status_label = "SUCCESS" if is_success else "FAILED"
     failed_step = ""
@@ -75,7 +85,7 @@ def _build_html(state: dict, log_file: str = "", elapsed: float = 0) -> str:
         failed_step = status.replace("failed_at_", "")
 
     rows = f"""
-    <tr><td><b>Generated</b></td><td>{len(generated)} items</td></tr>
+    <tr><td><b>Generated</b></td><td>{len(generated)} items{type_detail}</td></tr>
     <tr><td><b>Audio QA</b></td><td>{len(qa_passed)} passed, {len(qa_failed)} failed</td></tr>
     <tr><td><b>Covers</b></td><td>{len(covers_ok)} generated, {len(covers_fail)} fallback</td></tr>
     <tr><td><b>Elapsed</b></td><td>{_fmt_duration(elapsed)}</td></tr>
@@ -150,7 +160,15 @@ def send_pipeline_notification(
     n_items = len(state.get("generated_ids", []))
     subject = f"{tag} Dream Valley Pipeline — {date_str}"
     if is_success and n_items:
-        subject += f" — {n_items} new items"
+        # Per-type breakdown in subject
+        stories_n = state.get("generated_stories", 0)
+        poems_n = state.get("generated_poems", 0)
+        lullabies_n = state.get("generated_lullabies", 0)
+        parts = []
+        if stories_n: parts.append(f"{stories_n} story" if stories_n == 1 else f"{stories_n} stories")
+        if poems_n: parts.append(f"{poems_n} poem" if poems_n == 1 else f"{poems_n} poems")
+        if lullabies_n: parts.append(f"{lullabies_n} lullaby" if lullabies_n == 1 else f"{lullabies_n} lullabies")
+        subject += f" — {', '.join(parts)}" if parts else f" — {n_items} new items"
 
     html = _build_html(state, log_file, elapsed)
 
@@ -185,8 +203,11 @@ if __name__ == "__main__":
     if "--test" in sys.argv:
         test_state = {
             "status": "completed",
-            "generated_ids": ["test-001", "test-002"],
-            "generated_titles": ["Test Story: The Friendly Cloud", "Test Poem: Starlight Whisper"],
+            "generated_ids": ["test-001", "test-002", "test-003"],
+            "generated_titles": ["Test Story: The Friendly Cloud", "Test Poem: Starlight Whisper", "Test Lullaby: Moonlight Dreams"],
+            "generated_stories": 1,
+            "generated_poems": 1,
+            "generated_lullabies": 1,
             "qa_passed": ["test-001", "test-002"],
             "qa_failed": [],
             "covers_generated": ["test-001"],

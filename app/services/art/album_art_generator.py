@@ -46,7 +46,7 @@ class AlbumArtGenerator:
     CONTENT_TYPES = {
         "story": ("Story", "#FF6B9D"),
         "poem": ("Poem", "#9B59B6"),
-        "song": ("Song", "#3498DB"),
+        "song": ("Lullaby", "#3498DB"),
         "lullaby": ("Lullaby", "#F39C12"),
     }
     

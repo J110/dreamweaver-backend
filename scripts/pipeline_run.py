@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Automated content pipeline — generate, QA, enrich, and publish new stories/poems.
+"""Automated content pipeline — generate, QA, enrich, and publish new stories/poems/lullabies.
 
 Runs the full pipeline as subprocesses for isolation and crash safety.
 Designed to run autonomously on the GCP production server (daily cron).
 
 Pipeline flow:
-  1. GENERATE    → Mistral Large (free tier) → stories + poems
-  2. AUDIO GEN   → Modal Chatterbox TTS ($30 free credits) → 14 MP3 files per 2 items
+  1. GENERATE    → Mistral Large (free tier) → stories + poems + lullabies
+  2. AUDIO GEN   → Modal Chatterbox TTS + ACE-Step ($30 free credits) → 14+3 MP3 files per 3 items
   3. AUDIO QA    → Voxtral transcription + fidelity (free tier) → PASS/FAIL
   4. ENRICH      → Mistral Large (free tier) → musicParams for new items
   5. COVERS      → Mistral Large (free tier) → animated SVG covers
@@ -198,12 +198,13 @@ def step_generate(args, state: dict) -> bool:
 
     before_ids = get_existing_ids()
 
-    # Build the generation command using --count-stories/--count-poems for fresh daily content
+    # Build the generation command using --count-stories/--count-poems/--count-lullabies for fresh daily content
     cmd = [
         sys.executable, str(SCRIPTS_DIR / "generate_content_matrix.py"),
         "--api", "mistral",
         "--count-stories", str(args.count_stories),
         "--count-poems", str(args.count_poems),
+        "--count-lullabies", str(args.count_lullabies),
     ]
     if args.lang:
         cmd += ["--lang", args.lang]
@@ -219,14 +220,18 @@ def step_generate(args, state: dict) -> bool:
     new_ids = get_new_story_ids(before_ids)
     logger.info("  New items generated: %d", len(new_ids))
 
-    # Log story vs poem breakdown
+    # Log story vs poem vs lullaby breakdown and store per-type counts
     if new_ids and CONTENT_EXPANDED_PATH.exists():
         try:
             expanded = json.loads(CONTENT_EXPANDED_PATH.read_text())
             new_items = [s for s in expanded if s["id"] in set(new_ids)]
             story_count = sum(1 for s in new_items if s.get("type") == "story")
             poem_count = sum(1 for s in new_items if s.get("type") == "poem")
-            logger.info("  Breakdown: %d stories, %d poems", story_count, poem_count)
+            song_count = sum(1 for s in new_items if s.get("type") == "song")
+            logger.info("  Breakdown: %d stories, %d poems, %d lullabies", story_count, poem_count, song_count)
+            state["generated_stories"] = story_count
+            state["generated_poems"] = poem_count
+            state["generated_lullabies"] = song_count
         except Exception:
             pass
 
@@ -777,7 +782,11 @@ def print_summary(state: dict, total_elapsed: float):
     logger.info("\n" + "=" * 50)
     logger.info("  PIPELINE SUMMARY")
     logger.info("=" * 50)
-    logger.info("  Generated:  %d items", len(state.get("generated_ids", [])))
+    logger.info("  Generated:  %d items (%d stories, %d poems, %d lullabies)",
+                len(state.get("generated_ids", [])),
+                state.get("generated_stories", 0),
+                state.get("generated_poems", 0),
+                state.get("generated_lullabies", 0))
     logger.info("  Audio gen:  %s", state.get("step_audio", "not run"))
     logger.info("  QA passed:  %d", len(state.get("qa_passed", [])))
     logger.info("  QA failed:  %d", len(state.get("qa_failed", [])))
@@ -810,6 +819,8 @@ def main():
                         help="Number of stories to generate (default: 1)")
     parser.add_argument("--count-poems", type=int, default=1,
                         help="Number of poems to generate (default: 1)")
+    parser.add_argument("--count-lullabies", type=int, default=1,
+                        help="Number of lullabies to generate (default: 1)")
     parser.add_argument("--lang", default="en",
                         help="Language to generate (default: en)")
     parser.add_argument("--dry-run", action="store_true",
@@ -830,7 +841,8 @@ def main():
     logger.info("║  %s                            ║", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     logger.info("╚══════════════════════════════════════════════╝")
     logger.info("")
-    logger.info("  Stories: %d | Poems: %d | Lang: %s", args.count_stories, args.count_poems, args.lang)
+    logger.info("  Stories: %d | Poems: %d | Lullabies: %d | Lang: %s",
+                args.count_stories, args.count_poems, args.count_lullabies, args.lang)
     logger.info("  Dry run: %s | Skip publish: %s", args.dry_run, args.skip_publish)
     logger.info("")
 
