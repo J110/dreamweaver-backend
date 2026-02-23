@@ -234,7 +234,7 @@ When no emotion marker is active, use the content type default:
 |-------------|-------------|------------|
 | Story | 0.5 | 0.5 |
 | Poem | 0.5 | 0.3 |
-| Song | 0.7 | 0.3 |
+| Lullaby | 0.7 | 0.3 |
 
 ### Tuning Guidelines
 

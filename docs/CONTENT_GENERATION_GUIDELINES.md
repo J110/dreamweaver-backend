@@ -1,6 +1,6 @@
 # Dream Valley — Content Generation Guidelines
 
-> **Purpose**: Ensure every new story, poem, and song is high-quality, unique, diverse, and consistent with the Dream Valley brand. Follow these guidelines whenever generating new content — whether via AI, human writers, or hybrid.
+> **Purpose**: Ensure every new story, poem, and lullaby is high-quality, unique, diverse, and consistent with the Dream Valley brand. Follow these guidelines whenever generating new content — whether via AI, human writers, or hybrid.
 
 ---
 
@@ -15,13 +15,13 @@
 | 6–8       | 200–400     | 400–700      | 700–1200   | 60–100     | 100–180     | 180–300   |
 | 9–12      | 300–500     | 500–900      | 900–1500   | 80–130     | 130–220     | 220–400   |
 
-### Songs
+### Lullabies
 - Verse/chorus structure, 4–8 sections
 - Word count comparable to poems of the same age group
 - Must have repetitive, singable refrains
 
 ### Content Type Distribution Target
-Aim for roughly **50% stories, 35% poems, 15% songs** across the full catalog. The current catalog is poem-heavy (60%) — prioritise stories and songs for new batches.
+Aim for roughly **50% stories, 35% poems, 15% lullabies** across the full catalog. The current catalog is poem-heavy (60%) — prioritise stories and lullabies for new batches.
 
 ---
 
@@ -158,7 +158,7 @@ Target roughly equal content per age group:
 - **Progression**: Move from active/wondrous imagery → calm/sleepy imagery
 - **Final stanza**: Always sleep/dream/goodnight themed
 
-### 3.3 Song Structure (for type: "song")
+### 3.3 Lullaby Structure (for type: "song")
 
 - **Verse-Chorus pattern**: V1, Chorus, V2, Chorus, V3 (slower), Chorus (whispered)
 - **Chorus**: Short, repetitive, singable (4–8 words per line)
@@ -197,8 +197,8 @@ All content must include emotion markers in the `annotated_text` field for TTS g
 | `[SLEEPY]` | Wind-down, drowsy | Slow, soft, drowsy |
 | `[WHISPERING]` | Secrets, quiet endings | Hushed, intimate |
 | `[RHYTHMIC]` | Poem stanzas | Measured, poetic cadence |
-| `[SINGING]` | Song verses/choruses | Melodic, sing-song |
-| `[HUMMING]` | Song interludes | Soft, melodic humming |
+| `[SINGING]` | Lullaby verses/choruses | Melodic, sing-song |
+| `[HUMMING]` | Lullaby interludes | Soft, melodic humming |
 | `[PAUSE]` | Natural break | 800ms silence |
 | `[DRAMATIC_PAUSE]` | Before reveals | 1500ms silence |
 
@@ -232,7 +232,7 @@ All content must include emotion markers in the `annotated_text` field for TTS g
 [RHYTHMIC] [SLEEPY] Final stanza lines...
 ```
 
-**Songs:**
+**Lullabies:**
 ```
 [SINGING] Verse 1...
 
@@ -250,7 +250,7 @@ All content must include emotion markers in the `annotated_text` field for TTS g
 ### Marker Frequency Guidelines
 - **Stories**: 8–15 markers per piece (1 every 2–3 sentences, not every sentence)
 - **Poems**: 2–3 markers per stanza (`[RHYTHMIC]` + 1 emotion + `[PAUSE]` after)
-- **Songs**: 1 marker per section
+- **Lullabies**: 1 marker per section
 - **Never** repeat the same emotion marker consecutively
 - **Always** start with `[GENTLE]` (stories) or `[RHYTHMIC]` (poems)
 - **Always** end with `[SLEEPY]` or `[WHISPERING]`
@@ -442,7 +442,7 @@ Before any content goes to audio generation:
 | 5 | The Garden of Whispers | story | fantasy | 6-10 | female | Universal |
 | 6 | Twinkle Dream | poem | dreamy | 1-5 | — | Universal |
 | 7 | The Owl's Goodnight | poem | animals | 0-4 | neutral | Universal |
-| 8 | Sailing to Dreamland | song | dreamy | 2-6 | — | Universal |
+| 8 | Sailing to Dreamland | lullaby | dreamy | 2-6 | — | Universal |
 | 9 | Moonbeam's Ocean Friend | story | ocean | 0-1 | neutral | Universal |
 | 10 | Bella's Soft Petal Bed | story | nature | 0-1 | neutral | Universal |
 | 11 | Arjun's Flying Robot Friend | poem | fantasy | 1-3 | male | India |
@@ -458,7 +458,7 @@ Before any content goes to audio generation:
 
 ### Current Gaps to Fill
 - **Themes**: mystery (0), family (0), bedtime (1), adventure (1), ocean (1)
-- **Types**: songs (1 only), stories (7 — need more)
+- **Types**: lullabies (1 only), stories (7 — need more)
 - **Geographies**: Europe (0), Ocean/Islands (1)
 - **Age groups**: 12+ has only 2 pieces
 - **Lead genders**: Female-heavy (7F vs 4M) — need more male & neutral leads

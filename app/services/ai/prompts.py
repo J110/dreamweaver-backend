@@ -111,7 +111,7 @@ SAFETY REQUIREMENTS:
 FORMAT_INSTRUCTIONS = """
 Return the generated content as a JSON object with the following structure:
 {
-    "title": "Story/Poem/Song Title",
+    "title": "Story/Poem/Lullaby Title",
     "content": "The full text/lyrics",
     "categories": ["category1", "category2"],
     "morals": ["moral1", "moral2"],
