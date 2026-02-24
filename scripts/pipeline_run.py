@@ -760,9 +760,16 @@ def postflight_checks(state: dict):
     if CONTENT_PATH.exists():
         try:
             content = json.loads(CONTENT_PATH.read_text())
+            id_map = {s["id"]: s.get("title", s["id"]) for s in content if s.get("id")}
             id_set = set(state.get("generated_ids", []))
-            titles = [s["title"] for s in content if s.get("id") in id_set]
+            titles = [id_map[sid] for sid in id_set if sid in id_map]
             state["generated_titles"] = titles
+
+            # Map cover IDs to titles for detailed cover status in email
+            covers_ok_ids = state.get("covers_generated", [])
+            covers_fail_ids = state.get("covers_failed", [])
+            state["covers_generated_titles"] = [id_map.get(sid, sid[:12]) for sid in covers_ok_ids]
+            state["covers_failed_titles"] = [id_map.get(sid, sid[:12]) for sid in covers_fail_ids]
         except Exception:
             pass
 
