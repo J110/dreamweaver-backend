@@ -7356,5 +7356,205 @@
       "soundscapePreset": "starryNight",
       "musicLoop": "etherealPad"
     }
+  },
+  {
+    "id": "gen-9e87531b7db6",
+    "type": "story",
+    "lang": "en",
+    "title": "Leo and the Moonlight School of Waves",
+    "description": "Leo, a little boy in a floating treehouse, discovers a magical underwater school where sea creatures celebrate learning under the moonlight.",
+    "text": "[GENTLE] High above the sparkling ocean, in a cozy treehouse that floated on gentle waves, lived a little boy named Leo. \n\nHis treehouse had soft blue walls that glowed like the night sky, and a big round window where he could watch the stars twinkle. \n\nTonight, Leo snuggled under his favorite blanket, listening to the ocean’s lullaby—*whoosh, whoosh*—as the waves rocked him to sleep.\n\n\n[CURIOUS] But wait! What was that? A soft golden light shimmered beneath the waves. \n\nLeo rubbed his eyes and leaned closer to the window. [WHISPERING] 'Is that... a school?' \n\nDown below, fish with tiny backpacks swam in neat rows, and a wise old turtle held a glowing seashell like a book. [EXCITED] 'A school under the sea!' Leo gasped.\n\n\n[ADVENTUROUS] Leo tiptoed to his closet and found his special diving helmet—it let him breathe underwater! \n\n[DRAMATIC_PAUSE] *Click!* The helmet lit up, and with a big splash, Leo dove into the moonlit ocean. \n\nThe fish giggled as he swam toward them. [JOYFUL] 'Welcome, Leo!' said the turtle, handing him a seashell. 'Tonight, we’re learning about the stars!'\n\n\n[CALM] Leo sat on a smooth rock, listening as the turtle pointed to the sky. \n\n'The stars are like friends,' she said. 'They guide us home when we’re lost.' \n\nLeo looked up and saw his treehouse twinkling above, like a little star of its own. [laugh] 'I think I know the way!' he said.\n\n\n[GENTLE] After the lesson, the sea creatures threw a celebration! \n\nThey danced in swirling circles, their scales shimmering like confetti. \n\nLeo clapped along, his heart full of joy. 'This is the best school ever!' he cheered.\n\n\n[SLEEPY] But as the moon climbed higher, Leo’s eyelids grew heavy. \n\nThe turtle smiled. 'Time to rest, little one. Even explorers need their dreams.' \n\nLeo waved goodbye and floated back to his treehouse, where his pillow waited like a cloud. \n\nAnd as the waves sang their soft *whoosh, whoosh*, Leo drifted off to sleep, dreaming of stars, schools, and new friends under the sea.",
+    "annotated_text": "[GENTLE] High above the sparkling ocean, in a cozy treehouse that floated on gentle waves, lived a little boy named Leo. \n\nHis treehouse had soft blue walls that glowed like the night sky, and a big round window where he could watch the stars twinkle. \n\nTonight, Leo snuggled under his favorite blanket, listening to the ocean’s lullaby—*whoosh, whoosh*—as the waves rocked him to sleep.\n\n\n[CURIOUS] But wait! What was that? A soft golden light shimmered beneath the waves. \n\nLeo rubbed his eyes and leaned closer to the window. [WHISPERING] 'Is that... a school?' \n\nDown below, fish with tiny backpacks swam in neat rows, and a wise old turtle held a glowing seashell like a book. [EXCITED] 'A school under the sea!' Leo gasped.\n\n\n[ADVENTUROUS] Leo tiptoed to his closet and found his special diving helmet—it let him breathe underwater! \n\n[DRAMATIC_PAUSE] *Click!* The helmet lit up, and with a big splash, Leo dove into the moonlit ocean. \n\nThe fish giggled as he swam toward them. [JOYFUL] 'Welcome, Leo!' said the turtle, handing him a seashell. 'Tonight, we’re learning about the stars!'\n\n\n[CALM] Leo sat on a smooth rock, listening as the turtle pointed to the sky. \n\n'The stars are like friends,' she said. 'They guide us home when we’re lost.' \n\nLeo looked up and saw his treehouse twinkling above, like a little star of its own. [laugh] 'I think I know the way!' he said.\n\n\n[GENTLE] After the lesson, the sea creatures threw a celebration! \n\nThey danced in swirling circles, their scales shimmering like confetti. \n\nLeo clapped along, his heart full of joy. 'This is the best school ever!' he cheered.\n\n\n[SLEEPY] But as the moon climbed higher, Leo’s eyelids grew heavy. \n\nThe turtle smiled. 'Time to rest, little one. Even explorers need their dreams.' \n\nLeo waved goodbye and floated back to his treehouse, where his pillow waited like a cloud. \n\nAnd as the waves sang their soft *whoosh, whoosh*, Leo drifted off to sleep, dreaming of stars, schools, and new friends under the sea.",
+    "target_age": 3,
+    "age_min": 2,
+    "age_max": 5,
+    "age_group": "2-5",
+    "length": "MEDIUM",
+    "word_count": 323,
+    "duration_seconds": 0,
+    "categories": [
+      "Bedtime",
+      "Ocean Adventure",
+      "Futuristic Fantasy",
+      "Friendship",
+      "School & Learning"
+    ],
+    "theme": "bedtime",
+    "morals": [
+      "Learning can be a joyful adventure when we explore with an open heart.",
+      "Even the smallest creatures can teach us big lessons about kindness and curiosity."
+    ],
+    "cover": "",
+    "musicProfile": "starlight-lullaby",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-9e87_female_1.mp3",
+        "duration_seconds": 196.17,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-9e87_female_2.mp3",
+        "duration_seconds": 182.5,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-9e87_female_3.mp3",
+        "duration_seconds": 167.61,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_1",
+        "url": "/audio/pre-gen/gen-9e87_male_1.mp3",
+        "duration_seconds": 156.51,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-9e87_male_2.mp3",
+        "duration_seconds": 157.31,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "male",
+    "lead_character_type": "human",
+    "universe": "futuristic",
+    "geography": "Ocean/Islands",
+    "life_aspect": "school_learning",
+    "plot_archetype": "celebration",
+    "created_at": "2026-02-24T01:30:31.271957",
+    "updated_at": "2026-02-24T01:30:31.271957",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 3
+  },
+  {
+    "id": "gen-e47bcd61e515",
+    "type": "song",
+    "lang": "en",
+    "title": "Stripe and the Whispering Bamboo",
+    "description": "A prehistoric tiger cub discovers his true self beneath the rustling bamboo grove, learning that his stripes are not just marks—but the map of his journey.",
+    "text": "[SINGING] Beneath the golden, setting sun,\nThe bamboo sways—a whispered tune,\nStripe the cub with amber eyes,\nWonders why the wind still sighs.\n\n[GENTLE] Are my stripes too bold, too bright?\nDo they hide me in the night?\nOr are they threads of stories old,\nWoven deep in earth’s embrace so cold?\n\n[HUMMING] Hmm-hmm-hmm, the leaves hum low,\nHmm-hmm-hmm, the river knows.\n\n[JOYFUL] Oh, little cub, don’t fear the light,\nYour stripes are stars that guide the night!\nThey dance with fireflies in flight,\nAnd paint the sky with dreams so bright!\n\n[PAUSE]\n\n[SINGING] One evening, as the crickets play,\nStripe met Owl on moonlit spray.\n\"Why do you hide?\" the wise one said,\n\"Your stripes are roots where courage’s fed.\"\n\n[GENTLE] The river hums a lullaby,\nOf ancient tales beneath the sky.\nOf cubs who learned to stand so tall,\nNot despite their stripes—but all.\n\n[HUMMING] Hmm-hmm-hmm, the earth sings deep,\nHmm-hmm-hmm, the secrets keep.\n\n[JOYFUL] Oh, little cub, don’t fear the dark,\nYour stripes are embers, glowing spark!\nThey light the path where dreams embark,\nAnd lead you home through meadows’ arc!\n\n[PAUSE]\n\n[SLEEPY] Now Stripe curls ‘neath bamboo’s grace,\nHis stripes no longer just a trace.\nBut maps of love, of time, of place,\nA cub who found his truest face.\n\n[GENTLE] So close your eyes, let dreams take flight,\nThe bamboo sings you through the night.\nFor every stripe, for every hue,\nIs proof that you are brave—and true.\n\n[HUMMING] Hmm-hmm-hmm, the stars align,\nHmm-hmm-hmm, the world is kind.",
+    "annotated_text": "[SINGING] Beneath the golden, setting sun,\nThe bamboo sways—a whispered tune,\nStripe the cub with amber eyes,\nWonders why the wind still sighs.\n\n[GENTLE] Are my stripes too bold, too bright?\nDo they hide me in the night?\nOr are they threads of stories old,\nWoven deep in earth’s embrace so cold?\n\n[HUMMING] Hmm-hmm-hmm, the leaves hum low,\nHmm-hmm-hmm, the river knows.\n\n[JOYFUL] Oh, little cub, don’t fear the light,\nYour stripes are stars that guide the night!\nThey dance with fireflies in flight,\nAnd paint the sky with dreams so bright!\n\n[PAUSE]\n\n[SINGING] One evening, as the crickets play,\nStripe met Owl on moonlit spray.\n\"Why do you hide?\" the wise one said,\n\"Your stripes are roots where courage’s fed.\"\n\n[GENTLE] The river hums a lullaby,\nOf ancient tales beneath the sky.\nOf cubs who learned to stand so tall,\nNot despite their stripes—but all.\n\n[HUMMING] Hmm-hmm-hmm, the earth sings deep,\nHmm-hmm-hmm, the secrets keep.\n\n[JOYFUL] Oh, little cub, don’t fear the dark,\nYour stripes are embers, glowing spark!\nThey light the path where dreams embark,\nAnd lead you home through meadows’ arc!\n\n[PAUSE]\n\n[SLEEPY] Now Stripe curls ‘neath bamboo’s grace,\nHis stripes no longer just a trace.\nBut maps of love, of time, of place,\nA cub who found his truest face.\n\n[GENTLE] So close your eyes, let dreams take flight,\nThe bamboo sings you through the night.\nFor every stripe, for every hue,\nIs proof that you are brave—and true.\n\n[HUMMING] Hmm-hmm-hmm, the stars align,\nHmm-hmm-hmm, the world is kind.",
+    "target_age": 10,
+    "age_min": 9,
+    "age_max": 12,
+    "age_group": "9-12",
+    "length": "LONG",
+    "word_count": 240,
+    "duration_seconds": 0,
+    "categories": [
+      "Nature",
+      "Self-Discovery",
+      "Prehistoric Fantasy",
+      "Bedtime Lullaby"
+    ],
+    "theme": "nature",
+    "morals": [
+      "Your differences are not flaws—they are the unique threads that weave your strength and story.",
+      "True belonging begins when you embrace the beauty of who you are, without apology."
+    ],
+    "cover": "/covers/stripe-and-the-whispering-bamboo.svg",
+    "musicProfile": "moonlit-meadow",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-e47b_female_1.mp3",
+        "duration_seconds": 119.91,
+        "provider": "ace-step"
+      },
+      {
+        "voice": "male_1",
+        "url": "/audio/pre-gen/gen-e47b_male_1.mp3",
+        "duration_seconds": 119.91,
+        "provider": "ace-step"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-e47b_female_3.mp3",
+        "duration_seconds": 119.91,
+        "provider": "ace-step"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "male",
+    "lead_character_type": "animal",
+    "universe": "prehistoric",
+    "geography": "Africa",
+    "life_aspect": "self_identity",
+    "plot_archetype": "transformation",
+    "created_at": "2026-02-24T01:34:29.145747",
+    "updated_at": "2026-02-24T01:34:29.145747",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 2,
+    "musicParams": {
+      "key": "A",
+      "chordNotes": [
+        110.0,
+        138.59,
+        164.81,
+        220.0
+      ],
+      "padType": "resonant",
+      "padGain": 0.0406,
+      "padFilter": 852,
+      "padLfo": 0.0824,
+      "noiseType": "pink",
+      "noiseGain": 0.0122,
+      "droneFreq": 55.0,
+      "droneGain": 0.0368,
+      "melodyNotes": [
+        220.0,
+        277.18,
+        329.62,
+        293.66
+      ],
+      "melodyInterval": 3953,
+      "melodyGain": 0.0177,
+      "bassNotes": [
+        55.0,
+        82.41,
+        69.3
+      ],
+      "bassInterval": 6434,
+      "counterNotes": [
+        346.48,
+        412.02,
+        275.0
+      ],
+      "counterInterval": 4778,
+      "events": [
+        {
+          "type": "windGust",
+          "interval": 13329
+        },
+        {
+          "type": "leaves",
+          "interval": 8621
+        },
+        {
+          "type": "birdChirp",
+          "interval": 16162
+        },
+        {
+          "type": "owl",
+          "interval": 24420
+        }
+      ],
+      "soundscapePreset": "garden",
+      "musicLoop": "gentleGuitar"
+    }
   }
 ]
