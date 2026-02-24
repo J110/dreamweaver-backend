@@ -110,6 +110,18 @@ def _build_html(state: dict, log_file: str = "", elapsed: float = 0) -> str:
         items = "".join(f"<li>{t}</li>" for t in titles)
         titles_html = f"<h3>New Content</h3><ul>{items}</ul>"
 
+    # Detailed cover status
+    covers_html = ""
+    covers_ok_titles = state.get("covers_generated_titles", [])
+    covers_fail_titles = state.get("covers_failed_titles", [])
+    if covers_ok_titles or covers_fail_titles:
+        covers_items = ""
+        for t in covers_ok_titles:
+            covers_items += f'<li style="color:#22c55e;">✅ {t}</li>'
+        for t in covers_fail_titles:
+            covers_items += f'<li style="color:#ef4444;">❌ {t} <span style="color:#9ca3af;">(using default)</span></li>'
+        covers_html = f"<h3>🎨 Cover Status</h3><ul style='list-style:none;padding-left:0;'>{covers_items}</ul>"
+
     # Log tail on failure
     log_html = ""
     if not is_success and log_file:
@@ -132,6 +144,7 @@ def _build_html(state: dict, log_file: str = "", elapsed: float = 0) -> str:
           {rows}
         </table>
         {titles_html}
+        {covers_html}
         {log_html}
         <hr style="border:none;border-top:1px solid #e5e7eb;margin:16px 0;" />
         <p style="font-size:12px;color:#9ca3af;">
@@ -212,6 +225,8 @@ if __name__ == "__main__":
             "qa_failed": [],
             "covers_generated": ["test-001"],
             "covers_failed": ["test-002"],
+            "covers_generated_titles": ["Test Story: The Friendly Cloud"],
+            "covers_failed_titles": ["Test Poem: Starlight Whisper"],
             "cost_this_run": "$1.07",
             "cost_modal": "$0.53 (40.2 GPU-min)",
             "cost_gcp_daily": "$0.54",

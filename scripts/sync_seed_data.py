@@ -85,6 +85,10 @@ def _build_new_entry_js(story: dict) -> str:
 
     added_at = story.get("created_at", date.today().isoformat())[:10]
 
+    # Optional lullaby_lyrics (for long stories with lullaby)
+    lullaby_lyrics = story.get("lullaby_lyrics", "")
+    lullaby_line = f'\n      lullaby_lyrics: "{_js_escape(lullaby_lyrics)}",' if lullaby_lyrics else ""
+
     entry = f"""    {{
       id: "{_js_escape(sid)}",
       type: "{stype}",
@@ -92,7 +96,7 @@ def _build_new_entry_js(story: dict) -> str:
       description: "{_js_escape(desc)}",
       cover: "{cover}",
       addedAt: "{added_at}",
-      text: "{_js_escape(text)}",
+      text: "{_js_escape(text)}",{lullaby_line}
       target_age: {target_age},
       duration: {duration},
       like_count: 0,

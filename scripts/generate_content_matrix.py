@@ -504,13 +504,32 @@ def build_generation_prompt(item: Dict, existing_titles: List[str]) -> str:
     char_type = item.get('lead_character_type', 'human')
     char_type_label = item.get('lead_character_type_label', 'Human Child/Teen')
     char_type_guidance = ""
-    if char_type != "human":
-        char_type_guidance = f"""- Lead Character Entity Type: {char_type_label.upper()} — The main character must be a {char_type_label.lower()}, NOT a human. Give it personality, emotions, and a voice. The story should be told from its perspective or centered on its journey."""
+    if content_type == "poem":
+        # Poem-specific character guidance (no "story" language)
+        if char_type != "human":
+            char_type_guidance = f"- Subject Entity Type: {char_type_label.upper()} — The poem's subject must be a {char_type_label.lower()}, NOT a human. Give it personality and voice through imagery."
+        else:
+            char_type_guidance = f"- Subject Entity Type: HUMAN — The poem's subject is a human child/teen."
     else:
-        char_type_guidance = f"- Lead Character Entity Type: HUMAN — The main character is a human child/teen."
+        if char_type != "human":
+            char_type_guidance = f"""- Lead Character Entity Type: {char_type_label.upper()} — The main character must be a {char_type_label.lower()}, NOT a human. Give it personality, emotions, and a voice. The story should be told from its perspective or centered on its journey."""
+        else:
+            char_type_guidance = f"- Lead Character Entity Type: HUMAN — The main character is a human child/teen."
 
-    # Diversity instructions
-    diversity = f"""
+    # Diversity instructions — poem-specific vs story/song
+    if content_type == "poem":
+        diversity = f"""
+DIVERSITY REQUIREMENTS — Make this poem UNIQUE:
+- Universe/Setting Era: {item['universe'].upper()} — set this poem in a {item['universe']} world
+- Geography/Culture: {item['geography']} — draw imagery and metaphors from {item['geography']}
+- Life Aspect: {item['life_aspect'].replace('_', ' ')} — weave this theme into the poem's imagery
+- Poetic Mood: {item['plot_archetype'].replace('_', ' ').upper()} — use this as the emotional arc
+- Subject: {item['character_name']} ({item['character_species']}) in {item['character_setting']}
+{char_type_guidance}
+- Subject Gender: {'The subject should be {}'.format(item['lead_gender']) if item['lead_gender'] != 'neutral' else 'The subject can be any gender or non-human'}
+"""
+    else:
+        diversity = f"""
 DIVERSITY REQUIREMENTS — Make this piece UNIQUE:
 - Universe/Setting Era: {item['universe'].upper()} — set this in a {item['universe']} world/time period
 - Geography/Culture: {item['geography']} — the setting should be inspired by {item['geography']}
@@ -797,6 +816,10 @@ def generate_one(client, item: Dict, existing_titles: List[str],
                  max_retries: int = 3, api: str = "claude") -> Optional[Dict]:
     """Generate a single content piece via Claude or Groq API."""
 
+    # Poems are trickier (stanza structure, word count variability) — more attempts
+    if item.get("type") == "poem":
+        max_retries = max(max_retries, 5)
+
     prompt = build_generation_prompt(item, existing_titles)
 
     # Determine max_tokens based on word count range
@@ -844,9 +867,13 @@ def generate_one(client, item: Dict, existing_titles: List[str],
 
             # Validate word count
             wc = count_words(text)
-            # Allow 30% tolerance
-            min_ok = int(item["min_words"] * 0.7)
-            max_ok = int(item["max_words"] * 1.3)
+            # Poems get wider tolerance (stanza structure makes word counts variable)
+            if item["type"] == "poem":
+                min_ok = int(item["min_words"] * 0.5)
+                max_ok = int(item["max_words"] * 1.5)
+            else:
+                min_ok = int(item["min_words"] * 0.7)
+                max_ok = int(item["max_words"] * 1.3)
             if wc < min_ok or wc > max_ok:
                 logger.warning("  Attempt %d: Word count %d outside range [%d-%d]",
                                attempt + 1, wc, item["min_words"], item["max_words"])
