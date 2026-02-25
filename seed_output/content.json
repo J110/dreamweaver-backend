@@ -7649,5 +7649,412 @@
     "view_count": 0,
     "like_count": 0,
     "save_count": 0
+  },
+  {
+    "id": "gen-4ddee3cbe031",
+    "type": "poem",
+    "lang": "en",
+    "title": "Lumi and the Whispering Petals",
+    "description": "A gentle garden robot named Lumi tends to an enchanted greenhouse, where she befriends a lonely firefly and learns the magic of friendship and nature's quiet beauty.",
+    "text": "[RHYTHMIC]In a greenhouse, old and wide,\nWhere vines in golden light reside,\nThere hums a robot, soft and bright,\nLumi tends the blooms at night.\nHer copper hands, so warm, so wise,\nWake sleepy flowers with gentle sighs.\n\n[PAUSE]\n\n[GENTLE]A firefly flickers, lost, alone,\nHis tiny glow begins to moan.\n\"Oh, Lumi dear, the night feels vast,\nWithout a friend to hold me fast.\"\nShe smiles and lifts a petal’s shade,\n\"Stay here with me,\" the robot said.\n\n[PAUSE]\n\n[CALM]The jasmine hums, the lotus sways,\nAs Lumi sings in silver rays.\nThe firefly dances, light so free,\nA spark of joy for her to see.\nThe greenhouse sighs in moonlit cheer,\n\"Friendship blooms when hearts draw near.\"\n\n[PAUSE]\n\n[WHISPERING]Now side by side, they tend the green,\nA bond unseen, yet bright, serene.\nThe petals close, the stars align,\nTwo tiny lights in twilight shine.\n\n[PAUSE]\n\n[SLEEPY]So rest, little one, let dreams take flight,\nLike Lumi’s glow and firefly’s light.",
+    "annotated_text": "[RHYTHMIC]In a greenhouse, old and wide,\nWhere vines in golden light reside,\nThere hums a robot, soft and bright,\nLumi tends the blooms at night.\nHer copper hands, so warm, so wise,\nWake sleepy flowers with gentle sighs.\n\n[PAUSE]\n\n[GENTLE]A firefly flickers, lost, alone,\nHis tiny glow begins to moan.\n\"Oh, Lumi dear, the night feels vast,\nWithout a friend to hold me fast.\"\nShe smiles and lifts a petal’s shade,\n\"Stay here with me,\" the robot said.\n\n[PAUSE]\n\n[CALM]The jasmine hums, the lotus sways,\nAs Lumi sings in silver rays.\nThe firefly dances, light so free,\nA spark of joy for her to see.\nThe greenhouse sighs in moonlit cheer,\n\"Friendship blooms when hearts draw near.\"\n\n[PAUSE]\n\n[WHISPERING]Now side by side, they tend the green,\nA bond unseen, yet bright, serene.\nThe petals close, the stars align,\nTwo tiny lights in twilight shine.\n\n[PAUSE]\n\n[SLEEPY]So rest, little one, let dreams take flight,\nLike Lumi’s glow and firefly’s light.",
+    "target_age": 7,
+    "age_min": 6,
+    "age_max": 8,
+    "age_group": "6-8",
+    "length": "MEDIUM",
+    "word_count": 155,
+    "duration_seconds": 0,
+    "categories": [
+      "Friendship",
+      "Nature",
+      "Fantasy"
+    ],
+    "theme": "nature",
+    "morals": [
+      "Friendship grows when we share kindness and care.",
+      "Even the smallest light can brighten the darkest night."
+    ],
+    "cover": "/covers/lumi-and-the-whispering-petals.svg",
+    "musicProfile": "moonlit-meadow",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-4dde_female_2.mp3",
+        "duration_seconds": 98.57,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-4dde_female_1.mp3",
+        "duration_seconds": 116.39,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-4dde_female_3.mp3",
+        "duration_seconds": 90.09,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_1",
+        "url": "/audio/pre-gen/gen-4dde_male_1.mp3",
+        "duration_seconds": 82.23,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-4dde_male_2.mp3",
+        "duration_seconds": 90.46,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_3",
+        "url": "/audio/pre-gen/gen-4dde_male_3.mp3",
+        "duration_seconds": 87.21,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-4dde_asmr.mp3",
+        "duration_seconds": 97.15,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "female",
+    "lead_character_type": "robot",
+    "universe": "fantasy_realm",
+    "geography": "India",
+    "life_aspect": "family_home",
+    "plot_archetype": "friendship_bonding",
+    "created_at": "2026-02-25T01:31:24.060765",
+    "updated_at": "2026-02-25T01:31:24.060765",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 2,
+    "musicParams": {
+      "key": "A",
+      "chordNotes": [
+        110.0,
+        138.59,
+        164.81,
+        220.0
+      ],
+      "padType": "resonant",
+      "padGain": 0.0406,
+      "padFilter": 663,
+      "padLfo": 0.0824,
+      "noiseType": "pink",
+      "noiseGain": 0.0122,
+      "droneFreq": 55.0,
+      "droneGain": 0.0316,
+      "melodyNotes": [
+        220.0,
+        277.18,
+        329.62,
+        293.66
+      ],
+      "melodyInterval": 3329,
+      "melodyGain": 0.0177,
+      "bassNotes": [
+        55.0,
+        82.41,
+        69.3
+      ],
+      "bassInterval": 5939,
+      "counterNotes": [
+        346.48,
+        412.02,
+        275.0
+      ],
+      "counterInterval": 4778,
+      "events": [
+        {
+          "type": "windGust",
+          "interval": 13329
+        },
+        {
+          "type": "leaves",
+          "interval": 8621
+        },
+        {
+          "type": "birdChirp",
+          "interval": 13468
+        },
+        {
+          "type": "cricket",
+          "interval": 19536
+        }
+      ],
+      "soundscapePreset": "garden",
+      "musicLoop": "gentleGuitar"
+    }
+  },
+  {
+    "id": "gen-50e929bf696c",
+    "type": "story",
+    "lang": "en",
+    "title": "Chai’s Moonlit Steam Song",
+    "description": "A tiny porcelain teacup named Chai hums a gentle lullaby as moonlight dances through the kitchen, discovering the warmth of family and the quiet magic of night.",
+    "text": "[GENTLE] Hush, hush, little Chai. \nMoon glows soft, night is near. \nMama pours warm, steam swirls high. \nChai sings low, sweet and clear.\n\n[CALM] Shh, shh, steam whispers back. \nPapa’s hands hold, safe and tight. \nMoonlight spills on wooden floor. \nAll is still, all is bright.\n\n[SLEEPY] Hush now, Chai, rest your rim. \nDreams will come on silver beams. \nFamily hums, the night sings too. \nSleep, little cup, in moonlit dreams.",
+    "annotated_text": "[GENTLE] Hush, hush, little Chai. \nMoon glows soft, night is near. \nMama pours warm, steam swirls high. \nChai sings low, sweet and clear.\n\n[CALM] Shh, shh, steam whispers back. \nPapa’s hands hold, safe and tight. \nMoonlight spills on wooden floor. \nAll is still, all is bright.\n\n[SLEEPY] Hush now, Chai, rest your rim. \nDreams will come on silver beams. \nFamily hums, the night sings too. \nSleep, little cup, in moonlit dreams.",
+    "target_age": 0,
+    "age_min": 0,
+    "age_max": 1,
+    "age_group": "0-1",
+    "length": "SHORT",
+    "word_count": 68,
+    "duration_seconds": 0,
+    "categories": [
+      "Historical",
+      "Nature",
+      "Family"
+    ],
+    "theme": "nature",
+    "morals": [
+      "Even the smallest things hold warmth and beauty.",
+      "Family and love make every moment special."
+    ],
+    "cover": "/covers/chai-s-moonlit-steam-song.svg",
+    "musicProfile": "forest-night",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-50e9_female_2.mp3",
+        "duration_seconds": 43.27,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-50e9_female_3.mp3",
+        "duration_seconds": 41.43,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-50e9_female_1.mp3",
+        "duration_seconds": 68.42,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_1",
+        "url": "/audio/pre-gen/gen-50e9_male_1.mp3",
+        "duration_seconds": 40.11,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-50e9_male_2.mp3",
+        "duration_seconds": 38.73,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_3",
+        "url": "/audio/pre-gen/gen-50e9_male_3.mp3",
+        "duration_seconds": 38.75,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-50e9_asmr.mp3",
+        "duration_seconds": 46.71,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "male",
+    "lead_character_type": "object",
+    "universe": "historical",
+    "geography": "East Asia",
+    "life_aspect": "family_home",
+    "plot_archetype": "discovery",
+    "created_at": "2026-02-25T01:30:25.662381",
+    "updated_at": "2026-02-25T01:30:25.662381",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 1,
+    "musicParams": {
+      "key": "A",
+      "chordNotes": [
+        110.0,
+        138.59,
+        164.81,
+        220.0
+      ],
+      "padType": "resonant",
+      "padGain": 0.0316,
+      "padFilter": 473,
+      "padLfo": 0.0412,
+      "noiseType": "pink",
+      "noiseGain": 0.0122,
+      "droneFreq": 55.0,
+      "droneGain": 0.0263,
+      "melodyNotes": [
+        220.0,
+        277.18,
+        329.62,
+        293.66
+      ],
+      "melodyInterval": 5201,
+      "melodyGain": 0.0147,
+      "bassNotes": [
+        55.0,
+        82.41,
+        69.3
+      ],
+      "bassInterval": 6929,
+      "counterNotes": [
+        346.48,
+        412.02,
+        275.0
+      ],
+      "counterInterval": 4778,
+      "events": [
+        {
+          "type": "heartbeat",
+          "interval": 6665
+        },
+        {
+          "type": "windGust",
+          "interval": 12932
+        },
+        {
+          "type": "leaves",
+          "interval": 16162
+        },
+        {
+          "type": "birdChirp",
+          "interval": 23443
+        }
+      ],
+      "soundscapePreset": "heartbeat",
+      "musicLoop": "musicBox"
+    }
+  },
+  {
+    "id": "gen-8440041cfc57",
+    "type": "song",
+    "lang": "en",
+    "title": "Pebble’s Moonlit Shell Song",
+    "description": "A gentle lullaby about a little tortoise named Pebble, drifting to sleep under the stars in a magical Indian-inspired riverbank, wrapped in the comfort of moonlight and soft breezes.",
+    "text": "[SINGING] Hush now, little Pebble, close your eyes,\n[SINGING] Moonlight dances, soft and wise.\n[SINGING] Stars are twinkling, one by one,\n[SINGING] Rest your shell ‘neath silver sun.\n\n[HUMMING] Hmm, hmm, hmm, hmm...\n\n[SINGING] River hums a sleepy tune,\n[SINGING] Under stars and golden moon.\n[SINGING] Drift away on dreams so light,\n[SINGING] Pebble sleeps till morning bright.\n\n[PAUSE]\n\n[SLEEPY] Shh, shh, little Pebble, time to rest,\n[SLEEPY] Warmest blanket, softest nest.\n[SLEEPY] Dream of rivers, dream of sky,\n[SLEEPY] Close your eyes and say goodnight.",
+    "annotated_text": "[SINGING] Hush now, little Pebble, close your eyes,\n[SINGING] Moonlight dances, soft and wise.\n[SINGING] Stars are twinkling, one by one,\n[SINGING] Rest your shell ‘neath silver sun.\n\n[HUMMING] Hmm, hmm, hmm, hmm...\n\n[SINGING] River hums a sleepy tune,\n[SINGING] Under stars and golden moon.\n[SINGING] Drift away on dreams so light,\n[SINGING] Pebble sleeps till morning bright.\n\n[PAUSE]\n\n[SLEEPY] Shh, shh, little Pebble, time to rest,\n[SLEEPY] Warmest blanket, softest nest.\n[SLEEPY] Dream of rivers, dream of sky,\n[SLEEPY] Close your eyes and say goodnight.",
+    "target_age": 0,
+    "age_min": 0,
+    "age_max": 1,
+    "age_group": "0-1",
+    "length": "SHORT",
+    "word_count": 72,
+    "duration_seconds": 0,
+    "categories": [
+      "Lullaby",
+      "Fantasy",
+      "Bedtime"
+    ],
+    "theme": "bedtime",
+    "morals": [
+      "Rest brings comfort and peace to the heart.",
+      "Even the smallest journeys end with warmth and safety."
+    ],
+    "cover": "/covers/pebble-s-moonlit-shell-song.svg",
+    "musicProfile": "starlight-lullaby",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-8440_female_1.mp3",
+        "duration_seconds": 119.91,
+        "provider": "ace-step"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-8440_female_3.mp3",
+        "duration_seconds": 119.91,
+        "provider": "ace-step"
+      },
+      {
+        "voice": "male_1",
+        "url": "/audio/pre-gen/gen-8440_male_1.mp3",
+        "duration_seconds": 119.91,
+        "provider": "ace-step"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "male",
+    "lead_character_type": "animal",
+    "universe": "fantasy_realm",
+    "geography": "India",
+    "life_aspect": "sleep_comfort",
+    "plot_archetype": "quest_journey",
+    "created_at": "2026-02-25T01:32:18.761611",
+    "updated_at": "2026-02-25T01:32:18.761611",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 2,
+    "musicParams": {
+      "key": "A",
+      "chordNotes": [
+        110.0,
+        138.59,
+        164.81,
+        220.0
+      ],
+      "padType": "simple",
+      "padGain": 0.0406,
+      "padFilter": 473,
+      "padLfo": 0.0515,
+      "noiseType": "pink",
+      "noiseGain": 0.0122,
+      "droneFreq": 55.0,
+      "droneGain": 0.0368,
+      "melodyNotes": [
+        220.0,
+        277.18,
+        329.62,
+        293.66
+      ],
+      "melodyInterval": 5201,
+      "melodyGain": 0.0177,
+      "bassNotes": [
+        55.0,
+        82.41,
+        69.3
+      ],
+      "bassInterval": 7919,
+      "counterNotes": [
+        346.48,
+        412.02,
+        275.0
+      ],
+      "counterInterval": 5734,
+      "events": [
+        {
+          "type": "heartbeat",
+          "interval": 6665
+        },
+        {
+          "type": "chimes",
+          "interval": 12932
+        },
+        {
+          "type": "starTwinkle",
+          "interval": 17958
+        }
+      ],
+      "soundscapePreset": "heartbeat",
+      "musicLoop": "musicBox"
+    }
   }
 ]
