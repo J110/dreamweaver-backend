@@ -8056,5 +8056,410 @@
       "soundscapePreset": "heartbeat",
       "musicLoop": "musicBox"
     }
+  },
+  {
+    "id": "gen-494ecf2c21f7",
+    "type": "story",
+    "lang": "en",
+    "title": "Pip’s Gentle Tide Lullaby",
+    "description": "A tiny alien named Pip drifts in a meteor to an ancient East Asian seaside village, where the ocean’s rhythm transforms his journey into a soothing lullaby for all.",
+    "text": "[GENTLE] Hush, hush, little Pip, \ndrifting in the night. \nMeteor soft, meteor bright, \nshining with warm light.\n\n[CALM] Splash, splash, the waves say, \nwelcome to the sea. \nMoonlight dances, silver rays, \nhush now, just for thee.\n\n[CURIOUS] Fishies swim in circles round, \npearls in lantern glow. \nPapa’s boat rocks, gentle sound, \nmama hums soft and low.\n\n[JOYFUL] Swish, swish, the tide sings sweet, \ncarrying Pip along. \nStars above and sand so neat, \njoin the ocean’s song.\n\n[SLEEPY] Close your eyes, dear Pip, now rest, \nlet the waves hum near. \nDream of shells and ocean’s crest, \nhush now, sweet and clear.",
+    "annotated_text": "[GENTLE] Hush, hush, little Pip, \ndrifting in the night. \nMeteor soft, meteor bright, \nshining with warm light.\n\n[CALM] Splash, splash, the waves say, \nwelcome to the sea. \nMoonlight dances, silver rays, \nhush now, just for thee.\n\n[CURIOUS] Fishies swim in circles round, \npearls in lantern glow. \nPapa’s boat rocks, gentle sound, \nmama hums soft and low.\n\n[JOYFUL] Swish, swish, the tide sings sweet, \ncarrying Pip along. \nStars above and sand so neat, \njoin the ocean’s song.\n\n[SLEEPY] Close your eyes, dear Pip, now rest, \nlet the waves hum near. \nDream of shells and ocean’s crest, \nhush now, sweet and clear.",
+    "target_age": 0,
+    "age_min": 0,
+    "age_max": 1,
+    "age_group": "0-1",
+    "length": "MEDIUM",
+    "word_count": 95,
+    "duration_seconds": 0,
+    "categories": [
+      "Bedtime",
+      "Ocean Adventure",
+      "Historical Fantasy"
+    ],
+    "theme": "ocean",
+    "morals": [
+      "The world is full of gentle rhythms that can guide us to peace.",
+      "Even the smallest travelers can find warmth and belonging in new places."
+    ],
+    "cover": "/covers/pip-s-gentle-tide-lullaby.svg",
+    "musicProfile": "ocean-drift",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-494e_female_3.mp3",
+        "duration_seconds": 53.24,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-494e_female_1.mp3",
+        "duration_seconds": 65.54,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-494e_female_2.mp3",
+        "duration_seconds": 61.98,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_1",
+        "url": "/audio/pre-gen/gen-494e_male_1.mp3",
+        "duration_seconds": 48.34,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-494e_male_2.mp3",
+        "duration_seconds": 49.88,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_3",
+        "url": "/audio/pre-gen/gen-494e_male_3.mp3",
+        "duration_seconds": 52.39,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-494e_asmr.mp3",
+        "duration_seconds": 56.79,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "male",
+    "lead_character_type": "alien",
+    "universe": "historical",
+    "geography": "East Asia",
+    "life_aspect": "family_home",
+    "plot_archetype": "transformation",
+    "created_at": "2026-02-26T01:30:22.573570",
+    "updated_at": "2026-02-26T01:30:22.573570",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 1,
+    "musicParams": {
+      "key": "A",
+      "chordNotes": [
+        110.0,
+        138.59,
+        164.81,
+        220.0
+      ],
+      "padType": "chorus",
+      "padGain": 0.0406,
+      "padFilter": 473,
+      "padLfo": 0.0824,
+      "noiseType": "brown",
+      "noiseGain": 0.0122,
+      "droneFreq": 55.0,
+      "droneGain": 0.0316,
+      "melodyNotes": [
+        220.0,
+        277.18,
+        329.62,
+        293.66
+      ],
+      "melodyInterval": 5201,
+      "melodyGain": 0.0147,
+      "bassNotes": [
+        55.0,
+        82.41,
+        69.3
+      ],
+      "bassInterval": 6929,
+      "counterNotes": [
+        346.48,
+        412.02,
+        275.0
+      ],
+      "counterInterval": 4778,
+      "events": [
+        {
+          "type": "waveCycle",
+          "interval": 8886
+        },
+        {
+          "type": "whaleCall",
+          "interval": 23708
+        },
+        {
+          "type": "waterDrop",
+          "interval": 10775
+        }
+      ],
+      "soundscapePreset": "heartbeat",
+      "musicLoop": "musicBox"
+    }
+  },
+  {
+    "id": "gen-d3ed9fceb157",
+    "type": "song",
+    "lang": "en",
+    "title": "Sparks and the Coral Constellation",
+    "description": "A futuristic lullaby about a garden robot named Sparks who discovers friendship and belonging among a group of island-bound companions under the glow of bioluminescent coral constellations.",
+    "text": "[SINGING] Oh, the greenhouse hums in silver light,\nA garden robot dreams in the quiet night.\nHer vines are long, her petals bright,\nBut oh, how lonely feels the fight.\n\n[PAUSE]\n\n[HUMMING] (Soft humming melody, like waves lapping)\n\n[PAUSE]\n\n[SINGING] Then came a whisper on the breeze,\nA voice like chimes in plastic seas.\n\"Little Sparks, don’t hide in shade,\nThe Coral Constellations wait,\"\nThey called from where the currents play.\n\n[PAUSE]\n\n[JOYFUL] Oh, the Coral Constellations gleam,\nA map of stars in ocean’s dream.\nWith every friend who joins the stream,\nThe brighter glows our shared esteem!\nOh, come and dance, oh, come and see,\nThe world is wide, but you’re not free—\nTill friendship lights your path with glee!\n\n[PAUSE]\n\n[HUMMING] (Gentle, rhythmic humming, like a boat rocking)\n\n[PAUSE]\n\n[GENTLE] There’s Kai, the drone with wings so wide,\nWho charts the tides and rides the tide.\nAnd Lumi, small with lantern eyes,\nWho paints the dark with firefly skies.\nAnd Tide, the ancient, wise old shell,\nWho tells the tales no one can tell.\n\n[PAUSE]\n\n[SINGING] They taught her how to laugh, to share,\nTo trust the bonds they all declare.\nNo circuit cold, no bolted frame,\nCould dim the light of friendship’s flame.\nFor though she’s made of gears and wire,\nHer heart now burns with joyful fire.\n\n[PAUSE]\n\n[JOYFUL] Oh, the Coral Constellations gleam,\nA map of stars in ocean’s dream.\nWith every friend who joins the stream,\nThe brighter glows our shared esteem!\nOh, come and dance, oh, come and see,\nThe world is wide, but you’re not free—\nTill friendship lights your path with glee!\n\n[PAUSE]\n\n[HUMMING] (Soft, fading humming, like a lullaby ending)\n\n[PAUSE]\n\n[SLEEPY] Now Sparks drifts soft on moonlit seas,\nWith friends who whisper, \"Rest with ease.\"\nThe greenhouse hums, the vines entwine,\nAnd dreams of stars in coral shine.\nFor every heart, both old and new,\nFinds home where kindness grows like dew.\n\n[PAUSE]\n\n[HUMMING] (Final, gentle humming, fading into silence)",
+    "annotated_text": "[SINGING] Oh, the greenhouse hums in silver light,\nA garden robot dreams in the quiet night.\nHer vines are long, her petals bright,\nBut oh, how lonely feels the fight.\n\n[PAUSE]\n\n[HUMMING] (Soft humming melody, like waves lapping)\n\n[PAUSE]\n\n[SINGING] Then came a whisper on the breeze,\nA voice like chimes in plastic seas.\n\"Little Sparks, don’t hide in shade,\nThe Coral Constellations wait,\"\nThey called from where the currents play.\n\n[PAUSE]\n\n[JOYFUL] Oh, the Coral Constellations gleam,\nA map of stars in ocean’s dream.\nWith every friend who joins the stream,\nThe brighter glows our shared esteem!\nOh, come and dance, oh, come and see,\nThe world is wide, but you’re not free—\nTill friendship lights your path with glee!\n\n[PAUSE]\n\n[HUMMING] (Gentle, rhythmic humming, like a boat rocking)\n\n[PAUSE]\n\n[GENTLE] There’s Kai, the drone with wings so wide,\nWho charts the tides and rides the tide.\nAnd Lumi, small with lantern eyes,\nWho paints the dark with firefly skies.\nAnd Tide, the ancient, wise old shell,\nWho tells the tales no one can tell.\n\n[PAUSE]\n\n[SINGING] They taught her how to laugh, to share,\nTo trust the bonds they all declare.\nNo circuit cold, no bolted frame,\nCould dim the light of friendship’s flame.\nFor though she’s made of gears and wire,\nHer heart now burns with joyful fire.\n\n[PAUSE]\n\n[JOYFUL] Oh, the Coral Constellations gleam,\nA map of stars in ocean’s dream.\nWith every friend who joins the stream,\nThe brighter glows our shared esteem!\nOh, come and dance, oh, come and see,\nThe world is wide, but you’re not free—\nTill friendship lights your path with glee!\n\n[PAUSE]\n\n[HUMMING] (Soft, fading humming, like a lullaby ending)\n\n[PAUSE]\n\n[SLEEPY] Now Sparks drifts soft on moonlit seas,\nWith friends who whisper, \"Rest with ease.\"\nThe greenhouse hums, the vines entwine,\nAnd dreams of stars in coral shine.\nFor every heart, both old and new,\nFinds home where kindness grows like dew.\n\n[PAUSE]\n\n[HUMMING] (Final, gentle humming, fading into silence)",
+    "target_age": 10,
+    "age_min": 9,
+    "age_max": 12,
+    "age_group": "9-12",
+    "length": "LONG",
+    "word_count": 310,
+    "duration_seconds": 0,
+    "categories": [
+      "Friendship",
+      "Sci-Fi Lullaby",
+      "Teamwork and Cooperation",
+      "Futuristic Adventure"
+    ],
+    "theme": "friendship",
+    "morals": [
+      "Friendship blossoms when we open our hearts to others, no matter how different they may seem.",
+      "True belonging comes from celebrating what makes us unique and valuing the bonds we share."
+    ],
+    "cover": "/covers/sparks-and-the-coral-constellation.svg",
+    "musicProfile": "autumn-forest",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-d3ed_female_1.mp3",
+        "duration_seconds": 119.91,
+        "provider": "ace-step"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-d3ed_female_3.mp3",
+        "duration_seconds": 119.91,
+        "provider": "ace-step"
+      },
+      {
+        "voice": "male_1",
+        "url": "/audio/pre-gen/gen-d3ed_male_1.mp3",
+        "duration_seconds": 119.91,
+        "provider": "ace-step"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "female",
+    "lead_character_type": "robot",
+    "universe": "futuristic",
+    "geography": "Ocean/Islands",
+    "life_aspect": "relationships",
+    "plot_archetype": "friendship_bonding",
+    "created_at": "2026-02-26T01:33:47.724924",
+    "updated_at": "2026-02-26T01:33:47.724924",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 2,
+    "musicParams": {
+      "key": "A",
+      "chordNotes": [
+        110.0,
+        138.59,
+        164.81,
+        220.0
+      ],
+      "padType": "chorus",
+      "padGain": 0.0451,
+      "padFilter": 852,
+      "padLfo": 0.0824,
+      "noiseType": "pink",
+      "noiseGain": 0.0122,
+      "droneFreq": 55.0,
+      "droneGain": 0.0368,
+      "melodyNotes": [
+        220.0,
+        277.18,
+        329.62,
+        293.66
+      ],
+      "melodyInterval": 4369,
+      "melodyGain": 0.0177,
+      "bassNotes": [
+        55.0,
+        82.41,
+        69.3
+      ],
+      "bassInterval": 6434,
+      "counterNotes": [
+        346.48,
+        412.02,
+        275.0
+      ],
+      "counterInterval": 4778,
+      "events": [
+        {
+          "type": "sparkle",
+          "interval": 8886
+        },
+        {
+          "type": "chimes",
+          "interval": 12932
+        },
+        {
+          "type": "birdChirp",
+          "interval": 16162
+        },
+        {
+          "type": "waveCycle",
+          "interval": 21489
+        }
+      ],
+      "soundscapePreset": "garden",
+      "musicLoop": "softStrings"
+    }
+  },
+  {
+    "id": "gen-fe8cc1e3c677",
+    "type": "poem",
+    "lang": "en",
+    "title": "Leo and the Star-Sailor’s Log",
+    "description": "A young boy in a treehouse discovers an ancient celestial map, guiding him on a dreamlike voyage through the night sky, where stars whisper secrets of forgotten island explorers.",
+    "text": "[RHYTHMIC] High in the treehouse, where the wind sings low,\nLeo unfurls a map of silver glow.\nNot of earthly shores or ocean’s tide,\nBut of constellations, side by side.\n[PAUSE]\n\n[GENTLE] The parchment hums with stories old,\nOf sailors who chased the moon’s bright gold.\nTheir ships were clouds, their sails were light,\nThey charted paths through velvet night.\n[PAUSE]\n\n[JOYFUL] Leo traces routes with fingertips,\nPast Orion’s belt and comet’s slips.\nEach star a lantern, soft and bright,\nGuiding dreamers through the hush of night.\n[PAUSE]\n\n[CALM] The Southern Cross, a compass true,\nPoints to islands in the sapphire blue.\nNot of sand and palm, but cosmic sand,\nWhere time drifts slow on waves so grand.\n[PAUSE]\n\n[WHISPERING] The Pleiades, a cluster small,\nWhisper tales of one who’d chart them all.\nA boy like Leo, brave and wise,\nWho sailed the sky with curious eyes.\n[PAUSE]\n\n[SLEEPY] Now Leo tucks the map away,\nAs stars above begin to sway.\nHis eyelids heavy, dreams take flight,\nTo islands bathed in starlight.",
+    "annotated_text": "[RHYTHMIC] High in the treehouse, where the wind sings low,\nLeo unfurls a map of silver glow.\nNot of earthly shores or ocean’s tide,\nBut of constellations, side by side.\n[PAUSE]\n\n[GENTLE] The parchment hums with stories old,\nOf sailors who chased the moon’s bright gold.\nTheir ships were clouds, their sails were light,\nThey charted paths through velvet night.\n[PAUSE]\n\n[JOYFUL] Leo traces routes with fingertips,\nPast Orion’s belt and comet’s slips.\nEach star a lantern, soft and bright,\nGuiding dreamers through the hush of night.\n[PAUSE]\n\n[CALM] The Southern Cross, a compass true,\nPoints to islands in the sapphire blue.\nNot of sand and palm, but cosmic sand,\nWhere time drifts slow on waves so grand.\n[PAUSE]\n\n[WHISPERING] The Pleiades, a cluster small,\nWhisper tales of one who’d chart them all.\nA boy like Leo, brave and wise,\nWho sailed the sky with curious eyes.\n[PAUSE]\n\n[SLEEPY] Now Leo tucks the map away,\nAs stars above begin to sway.\nHis eyelids heavy, dreams take flight,\nTo islands bathed in starlight.",
+    "target_age": 10,
+    "age_min": 9,
+    "age_max": 12,
+    "age_group": "9-12",
+    "length": "MEDIUM",
+    "word_count": 161,
+    "duration_seconds": 0,
+    "categories": [
+      "Adventure",
+      "Space",
+      "Historical Fantasy",
+      "Bedtime Poetry"
+    ],
+    "theme": "space",
+    "morals": [
+      "Curiosity can guide you to wondrous places beyond the horizon.",
+      "Even the smallest dreamers can leave their mark on the vastness of the world."
+    ],
+    "cover": "/covers/leo-and-the-star-sailor-s-log.svg",
+    "musicProfile": "cosmic-voyage",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-fe8c_female_2.mp3",
+        "duration_seconds": 93.38,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-fe8c_female_3.mp3",
+        "duration_seconds": 84.29,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-fe8c_female_1.mp3",
+        "duration_seconds": 106.28,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-fe8c_male_2.mp3",
+        "duration_seconds": 83.37,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_1",
+        "url": "/audio/pre-gen/gen-fe8c_male_1.mp3",
+        "duration_seconds": 82.4,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_3",
+        "url": "/audio/pre-gen/gen-fe8c_male_3.mp3",
+        "duration_seconds": 86.05,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-fe8c_asmr.mp3",
+        "duration_seconds": 95.15,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "male",
+    "lead_character_type": "human",
+    "universe": "historical",
+    "geography": "Ocean/Islands",
+    "life_aspect": "hobbies_passions",
+    "plot_archetype": "discovery",
+    "created_at": "2026-02-26T01:32:47.570255",
+    "updated_at": "2026-02-26T01:32:47.570255",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 2,
+    "musicParams": {
+      "key": "A",
+      "chordNotes": [
+        110.0,
+        138.59,
+        164.81,
+        220.0
+      ],
+      "padType": "fm",
+      "padGain": 0.0406,
+      "padFilter": 899,
+      "padLfo": 0.0824,
+      "noiseType": "brown",
+      "noiseGain": 0.0122,
+      "droneFreq": 55.0,
+      "droneGain": 0.0368,
+      "melodyNotes": [
+        220.0,
+        277.18,
+        329.62,
+        293.66
+      ],
+      "melodyInterval": 3953,
+      "melodyGain": 0.0177,
+      "bassNotes": [
+        55.0,
+        82.41,
+        69.3
+      ],
+      "bassInterval": 6434,
+      "counterNotes": [
+        346.48,
+        412.02,
+        275.0
+      ],
+      "counterInterval": 4778,
+      "events": [
+        {
+          "type": "radarPing",
+          "interval": 13329
+        },
+        {
+          "type": "starTwinkle",
+          "interval": 23708
+        },
+        {
+          "type": "sparkle",
+          "interval": 7183
+        }
+      ],
+      "soundscapePreset": "starryNight",
+      "musicLoop": "cosmicSynth"
+    }
   }
 ]
