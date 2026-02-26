@@ -694,7 +694,7 @@ Return ONLY the Phase 3 text (starting with [PHASE_3]). No JSON wrapper — just
 
     content_obj = {
         "id": content_id,
-        "type": "story",
+        "type": "long_story",
         "lang": "en",
         "title": title,
         "description": description,
