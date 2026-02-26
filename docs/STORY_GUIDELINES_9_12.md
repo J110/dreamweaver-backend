@@ -194,7 +194,7 @@ The generation script outputs JSON with these 9-12-specific fields:
 
 ```json
 {
-    "type": "story",
+    "type": "long_story",
     "target_age": 10,
     "age_min": 9,
     "age_max": 12,
@@ -222,6 +222,7 @@ python3 scripts/generate_experimental_story_9_12.py --dry-run
 
 # Full pipeline after generation
 python3 scripts/generate_audio.py --story-id gen-XXXX --speed 0.8
+python3 scripts/stitch_lullaby.py --story-id gen-XXXX           # Stitch atmospheric ambient music
 python3 scripts/generate_music_params.py --id gen-XXXX
 python3 scripts/generate_cover_svg.py --id gen-XXXX
 python3 scripts/sync_seed_data.py --lang en
@@ -243,11 +244,75 @@ The benchmark story is "The Secret of the Dream Library" (`seed_output/experimen
 
 ## Music Transition (NOT Lullaby)
 
-This age group should feel like they're listening to something **sophisticated**. Think Sigur Ros or Olafur Arnalds in mood, NOT a children's lullaby.
+This age group should feel like they're listening to something **sophisticated** — a film score fading out, NOT a children's lullaby. Think **Sigur Rós** or **Ólafur Arnalds** in mood.
 
-Each story includes an `ambient_music_description` field with 2-3 sentences describing the closing music:
-- "Deep, sustained cello drones with distant piano notes, like starlight translated to sound"
-- "Underwater reverb, slow whale-song frequencies, bubbling sub-bass"
-- "Wind through ancient stone corridors, barely audible crystalline chimes"
+### How it works
 
-This is used by the music generation system to create the closing ambient track.
+Each story includes an `ambient_music_description` field with 2-3 sentences describing the closing music mood. This guides the generation of a **150-second atmospheric ambient piece** that gets stitched onto the end of every audio variant.
+
+#### Example descriptions:
+- "Deep, resonant cello notes submerged in water, creating a slow, pulsing rhythm like the rise and fall of tides. Distant, echoing chimes fade in and out, leaving trails of reverb."
+- "Sustained cello drones with distant piano notes, like starlight translated to sound. Slow, breathing strings."
+- "Wind through ancient stone corridors, barely audible crystalline chimes, sub-bass hum."
+
+### Generation via ACE-Step
+
+The ambient music is generated using **ACE-Step** (our Modal singing endpoint) with **non-lexical vocables** — wordless "ooh, aah, mmm" vocalizations in a V-C-V-C-V-C structure. This captures the Sigur Rós "Hopelandic" aesthetic: ethereal, wordless vocals floating over atmospheric instrumentation.
+
+**Why vocables, not instrumental?** ACE-Step is a singing model that requires lyrics. Non-lexical vocables give it enough vocal content to work with while producing an ethereal, non-verbal ambient result. The `description` parameter drives the instrumental mood.
+
+#### ACE-Step parameters:
+
+| Parameter | Female Variant | Male Variant |
+|-----------|---------------|--------------|
+| `mode` | `"full"` | `"full"` |
+| `duration` | 150s | 150s |
+| `description` | atmospheric ambient, ethereal female vocals, wordless, deep cello, slow sustained strings, reverberating piano, post-rock, Sigur Ros mood, 45 bpm | atmospheric ambient, ethereal male vocals, wordless, deep cello drone, distant piano, underwater reverb, Olafur Arnalds mood, 40 bpm |
+
+#### Non-lexical vocable template:
+
+```
+[verse]
+Ooh ooh ooh, ooh ooh ooh ooh,
+Aah aah aah, aah aah aah.
+Ooh ooh ooh, ooh ooh ooh ooh,
+Mmm mmm mmm, mmm mmm mmm.
+
+[chorus]
+Ooh aah ooh, ooh aah ooh,
+Mmm mmm mmm, mmm.
+
+(repeat V-C-V-C-V-C — choruses identical)
+```
+
+### Stitching onto narration audio
+
+The `stitch_lullaby.py` script handles the full pipeline:
+
+```bash
+python3 scripts/stitch_lullaby.py --story-id gen-XXXX [--backup] [--duration 150]
+```
+
+**What it does:**
+1. Generates **2 ambient pieces** via ACE-Step (female + male, cached by gender)
+2. For each of the 7 voice variants:
+   - Loads existing narration MP3
+   - Maps voice to gender (female_1/2/3 + asmr → female, male_1/2/3 → male)
+   - Stitches: `narration.fade_out(10s)` → `3s silence` → `ambient.fade_in(10s)`
+   - Applies final fade_out(1.5s) on combined audio
+   - Normalizes ambient to **-19 dBFS** (slightly quieter than narration at -16 dBFS)
+   - Exports as MP3 at 256kbps
+3. Updates `content.json` with new durations and ambient lyrics
+
+**Expected result:** Each audio variant gains ~143 seconds (150s ambient - crossfade overlap).
+
+### Key differences from ages 2-8 lullaby
+
+| Aspect | Ages 2-8 | Ages 9-12 |
+|--------|----------|-----------|
+| Content | Sung lullaby with children's lyrics | Wordless atmospheric ambient |
+| Mood | Warm, nurturing, music-box feel | Film score, post-rock, cinematic |
+| ACE-Step lyrics | Full lyric sections (words) | Non-lexical vocables (ooh/aah/mmm) |
+| Duration | 120s | 150s |
+| Description tone | "gentle lullaby, piano, bedtime" | "atmospheric ambient, post-rock, Sigur Rós mood" |
+| Normalization | -19 dBFS | -19 dBFS |
