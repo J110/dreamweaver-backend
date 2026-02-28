@@ -31,7 +31,13 @@ class LocalStore:
         self._data_dir = Path(__file__).parent.parent.parent / "data"
         self._data_dir.mkdir(parents=True, exist_ok=True)
 
+        # Seed data tracking for hot-reload
+        self._seed_dir = Path(__file__).parent.parent.parent / "seed_output"
+        self._seed_content_path = self._seed_dir / "content.json"
+        self._last_seed_mtime: float = 0.0
+
         self._load_data()
+        self._update_seed_mtime()
 
     def _load_data(self):
         """Load from persistent data dir, falling back to seed data."""
@@ -103,6 +109,88 @@ class LocalStore:
                     }
             elif coll_name not in self.collections:
                 self.collections[coll_name] = {}
+
+    def _update_seed_mtime(self):
+        """Record the current mtime of seed content.json."""
+        try:
+            if self._seed_content_path.exists():
+                self._last_seed_mtime = self._seed_content_path.stat().st_mtime
+        except OSError:
+            pass
+
+    def has_seed_changed(self) -> bool:
+        """Check if seed content.json has been modified since last load."""
+        try:
+            if self._seed_content_path.exists():
+                return self._seed_content_path.stat().st_mtime > self._last_seed_mtime
+        except OSError:
+            pass
+        return False
+
+    def reload_content(self) -> dict:
+        """Re-read content collections from disk without touching user data.
+
+        Thread-safe. Returns stats about what changed.
+        Called by the admin reload endpoint and the background polling task.
+        """
+        with self._lock:
+            old_count = len(self.collections.get("content", {}))
+
+            # Re-run _load_data for content collections only
+            seed_dir = self._seed_dir
+            collection_sources = {
+                "content": ("content.json", "content.json", "id"),
+                "subscriptions": ("subscriptions.json", "subscriptions.json", "tier"),
+                "voices": ("voices.json", "voices.json", "id"),
+            }
+            for coll_name, (data_file, seed_file, key_field) in collection_sources.items():
+                persistent_path = self._data_dir / data_file
+                seed_path = seed_dir / seed_file
+
+                if persistent_path.exists():
+                    with open(persistent_path) as f:
+                        items = json.load(f)
+                        self.collections[coll_name] = {
+                            item[key_field]: item for item in items
+                        }
+                    if seed_path.exists():
+                        with open(seed_path) as f:
+                            seed_items = json.load(f)
+                            changed = False
+                            SEED_PREFERRED_FIELDS = {"cover", "musicParams", "audio_variants"}
+                            for item in seed_items:
+                                item_id = item[key_field]
+                                if item_id not in self.collections[coll_name]:
+                                    self.collections[coll_name][item_id] = item
+                                    changed = True
+                                else:
+                                    existing = self.collections[coll_name][item_id]
+                                    for k, v in item.items():
+                                        if k not in existing:
+                                            existing[k] = v
+                                            changed = True
+                                        elif k in SEED_PREFERRED_FIELDS and v and existing.get(k) != v:
+                                            existing[k] = v
+                                            changed = True
+                            if changed:
+                                self._persist_collection(coll_name)
+                elif seed_path.exists():
+                    with open(seed_path) as f:
+                        items = json.load(f)
+                        self.collections[coll_name] = {
+                            item[key_field]: item for item in items
+                        }
+                    self._persist_collection(coll_name)
+
+            self._update_seed_mtime()
+            new_count = len(self.collections.get("content", {}))
+
+            return {
+                "previous_count": old_count,
+                "current_count": new_count,
+                "added": new_count - old_count,
+                "reloaded_at": datetime.now().isoformat(),
+            }
 
     def _persist_collection(self, name: str):
         """Write a collection to disk as JSON."""

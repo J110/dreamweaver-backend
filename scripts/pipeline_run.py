@@ -589,18 +589,39 @@ def step_deploy_prod(args, state: dict) -> bool:
             frontend_ok = True
             logger.info("  Frontend deployed successfully")
 
-    # ── Backend: restart Docker container (seed_output is volume-mounted) ──
-    logger.info("  Restarting backend Docker...")
-    ok, _, stderr, _ = run_command(
-        ["sudo", "docker", "restart", "dreamweaver-backend"],
-        "Backend: docker restart",
-        timeout=30,
-    )
-    if ok:
-        backend_ok = True
-        logger.info("  Backend deployed successfully")
-    else:
-        logger.error("  Backend restart failed: %s", stderr)
+    # ── Backend: hot-reload content via admin API (no restart needed) ──
+    admin_key = os.environ.get("ADMIN_API_KEY", "")
+    if admin_key:
+        logger.info("  Triggering backend content reload...")
+        try:
+            import httpx
+            resp = httpx.post(
+                "http://localhost:8000/api/v1/admin/reload",
+                headers={"X-Admin-Key": admin_key},
+                timeout=15,
+            )
+            if resp.status_code == 200:
+                result = resp.json()
+                backend_ok = True
+                logger.info("  Backend reloaded: %s", result.get("message", "OK"))
+            else:
+                logger.error("  Backend reload failed: HTTP %d — %s", resp.status_code, resp.text[:200])
+        except Exception as e:
+            logger.error("  Backend reload HTTP call failed: %s", e)
+
+    if not backend_ok:
+        # Fallback: docker restart (if reload unavailable or failed)
+        logger.info("  Falling back to docker restart...")
+        ok, _, stderr, _ = run_command(
+            ["sudo", "docker", "restart", "dreamweaver-backend"],
+            "Backend: docker restart (fallback)",
+            timeout=30,
+        )
+        if ok:
+            backend_ok = True
+            logger.info("  Backend restarted successfully (fallback)")
+        else:
+            logger.error("  Backend restart also failed: %s", stderr)
 
     state["step_deploy_prod"] = "done" if (frontend_ok or backend_ok) else "failed"
     state["deploy_prod_frontend"] = "ok" if frontend_ok else "failed"

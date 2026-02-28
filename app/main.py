@@ -24,8 +24,9 @@ settings = get_settings()
 configure_logging(debug=settings.debug)
 
 
-# ── Self-ping keep-alive (prevents Render free tier from sleeping) ────────
+# ── Background tasks ──────────────────────────────────────────────────────
 _keep_alive_task = None
+_content_poll_task = None
 
 
 async def _keep_alive_loop():
@@ -53,10 +54,41 @@ async def _keep_alive_loop():
             logger.warning(f"Keep-alive ping failed: {e}")
 
 
+async def _content_poll_loop():
+    """Poll seed_output/content.json for changes every 60 seconds.
+
+    Safety net: even if the pipeline's reload HTTP call fails,
+    new content will be picked up within 60 seconds.
+    """
+    from app.dependencies import _check_local_mode
+
+    if not _check_local_mode():
+        return  # Only needed in LocalStore mode
+
+    from app.services.local_store import get_local_store
+    store = get_local_store()
+
+    logger.info("Content polling started (60s interval)")
+
+    while True:
+        await asyncio.sleep(60)
+        try:
+            if store.has_seed_changed():
+                result = store.reload_content()
+                logger.info(
+                    "Auto-reload: %d -> %d items (%+d new)",
+                    result["previous_count"],
+                    result["current_count"],
+                    result["added"],
+                )
+        except Exception as e:
+            logger.warning("Content poll error: %s", e)
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Manage application startup and shutdown events."""
-    global _keep_alive_task
+    global _keep_alive_task, _content_poll_task
 
     # Startup event
     logger.info(f"Starting {settings.app_name} API v{settings.api_version}")
@@ -80,15 +112,20 @@ async def lifespan(app: FastAPI):
         _keep_alive_task = asyncio.create_task(_keep_alive_loop())
         logger.info("Keep-alive background task started (Render free tier protection)")
 
+    # Start content polling (hot-reload without restart)
+    _content_poll_task = asyncio.create_task(_content_poll_loop())
+    logger.info("Content polling background task started (60s interval)")
+
     yield
 
     # Shutdown event
-    if _keep_alive_task:
-        _keep_alive_task.cancel()
-        try:
-            await _keep_alive_task
-        except asyncio.CancelledError:
-            pass
+    for task in [_keep_alive_task, _content_poll_task]:
+        if task:
+            task.cancel()
+            try:
+                await task
+            except asyncio.CancelledError:
+                pass
     logger.info(f"Shutting down {settings.app_name} API")
 
 
