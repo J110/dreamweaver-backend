@@ -107,7 +107,7 @@ def run_command(cmd: list, label: str, timeout: int = 3600, cwd: str = None) -> 
         elapsed = time.time() - start
 
         if result.stdout:
-            for line in result.stdout.strip().split("\n")[-20:]:
+            for line in result.stdout.strip().split("\n")[-50:]:
                 logger.info("  %s", line)
 
         if result.returncode != 0:
@@ -234,6 +234,13 @@ def step_generate(args, state: dict) -> bool:
             state["generated_lullabies"] = song_count
         except Exception:
             pass
+
+    # Validate generation count — warn (don't halt) on partial failure
+    expected = args.count_stories + args.count_poems + args.count_lullabies
+    actual = len(new_ids)
+    if actual < expected:
+        logger.warning("  PARTIAL GENERATION: expected %d items but only got %d", expected, actual)
+        state["generation_warning"] = f"Expected {expected}, got {actual}"
 
     # Merge into content.json
     if new_ids and not args.dry_run:
@@ -753,7 +760,7 @@ def postflight_checks(state: dict):
     total_monthly_est = GCP_MONTHLY + modal_monthly_est
     state["cost_monthly"] = (
         f"~${total_monthly_est:.2f}/mo est. "
-        f"(GCP ${GCP_MONTHLY:.2f} + Modal ~${modal_monthly_est:.2f} from $30 free credits)"
+        f"(GCP ${GCP_MONTHLY:.2f} + Modal ~${modal_monthly_est:.2f})"
     )
 
     # Collect generated titles for email

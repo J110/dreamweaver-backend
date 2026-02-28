@@ -78,8 +78,19 @@ def _build_html(state: dict, log_file: str = "", elapsed: float = 0) -> str:
     if lullabies_n: type_parts.append(f"{lullabies_n} {'lullaby' if lullabies_n == 1 else 'lullabies'}")
     type_detail = f" ({', '.join(type_parts)})" if type_parts else ""
 
-    status_color = "#22c55e" if is_success else "#ef4444"
-    status_label = "SUCCESS" if is_success else "FAILED"
+    generation_warning = state.get("generation_warning", "")
+    is_partial = is_success and bool(generation_warning)
+
+    if is_partial:
+        status_color = "#f59e0b"  # amber/yellow
+        status_label = "PARTIAL"
+    elif is_success:
+        status_color = "#22c55e"
+        status_label = "SUCCESS"
+    else:
+        status_color = "#ef4444"
+        status_label = "FAILED"
+
     failed_step = ""
     if not is_success and status.startswith("failed_at_"):
         failed_step = status.replace("failed_at_", "")
@@ -100,6 +111,8 @@ def _build_html(state: dict, log_file: str = "", elapsed: float = 0) -> str:
         rows += f'<tr><td>&nbsp;&nbsp;Monthly proj.</td><td>{cost_monthly}</td></tr>'
     if disk_info:
         rows += f'<tr><td><b>Disk</b></td><td>{disk_info}</td></tr>'
+    if generation_warning:
+        rows += f'<tr><td><b>⚠️ Warning</b></td><td style="color:#f59e0b"><b>{generation_warning}</b></td></tr>'
     if failed_step:
         rows += f'<tr><td><b>Failed at</b></td><td style="color:#ef4444"><b>{failed_step}</b></td></tr>'
 
@@ -169,7 +182,16 @@ def send_pipeline_notification(
     is_success = status == "completed"
     date_str = datetime.now().strftime("%Y-%m-%d")
 
-    tag = "[OK]" if is_success else "[FAIL]"
+    gen_warning = state.get("generation_warning", "")
+    is_partial = is_success and bool(gen_warning)
+
+    if is_partial:
+        tag = "[PARTIAL]"
+    elif is_success:
+        tag = "[OK]"
+    else:
+        tag = "[FAIL]"
+
     n_items = len(state.get("generated_ids", []))
     subject = f"{tag} Dream Valley Pipeline — {date_str}"
     if is_success and n_items:
@@ -230,7 +252,7 @@ if __name__ == "__main__":
             "cost_this_run": "$1.07",
             "cost_modal": "$0.53 (40.2 GPU-min)",
             "cost_gcp_daily": "$0.54",
-            "cost_monthly": "~$32.03/mo est. (GCP $16.13 + Modal ~$15.90 from $30 free credits)",
+            "cost_monthly": "~$32.03/mo est. (GCP $16.13 + Modal ~$15.90)",
             "disk_info": "Audio: 304 files (1.2 GB), Covers: 12 SVGs",
         }
         ok = send_pipeline_notification(test_state, "", 325.7)
