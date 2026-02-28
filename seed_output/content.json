@@ -8268,5 +8268,126 @@
       "soundscapePreset": "garden",
       "musicLoop": "gentleGuitar"
     }
+  },
+  {
+    "id": "gen-69ca3c81363d",
+    "type": "song",
+    "lang": "en",
+    "title": "Priya and the River of Echoing Hearts",
+    "description": "A lullaby about Priya, a girl in an ancient village, who discovers the power of friendship and unity while listening to the whispers of a mythical river that carries the dreams of her people.",
+    "text": "[SINGING] By the river’s edge where fireflies gleam,\nPriya listens to the water’s dream.\n[GENTLE] The current hums a lullaby so sweet,\nOf hearts entwined and dancing feet.\n\n[PAUSE]\n\n[HUMMING] Hmm-hmm-hmm, hmm-hmm-hmm,\nThe river sings of bonds that brim.\n\n[PAUSE]\n\n[SINGING] Aru, the storyteller, with tales so wide,\nMaya, the weaver, with threads of pride.\nKiran, the drummer, with rhythms bold,\nTogether they weave a friendship’s gold.\n\n[PAUSE]\n\n[JOYFUL] Oh, the river knows, oh, the river sees,\nHow kindness flows like the breeze.\nDifferences fade in the moon’s soft glow,\nFor love is the river’s eternal flow.\n\n[PAUSE]\n\n[HUMMING] Hmm-hmm-hmm, hmm-hmm-hmm,\nThe stars above nod and dim.\n\n[PAUSE]\n\n[SLEEPY] Now Priya closes her eyes so tight,\nAs the river sings her into the night.\n[GENTLE] Dreams of friendship, strong and true,\nDance in the light of the silver moon.\n\n[PAUSE]\n\n[HUMMING] Hmm-hmm-hmm, hmm-hmm-hmm,\nSleep now, dear one, drift and swim.",
+    "annotated_text": "[SINGING] By the river’s edge where fireflies gleam,\nPriya listens to the water’s dream.\n[GENTLE] The current hums a lullaby so sweet,\nOf hearts entwined and dancing feet.\n\n[PAUSE]\n\n[HUMMING] Hmm-hmm-hmm, hmm-hmm-hmm,\nThe river sings of bonds that brim.\n\n[PAUSE]\n\n[SINGING] Aru, the storyteller, with tales so wide,\nMaya, the weaver, with threads of pride.\nKiran, the drummer, with rhythms bold,\nTogether they weave a friendship’s gold.\n\n[PAUSE]\n\n[JOYFUL] Oh, the river knows, oh, the river sees,\nHow kindness flows like the breeze.\nDifferences fade in the moon’s soft glow,\nFor love is the river’s eternal flow.\n\n[PAUSE]\n\n[HUMMING] Hmm-hmm-hmm, hmm-hmm-hmm,\nThe stars above nod and dim.\n\n[PAUSE]\n\n[SLEEPY] Now Priya closes her eyes so tight,\nAs the river sings her into the night.\n[GENTLE] Dreams of friendship, strong and true,\nDance in the light of the silver moon.\n\n[PAUSE]\n\n[HUMMING] Hmm-hmm-hmm, hmm-hmm-hmm,\nSleep now, dear one, drift and swim.",
+    "target_age": 10,
+    "age_min": 9,
+    "age_max": 12,
+    "age_group": "9-12",
+    "length": "MEDIUM",
+    "word_count": 135,
+    "duration_seconds": 0,
+    "categories": [
+      "Mythological",
+      "Friendship",
+      "Lullaby"
+    ],
+    "theme": "friendship",
+    "morals": [
+      "Friendship grows when we celebrate what makes each of us unique.",
+      "Unity and understanding can turn differences into strengths."
+    ],
+    "cover": "/covers/priya-and-the-river-of-echoing-hearts.svg",
+    "musicProfile": "enchanted-garden",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-69ca_female_1.mp3",
+        "duration_seconds": 119.91,
+        "provider": "ace-step"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-69ca_female_3.mp3",
+        "duration_seconds": 119.91,
+        "provider": "ace-step"
+      },
+      {
+        "voice": "male_1",
+        "url": "/audio/pre-gen/gen-69ca_male_1.mp3",
+        "duration_seconds": 119.91,
+        "provider": "ace-step"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "female",
+    "lead_character_type": "human",
+    "universe": "mythological",
+    "geography": "Americas",
+    "life_aspect": "relationships",
+    "plot_archetype": "discovery",
+    "created_at": "2026-02-28T01:38:13.857397",
+    "updated_at": "2026-02-28T01:38:13.857397",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 2,
+    "musicParams": {
+      "key": "A",
+      "chordNotes": [
+        110.0,
+        138.59,
+        164.81,
+        220.0
+      ],
+      "padType": "chorus",
+      "padGain": 0.0451,
+      "padFilter": 852,
+      "padLfo": 0.0824,
+      "noiseType": "pink",
+      "noiseGain": 0.0122,
+      "droneFreq": 55.0,
+      "droneGain": 0.0368,
+      "melodyNotes": [
+        220.0,
+        277.18,
+        329.62,
+        293.66
+      ],
+      "melodyInterval": 4369,
+      "melodyGain": 0.0177,
+      "bassNotes": [
+        55.0,
+        82.41,
+        69.3
+      ],
+      "bassInterval": 6434,
+      "counterNotes": [
+        346.48,
+        412.02,
+        275.0
+      ],
+      "counterInterval": 4778,
+      "events": [
+        {
+          "type": "chimes",
+          "interval": 13329
+        },
+        {
+          "type": "sparkle",
+          "interval": 19398
+        },
+        {
+          "type": "birdChirp",
+          "interval": 19754
+        },
+        {
+          "type": "waterDrop",
+          "interval": 28000
+        }
+      ],
+      "soundscapePreset": "garden",
+      "musicLoop": "softStrings"
+    }
   }
 ]
