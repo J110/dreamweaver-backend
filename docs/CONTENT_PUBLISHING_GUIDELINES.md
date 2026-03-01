@@ -8,8 +8,8 @@
 
 1. **Audio files and seedData.js must always be in sync.** If seedData.js references an audio URL, the MP3 file MUST exist in `public/audio/pre-gen/`.
 2. **Never modify seedData.js without verifying that referenced assets exist.** This includes audio files, cover SVGs, and any other referenced paths.
-3. **Always deploy backend BEFORE frontend.** Backend serves content.json; frontend reads seedData.js. If frontend deploys first with references to backend data that doesn't exist yet, things break.
-4. **Production deploy is MANUAL and separate.** Pipeline auto-deploys to Vercel/Render (test). GCP production requires explicit `git pull && build && pm2 restart`.
+3. **Backend content hot-reloads automatically; frontend still needs a manual production deploy.** The backend detects new `seed_output/content.json` via background polling (60s) or the admin reload endpoint — no Docker restart needed. But the frontend still needs `git pull && npm run build && cp static && pm2 restart` on GCP.
+4. **Production frontend deploy is MANUAL and separate.** Pipeline auto-deploys to Vercel/Render (test). GCP production frontend requires explicit approval and manual deploy steps.
 5. **NEVER remove audio files from `public/audio/pre-gen/` unless the corresponding seedData.js entries are also removed.** Orphan URLs → 404 errors → broken playback.
 
 ---
@@ -25,6 +25,21 @@ Backend                                         Frontend
 seed_output/content.json  ─── sync_seed_data.py ───►  src/utils/seedData.js
 audio/pre-gen/*.mp3       ─── step_sync copies  ───►  public/audio/pre-gen/*.mp3
                           ─── covers already in  ───►  public/covers/*.svg
+
+                    BACKEND HOT-RELOAD (zero-downtime)
+                    ===================================
+
+Pipeline writes seed_output/content.json
+       │
+       ├── HTTP POST /api/v1/admin/reload (primary)
+       │     Requires X-Admin-Key header
+       │     Re-reads content/subscriptions/voices in-memory
+       │
+       ├── Background polling (safety net, every 60s)
+       │     Detects content.json mtime change → auto-reload
+       │
+       └── Docker restart (last resort fallback)
+             Only if HTTP reload AND polling both fail
 
                     MANUAL PUBLISHING
                     =================
@@ -70,7 +85,11 @@ The daily pipeline (`pipeline_run.py`) handles everything automatically:
 - Git adds `seedData.js`, `public/audio/pre-gen/`, and `public/covers/`
 - Commits and pushes both repos
 
-**IMPORTANT**: The pipeline only publishes to **test** (Vercel/Render). Production deploy is always manual.
+**What the deploy_prod step does (after publish):**
+- **Backend**: Calls `POST /api/v1/admin/reload` to hot-reload content in-memory (zero downtime). Falls back to `docker restart` if the HTTP call fails.
+- **Frontend**: Runs `npm run build`, copies static assets, restarts PM2.
+
+**IMPORTANT**: The pipeline auto-deploys frontend to GCP production and hot-reloads the backend. Content is live within minutes of the pipeline finishing.
 
 ---
 
@@ -285,25 +304,32 @@ echo "Build exit code: $?"
 # SSH into production
 gcloud compute ssh dreamvalley-prod --project=strong-harbor-472607-n4 --zone=asia-south1-a
 
-# 1. Pull latest code
+# 1. Pull latest backend (content hot-reloads automatically via 60s polling)
 cd /opt/dreamweaver-backend && git pull
+# Content will auto-reload within 60s. To force immediate reload:
+curl -s -X POST http://localhost:8000/api/v1/admin/reload \
+  -H "X-Admin-Key: $(grep ADMIN_API_KEY .env | cut -d= -f2)"
+
+# 2. Pull and build frontend
 cd /opt/dreamweaver-web && git pull
 
-# 2. Build frontend
+# 3. Build frontend
 npm run build
 
-# 3. CRITICAL: Copy static assets to standalone
+# 4. CRITICAL: Copy static assets to standalone
 cp -r public .next/standalone/public
 cp -r .next/static .next/standalone/.next/static
 
-# 4. Restart
+# 5. Restart frontend
 pm2 restart all
 
-# 5. Verify
+# 6. Verify
 curl -s https://dreamvalley.app | head -20  # Should return HTML
 curl -s -o /dev/null -w "%{http_code}" https://dreamvalley.app/audio/pre-gen/SOME_KNOWN_FILE.mp3
 # Should return 200
 ```
+
+> **Note**: The backend no longer needs a Docker restart for content changes. The `git pull` updates `seed_output/content.json`, and the background polling task detects the new mtime within 60 seconds. Only Docker restart if you changed backend Python code.
 
 ### Post-Deploy Verification
 
@@ -347,8 +373,14 @@ pm2 restart all
 cd /opt/dreamweaver-backend
 git log --oneline -10
 git checkout <GOOD_COMMIT_HASH>
-# Backend auto-restarts on Render push, but for GCP:
-# No restart needed — backend files are static (content.json, audio files)
+
+# Content changes: hot-reload picks up the reverted content.json within 60s
+# Or force immediate reload:
+curl -s -X POST http://localhost:8000/api/v1/admin/reload \
+  -H "X-Admin-Key: $(grep ADMIN_API_KEY .env | cut -d= -f2)"
+
+# Code changes: Docker restart needed only if you changed Python code
+sudo docker compose down && sudo docker compose up -d --build
 ```
 
 ---
@@ -483,12 +515,14 @@ fi
 
 | Scenario | Steps |
 |----------|-------|
-| Pipeline ran successfully | Review on Vercel test → Deploy to GCP production |
+| Pipeline ran successfully | Backend auto-reloads content. Review frontend on Vercel → Deploy frontend to GCP production |
+| Pipeline reported PARTIAL | Check email for expected vs actual count. Missing items failed at generation (likely Mistral flakiness). Re-run: `pipeline_run.py --resume` |
 | Pipeline failed at audio | Check Modal credits/health → Resume: `pipeline_run.py --resume` |
 | Pipeline failed at sync | Check content.json validity → Re-run: `pipeline_run.py --step sync` |
-| Need to add content manually | Edit content.json → Run sync → Copy audio/covers → Commit BOTH repos → Deploy |
+| Need to add content manually | Edit content.json → Backend auto-reloads (60s) or call admin reload → Run sync → Copy audio/covers → Commit frontend → Deploy frontend |
 | Need to regenerate audio | `generate_audio.py --story-id X` → Copy MP3s to frontend → Commit → Deploy |
 | Need to regenerate a cover | `generate_cover_svg.py --id X` → Commit frontend → Deploy |
 | Audio 404 on production | Verify files in standalone/public → `cp -r public .next/standalone/public` → `pm2 restart all` |
 | seedData.js looks wrong | Regenerate: `python3 scripts/sync_seed_data.py --lang en` → Commit → Deploy |
-| Need to rollback | `git checkout <good-commit>` → Rebuild → Copy static → Restart |
+| Backend content stale | `curl -X POST localhost:8000/api/v1/admin/reload -H "X-Admin-Key: KEY"` or wait 60s for polling |
+| Need to rollback | `git checkout <good-commit>` → Backend auto-reloads content. Frontend: Rebuild → Copy static → Restart |

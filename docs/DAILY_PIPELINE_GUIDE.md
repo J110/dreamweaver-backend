@@ -17,9 +17,20 @@ GCP VM (dreamvalley-prod) runs pipeline_run.py daily via cron (7 days/week):
   5. COVERS    → Mistral Large (free tier)          → animated SVG cover per story
   6. SYNC      → content.json → seedData.js + copy audio/covers to web public/
   7. PUBLISH   → git push both repos → Render/Vercel auto-deploy
+  8. DEPLOY    → Backend hot-reload (admin API) + Frontend build + PM2 restart
   POSTFLIGHT → Cost estimate + disk usage summary
-  NOTIFY     → Email via Resend (ALWAYS — success or failure)
+  NOTIFY     → Email via Resend (ALWAYS — success, partial, or failure)
 ```
+
+### Backend Hot-Reload
+
+The backend uses a **zero-downtime hot-reload** architecture. No Docker restart is needed for content changes:
+
+1. **Admin API** (primary): `POST /api/v1/admin/reload` with `X-Admin-Key` header — re-reads content/subscriptions/voices into memory instantly.
+2. **Background polling** (safety net): A background task checks `seed_output/content.json` mtime every 60 seconds and auto-reloads on change.
+3. **Docker restart** (fallback): Only used if both the HTTP call and polling fail.
+
+The pipeline's `step_deploy_prod()` calls the admin API automatically. The `ADMIN_API_KEY` is loaded from `.env`.
 
 ### Cost Summary
 
@@ -103,6 +114,9 @@ RESEND_API_KEY=your_resend_api_key_here
 # Modal — ACE-Step SongGen endpoint (for lullaby audio generation)
 SONGGEN_URL=https://anmol-71634--dreamweaver-songgen-sing.modal.run
 SONGGEN_HEALTH=https://anmol-71634--dreamweaver-songgen-health.modal.run
+
+# Admin API — used by pipeline to hot-reload backend content (no restart needed)
+ADMIN_API_KEY=your_admin_api_key_here
 ```
 
 **Getting your Mistral API key:**
@@ -215,13 +229,17 @@ The pipeline sends an email notification via Resend API **on every run** — bot
 
 **From**: `Dream Valley Pipeline <support@dreamvalley.app>`
 **To**: `mohan.anmol@gmail.com`
-**Subject**: `[OK] Dream Valley Pipeline — 2026-02-19 — 2 new items` or `[FAIL] Dream Valley Pipeline — 2026-02-19`
+**Subject formats**:
+- `[OK] Dream Valley Pipeline — 2026-02-28 — 3 new items` — All items generated successfully
+- `[PARTIAL] Dream Valley Pipeline — 2026-02-28 — 1 new items` — Some items failed (e.g., expected 3, got 1)
+- `[FAIL] Dream Valley Pipeline — 2026-02-28` — Pipeline failed entirely
 
 ### Email Contents
 
 | Field | Description |
 |-------|-------------|
 | Generated | Number of new stories/poems/lullabies generated (with per-type breakdown) |
+| ⚠️ Warning | (PARTIAL only) Expected vs actual item count — e.g., "Expected 3, got 1" |
 | Audio QA | X passed, Y failed |
 | Covers | X generated, Y fallback (default.svg) |
 | Elapsed | Total pipeline run time |
@@ -229,7 +247,7 @@ The pipeline sends an email notification via Resend API **on every run** — bot
 | Monthly Projection | Extrapolated from actual run cost × 30 |
 | Disk | Total audio files + cover count |
 | New Content | List of generated story/poem titles |
-| Log tail (failure only) | Last 20 lines of the pipeline log |
+| Log tail (failure only) | Last 50 lines of the pipeline log |
 
 ### Test Email Notification
 
@@ -284,13 +302,14 @@ python3 scripts/generate_cover_svg.py --new-only
 
 ---
 
-## Known Limitations (Manual Steps)
+## Known Limitations
 
 | Step | Status | Notes |
 |------|--------|-------|
-| Production deploy | **Manual** | Pipeline publishes to Vercel/Render test only. GCP production deploy requires manual approval and `git pull && npm run build && pm2 restart`. |
-| Content review | **Recommended** | While QA catches audio issues, human review of story text quality is recommended before production deploy. |
-| Cover quality review | **Recommended** | AI-generated covers may occasionally need manual refinement. Check the Vercel test app. |
+| Production deploy | **Automated** | Pipeline auto-deploys: backend hot-reloads content via admin API, frontend is rebuilt and PM2 restarted. Falls back to docker restart if reload fails. |
+| Content review | **Recommended** | While QA catches audio issues, human review of story text quality is recommended as a spot-check. |
+| Cover quality review | **Recommended** | AI-generated covers may occasionally need manual refinement. Check the production app after deploy. |
+| Partial generation | **Auto-detected** | If Mistral fails mid-generation, pipeline reports PARTIAL (yellow) in email with expected vs actual count. Items that were generated still proceed through the full pipeline. |
 
 ---
 
@@ -376,6 +395,9 @@ cat /opt/dreamweaver-backend/seed_output/pipeline_state.json
 | Publish runs from wrong directory | Frontend git commands must use `cwd=WEB_DIR`. Fixed in `step_publish()` on 2026-02-19 — no longer uses string splitting. |
 | Story text is one big block (no paragraphs) | LLM sometimes generates text without newlines. Fixed: (1) prompts now mandate paragraph breaks, (2) `ensure_paragraph_breaks()` post-processor auto-fixes. |
 | `content.json` corrupt | Restore from git: `git checkout -- seed_output/content.json` |
+| Backend content stale | Hot-reload: `curl -X POST localhost:8000/api/v1/admin/reload -H "X-Admin-Key: KEY"`. Or wait 60s for auto-polling. |
+| Pipeline shows PARTIAL | Some items failed generation (usually Mistral flakiness). Items that succeeded still publish. Re-run `--resume` for missing items. |
+| Admin reload returns 403 | Wrong API key. Check `ADMIN_API_KEY` in `.env` matches the header value. |
 | Audio not playing on deployed app | Audio files must be in BOTH repos. Pipeline auto-copies during sync. If missing: `cp backend/audio/pre-gen/XXXX*.mp3 web/public/audio/pre-gen/` |
 | New story has no cover image | Cover generation may have failed — check logs. Run manually: `python3 scripts/generate_cover_svg.py --id STORY_ID` |
 | Cover shows as blank | SVG validation failed. Check logs for XML parse errors. May need manual SVG creation per `COVER_DESIGN_GUIDE.md`. |
@@ -413,7 +435,7 @@ print(r.choices[0].message.content)
 
 | File | Purpose |
 |------|---------|
-| `scripts/pipeline_run.py` | Main orchestrator (preflight → 7 steps → postflight → notify) |
+| `scripts/pipeline_run.py` | Main orchestrator (preflight → 8 steps → postflight → notify) |
 | `scripts/pipeline_notify.py` | Email notifications via Resend API |
 | `scripts/generate_content_matrix.py` | Story/poem generation with diversity matrix |
 | `scripts/generate_audio.py` | Audio generation (Chatterbox TTS for stories/poems, ACE-Step for lullabies) |
@@ -421,6 +443,8 @@ print(r.choices[0].message.content)
 | `scripts/generate_music_params.py` | Unique ambient music parameters per story |
 | `scripts/generate_cover_svg.py` | AI-powered animated SVG cover generation |
 | `scripts/sync_seed_data.py` | Sync content.json to seedData.js |
+| `app/api/v1/admin.py` | Admin reload endpoint (hot-reload content without restart) |
+| `app/services/local_store.py` | LocalStore with hot-reload support (reload_content, has_seed_changed) |
 | `seed_output/content.json` | Master content file (backend) |
 | `seed_output/content_expanded.json` | Generated content output |
 | `seed_output/pipeline_state.json` | Pipeline checkpoint for crash-resume |
@@ -443,29 +467,33 @@ Pipeline generates content (runs daily at 2 AM IST, 1 story + 1 poem + 1 lullaby
        ├── PREFLIGHT: Warm Modal, test Mistral, check disk
        │
        ├── GENERATE → AUDIO → QA → ENRICH → COVERS
+       │     (validates expected vs actual count — triggers PARTIAL if items missing)
        │
        ├── SYNC: content.json → seedData.js
        │         + copy audio MP3s to web/public/audio/pre-gen/
        │         + cover paths read from content.json (AI-generated or default.svg)
        │
-       ├── git push backend → Render auto-deploys backend API
-       │     (includes: seed_output/content.json, audio/ files)
+       ├── PUBLISH (test):
+       │     ├── git push backend → Render auto-deploys backend API
+       │     │     (includes: seed_output/content.json, audio/ files)
+       │     └── git push frontend → Vercel auto-deploys web app
+       │           (includes: seedData.js, public/audio/pre-gen/*.mp3, public/covers/*.svg)
        │
-       ├── git push frontend → Vercel auto-deploys web app
-       │     (includes: seedData.js, public/audio/pre-gen/*.mp3, public/covers/*.svg)
+       ├── DEPLOY PROD (GCP):
+       │     ├── Backend: POST /api/v1/admin/reload (zero-downtime hot-reload)
+       │     │     Falls back to docker restart if HTTP call fails
+       │     └── Frontend: npm build → copy static → pm2 restart
        │
        ├── POSTFLIGHT: Cost estimate + disk usage
        │
-       └── NOTIFY: Email sent (success or failure, with cost estimate)
-                                     │
-                          (User reviews on Vercel test app)
-                                     │
-                          (Once approved, deploy to GCP production)
+       └── NOTIFY: Email sent (SUCCESS / PARTIAL / FAIL, with cost estimate)
 ```
 
-**IMPORTANT**: The pipeline publishes to **test only** (Render/Vercel). Production deployment (GCP/dreamvalley.app) is manual and requires explicit approval.
+**Pipeline deploys to both test (Render/Vercel) AND production (GCP)**. Backend content hot-reloads with zero downtime. Frontend is rebuilt and restarted via PM2.
 
-### Post-Pipeline Checklist (Manual Review Before Production Deploy)
+### Post-Pipeline Checklist (Spot-Check on Production)
+
+The pipeline auto-deploys to production. These are spot-checks to verify everything worked:
 
 1. **Appears first**: New story/poem shows at top of feed (requires `addedAt` in seedData.js — auto-generated by sync)
 2. **NEW tag shows**: Pink "NEW" badge visible on the card (based on listening history — shows for unlistened content)
@@ -474,16 +502,20 @@ Pipeline generates content (runs daily at 2 AM IST, 1 story + 1 poem + 1 lullaby
 5. **Music is unique**: Ambient music sounds distinct from other stories
 6. **Text is correct**: Story reads well, no garbled text or truncated content
 7. **Categories correct**: Story appears in appropriate browse categories
+8. **Check email status**: If PARTIAL (yellow), some items failed — review which types are missing
 
-### Production Deploy (after review)
+### Manual Production Deploy (if pipeline's deploy_prod step failed)
 
 ```bash
 gcloud compute ssh dreamvalley-prod --project=strong-harbor-472607-n4 --zone=asia-south1-a
 
-# Backend
+# Backend: pull latest content (hot-reloads automatically within 60s)
 cd /opt/dreamweaver-backend && git pull
+# Force immediate reload:
+curl -s -X POST http://localhost:8000/api/v1/admin/reload \
+  -H "X-Admin-Key: $(grep ADMIN_API_KEY .env | cut -d= -f2)"
 
-# Frontend
+# Frontend: pull, build, restart
 cd /opt/dreamweaver-web && git pull && npm run build
 cp -r public .next/standalone/public && cp -r .next/static .next/standalone/.next/static
 pm2 restart all

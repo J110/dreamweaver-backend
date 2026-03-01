@@ -23,6 +23,8 @@
 15. [Git Identity Not Configured on Server](#15-git-identity-not-configured-on-server)
 16. [Story Text Rendered as One Big Block](#16-story-text-rendered-as-one-big-block)
 17. [Cost Email Shows Estimated Instead of Actual Cost](#17-cost-email-shows-estimated-instead-of-actual-cost)
+18. [Backend Content Not Updating After Pipeline Run](#18-backend-content-not-updating-after-pipeline-run)
+19. [Pipeline Email Shows PARTIAL Instead of OK](#19-pipeline-email-shows-partial-instead-of-ok)
 
 ---
 
@@ -117,19 +119,23 @@ grep -l "load_dotenv" scripts/*.py
 
 ---
 
-## 5. Story Generation Fails (Only Poem Generated)
+## 5. Story Generation Fails (Only Poem Generated) — PARTIAL Detection
 
-**Symptom**: Pipeline requested 1 story + 1 poem but only the poem was generated. Log shows "New items generated: 1" instead of 2.
+**Symptom**: Pipeline requested 1 story + 1 poem + 1 lullaby but fewer items were generated. Email now shows **[PARTIAL]** (yellow) instead of [OK] (green), with a warning row showing expected vs actual count (e.g., "Expected 3, got 1").
 
-**Root Cause**: Mistral rate limiting caused the story generation API call to fail silently. The pipeline continued with just the poem.
+**Root Cause**: Mistral rate limiting or API flakiness caused some generation calls to fail after exhausting retries. The pipeline continues with whatever items succeeded.
+
+**How it's detected**: `step_generate()` validates `len(new_ids)` against `args.count_stories + args.count_poems + args.count_lullabies`. If fewer items were generated, it sets `state["generation_warning"]` which triggers the PARTIAL status in the email notification.
 
 **Fix**:
 ```bash
-# Re-run just the generate step to get the missing story
+# Re-run just the generate step to get the missing items
 python3 scripts/pipeline_run.py --step generate --count-stories 1 --count-poems 0
-# Then resume the full pipeline
+# Then resume the full pipeline from audio onwards
 python3 scripts/pipeline_run.py --resume
 ```
+
+**Note**: Items that DID succeed will still go through the full pipeline (audio → QA → enrich → covers → sync → publish → deploy). Only the missing items need re-generation.
 
 ---
 
@@ -435,4 +441,69 @@ for s in data[-3:]:
 
 ---
 
-*Last updated: 2026-02-19. Add new issues as they're discovered.*
+## 18. Backend Content Not Updating After Pipeline Run
+
+**Symptom**: Pipeline published new content and pushed to git, but the backend API still returns old content. New stories don't appear in the app.
+
+**Root Cause (before hot-reload)**: The backend Docker container needed a restart to re-read `seed_output/content.json` from disk.
+
+**How it works now**: The backend has 3 layers of content reload:
+1. **Admin API** (instant): `POST /api/v1/admin/reload` with `X-Admin-Key` header
+2. **Background polling** (≤60s): Checks `content.json` mtime every 60 seconds
+3. **Docker restart** (fallback): Full container restart, ~5s downtime
+
+**Fix**:
+```bash
+# Option 1: Trigger immediate reload via admin API
+curl -s -X POST http://localhost:8000/api/v1/admin/reload \
+  -H "X-Admin-Key: $(grep ADMIN_API_KEY /opt/dreamweaver-backend/.env | cut -d= -f2)"
+
+# Option 2: Wait 60 seconds for background polling to detect the change
+
+# Option 3: Docker restart (last resort, causes ~5s downtime)
+cd /opt/dreamweaver-backend && sudo docker compose restart
+```
+
+**Verify reload worked**:
+```bash
+# Check the reload response
+curl -s -X POST http://localhost:8000/api/v1/admin/reload \
+  -H "X-Admin-Key: KEY" | python3 -m json.tool
+# Should show: {"success": true, "data": {"previous_count": N, "current_count": M, "added": X}}
+```
+
+**If admin reload returns 403**: Wrong API key. Check `ADMIN_API_KEY` in `.env`.
+**If admin reload returns 503**: `ADMIN_API_KEY` not set in environment.
+**If admin reload returns 400**: Backend is not running in LocalStore mode.
+
+---
+
+## 19. Pipeline Email Shows [PARTIAL] Instead of [OK]
+
+**Symptom**: Pipeline email subject says `[PARTIAL]` with a yellow banner instead of green `[OK]`. The email body shows a warning row like "⚠️ Warning: Expected 3, got 1".
+
+**Root Cause**: The `generate` step produced fewer items than requested. This is typically caused by Mistral API rate limiting or transient failures. The items that were generated still complete the full pipeline successfully.
+
+**Impact**: Partial — some new content is published, but not the full daily quota. The app still works fine with whatever was generated.
+
+**Fix**:
+```bash
+# Check what was generated vs what was expected
+cat seed_output/pipeline_state.json | python3 -c "
+import json, sys
+s = json.load(sys.stdin)
+print('Warning:', s.get('generation_warning', 'none'))
+print('New IDs:', s.get('new_ids', []))
+"
+
+# Re-run generation for missing types
+python3 scripts/pipeline_run.py --step generate --count-stories 1 --count-poems 0 --count-lullabies 0
+# Then resume to process the new items
+python3 scripts/pipeline_run.py --resume
+```
+
+**Prevention**: Mistral free tier has a 2 req/min rate limit. The pipeline already waits 35-45s between calls. Occasional failures are expected — PARTIAL status makes them visible instead of silently reporting SUCCESS.
+
+---
+
+*Last updated: 2026-02-28. Add new issues as they're discovered.*
