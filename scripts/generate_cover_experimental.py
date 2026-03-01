@@ -47,6 +47,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 logger = logging.getLogger(__name__)
 
 OUTPUT_DIR = BASE_DIR / "seed_output" / "covers_experimental"
+SEED_OUTPUT = BASE_DIR / "seed_output"
 
 # ── 7 Diversity Axes ────────────────────────────────────────────────────
 
@@ -674,6 +675,29 @@ def _gen_vignette() -> str:
 
 # ── Preview HTML Generator ──────────────────────────────────────────────
 
+def generate_combined_svg(bg_path: Path, svg_overlay: str) -> str:
+    """Create a single SVG with the WebP background embedded as base64 + animated overlay.
+
+    This is the final deliverable — a single .svg file that can be served via <object> tag
+    and renders the FLUX background with animated overlay on top.
+    """
+    import base64
+    import re
+
+    with open(bg_path, "rb") as f:
+        b64 = base64.b64encode(f.read()).decode()
+
+    # Extract inner content from overlay SVG (everything between <svg...> and </svg>)
+    match = re.search(r'<svg[^>]*>(.*)</svg>', svg_overlay, re.DOTALL)
+    inner = match.group(1) if match else svg_overlay
+
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Layer 1: FLUX AI Background (embedded WebP) -->
+  <image width="512" height="512" href="data:image/webp;base64,{b64}" />
+{inner}
+</svg>'''
+
+
 def generate_preview_html(story_id: str, title: str, axes: dict, prompt: str) -> str:
     """Generate an HTML file for previewing the layered cover."""
     bg_file = f"{story_id}_background.webp"
@@ -896,6 +920,40 @@ def main():
     svg_size = svg_path.stat().st_size
     logger.info("Saved SVG: %s (%d KB)", svg_path.name, svg_size // 1024)
 
+    # Generate combined SVG (single file: embedded WebP + animated overlay)
+    logger.info("Generating combined SVG...")
+    combined_svg = generate_combined_svg(bg_path, svg_content)
+    combined_path = OUTPUT_DIR / f"{story_id}_combined.svg"
+    with open(combined_path, "w", encoding="utf-8") as f:
+        f.write(combined_svg)
+    combined_size = combined_path.stat().st_size
+    logger.info("Saved combined SVG: %s (%d KB)", combined_path.name, combined_size // 1024)
+
+    # Copy combined SVG to frontend public/covers/
+    web_covers = BASE_DIR.parent / "dreamweaver-web" / "public" / "covers"
+    if web_covers.exists():
+        import shutil
+        dest = web_covers / f"{story_id}.svg"
+        shutil.copy2(combined_path, dest)
+        logger.info("Copied to frontend: %s", dest)
+
+    # Update cover path in content.json
+    content_path = SEED_OUTPUT / "content.json"
+    if content_path.exists():
+        try:
+            with open(content_path, "r", encoding="utf-8") as f:
+                all_stories = json.load(f)
+            for s in all_stories:
+                if s["id"] == story_id:
+                    s["cover"] = f"/covers/{story_id}.svg"
+                    logger.info("Updated cover path in content.json: %s", s["cover"])
+                    break
+            with open(content_path, "w", encoding="utf-8") as f:
+                json.dump(all_stories, f, ensure_ascii=False, indent=2)
+                f.write("\n")
+        except Exception as e:
+            logger.warning("Could not update content.json: %s", e)
+
     # Generate preview HTML
     logger.info("Generating preview HTML...")
     html_content = generate_preview_html(story_id, title, axes, prompt)
@@ -907,8 +965,10 @@ def main():
     logger.info("=== COVER GENERATED ===")
     logger.info("Background: %s", bg_path)
     logger.info("Overlay:    %s", svg_path)
+    logger.info("Combined:   %s (%d KB)", combined_path, combined_size // 1024)
     logger.info("Preview:    %s", html_path)
     logger.info("")
+    logger.info("OK: %s", combined_path)
     logger.info("Open the preview in your browser:")
     logger.info("  open %s", html_path)
 

@@ -378,9 +378,20 @@ def step_enrich(args, state: dict) -> bool:
 
 
 def step_covers(args, state: dict) -> bool:
-    """Step 5: Generate animated SVG covers for new stories via Mistral AI."""
+    """Step 5: Generate experimental 2-layer covers (FLUX AI + SVG overlay).
+
+    Uses generate_cover_experimental.py which:
+      1. Generates a FLUX AI background (WebP) via Hugging Face free tier
+      2. Creates an animated SVG overlay (particles, glows, mist)
+      3. Combines into a single SVG (embedded WebP + overlay animations)
+      4. Copies to frontend public/covers/ and updates content.json
+
+    Each cover uses 7 diversity axes (world, palette, composition, character,
+    light, texture, time) auto-selected from story metadata to ensure
+    no two covers look similar.
+    """
     logger.info("\n╔══════════════════════════════════════╗")
-    logger.info("║  STEP 5: GENERATE COVERS             ║")
+    logger.info("║  STEP 5: GENERATE COVERS (FLUX+SVG)  ║")
     logger.info("╚══════════════════════════════════════╝")
 
     qa_passed = state.get("qa_passed", [])
@@ -395,22 +406,86 @@ def step_covers(args, state: dict) -> bool:
     covers_generated = []
     covers_failed = []
 
+    # Check for HF_API_TOKEN — required for FLUX AI
+    hf_token = os.environ.get("HF_API_TOKEN", "")
+    if not hf_token and not args.dry_run:
+        logger.warning("  HF_API_TOKEN not set — falling back to Mistral SVG covers")
+        # Fallback to old Mistral-generated SVG covers
+        for sid in qa_passed:
+            cmd = [
+                sys.executable, str(SCRIPTS_DIR / "generate_cover_svg.py"),
+                "--id", sid,
+            ]
+            ok, stdout, stderr, elapsed = run_command(
+                cmd, f"Cover (fallback): {sid[:8]}...", timeout=600
+            )
+            if ok and "OK:" in stdout:
+                covers_generated.append(sid)
+            else:
+                covers_failed.append(sid)
+        state["covers_generated"] = covers_generated
+        state["covers_failed"] = covers_failed
+        state["step_covers"] = "done"
+        save_state(state)
+        return True
+
+    # Load content.json to find story JSON files for each story
+    content = []
+    if CONTENT_PATH.exists():
+        try:
+            content = json.loads(CONTENT_PATH.read_text())
+        except Exception:
+            pass
+    content_map = {s["id"]: s for s in content}
+
     for sid in qa_passed:
+        # Try to find the standalone story JSON first (for full metadata)
+        story_json_candidates = list(SEED_OUTPUT.glob(f"*_{sid}.json"))
+        if story_json_candidates:
+            story_json_path = story_json_candidates[0]
+        else:
+            # Create a temp JSON from content.json entry
+            story_data = content_map.get(sid, {})
+            if not story_data:
+                logger.warning("  Story %s not found in content.json, skipping cover", sid)
+                covers_failed.append(sid)
+                continue
+            story_json_path = SEED_OUTPUT / f"_temp_{sid}.json"
+            story_json_path.write_text(json.dumps(story_data, ensure_ascii=False, indent=2))
+
         cmd = [
-            sys.executable, str(SCRIPTS_DIR / "generate_cover_svg.py"),
-            "--id", sid,
+            sys.executable, str(SCRIPTS_DIR / "generate_cover_experimental.py"),
+            "--story-json", str(story_json_path),
         ]
         if args.dry_run:
             cmd += ["--dry-run"]
 
         ok, stdout, stderr, elapsed = run_command(
-            cmd, f"Cover: {sid[:8]}...", timeout=600
+            cmd, f"Cover (FLUX): {sid[:8]}...", timeout=300
         )
+
+        # Clean up temp file
+        temp_path = SEED_OUTPUT / f"_temp_{sid}.json"
+        if temp_path.exists():
+            temp_path.unlink()
+
         if ok and "OK:" in stdout:
             covers_generated.append(sid)
         else:
             covers_failed.append(sid)
-            logger.warning("  Cover generation failed for %s (will use default.svg)", sid)
+            logger.warning("  Experimental cover failed for %s, trying fallback...", sid)
+            # Fallback to Mistral SVG cover
+            fallback_cmd = [
+                sys.executable, str(SCRIPTS_DIR / "generate_cover_svg.py"),
+                "--id", sid,
+            ]
+            if not args.dry_run:
+                fb_ok, fb_stdout, _, _ = run_command(
+                    fallback_cmd, f"Cover (fallback): {sid[:8]}...", timeout=600
+                )
+                if fb_ok and "OK:" in fb_stdout:
+                    covers_failed.remove(sid)
+                    covers_generated.append(sid)
 
     state["covers_generated"] = covers_generated
     state["covers_failed"] = covers_failed

@@ -119,8 +119,9 @@ def update_existing(seed_js: str, stories: list) -> tuple:
         title = story["title"]
         variants = story.get("audio_variants", [])
         duration = story.get("duration")
+        cover = story.get("cover")
         if variants:
-            title_map[title] = {"variants": variants, "duration": duration}
+            title_map[title] = {"variants": variants, "duration": duration, "cover": cover}
 
     replacements = 0
 
@@ -159,6 +160,21 @@ def update_existing(seed_js: str, stories: list) -> tuple:
                 dur_prefix = dur_match.group(1)
                 new_dur = dur_prefix + f"duration: {duration},"
                 seed_js = seed_js.replace(old_dur, new_dur)
+
+        # Also update cover path if it changed (e.g., from WebP to SVG)
+        cover = info.get("cover")
+        if cover:
+            cover_pattern = (
+                r'(title:\s*"' + escaped_title + r'".*?)'
+                r'cover:\s*"[^"]*",'
+            )
+            cover_match = re.search(cover_pattern, seed_js, re.DOTALL)
+            if cover_match:
+                old_cover_full = cover_match.group(0)
+                cover_prefix = cover_match.group(1)
+                new_cover_full = cover_prefix + f'cover: "{cover}",'
+                if old_cover_full != new_cover_full:
+                    seed_js = seed_js.replace(old_cover_full, new_cover_full)
 
     return seed_js, replacements
 
