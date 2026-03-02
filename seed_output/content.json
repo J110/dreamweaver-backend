@@ -8951,5 +8951,408 @@
       "soundscapePreset": "garden",
       "musicLoop": "gentleGuitar"
     }
+  },
+  {
+    "id": "gen-146a4028274a",
+    "type": "song",
+    "lang": "en",
+    "title": "Drizzle’s Glow Below the Neon Sky",
+    "description": "A tiny raindrop named Drizzle embarks on a shimmering nighttime journey through a futuristic city to find the softest light that will help his cloud family sleep.",
+    "text": "[SINGING] Way up high in a silver cloud,\nDrizzle hums a sleepy sound.\nMonsoon friends all snuggle tight,\nBut one small drop wants soft moonlight.\n\n[PAUSE]\n\n[HUMMING] Hmm hmm hmm, hmm hmm hmm...\n\n[SINGING] Down he falls on neon beams,\nPast the towers, past the dreams.\nCars like stars all twinkle low,\nWhere does gentle glimmer go?\n\n[PAUSE]\n\n[JOYFUL] Oh, the park has firefly trees,\nDancing lights on rustling leaves!\nDrizzle giggles, spins around,\nGlow so warm right off the ground.\n\n[PAUSE]\n\n[GENTLE] He collects the light so sweet,\nTucked inside his tiny feet.\nUp he floats on silver breeze,\nBack to friends who long for ease.\n\n[PAUSE]\n\n[SLEEPY] Now the cloud is soft and bright,\nEvery drop curls in the light.\nDrizzle hums a lullaby,\nDreaming ‘neath the neon sky.",
+    "annotated_text": "[SINGING] Way up high in a silver cloud,\nDrizzle hums a sleepy sound.\nMonsoon friends all snuggle tight,\nBut one small drop wants soft moonlight.\n\n[PAUSE]\n\n[HUMMING] Hmm hmm hmm, hmm hmm hmm...\n\n[SINGING] Down he falls on neon beams,\nPast the towers, past the dreams.\nCars like stars all twinkle low,\nWhere does gentle glimmer go?\n\n[PAUSE]\n\n[JOYFUL] Oh, the park has firefly trees,\nDancing lights on rustling leaves!\nDrizzle giggles, spins around,\nGlow so warm right off the ground.\n\n[PAUSE]\n\n[GENTLE] He collects the light so sweet,\nTucked inside his tiny feet.\nUp he floats on silver breeze,\nBack to friends who long for ease.\n\n[PAUSE]\n\n[SLEEPY] Now the cloud is soft and bright,\nEvery drop curls in the light.\nDrizzle hums a lullaby,\nDreaming ‘neath the neon sky.",
+    "target_age": 3,
+    "age_min": 2,
+    "age_max": 5,
+    "age_group": "2-5",
+    "length": "SHORT",
+    "word_count": 121,
+    "duration_seconds": 0,
+    "categories": [
+      "Futuristic Adventure",
+      "Weather Fantasy",
+      "Bedtime Lullaby"
+    ],
+    "theme": "adventure",
+    "morals": [
+      "Even the smallest journey can bring comfort to others.",
+      "Kindness shines brightest when shared."
+    ],
+    "cover": "/covers/drizzle-s-glow-below-the-neon-sky.svg",
+    "musicProfile": "enchanted-garden",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-146a_female_1.mp3",
+        "duration_seconds": 119.91,
+        "provider": "ace-step"
+      },
+      {
+        "voice": "male_1",
+        "url": "/audio/pre-gen/gen-146a_male_1.mp3",
+        "duration_seconds": 119.91,
+        "provider": "ace-step"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-146a_female_3.mp3",
+        "duration_seconds": 119.91,
+        "provider": "ace-step"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "male",
+    "lead_character_type": "atmospheric",
+    "universe": "futuristic",
+    "geography": "Americas",
+    "life_aspect": "sleep_comfort",
+    "plot_archetype": "transformation",
+    "created_at": "2026-03-02T01:32:28.644362",
+    "updated_at": "2026-03-02T01:32:28.644362",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 2,
+    "musicParams": {
+      "key": "A",
+      "chordNotes": [
+        110.0,
+        138.59,
+        164.81,
+        220.0
+      ],
+      "padType": "fm",
+      "padGain": 0.0406,
+      "padFilter": 852,
+      "padLfo": 0.0824,
+      "noiseType": "brown",
+      "noiseGain": 0.0122,
+      "droneFreq": 55.0,
+      "droneGain": 0.0316,
+      "melodyNotes": [
+        220.0,
+        277.18,
+        329.62,
+        293.66
+      ],
+      "melodyInterval": 4369,
+      "melodyGain": 0.0177,
+      "bassNotes": [
+        55.0,
+        82.41,
+        69.3
+      ],
+      "bassInterval": 6434,
+      "counterNotes": [
+        346.48,
+        412.02,
+        275.0
+      ],
+      "counterInterval": 4778,
+      "events": [
+        {
+          "type": "leaves",
+          "interval": 8886
+        },
+        {
+          "type": "windGust",
+          "interval": 12932
+        },
+        {
+          "type": "waterDrop",
+          "interval": 5387
+        }
+      ],
+      "soundscapePreset": "wind",
+      "musicLoop": "gentleGuitar"
+    }
+  },
+  {
+    "id": "gen-3fc983f95d8b",
+    "type": "poem",
+    "lang": "en",
+    "title": "Sylvie’s Frost-Spun Secret",
+    "description": "A tiny Arctic caterpillar weaves warmth and wisdom into her icy world, teaching her friends the magic of patience and inner strength.",
+    "text": "[RHYTHMIC] Beneath the polar glow so bright,\nA mulberry tree stands wrapped in white.\nIts leaves like lace on frozen air,\nSylvie spins her dreams with care.\n\n[GENTLE] She hums a tune so soft and low,\nA lullaby for ice and snow.\nHer tiny feet, so light, so wise,\nDance patterns ‘neath the northern skies.\n\n[PAUSE]\n\n[CALM] The woolly mammoths trudge with might,\nTheir breath like clouds in morning light.\n\"Why spin so slow?\" they puff and say,\n\"The cold will steal your warmth away!\"\n\n[JOYFUL] But Sylvie smiles, her thread so fine,\nA golden glow begins to shine.\n\"I weave not silk—oh, friends so grand,\nI weave the sun into this land!\"\n\n[PAUSE]\n\n[WHISPERING] The Arctic fox with fur so sleek,\nCurls close and whispers, \"Can you speak\nOf how you turn the frost to gold?\nYour secret’s worth its weight, I’m told.\"\n\n[RHYTHMIC] Sylvie pauses, then replies,\n\"The magic lives in quiet skies.\nNot in the rush, nor in the race,\nBut in the warmth you hold inside your place.\"\n\n[PAUSE]\n\n[CALM] The snowflakes pause to hear her song,\nThe wind drifts gently all night long.\nAnd as she spins her final thread,\nThe world grows still—and softly fed.\n\n[SLEEPY] Now nestled in her silken keep,\nSylvie dreams where icebergs sleep.\nAnd all who watched her patient art,\nFeel warmth bloom deep inside their heart.",
+    "annotated_text": "[RHYTHMIC] Beneath the polar glow so bright,\nA mulberry tree stands wrapped in white.\nIts leaves like lace on frozen air,\nSylvie spins her dreams with care.\n\n[GENTLE] She hums a tune so soft and low,\nA lullaby for ice and snow.\nHer tiny feet, so light, so wise,\nDance patterns ‘neath the northern skies.\n\n[PAUSE]\n\n[CALM] The woolly mammoths trudge with might,\nTheir breath like clouds in morning light.\n\"Why spin so slow?\" they puff and say,\n\"The cold will steal your warmth away!\"\n\n[JOYFUL] But Sylvie smiles, her thread so fine,\nA golden glow begins to shine.\n\"I weave not silk—oh, friends so grand,\nI weave the sun into this land!\"\n\n[PAUSE]\n\n[WHISPERING] The Arctic fox with fur so sleek,\nCurls close and whispers, \"Can you speak\nOf how you turn the frost to gold?\nYour secret’s worth its weight, I’m told.\"\n\n[RHYTHMIC] Sylvie pauses, then replies,\n\"The magic lives in quiet skies.\nNot in the rush, nor in the race,\nBut in the warmth you hold inside your place.\"\n\n[PAUSE]\n\n[CALM] The snowflakes pause to hear her song,\nThe wind drifts gently all night long.\nAnd as she spins her final thread,\nThe world grows still—and softly fed.\n\n[SLEEPY] Now nestled in her silken keep,\nSylvie dreams where icebergs sleep.\nAnd all who watched her patient art,\nFeel warmth bloom deep inside their heart.",
+    "target_age": 7,
+    "age_min": 6,
+    "age_max": 8,
+    "age_group": "6-8",
+    "length": "LONG",
+    "word_count": 216,
+    "duration_seconds": 0,
+    "categories": [
+      "Fantasy",
+      "Bedtime Poetry",
+      "Nature and Wildlife",
+      "Friendship",
+      "Prehistoric Tales"
+    ],
+    "theme": "fantasy",
+    "morals": [
+      "Patience and inner strength can create beauty even in the coldest of times.",
+      "True magic comes from believing in the warmth within yourself and sharing it with others."
+    ],
+    "cover": "/covers/sylvie-s-frost-spun-secret.svg",
+    "musicProfile": "moonlit-meadow",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-3fc9_female_1.mp3",
+        "duration_seconds": 166.33,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-3fc9_female_2.mp3",
+        "duration_seconds": 122.91,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-3fc9_female_3.mp3",
+        "duration_seconds": 115.53,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_1",
+        "url": "/audio/pre-gen/gen-3fc9_male_1.mp3",
+        "duration_seconds": 102.41,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-3fc9_male_2.mp3",
+        "duration_seconds": 114.15,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_3",
+        "url": "/audio/pre-gen/gen-3fc9_male_3.mp3",
+        "duration_seconds": 112.32,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-3fc9_asmr.mp3",
+        "duration_seconds": 118.56,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "female",
+    "lead_character_type": "insect",
+    "universe": "prehistoric",
+    "geography": "Arctic/Polar",
+    "life_aspect": "health_wellness",
+    "plot_archetype": "problem_solving",
+    "created_at": "2026-03-02T01:31:35.091856",
+    "updated_at": "2026-03-02T01:31:35.091856",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 3,
+    "musicParams": {
+      "key": "A",
+      "chordNotes": [
+        110.0,
+        138.59,
+        164.81,
+        220.0
+      ],
+      "padType": "plucked",
+      "padGain": 0.0379,
+      "padFilter": 899,
+      "padLfo": 0.0824,
+      "noiseType": "pink",
+      "noiseGain": 0.0122,
+      "droneFreq": 55.0,
+      "droneGain": 0.0263,
+      "melodyNotes": [
+        220.0,
+        277.18,
+        329.62,
+        293.66
+      ],
+      "melodyInterval": 3329,
+      "melodyGain": 0.0177,
+      "bassNotes": [
+        55.0,
+        82.41,
+        69.3
+      ],
+      "bassInterval": 6434,
+      "counterNotes": [
+        346.48,
+        412.02,
+        275.0
+      ],
+      "counterInterval": 4587,
+      "events": [
+        {
+          "type": "sparkle",
+          "interval": 8886
+        },
+        {
+          "type": "chimes",
+          "interval": 12932
+        },
+        {
+          "type": "windGust",
+          "interval": 17958
+        }
+      ],
+      "soundscapePreset": "starryNight",
+      "musicLoop": "etherealPad"
+    }
+  },
+  {
+    "id": "gen-6034c85ea602",
+    "type": "story",
+    "lang": "en",
+    "title": "Priya and the Whispering Wellness Stones",
+    "description": "When Priya and her friends discover a set of glowing stones in the village well, they must solve a gentle mystery to uncover their purpose and restore balance to their community’s wellness.",
+    "text": "[GENTLE] The sun dipped low over the rolling hills of Priya’s village in India, painting the sky in soft hues of pink and gold. Priya sat on the edge of the old stone well, her bare feet dangling above the cool water below. Beside her, her best friends, Aarav and Meera, chattered excitedly about the village festival the next day. But Priya’s mind was elsewhere—she had noticed something strange in the well earlier that afternoon.\n\n[CURIOUS] 'You two,' Priya said, turning to her friends with a sparkle in her eyes, 'I think there’s something down there.' She pointed into the well, where the fading light caught the surface of the water just enough to reveal a faint, shimmering glow. Aarav leaned over, squinting, while Meera gasped softly. 'It looks like… stones?' she whispered. 'But they’re glowing!'\n\n[ADVENTUROUS] Without hesitation, the three friends sprang into action. Aarav fetched a long rope from the nearby shed, while Meera tied a small basket to the end. Priya, ever the careful one, tested the rope’s strength before lowering it into the well. [DRAMATIC_PAUSE] The moment the basket touched the water, the glow intensified, and the stones seemed to hum with energy. 'It’s like they’re singing,' Meera breathed, her eyes wide with wonder.\n\n[MYSTERIOUS] The stones were smooth and warm to the touch, each one etched with delicate symbols Priya had never seen before. As she turned one over in her palm, a strange sensation washed over her—a mix of calm and energy, like the first deep breath after a long run. 'These aren’t just ordinary stones,' Aarav said, his voice hushed. 'I think they’re… wellness stones. My grandmother used to talk about them in her stories.'\n\n[CALM] The friends sat in a circle, the stones resting in the center, pulsing softly like a heartbeat. Priya traced the symbols with her finger, feeling a connection to something ancient and wise. 'If these stones are really for wellness,' she said thoughtfully, 'then why were they hidden in the well? And why do they feel… sad?' Meera nodded. 'Like they’re waiting for something.'\n\n[EXCITED] Determined to solve the mystery, the trio set off to visit the village elder, Dadi-ji, who knew all the old tales. She listened intently as Priya described the stones, her eyes twinkling with recognition. 'Ah,' she said, 'these are the Stones of Balancing. Long ago, they were placed in the well to keep our village healthy and happy. But they were lost when the well was cleaned years ago.' She sighed. 'Without them, our village has felt… out of sorts.'\n\n[JOYFUL] Priya’s heart swelled with purpose. 'We have to return them!' she declared. Dadi-ji smiled. 'Yes, child. But first, you must solve their riddle.' She handed Priya an old parchment with a poem written in faded ink. 'The stones will only stay if you prove you understand their message.' The friends huddled together, reading the words aloud: *\"To heal the land and lift the soul, place us where the heart is whole.\"*\n\n[CURIOUS] The riddle puzzled them at first, but then Meera gasped. 'The heart of the village!' she cried. 'The community garden—it’s where everyone gathers to grow food and share stories!' Aarav grinned. 'That must be it!' The friends raced to the garden, the stones glowing brighter with every step. [DRAMATIC] As they placed the stones in a circle at the garden’s center, a warm breeze swept through the village, carrying the scent of blooming flowers. The stones pulsed once, twice, and then settled into a steady, comforting glow.\n\n[SLEEPY] That night, as Priya lay in bed, she listened to the soft hum of the wellness stones drifting through her window. The village felt different now—lighter, happier, as if a weight had been lifted. She closed her eyes, smiling, knowing that she and her friends had done something truly special. Outside, the stars twinkled like the stones below, whispering secrets of balance and harmony until sleep carried her away.",
+    "annotated_text": "[GENTLE] The sun dipped low over the rolling hills of Priya’s village in India, painting the sky in soft hues of pink and gold. Priya sat on the edge of the old stone well, her bare feet dangling above the cool water below. Beside her, her best friends, Aarav and Meera, chattered excitedly about the village festival the next day. But Priya’s mind was elsewhere—she had noticed something strange in the well earlier that afternoon.\n\n[CURIOUS] 'You two,' Priya said, turning to her friends with a sparkle in her eyes, 'I think there’s something down there.' She pointed into the well, where the fading light caught the surface of the water just enough to reveal a faint, shimmering glow. Aarav leaned over, squinting, while Meera gasped softly. 'It looks like… stones?' she whispered. 'But they’re glowing!'\n\n[ADVENTUROUS] Without hesitation, the three friends sprang into action. Aarav fetched a long rope from the nearby shed, while Meera tied a small basket to the end. Priya, ever the careful one, tested the rope’s strength before lowering it into the well. [DRAMATIC_PAUSE] The moment the basket touched the water, the glow intensified, and the stones seemed to hum with energy. 'It’s like they’re singing,' Meera breathed, her eyes wide with wonder.\n\n[MYSTERIOUS] The stones were smooth and warm to the touch, each one etched with delicate symbols Priya had never seen before. As she turned one over in her palm, a strange sensation washed over her—a mix of calm and energy, like the first deep breath after a long run. 'These aren’t just ordinary stones,' Aarav said, his voice hushed. 'I think they’re… wellness stones. My grandmother used to talk about them in her stories.'\n\n[CALM] The friends sat in a circle, the stones resting in the center, pulsing softly like a heartbeat. Priya traced the symbols with her finger, feeling a connection to something ancient and wise. 'If these stones are really for wellness,' she said thoughtfully, 'then why were they hidden in the well? And why do they feel… sad?' Meera nodded. 'Like they’re waiting for something.'\n\n[EXCITED] Determined to solve the mystery, the trio set off to visit the village elder, Dadi-ji, who knew all the old tales. She listened intently as Priya described the stones, her eyes twinkling with recognition. 'Ah,' she said, 'these are the Stones of Balancing. Long ago, they were placed in the well to keep our village healthy and happy. But they were lost when the well was cleaned years ago.' She sighed. 'Without them, our village has felt… out of sorts.'\n\n[JOYFUL] Priya’s heart swelled with purpose. 'We have to return them!' she declared. Dadi-ji smiled. 'Yes, child. But first, you must solve their riddle.' She handed Priya an old parchment with a poem written in faded ink. 'The stones will only stay if you prove you understand their message.' The friends huddled together, reading the words aloud: *\"To heal the land and lift the soul, place us where the heart is whole.\"*\n\n[CURIOUS] The riddle puzzled them at first, but then Meera gasped. 'The heart of the village!' she cried. 'The community garden—it’s where everyone gathers to grow food and share stories!' Aarav grinned. 'That must be it!' The friends raced to the garden, the stones glowing brighter with every step. [DRAMATIC] As they placed the stones in a circle at the garden’s center, a warm breeze swept through the village, carrying the scent of blooming flowers. The stones pulsed once, twice, and then settled into a steady, comforting glow.\n\n[SLEEPY] That night, as Priya lay in bed, she listened to the soft hum of the wellness stones drifting through her window. The village felt different now—lighter, happier, as if a weight had been lifted. She closed her eyes, smiling, knowing that she and her friends had done something truly special. Outside, the stars twinkled like the stones below, whispering secrets of balance and harmony until sleep carried her away.",
+    "target_age": 10,
+    "age_min": 9,
+    "age_max": 12,
+    "age_group": "9-12",
+    "length": "MEDIUM",
+    "word_count": 646,
+    "duration_seconds": 0,
+    "categories": [
+      "Mystery",
+      "Friendship",
+      "Adventure",
+      "Wellness",
+      "Folklore"
+    ],
+    "theme": "mystery",
+    "morals": [
+      "True wellness comes from balance—within ourselves and our communities.",
+      "Friendship and teamwork can solve even the gentlest of mysteries."
+    ],
+    "cover": "/covers/priya-and-the-whispering-wellness-stones.svg",
+    "musicProfile": "moonlit-meadow",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-6034_female_2.mp3",
+        "duration_seconds": 302.15,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-6034_female_1.mp3",
+        "duration_seconds": 346.88,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-6034_female_3.mp3",
+        "duration_seconds": 288.66,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-6034_male_2.mp3",
+        "duration_seconds": 285.05,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_1",
+        "url": "/audio/pre-gen/gen-6034_male_1.mp3",
+        "duration_seconds": 264.66,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_3",
+        "url": "/audio/pre-gen/gen-6034_male_3.mp3",
+        "duration_seconds": 282.26,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-6034_asmr.mp3",
+        "duration_seconds": 297.66,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "neutral",
+    "lead_character_type": "human",
+    "universe": "contemporary",
+    "geography": "Europe",
+    "life_aspect": "health_wellness",
+    "plot_archetype": "friendship_bonding",
+    "created_at": "2026-03-02T01:30:38.377273",
+    "updated_at": "2026-03-02T01:30:38.377273",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 5,
+    "musicParams": {
+      "key": "A",
+      "chordNotes": [
+        110.0,
+        138.59,
+        164.81,
+        220.0
+      ],
+      "padType": "fm",
+      "padGain": 0.0451,
+      "padFilter": 852,
+      "padLfo": 0.0824,
+      "noiseType": "pink",
+      "noiseGain": 0.0122,
+      "droneFreq": 55.0,
+      "droneGain": 0.0368,
+      "melodyNotes": [
+        220.0,
+        277.18,
+        329.62,
+        293.66
+      ],
+      "melodyInterval": 4369,
+      "melodyGain": 0.0177,
+      "bassNotes": [
+        55.0,
+        82.41,
+        69.3
+      ],
+      "bassInterval": 6434,
+      "counterNotes": [
+        346.48,
+        412.02,
+        275.0
+      ],
+      "counterInterval": 4778,
+      "events": [
+        {
+          "type": "sparkle",
+          "interval": 8886
+        },
+        {
+          "type": "cricket",
+          "interval": 12932
+        },
+        {
+          "type": "windGust",
+          "interval": 16162
+        }
+      ],
+      "soundscapePreset": "forest",
+      "musicLoop": "nightPiano"
+    }
   }
 ]
