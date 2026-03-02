@@ -1,0 +1,268 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="glowGrad">
+      <stop offset="0%" stop-color="#FFE4B5" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="#FFE4B5" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowGrad2">
+      <stop offset="0%" stop-color="#FFD89B" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#FFD89B" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="vignetteGrad">
+      <stop offset="40%" stop-color="transparent"/>
+      <stop offset="100%" stop-color="#1a0f00" stop-opacity="0.75"/>
+    </radialGradient>
+    <filter id="softBlur">
+      <feGaussianBlur stdDeviation="2"/>
+    </filter>
+  </defs>
+
+  <!-- Vignette Breathing (sleep framing) -->
+  <rect width="512" height="512" fill="url(#vignetteGrad)">
+    <animate attributeName="opacity"
+      values="0.55;0.80;0.55" dur="10s" repeatCount="indefinite"/>
+  </rect>
+
+  <!-- Breathing Pacer Glow (primary sleep cue) -->
+  <!-- Outer glow ring -->
+  <circle cx="226" cy="282" r="116" fill="url(#glowGrad)" filter="url(#softBlur)">
+    <animate attributeName="r"
+      values="101;131;101" dur="8s" repeatCount="indefinite" />
+    <animate attributeName="opacity"
+      values="0.25;0.50;0.25" dur="8s" repeatCount="indefinite" />
+  </circle>
+  <!-- Inner glow core -->
+  <circle cx="226" cy="282" r="54" fill="url(#glowGrad)">
+    <animate attributeName="r"
+      values="46;66;46" dur="8s" repeatCount="indefinite" />
+    <animate attributeName="opacity"
+      values="0.35;0.55;0.35" dur="8s" repeatCount="indefinite" />
+  </circle>
+
+  <!-- Secondary Ambient Glows -->
+  <circle cx="272" cy="184" r="85" fill="url(#glowGrad2)" filter="url(#softBlur)">
+    <animate attributeName="r"
+      values="75;95;75" dur="12s" repeatCount="indefinite" />
+    <animate attributeName="opacity"
+      values="0.15;0.35;0.15" dur="12s" repeatCount="indefinite" />
+  </circle>
+  <circle cx="146" cy="198" r="73" fill="url(#glowGrad2)" filter="url(#softBlur)">
+    <animate attributeName="r"
+      values="63;83;63" dur="11s" repeatCount="indefinite" />
+    <animate attributeName="opacity"
+      values="0.15;0.35;0.15" dur="11s" repeatCount="indefinite" />
+  </circle>
+
+  <!-- Drifting Particles (floating orbs) -->
+  <circle r="4.5" fill="#FFD89B" opacity="0" filter="url(#softBlur)">
+    <animateMotion dur="21s" begin="7.5s" repeatCount="indefinite"
+      path="M210,61 C239,200 223,392 232,513" />
+    <animate attributeName="opacity"
+      values="0;0.30;0.30;0.12;0" dur="21s"
+      begin="7.5s" repeatCount="indefinite" />
+  </circle>
+  <circle r="6.6" fill="#FFD89B" opacity="0" filter="url(#softBlur)">
+    <animateMotion dur="18s" begin="8.2s" repeatCount="indefinite"
+      path="M405,43 C412,222 396,320 391,478" />
+    <animate attributeName="opacity"
+      values="0;0.40;0.40;0.16;0" dur="18s"
+      begin="8.2s" repeatCount="indefinite" />
+  </circle>
+  <circle r="5.6" fill="#FFD89B" opacity="0" filter="url(#softBlur)">
+    <animateMotion dur="23s" begin="1.0s" repeatCount="indefinite"
+      path="M213,-18 C226,160 227,244 211,337" />
+    <animate attributeName="opacity"
+      values="0;0.46;0.46;0.19;0" dur="23s"
+      begin="1.0s" repeatCount="indefinite" />
+  </circle>
+  <circle r="2.5" fill="#FFD89B" opacity="0" filter="url(#softBlur)">
+    <animateMotion dur="22s" begin="4.9s" repeatCount="indefinite"
+      path="M304,-27 C290,112 287,224 269,400" />
+    <animate attributeName="opacity"
+      values="0;0.43;0.43;0.17;0" dur="22s"
+      begin="4.9s" repeatCount="indefinite" />
+  </circle>
+  <circle r="2.6" fill="#FFD89B" opacity="0" filter="url(#softBlur)">
+    <animateMotion dur="22s" begin="1.5s" repeatCount="indefinite"
+      path="M76,65 C55,212 96,399 109,513" />
+    <animate attributeName="opacity"
+      values="0;0.29;0.29;0.12;0" dur="22s"
+      begin="1.5s" repeatCount="indefinite" />
+  </circle>
+  <circle r="2.2" fill="#FFD89B" opacity="0" filter="url(#softBlur)">
+    <animateMotion dur="17s" begin="1.3s" repeatCount="indefinite"
+      path="M112,52 C103,158 115,315 127,511" />
+    <animate attributeName="opacity"
+      values="0;0.35;0.35;0.14;0" dur="17s"
+      begin="1.3s" repeatCount="indefinite" />
+  </circle>
+  <circle r="2.5" fill="#FFD89B" opacity="0" filter="url(#softBlur)">
+    <animateMotion dur="27s" begin="3.8s" repeatCount="indefinite"
+      path="M215,34 C208,183 230,313 210,419" />
+    <animate attributeName="opacity"
+      values="0;0.26;0.26;0.11;0" dur="27s"
+      begin="3.8s" repeatCount="indefinite" />
+  </circle>
+  <circle r="1.1" fill="#FFD89B" opacity="0" filter="url(#softBlur)">
+    <animateMotion dur="19s" begin="1.5s" repeatCount="indefinite"
+      path="M426,-16 C451,144 417,238 389,450" />
+    <animate attributeName="opacity"
+      values="0;0.33;0.33;0.13;0" dur="19s"
+      begin="1.5s" repeatCount="indefinite" />
+  </circle>
+  <circle r="1.6" fill="#FFD89B" opacity="0" filter="url(#softBlur)">
+    <animateMotion dur="19s" begin="8.4s" repeatCount="indefinite"
+      path="M304,-16 C306,148 299,319 313,421" />
+    <animate attributeName="opacity"
+      values="0;0.32;0.32;0.13;0" dur="19s"
+      begin="8.4s" repeatCount="indefinite" />
+  </circle>
+  <circle r="1.4" fill="#FFD89B" opacity="0" filter="url(#softBlur)">
+    <animateMotion dur="27s" begin="4.8s" repeatCount="indefinite"
+      path="M50,-19 C59,151 48,254 10,414" />
+    <animate attributeName="opacity"
+      values="0;0.27;0.27;0.11;0" dur="27s"
+      begin="4.8s" repeatCount="indefinite" />
+  </circle>
+
+  <!-- Rising Mist (3 layers) -->
+  <ellipse cx="180" cy="480" rx="280" ry="60" fill="#FFE4B5" opacity="0.15" filter="url(#softBlur)">
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; 20,-12; 0,0; -15,-8; 0,0"
+      dur="28s" repeatCount="indefinite" />
+    <animate attributeName="opacity"
+      values="0.10;0.22;0.10" dur="28s" repeatCount="indefinite" />
+  </ellipse>
+  <ellipse cx="350" cy="495" rx="230" ry="45" fill="#FFD89B" opacity="0.12" filter="url(#softBlur)">
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; -18,-10; 0,0; 12,-6; 0,0"
+      dur="36s" repeatCount="indefinite" />
+    <animate attributeName="opacity"
+      values="0.08;0.18;0.08" dur="36s" repeatCount="indefinite" />
+  </ellipse>
+  <ellipse cx="256" cy="510" rx="350" ry="70" fill="#FFE4B5" opacity="0.10" filter="url(#softBlur)">
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; 10,-5; 0,0; -8,-3; 0,0"
+      dur="28s" repeatCount="indefinite" />
+    <animate attributeName="opacity"
+      values="0.06;0.15;0.06" dur="28s" repeatCount="indefinite" />
+  </ellipse>
+
+  <!-- Twinkling Stars -->
+  <circle cx="314" cy="265" r="3.4" fill="#FFF8E8" opacity="0">
+    <animate attributeName="opacity"
+      values="0;0.45;0.23;0.45;0" dur="6s"
+      begin="2.9s" repeatCount="indefinite" />
+    <animate attributeName="r"
+      values="3.4;4.5;3.4" dur="6s"
+      begin="2.9s" repeatCount="indefinite" />
+  </circle>
+  <circle cx="394" cy="204" r="3.2" fill="#FFF8E8" opacity="0">
+    <animate attributeName="opacity"
+      values="0;0.53;0.26;0.53;0" dur="9s"
+      begin="6.2s" repeatCount="indefinite" />
+    <animate attributeName="r"
+      values="3.2;4.1;3.2" dur="9s"
+      begin="6.2s" repeatCount="indefinite" />
+  </circle>
+  <circle cx="360" cy="43" r="2.8" fill="#FFF8E8" opacity="0">
+    <animate attributeName="opacity"
+      values="0;0.49;0.24;0.49;0" dur="5s"
+      begin="1.2s" repeatCount="indefinite" />
+    <animate attributeName="r"
+      values="2.8;3.6;2.8" dur="5s"
+      begin="1.2s" repeatCount="indefinite" />
+  </circle>
+  <circle cx="354" cy="128" r="3.3" fill="#FFF8E8" opacity="0">
+    <animate attributeName="opacity"
+      values="0;0.44;0.22;0.44;0" dur="6s"
+      begin="7.1s" repeatCount="indefinite" />
+    <animate attributeName="r"
+      values="3.3;4.3;3.3" dur="6s"
+      begin="7.1s" repeatCount="indefinite" />
+  </circle>
+  <circle cx="121" cy="227" r="2.0" fill="#FFF8E8" opacity="0">
+    <animate attributeName="opacity"
+      values="0;0.36;0.18;0.36;0" dur="9s"
+      begin="3.6s" repeatCount="indefinite" />
+    <animate attributeName="r"
+      values="2.0;2.6;2.0" dur="9s"
+      begin="3.6s" repeatCount="indefinite" />
+  </circle>
+  <circle cx="147" cy="117" r="1.8" fill="#FFF8E8" opacity="0">
+    <animate attributeName="opacity"
+      values="0;0.39;0.19;0.39;0" dur="7s"
+      begin="4.3s" repeatCount="indefinite" />
+    <animate attributeName="r"
+      values="1.8;2.4;1.8" dur="7s"
+      begin="4.3s" repeatCount="indefinite" />
+  </circle>
+  <circle cx="208" cy="44" r="1.7" fill="#FFF8E8" opacity="0">
+    <animate attributeName="opacity"
+      values="0;0.36;0.18;0.36;0" dur="7s"
+      begin="1.8s" repeatCount="indefinite" />
+    <animate attributeName="r"
+      values="1.7;2.2;1.7" dur="7s"
+      begin="1.8s" repeatCount="indefinite" />
+  </circle>
+  <circle cx="407" cy="102" r="1.9" fill="#FFF8E8" opacity="0">
+    <animate attributeName="opacity"
+      values="0;0.32;0.16;0.32;0" dur="7s"
+      begin="3.6s" repeatCount="indefinite" />
+    <animate attributeName="r"
+      values="1.9;2.5;1.9" dur="7s"
+      begin="3.6s" repeatCount="indefinite" />
+  </circle>
+  <circle cx="41" cy="224" r="2.1" fill="#FFF8E8" opacity="0">
+    <animate attributeName="opacity"
+      values="0;0.31;0.15;0.31;0" dur="7s"
+      begin="2.3s" repeatCount="indefinite" />
+    <animate attributeName="r"
+      values="2.1;2.8;2.1" dur="7s"
+      begin="2.3s" repeatCount="indefinite" />
+  </circle>
+  <circle cx="259" cy="180" r="1.6" fill="#FFF8E8" opacity="0">
+    <animate attributeName="opacity"
+      values="0;0.50;0.25;0.50;0" dur="8s"
+      begin="7.3s" repeatCount="indefinite" />
+    <animate attributeName="r"
+      values="1.6;2.1;1.6" dur="8s"
+      begin="7.3s" repeatCount="indefinite" />
+  </circle>
+  <circle cx="174" cy="203" r="1.0" fill="#FFF8E8" opacity="0">
+    <animate attributeName="opacity"
+      values="0;0.21;0.11;0.21;0" dur="6s"
+      begin="2.3s" repeatCount="indefinite" />
+    <animate attributeName="r"
+      values="1.0;1.4;1.0" dur="6s"
+      begin="2.3s" repeatCount="indefinite" />
+  </circle>
+  <circle cx="359" cy="117" r="1.3" fill="#FFF8E8" opacity="0">
+    <animate attributeName="opacity"
+      values="0;0.37;0.19;0.37;0" dur="6s"
+      begin="7.7s" repeatCount="indefinite" />
+    <animate attributeName="r"
+      values="1.3;1.7;1.3" dur="6s"
+      begin="7.7s" repeatCount="indefinite" />
+  </circle>
+  <circle cx="118" cy="23" r="1.1" fill="#FFF8E8" opacity="0">
+    <animate attributeName="opacity"
+      values="0;0.35;0.18;0.35;0" dur="5s"
+      begin="0.1s" repeatCount="indefinite" />
+    <animate attributeName="r"
+      values="1.1;1.4;1.1" dur="5s"
+      begin="0.1s" repeatCount="indefinite" />
+  </circle>
+
+  <!-- Moonlight Wash -->
+  <ellipse cx="256" cy="100" rx="320" ry="200" fill="#FFF8E8" opacity="0.05" filter="url(#softBlur)">
+    <animate attributeName="opacity"
+      values="0.03;0.10;0.03" dur="16s" repeatCount="indefinite" />
+  </ellipse>
+  <!-- Bottom warm glow -->
+  <ellipse cx="256" cy="480" rx="300" ry="100" fill="#FFE4B5" opacity="0.04" filter="url(#softBlur)">
+    <animate attributeName="opacity"
+      values="0.03;0.08;0.03" dur="20s" repeatCount="indefinite" />
+  </ellipse>
+
+</svg>

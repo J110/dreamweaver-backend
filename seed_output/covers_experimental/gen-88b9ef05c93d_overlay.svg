@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+
+    <radialGradient id="glowGrad">
+      <stop offset="0%" stop-color="#FFE4B5" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="#FFE4B5" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="vignetteGrad">
+      <stop offset="50%" stop-color="transparent"/>
+      <stop offset="100%" stop-color="#1a0f00" stop-opacity="0.7"/>
+    </radialGradient>
+
+  </defs>
+
+  <!-- Drifting Particles -->
+  <circle r="2.3" fill="#FFD89B" opacity="0">
+    <animateMotion dur="19s" begin="5.9s" repeatCount="indefinite"
+      path="M77,64 C85,161 76,349 93,372" />
+    <animate attributeName="opacity"
+      values="0;0.16;0.16;0.08;0" dur="19s"
+      begin="5.9s" repeatCount="indefinite" />
+  </circle>
+  <circle r="2.4" fill="#FFD89B" opacity="0">
+    <animateMotion dur="18s" begin="2.6s" repeatCount="indefinite"
+      path="M301,80 C317,188 291,325 304,512" />
+    <animate attributeName="opacity"
+      values="0;0.22;0.22;0.11;0" dur="18s"
+      begin="2.6s" repeatCount="indefinite" />
+  </circle>
+  <circle r="2.9" fill="#FFD89B" opacity="0">
+    <animateMotion dur="17s" begin="7.1s" repeatCount="indefinite"
+      path="M334,-20 C317,114 319,211 310,280" />
+    <animate attributeName="opacity"
+      values="0;0.35;0.35;0.18;0" dur="17s"
+      begin="7.1s" repeatCount="indefinite" />
+  </circle>
+  <circle r="3.2" fill="#FFD89B" opacity="0">
+    <animateMotion dur="16s" begin="2.4s" repeatCount="indefinite"
+      path="M250,63 C265,205 265,327 225,404" />
+    <animate attributeName="opacity"
+      values="0;0.19;0.19;0.10;0" dur="16s"
+      begin="2.4s" repeatCount="indefinite" />
+  </circle>
+  <circle r="2.8" fill="#FFD89B" opacity="0">
+    <animateMotion dur="14s" begin="0.6s" repeatCount="indefinite"
+      path="M142,98 C143,243 153,386 140,409" />
+    <animate attributeName="opacity"
+      values="0;0.34;0.34;0.17;0" dur="14s"
+      begin="0.6s" repeatCount="indefinite" />
+  </circle>
+  <circle r="2.8" fill="#FFD89B" opacity="0">
+    <animateMotion dur="15s" begin="3.6s" repeatCount="indefinite"
+      path="M239,45 C255,160 245,339 209,420" />
+    <animate attributeName="opacity"
+      values="0;0.43;0.43;0.21;0" dur="15s"
+      begin="3.6s" repeatCount="indefinite" />
+  </circle>
+
+  <!-- Glow Pulse (Breathing Pacer) -->
+  <circle cx="326" cy="376" r="71" fill="url(#glowGrad)">
+    <animate attributeName="r"
+      values="61;81;61" dur="10s" repeatCount="indefinite" />
+    <animate attributeName="opacity"
+      values="0.3;0.55;0.3" dur="10s" repeatCount="indefinite" />
+  </circle>
+
+</svg>
