@@ -377,8 +377,9 @@ def save_as_webp(image_bytes: bytes, output_path: Path, quality: int = 80) -> in
 def generate_svg_overlay(axes: dict, story: dict) -> str:
     """Generate an animated SVG overlay based on world setting and diversity axes.
 
-    Sleep-focused: Always includes vignette breathing + glow breathing pacer + particles.
-    Plus world-specific animations (mist, twinkle, drift).
+    Each world gets a UNIQUE overlay personality — not the same formula with different params.
+    Some worlds are particle-heavy, some are glow-heavy, some are minimal.
+    The vignette style also varies per world to break the "same dark edges" pattern.
     """
     world = axes["world_setting"]
     palette = axes["palette"]
@@ -435,14 +436,25 @@ def generate_svg_overlay(axes: dict, story: dict) -> str:
     </filter>
   </defs>''')
 
-    # --- ALWAYS include these sleep-essential layers ---
+    # --- Per-world vignette style (NOT the same dark edges on every cover) ---
+    VIGNETTE_STYLE = {
+        "deep_ocean":       "top_heavy",      # dark at top like deep water
+        "cloud_kingdom":    "none",            # clean, no vignette — bright sky
+        "enchanted_forest": "bottom_heavy",    # dark at bottom, light canopy above
+        "snow_landscape":   "none",            # clean white landscape
+        "desert_night":     "top_corners",     # dark sky corners, bright horizon
+        "cozy_interior":    "full_soft",       # gentle all-around darkness
+        "mountain_meadow":  "bottom_light",    # very subtle bottom only
+        "space_cosmos":     "corners_only",    # dark corners, open center
+        "tropical_lagoon":  "top_heavy",       # dark sky, bright water below
+        "underground_cave": "full_heavy",      # heavy darkness, glows punch through
+        "ancient_library":  "full_soft",       # gentle ambient darkness
+        "floating_islands": "none",            # clean, airy
+    }
+    vig_style = VIGNETTE_STYLE.get(world, "full_soft")
+    svg_parts.append(_gen_vignette(vig_style, colors))
 
-    # 1. Vignette breathing (darkens edges + IS the breathing pacer, 7-9s cycle)
-    #    The vignette IS the pacer — its edge breathing guides the sleep rhythm.
-    #    No separate visible glow dot needed. World-specific animations provide the visual interest.
-    svg_parts.append(_gen_vignette())
-
-    # 3. World-specific animations (all of them, passing variant names through)
+    # --- World-specific animations ONLY (no forced layers) ---
     for anim in anim_types:
         if anim.startswith("particles"):
             svg_parts.append(_gen_particles(anim, colors))
@@ -455,15 +467,9 @@ def generate_svg_overlay(axes: dict, story: dict) -> str:
         elif anim.startswith("mist"):
             svg_parts.append(_gen_mist(anim, colors))
 
-    # 4. Only add twinkle for deep_night if not already present (removed early_night forcing)
+    # Add twinkle for deep_night only if not already present
     if time_setting == "deep_night" and not any(a.startswith("twinkle") for a in anim_types):
         svg_parts.append(_gen_twinkle(colors))
-
-    # 5. No forced ground layer — each world's specific animations are enough.
-    #    Forcing extra layers makes covers look the same.
-
-    # 6. Ambient light wash — REMOVED to reduce sameness.
-    #    World-specific glows/mist/particles provide enough atmosphere.
 
     svg_parts.append('\n</svg>')
     return "\n".join(svg_parts)
@@ -1354,18 +1360,96 @@ def _gen_moonlight_wash(colors: dict, world: str = "") -> str:
         return ""
 
 
-def _gen_vignette() -> str:
-    """Generate vignette breathing — darkens edges, primary sleep framing.
+def _gen_vignette(style: str, colors: dict) -> str:
+    """Generate per-world vignette — NOT the same dark edges on every cover.
 
+    Different worlds get different darkness patterns so covers look distinct.
     Sleep rules: slow breathing (7-10s), max opacity 0.85.
     """
     dur = random.randint(8, 10)
+    vig = colors["vignette"]
 
-    return f'''
-  <!-- Vignette Breathing (sleep framing) -->
+    if style == "none":
+        # No vignette at all — clean, bright covers (cloud, snow, floating)
+        return ""
+
+    elif style == "top_heavy":
+        # Dark at top, fading to clear at bottom (ocean, lagoon)
+        return f'''
+  <!-- Vignette (top-heavy) -->
+  <defs><linearGradient id="vigLG" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="{vig}" stop-opacity="0.7"/>
+    <stop offset="50%" stop-color="{vig}" stop-opacity="0.15"/>
+    <stop offset="100%" stop-color="{vig}" stop-opacity="0"/>
+  </linearGradient></defs>
+  <rect width="512" height="512" fill="url(#vigLG)">
+    <animate attributeName="opacity" values="0.6;0.85;0.6" dur="{dur}s" repeatCount="indefinite"/>
+  </rect>'''
+
+    elif style == "bottom_heavy":
+        # Dark at bottom, clear at top (forest — canopy lets light in from above)
+        return f'''
+  <!-- Vignette (bottom-heavy) -->
+  <defs><linearGradient id="vigLG" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="{vig}" stop-opacity="0"/>
+    <stop offset="50%" stop-color="{vig}" stop-opacity="0.15"/>
+    <stop offset="100%" stop-color="{vig}" stop-opacity="0.7"/>
+  </linearGradient></defs>
+  <rect width="512" height="512" fill="url(#vigLG)">
+    <animate attributeName="opacity" values="0.6;0.85;0.6" dur="{dur}s" repeatCount="indefinite"/>
+  </rect>'''
+
+    elif style == "bottom_light":
+        # Very subtle bottom only (meadow)
+        return f'''
+  <!-- Vignette (subtle bottom) -->
+  <defs><linearGradient id="vigLG" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="{vig}" stop-opacity="0"/>
+    <stop offset="70%" stop-color="{vig}" stop-opacity="0"/>
+    <stop offset="100%" stop-color="{vig}" stop-opacity="0.4"/>
+  </linearGradient></defs>
+  <rect width="512" height="512" fill="url(#vigLG)">
+    <animate attributeName="opacity" values="0.5;0.7;0.5" dur="{dur}s" repeatCount="indefinite"/>
+  </rect>'''
+
+    elif style == "top_corners":
+        # Dark in top corners only, open bottom and center (desert)
+        return f'''
+  <!-- Vignette (top corners) -->
+  <defs><radialGradient id="vigRC" cx="0.5" cy="0.3" r="0.7">
+    <stop offset="50%" stop-color="transparent"/>
+    <stop offset="100%" stop-color="{vig}" stop-opacity="0.6"/>
+  </radialGradient></defs>
+  <rect width="512" height="512" fill="url(#vigRC)">
+    <animate attributeName="opacity" values="0.5;0.75;0.5" dur="{dur}s" repeatCount="indefinite"/>
+  </rect>'''
+
+    elif style == "corners_only":
+        # Dark corners only, very open center (space)
+        return f'''
+  <!-- Vignette (corners only) -->
+  <defs><radialGradient id="vigRC" cx="0.5" cy="0.5" r="0.6">
+    <stop offset="40%" stop-color="transparent"/>
+    <stop offset="100%" stop-color="{vig}" stop-opacity="0.55"/>
+  </radialGradient></defs>
+  <rect width="512" height="512" fill="url(#vigRC)">
+    <animate attributeName="opacity" values="0.5;0.7;0.5" dur="{dur}s" repeatCount="indefinite"/>
+  </rect>'''
+
+    elif style == "full_heavy":
+        # Heavy all-around vignette (cave — glows punch through the darkness)
+        return f'''
+  <!-- Vignette (heavy) -->
   <rect width="512" height="512" fill="url(#vignetteGrad)">
-    <animate attributeName="opacity"
-      values="0.55;0.80;0.55" dur="{dur}s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.7;0.90;0.7" dur="{dur}s" repeatCount="indefinite"/>
+  </rect>'''
+
+    else:
+        # full_soft — gentle all-around (library, interior)
+        return f'''
+  <!-- Vignette (soft) -->
+  <rect width="512" height="512" fill="url(#vignetteGrad)">
+    <animate attributeName="opacity" values="0.40;0.60;0.40" dur="{dur}s" repeatCount="indefinite"/>
   </rect>'''
 
 
