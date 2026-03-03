@@ -387,7 +387,7 @@ def generate_svg_overlay(axes: dict, story: dict) -> str:
     # Get ALL animation types for this world (use all, not just 2-3)
     anim_types = WORLD_TO_ANIMATIONS.get(world, ["particles_pollen", "glow_firefly", "vignette"])
 
-    # Palette-based colors
+    # Palette-based colors (base layer)
     palette_colors = {
         "ember_warm":   {"glow": "#FFD699", "particle": "#FFCC80", "vignette": "#1a0a05", "star": "#FFF5E0"},
         "twilight_cool": {"glow": "#C8B8E0", "particle": "#D0C4E8", "vignette": "#0a0520", "star": "#E8E0F0"},
@@ -397,6 +397,25 @@ def generate_svg_overlay(axes: dict, story: dict) -> str:
         "berry_dusk":   {"glow": "#D8A8C8", "particle": "#E0B8D0", "vignette": "#100510", "star": "#F0D8E8"},
     }
     colors = palette_colors.get(palette, palette_colors["golden_hour"])
+
+    # World-specific accent colors — override generic palette for distinctiveness
+    world_accents = {
+        "deep_ocean":       {"particle": "#7EC8E3", "glow": "#00BFFF", "accent": "#40E0D0"},  # cyan/turquoise
+        "cloud_kingdom":    {"particle": "#E8E0FF", "glow": "#C4B0FF", "accent": "#FFE4F0"},  # soft lavender
+        "enchanted_forest": {"particle": "#90EE90", "glow": "#50C878", "accent": "#ADFF2F"},  # bright green
+        "snow_landscape":   {"particle": "#FFFFFF", "glow": "#B0E0FF", "accent": "#E0F0FF"},  # white/ice blue
+        "desert_night":     {"particle": "#FFD700", "glow": "#FF8C00", "accent": "#FFA07A"},  # gold/orange
+        "cozy_interior":    {"particle": "#FFE4B5", "glow": "#FFA500", "accent": "#FFD700"},  # warm amber
+        "mountain_meadow":  {"particle": "#98FB98", "glow": "#87CEEB", "accent": "#DDA0DD"},  # green/sky/plum
+        "space_cosmos":     {"particle": "#E0E0FF", "glow": "#9370DB", "accent": "#FF69B4"},  # purple/pink
+        "tropical_lagoon":  {"particle": "#FFD700", "glow": "#FF6347", "accent": "#FF8C69"},  # sunset red/gold
+        "underground_cave": {"particle": "#00CED1", "glow": "#7B68EE", "accent": "#48D1CC"},  # crystal teal/purple
+        "ancient_library":  {"particle": "#FFD700", "glow": "#DAA520", "accent": "#FFA500"},  # golden warm
+        "floating_islands": {"particle": "#98FB98", "glow": "#87CEEB", "accent": "#FFB6C1"},  # pastel greens/pinks
+    }
+    accents = world_accents.get(world, {})
+    if accents:
+        colors = {**colors, **accents}  # world accents override palette defaults
 
     svg_parts = []
     svg_parts.append(f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
@@ -461,48 +480,48 @@ def _gen_particles(variant: str, colors: dict) -> str:
     Sleep rules: cycle >=4s, opacity <=60%, slow drift.
     Each variant produces a different motion, shape, and feel.
     """
-    # Variant-specific configuration
+    # Variant-specific configuration (opacity boosted for visibility, max 0.60)
     configs = {
         "particles_bubbles": {
             "label": "Rising Bubbles", "count": (6, 10), "direction": "up",
-            "r_large": (5.0, 8.0), "r_med": (3.0, 5.0), "r_small": (1.5, 3.0),
-            "op_large": (0.20, 0.35), "op_med": (0.15, 0.30), "op_small": (0.10, 0.25),
+            "r_large": (6.0, 10.0), "r_med": (3.5, 6.0), "r_small": (2.0, 3.5),
+            "op_large": (0.35, 0.55), "op_med": (0.25, 0.45), "op_small": (0.18, 0.35),
             "dur": (18, 28), "size_pulse": True, "use_filter": True,
         },
         "particles_snow": {
-            "label": "Falling Snowflakes", "count": (10, 16), "direction": "down_sway",
-            "r_large": (2.5, 4.0), "r_med": (1.5, 2.5), "r_small": (0.8, 1.5),
-            "op_large": (0.35, 0.55), "op_med": (0.25, 0.45), "op_small": (0.15, 0.30),
+            "label": "Falling Snowflakes", "count": (12, 20), "direction": "down_sway",
+            "r_large": (3.0, 5.0), "r_med": (2.0, 3.0), "r_small": (1.0, 2.0),
+            "op_large": (0.45, 0.60), "op_med": (0.35, 0.55), "op_small": (0.25, 0.40),
             "dur": (16, 26), "size_pulse": False, "use_filter": False,
         },
         "particles_pollen": {
             "label": "Floating Pollen", "count": (8, 14), "direction": "float",
-            "r_large": (2.0, 3.0), "r_med": (1.0, 2.0), "r_small": (0.5, 1.2),
-            "op_large": (0.25, 0.40), "op_med": (0.15, 0.30), "op_small": (0.10, 0.20),
+            "r_large": (3.0, 4.5), "r_med": (1.5, 3.0), "r_small": (0.8, 1.5),
+            "op_large": (0.35, 0.55), "op_med": (0.25, 0.45), "op_small": (0.18, 0.30),
             "dur": (20, 35), "size_pulse": False, "use_filter": True,
         },
         "particles_dust": {
-            "label": "Dust Motes in Light", "count": (6, 10), "direction": "diagonal",
-            "r_large": (1.5, 2.5), "r_med": (0.8, 1.5), "r_small": (0.4, 0.8),
-            "op_large": (0.20, 0.35), "op_med": (0.12, 0.25), "op_small": (0.08, 0.18),
+            "label": "Dust Motes in Light", "count": (8, 14), "direction": "diagonal",
+            "r_large": (2.0, 3.5), "r_med": (1.2, 2.0), "r_small": (0.6, 1.2),
+            "op_large": (0.35, 0.55), "op_med": (0.25, 0.40), "op_small": (0.15, 0.30),
             "dur": (22, 35), "size_pulse": False, "use_filter": True,
         },
         "particles_fireflies": {
             "label": "Firefly Glows", "count": (5, 8), "direction": "bob",
-            "r_large": (4.0, 6.0), "r_med": (2.5, 4.0), "r_small": (1.5, 2.5),
-            "op_large": (0.10, 0.50), "op_med": (0.08, 0.45), "op_small": (0.05, 0.35),
+            "r_large": (5.0, 8.0), "r_med": (3.0, 5.0), "r_small": (2.0, 3.0),
+            "op_large": (0.15, 0.60), "op_med": (0.12, 0.55), "op_small": (0.08, 0.45),
             "dur": (8, 16), "size_pulse": True, "use_filter": True,
         },
         "particles_leaves": {
             "label": "Falling Leaves", "count": (5, 8), "direction": "down_rotate",
-            "r_large": (3.5, 5.0), "r_med": (2.5, 3.5), "r_small": (1.5, 2.5),
-            "op_large": (0.25, 0.40), "op_med": (0.18, 0.32), "op_small": (0.12, 0.25),
+            "r_large": (4.0, 6.0), "r_med": (3.0, 4.0), "r_small": (2.0, 3.0),
+            "op_large": (0.35, 0.55), "op_med": (0.28, 0.45), "op_small": (0.20, 0.35),
             "dur": (18, 30), "size_pulse": False, "use_filter": False,
         },
         "particles_spores": {
-            "label": "Rising Spores", "count": (7, 12), "direction": "up_gentle",
-            "r_large": (2.0, 3.5), "r_med": (1.2, 2.0), "r_small": (0.6, 1.2),
-            "op_large": (0.20, 0.35), "op_med": (0.12, 0.25), "op_small": (0.08, 0.18),
+            "label": "Rising Spores", "count": (8, 14), "direction": "up_gentle",
+            "r_large": (2.5, 4.0), "r_med": (1.5, 2.5), "r_small": (0.8, 1.5),
+            "op_large": (0.35, 0.55), "op_med": (0.25, 0.40), "op_small": (0.15, 0.30),
             "dur": (20, 32), "size_pulse": False, "use_filter": True,
         },
     }
@@ -668,33 +687,36 @@ def _gen_twinkle(colors: dict) -> str:
 
     Sleep rules: cycle >=4s, gentle fade in/out.
     """
-    count = random.randint(12, 18)
+    accent = colors.get("accent", colors["star"])
+    count = random.randint(14, 22)
     twinkles = []
     twinkles.append('\n  <!-- Twinkling Stars -->')
 
     for i in range(count):
         cx = random.randint(15, 500)
-        cy = random.randint(5, 280)
+        cy = random.randint(5, 300)
         dur = random.uniform(5, 10)  # >=4s rule
         delay = random.uniform(0, 8)
+        # Use accent color for some stars to add color variety
+        star_color = accent if i % 4 == 0 else colors["star"]
 
-        # Mix of star sizes
-        if i < 4:
-            r = random.uniform(2.5, 3.5)
+        # Mix of star sizes — boosted for visibility
+        if i < 5:
+            r = random.uniform(3.0, 4.5)
+            max_opacity = random.uniform(0.50, 0.60)
+        elif i < 12:
+            r = random.uniform(2.0, 3.0)
             max_opacity = random.uniform(0.40, 0.55)
-        elif i < 10:
-            r = random.uniform(1.5, 2.5)
-            max_opacity = random.uniform(0.30, 0.50)
         else:
-            r = random.uniform(0.8, 1.5)
-            max_opacity = random.uniform(0.20, 0.40)
+            r = random.uniform(1.0, 2.0)
+            max_opacity = random.uniform(0.30, 0.45)
 
-        twinkles.append(f'''  <circle cx="{cx}" cy="{cy}" r="{r:.1f}" fill="{colors['star']}" opacity="0">
+        twinkles.append(f'''  <circle cx="{cx}" cy="{cy}" r="{r:.1f}" fill="{star_color}" opacity="0">
     <animate attributeName="opacity"
       values="0;{max_opacity:.2f};{max_opacity*0.5:.2f};{max_opacity:.2f};0" dur="{dur:.0f}s"
       begin="{delay:.1f}s" repeatCount="indefinite" />
     <animate attributeName="r"
-      values="{r:.1f};{r*1.3:.1f};{r:.1f}" dur="{dur:.0f}s"
+      values="{r:.1f};{r*1.5:.1f};{r:.1f}" dur="{dur:.0f}s"
       begin="{delay:.1f}s" repeatCount="indefinite" />
   </circle>''')
 
@@ -707,6 +729,8 @@ def _gen_drift(variant: str, colors: dict) -> str:
     Sleep rules: very slow (25-40s cycle), low opacity, no jarring motion.
     Each variant produces a different drift character.
     """
+    accent = colors.get("accent", colors["glow"])
+
     if variant == "drift_clouds":
         # Large soft cloud shapes at top, slow horizontal pan
         dur1 = random.randint(30, 45)
@@ -717,21 +741,21 @@ def _gen_drift(variant: str, colors: dict) -> str:
         cy2 = random.randint(90, 160)
         return f'''
   <!-- Drifting Clouds -->
-  <ellipse cx="180" cy="{cy1}" rx="220" ry="50" fill="{colors['particle']}" opacity="0.10" filter="url(#softBlur)">
+  <ellipse cx="180" cy="{cy1}" rx="220" ry="55" fill="{colors['particle']}" opacity="0.18" filter="url(#softBlur)">
     <animateTransform attributeName="transform" type="translate"
       values="0,0; {dx1},3; 0,0; {-dx1},-2; 0,0"
       dur="{dur1}s" repeatCount="indefinite" />
     <animate attributeName="opacity"
-      values="0.06;0.14;0.06" dur="{dur1}s" repeatCount="indefinite" />
+      values="0.12;0.28;0.12" dur="{dur1}s" repeatCount="indefinite" />
   </ellipse>
-  <ellipse cx="380" cy="{cy2}" rx="180" ry="40" fill="{colors['glow']}" opacity="0.08" filter="url(#softBlur)">
+  <ellipse cx="380" cy="{cy2}" rx="180" ry="45" fill="{accent}" opacity="0.14" filter="url(#softBlur)">
     <animateTransform attributeName="transform" type="translate"
       values="0,0; {-dx2},2; 0,0; {dx2},-3; 0,0"
       dur="{dur2}s" repeatCount="indefinite" />
     <animate attributeName="opacity"
-      values="0.05;0.12;0.05" dur="{dur2}s" repeatCount="indefinite" />
+      values="0.10;0.22;0.10" dur="{dur2}s" repeatCount="indefinite" />
   </ellipse>
-  <ellipse cx="100" cy="{cy1 + 50}" rx="140" ry="30" fill="{colors['particle']}" opacity="0.06" filter="url(#softBlur)">
+  <ellipse cx="100" cy="{cy1 + 50}" rx="140" ry="30" fill="{colors['glow']}" opacity="0.10" filter="url(#softBlur)">
     <animateTransform attributeName="transform" type="translate"
       values="0,0; {dx1+10},1; 0,0; {-dx2},0; 0,0"
       dur="{dur1 + 8}s" repeatCount="indefinite" />
@@ -744,21 +768,21 @@ def _gen_drift(variant: str, colors: dict) -> str:
         dx = random.randint(30, 60)
         return f'''
   <!-- Desert Sand Drift -->
-  <ellipse cx="200" cy="480" rx="350" ry="25" fill="{colors['particle']}" opacity="0.10" filter="url(#softBlur)">
+  <ellipse cx="200" cy="480" rx="350" ry="28" fill="{colors['particle']}" opacity="0.18" filter="url(#softBlur)">
     <animateTransform attributeName="transform" type="translate"
       values="0,0; {dx},0; {dx//2},-3; 0,0"
       dur="{dur1}s" repeatCount="indefinite" />
     <animate attributeName="opacity"
-      values="0.06;0.14;0.08;0.06" dur="{dur1}s" repeatCount="indefinite" />
+      values="0.12;0.28;0.15;0.12" dur="{dur1}s" repeatCount="indefinite" />
   </ellipse>
-  <ellipse cx="380" cy="495" rx="250" ry="18" fill="{colors['glow']}" opacity="0.07" filter="url(#softBlur)">
+  <ellipse cx="380" cy="495" rx="250" ry="20" fill="{accent}" opacity="0.12" filter="url(#softBlur)">
     <animateTransform attributeName="transform" type="translate"
       values="0,0; {dx+10},0; {dx//3},-2; 0,0"
       dur="{dur2}s" repeatCount="indefinite" />
     <animate attributeName="opacity"
-      values="0.04;0.10;0.04" dur="{dur2}s" repeatCount="indefinite" />
+      values="0.08;0.20;0.08" dur="{dur2}s" repeatCount="indefinite" />
   </ellipse>
-  <ellipse cx="80" cy="470" rx="180" ry="15" fill="{colors['particle']}" opacity="0.05" filter="url(#softBlur)">
+  <ellipse cx="80" cy="470" rx="180" ry="15" fill="{colors['glow']}" opacity="0.10" filter="url(#softBlur)">
     <animateTransform attributeName="transform" type="translate"
       values="0,0; {dx+20},1; 0,0"
       dur="{dur1+5}s" repeatCount="indefinite" />
@@ -769,17 +793,17 @@ def _gen_drift(variant: str, colors: dict) -> str:
         dur = random.randint(60, 90)
         return f'''
   <!-- Starfield Drift (slow sky rotation) -->
-  <g opacity="0.12">
+  <g opacity="0.30">
     <animateTransform attributeName="transform" type="rotate"
       values="0 256 256; 8 256 256; 0 256 256; -5 256 256; 0 256 256"
       dur="{dur}s" repeatCount="indefinite" />
-    <circle cx="120" cy="80" r="1.2" fill="{colors['star']}" opacity="0.5"/>
-    <circle cx="350" cy="60" r="0.9" fill="{colors['star']}" opacity="0.4"/>
-    <circle cx="420" cy="180" r="1.0" fill="{colors['star']}" opacity="0.35"/>
-    <circle cx="80" cy="220" r="0.8" fill="{colors['star']}" opacity="0.3"/>
-    <circle cx="280" cy="40" r="1.1" fill="{colors['star']}" opacity="0.45"/>
-    <circle cx="450" cy="120" r="0.7" fill="{colors['star']}" opacity="0.25"/>
-    <circle cx="200" cy="150" r="1.3" fill="{colors['star']}" opacity="0.4"/>
+    <circle cx="120" cy="80" r="1.8" fill="{colors['star']}" opacity="0.6"/>
+    <circle cx="350" cy="60" r="1.4" fill="{accent}" opacity="0.5"/>
+    <circle cx="420" cy="180" r="1.5" fill="{colors['star']}" opacity="0.45"/>
+    <circle cx="80" cy="220" r="1.2" fill="{accent}" opacity="0.4"/>
+    <circle cx="280" cy="40" r="1.6" fill="{colors['star']}" opacity="0.55"/>
+    <circle cx="450" cy="120" r="1.0" fill="{colors['star']}" opacity="0.35"/>
+    <circle cx="200" cy="150" r="1.8" fill="{accent}" opacity="0.5"/>
   </g>'''
 
     else:
@@ -793,9 +817,9 @@ def _gen_drift(variant: str, colors: dict) -> str:
     <animateTransform attributeName="transform" type="translate"
       values="0,0; {dx},{dy}; 0,0; {-dx},{-dy}; 0,0"
       dur="{dur}s" repeatCount="indefinite" />
-    <ellipse cx="256" cy="450" rx="320" ry="60" fill="{colors['particle']}" opacity="0.12" filter="url(#softBlur)"/>
-    <ellipse cx="150" cy="470" rx="220" ry="45" fill="{colors['glow']}" opacity="0.10" filter="url(#softBlur)"/>
-    <ellipse cx="380" cy="440" rx="180" ry="35" fill="{colors['particle']}" opacity="0.08" filter="url(#softBlur)"/>
+    <ellipse cx="256" cy="450" rx="320" ry="60" fill="{colors['particle']}" opacity="0.20" filter="url(#softBlur)"/>
+    <ellipse cx="150" cy="470" rx="220" ry="45" fill="{colors['glow']}" opacity="0.16" filter="url(#softBlur)"/>
+    <ellipse cx="380" cy="440" rx="180" ry="35" fill="{accent}" opacity="0.14" filter="url(#softBlur)"/>
   </g>'''
 
 
@@ -805,6 +829,8 @@ def _gen_mist(variant: str, colors: dict) -> str:
     Sleep rules: slow movement (18-40s), moderate opacity, gentle.
     Each variant produces a different mist character.
     """
+    accent = colors.get("accent", colors["glow"])
+
     if variant == "mist_underwater":
         # Horizontal swaying current-like motion — wide, slow lateral waves
         dur1 = random.randint(24, 34)
@@ -812,19 +838,19 @@ def _gen_mist(variant: str, colors: dict) -> str:
         sx = random.randint(30, 50)
         return f'''
   <!-- Underwater Currents -->
-  <ellipse cx="200" cy="350" rx="300" ry="40" fill="{colors['glow']}" opacity="0.12" filter="url(#softBlur)">
+  <ellipse cx="200" cy="350" rx="300" ry="45" fill="{colors['glow']}" opacity="0.18" filter="url(#softBlur)">
     <animateTransform attributeName="transform" type="translate"
       values="0,0; {sx},5; 0,0; {-sx},-5; 0,0"
       dur="{dur1}s" repeatCount="indefinite" />
     <animate attributeName="opacity"
-      values="0.08;0.18;0.08" dur="{dur1}s" repeatCount="indefinite" />
+      values="0.12;0.30;0.12" dur="{dur1}s" repeatCount="indefinite" />
   </ellipse>
-  <ellipse cx="350" cy="420" rx="260" ry="35" fill="{colors['particle']}" opacity="0.10" filter="url(#softBlur)">
+  <ellipse cx="350" cy="420" rx="260" ry="38" fill="{accent}" opacity="0.15" filter="url(#softBlur)">
     <animateTransform attributeName="transform" type="translate"
       values="0,0; {-sx+10},3; 0,0; {sx-10},-3; 0,0"
       dur="{dur2}s" repeatCount="indefinite" />
     <animate attributeName="opacity"
-      values="0.06;0.15;0.06" dur="{dur2}s" repeatCount="indefinite" />
+      values="0.10;0.25;0.10" dur="{dur2}s" repeatCount="indefinite" />
   </ellipse>'''
 
     elif variant == "mist_valley":
@@ -833,19 +859,19 @@ def _gen_mist(variant: str, colors: dict) -> str:
         dur2 = random.randint(34, 46)
         return f'''
   <!-- Valley Mist (rolling in from side) -->
-  <ellipse cx="60" cy="460" rx="250" ry="55" fill="{colors['glow']}" opacity="0.14" filter="url(#softBlur)">
+  <ellipse cx="60" cy="460" rx="250" ry="55" fill="{colors['glow']}" opacity="0.20" filter="url(#softBlur)">
     <animateTransform attributeName="transform" type="translate"
       values="0,0; 120,-15; 180,-8; 80,-5; 0,0"
       dur="{dur1}s" repeatCount="indefinite" />
     <animate attributeName="opacity"
-      values="0.08;0.20;0.14;0.10;0.08" dur="{dur1}s" repeatCount="indefinite" />
+      values="0.12;0.32;0.22;0.16;0.12" dur="{dur1}s" repeatCount="indefinite" />
   </ellipse>
-  <ellipse cx="30" cy="490" rx="200" ry="40" fill="{colors['particle']}" opacity="0.10" filter="url(#softBlur)">
+  <ellipse cx="30" cy="490" rx="200" ry="40" fill="{accent}" opacity="0.15" filter="url(#softBlur)">
     <animateTransform attributeName="transform" type="translate"
       values="0,0; 150,-10; 200,-5; 60,-3; 0,0"
       dur="{dur2}s" repeatCount="indefinite" />
     <animate attributeName="opacity"
-      values="0.05;0.15;0.10;0.05" dur="{dur2}s" repeatCount="indefinite" />
+      values="0.08;0.25;0.15;0.08" dur="{dur2}s" repeatCount="indefinite" />
   </ellipse>'''
 
     elif variant == "mist_sea":
@@ -855,70 +881,71 @@ def _gen_mist(variant: str, colors: dict) -> str:
         dx = random.randint(20, 35)
         return f'''
   <!-- Sea Fog (low horizon) -->
-  <ellipse cx="256" cy="498" rx="380" ry="30" fill="{colors['glow']}" opacity="0.15" filter="url(#softBlur)">
+  <ellipse cx="256" cy="498" rx="380" ry="35" fill="{colors['glow']}" opacity="0.22" filter="url(#softBlur)">
     <animateTransform attributeName="transform" type="translate"
       values="0,0; {dx},0; 0,0; {-dx},0; 0,0"
       dur="{dur1}s" repeatCount="indefinite" />
     <animate attributeName="opacity"
-      values="0.10;0.20;0.10" dur="{dur1}s" repeatCount="indefinite" />
+      values="0.15;0.32;0.15" dur="{dur1}s" repeatCount="indefinite" />
   </ellipse>
-  <ellipse cx="160" cy="505" rx="300" ry="22" fill="{colors['particle']}" opacity="0.10" filter="url(#softBlur)">
+  <ellipse cx="160" cy="505" rx="300" ry="25" fill="{accent}" opacity="0.16" filter="url(#softBlur)">
     <animateTransform attributeName="transform" type="translate"
       values="0,0; {-dx-5},0; 0,0; {dx+5},0; 0,0"
       dur="{dur2}s" repeatCount="indefinite" />
     <animate attributeName="opacity"
-      values="0.06;0.14;0.06" dur="{dur2}s" repeatCount="indefinite" />
+      values="0.10;0.24;0.10" dur="{dur2}s" repeatCount="indefinite" />
   </ellipse>'''
 
     elif variant == "mist_steam":
         # Small rising wisps from specific points — like cave vents or hot springs
         parts = ['\n  <!-- Steam Wisps -->']
-        num_vents = random.randint(2, 4)
+        num_vents = random.randint(3, 5)
         for _ in range(num_vents):
             vx = random.randint(100, 420)
             vy = random.randint(430, 490)
             dur = random.randint(14, 24)
             delay = random.uniform(0, 6)
-            rise = random.randint(40, 80)
-            rx = random.randint(20, 40)
-            ry = random.randint(12, 22)
-            parts.append(f'''  <ellipse cx="{vx}" cy="{vy}" rx="{rx}" ry="{ry}" fill="{colors['glow']}" opacity="0" filter="url(#softBlur)">
+            rise = random.randint(50, 100)
+            rx = random.randint(25, 45)
+            ry = random.randint(14, 25)
+            wisp_color = random.choice([colors["glow"], accent])
+            parts.append(f'''  <ellipse cx="{vx}" cy="{vy}" rx="{rx}" ry="{ry}" fill="{wisp_color}" opacity="0" filter="url(#softBlur)">
     <animateTransform attributeName="transform" type="translate"
-      values="0,0; {random.randint(-8,8)},{-rise}; 0,0"
+      values="0,0; {random.randint(-12,12)},{-rise}; 0,0"
       dur="{dur}s" begin="{delay:.1f}s" repeatCount="indefinite" />
     <animate attributeName="opacity"
-      values="0;0.18;0.12;0" dur="{dur}s"
+      values="0;0.30;0.20;0" dur="{dur}s"
       begin="{delay:.1f}s" repeatCount="indefinite" />
   </ellipse>''')
         return "\n".join(parts)
 
     else:
-        # Default (mist_ground): Slow rise from bottom with horizontal sway — original behavior
+        # Default (mist_ground): Slow rise from bottom with horizontal sway
         dur1 = random.randint(22, 32)
         dur2 = random.randint(28, 38)
         dur3 = random.randint(18, 28)
         return f'''
   <!-- Rising Ground Mist (3 layers) -->
-  <ellipse cx="180" cy="480" rx="280" ry="60" fill="{colors['glow']}" opacity="0.15" filter="url(#softBlur)">
+  <ellipse cx="180" cy="480" rx="280" ry="60" fill="{colors['glow']}" opacity="0.22" filter="url(#softBlur)">
     <animateTransform attributeName="transform" type="translate"
       values="0,0; 20,-12; 0,0; -15,-8; 0,0"
       dur="{dur1}s" repeatCount="indefinite" />
     <animate attributeName="opacity"
-      values="0.10;0.22;0.10" dur="{dur1}s" repeatCount="indefinite" />
+      values="0.15;0.32;0.15" dur="{dur1}s" repeatCount="indefinite" />
   </ellipse>
-  <ellipse cx="350" cy="495" rx="230" ry="45" fill="{colors['particle']}" opacity="0.12" filter="url(#softBlur)">
+  <ellipse cx="350" cy="495" rx="230" ry="45" fill="{accent}" opacity="0.18" filter="url(#softBlur)">
     <animateTransform attributeName="transform" type="translate"
       values="0,0; -18,-10; 0,0; 12,-6; 0,0"
       dur="{dur2}s" repeatCount="indefinite" />
     <animate attributeName="opacity"
-      values="0.08;0.18;0.08" dur="{dur2}s" repeatCount="indefinite" />
+      values="0.12;0.28;0.12" dur="{dur2}s" repeatCount="indefinite" />
   </ellipse>
-  <ellipse cx="256" cy="510" rx="350" ry="70" fill="{colors['glow']}" opacity="0.10" filter="url(#softBlur)">
+  <ellipse cx="256" cy="510" rx="350" ry="70" fill="{colors['particle']}" opacity="0.15" filter="url(#softBlur)">
     <animateTransform attributeName="transform" type="translate"
       values="0,0; 10,-5; 0,0; -8,-3; 0,0"
       dur="{dur3}s" repeatCount="indefinite" />
     <animate attributeName="opacity"
-      values="0.06;0.15;0.06" dur="{dur3}s" repeatCount="indefinite" />
+      values="0.10;0.25;0.10" dur="{dur3}s" repeatCount="indefinite" />
   </ellipse>'''
 
 
@@ -940,45 +967,49 @@ def _gen_glow_secondary(variant: str, colors: dict) -> str:
     """Generate variant-aware secondary glow animations — visually distinct per world.
 
     Sleep rules: cycle >=4s, gentle pulse, max opacity 60%.
-    Each variant produces a different glow character.
+    Each variant produces a different glow character with world-specific colors.
     """
+    accent = colors.get("accent", colors["glow"])
+
     if variant == "glow_firefly":
-        # 3-5 small glows at random positions, staggered pulse timings
+        # 4-6 small glows at random positions, staggered pulse timings
         parts = ['\n  <!-- Firefly Glows -->']
-        count = random.randint(3, 5)
+        count = random.randint(4, 6)
         for i in range(count):
             cx = random.randint(60, 450)
             cy = random.randint(120, 440)
-            r = random.randint(18, 30)
+            r = random.randint(22, 35)
             dur = random.randint(6, 12)
             delay = random.uniform(0, dur * 0.7)
-            parts.append(f'''  <circle cx="{cx}" cy="{cy}" r="{r}" fill="url(#glowGrad2)" filter="url(#softBlur)" opacity="0">
+            glow_col = accent if i % 2 == 0 else colors["glow"]
+            parts.append(f'''  <circle cx="{cx}" cy="{cy}" r="{r}" fill="{glow_col}" filter="url(#softBlur)" opacity="0">
     <animate attributeName="opacity"
-      values="0;0.05;0.35;0.30;0.05;0;0" dur="{dur}s"
+      values="0;0.08;0.50;0.40;0.08;0;0" dur="{dur}s"
       begin="{delay:.1f}s" repeatCount="indefinite" />
     <animate attributeName="r"
-      values="{r};{r+8};{r+4};{r}" dur="{dur}s"
+      values="{r};{r+10};{r+5};{r}" dur="{dur}s"
       begin="{delay:.1f}s" repeatCount="indefinite" />
   </circle>''')
         return "\n".join(parts)
 
     elif variant == "glow_bioluminescence":
-        # 2-3 elongated horizontal glows at bottom, wave-like timing
+        # 3 elongated horizontal glows at bottom, wave-like timing
         parts = ['\n  <!-- Bioluminescent Glow -->']
-        count = random.randint(2, 3)
+        count = 3
         for i in range(count):
             cx = random.randint(80, 440)
-            cy = random.randint(350, 460)
-            rx = random.randint(80, 140)
-            ry = random.randint(20, 35)
+            cy = random.randint(320, 460)
+            rx = random.randint(90, 160)
+            ry = random.randint(25, 40)
             dur = random.randint(10, 18)
             delay = i * random.uniform(2, 4)
-            parts.append(f'''  <ellipse cx="{cx}" cy="{cy}" rx="{rx}" ry="{ry}" fill="{colors['glow']}" opacity="0" filter="url(#softBlur)">
+            bio_color = accent if i % 2 == 0 else colors["glow"]
+            parts.append(f'''  <ellipse cx="{cx}" cy="{cy}" rx="{rx}" ry="{ry}" fill="{bio_color}" opacity="0" filter="url(#softBlur)">
     <animate attributeName="opacity"
-      values="0;0.08;0.25;0.15;0.08;0" dur="{dur}s"
+      values="0;0.12;0.40;0.25;0.12;0" dur="{dur}s"
       begin="{delay:.1f}s" repeatCount="indefinite" />
     <animateTransform attributeName="transform" type="translate"
-      values="0,0; {random.randint(5,15)},0; 0,0; {random.randint(-10,-5)},0; 0,0"
+      values="0,0; {random.randint(8,20)},0; 0,0; {random.randint(-15,-5)},0; 0,0"
       dur="{dur+4}s" begin="{delay:.1f}s" repeatCount="indefinite" />
   </ellipse>''')
         return "\n".join(parts)
@@ -986,132 +1017,136 @@ def _gen_glow_secondary(variant: str, colors: dict) -> str:
     elif variant == "glow_campfire":
         # Single warm glow at bottom-center, faster flicker (4-6s)
         cx = random.randint(220, 300)
-        cy = random.randint(420, 460)
-        r = random.randint(50, 70)
+        cy = random.randint(410, 450)
+        r = random.randint(55, 80)
         dur = random.randint(4, 6)
         return f'''
   <!-- Campfire Glow -->
-  <circle cx="{cx}" cy="{cy}" r="{r}" fill="url(#glowGrad)" filter="url(#softBlur)" opacity="0.20">
+  <circle cx="{cx}" cy="{cy}" r="{r}" fill="{accent}" filter="url(#softBlur)" opacity="0.25">
     <animate attributeName="opacity"
-      values="0.15;0.35;0.25;0.40;0.20;0.15" dur="{dur}s" repeatCount="indefinite" />
+      values="0.20;0.50;0.35;0.55;0.25;0.20" dur="{dur}s" repeatCount="indefinite" />
     <animate attributeName="r"
-      values="{r};{r+6};{r-3};{r+8};{r}" dur="{dur}s" repeatCount="indefinite" />
+      values="{r};{r+8};{r-3};{r+10};{r}" dur="{dur}s" repeatCount="indefinite" />
   </circle>
-  <circle cx="{cx}" cy="{cy+5}" r="{r//2}" fill="url(#glowGrad)" opacity="0.10">
+  <circle cx="{cx}" cy="{cy+5}" r="{r//2}" fill="{colors['glow']}" opacity="0.15">
     <animate attributeName="opacity"
-      values="0.08;0.20;0.12;0.22;0.08" dur="{dur-1}s" repeatCount="indefinite" />
+      values="0.12;0.30;0.18;0.32;0.12" dur="{dur-1}s" repeatCount="indefinite" />
   </circle>'''
 
     elif variant == "glow_candle":
         # Single small warm glow, slight position wobble
         cx = random.randint(200, 320)
         cy = random.randint(280, 400)
-        r = random.randint(25, 40)
+        r = random.randint(30, 50)
         dur = random.randint(5, 8)
         return f'''
   <!-- Candle Glow -->
-  <circle cx="{cx}" cy="{cy}" r="{r}" fill="url(#glowGrad)" filter="url(#softBlur)" opacity="0.25">
+  <circle cx="{cx}" cy="{cy}" r="{r}" fill="{accent}" filter="url(#softBlur)" opacity="0.30">
     <animate attributeName="opacity"
-      values="0.18;0.38;0.22;0.35;0.18" dur="{dur}s" repeatCount="indefinite" />
+      values="0.22;0.50;0.30;0.48;0.22" dur="{dur}s" repeatCount="indefinite" />
     <animate attributeName="r"
-      values="{r};{r+5};{r-2};{r+3};{r}" dur="{dur}s" repeatCount="indefinite" />
+      values="{r};{r+6};{r-3};{r+4};{r}" dur="{dur}s" repeatCount="indefinite" />
     <animateTransform attributeName="transform" type="translate"
-      values="0,0; 2,-1; -1,0; 1,1; 0,0"
+      values="0,0; 3,-2; -2,0; 2,1; 0,0"
       dur="{dur+2}s" repeatCount="indefinite" />
   </circle>'''
 
     elif variant == "glow_crystals":
-        # 3-4 sharp small glows, longer dim phases between pulses
+        # 4-5 sharp small glows, longer dim phases between pulses
         parts = ['\n  <!-- Crystal Glows -->']
-        count = random.randint(3, 4)
+        count = random.randint(4, 5)
         for i in range(count):
             cx = random.randint(80, 440)
             cy = random.randint(180, 440)
-            r = random.randint(15, 25)
+            r = random.randint(18, 30)
             dur = random.randint(8, 14)
             delay = random.uniform(0, dur * 0.5)
-            parts.append(f'''  <circle cx="{cx}" cy="{cy}" r="{r}" fill="url(#glowGrad2)" filter="url(#softBlur)" opacity="0">
+            crystal_color = accent if i % 2 == 0 else colors["glow"]
+            parts.append(f'''  <circle cx="{cx}" cy="{cy}" r="{r}" fill="{crystal_color}" filter="url(#softBlur)" opacity="0">
     <animate attributeName="opacity"
-      values="0;0;0.05;0.40;0.30;0.05;0;0" dur="{dur}s"
+      values="0;0;0.08;0.55;0.40;0.08;0;0" dur="{dur}s"
       begin="{delay:.1f}s" repeatCount="indefinite" />
     <animate attributeName="r"
-      values="{r};{r};{r+3};{r+6};{r+3};{r}" dur="{dur}s"
+      values="{r};{r};{r+4};{r+8};{r+4};{r}" dur="{dur}s"
       begin="{delay:.1f}s" repeatCount="indefinite" />
   </circle>''')
         return "\n".join(parts)
 
     elif variant == "glow_nebula":
-        # 1-2 very large diffuse glows, very slow (16-24s)
+        # 2 very large diffuse glows, very slow (16-24s)
         parts = ['\n  <!-- Nebula Glow -->']
-        count = random.randint(1, 2)
-        for _ in range(count):
+        count = 2
+        for idx in range(count):
             cx = random.randint(120, 400)
             cy = random.randint(120, 380)
-            r = random.randint(120, 180)
+            r = random.randint(130, 200)
             dur = random.randint(16, 24)
             delay = random.uniform(0, 5)
-            parts.append(f'''  <circle cx="{cx}" cy="{cy}" r="{r}" fill="url(#glowGrad2)" filter="url(#softBlur)" opacity="0.06">
+            neb_color = accent if idx == 0 else colors["glow"]
+            parts.append(f'''  <circle cx="{cx}" cy="{cy}" r="{r}" fill="{neb_color}" filter="url(#softBlur)" opacity="0.08">
     <animate attributeName="opacity"
-      values="0.04;0.12;0.06;0.10;0.04" dur="{dur}s"
+      values="0.06;0.20;0.10;0.18;0.06" dur="{dur}s"
       begin="{delay:.1f}s" repeatCount="indefinite" />
     <animate attributeName="r"
-      values="{r-15};{r+20};{r-10};{r+15};{r-15}" dur="{dur}s"
+      values="{r-20};{r+25};{r-10};{r+15};{r-20}" dur="{dur}s"
       begin="{delay:.1f}s" repeatCount="indefinite" />
   </circle>''')
         return "\n".join(parts)
 
     elif variant == "glow_sunset":
         # Wide horizontal glow at horizon level, slow breathing
-        cy = random.randint(380, 430)
-        rx = random.randint(200, 300)
-        ry = random.randint(40, 60)
+        cy = random.randint(370, 420)
+        rx = random.randint(220, 320)
+        ry = random.randint(45, 70)
         dur = random.randint(12, 18)
         return f'''
   <!-- Sunset Horizon Glow -->
-  <ellipse cx="256" cy="{cy}" rx="{rx}" ry="{ry}" fill="{colors['glow']}" opacity="0.12" filter="url(#softBlur)">
+  <ellipse cx="256" cy="{cy}" rx="{rx}" ry="{ry}" fill="{accent}" opacity="0.18" filter="url(#softBlur)">
     <animate attributeName="opacity"
-      values="0.08;0.22;0.12;0.18;0.08" dur="{dur}s" repeatCount="indefinite" />
+      values="0.12;0.35;0.18;0.30;0.12" dur="{dur}s" repeatCount="indefinite" />
     <animate attributeName="ry"
-      values="{ry};{ry+10};{ry-5};{ry+8};{ry}" dur="{dur}s" repeatCount="indefinite" />
+      values="{ry};{ry+12};{ry-5};{ry+10};{ry}" dur="{dur}s" repeatCount="indefinite" />
   </ellipse>
-  <ellipse cx="256" cy="{cy+10}" rx="{rx-40}" ry="{ry//2}" fill="{colors['glow']}" opacity="0.08" filter="url(#softBlur)">
+  <ellipse cx="256" cy="{cy+10}" rx="{rx-40}" ry="{ry//2}" fill="{colors['glow']}" opacity="0.12" filter="url(#softBlur)">
     <animate attributeName="opacity"
-      values="0.05;0.15;0.05" dur="{dur+3}s" repeatCount="indefinite" />
+      values="0.08;0.22;0.08" dur="{dur+3}s" repeatCount="indefinite" />
   </ellipse>'''
 
     elif variant == "glow_lantern":
-        # 1-2 warm glows in upper area, gentle flicker
+        # 2 warm glows in upper area, gentle flicker
         parts = ['\n  <!-- Lantern Glows -->']
-        count = random.randint(1, 2)
-        for _ in range(count):
+        count = 2
+        for idx in range(count):
             cx = random.randint(100, 420)
             cy = random.randint(80, 250)
-            r = random.randint(30, 50)
+            r = random.randint(35, 55)
             dur = random.randint(6, 10)
             delay = random.uniform(0, 3)
-            parts.append(f'''  <circle cx="{cx}" cy="{cy}" r="{r}" fill="url(#glowGrad)" filter="url(#softBlur)" opacity="0.20">
+            lantern_color = accent if idx == 0 else colors["glow"]
+            parts.append(f'''  <circle cx="{cx}" cy="{cy}" r="{r}" fill="{lantern_color}" filter="url(#softBlur)" opacity="0.25">
     <animate attributeName="opacity"
-      values="0.15;0.32;0.20;0.35;0.15" dur="{dur}s"
+      values="0.20;0.45;0.28;0.48;0.20" dur="{dur}s"
       begin="{delay:.1f}s" repeatCount="indefinite" />
     <animate attributeName="r"
-      values="{r};{r+4};{r-2};{r+3};{r}" dur="{dur}s"
+      values="{r};{r+6};{r-2};{r+4};{r}" dur="{dur}s"
       begin="{delay:.1f}s" repeatCount="indefinite" />
   </circle>''')
         return "\n".join(parts)
 
     else:
-        # Default: original 2 breathing circles
+        # Default: 2 breathing circles
         parts = ['\n  <!-- Secondary Ambient Glows -->']
-        for _ in range(2):
+        for idx in range(2):
             cx = random.randint(80, 440)
             cy = random.randint(150, 420)
-            r = random.randint(55, 90)
+            r = random.randint(60, 100)
             dur = random.randint(10, 16)
-            parts.append(f'''  <circle cx="{cx}" cy="{cy}" r="{r}" fill="url(#glowGrad2)" filter="url(#softBlur)">
+            glow_color = accent if idx == 0 else colors["glow"]
+            parts.append(f'''  <circle cx="{cx}" cy="{cy}" r="{r}" fill="{glow_color}" filter="url(#softBlur)">
     <animate attributeName="r"
-      values="{r-10};{r+10};{r-10}" dur="{dur}s" repeatCount="indefinite" />
+      values="{r-10};{r+12};{r-10}" dur="{dur}s" repeatCount="indefinite" />
     <animate attributeName="opacity"
-      values="0.15;0.35;0.15" dur="{dur}s" repeatCount="indefinite" />
+      values="0.18;0.42;0.18" dur="{dur}s" repeatCount="indefinite" />
   </circle>''')
         return "\n".join(parts)
 
