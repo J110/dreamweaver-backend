@@ -24,6 +24,7 @@ import argparse
 import io
 import json
 import logging
+import math
 import os
 import random
 import sys
@@ -84,15 +85,65 @@ COMPOSITIONS = {
 }
 
 CHARACTER_VISUALS = {
-    "small_mammal": "Bunny, fox, mouse, hedgehog — round, soft, curled",
-    "aquatic_creature": "Whale, turtle, jellyfish — flowing, gentle",
-    "bird": "Owl, small songbird, penguin — feathered, compact",
-    "mythical_gentle": "Baby dragon, small griffin, friendly spirit",
-    "human_child": "Diverse, age-matched to listener, soft features",
-    "nature_spirit": "Tree spirit, cloud being, star creature — abstract",
-    "robot_mech": "Soft-edged, warm-eyed, small and round",
-    "no_character": "Pure landscape, environment is the subject",
+    "human_child":      "a young child with soft rounded features and bright curious eyes",
+    "small_mammal":     "a small cute animal with soft round body and gentle expression",
+    "aquatic_creature": "a gentle sea creature with flowing form and luminous eyes",
+    "bird":             "a small bird with soft feathers and round body and bright curious eyes",
+    "insect":           "a tiny insect with delicate features and round friendly face",
+    "plant":            "a sentient plant with gentle glowing organic form",
+    "celestial":        "a glowing celestial being with radiant soft light and ethereal form",
+    "atmospheric":      "a personified weather element with translucent flowing form",
+    "mythical_gentle":  "a baby mythical creature with soft features and round friendly face",
+    "object":           "a personified everyday object with gentle expressive features and warm glow",
+    "robot_mech":       "a small round friendly robot with soft edges and warm glowing eyes",
+    "nature_spirit":    "an abstract nature spirit with flowing translucent form",
+    "no_character":     "",
 }
+
+# Map lead_character_type (from content generation) → CHARACTER_VISUALS key
+CHAR_TYPE_TO_VISUAL = {
+    "human":        "human_child",
+    "animal":       "small_mammal",
+    "bird":         "bird",
+    "sea_creature": "aquatic_creature",
+    "insect":       "insect",
+    "plant":        "plant",
+    "celestial":    "celestial",
+    "atmospheric":  "atmospheric",
+    "mythical":     "mythical_gentle",
+    "object":       "object",
+    "alien":        "nature_spirit",
+    "robot":        "robot_mech",
+}
+
+# Human appearance diversity — deterministically selected per story via hash
+# Gender-appropriate options to avoid mismatches
+HAIR_STYLES_FEMALE = [
+    "long straight black hair", "braided hair with ribbons", "curly dark hair",
+    "pigtails", "bob cut hair", "afro hair", "long flowing red hair",
+    "two buns", "ponytail with bangs", "wavy brown hair with flowers",
+]
+HAIR_STYLES_MALE = [
+    "short curly dark hair", "messy wavy brown hair", "short spiky hair",
+    "short afro hair", "buzz cut", "shaggy brown hair", "neat black hair",
+    "short hair with a headband", "tousled red hair", "close-cropped hair",
+]
+SKIN_TONES = [
+    "warm brown skin", "light olive skin", "dark brown skin", "fair rosy skin",
+    "tan skin", "deep ebony skin", "golden tan skin", "pale with freckles",
+]
+CLOTHING_STYLES_FEMALE = [
+    "wearing a cozy knitted sweater", "wearing a flowing colorful dress",
+    "wearing overalls and a striped shirt", "wearing a hooded cape",
+    "wearing a hoodie", "wearing traditional embroidered clothing",
+    "wearing a puffy jacket and scarf", "wearing a simple tunic",
+]
+CLOTHING_STYLES_MALE = [
+    "wearing a cozy knitted sweater", "wearing a vest and rolled-up sleeves",
+    "wearing overalls and a striped shirt", "wearing a hooded cape",
+    "wearing a hoodie and sneakers", "wearing traditional embroidered clothing",
+    "wearing a puffy jacket and scarf", "wearing a simple tunic and sandals",
+]
 
 LIGHT_SOURCES = {
     "above": "Cool, gentle moonlight/starlight diffused from top",
@@ -189,13 +240,29 @@ def auto_select_axes(story: dict, overrides: dict = None) -> dict:
         comp = random.choice(list(COMPOSITIONS.keys()))
     comp = overrides.get("composition") or comp
 
-    # Character visual
-    if char_type == "human":
-        char_visual = "human_child"
-    elif char_type in ("fantastical", "animal"):
-        char_visual = random.choice(["mythical_gentle", "nature_spirit"])
-    else:
-        char_visual = "human_child"
+    # Character visual — map all 12 lead_character_type values to the correct visual
+    # Handle compound types like "jellyfish (sea creature)" by checking for known keywords
+    char_visual = CHAR_TYPE_TO_VISUAL.get(char_type, None)
+    if char_visual is None:
+        # Try fuzzy match for compound types
+        ct_lower = char_type.lower()
+        for keyword, visual in [
+            ("sea", "aquatic_creature"), ("fish", "aquatic_creature"), ("whale", "aquatic_creature"),
+            ("bird", "bird"), ("owl", "bird"), ("eagle", "bird"),
+            ("insect", "insect"), ("bug", "insect"), ("caterpillar", "insect"),
+            ("plant", "plant"), ("flower", "plant"), ("tree", "plant"),
+            ("dragon", "mythical_gentle"), ("mythical", "mythical_gentle"),
+            ("robot", "robot_mech"), ("machine", "robot_mech"),
+            ("star", "celestial"), ("moon", "celestial"), ("comet", "celestial"),
+            ("rain", "atmospheric"), ("cloud", "atmospheric"), ("snow", "atmospheric"),
+            ("object", "object"), ("lantern", "object"), ("clock", "object"),
+            ("animal", "small_mammal"),
+        ]:
+            if keyword in ct_lower:
+                char_visual = visual
+                break
+        if char_visual is None:
+            char_visual = "human_child"
     char_visual = overrides.get("character") or char_visual
 
     # Light source
@@ -238,45 +305,187 @@ def auto_select_axes(story: dict, overrides: dict = None) -> dict:
     }
 
 
+# ── Character extraction ───────────────────────────────────────────────
+
+import re
+
+def _extract_character_phrase(story: dict) -> str:
+    """Extract the lead character identity from the story description.
+
+    e.g. "A tiny raindrop named Drizzle embarks on..." → "a tiny raindrop named Drizzle"
+         "When seven-year-old Aarohi discovers..." → "seven-year-old Aarohi"
+         "A gentle tortoise named Pebble embarks..." → "a gentle tortoise named Pebble"
+    """
+    desc = story.get("description", "")
+    if not desc:
+        return ""
+
+    # Take first sentence
+    first_sent = re.split(r'[.!?]', desc)[0].strip()
+
+    # Common story-start verbs that mark the end of the character phrase
+    verb_pattern = r'\b(embarks?|discovers?|learns?|finds?|begins?|sets?\s+out|ventures?|travels?|journeys?|explores?|weaves?|must|hears?|meets?|wakes?|searches?|stumbles?|follows?|seeks?|drifts?|wanders?|deciphers?|helps?|uncovers?|lights?|creates?|forges?|teaches?|guides?)\b'
+
+    # Strip common prefixes that precede the character phrase
+    # "When seven-year-old Aarohi discovers..." → "seven-year-old Aarohi discovers..."
+    # "In a futuristic city where X float, Aria discovers..." → harder, use comma split
+    prefix_pattern = r'^(?:When|As|After|Before|In|On|During|While|One\s+night)\s+'
+    if re.match(prefix_pattern, first_sent, re.IGNORECASE):
+        # If there's a comma, the character is usually after the comma
+        if ',' in first_sent:
+            after_comma = first_sent.split(',', 1)[1].strip()
+            if len(after_comma) > 5:
+                first_sent = after_comma
+        else:
+            # Just strip the leading word
+            first_sent = re.sub(prefix_pattern, '', first_sent, flags=re.IGNORECASE).strip()
+
+    # Handle "Join X as..." pattern
+    join_match = re.match(r'(?:Join|Meet|Follow)\s+(.+?)\s*(?:as|on|in|who)\b', first_sent, re.IGNORECASE)
+    if join_match:
+        return join_match.group(1).strip()
+
+    # Strip "A gentle lullaby/story/poem about..." wrappers
+    about_match = re.match(r'^A\s+(?:gentle\s+)?(?:lullaby|story|poem|song|tale)\s+about\s+', first_sent, re.IGNORECASE)
+    if about_match:
+        first_sent = first_sent[about_match.end():].strip()
+
+    # Find verb and take everything before it as the character phrase
+    verb_match = re.search(verb_pattern, first_sent, re.IGNORECASE)
+    if verb_match:
+        phrase = first_sent[:verb_match.start()].strip().rstrip(',')
+        # Clean up common artifacts
+        phrase = re.sub(r'\s+', ' ', phrase)
+        # Cap at reasonable length for a FLUX prompt character description
+        if len(phrase) > 60:
+            short_match = re.search(r'\b(?:who|from|in\s+(?:a|an|the|her|his))\b', phrase)
+            if short_match and short_match.start() > 10:
+                phrase = phrase[:short_match.start()].strip().rstrip(',')
+        if len(phrase) > 5:
+            return phrase
+
+    # Fallback: use title-based character name
+    title = story.get("title", "")
+    # Try to extract name from title patterns: "X and the Y", "X's Y"
+    title_match = re.match(r"^(.+?)\s+(?:and the|'s)\s+", title)
+    if title_match:
+        return title_match.group(1).strip()
+
+    return ""
+
+
+def _build_human_appearance(story: dict) -> str:
+    """Generate diverse human appearance descriptors using story ID as seed.
+
+    Deterministic: same story always gets the same appearance.
+    Gender-aware: picks from appropriate hair/clothing lists.
+    """
+    import hashlib
+    story_id = story.get("id", story.get("title", "default"))
+    gender = story.get("lead_gender", "neutral")
+    # Use MD5 for stable, well-distributed hash across all story IDs
+    digest = hashlib.md5(story_id.encode('utf-8')).digest()
+    h1, h2, h3, h4 = digest[0], digest[1], digest[2], digest[3]
+
+    # Pick gender-appropriate hair and clothing
+    if gender == "male":
+        hair_list = HAIR_STYLES_MALE
+        clothing_list = CLOTHING_STYLES_MALE
+    elif gender == "female":
+        hair_list = HAIR_STYLES_FEMALE
+        clothing_list = CLOTHING_STYLES_FEMALE
+    else:
+        hair_list = HAIR_STYLES_FEMALE if h4 % 2 == 0 else HAIR_STYLES_MALE
+        clothing_list = CLOTHING_STYLES_FEMALE if h4 % 2 == 0 else CLOTHING_STYLES_MALE
+
+    hair = hair_list[h1 % len(hair_list)]
+    skin = SKIN_TONES[h2 % len(SKIN_TONES)]
+    clothing = clothing_list[h3 % len(clothing_list)]
+
+    return f"{skin}, {hair}, {clothing}"
+
+
 # ── FLUX prompt builder ─────────────────────────────────────────────────
 
 def build_flux_prompt(story: dict, axes: dict) -> str:
-    """Build FLUX AI prompt from story metadata and axis selections."""
+    """Build FLUX AI prompt from story metadata and axis selections.
+
+    Character description is context-aware:
+    - Non-human leads (animal, object, insect, etc.) use the actual character
+      identity from the story description
+    - Human leads get diverse appearance traits (hair, skin, clothing)
+    - All characters get world-appropriate poses and expressions
+    """
     age_group = story.get("age_group", "6-8")
 
     world_info = WORLD_SETTINGS.get(axes["world_setting"], {})
     palette_info = COLOR_PALETTES.get(axes["palette"], {})
     comp_desc = COMPOSITIONS.get(axes["composition"], "")
-    char_desc = CHARACTER_VISUALS.get(axes["character"], "")
+    char_visual_key = axes["character"]
+    char_visual_desc = CHARACTER_VISUALS.get(char_visual_key, "")
     light_desc = LIGHT_SOURCES.get(axes["light"], "")
     texture_desc = TEXTURES.get(axes["texture"], "")
     time_desc = TIME_MARKERS.get(axes["time"], "")
 
-    # Character details
-    char_name = story.get("character_name", "a child")
     char_gender = story.get("lead_gender", "female")
     char_age = story.get("character_age", 7)
+    is_human = char_visual_key == "human_child"
 
-    # Age-specific additions
+    # Extract character phrase from description (e.g., "a tiny raindrop named Drizzle")
+    char_phrase = _extract_character_phrase(story)
+
+    # Build the character description for the prompt
+    if is_human:
+        # Human child — add diversity in appearance
+        appearance = _build_human_appearance(story)
+        gender_word = {"male": "boy", "female": "girl", "neutral": "child"}.get(char_gender, "child")
+        if char_phrase and not any(w in char_phrase.lower() for w in ["child", "girl", "boy"]):
+            # char_phrase has a name like "seven-year-old Aarohi"
+            char_section = (
+                f"{char_phrase}, a young {gender_word}, {appearance}, "
+                f"bright curious eyes wide open, gentle smile, "
+                f"looking with wonder at the magical world"
+            )
+        else:
+            char_section = (
+                f"a young {gender_word} (age {char_age}), {appearance}, "
+                f"bright curious eyes wide open, gentle smile, "
+                f"looking with wonder at the magical world"
+            )
+    else:
+        # Non-human character — use the actual character identity
+        if char_phrase:
+            # Use the extracted phrase directly: "a tiny raindrop named Drizzle"
+            char_section = (
+                f"{char_phrase}, {char_visual_desc}, "
+                f"gentle and friendly expression, "
+                f"in a magical world"
+            )
+        else:
+            # Fallback to generic visual description
+            char_section = (
+                f"{char_visual_desc}, "
+                f"gentle and friendly expression, "
+                f"in a magical world"
+            )
+
+    # Age-specific art style additions
     if age_group in ("2-5", "0-1"):
-        age_addition = "simple rounded shapes, soft and cuddly character design, picture book illustration quality, large gentle eyes (closed), storybook warmth"
+        age_addition = "simple rounded shapes, soft and cuddly character design, picture book illustration quality, storybook warmth"
     elif age_group == "6-8":
         age_addition = "rich atmospheric environment, adventure illustration quality, detailed but soft world-building, Studio Ghibli inspired mood"
     else:
         age_addition = "cinematic concept art, atmospheric landscape, matte painting quality, sophisticated color grading, film still aesthetic"
 
-    # Use Template B for 6-8 (environment-focused)
-    # Extract clean texture name
+    # Extract clean texture and composition names
     texture_name = texture_desc.split(",")[0].strip()
-    # Extract clean composition
     comp_name = comp_desc.split(",")[0].strip().lower()
 
     prompt = (
         f"Children's book illustration, {texture_name} style, "
         f"atmospheric {world_info.get('signature', 'magical scene').lower()}, "
         f"{comp_name}, "
-        f"a small {char_gender} child figure (age {char_age}) with bright curious eyes wide open, "
-        f"gentle smile, looking with wonder at the magical world around them, adventurous and happy, "
+        f"{char_section}, "
         f"{light_desc.lower()}, "
         f"rich {palette_info.get('mood', 'warm').lower()} color palette with "
         f"{palette_info.get('base', 'warm tones').lower()} and "
@@ -285,8 +494,7 @@ def build_flux_prompt(story: dict, axes: dict) -> str:
         f"{age_addition}, "
         f"warm inviting mood, no text, no harsh contrasts, soft atmospheric depth, "
         f"no bright whites, maximum 70% luminance, sleep-safe colors, "
-        f"absolutely no sad expressions, no tears, no frowning, no closed eyes, no sleepy face, "
-        f"the child must look happy and excited to explore"
+        f"absolutely no sad expressions, no tears, no frowning, no closed eyes, no sleepy face"
     )
 
     return prompt
@@ -880,31 +1088,32 @@ def _gen_drift(variant: str, colors: dict) -> str:
   </ellipse>'''
 
     elif variant == "drift_sand":
-        # Low ground-level wisps, horizontal motion like desert wind
-        dur1 = random.randint(25, 35)
-        dur2 = random.randint(28, 38)
-        dx = random.randint(30, 60)
-        return f'''
-  <!-- Desert Sand Drift -->
-  <ellipse cx="200" cy="480" rx="350" ry="28" fill="{colors['particle']}" opacity="0.18" filter="url(#softBlur)">
+        # Diagonal sand streaks blowing across — like desert wind gusts
+        # Uses <line> elements at various angles, NOT bottom ellipses
+        parts = ['\n  <!-- Desert Sand Streaks -->']
+        for i in range(5):
+            x1 = random.randint(-50, 200)
+            y1 = random.randint(100, 400)
+            length = random.randint(150, 350)
+            angle = random.randint(-10, 15)  # mostly horizontal with slight angle
+            x2 = x1 + length
+            y2 = y1 + int(length * math.sin(math.radians(angle)))
+            dur = random.randint(20, 35)
+            delay = i * random.uniform(1, 3)
+            col = accent if i % 2 == 0 else colors["particle"]
+            op_max = random.uniform(0.12, 0.28)
+            sw = random.uniform(1.5, 4.0)
+            drift = random.randint(20, 50)
+            parts.append(f'''  <line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}"
+    stroke="{col}" stroke-width="{sw:.1f}" stroke-linecap="round" opacity="0">
     <animateTransform attributeName="transform" type="translate"
-      values="0,0; {dx},0; {dx//2},-3; 0,0"
-      dur="{dur1}s" repeatCount="indefinite" />
+      values="0,0; {drift},{random.randint(-5,5)}; {drift*2},{random.randint(-3,3)}; 0,0"
+      dur="{dur}s" begin="{delay:.1f}s" repeatCount="indefinite" />
     <animate attributeName="opacity"
-      values="0.12;0.28;0.15;0.12" dur="{dur1}s" repeatCount="indefinite" />
-  </ellipse>
-  <ellipse cx="380" cy="495" rx="250" ry="20" fill="{accent}" opacity="0.12" filter="url(#softBlur)">
-    <animateTransform attributeName="transform" type="translate"
-      values="0,0; {dx+10},0; {dx//3},-2; 0,0"
-      dur="{dur2}s" repeatCount="indefinite" />
-    <animate attributeName="opacity"
-      values="0.08;0.20;0.08" dur="{dur2}s" repeatCount="indefinite" />
-  </ellipse>
-  <ellipse cx="80" cy="470" rx="180" ry="15" fill="{colors['glow']}" opacity="0.10" filter="url(#softBlur)">
-    <animateTransform attributeName="transform" type="translate"
-      values="0,0; {dx+20},1; 0,0"
-      dur="{dur1+5}s" repeatCount="indefinite" />
-  </ellipse>'''
+      values="0;{op_max:.2f};{op_max*0.5:.2f};0" dur="{dur}s"
+      begin="{delay:.1f}s" repeatCount="indefinite" />
+  </line>''')
+        return "\n".join(parts)
 
     elif variant == "drift_starfield":
         # Very slow rotation of entire star group — subtle sky rotation
@@ -942,129 +1151,142 @@ def _gen_drift(variant: str, colors: dict) -> str:
 
 
 def _gen_mist(variant: str, colors: dict) -> str:
-    """Generate variant-aware mist/fog animations — visually distinct per world.
+    """Generate variant-aware atmosphere effects — each uses DIFFERENT SVG primitives & positions.
+
+    CRITICAL: No two variants should look similar. Each uses different:
+    - SVG shapes (paths, rects, lines — NOT just ellipses)
+    - Positions (top, middle, sides, diagonal — NOT always bottom)
+    - Sizes and counts
+    - Movement patterns
 
     Sleep rules: slow movement (18-40s), moderate opacity, gentle.
-    Each variant produces a different mist character.
     """
     accent = colors.get("accent", colors["glow"])
 
     if variant == "mist_underwater":
-        # Horizontal swaying current-like motion — wide, slow lateral waves
-        dur1 = random.randint(24, 34)
-        dur2 = random.randint(28, 38)
-        sx = random.randint(30, 50)
-        return f'''
-  <!-- Underwater Currents -->
-  <ellipse cx="200" cy="350" rx="300" ry="45" fill="{colors['glow']}" opacity="0.18" filter="url(#softBlur)">
+        # WAVY HORIZONTAL LINES at mid-height — like ocean currents
+        # Uses <path> curves, NOT ellipses. Positioned at MIDDLE of canvas.
+        parts = ['\n  <!-- Underwater Current Lines -->']
+        for i in range(4):
+            y = 160 + i * 70 + random.randint(-15, 15)  # spread across middle
+            dur = random.randint(20, 32)
+            delay = i * random.uniform(1, 3)
+            dx = random.randint(15, 30)
+            # Wavy path — sinusoidal curve across full width
+            amp = random.randint(8, 18)
+            col = accent if i % 2 == 0 else colors["glow"]
+            op_max = random.uniform(0.20, 0.40)
+            stroke_w = random.uniform(2.5, 5.0)
+            # Create a wavy line using cubic bezier — looks like a flowing current
+            path = f"M-20,{y} C80,{y-amp} 160,{y+amp} 256,{y} C352,{y-amp} 432,{y+amp} 532,{y}"
+            parts.append(f'''  <path d="{path}" stroke="{col}" stroke-width="{stroke_w:.1f}"
+    fill="none" opacity="0" stroke-linecap="round">
     <animateTransform attributeName="transform" type="translate"
-      values="0,0; {sx},5; 0,0; {-sx},-5; 0,0"
-      dur="{dur1}s" repeatCount="indefinite" />
-    <animate attributeName="opacity"
-      values="0.12;0.30;0.12" dur="{dur1}s" repeatCount="indefinite" />
-  </ellipse>
-  <ellipse cx="350" cy="420" rx="260" ry="38" fill="{accent}" opacity="0.15" filter="url(#softBlur)">
-    <animateTransform attributeName="transform" type="translate"
-      values="0,0; {-sx+10},3; 0,0; {sx-10},-3; 0,0"
-      dur="{dur2}s" repeatCount="indefinite" />
-    <animate attributeName="opacity"
-      values="0.10;0.25;0.10" dur="{dur2}s" repeatCount="indefinite" />
-  </ellipse>'''
-
-    elif variant == "mist_valley":
-        # Rolling in from one side — asymmetric drift from left
-        dur1 = random.randint(30, 42)
-        dur2 = random.randint(34, 46)
-        return f'''
-  <!-- Valley Mist (rolling in from side) -->
-  <ellipse cx="60" cy="460" rx="250" ry="55" fill="{colors['glow']}" opacity="0.20" filter="url(#softBlur)">
-    <animateTransform attributeName="transform" type="translate"
-      values="0,0; 120,-15; 180,-8; 80,-5; 0,0"
-      dur="{dur1}s" repeatCount="indefinite" />
-    <animate attributeName="opacity"
-      values="0.12;0.32;0.22;0.16;0.12" dur="{dur1}s" repeatCount="indefinite" />
-  </ellipse>
-  <ellipse cx="30" cy="490" rx="200" ry="40" fill="{accent}" opacity="0.15" filter="url(#softBlur)">
-    <animateTransform attributeName="transform" type="translate"
-      values="0,0; 150,-10; 200,-5; 60,-3; 0,0"
-      dur="{dur2}s" repeatCount="indefinite" />
-    <animate attributeName="opacity"
-      values="0.08;0.25;0.15;0.08" dur="{dur2}s" repeatCount="indefinite" />
-  </ellipse>'''
-
-    elif variant == "mist_sea":
-        # Low horizontal drift at very bottom only — like sea fog on shore
-        dur1 = random.randint(22, 32)
-        dur2 = random.randint(26, 36)
-        dx = random.randint(20, 35)
-        return f'''
-  <!-- Sea Fog (low horizon) -->
-  <ellipse cx="256" cy="498" rx="380" ry="35" fill="{colors['glow']}" opacity="0.22" filter="url(#softBlur)">
-    <animateTransform attributeName="transform" type="translate"
-      values="0,0; {dx},0; 0,0; {-dx},0; 0,0"
-      dur="{dur1}s" repeatCount="indefinite" />
-    <animate attributeName="opacity"
-      values="0.15;0.32;0.15" dur="{dur1}s" repeatCount="indefinite" />
-  </ellipse>
-  <ellipse cx="160" cy="505" rx="300" ry="25" fill="{accent}" opacity="0.16" filter="url(#softBlur)">
-    <animateTransform attributeName="transform" type="translate"
-      values="0,0; {-dx-5},0; 0,0; {dx+5},0; 0,0"
-      dur="{dur2}s" repeatCount="indefinite" />
-    <animate attributeName="opacity"
-      values="0.10;0.24;0.10" dur="{dur2}s" repeatCount="indefinite" />
-  </ellipse>'''
-
-    elif variant == "mist_steam":
-        # Small rising wisps from specific points — like cave vents or hot springs
-        parts = ['\n  <!-- Steam Wisps -->']
-        num_vents = random.randint(3, 5)
-        for _ in range(num_vents):
-            vx = random.randint(100, 420)
-            vy = random.randint(430, 490)
-            dur = random.randint(14, 24)
-            delay = random.uniform(0, 6)
-            rise = random.randint(50, 100)
-            rx = random.randint(25, 45)
-            ry = random.randint(14, 25)
-            wisp_color = random.choice([colors["glow"], accent])
-            parts.append(f'''  <ellipse cx="{vx}" cy="{vy}" rx="{rx}" ry="{ry}" fill="{wisp_color}" opacity="0" filter="url(#softBlur)">
-    <animateTransform attributeName="transform" type="translate"
-      values="0,0; {random.randint(-12,12)},{-rise}; 0,0"
+      values="0,0; {dx},{random.randint(-3,3)}; 0,0; {-dx},{random.randint(-3,3)}; 0,0"
       dur="{dur}s" begin="{delay:.1f}s" repeatCount="indefinite" />
     <animate attributeName="opacity"
-      values="0;0.30;0.20;0" dur="{dur}s"
+      values="0;{op_max:.2f};{op_max*0.5:.2f};{op_max:.2f};0" dur="{dur}s"
       begin="{delay:.1f}s" repeatCount="indefinite" />
-  </ellipse>''')
+  </path>''')
+        return "\n".join(parts)
+
+    elif variant == "mist_valley":
+        # DIAGONAL SWEEPING BANDS from upper-left to lower-right — like mountain wind
+        # Uses <rect> with rotation, NOT ellipses. Covers diagonal of canvas.
+        parts = ['\n  <!-- Valley Wind Bands -->']
+        angles = [-25, -18, -30]
+        for i in range(3):
+            y = 80 + i * 140 + random.randint(-20, 20)
+            w = 700  # wider than canvas for diagonal coverage
+            h = random.randint(25, 50)
+            angle = angles[i] + random.randint(-5, 5)
+            dur = random.randint(28, 42)
+            delay = i * random.uniform(2, 4)
+            drift = random.randint(30, 60)
+            col = accent if i == 0 else colors["glow"] if i == 1 else colors["particle"]
+            op_max = random.uniform(0.15, 0.30)
+            parts.append(f'''  <rect x="-100" y="{y}" width="{w}" height="{h}" fill="{col}"
+    opacity="0" transform="rotate({angle},256,256)">
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; {drift},{random.randint(-8,8)}; {drift//2},0; 0,0"
+      dur="{dur}s" begin="{delay:.1f}s" repeatCount="indefinite" additive="sum" />
+    <animate attributeName="opacity"
+      values="0;{op_max:.2f};{op_max*0.7:.2f};{op_max:.2f};0" dur="{dur}s"
+      begin="{delay:.1f}s" repeatCount="indefinite" />
+  </rect>''')
+        return "\n".join(parts)
+
+    elif variant == "mist_sea":
+        # SINGLE THIN HORIZON LINE with glow — like distant sea fog
+        # Uses a thin <rect> at horizon + one accent path. Minimal, clean.
+        dur = random.randint(24, 36)
+        y = random.randint(340, 380)  # horizon level, not very bottom
+        op_max = random.uniform(0.25, 0.40)
+        return f'''
+  <!-- Sea Horizon Line -->
+  <rect x="0" y="{y}" width="512" height="3" fill="{colors['glow']}" opacity="{op_max:.2f}">
+    <animate attributeName="opacity"
+      values="{op_max*0.5:.2f};{op_max:.2f};{op_max*0.5:.2f}" dur="{dur}s" repeatCount="indefinite" />
+    <animate attributeName="height"
+      values="2;5;2" dur="{dur}s" repeatCount="indefinite" />
+  </rect>
+  <rect x="40" y="{y+8}" width="432" height="2" fill="{accent}" opacity="{op_max*0.6:.2f}">
+    <animate attributeName="opacity"
+      values="{op_max*0.3:.2f};{op_max*0.6:.2f};{op_max*0.3:.2f}" dur="{dur+5}s" repeatCount="indefinite" />
+  </rect>'''
+
+    elif variant == "mist_steam":
+        # VERTICAL NARROW COLUMNS rising — tall thin rects, NOT blobs
+        # Positioned at scattered points, rising upward. Very different from horizontal mist.
+        parts = ['\n  <!-- Rising Steam Columns -->']
+        num_cols = random.randint(4, 7)
+        for i in range(num_cols):
+            x = random.randint(60, 450)
+            y_start = random.randint(300, 430)
+            w = random.randint(4, 10)
+            h = random.randint(60, 140)
+            dur = random.randint(12, 22)
+            delay = random.uniform(0, 8)
+            rise = random.randint(40, 90)
+            col = accent if i % 3 == 0 else colors["glow"]
+            op_max = random.uniform(0.15, 0.35)
+            # Slight horizontal wobble as steam rises
+            wobble = random.randint(5, 15) * random.choice([-1, 1])
+            parts.append(f'''  <rect x="{x}" y="{y_start}" width="{w}" height="{h}" rx="{w//2}"
+    fill="{col}" opacity="0">
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; {wobble},{-rise}; {-wobble},{-rise//2}; 0,0"
+      dur="{dur}s" begin="{delay:.1f}s" repeatCount="indefinite" />
+    <animate attributeName="opacity"
+      values="0;{op_max:.2f};{op_max*0.6:.2f};0" dur="{dur}s"
+      begin="{delay:.1f}s" repeatCount="indefinite" />
+  </rect>''')
         return "\n".join(parts)
 
     else:
-        # Default (mist_ground): Slow rise from bottom with horizontal sway
-        dur1 = random.randint(22, 32)
-        dur2 = random.randint(28, 38)
-        dur3 = random.randint(18, 28)
-        return f'''
-  <!-- Rising Ground Mist (3 layers) -->
-  <ellipse cx="180" cy="480" rx="280" ry="60" fill="{colors['glow']}" opacity="0.22" filter="url(#softBlur)">
+        # Default (mist_ground): SCATTERED SOFT DOTS across lower third — NOT big ellipses
+        # Many small circles at varying heights, not 2-3 big blobs
+        parts = ['\n  <!-- Ground Mist (scattered dots) -->']
+        count = random.randint(12, 20)
+        for i in range(count):
+            cx = random.randint(20, 492)
+            cy = random.randint(320, 500)
+            r = random.uniform(3.0, 12.0)
+            dur = random.randint(16, 30)
+            delay = random.uniform(0, dur * 0.5)
+            col = accent if i % 3 == 0 else colors["glow"] if i % 3 == 1 else colors["particle"]
+            op_max = random.uniform(0.10, 0.30)
+            dx = random.randint(-15, 15)
+            dy = random.randint(-10, 5)
+            parts.append(f'''  <circle cx="{cx}" cy="{cy}" r="{r:.1f}" fill="{col}" opacity="0" filter="url(#softBlur)">
     <animateTransform attributeName="transform" type="translate"
-      values="0,0; 20,-12; 0,0; -15,-8; 0,0"
-      dur="{dur1}s" repeatCount="indefinite" />
+      values="0,0; {dx},{dy}; 0,0"
+      dur="{dur}s" begin="{delay:.1f}s" repeatCount="indefinite" />
     <animate attributeName="opacity"
-      values="0.15;0.32;0.15" dur="{dur1}s" repeatCount="indefinite" />
-  </ellipse>
-  <ellipse cx="350" cy="495" rx="230" ry="45" fill="{accent}" opacity="0.18" filter="url(#softBlur)">
-    <animateTransform attributeName="transform" type="translate"
-      values="0,0; -18,-10; 0,0; 12,-6; 0,0"
-      dur="{dur2}s" repeatCount="indefinite" />
-    <animate attributeName="opacity"
-      values="0.12;0.28;0.12" dur="{dur2}s" repeatCount="indefinite" />
-  </ellipse>
-  <ellipse cx="256" cy="510" rx="350" ry="70" fill="{colors['particle']}" opacity="0.15" filter="url(#softBlur)">
-    <animateTransform attributeName="transform" type="translate"
-      values="0,0; 10,-5; 0,0; -8,-3; 0,0"
-      dur="{dur3}s" repeatCount="indefinite" />
-    <animate attributeName="opacity"
-      values="0.10;0.25;0.10" dur="{dur3}s" repeatCount="indefinite" />
-  </ellipse>'''
+      values="0;{op_max:.2f};{op_max*0.5:.2f};0" dur="{dur}s"
+      begin="{delay:.1f}s" repeatCount="indefinite" />
+  </circle>''')
+        return "\n".join(parts)
 
 
 def _gen_ground_glow(colors: dict) -> str:
@@ -1128,45 +1350,56 @@ def _gen_glow_secondary(variant: str, colors: dict) -> str:
         return "\n".join(parts)
 
     elif variant == "glow_bioluminescence":
-        # 3 elongated horizontal glows at bottom, wave-like timing
-        parts = ['\n  <!-- Bioluminescent Glow -->']
-        count = 3
+        # Glowing VERTICAL STREAKS scattered across canvas — like bioluminescent trails
+        # NOT ellipses at bottom. Tall thin shapes at varied heights.
+        parts = ['\n  <!-- Bioluminescent Streaks -->']
+        count = random.randint(5, 8)
         for i in range(count):
-            cx = random.randint(80, 440)
-            cy = random.randint(320, 460)
-            rx = random.randint(90, 160)
-            ry = random.randint(25, 40)
-            dur = random.randint(10, 18)
-            delay = i * random.uniform(2, 4)
+            x = random.randint(40, 470)
+            y = random.randint(60, 350)  # spread across upper 2/3, NOT bottom
+            h = random.randint(40, 120)
+            w = random.randint(3, 8)
+            dur = random.randint(8, 16)
+            delay = i * random.uniform(1.5, 3)
             bio_color = accent if i % 2 == 0 else colors["glow"]
-            parts.append(f'''  <ellipse cx="{cx}" cy="{cy}" rx="{rx}" ry="{ry}" fill="{bio_color}" opacity="0" filter="url(#softBlur)">
+            op_max = random.uniform(0.20, 0.45)
+            parts.append(f'''  <rect x="{x}" y="{y}" width="{w}" height="{h}" rx="{w//2}"
+    fill="{bio_color}" opacity="0">
     <animate attributeName="opacity"
-      values="0;0.12;0.40;0.25;0.12;0" dur="{dur}s"
+      values="0;{op_max*0.3:.2f};{op_max:.2f};{op_max*0.5:.2f};0" dur="{dur}s"
       begin="{delay:.1f}s" repeatCount="indefinite" />
-    <animateTransform attributeName="transform" type="translate"
-      values="0,0; {random.randint(8,20)},0; 0,0; {random.randint(-15,-5)},0; 0,0"
-      dur="{dur+4}s" begin="{delay:.1f}s" repeatCount="indefinite" />
-  </ellipse>''')
+    <animate attributeName="height"
+      values="{h};{h+20};{h-10};{h}" dur="{dur+2}s"
+      begin="{delay:.1f}s" repeatCount="indefinite" />
+  </rect>''')
         return "\n".join(parts)
 
     elif variant == "glow_campfire":
-        # Single warm glow at bottom-center, faster flicker (4-6s)
+        # TRIANGULAR warm glow — a pointed upward shape, not a blob
+        # Uses <polygon> for a flame-like triangle at lower-center
         cx = random.randint(220, 300)
-        cy = random.randint(410, 450)
-        r = random.randint(55, 80)
+        cy_base = random.randint(420, 460)
+        flame_h = random.randint(60, 100)
+        flame_w = random.randint(30, 50)
         dur = random.randint(4, 6)
+        # Triangle points: left-base, right-base, tip
+        p1 = f"{cx-flame_w},{cy_base}"
+        p2 = f"{cx+flame_w},{cy_base}"
+        p3 = f"{cx},{cy_base-flame_h}"
+        p3b = f"{cx+random.randint(-8,8)},{cy_base-flame_h-random.randint(5,15)}"
         return f'''
-  <!-- Campfire Glow -->
-  <circle cx="{cx}" cy="{cy}" r="{r}" fill="{accent}" filter="url(#softBlur)" opacity="0.25">
+  <!-- Campfire Flame Glow -->
+  <polygon points="{p1} {p2} {p3}" fill="{accent}" opacity="0.25" filter="url(#softBlur)">
     <animate attributeName="opacity"
-      values="0.20;0.50;0.35;0.55;0.25;0.20" dur="{dur}s" repeatCount="indefinite" />
-    <animate attributeName="r"
-      values="{r};{r+8};{r-3};{r+10};{r}" dur="{dur}s" repeatCount="indefinite" />
-  </circle>
-  <circle cx="{cx}" cy="{cy+5}" r="{r//2}" fill="{colors['glow']}" opacity="0.15">
+      values="0.18;0.45;0.30;0.50;0.18" dur="{dur}s" repeatCount="indefinite" />
+    <animate attributeName="points"
+      values="{p1} {p2} {p3}; {p1} {p2} {p3b}; {p1} {p2} {p3}" dur="{dur}s" repeatCount="indefinite" />
+  </polygon>
+  <polygon points="{cx-flame_w//2},{cy_base} {cx+flame_w//2},{cy_base} {cx},{cy_base-flame_h*2//3}"
+    fill="{colors['glow']}" opacity="0.15">
     <animate attributeName="opacity"
-      values="0.12;0.30;0.18;0.32;0.12" dur="{dur-1}s" repeatCount="indefinite" />
-  </circle>'''
+      values="0.10;0.30;0.15;0.28;0.10" dur="{dur-1}s" repeatCount="indefinite" />
+  </polygon>'''
 
     elif variant == "glow_candle":
         # Single small warm glow, slight position wobble
@@ -1229,23 +1462,25 @@ def _gen_glow_secondary(variant: str, colors: dict) -> str:
         return "\n".join(parts)
 
     elif variant == "glow_sunset":
-        # Wide horizontal glow at horizon level, slow breathing
-        cy = random.randint(370, 420)
-        rx = random.randint(220, 320)
-        ry = random.randint(45, 70)
-        dur = random.randint(12, 18)
-        return f'''
-  <!-- Sunset Horizon Glow -->
-  <ellipse cx="256" cy="{cy}" rx="{rx}" ry="{ry}" fill="{accent}" opacity="0.18" filter="url(#softBlur)">
+        # GRADIENT BANDS at top — warm horizontal stripes like sunset sky
+        # Uses thin <rect> bands at TOP of canvas, not bottom blobs
+        parts = ['\n  <!-- Sunset Sky Bands -->']
+        band_count = random.randint(3, 5)
+        for i in range(band_count):
+            y = 30 + i * random.randint(35, 55)  # TOP of canvas
+            h = random.randint(12, 30)
+            dur = random.randint(10, 18)
+            delay = i * random.uniform(1, 3)
+            col = accent if i % 2 == 0 else colors["glow"]
+            op_max = random.uniform(0.15, 0.35)
+            # Bands breathe in width and opacity
+            parts.append(f'''  <rect x="{random.randint(20, 80)}" y="{y}" width="{random.randint(350, 470)}" height="{h}"
+    rx="{h//2}" fill="{col}" opacity="0">
     <animate attributeName="opacity"
-      values="0.12;0.35;0.18;0.30;0.12" dur="{dur}s" repeatCount="indefinite" />
-    <animate attributeName="ry"
-      values="{ry};{ry+12};{ry-5};{ry+10};{ry}" dur="{dur}s" repeatCount="indefinite" />
-  </ellipse>
-  <ellipse cx="256" cy="{cy+10}" rx="{rx-40}" ry="{ry//2}" fill="{colors['glow']}" opacity="0.12" filter="url(#softBlur)">
-    <animate attributeName="opacity"
-      values="0.08;0.22;0.08" dur="{dur+3}s" repeatCount="indefinite" />
-  </ellipse>'''
+      values="0;{op_max:.2f};{op_max*0.5:.2f};{op_max:.2f};0" dur="{dur}s"
+      begin="{delay:.1f}s" repeatCount="indefinite" />
+  </rect>''')
+        return "\n".join(parts)
 
     elif variant == "glow_lantern":
         # 2 warm glows in upper area, gentle flicker
