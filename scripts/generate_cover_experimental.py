@@ -398,20 +398,21 @@ def generate_svg_overlay(axes: dict, story: dict) -> str:
     }
     colors = palette_colors.get(palette, palette_colors["golden_hour"])
 
-    # World-specific accent colors — override generic palette for distinctiveness
+    # World-specific colors — MUST be visually distinct from each other at thumbnail size
+    # Rule: no two worlds share the same hue family for their primary visible color
     world_accents = {
-        "deep_ocean":       {"particle": "#7EC8E3", "glow": "#00BFFF", "accent": "#40E0D0"},  # cyan/turquoise
-        "cloud_kingdom":    {"particle": "#E8E0FF", "glow": "#C4B0FF", "accent": "#FFE4F0"},  # soft lavender
-        "enchanted_forest": {"particle": "#90EE90", "glow": "#50C878", "accent": "#ADFF2F"},  # bright green
-        "snow_landscape":   {"particle": "#FFFFFF", "glow": "#B0E0FF", "accent": "#E0F0FF"},  # white/ice blue
-        "desert_night":     {"particle": "#FFD700", "glow": "#FF8C00", "accent": "#FFA07A"},  # gold/orange
-        "cozy_interior":    {"particle": "#FFE4B5", "glow": "#FFA500", "accent": "#FFD700"},  # warm amber
-        "mountain_meadow":  {"particle": "#98FB98", "glow": "#87CEEB", "accent": "#DDA0DD"},  # green/sky/plum
-        "space_cosmos":     {"particle": "#E0E0FF", "glow": "#9370DB", "accent": "#FF69B4"},  # purple/pink
-        "tropical_lagoon":  {"particle": "#FFD700", "glow": "#FF6347", "accent": "#FF8C69"},  # sunset red/gold
-        "underground_cave": {"particle": "#00CED1", "glow": "#7B68EE", "accent": "#48D1CC"},  # crystal teal/purple
-        "ancient_library":  {"particle": "#FFD700", "glow": "#DAA520", "accent": "#FFA500"},  # golden warm
-        "floating_islands": {"particle": "#98FB98", "glow": "#87CEEB", "accent": "#FFB6C1"},  # pastel greens/pinks
+        "deep_ocean":       {"particle": "#00E5FF", "glow": "#0097A7", "accent": "#00BCD4"},  # CYAN — unmistakable ocean blue-green
+        "cloud_kingdom":    {"particle": "#E0E0E0", "glow": "#B0BEC5", "accent": "#ECEFF1"},  # SILVER/WHITE — cloud-like
+        "enchanted_forest": {"particle": "#76FF03", "glow": "#00C853", "accent": "#64DD17"},  # VIVID GREEN — forest canopy
+        "snow_landscape":   {"particle": "#E1F5FE", "glow": "#81D4FA", "accent": "#B3E5FC"},  # ICE BLUE — cold and pale
+        "desert_night":     {"particle": "#FFAB00", "glow": "#FF6D00", "accent": "#FF9100"},  # ORANGE — desert warmth
+        "cozy_interior":    {"particle": "#FFD54F", "glow": "#FFB300", "accent": "#FFC107"},  # AMBER/YELLOW — candlelight
+        "mountain_meadow":  {"particle": "#B2FF59", "glow": "#69F0AE", "accent": "#A5D6A7"},  # SOFT GREEN — meadow fresh
+        "space_cosmos":     {"particle": "#B388FF", "glow": "#7C4DFF", "accent": "#EA80FC"},  # PURPLE/VIOLET — cosmic
+        "tropical_lagoon":  {"particle": "#FF6E40", "glow": "#FF3D00", "accent": "#FF8A65"},  # RED-ORANGE — sunset fire
+        "underground_cave": {"particle": "#18FFFF", "glow": "#00E5FF", "accent": "#84FFFF"},  # BRIGHT TEAL — crystal glow
+        "ancient_library":  {"particle": "#FFE082", "glow": "#FFA000", "accent": "#FFD740"},  # GOLD — aged warmth
+        "floating_islands": {"particle": "#FF80AB", "glow": "#F50057", "accent": "#FF4081"},  # MAGENTA/PINK — magical
     }
     accents = world_accents.get(world, {})
     if accents:
@@ -422,29 +423,6 @@ def generate_svg_overlay(axes: dict, story: dict) -> str:
     svg_parts = []
     svg_parts.append(f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <defs>
-    <radialGradient id="glowGrad">
-      <stop offset="0%" stop-color="{colors['glow']}" stop-opacity="0.45"/>
-      <stop offset="100%" stop-color="{colors['glow']}" stop-opacity="0"/>
-    </radialGradient>
-    <radialGradient id="glowGrad2">
-      <stop offset="0%" stop-color="{accent}" stop-opacity="0.35"/>
-      <stop offset="100%" stop-color="{accent}" stop-opacity="0"/>
-    </radialGradient>
-    <linearGradient id="horizGlow" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="{colors['glow']}" stop-opacity="0"/>
-      <stop offset="60%" stop-color="{colors['glow']}" stop-opacity="0.3"/>
-      <stop offset="100%" stop-color="{accent}" stop-opacity="0"/>
-    </linearGradient>
-    <linearGradient id="sideGlow" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="{accent}" stop-opacity="0.25"/>
-      <stop offset="50%" stop-color="{colors['glow']}" stop-opacity="0"/>
-      <stop offset="100%" stop-color="{accent}" stop-opacity="0.25"/>
-    </linearGradient>
-    <linearGradient id="diagonalGlow" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="{accent}" stop-opacity="0.2"/>
-      <stop offset="50%" stop-color="transparent" stop-opacity="0"/>
-      <stop offset="100%" stop-color="{colors['glow']}" stop-opacity="0.15"/>
-    </linearGradient>
     <radialGradient id="vignetteGrad">
       <stop offset="40%" stop-color="transparent"/>
       <stop offset="100%" stop-color="{colors['vignette']}" stop-opacity="0.75"/>
@@ -453,17 +431,16 @@ def generate_svg_overlay(axes: dict, story: dict) -> str:
       <feGaussianBlur stdDeviation="2"/>
     </filter>
     <filter id="heavyBlur">
-      <feGaussianBlur stdDeviation="6"/>
+      <feGaussianBlur stdDeviation="8"/>
     </filter>
   </defs>''')
 
     # --- ALWAYS include these sleep-essential layers ---
 
-    # 1. Vignette breathing (darkens edges, primary sleep cue)
+    # 1. Vignette breathing (darkens edges + IS the breathing pacer, 7-9s cycle)
+    #    The vignette IS the pacer — its edge breathing guides the sleep rhythm.
+    #    No separate visible glow dot needed. World-specific animations provide the visual interest.
     svg_parts.append(_gen_vignette())
-
-    # 2. Glow breathing pacer (guides breathing rhythm, 6-8 cycles/min)
-    svg_parts.append(_gen_glow("glow_breathing", colors, world=world))
 
     # 3. World-specific animations (all of them, passing variant names through)
     for anim in anim_types:
@@ -482,13 +459,11 @@ def generate_svg_overlay(axes: dict, story: dict) -> str:
     if time_setting == "deep_night" and not any(a.startswith("twinkle") for a in anim_types):
         svg_parts.append(_gen_twinkle(colors))
 
-    # 5. Add subtle ground glow for covers without mist/drift (lighter than full mist)
-    has_ground_layer = any(a.startswith("mist") or a.startswith("drift") for a in anim_types)
-    if not has_ground_layer:
-        svg_parts.append(_gen_ground_glow(colors))
+    # 5. No forced ground layer — each world's specific animations are enough.
+    #    Forcing extra layers makes covers look the same.
 
-    # 6. Ambient light wash (varies by world)
-    svg_parts.append(_gen_moonlight_wash(colors, world=world))
+    # 6. Ambient light wash — REMOVED to reduce sameness.
+    #    World-specific glows/mist/particles provide enough atmosphere.
 
     svg_parts.append('\n</svg>')
     return "\n".join(svg_parts)
