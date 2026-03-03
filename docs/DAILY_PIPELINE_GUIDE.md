@@ -17,7 +17,7 @@ GCP VM (dreamvalley-prod) runs pipeline_run.py daily via cron (7 days/week):
   5. COVERS    → Mistral Large (free tier)          → animated SVG cover per story
   6. SYNC      → content.json → seedData.js + copy audio/covers to web public/
   7. PUBLISH   → git push both repos → Render/Vercel auto-deploy
-  8. DEPLOY    → Backend hot-reload (admin API) + Frontend build + PM2 restart
+  8. DEPLOY    → Backend hot-reload (admin API) + nginx serves new static files (zero-downtime)
   POSTFLIGHT → Cost estimate + disk usage summary
   NOTIFY     → Email via Resend (ALWAYS — success, partial, or failure)
 ```
@@ -306,7 +306,7 @@ python3 scripts/generate_cover_svg.py --new-only
 
 | Step | Status | Notes |
 |------|--------|-------|
-| Production deploy | **Automated** | Pipeline auto-deploys: backend hot-reloads content via admin API, frontend is rebuilt and PM2 restarted. Falls back to docker restart if reload fails. |
+| Production deploy | **Zero-downtime** | Pipeline auto-deploys: backend hot-reloads via admin API, nginx serves new covers/audio from `public/`. NO frontend rebuild or PM2 restart for daily content. |
 | Content review | **Recommended** | While QA catches audio issues, human review of story text quality is recommended as a spot-check. |
 | Cover quality review | **Recommended** | AI-generated covers may occasionally need manual refinement. Check the production app after deploy. |
 | Partial generation | **Auto-detected** | If Mistral fails mid-generation, pipeline reports PARTIAL (yellow) in email with expected vs actual count. Items that were generated still proceed through the full pipeline. |
@@ -479,17 +479,23 @@ Pipeline generates content (runs daily at 2 AM IST, 1 story + 1 poem + 1 lullaby
        │     └── git push frontend → Vercel auto-deploys web app
        │           (includes: seedData.js, public/audio/pre-gen/*.mp3, public/covers/*.svg)
        │
-       ├── DEPLOY PROD (GCP):
-       │     ├── Backend: POST /api/v1/admin/reload (zero-downtime hot-reload)
+       ├── DEPLOY PROD (GCP, zero-downtime):
+       │     ├── Backend: POST /api/v1/admin/reload (hot-reload content from content.json)
        │     │     Falls back to docker restart if HTTP call fails
-       │     └── Frontend: npm build → copy static → pm2 restart
+       │     └── Frontend: nginx serves /covers/ and /audio/ directly from public/
+       │           (NO npm build, NO pm2 restart — files are already in public/)
        │
        ├── POSTFLIGHT: Cost estimate + disk usage
        │
        └── NOTIFY: Email sent (SUCCESS / PARTIAL / FAIL, with cost estimate)
 ```
 
-**Pipeline deploys to both test (Render/Vercel) AND production (GCP)**. Backend content hot-reloads with zero downtime. Frontend is rebuilt and restarted via PM2.
+**Pipeline deploys to both test (Render/Vercel) AND production (GCP)**. Production deploy is fully zero-downtime:
+- **Backend**: hot-reloads content via admin API (serves new data immediately)
+- **Frontend**: nginx serves `/covers/` and `/audio/` directly from `public/` via alias directives — new files are available instantly without any build or restart
+- **seedData.js**: synced and pushed for Vercel test deployment, but production frontend fetches content from API at runtime
+
+**IMPORTANT**: Never do `npm build` + `pm2 restart` for daily content updates. This causes downtime and is unnecessary. Only rebuild frontend for code changes (new components, CSS, etc.).
 
 ### Post-Pipeline Checklist (Spot-Check on Production)
 
@@ -504,18 +510,26 @@ The pipeline auto-deploys to production. These are spot-checks to verify everyth
 7. **Categories correct**: Story appears in appropriate browse categories
 8. **Check email status**: If PARTIAL (yellow), some items failed — review which types are missing
 
-### Manual Production Deploy (if pipeline's deploy_prod step failed)
+### Manual Content Deploy (if pipeline's deploy_prod step failed)
 
 ```bash
 gcloud compute ssh dreamvalley-prod --project=strong-harbor-472607-n4 --zone=asia-south1-a
 
-# Backend: pull latest content (hot-reloads automatically within 60s)
+# Backend: pull latest content + hot-reload (zero-downtime)
 cd /opt/dreamweaver-backend && git pull
-# Force immediate reload:
 curl -s -X POST http://localhost:8000/api/v1/admin/reload \
   -H "X-Admin-Key: $(grep ADMIN_API_KEY .env | cut -d= -f2)"
 
-# Frontend: pull, build, restart
+# Frontend: pull new covers/audio (nginx serves them directly — NO rebuild needed)
+cd /opt/dreamweaver-web && git pull
+# That's it! nginx serves /covers/ and /audio/ from public/ via alias directives.
+```
+
+### Full Frontend Rebuild (only for CODE changes, not content)
+
+Only needed when JS/CSS/component code changes — never for daily content updates.
+
+```bash
 cd /opt/dreamweaver-web && git pull && npm run build
 cp -r public .next/standalone/public && cp -r .next/static .next/standalone/.next/static
 pm2 restart all
