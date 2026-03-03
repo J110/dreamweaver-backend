@@ -9,7 +9,7 @@ Pipeline flow:
   2. AUDIO GEN   → Modal Chatterbox TTS + ACE-Step ($30 free credits) → 14+3 MP3 files per 3 items
   3. AUDIO QA    → Voxtral transcription + fidelity (free tier) → PASS/FAIL
   4. ENRICH      → Mistral Large (free tier) → musicParams for new items
-  5. COVERS      → FLUX.1 Schnell (HuggingFace free tier) → 2-layer covers (WebP + SVG overlay)
+  5. COVERS      → FLUX.1 Schnell (HuggingFace free tier, 3 retries) → 2-layer covers (Mistral SVG fallback)
   6. SYNC        → sync content.json → seedData.js + copy audio/covers to web
   7. PUBLISH     → git push → Render/Vercel auto-deploy (test only)
   8. DEPLOY PROD → rebuild frontend + restart backend on local GCP VM
@@ -404,19 +404,33 @@ def step_covers(args, state: dict) -> bool:
         return True
 
     covers_flux = []      # Successfully generated with FLUX AI
+    covers_fallback = []   # Fell back to Mistral SVG
     covers_failed = []     # No cover at all
+
+    FLUX_MAX_RETRIES = 3   # Retry FLUX up to 3 times before falling back
+    FLUX_RETRY_DELAY = 10  # Seconds between retries
 
     # Check for HF_API_TOKEN — required for FLUX AI
     hf_token = os.environ.get("HF_API_TOKEN", "")
     if not hf_token and not args.dry_run:
-        logger.error("  ❌ HF_API_TOKEN not set — cannot generate FLUX covers!")
-        logger.error("  Set HF_API_TOKEN in .env or environment before running pipeline.")
-        logger.error("  No covers will be generated. Stories will use default.svg.")
+        logger.warning("  ⚠️ HF_API_TOKEN not set — falling back to Mistral SVG covers")
+        logger.warning("  Set HF_API_TOKEN in .env to use FLUX AI covers instead.")
+        # Fallback to old Mistral-generated SVG covers
         for sid in qa_passed:
-            covers_failed.append(sid)
+            cmd = [
+                sys.executable, str(SCRIPTS_DIR / "generate_cover_svg.py"),
+                "--id", sid,
+            ]
+            ok, stdout, stderr, elapsed = run_command(
+                cmd, f"Cover (Mistral fallback): {sid[:8]}...", timeout=600
+            )
+            if ok and "OK:" in stdout:
+                covers_fallback.append(sid)
+            else:
+                covers_failed.append(sid)
         state["covers_flux"] = covers_flux
-        state["covers_fallback"] = []
-        state["covers_generated"] = []
+        state["covers_fallback"] = covers_fallback
+        state["covers_generated"] = covers_flux + covers_fallback  # backwards compat
         state["covers_failed"] = covers_failed
         state["step_covers"] = "done"
         save_state(state)
@@ -465,17 +479,49 @@ def step_covers(args, state: dict) -> bool:
         if ok and "OK:" in stdout:
             covers_flux.append(sid)
         else:
-            logger.warning("  ⚠️ FLUX cover failed for %s — story will use default.svg", sid)
-            covers_failed.append(sid)
+            # Retry FLUX up to FLUX_MAX_RETRIES times before falling back
+            flux_succeeded = False
+            for attempt in range(2, FLUX_MAX_RETRIES + 1):
+                logger.info("  FLUX retry %d/%d for %s (waiting %ds)...",
+                            attempt, FLUX_MAX_RETRIES, sid[:8], FLUX_RETRY_DELAY)
+                import time as _time
+                _time.sleep(FLUX_RETRY_DELAY)
+                ok2, stdout2, stderr2, elapsed2 = run_command(
+                    cmd, f"Cover (FLUX retry {attempt}): {sid[:8]}...", timeout=300
+                )
+                if ok2 and "OK:" in stdout2:
+                    covers_flux.append(sid)
+                    flux_succeeded = True
+                    logger.info("  ✅ FLUX succeeded on retry %d for %s", attempt, sid[:8])
+                    break
+
+            if not flux_succeeded:
+                logger.warning("  ⚠️ FLUX failed after %d attempts for %s, trying Mistral fallback...",
+                               FLUX_MAX_RETRIES, sid[:8])
+                # Fallback to Mistral SVG cover
+                fallback_cmd = [
+                    sys.executable, str(SCRIPTS_DIR / "generate_cover_svg.py"),
+                    "--id", sid,
+                ]
+                if not args.dry_run:
+                    fb_ok, fb_stdout, _, _ = run_command(
+                        fallback_cmd, f"Cover (Mistral fallback): {sid[:8]}...", timeout=600
+                    )
+                    if fb_ok and "OK:" in fb_stdout:
+                        covers_fallback.append(sid)
+                    else:
+                        covers_failed.append(sid)
+                else:
+                    covers_failed.append(sid)
 
     state["covers_flux"] = covers_flux
-    state["covers_fallback"] = []  # No Mistral fallback — FLUX only
-    state["covers_generated"] = covers_flux  # backwards compat
+    state["covers_fallback"] = covers_fallback
+    state["covers_generated"] = covers_flux + covers_fallback  # backwards compat
     state["covers_failed"] = covers_failed
     state["step_covers"] = "done"
     save_state(state)
-    logger.info("  Covers: %d FLUX, %d failed",
-                len(covers_flux), len(covers_failed))
+    logger.info("  Covers: %d FLUX, %d Mistral fallback, %d failed",
+                len(covers_flux), len(covers_fallback), len(covers_failed))
     return True
 
 
@@ -907,8 +953,10 @@ def print_summary(state: dict, total_elapsed: float):
     logger.info("  Audio gen:  %s", state.get("step_audio", "not run"))
     logger.info("  QA passed:  %d", len(state.get("qa_passed", [])))
     logger.info("  QA failed:  %d", len(state.get("qa_failed", [])))
-    logger.info("  Covers:     %d FLUX generated, %d failed",
+    logger.info("  Covers:     %d generated (%d FLUX, %d Mistral fallback), %d failed",
+                len(state.get("covers_generated", [])),
                 len(state.get("covers_flux", [])),
+                len(state.get("covers_fallback", [])),
                 len(state.get("covers_failed", [])))
     logger.info("  Enriched:   %s", state.get("step_enrich", "not run"))
     logger.info("  Synced:     %s", state.get("step_sync", "not run"))
