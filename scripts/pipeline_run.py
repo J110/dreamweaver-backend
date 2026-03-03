@@ -403,8 +403,9 @@ def step_covers(args, state: dict) -> bool:
         save_state(state)
         return True
 
-    covers_generated = []
-    covers_failed = []
+    covers_flux = []      # Successfully generated with FLUX AI
+    covers_fallback = []   # Fell back to Mistral SVG
+    covers_failed = []     # No cover at all
 
     # Check for HF_API_TOKEN — required for FLUX AI
     hf_token = os.environ.get("HF_API_TOKEN", "")
@@ -417,13 +418,15 @@ def step_covers(args, state: dict) -> bool:
                 "--id", sid,
             ]
             ok, stdout, stderr, elapsed = run_command(
-                cmd, f"Cover (fallback): {sid[:8]}...", timeout=600
+                cmd, f"Cover (Mistral fallback): {sid[:8]}...", timeout=600
             )
             if ok and "OK:" in stdout:
-                covers_generated.append(sid)
+                covers_fallback.append(sid)
             else:
                 covers_failed.append(sid)
-        state["covers_generated"] = covers_generated
+        state["covers_flux"] = covers_flux
+        state["covers_fallback"] = covers_fallback
+        state["covers_generated"] = covers_flux + covers_fallback  # backwards compat
         state["covers_failed"] = covers_failed
         state["step_covers"] = "done"
         save_state(state)
@@ -470,10 +473,9 @@ def step_covers(args, state: dict) -> bool:
             temp_path.unlink()
 
         if ok and "OK:" in stdout:
-            covers_generated.append(sid)
+            covers_flux.append(sid)
         else:
-            covers_failed.append(sid)
-            logger.warning("  Experimental cover failed for %s, trying fallback...", sid)
+            logger.warning("  FLUX cover failed for %s, trying Mistral fallback...", sid)
             # Fallback to Mistral SVG cover
             fallback_cmd = [
                 sys.executable, str(SCRIPTS_DIR / "generate_cover_svg.py"),
@@ -481,17 +483,23 @@ def step_covers(args, state: dict) -> bool:
             ]
             if not args.dry_run:
                 fb_ok, fb_stdout, _, _ = run_command(
-                    fallback_cmd, f"Cover (fallback): {sid[:8]}...", timeout=600
+                    fallback_cmd, f"Cover (Mistral fallback): {sid[:8]}...", timeout=600
                 )
                 if fb_ok and "OK:" in fb_stdout:
-                    covers_failed.remove(sid)
-                    covers_generated.append(sid)
+                    covers_fallback.append(sid)
+                else:
+                    covers_failed.append(sid)
+            else:
+                covers_failed.append(sid)
 
-    state["covers_generated"] = covers_generated
+    state["covers_flux"] = covers_flux
+    state["covers_fallback"] = covers_fallback
+    state["covers_generated"] = covers_flux + covers_fallback  # backwards compat
     state["covers_failed"] = covers_failed
     state["step_covers"] = "done"
     save_state(state)
-    logger.info("  Covers: %d generated, %d fallback", len(covers_generated), len(covers_failed))
+    logger.info("  Covers: %d FLUX, %d Mistral fallback, %d failed",
+                len(covers_flux), len(covers_fallback), len(covers_failed))
     return True
 
 
@@ -622,9 +630,17 @@ def step_publish(args, state: dict) -> bool:
 
 
 def step_deploy_prod(args, state: dict) -> bool:
-    """Step 8: Deploy to local production (frontend rebuild + backend restart)."""
+    """Step 8: Deploy to local production (zero-downtime static copy + backend hot-reload).
+
+    For daily content updates, NO frontend rebuild or PM2 restart is needed:
+    - Backend hot-reloads content via admin API (serves new data immediately)
+    - Frontend fetches content from API at runtime (not build time)
+    - New static files (covers, audio) just need to be copied to standalone dir
+
+    seedData.js sync + git push (steps 6-7) still handle Vercel test deployment.
+    """
     logger.info("\n╔══════════════════════════════════════╗")
-    logger.info("║  STEP 8: DEPLOY PROD (local)         ║")
+    logger.info("║  STEP 8: DEPLOY PROD (zero-downtime) ║")
     logger.info("╚══════════════════════════════════════╝")
 
     if getattr(args, "skip_deploy_prod", False) or args.dry_run:
@@ -643,26 +659,43 @@ def step_deploy_prod(args, state: dict) -> bool:
     frontend_ok = False
     backend_ok = False
 
-    # ── Frontend: build + copy static + restart PM2 ──
+    # ── Frontend: copy new static assets to standalone (no build, no restart) ──
     if WEB_DIR.exists():
-        logger.info("  Building frontend...")
-        web_cwd = str(WEB_DIR)
-        frontend_cmds = [
-            (["npm", "run", "build"], "Frontend: npm build", 300),
-            (["bash", "-c",
-              "cp -r public .next/standalone/public && "
-              "cp -r .next/static .next/standalone/.next/static"],
-             "Frontend: copy static assets", 30),
-            (["pm2", "restart", "all"], "Frontend: pm2 restart", 30),
-        ]
-        for cmd, label, timeout in frontend_cmds:
-            ok, _, stderr, _ = run_command(cmd, label, timeout=timeout, cwd=web_cwd)
-            if not ok:
-                logger.error("  %s failed: %s", label, stderr)
-                break
+        standalone_public = WEB_DIR / ".next" / "standalone" / "public"
+        if standalone_public.exists():
+            logger.info("  Copying new static assets to standalone (zero-downtime)...")
+            web_cwd = str(WEB_DIR)
+            ok, _, stderr, _ = run_command(
+                ["bash", "-c",
+                 "cp -r public/covers .next/standalone/public/covers && "
+                 "cp -r public/audio .next/standalone/public/audio"],
+                "Frontend: copy covers + audio to standalone", timeout=30, cwd=web_cwd
+            )
+            if ok:
+                frontend_ok = True
+                logger.info("  Frontend static assets updated (zero-downtime, no rebuild)")
+            else:
+                logger.error("  Static copy failed: %s", stderr)
         else:
-            frontend_ok = True
-            logger.info("  Frontend deployed successfully")
+            # Standalone dir doesn't exist yet — need a full build (first-time only)
+            logger.warning("  Standalone dir missing — performing full frontend build...")
+            web_cwd = str(WEB_DIR)
+            frontend_cmds = [
+                (["npm", "run", "build"], "Frontend: npm build", 300),
+                (["bash", "-c",
+                  "cp -r public .next/standalone/public && "
+                  "cp -r .next/static .next/standalone/.next/static"],
+                 "Frontend: copy static assets", 30),
+                (["pm2", "restart", "all"], "Frontend: pm2 restart", 30),
+            ]
+            for cmd, label, timeout in frontend_cmds:
+                ok, _, stderr, _ = run_command(cmd, label, timeout=timeout, cwd=web_cwd)
+                if not ok:
+                    logger.error("  %s failed: %s", label, stderr)
+                    break
+            else:
+                frontend_ok = True
+                logger.info("  Frontend deployed successfully (full build)")
 
     # ── Backend: hot-reload content via admin API (no restart needed) ──
     admin_key = os.environ.get("ADMIN_API_KEY", "")
@@ -871,8 +904,12 @@ def postflight_checks(state: dict):
             # Map cover IDs to titles for detailed cover status in email
             covers_ok_ids = state.get("covers_generated", [])
             covers_fail_ids = state.get("covers_failed", [])
+            covers_flux_ids = state.get("covers_flux", [])
+            covers_fallback_ids = state.get("covers_fallback", [])
             state["covers_generated_titles"] = [id_map.get(sid, sid[:12]) for sid in covers_ok_ids]
             state["covers_failed_titles"] = [id_map.get(sid, sid[:12]) for sid in covers_fail_ids]
+            state["covers_flux_titles"] = [id_map.get(sid, sid[:12]) for sid in covers_flux_ids]
+            state["covers_fallback_titles"] = [id_map.get(sid, sid[:12]) for sid in covers_fallback_ids]
         except Exception:
             pass
 
@@ -900,8 +937,10 @@ def print_summary(state: dict, total_elapsed: float):
     logger.info("  Audio gen:  %s", state.get("step_audio", "not run"))
     logger.info("  QA passed:  %d", len(state.get("qa_passed", [])))
     logger.info("  QA failed:  %d", len(state.get("qa_failed", [])))
-    logger.info("  Covers:     %d generated, %d fallback",
+    logger.info("  Covers:     %d generated (%d FLUX, %d Mistral fallback), %d failed",
                 len(state.get("covers_generated", [])),
+                len(state.get("covers_flux", [])),
+                len(state.get("covers_fallback", [])),
                 len(state.get("covers_failed", [])))
     logger.info("  Enriched:   %s", state.get("step_enrich", "not run"))
     logger.info("  Synced:     %s", state.get("step_sync", "not run"))

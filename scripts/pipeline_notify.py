@@ -62,6 +62,8 @@ def _build_html(state: dict, log_file: str = "", elapsed: float = 0) -> str:
     qa_failed = state.get("qa_failed", [])
     covers_ok = state.get("covers_generated", [])
     covers_fail = state.get("covers_failed", [])
+    covers_flux = state.get("covers_flux", [])
+    covers_fallback = state.get("covers_fallback", [])
     disk_info = state.get("disk_info", "")
     cost_this_run = state.get("cost_this_run", "")
     cost_modal = state.get("cost_modal", "")
@@ -98,7 +100,7 @@ def _build_html(state: dict, log_file: str = "", elapsed: float = 0) -> str:
     rows = f"""
     <tr><td><b>Generated</b></td><td>{len(generated)} items{type_detail}</td></tr>
     <tr><td><b>Audio QA</b></td><td>{len(qa_passed)} passed, {len(qa_failed)} failed</td></tr>
-    <tr><td><b>Covers</b></td><td>{len(covers_ok)} generated, {len(covers_fail)} fallback</td></tr>
+    <tr><td><b>Covers</b></td><td>{len(covers_ok)} generated ({len(covers_flux)} FLUX, {len(covers_fallback)} Mistral), {len(covers_fail)} failed</td></tr>
     <tr><td><b>Elapsed</b></td><td>{_fmt_duration(elapsed)}</td></tr>
     """
     # Cost section — actual costs, not estimates
@@ -123,16 +125,19 @@ def _build_html(state: dict, log_file: str = "", elapsed: float = 0) -> str:
         items = "".join(f"<li>{t}</li>" for t in titles)
         titles_html = f"<h3>New Content</h3><ul>{items}</ul>"
 
-    # Detailed cover status
+    # Detailed cover status — distinguish FLUX AI vs Mistral fallback
     covers_html = ""
-    covers_ok_titles = state.get("covers_generated_titles", [])
+    covers_flux_titles = state.get("covers_flux_titles", [])
+    covers_fallback_titles = state.get("covers_fallback_titles", [])
     covers_fail_titles = state.get("covers_failed_titles", [])
-    if covers_ok_titles or covers_fail_titles:
+    if covers_flux_titles or covers_fallback_titles or covers_fail_titles:
         covers_items = ""
-        for t in covers_ok_titles:
-            covers_items += f'<li style="color:#22c55e;">✅ {t}</li>'
+        for t in covers_flux_titles:
+            covers_items += f'<li style="color:#22c55e;">✅ {t} <span style="color:#9ca3af;">(FLUX)</span></li>'
+        for t in covers_fallback_titles:
+            covers_items += f'<li style="color:#f59e0b;">⚠️ {t} <span style="color:#9ca3af;">(Mistral fallback)</span></li>'
         for t in covers_fail_titles:
-            covers_items += f'<li style="color:#ef4444;">❌ {t} <span style="color:#9ca3af;">(using default)</span></li>'
+            covers_items += f'<li style="color:#ef4444;">❌ {t} <span style="color:#9ca3af;">(no cover)</span></li>'
         covers_html = f"<h3>🎨 Cover Status</h3><ul style='list-style:none;padding-left:0;'>{covers_items}</ul>"
 
     # Log tail on failure
