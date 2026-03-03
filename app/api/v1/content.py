@@ -85,7 +85,7 @@ async def list_content(
         elif sort_by == "like_count":
             items.sort(key=lambda x: x.get("like_count", 0), reverse=True)
         else:  # created_at
-            items.sort(key=lambda x: x.get("created_at", datetime.utcnow()), reverse=True)
+            items.sort(key=lambda x: x.get("created_at") or "1970-01-01T00:00:00", reverse=True)
         
         # Paginate
         start = (page - 1) * page_size
@@ -159,7 +159,7 @@ async def get_content(
         current_views = content_data.get("view_count", 0)
         db_client.collection("content").document(content_id).update({
             "view_count": current_views + 1,
-            "updated_at": datetime.utcnow(),
+            "updated_at": datetime.utcnow().isoformat(),
         })
         
         # Update local copy
