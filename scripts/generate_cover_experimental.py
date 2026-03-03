@@ -417,6 +417,8 @@ def generate_svg_overlay(axes: dict, story: dict) -> str:
     if accents:
         colors = {**colors, **accents}  # world accents override palette defaults
 
+    accent = colors.get("accent", colors["glow"])
+
     svg_parts = []
     svg_parts.append(f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <defs>
@@ -425,15 +427,33 @@ def generate_svg_overlay(axes: dict, story: dict) -> str:
       <stop offset="100%" stop-color="{colors['glow']}" stop-opacity="0"/>
     </radialGradient>
     <radialGradient id="glowGrad2">
-      <stop offset="0%" stop-color="{colors['particle']}" stop-opacity="0.3"/>
-      <stop offset="100%" stop-color="{colors['particle']}" stop-opacity="0"/>
+      <stop offset="0%" stop-color="{accent}" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="{accent}" stop-opacity="0"/>
     </radialGradient>
+    <linearGradient id="horizGlow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="{colors['glow']}" stop-opacity="0"/>
+      <stop offset="60%" stop-color="{colors['glow']}" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="{accent}" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="sideGlow" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="{accent}" stop-opacity="0.25"/>
+      <stop offset="50%" stop-color="{colors['glow']}" stop-opacity="0"/>
+      <stop offset="100%" stop-color="{accent}" stop-opacity="0.25"/>
+    </linearGradient>
+    <linearGradient id="diagonalGlow" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="{accent}" stop-opacity="0.2"/>
+      <stop offset="50%" stop-color="transparent" stop-opacity="0"/>
+      <stop offset="100%" stop-color="{colors['glow']}" stop-opacity="0.15"/>
+    </linearGradient>
     <radialGradient id="vignetteGrad">
       <stop offset="40%" stop-color="transparent"/>
       <stop offset="100%" stop-color="{colors['vignette']}" stop-opacity="0.75"/>
     </radialGradient>
     <filter id="softBlur">
       <feGaussianBlur stdDeviation="2"/>
+    </filter>
+    <filter id="heavyBlur">
+      <feGaussianBlur stdDeviation="6"/>
     </filter>
   </defs>''')
 
@@ -443,7 +463,7 @@ def generate_svg_overlay(axes: dict, story: dict) -> str:
     svg_parts.append(_gen_vignette())
 
     # 2. Glow breathing pacer (guides breathing rhythm, 6-8 cycles/min)
-    svg_parts.append(_gen_glow("glow_breathing", colors))
+    svg_parts.append(_gen_glow("glow_breathing", colors, world=world))
 
     # 3. World-specific animations (all of them, passing variant names through)
     for anim in anim_types:
@@ -467,8 +487,8 @@ def generate_svg_overlay(axes: dict, story: dict) -> str:
     if not has_ground_layer:
         svg_parts.append(_gen_ground_glow(colors))
 
-    # 6. Moonlight wash overlay (gentle top-down light)
-    svg_parts.append(_gen_moonlight_wash(colors))
+    # 6. Ambient light wash (varies by world)
+    svg_parts.append(_gen_moonlight_wash(colors, world=world))
 
     svg_parts.append('\n</svg>')
     return "\n".join(svg_parts)
@@ -651,34 +671,151 @@ def _gen_particles(variant: str, colors: dict) -> str:
     return "\n".join(particles)
 
 
-def _gen_glow(variant: str, colors: dict) -> str:
-    """Generate breathing pacer glow — the primary sleep cue.
+def _gen_glow(variant: str, colors: dict, world: str = "") -> str:
+    """Generate breathing pacer glow — the primary sleep cue, with shape diversity.
 
-    Sleep rules: 6-12 cycles/min = 5-10s per cycle. Must be clearly visible.
-    Two concentric rings for depth.
+    Sleep rules: 7-9s cycle. Must be clearly visible.
+    Shape varies by world to avoid the "same circles on every cover" look.
     """
-    cx = random.randint(200, 320)
-    cy = random.randint(240, 360)
-    dur = random.randint(7, 9)  # ~7-9 BPM breathing
+    dur = random.randint(7, 9)
+    accent = colors.get("accent", colors["glow"])
 
-    r_outer = random.randint(100, 130)
-    r_inner = random.randint(50, 70)
+    # Choose pacer shape based on world setting
+    # Group worlds into shape families to ensure visual diversity
+    SHAPE_MAP = {
+        "deep_ocean": "horizontal_band",
+        "cloud_kingdom": "top_wash",
+        "enchanted_forest": "off_center_orb",
+        "snow_landscape": "top_wash",
+        "desert_night": "horizon_line",
+        "cozy_interior": "corner_glow",
+        "mountain_meadow": "diagonal_band",
+        "space_cosmos": "center_nebula",
+        "tropical_lagoon": "horizon_line",
+        "underground_cave": "bottom_pool",
+        "ancient_library": "corner_glow",
+        "floating_islands": "diagonal_band",
+    }
+    shape = SHAPE_MAP.get(world, random.choice(["off_center_orb", "horizontal_band", "diagonal_band"]))
 
-    return f'''
-  <!-- Breathing Pacer Glow (primary sleep cue) -->
-  <!-- Outer glow ring -->
-  <circle cx="{cx}" cy="{cy}" r="{r_outer}" fill="url(#glowGrad)" filter="url(#softBlur)">
+    if shape == "off_center_orb":
+        # Single off-center orb (NOT centered, NOT bottom)
+        cx = random.choice([random.randint(100, 180), random.randint(340, 420)])
+        cy = random.randint(160, 320)
+        r = random.randint(80, 110)
+        return f'''
+  <!-- Breathing Pacer (off-center orb) -->
+  <circle cx="{cx}" cy="{cy}" r="{r}" fill="url(#glowGrad)" filter="url(#heavyBlur)">
     <animate attributeName="r"
-      values="{r_outer-15};{r_outer+15};{r_outer-15}" dur="{dur}s" repeatCount="indefinite" />
+      values="{r-12};{r+15};{r-12}" dur="{dur}s" repeatCount="indefinite" />
     <animate attributeName="opacity"
-      values="0.25;0.50;0.25" dur="{dur}s" repeatCount="indefinite" />
+      values="0.20;0.45;0.20" dur="{dur}s" repeatCount="indefinite" />
+  </circle>'''
+
+    elif shape == "horizontal_band":
+        # Wide horizontal band across middle — like underwater light
+        cy = random.randint(200, 350)
+        return f'''
+  <!-- Breathing Pacer (horizontal band) -->
+  <rect x="0" y="{cy-40}" width="512" height="80" fill="url(#horizGlow)" filter="url(#heavyBlur)">
+    <animate attributeName="opacity"
+      values="0.15;0.40;0.15" dur="{dur}s" repeatCount="indefinite" />
+    <animate attributeName="height"
+      values="60;100;60" dur="{dur}s" repeatCount="indefinite" />
+  </rect>'''
+
+    elif shape == "top_wash":
+        # Diffuse wash from top — like sky glow or cloud light
+        return f'''
+  <!-- Breathing Pacer (top wash) -->
+  <rect x="0" y="0" width="512" height="280" fill="url(#horizGlow)" filter="url(#heavyBlur)" transform="rotate(180,256,140)">
+    <animate attributeName="opacity"
+      values="0.15;0.38;0.15" dur="{dur}s" repeatCount="indefinite" />
+  </rect>'''
+
+    elif shape == "horizon_line":
+        # Glow along horizon — for sunset/desert worlds
+        cy = random.randint(340, 400)
+        return f'''
+  <!-- Breathing Pacer (horizon glow) -->
+  <ellipse cx="256" cy="{cy}" rx="350" ry="25" fill="{accent}" filter="url(#heavyBlur)">
+    <animate attributeName="opacity"
+      values="0.20;0.50;0.20" dur="{dur}s" repeatCount="indefinite" />
+    <animate attributeName="ry"
+      values="20;40;20" dur="{dur}s" repeatCount="indefinite" />
+  </ellipse>'''
+
+    elif shape == "corner_glow":
+        # Warm glow from one corner — for interior/library worlds
+        corner = random.choice(["top_left", "top_right", "bottom_left", "bottom_right"])
+        cx = 80 if "left" in corner else 430
+        cy = 80 if "top" in corner else 430
+        r = random.randint(100, 140)
+        return f'''
+  <!-- Breathing Pacer (corner glow) -->
+  <circle cx="{cx}" cy="{cy}" r="{r}" fill="{accent}" filter="url(#heavyBlur)">
+    <animate attributeName="r"
+      values="{r-15};{r+20};{r-15}" dur="{dur}s" repeatCount="indefinite" />
+    <animate attributeName="opacity"
+      values="0.18;0.42;0.18" dur="{dur}s" repeatCount="indefinite" />
+  </circle>'''
+
+    elif shape == "diagonal_band":
+        # Diagonal light band across the image
+        return f'''
+  <!-- Breathing Pacer (diagonal band) -->
+  <rect x="-100" y="180" width="712" height="100" fill="url(#diagonalGlow)" filter="url(#heavyBlur)"
+    transform="rotate(-15,256,256)">
+    <animate attributeName="opacity"
+      values="0.15;0.40;0.15" dur="{dur}s" repeatCount="indefinite" />
+  </rect>'''
+
+    elif shape == "center_nebula":
+        # Two overlapping large blobs — for space/cosmos
+        cx1 = random.randint(160, 240)
+        cy1 = random.randint(180, 280)
+        cx2 = random.randint(280, 360)
+        cy2 = random.randint(220, 320)
+        r1 = random.randint(90, 120)
+        r2 = random.randint(80, 110)
+        return f'''
+  <!-- Breathing Pacer (nebula blobs) -->
+  <circle cx="{cx1}" cy="{cy1}" r="{r1}" fill="{accent}" filter="url(#heavyBlur)">
+    <animate attributeName="r"
+      values="{r1-10};{r1+15};{r1-10}" dur="{dur}s" repeatCount="indefinite" />
+    <animate attributeName="opacity"
+      values="0.12;0.30;0.12" dur="{dur}s" repeatCount="indefinite" />
   </circle>
-  <!-- Inner glow core -->
-  <circle cx="{cx}" cy="{cy}" r="{r_inner}" fill="url(#glowGrad)">
+  <circle cx="{cx2}" cy="{cy2}" r="{r2}" fill="{colors['glow']}" filter="url(#heavyBlur)">
     <animate attributeName="r"
-      values="{r_inner-8};{r_inner+12};{r_inner-8}" dur="{dur}s" repeatCount="indefinite" />
+      values="{r2+10};{r2-8};{r2+10}" dur="{dur}s" repeatCount="indefinite" />
     <animate attributeName="opacity"
-      values="0.35;0.55;0.35" dur="{dur}s" repeatCount="indefinite" />
+      values="0.10;0.25;0.10" dur="{dur}s" repeatCount="indefinite" />
+  </circle>'''
+
+    elif shape == "bottom_pool":
+        # Glowing pool at bottom — for cave/underground
+        return f'''
+  <!-- Breathing Pacer (bottom pool) -->
+  <ellipse cx="256" cy="480" rx="200" ry="50" fill="{accent}" filter="url(#heavyBlur)">
+    <animate attributeName="opacity"
+      values="0.18;0.45;0.18" dur="{dur}s" repeatCount="indefinite" />
+    <animate attributeName="rx"
+      values="180;220;180" dur="{dur}s" repeatCount="indefinite" />
+  </ellipse>'''
+
+    else:
+        # Fallback: original off-center orb
+        cx = random.randint(150, 370)
+        cy = random.randint(180, 340)
+        r = random.randint(80, 110)
+        return f'''
+  <!-- Breathing Pacer (default orb) -->
+  <circle cx="{cx}" cy="{cy}" r="{r}" fill="url(#glowGrad)" filter="url(#heavyBlur)">
+    <animate attributeName="r"
+      values="{r-12};{r+15};{r-12}" dur="{dur}s" repeatCount="indefinite" />
+    <animate attributeName="opacity"
+      values="0.20;0.45;0.20" dur="{dur}s" repeatCount="indefinite" />
   </circle>'''
 
 
@@ -950,17 +1087,34 @@ def _gen_mist(variant: str, colors: dict) -> str:
 
 
 def _gen_ground_glow(colors: dict) -> str:
-    """Generate a subtle ground glow — lighter alternative to mist for covers without mist/drift.
-
-    Used as fallback grounding layer. Much subtler than full mist to avoid uniformity.
-    """
+    """Generate a subtle grounding layer — varies shape to avoid sameness."""
     dur = random.randint(16, 24)
-    return f'''
-  <!-- Subtle Ground Glow (grounding layer) -->
-  <ellipse cx="256" cy="490" rx="280" ry="45" fill="{colors['glow']}" opacity="0.06" filter="url(#softBlur)">
+    accent = colors.get("accent", colors["glow"])
+    # Randomly pick different grounding styles
+    style = random.choice(["bottom_band", "side_fade", "diagonal_stripe"])
+
+    if style == "bottom_band":
+        return f'''
+  <!-- Ground Glow (bottom band) -->
+  <rect x="0" y="440" width="512" height="72" fill="url(#horizGlow)" filter="url(#heavyBlur)" opacity="0.10">
+    <animate attributeName="opacity"
+      values="0.06;0.16;0.06" dur="{dur}s" repeatCount="indefinite" />
+  </rect>'''
+    elif style == "side_fade":
+        return f'''
+  <!-- Ground Glow (side fade) -->
+  <rect x="0" y="0" width="512" height="512" fill="url(#sideGlow)" filter="url(#heavyBlur)" opacity="0.06">
     <animate attributeName="opacity"
       values="0.04;0.10;0.04" dur="{dur}s" repeatCount="indefinite" />
-  </ellipse>'''
+  </rect>'''
+    else:
+        return f'''
+  <!-- Ground Glow (diagonal stripe) -->
+  <rect x="-50" y="380" width="612" height="60" fill="{accent}" filter="url(#heavyBlur)" opacity="0.06"
+    transform="rotate(-8,256,410)">
+    <animate attributeName="opacity"
+      values="0.04;0.12;0.04" dur="{dur}s" repeatCount="indefinite" />
+  </rect>'''
 
 
 def _gen_glow_secondary(variant: str, colors: dict) -> str:
@@ -1151,21 +1305,78 @@ def _gen_glow_secondary(variant: str, colors: dict) -> str:
         return "\n".join(parts)
 
 
-def _gen_moonlight_wash(colors: dict) -> str:
-    """Generate a gentle top-down moonlight wash — visible ambient light."""
+def _gen_moonlight_wash(colors: dict, world: str = "") -> str:
+    """Generate ambient light wash — varies by world to avoid sameness."""
     dur = random.randint(14, 20)
+    accent = colors.get("accent", colors["glow"])
 
-    return f'''
-  <!-- Moonlight Wash -->
-  <ellipse cx="256" cy="100" rx="320" ry="200" fill="{colors['star']}" opacity="0.05" filter="url(#softBlur)">
+    # Choose wash style based on world
+    WASH_MAP = {
+        "deep_ocean": "side_curtains",
+        "cloud_kingdom": "top_down",
+        "enchanted_forest": "dappled",
+        "snow_landscape": "top_down",
+        "desert_night": "none",  # desert has enough glow from horizon
+        "cozy_interior": "none",  # interior has corner glow
+        "mountain_meadow": "side_curtains",
+        "space_cosmos": "none",  # space has nebula blobs
+        "tropical_lagoon": "bottom_warm",
+        "underground_cave": "dappled",
+        "ancient_library": "dappled",
+        "floating_islands": "top_down",
+    }
+    style = WASH_MAP.get(world, "top_down")
+
+    if style == "none":
+        return ""
+
+    elif style == "top_down":
+        return f'''
+  <!-- Moonlight Wash (top-down) -->
+  <rect x="0" y="0" width="512" height="300" fill="url(#horizGlow)" filter="url(#heavyBlur)" opacity="0.08"
+    transform="rotate(180,256,150)">
     <animate attributeName="opacity"
-      values="0.03;0.10;0.03" dur="{dur}s" repeatCount="indefinite" />
-  </ellipse>
-  <!-- Bottom warm glow -->
-  <ellipse cx="256" cy="480" rx="300" ry="100" fill="{colors['glow']}" opacity="0.04" filter="url(#softBlur)">
+      values="0.05;0.14;0.05" dur="{dur}s" repeatCount="indefinite" />
+  </rect>'''
+
+    elif style == "side_curtains":
+        # Soft light from both sides
+        return f'''
+  <!-- Ambient Wash (side curtains) -->
+  <rect x="0" y="0" width="512" height="512" fill="url(#sideGlow)" filter="url(#heavyBlur)" opacity="0.10">
     <animate attributeName="opacity"
-      values="0.03;0.08;0.03" dur="{dur+4}s" repeatCount="indefinite" />
-  </ellipse>'''
+      values="0.06;0.15;0.06" dur="{dur}s" repeatCount="indefinite" />
+  </rect>'''
+
+    elif style == "dappled":
+        # Scattered light patches — like forest canopy or cave crystals
+        parts = ['\n  <!-- Dappled Light Wash -->']
+        for _ in range(3):
+            cx = random.randint(60, 450)
+            cy = random.randint(60, 400)
+            rx = random.randint(40, 80)
+            ry = random.randint(30, 60)
+            rot = random.randint(-30, 30)
+            pdur = dur + random.randint(-3, 3)
+            delay = random.uniform(0, 5)
+            parts.append(f'''  <ellipse cx="{cx}" cy="{cy}" rx="{rx}" ry="{ry}" fill="{accent}" opacity="0"
+    filter="url(#heavyBlur)" transform="rotate({rot},{cx},{cy})">
+    <animate attributeName="opacity"
+      values="0;0.12;0.06;0.10;0" dur="{pdur}s"
+      begin="{delay:.1f}s" repeatCount="indefinite" />
+  </ellipse>''')
+        return "\n".join(parts)
+
+    elif style == "bottom_warm":
+        return f'''
+  <!-- Bottom Warm Wash -->
+  <rect x="0" y="350" width="512" height="162" fill="url(#horizGlow)" filter="url(#heavyBlur)" opacity="0.10">
+    <animate attributeName="opacity"
+      values="0.06;0.16;0.06" dur="{dur}s" repeatCount="indefinite" />
+  </rect>'''
+
+    else:
+        return ""
 
 
 def _gen_vignette() -> str:
