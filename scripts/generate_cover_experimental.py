@@ -426,26 +426,27 @@ def generate_svg_overlay(axes: dict, story: dict) -> str:
     # 2. Glow breathing pacer (guides breathing rhythm, 6-8 cycles/min)
     svg_parts.append(_gen_glow("glow_breathing", colors))
 
-    # 3. World-specific animations (all of them)
+    # 3. World-specific animations (all of them, passing variant names through)
     for anim in anim_types:
         if anim.startswith("particles"):
             svg_parts.append(_gen_particles(anim, colors))
         elif anim.startswith("glow") and anim != "glow_breathing":
-            svg_parts.append(_gen_glow_secondary(colors))
+            svg_parts.append(_gen_glow_secondary(anim, colors))
         elif anim.startswith("twinkle"):
             svg_parts.append(_gen_twinkle(colors))
         elif anim.startswith("drift"):
             svg_parts.append(_gen_drift(anim, colors))
         elif anim.startswith("mist"):
-            svg_parts.append(_gen_mist(colors))
+            svg_parts.append(_gen_mist(anim, colors))
 
-    # 4. Always add twinkle stars for night settings
-    if time_setting in ("early_night", "deep_night") and not any(a.startswith("twinkle") for a in anim_types):
+    # 4. Only add twinkle for deep_night if not already present (removed early_night forcing)
+    if time_setting == "deep_night" and not any(a.startswith("twinkle") for a in anim_types):
         svg_parts.append(_gen_twinkle(colors))
 
-    # 5. Always add mist/fog for grounding
-    if not any(a.startswith("mist") for a in anim_types):
-        svg_parts.append(_gen_mist(colors))
+    # 5. Add subtle ground glow for covers without mist/drift (lighter than full mist)
+    has_ground_layer = any(a.startswith("mist") or a.startswith("drift") for a in anim_types)
+    if not has_ground_layer:
+        svg_parts.append(_gen_ground_glow(colors))
 
     # 6. Moonlight wash overlay (gentle top-down light)
     svg_parts.append(_gen_moonlight_wash(colors))
@@ -455,44 +456,176 @@ def generate_svg_overlay(axes: dict, story: dict) -> str:
 
 
 def _gen_particles(variant: str, colors: dict) -> str:
-    """Generate drifting particle animations — visible but slow.
+    """Generate variant-aware particle animations — visually distinct per world.
 
     Sleep rules: cycle >=4s, opacity <=60%, slow drift.
+    Each variant produces a different motion, shape, and feel.
     """
-    count = random.randint(8, 12)
+    # Variant-specific configuration
+    configs = {
+        "particles_bubbles": {
+            "label": "Rising Bubbles", "count": (6, 10), "direction": "up",
+            "r_large": (5.0, 8.0), "r_med": (3.0, 5.0), "r_small": (1.5, 3.0),
+            "op_large": (0.20, 0.35), "op_med": (0.15, 0.30), "op_small": (0.10, 0.25),
+            "dur": (18, 28), "size_pulse": True, "use_filter": True,
+        },
+        "particles_snow": {
+            "label": "Falling Snowflakes", "count": (10, 16), "direction": "down_sway",
+            "r_large": (2.5, 4.0), "r_med": (1.5, 2.5), "r_small": (0.8, 1.5),
+            "op_large": (0.35, 0.55), "op_med": (0.25, 0.45), "op_small": (0.15, 0.30),
+            "dur": (16, 26), "size_pulse": False, "use_filter": False,
+        },
+        "particles_pollen": {
+            "label": "Floating Pollen", "count": (8, 14), "direction": "float",
+            "r_large": (2.0, 3.0), "r_med": (1.0, 2.0), "r_small": (0.5, 1.2),
+            "op_large": (0.25, 0.40), "op_med": (0.15, 0.30), "op_small": (0.10, 0.20),
+            "dur": (20, 35), "size_pulse": False, "use_filter": True,
+        },
+        "particles_dust": {
+            "label": "Dust Motes in Light", "count": (6, 10), "direction": "diagonal",
+            "r_large": (1.5, 2.5), "r_med": (0.8, 1.5), "r_small": (0.4, 0.8),
+            "op_large": (0.20, 0.35), "op_med": (0.12, 0.25), "op_small": (0.08, 0.18),
+            "dur": (22, 35), "size_pulse": False, "use_filter": True,
+        },
+        "particles_fireflies": {
+            "label": "Firefly Glows", "count": (5, 8), "direction": "bob",
+            "r_large": (4.0, 6.0), "r_med": (2.5, 4.0), "r_small": (1.5, 2.5),
+            "op_large": (0.10, 0.50), "op_med": (0.08, 0.45), "op_small": (0.05, 0.35),
+            "dur": (8, 16), "size_pulse": True, "use_filter": True,
+        },
+        "particles_leaves": {
+            "label": "Falling Leaves", "count": (5, 8), "direction": "down_rotate",
+            "r_large": (3.5, 5.0), "r_med": (2.5, 3.5), "r_small": (1.5, 2.5),
+            "op_large": (0.25, 0.40), "op_med": (0.18, 0.32), "op_small": (0.12, 0.25),
+            "dur": (18, 30), "size_pulse": False, "use_filter": False,
+        },
+        "particles_spores": {
+            "label": "Rising Spores", "count": (7, 12), "direction": "up_gentle",
+            "r_large": (2.0, 3.5), "r_med": (1.2, 2.0), "r_small": (0.6, 1.2),
+            "op_large": (0.20, 0.35), "op_med": (0.12, 0.25), "op_small": (0.08, 0.18),
+            "dur": (20, 32), "size_pulse": False, "use_filter": True,
+        },
+    }
+    cfg = configs.get(variant, configs["particles_pollen"])
+
+    count = random.randint(*cfg["count"])
+    filt = ' filter="url(#softBlur)"' if cfg["use_filter"] else ""
     particles = []
-    particles.append('\n  <!-- Drifting Particles (floating orbs) -->')
+    particles.append(f'\n  <!-- {cfg["label"]} -->')
 
     for i in range(count):
-        cx = random.randint(30, 480)
-        cy_start = random.randint(-30, 80)
-        # Mix of sizes: some larger glowing orbs, some tiny dust
-        if i < 3:
-            r = random.uniform(4.0, 7.0)   # Large glowing orbs
-            opacity = random.uniform(0.30, 0.50)
-        elif i < 7:
-            r = random.uniform(2.0, 4.0)   # Medium particles
-            opacity = random.uniform(0.25, 0.45)
+        # Size tiers: ~25% large, ~40% medium, rest small
+        if i < count // 4:
+            r = random.uniform(*cfg["r_large"])
+            opacity = random.uniform(*cfg["op_large"])
+        elif i < count * 2 // 3:
+            r = random.uniform(*cfg["r_med"])
+            opacity = random.uniform(*cfg["op_med"])
         else:
-            r = random.uniform(1.0, 2.0)   # Tiny dust motes
-            opacity = random.uniform(0.15, 0.35)
+            r = random.uniform(*cfg["r_small"])
+            opacity = random.uniform(*cfg["op_small"])
 
-        dur = random.uniform(15, 28)  # Slow drift (>=4s rule)
-        delay = random.uniform(0, 12)
+        dur = random.uniform(*cfg["dur"])
+        delay = random.uniform(0, dur * 0.6)
+        direction = cfg["direction"]
 
-        # Path: gentle S-curve downward
-        dx = random.randint(-40, 40)
-        dy = random.randint(350, 500)
-        cx1 = random.randint(-30, 30)
-        cy1 = random.randint(100, 180)
-        cx2 = random.randint(-25, 25)
-        cy2 = random.randint(250, 350)
+        if direction == "up":
+            # Rising bubbles — upward S-curve with wobble
+            cx = random.randint(40, 470)
+            cy_start = random.randint(420, 540)
+            dx = random.randint(-50, 50)
+            dy = random.randint(-400, -300)
+            cx1 = random.randint(-40, 40)
+            cy1 = random.randint(-100, -60)
+            cx2 = random.randint(-35, 35)
+            cy2 = random.randint(-250, -180)
+            path = f"M{cx},{cy_start} C{cx+cx1},{cy_start+cy1} {cx+cx2},{cy_start+cy2} {cx+dx},{cy_start+dy}"
+        elif direction == "down_sway":
+            # Snow — falling with wide horizontal sway
+            cx = random.randint(20, 500)
+            cy_start = random.randint(-40, -10)
+            sway = random.randint(40, 80) * random.choice([-1, 1])
+            dy = random.randint(480, 560)
+            path = f"M{cx},{cy_start} C{cx+sway},{cy_start+dy//3} {cx-sway},{cy_start+2*dy//3} {cx+sway//2},{cy_start+dy}"
+        elif direction == "float":
+            # Pollen — lazy figure-8 / random drift, barely moving
+            cx = random.randint(40, 470)
+            cy = random.randint(60, 420)
+            dx1 = random.randint(-25, 25)
+            dy1 = random.randint(-20, 20)
+            dx2 = random.randint(-25, 25)
+            dy2 = random.randint(-20, 20)
+            path = f"M{cx},{cy} C{cx+dx1},{cy+dy1} {cx+dx2},{cy+dy2} {cx-dx1},{cy-dy1} C{cx-dx2},{cy-dy2} {cx+dx1},{cy+dy1} {cx},{cy}"
+        elif direction == "diagonal":
+            # Dust — slow diagonal drift in a light beam area
+            beam_cx = random.randint(150, 380)
+            cx = beam_cx + random.randint(-60, 60)
+            cy_start = random.randint(50, 200)
+            dx = random.randint(20, 50)
+            dy = random.randint(200, 350)
+            path = f"M{cx},{cy_start} C{cx+dx//2},{cy_start+dy//3} {cx+dx},{cy_start+2*dy//3} {cx+dx},{cy_start+dy}"
+        elif direction == "bob":
+            # Fireflies — bobbing in place with random wander
+            cx = random.randint(50, 460)
+            cy = random.randint(100, 420)
+            bx = random.randint(15, 35)
+            by = random.randint(10, 25)
+            path = f"M{cx},{cy} C{cx+bx},{cy-by} {cx-bx},{cy+by} {cx},{cy}"
+        elif direction == "down_rotate":
+            # Leaves — falling with wide S-curve (rotation handled separately)
+            cx = random.randint(30, 480)
+            cy_start = random.randint(-30, 30)
+            dx = random.randint(-80, 80)
+            dy = random.randint(400, 540)
+            path = f"M{cx},{cy_start} C{cx+dx},{cy_start+dy//4} {cx-dx},{cy_start+3*dy//4} {cx+dx//2},{cy_start+dy}"
+        elif direction == "up_gentle":
+            # Spores — gentle rise from ground
+            cx = random.randint(60, 450)
+            cy_start = random.randint(440, 510)
+            dx = random.randint(-30, 30)
+            dy = random.randint(-250, -150)
+            path = f"M{cx},{cy_start} C{cx+dx},{cy_start+dy//2} {cx-dx},{cy_start+dy} {cx},{cy_start+dy-40}"
+        else:
+            # Default: gentle downward drift
+            cx = random.randint(30, 480)
+            cy_start = random.randint(-30, 80)
+            dx = random.randint(-40, 40)
+            dy = random.randint(350, 500)
+            path = f"M{cx},{cy_start} C{cx},{cy_start+dy//3} {cx+dx},{cy_start+2*dy//3} {cx+dx},{cy_start+dy}"
 
-        particles.append(f'''  <circle r="{r:.1f}" fill="{colors['particle']}" opacity="0" filter="url(#softBlur)">
-    <animateMotion dur="{dur:.0f}s" begin="{delay:.1f}s" repeatCount="indefinite"
-      path="M{cx},{cy_start} C{cx+cx1},{cy_start+cy1} {cx+cx2},{cy_start+cy2} {cx+dx},{cy_start+dy}" />
+        # Use ellipse for leaves, circle for everything else
+        if direction == "down_rotate":
+            rx = r * random.uniform(1.4, 2.0)
+            ry = r * random.uniform(0.6, 0.9)
+            rot_dur = random.uniform(6, 12)
+            rot_dir = random.choice([-1, 1]) * random.randint(180, 360)
+            particles.append(f'''  <ellipse rx="{rx:.1f}" ry="{ry:.1f}" fill="{colors['particle']}" opacity="0"{filt}>
+    <animateMotion dur="{dur:.0f}s" begin="{delay:.1f}s" repeatCount="indefinite" path="{path}" />
+    <animateTransform attributeName="transform" type="rotate"
+      values="0;{rot_dir};0" dur="{rot_dur:.0f}s" begin="{delay:.1f}s" repeatCount="indefinite" additive="sum" />
     <animate attributeName="opacity"
-      values="0;{opacity:.2f};{opacity:.2f};{opacity*0.4:.2f};0" dur="{dur:.0f}s"
+      values="0;{opacity:.2f};{opacity:.2f};{opacity*0.3:.2f};0" dur="{dur:.0f}s"
+      begin="{delay:.1f}s" repeatCount="indefinite" />
+  </ellipse>''')
+        else:
+            size_anim = ""
+            if cfg["size_pulse"]:
+                pulse_dur = random.uniform(4, 8)
+                r_max = r * random.uniform(1.3, 1.6)
+                size_anim = f'''
+    <animate attributeName="r" values="{r:.1f};{r_max:.1f};{r:.1f}" dur="{pulse_dur:.0f}s"
+      begin="{delay:.1f}s" repeatCount="indefinite" />'''
+
+            # Fireflies use a distinctive pulse pattern: dim → bright → dim with long dark phases
+            if direction == "bob":
+                op_vals = f"0;{opacity*0.2:.2f};{opacity:.2f};{opacity:.2f};{opacity*0.1:.2f};0;0"
+            else:
+                op_vals = f"0;{opacity:.2f};{opacity:.2f};{opacity*0.4:.2f};0"
+
+            particles.append(f'''  <circle r="{r:.1f}" fill="{colors['particle']}" opacity="0"{filt}>
+    <animateMotion dur="{dur:.0f}s" begin="{delay:.1f}s" repeatCount="indefinite" path="{path}" />{size_anim}
+    <animate attributeName="opacity"
+      values="{op_vals}" dur="{dur:.0f}s"
       begin="{delay:.1f}s" repeatCount="indefinite" />
   </circle>''')
 
@@ -569,15 +702,92 @@ def _gen_twinkle(colors: dict) -> str:
 
 
 def _gen_drift(variant: str, colors: dict) -> str:
-    """Generate slow drift/pan — gentle horizontal haze movement.
+    """Generate variant-aware drift animations — visually distinct per world.
 
-    Sleep rules: very slow (25-40s cycle), low opacity.
+    Sleep rules: very slow (25-40s cycle), low opacity, no jarring motion.
+    Each variant produces a different drift character.
     """
-    dur = random.randint(25, 40)
-    dx = random.randint(8, 15)
-    dy = random.randint(2, 5)
+    if variant == "drift_clouds":
+        # Large soft cloud shapes at top, slow horizontal pan
+        dur1 = random.randint(30, 45)
+        dur2 = random.randint(35, 50)
+        dx1 = random.randint(25, 50)
+        dx2 = random.randint(20, 40)
+        cy1 = random.randint(60, 120)
+        cy2 = random.randint(90, 160)
+        return f'''
+  <!-- Drifting Clouds -->
+  <ellipse cx="180" cy="{cy1}" rx="220" ry="50" fill="{colors['particle']}" opacity="0.10" filter="url(#softBlur)">
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; {dx1},3; 0,0; {-dx1},-2; 0,0"
+      dur="{dur1}s" repeatCount="indefinite" />
+    <animate attributeName="opacity"
+      values="0.06;0.14;0.06" dur="{dur1}s" repeatCount="indefinite" />
+  </ellipse>
+  <ellipse cx="380" cy="{cy2}" rx="180" ry="40" fill="{colors['glow']}" opacity="0.08" filter="url(#softBlur)">
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; {-dx2},2; 0,0; {dx2},-3; 0,0"
+      dur="{dur2}s" repeatCount="indefinite" />
+    <animate attributeName="opacity"
+      values="0.05;0.12;0.05" dur="{dur2}s" repeatCount="indefinite" />
+  </ellipse>
+  <ellipse cx="100" cy="{cy1 + 50}" rx="140" ry="30" fill="{colors['particle']}" opacity="0.06" filter="url(#softBlur)">
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; {dx1+10},1; 0,0; {-dx2},0; 0,0"
+      dur="{dur1 + 8}s" repeatCount="indefinite" />
+  </ellipse>'''
 
-    return f'''
+    elif variant == "drift_sand":
+        # Low ground-level wisps, horizontal motion like desert wind
+        dur1 = random.randint(25, 35)
+        dur2 = random.randint(28, 38)
+        dx = random.randint(30, 60)
+        return f'''
+  <!-- Desert Sand Drift -->
+  <ellipse cx="200" cy="480" rx="350" ry="25" fill="{colors['particle']}" opacity="0.10" filter="url(#softBlur)">
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; {dx},0; {dx//2},-3; 0,0"
+      dur="{dur1}s" repeatCount="indefinite" />
+    <animate attributeName="opacity"
+      values="0.06;0.14;0.08;0.06" dur="{dur1}s" repeatCount="indefinite" />
+  </ellipse>
+  <ellipse cx="380" cy="495" rx="250" ry="18" fill="{colors['glow']}" opacity="0.07" filter="url(#softBlur)">
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; {dx+10},0; {dx//3},-2; 0,0"
+      dur="{dur2}s" repeatCount="indefinite" />
+    <animate attributeName="opacity"
+      values="0.04;0.10;0.04" dur="{dur2}s" repeatCount="indefinite" />
+  </ellipse>
+  <ellipse cx="80" cy="470" rx="180" ry="15" fill="{colors['particle']}" opacity="0.05" filter="url(#softBlur)">
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; {dx+20},1; 0,0"
+      dur="{dur1+5}s" repeatCount="indefinite" />
+  </ellipse>'''
+
+    elif variant == "drift_starfield":
+        # Very slow rotation of entire star group — subtle sky rotation
+        dur = random.randint(60, 90)
+        return f'''
+  <!-- Starfield Drift (slow sky rotation) -->
+  <g opacity="0.12">
+    <animateTransform attributeName="transform" type="rotate"
+      values="0 256 256; 8 256 256; 0 256 256; -5 256 256; 0 256 256"
+      dur="{dur}s" repeatCount="indefinite" />
+    <circle cx="120" cy="80" r="1.2" fill="{colors['star']}" opacity="0.5"/>
+    <circle cx="350" cy="60" r="0.9" fill="{colors['star']}" opacity="0.4"/>
+    <circle cx="420" cy="180" r="1.0" fill="{colors['star']}" opacity="0.35"/>
+    <circle cx="80" cy="220" r="0.8" fill="{colors['star']}" opacity="0.3"/>
+    <circle cx="280" cy="40" r="1.1" fill="{colors['star']}" opacity="0.45"/>
+    <circle cx="450" cy="120" r="0.7" fill="{colors['star']}" opacity="0.25"/>
+    <circle cx="200" cy="150" r="1.3" fill="{colors['star']}" opacity="0.4"/>
+  </g>'''
+
+    else:
+        # Default: original gentle bottom haze
+        dur = random.randint(25, 40)
+        dx = random.randint(8, 15)
+        dy = random.randint(2, 5)
+        return f'''
   <!-- Slow Drifting Haze -->
   <g>
     <animateTransform attributeName="transform" type="translate"
@@ -589,17 +799,106 @@ def _gen_drift(variant: str, colors: dict) -> str:
   </g>'''
 
 
-def _gen_mist(colors: dict) -> str:
-    """Generate rising mist/fog — three layers for depth.
+def _gen_mist(variant: str, colors: dict) -> str:
+    """Generate variant-aware mist/fog animations — visually distinct per world.
 
-    Sleep rules: slow movement (20-40s), moderate opacity.
+    Sleep rules: slow movement (18-40s), moderate opacity, gentle.
+    Each variant produces a different mist character.
     """
-    dur1 = random.randint(22, 32)
-    dur2 = random.randint(28, 38)
-    dur3 = random.randint(18, 28)
+    if variant == "mist_underwater":
+        # Horizontal swaying current-like motion — wide, slow lateral waves
+        dur1 = random.randint(24, 34)
+        dur2 = random.randint(28, 38)
+        sx = random.randint(30, 50)
+        return f'''
+  <!-- Underwater Currents -->
+  <ellipse cx="200" cy="350" rx="300" ry="40" fill="{colors['glow']}" opacity="0.12" filter="url(#softBlur)">
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; {sx},5; 0,0; {-sx},-5; 0,0"
+      dur="{dur1}s" repeatCount="indefinite" />
+    <animate attributeName="opacity"
+      values="0.08;0.18;0.08" dur="{dur1}s" repeatCount="indefinite" />
+  </ellipse>
+  <ellipse cx="350" cy="420" rx="260" ry="35" fill="{colors['particle']}" opacity="0.10" filter="url(#softBlur)">
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; {-sx+10},3; 0,0; {sx-10},-3; 0,0"
+      dur="{dur2}s" repeatCount="indefinite" />
+    <animate attributeName="opacity"
+      values="0.06;0.15;0.06" dur="{dur2}s" repeatCount="indefinite" />
+  </ellipse>'''
 
-    return f'''
-  <!-- Rising Mist (3 layers) -->
+    elif variant == "mist_valley":
+        # Rolling in from one side — asymmetric drift from left
+        dur1 = random.randint(30, 42)
+        dur2 = random.randint(34, 46)
+        return f'''
+  <!-- Valley Mist (rolling in from side) -->
+  <ellipse cx="60" cy="460" rx="250" ry="55" fill="{colors['glow']}" opacity="0.14" filter="url(#softBlur)">
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; 120,-15; 180,-8; 80,-5; 0,0"
+      dur="{dur1}s" repeatCount="indefinite" />
+    <animate attributeName="opacity"
+      values="0.08;0.20;0.14;0.10;0.08" dur="{dur1}s" repeatCount="indefinite" />
+  </ellipse>
+  <ellipse cx="30" cy="490" rx="200" ry="40" fill="{colors['particle']}" opacity="0.10" filter="url(#softBlur)">
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; 150,-10; 200,-5; 60,-3; 0,0"
+      dur="{dur2}s" repeatCount="indefinite" />
+    <animate attributeName="opacity"
+      values="0.05;0.15;0.10;0.05" dur="{dur2}s" repeatCount="indefinite" />
+  </ellipse>'''
+
+    elif variant == "mist_sea":
+        # Low horizontal drift at very bottom only — like sea fog on shore
+        dur1 = random.randint(22, 32)
+        dur2 = random.randint(26, 36)
+        dx = random.randint(20, 35)
+        return f'''
+  <!-- Sea Fog (low horizon) -->
+  <ellipse cx="256" cy="498" rx="380" ry="30" fill="{colors['glow']}" opacity="0.15" filter="url(#softBlur)">
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; {dx},0; 0,0; {-dx},0; 0,0"
+      dur="{dur1}s" repeatCount="indefinite" />
+    <animate attributeName="opacity"
+      values="0.10;0.20;0.10" dur="{dur1}s" repeatCount="indefinite" />
+  </ellipse>
+  <ellipse cx="160" cy="505" rx="300" ry="22" fill="{colors['particle']}" opacity="0.10" filter="url(#softBlur)">
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; {-dx-5},0; 0,0; {dx+5},0; 0,0"
+      dur="{dur2}s" repeatCount="indefinite" />
+    <animate attributeName="opacity"
+      values="0.06;0.14;0.06" dur="{dur2}s" repeatCount="indefinite" />
+  </ellipse>'''
+
+    elif variant == "mist_steam":
+        # Small rising wisps from specific points — like cave vents or hot springs
+        parts = ['\n  <!-- Steam Wisps -->']
+        num_vents = random.randint(2, 4)
+        for _ in range(num_vents):
+            vx = random.randint(100, 420)
+            vy = random.randint(430, 490)
+            dur = random.randint(14, 24)
+            delay = random.uniform(0, 6)
+            rise = random.randint(40, 80)
+            rx = random.randint(20, 40)
+            ry = random.randint(12, 22)
+            parts.append(f'''  <ellipse cx="{vx}" cy="{vy}" rx="{rx}" ry="{ry}" fill="{colors['glow']}" opacity="0" filter="url(#softBlur)">
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; {random.randint(-8,8)},{-rise}; 0,0"
+      dur="{dur}s" begin="{delay:.1f}s" repeatCount="indefinite" />
+    <animate attributeName="opacity"
+      values="0;0.18;0.12;0" dur="{dur}s"
+      begin="{delay:.1f}s" repeatCount="indefinite" />
+  </ellipse>''')
+        return "\n".join(parts)
+
+    else:
+        # Default (mist_ground): Slow rise from bottom with horizontal sway — original behavior
+        dur1 = random.randint(22, 32)
+        dur2 = random.randint(28, 38)
+        dur3 = random.randint(18, 28)
+        return f'''
+  <!-- Rising Ground Mist (3 layers) -->
   <ellipse cx="180" cy="480" rx="280" ry="60" fill="{colors['glow']}" opacity="0.15" filter="url(#softBlur)">
     <animateTransform attributeName="transform" type="translate"
       values="0,0; 20,-12; 0,0; -15,-8; 0,0"
@@ -623,22 +922,198 @@ def _gen_mist(colors: dict) -> str:
   </ellipse>'''
 
 
-def _gen_glow_secondary(colors: dict) -> str:
-    """Generate secondary ambient glows — two offset glows for atmosphere."""
-    parts = ['\n  <!-- Secondary Ambient Glows -->']
-    for _ in range(2):
-        cx = random.randint(80, 440)
-        cy = random.randint(150, 420)
-        r = random.randint(55, 90)
-        dur = random.randint(10, 16)
+def _gen_ground_glow(colors: dict) -> str:
+    """Generate a subtle ground glow — lighter alternative to mist for covers without mist/drift.
 
-        parts.append(f'''  <circle cx="{cx}" cy="{cy}" r="{r}" fill="url(#glowGrad2)" filter="url(#softBlur)">
+    Used as fallback grounding layer. Much subtler than full mist to avoid uniformity.
+    """
+    dur = random.randint(16, 24)
+    return f'''
+  <!-- Subtle Ground Glow (grounding layer) -->
+  <ellipse cx="256" cy="490" rx="280" ry="45" fill="{colors['glow']}" opacity="0.06" filter="url(#softBlur)">
+    <animate attributeName="opacity"
+      values="0.04;0.10;0.04" dur="{dur}s" repeatCount="indefinite" />
+  </ellipse>'''
+
+
+def _gen_glow_secondary(variant: str, colors: dict) -> str:
+    """Generate variant-aware secondary glow animations — visually distinct per world.
+
+    Sleep rules: cycle >=4s, gentle pulse, max opacity 60%.
+    Each variant produces a different glow character.
+    """
+    if variant == "glow_firefly":
+        # 3-5 small glows at random positions, staggered pulse timings
+        parts = ['\n  <!-- Firefly Glows -->']
+        count = random.randint(3, 5)
+        for i in range(count):
+            cx = random.randint(60, 450)
+            cy = random.randint(120, 440)
+            r = random.randint(18, 30)
+            dur = random.randint(6, 12)
+            delay = random.uniform(0, dur * 0.7)
+            parts.append(f'''  <circle cx="{cx}" cy="{cy}" r="{r}" fill="url(#glowGrad2)" filter="url(#softBlur)" opacity="0">
+    <animate attributeName="opacity"
+      values="0;0.05;0.35;0.30;0.05;0;0" dur="{dur}s"
+      begin="{delay:.1f}s" repeatCount="indefinite" />
+    <animate attributeName="r"
+      values="{r};{r+8};{r+4};{r}" dur="{dur}s"
+      begin="{delay:.1f}s" repeatCount="indefinite" />
+  </circle>''')
+        return "\n".join(parts)
+
+    elif variant == "glow_bioluminescence":
+        # 2-3 elongated horizontal glows at bottom, wave-like timing
+        parts = ['\n  <!-- Bioluminescent Glow -->']
+        count = random.randint(2, 3)
+        for i in range(count):
+            cx = random.randint(80, 440)
+            cy = random.randint(350, 460)
+            rx = random.randint(80, 140)
+            ry = random.randint(20, 35)
+            dur = random.randint(10, 18)
+            delay = i * random.uniform(2, 4)
+            parts.append(f'''  <ellipse cx="{cx}" cy="{cy}" rx="{rx}" ry="{ry}" fill="{colors['glow']}" opacity="0" filter="url(#softBlur)">
+    <animate attributeName="opacity"
+      values="0;0.08;0.25;0.15;0.08;0" dur="{dur}s"
+      begin="{delay:.1f}s" repeatCount="indefinite" />
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; {random.randint(5,15)},0; 0,0; {random.randint(-10,-5)},0; 0,0"
+      dur="{dur+4}s" begin="{delay:.1f}s" repeatCount="indefinite" />
+  </ellipse>''')
+        return "\n".join(parts)
+
+    elif variant == "glow_campfire":
+        # Single warm glow at bottom-center, faster flicker (4-6s)
+        cx = random.randint(220, 300)
+        cy = random.randint(420, 460)
+        r = random.randint(50, 70)
+        dur = random.randint(4, 6)
+        return f'''
+  <!-- Campfire Glow -->
+  <circle cx="{cx}" cy="{cy}" r="{r}" fill="url(#glowGrad)" filter="url(#softBlur)" opacity="0.20">
+    <animate attributeName="opacity"
+      values="0.15;0.35;0.25;0.40;0.20;0.15" dur="{dur}s" repeatCount="indefinite" />
+    <animate attributeName="r"
+      values="{r};{r+6};{r-3};{r+8};{r}" dur="{dur}s" repeatCount="indefinite" />
+  </circle>
+  <circle cx="{cx}" cy="{cy+5}" r="{r//2}" fill="url(#glowGrad)" opacity="0.10">
+    <animate attributeName="opacity"
+      values="0.08;0.20;0.12;0.22;0.08" dur="{dur-1}s" repeatCount="indefinite" />
+  </circle>'''
+
+    elif variant == "glow_candle":
+        # Single small warm glow, slight position wobble
+        cx = random.randint(200, 320)
+        cy = random.randint(280, 400)
+        r = random.randint(25, 40)
+        dur = random.randint(5, 8)
+        return f'''
+  <!-- Candle Glow -->
+  <circle cx="{cx}" cy="{cy}" r="{r}" fill="url(#glowGrad)" filter="url(#softBlur)" opacity="0.25">
+    <animate attributeName="opacity"
+      values="0.18;0.38;0.22;0.35;0.18" dur="{dur}s" repeatCount="indefinite" />
+    <animate attributeName="r"
+      values="{r};{r+5};{r-2};{r+3};{r}" dur="{dur}s" repeatCount="indefinite" />
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; 2,-1; -1,0; 1,1; 0,0"
+      dur="{dur+2}s" repeatCount="indefinite" />
+  </circle>'''
+
+    elif variant == "glow_crystals":
+        # 3-4 sharp small glows, longer dim phases between pulses
+        parts = ['\n  <!-- Crystal Glows -->']
+        count = random.randint(3, 4)
+        for i in range(count):
+            cx = random.randint(80, 440)
+            cy = random.randint(180, 440)
+            r = random.randint(15, 25)
+            dur = random.randint(8, 14)
+            delay = random.uniform(0, dur * 0.5)
+            parts.append(f'''  <circle cx="{cx}" cy="{cy}" r="{r}" fill="url(#glowGrad2)" filter="url(#softBlur)" opacity="0">
+    <animate attributeName="opacity"
+      values="0;0;0.05;0.40;0.30;0.05;0;0" dur="{dur}s"
+      begin="{delay:.1f}s" repeatCount="indefinite" />
+    <animate attributeName="r"
+      values="{r};{r};{r+3};{r+6};{r+3};{r}" dur="{dur}s"
+      begin="{delay:.1f}s" repeatCount="indefinite" />
+  </circle>''')
+        return "\n".join(parts)
+
+    elif variant == "glow_nebula":
+        # 1-2 very large diffuse glows, very slow (16-24s)
+        parts = ['\n  <!-- Nebula Glow -->']
+        count = random.randint(1, 2)
+        for _ in range(count):
+            cx = random.randint(120, 400)
+            cy = random.randint(120, 380)
+            r = random.randint(120, 180)
+            dur = random.randint(16, 24)
+            delay = random.uniform(0, 5)
+            parts.append(f'''  <circle cx="{cx}" cy="{cy}" r="{r}" fill="url(#glowGrad2)" filter="url(#softBlur)" opacity="0.06">
+    <animate attributeName="opacity"
+      values="0.04;0.12;0.06;0.10;0.04" dur="{dur}s"
+      begin="{delay:.1f}s" repeatCount="indefinite" />
+    <animate attributeName="r"
+      values="{r-15};{r+20};{r-10};{r+15};{r-15}" dur="{dur}s"
+      begin="{delay:.1f}s" repeatCount="indefinite" />
+  </circle>''')
+        return "\n".join(parts)
+
+    elif variant == "glow_sunset":
+        # Wide horizontal glow at horizon level, slow breathing
+        cy = random.randint(380, 430)
+        rx = random.randint(200, 300)
+        ry = random.randint(40, 60)
+        dur = random.randint(12, 18)
+        return f'''
+  <!-- Sunset Horizon Glow -->
+  <ellipse cx="256" cy="{cy}" rx="{rx}" ry="{ry}" fill="{colors['glow']}" opacity="0.12" filter="url(#softBlur)">
+    <animate attributeName="opacity"
+      values="0.08;0.22;0.12;0.18;0.08" dur="{dur}s" repeatCount="indefinite" />
+    <animate attributeName="ry"
+      values="{ry};{ry+10};{ry-5};{ry+8};{ry}" dur="{dur}s" repeatCount="indefinite" />
+  </ellipse>
+  <ellipse cx="256" cy="{cy+10}" rx="{rx-40}" ry="{ry//2}" fill="{colors['glow']}" opacity="0.08" filter="url(#softBlur)">
+    <animate attributeName="opacity"
+      values="0.05;0.15;0.05" dur="{dur+3}s" repeatCount="indefinite" />
+  </ellipse>'''
+
+    elif variant == "glow_lantern":
+        # 1-2 warm glows in upper area, gentle flicker
+        parts = ['\n  <!-- Lantern Glows -->']
+        count = random.randint(1, 2)
+        for _ in range(count):
+            cx = random.randint(100, 420)
+            cy = random.randint(80, 250)
+            r = random.randint(30, 50)
+            dur = random.randint(6, 10)
+            delay = random.uniform(0, 3)
+            parts.append(f'''  <circle cx="{cx}" cy="{cy}" r="{r}" fill="url(#glowGrad)" filter="url(#softBlur)" opacity="0.20">
+    <animate attributeName="opacity"
+      values="0.15;0.32;0.20;0.35;0.15" dur="{dur}s"
+      begin="{delay:.1f}s" repeatCount="indefinite" />
+    <animate attributeName="r"
+      values="{r};{r+4};{r-2};{r+3};{r}" dur="{dur}s"
+      begin="{delay:.1f}s" repeatCount="indefinite" />
+  </circle>''')
+        return "\n".join(parts)
+
+    else:
+        # Default: original 2 breathing circles
+        parts = ['\n  <!-- Secondary Ambient Glows -->']
+        for _ in range(2):
+            cx = random.randint(80, 440)
+            cy = random.randint(150, 420)
+            r = random.randint(55, 90)
+            dur = random.randint(10, 16)
+            parts.append(f'''  <circle cx="{cx}" cy="{cy}" r="{r}" fill="url(#glowGrad2)" filter="url(#softBlur)">
     <animate attributeName="r"
       values="{r-10};{r+10};{r-10}" dur="{dur}s" repeatCount="indefinite" />
     <animate attributeName="opacity"
       values="0.15;0.35;0.15" dur="{dur}s" repeatCount="indefinite" />
   </circle>''')
-    return "\n".join(parts)
+        return "\n".join(parts)
 
 
 def _gen_moonlight_wash(colors: dict) -> str:
