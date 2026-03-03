@@ -8,9 +8,10 @@
 
 1. **Audio files and seedData.js must always be in sync.** If seedData.js references an audio URL, the MP3 file MUST exist in `public/audio/pre-gen/`.
 2. **Never modify seedData.js without verifying that referenced assets exist.** This includes audio files, cover SVGs, and any other referenced paths.
-3. **Backend content hot-reloads automatically; frontend still needs a manual production deploy.** The backend detects new `seed_output/content.json` via background polling (60s) or the admin reload endpoint — no Docker restart needed. But the frontend still needs `git pull && npm run build && cp static && pm2 restart` on GCP.
-4. **Production frontend deploy is MANUAL and separate.** Pipeline auto-deploys to Vercel/Render (test). GCP production frontend requires explicit approval and manual deploy steps.
-5. **NEVER remove audio files from `public/audio/pre-gen/` unless the corresponding seedData.js entries are also removed.** Orphan URLs → 404 errors → broken playback.
+3. **NEVER do `npm build` + `pm2 restart` for daily content updates.** nginx serves `/covers/` and `/audio/` directly from `public/`. Backend hot-reloads content via admin reload or 60s polling. Only rebuild frontend for CODE changes (JS/CSS/components).
+4. **Every content item MUST have `created_at` and `updated_at` as ISO strings.** Missing `created_at` crashes the entire API sort, making ALL content disappear. Always validate after manual edits.
+5. **Audio files must exist in BOTH backend AND frontend `public/` directories.** nginx serves from frontend `public/`. Backend stores the source copies.
+6. **NEVER remove audio files from `public/audio/pre-gen/` unless the corresponding seedData.js entries are also removed.** Orphan URLs → 404 errors → broken playback.
 
 ---
 
@@ -26,33 +27,53 @@ seed_output/content.json  ─── sync_seed_data.py ───►  src/utils/se
 audio/pre-gen/*.mp3       ─── step_sync copies  ───►  public/audio/pre-gen/*.mp3
                           ─── covers already in  ───►  public/covers/*.svg
 
-                    BACKEND HOT-RELOAD (zero-downtime)
-                    ===================================
+                    PRODUCTION SERVING (nginx + backend)
+                    =====================================
 
-Pipeline writes seed_output/content.json
+nginx (port 443) serves static files DIRECTLY from filesystem:
        │
-       ├── HTTP POST /api/v1/admin/reload (primary)
-       │     Requires X-Admin-Key header
-       │     Re-reads content/subscriptions/voices in-memory
+       ├── /covers/  → alias /opt/dreamweaver-web/public/covers/  (30-day cache)
+       ├── /audio/   → alias /opt/dreamweaver-web/public/audio/   (1-year cache, immutable)
+       └── Everything else → proxy to Next.js standalone (port 3000)
+
+Backend hot-reload (zero-downtime):
        │
-       ├── Background polling (safety net, every 60s)
-       │     Detects content.json mtime change → auto-reload
-       │
-       └── Docker restart (last resort fallback)
-             Only if HTTP reload AND polling both fail
+       ├── HTTP POST /api/v1/admin/reload (primary, requires X-Admin-Key)
+       ├── Background polling (safety net, every 60s, detects content.json mtime)
+       └── Process restart (last resort, only for Python CODE changes)
+
+⚠️  CRITICAL: Next.js standalone only serves files known at BUILD TIME.
+    New covers/audio added after build get 404 from Next.js.
+    nginx aliases bypass this — files are served directly from public/.
+
+                    DAILY CONTENT DEPLOY (zero-downtime)
+                    =====================================
+
+1. Pipeline writes content.json, audio, covers to backend
+2. Pipeline copies audio + covers to frontend public/
+3. Backend: POST /api/v1/admin/reload → content live instantly
+4. nginx: already serves /covers/ and /audio/ from public/ → no restart needed
+5. NO npm build, NO pm2 restart
+
+                    FULL FRONTEND REBUILD (CODE changes only)
+                    ==========================================
+
+Only when JS/CSS/component code changes:
+1. cd /opt/dreamweaver-web && git pull
+2. npm run build
+3. cp -r public .next/standalone/public && cp -r .next/static .next/standalone/.next/static
+4. pm2 restart all
 
                     MANUAL PUBLISHING
                     =================
 
 1. Generate/create content → backend content.json
 2. Generate audio files → backend audio/pre-gen/
-3. Run sync_seed_data.py OR manually edit seedData.js
-4. Copy audio MP3s to frontend public/audio/pre-gen/
-5. Copy cover SVGs to frontend public/covers/
-6. Commit BOTH repos
-7. Deploy to test (Vercel/Render auto-deploy on push)
-8. Verify on test
-9. Deploy to GCP production (manual)
+3. Copy audio MP3s to frontend public/audio/pre-gen/
+4. Copy cover SVGs to frontend public/covers/
+5. Hot-reload backend: POST /api/v1/admin/reload
+6. Verify on production (nginx serves new files immediately)
+7. Run sync_seed_data.py → commit BOTH repos (for Vercel test site)
 ```
 
 ### Key Directories
@@ -86,10 +107,10 @@ The daily pipeline (`pipeline_run.py`) handles everything automatically:
 - Commits and pushes both repos
 
 **What the deploy_prod step does (after publish):**
-- **Backend**: Calls `POST /api/v1/admin/reload` to hot-reload content in-memory (zero downtime). Falls back to `docker restart` if the HTTP call fails.
-- **Frontend**: Runs `npm run build`, copies static assets, restarts PM2.
+- **Backend**: Calls `POST /api/v1/admin/reload` to hot-reload content in-memory (zero downtime). Falls back to process restart if HTTP call fails.
+- **Frontend**: nginx serves `/covers/` and `/audio/` directly from `public/`. No build or restart needed.
 
-**IMPORTANT**: The pipeline auto-deploys frontend to GCP production and hot-reloads the backend. Content is live within minutes of the pipeline finishing.
+**IMPORTANT**: The pipeline deploys content with ZERO downtime. No `npm build`, no `pm2 restart`. Content is live within seconds of the pipeline finishing.
 
 ---
 
@@ -169,21 +190,54 @@ cp dreamweaver-backend/audio/pre-gen/gen-XXXX_*.mp3 dreamweaver-web/public/audio
 - If you must edit seedData.js manually, also update content.json
 - After any manual edit, run the verification script (see below)
 
-### 3. Production Deploys Without Static Asset Copy
+### 3. Missing `created_at` Crashes Entire API (THE SORT BUG)
 
-**What happened**: `npm run build` creates `.next/standalone/` but does NOT copy `public/` or `.next/static/`. Without step 4 (`cp -r public ...`), audio files and covers are missing.
+**What happened**: A content item was missing its `created_at` field. The API's sort fallback used `datetime.utcnow()` (a datetime object) while all other items had ISO string timestamps. Python cannot compare datetime with str → `TypeError: '<' not supported` → the entire `/api/v1/content` endpoint returned 0 items, making ALL content disappear from the app.
 
-**Prevention**: ALWAYS run the full deploy sequence:
+**Root cause**: Content was added through a path that didn't set `created_at` (manual edit, broken script, etc.). One bad item breaks sorting for ALL items.
+
+**Prevention**:
 ```bash
-cd /opt/dreamweaver-web
-git pull
-npm run build
-cp -r public .next/standalone/public          # CRITICAL
-cp -r .next/static .next/standalone/.next/static  # CRITICAL
-pm2 restart all
+# Validate ALL items have created_at and updated_at before publishing
+cd /opt/dreamweaver-backend
+python3 -c "
+import json
+content = json.load(open('seed_output/content.json'))
+for item in content:
+    if not item.get('created_at'):
+        print('MISSING created_at:', item.get('id'), '-', item.get('title'))
+    if not item.get('updated_at'):
+        print('MISSING updated_at:', item.get('id'), '-', item.get('title'))
+"
 ```
 
-### 4. Template musicParams (All Stories Sound the Same)
+**Quick fix if it happens**:
+```bash
+# Set created_at from updated_at (or current time) for items missing it
+python3 -c "
+import json
+from datetime import datetime
+for fname in ['data/content.json', 'seed_output/content.json']:
+    content = json.load(open(fname))
+    for item in content:
+        if not item.get('created_at'):
+            item['created_at'] = item.get('updated_at', datetime.now().isoformat())
+        if not item.get('updated_at'):
+            item['updated_at'] = item['created_at']
+    json.dump(content, open(fname, 'w'), indent=2)
+"
+# Then hot-reload: POST /api/v1/admin/reload
+```
+
+### 4. Daily Content Deploy Does NOT Need Frontend Rebuild
+
+**What happened**: `npm run build` + `pm2 restart` was run for daily content, causing unnecessary downtime and wasted time. Next.js standalone only serves files from build time — new covers/audio added after build get 404.
+
+**How it works now**: nginx serves `/covers/` and `/audio/` directly from `public/` via alias directives. New files are available instantly. Backend hot-reloads content.json. No frontend rebuild or restart needed.
+
+**Prevention**: NEVER run `npm build` or `pm2 restart` for daily content updates. Only rebuild for code changes (JS/CSS/component modifications).
+
+### 5. Template musicParams (All Stories Sound the Same)
 
 **What happened**: Stories generated with placeholder musicParams (melodyInterval:4000, bassInterval:6000) sound identical.
 
@@ -194,19 +248,19 @@ grep -c "melodyInterval.*4000" src/utils/seedData.js
 # Should be 0 or very low. If high, musicParams need regeneration.
 ```
 
-### 5. Hindi Title Mismatches
+### 6. Hindi Title Mismatches
 
 **What happened**: content.json and seedData.js had different Hindi titles for the same story ID.
 
 **Prevention**: When syncing Hindi content, match by story ID, not title. Run sync_seed_data.py rather than manual copy-paste.
 
-### 6. Default.svg Trap
+### 7. Default.svg Trap
 
 **What happened**: API returns `"/covers/default.svg"` which is truthy but the file renders as a blank/generic cover.
 
 **Prevention**: Use `hasRealCover()` utility function. Never treat `default.svg` as a valid custom cover.
 
-### 7. Audio Files Deleted by Git Operations
+### 8. Audio Files Deleted by Git Operations
 
 **What happened**: `git checkout .`, `git clean -f`, or `git reset --hard` removed uncommitted audio files.
 
@@ -266,70 +320,111 @@ format=mp3"
 
 ## Production Deployment Procedure
 
-### Pre-Deploy Verification
+### A. Daily Content Deploy (zero-downtime, automated by pipeline)
 
-Run these checks BEFORE deploying to production:
-
-```bash
-cd /opt/dreamweaver-web
-
-# 1. Verify all referenced audio files exist
-echo "=== Checking audio file references ==="
-grep -oP '/audio/pre-gen/[^"]+\.mp3' src/utils/seedData.js | sort -u | while read url; do
-  file="public${url}"
-  if [ ! -f "$file" ]; then
-    echo "❌ MISSING: $file"
-  fi
-done
-echo "=== Done ==="
-
-# 2. Verify all referenced cover files exist
-echo "=== Checking cover references ==="
-grep -oP '/covers/[^"]+\.svg' src/utils/seedData.js | sort -u | while read url; do
-  file="public${url}"
-  if [ "$url" != "/covers/default.svg" ] && [ ! -f "$file" ]; then
-    echo "❌ MISSING: $file"
-  fi
-done
-echo "=== Done ==="
-
-# 3. Check build succeeds
-npm run build
-echo "Build exit code: $?"
-```
-
-### Deploy Steps
+No frontend rebuild needed. nginx serves new covers and audio directly from `public/`.
 
 ```bash
 # SSH into production
 gcloud compute ssh dreamvalley-prod --project=strong-harbor-472607-n4 --zone=asia-south1-a
 
-# 1. Pull latest backend (content hot-reloads automatically via 60s polling)
+# 1. Pull latest backend
 cd /opt/dreamweaver-backend && git pull
-# Content will auto-reload within 60s. To force immediate reload:
+
+# 2. Hot-reload backend (or wait 60s for auto-polling)
 curl -s -X POST http://localhost:8000/api/v1/admin/reload \
   -H "X-Admin-Key: $(grep ADMIN_API_KEY .env | cut -d= -f2)"
 
-# 2. Pull and build frontend
+# 3. Pull frontend (for new covers/audio in public/)
 cd /opt/dreamweaver-web && git pull
 
-# 3. Build frontend
-npm run build
+# 4. Verify new content
+curl -s http://localhost:8000/api/v1/content?page_size=3 | python3 -c "
+import json, sys
+data = json.load(sys.stdin)
+items = data.get('data', {}).get('items', [])
+print('Total:', data.get('data', {}).get('total', 0))
+for i in items:
+    print(' -', i.get('title', '?'))
+"
 
-# 4. CRITICAL: Copy static assets to standalone
-cp -r public .next/standalone/public
-cp -r .next/static .next/standalone/.next/static
-
-# 5. Restart frontend
-pm2 restart all
-
-# 6. Verify
-curl -s https://dreamvalley.app | head -20  # Should return HTML
-curl -s -o /dev/null -w "%{http_code}" https://dreamvalley.app/audio/pre-gen/SOME_KNOWN_FILE.mp3
-# Should return 200
+# That's it! NO npm build, NO pm2 restart.
+# nginx serves /covers/ and /audio/ directly from public/.
 ```
 
-> **Note**: The backend no longer needs a Docker restart for content changes. The `git pull` updates `seed_output/content.json`, and the background polling task detects the new mtime within 60 seconds. Only Docker restart if you changed backend Python code.
+> **IMPORTANT**: Never do `npm build` + `pm2 restart` for daily content updates.
+> Only needed for CODE changes (see section B below).
+
+### B. Full Frontend Rebuild (only for CODE changes)
+
+Only when JS/CSS/component code changes — NOT for new stories/covers/audio.
+
+```bash
+# SSH into production
+gcloud compute ssh dreamvalley-prod --project=strong-harbor-472607-n4 --zone=asia-south1-a
+
+cd /opt/dreamweaver-web && git pull
+npm run build
+cp -r public .next/standalone/public
+cp -r .next/static .next/standalone/.next/static
+pm2 restart all
+```
+
+### Pre-Deploy Validation
+
+Run these checks BEFORE any deploy to catch data issues:
+
+```bash
+cd /opt/dreamweaver-backend
+
+# 1. Verify ALL items have required timestamp fields
+python3 -c "
+import json
+content = json.load(open('seed_output/content.json'))
+errors = 0
+for item in content:
+    sid = item.get('id', '?')
+    if not item.get('created_at'):
+        print('MISSING created_at:', sid, '-', item.get('title'))
+        errors += 1
+    if not item.get('updated_at'):
+        print('MISSING updated_at:', sid, '-', item.get('title'))
+        errors += 1
+print('Checked %d items, %d errors' % (len(content), errors))
+"
+
+# 2. Verify audio files exist in frontend public/
+cd /opt/dreamweaver-web
+python3 -c "
+import json, os
+content = json.load(open('/opt/dreamweaver-backend/seed_output/content.json'))
+missing = 0
+for item in content:
+    for av in (item.get('audio_variants') or []):
+        url = av.get('url', '') if isinstance(av, dict) else ''
+        if url:
+            path = 'public' + url
+            if not os.path.exists(path):
+                print('MISSING:', path, '(' + item.get('title', '?') + ')')
+                missing += 1
+print('Missing audio files:', missing)
+"
+
+# 3. Verify cover files exist
+python3 -c "
+import json, os
+content = json.load(open('/opt/dreamweaver-backend/seed_output/content.json'))
+missing = 0
+for item in content:
+    cover = item.get('cover', '')
+    if cover and cover != '/covers/default.svg':
+        path = 'public' + cover
+        if not os.path.exists(path):
+            print('MISSING:', path, '(' + item.get('title', '?') + ')')
+            missing += 1
+print('Missing cover files:', missing)
+"
+```
 
 ### Post-Deploy Verification
 
@@ -491,23 +586,30 @@ fi
 ### Audio not playing (404 errors)
 
 1. Check browser console for the exact 404 URL
-2. SSH into production: `ls /opt/dreamweaver-web/.next/standalone/public/audio/pre-gen/`
-3. If file missing from standalone but exists in `public/`: re-run `cp -r public .next/standalone/public`
-4. If file missing from `public/`: copy from backend repo or regenerate
-5. If file missing everywhere: regenerate via Chatterbox TTS (see above)
+2. SSH into production: `ls /opt/dreamweaver-web/public/audio/pre-gen/` (nginx serves from HERE, not `.next/standalone/`)
+3. If file missing from `public/`: copy from backend `audio/pre-gen/` or regenerate
+4. If file missing everywhere: regenerate via Chatterbox TTS (see above)
+5. Check nginx is serving: `curl -I https://dreamvalley.app/audio/pre-gen/FILENAME.mp3`
 
 ### Story showing wrong/no cover
 
-1. Check seedData.js cover path for the story
-2. Verify SVG file exists in `public/covers/`
-3. If missing, check if pipeline generated it → `git log -- public/covers/`
-4. Regenerate: `python3 scripts/generate_cover_svg.py --id STORY_ID`
+1. Check content.json for the story's `cover` field
+2. Verify SVG file exists in `public/covers/` (nginx serves from HERE)
+3. If missing: regenerate with FLUX: `python3 scripts/generate_cover_experimental.py --story-json <file>`
+4. Hot-reload backend: `POST /api/v1/admin/reload`
 
 ### Story appearing but with no audio options
 
-1. Check seedData.js for `audio_variants` field
-2. If empty/missing: content.json may not have audio URLs → run audio generation
-3. If populated but audio fails: check MP3 files exist (see above)
+1. Check content.json for `audio_variants` field
+2. If empty/missing: run audio generation → copy MP3s to frontend `public/audio/pre-gen/`
+3. If populated but audio 404: check files exist in `public/audio/pre-gen/` (see above)
+
+### ALL content disappeared from the app
+
+1. Check API directly: `curl -s http://localhost:8000/api/v1/content?page_size=1`
+2. If error mentions `datetime` or `'<' not supported`: a content item is missing `created_at`
+3. Fix: find and add the missing field (see Pitfall #3 above)
+4. Hot-reload backend after fixing
 
 ---
 
@@ -515,14 +617,15 @@ fi
 
 | Scenario | Steps |
 |----------|-------|
-| Pipeline ran successfully | Backend auto-reloads content. Review frontend on Vercel → Deploy frontend to GCP production |
-| Pipeline reported PARTIAL | Check email for expected vs actual count. Missing items failed at generation (likely Mistral flakiness). Re-run: `pipeline_run.py --resume` |
+| Pipeline ran successfully | Content is live automatically (zero-downtime deploy). Verify on dreamvalley.app |
+| Pipeline reported PARTIAL | Check email for FLUX vs Mistral breakdown. Missing items failed at audio/generation. Re-run: `pipeline_run.py --resume` |
 | Pipeline failed at audio | Check Modal credits/health → Resume: `pipeline_run.py --resume` |
 | Pipeline failed at sync | Check content.json validity → Re-run: `pipeline_run.py --step sync` |
-| Need to add content manually | Edit content.json → Backend auto-reloads (60s) or call admin reload → Run sync → Copy audio/covers → Commit frontend → Deploy frontend |
-| Need to regenerate audio | `generate_audio.py --story-id X` → Copy MP3s to frontend → Commit → Deploy |
-| Need to regenerate a cover | `generate_cover_svg.py --id X` → Commit frontend → Deploy |
-| Audio 404 on production | Verify files in standalone/public → `cp -r public .next/standalone/public` → `pm2 restart all` |
-| seedData.js looks wrong | Regenerate: `python3 scripts/sync_seed_data.py --lang en` → Commit → Deploy |
+| ALL content disappeared from app | Check API: `curl localhost:8000/api/v1/content`. If error mentions datetime/sort → missing `created_at` on an item. See Pitfall #3 |
+| Need to add content manually | Edit content.json (MUST include `created_at`) → Copy audio/covers to frontend `public/` → Hot-reload backend |
+| Need to regenerate audio | `generate_audio.py --story-id X` → Copy MP3s to frontend `public/audio/pre-gen/` → Hot-reload backend |
+| Need to regenerate a cover | `generate_cover_experimental.py --story-json <file>` → Cover auto-copied to frontend `public/covers/` → Hot-reload backend |
+| Audio 404 on production | Check file exists in `public/audio/pre-gen/` (nginx serves from there, NOT from `.next/standalone/`) |
+| Cover 404 on production | Check file exists in `public/covers/` (nginx serves from there, NOT from `.next/standalone/`) |
 | Backend content stale | `curl -X POST localhost:8000/api/v1/admin/reload -H "X-Admin-Key: KEY"` or wait 60s for polling |
-| Need to rollback | `git checkout <good-commit>` → Backend auto-reloads content. Frontend: Rebuild → Copy static → Restart |
+| Need to rollback | `git checkout <good-commit>` → Backend auto-reloads content. Frontend covers/audio: nginx serves from `public/` (no rebuild needed) |
