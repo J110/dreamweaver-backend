@@ -659,27 +659,21 @@ def step_deploy_prod(args, state: dict) -> bool:
     frontend_ok = False
     backend_ok = False
 
-    # ── Frontend: copy new static assets to standalone (no build, no restart) ──
+    # ── Frontend: zero-downtime static asset update ──
+    # nginx serves /covers/ and /audio/ directly from public/ via alias directives,
+    # so we only need new files in public/ — no Next.js rebuild or PM2 restart needed.
+    # The generate_cover_experimental.py and sync step already copy files to public/,
+    # so typically no extra copy is needed here. We just verify the dirs exist.
     if WEB_DIR.exists():
-        standalone_public = WEB_DIR / ".next" / "standalone" / "public"
-        if standalone_public.exists():
-            logger.info("  Copying new static assets to standalone (zero-downtime)...")
-            web_cwd = str(WEB_DIR)
-            ok, _, stderr, _ = run_command(
-                ["bash", "-c",
-                 "cp -r public/covers .next/standalone/public/covers && "
-                 "cp -r public/audio .next/standalone/public/audio"],
-                "Frontend: copy covers + audio to standalone", timeout=30, cwd=web_cwd
-            )
-            if ok:
-                frontend_ok = True
-                logger.info("  Frontend static assets updated (zero-downtime, no rebuild)")
-            else:
-                logger.error("  Static copy failed: %s", stderr)
+        web_cwd = str(WEB_DIR)
+        covers_dir = WEB_DIR / "public" / "covers"
+        audio_dir = WEB_DIR / "public" / "audio"
+        if covers_dir.exists() and audio_dir.exists():
+            frontend_ok = True
+            logger.info("  Frontend: static assets served by nginx (zero-downtime, no rebuild)")
         else:
-            # Standalone dir doesn't exist yet — need a full build (first-time only)
-            logger.warning("  Standalone dir missing — performing full frontend build...")
-            web_cwd = str(WEB_DIR)
+            # First-time setup — need a full build
+            logger.warning("  Public dirs missing — performing full frontend build...")
             frontend_cmds = [
                 (["npm", "run", "build"], "Frontend: npm build", 300),
                 (["bash", "-c",
