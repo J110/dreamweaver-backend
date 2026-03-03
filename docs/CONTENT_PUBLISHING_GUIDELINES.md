@@ -237,7 +237,19 @@ for fname in ['data/content.json', 'seed_output/content.json']:
 
 **Prevention**: NEVER run `npm build` or `pm2 restart` for daily content updates. Only rebuild for code changes (JS/CSS/component modifications).
 
-### 5. Template musicParams (All Stories Sound the Same)
+### 5. New Stories Invisible on Home Page (THE TRENDING GAP)
+
+**What happened**: New stories start with 0 views and 0 likes. The home page uses the `/api/v1/trending` endpoint sorted by `(likes × 5) + views`, with a limit. New stories with score=0 landed beyond the limit and were invisible, even though the API served them correctly.
+
+**Root cause**: Home page requested `getTrending(40)` but there were 71+ items. All items with score=0 were at the end, and new items fell beyond position 40.
+
+**Fix applied**: Changed `getTrending(40)` to `getTrending(100)` in `src/app/page.js`. This is a CODE change requiring a frontend rebuild.
+
+**Prevention**: When total content count approaches the trending limit, increase the limit. Monitor after adding batches of content.
+
+**Quick fix if a new story is invisible**: View it once via `curl https://api.dreamvalley.app/api/v1/content/STORY_ID` — this increments view_count to 1, moving it above other 0-score items.
+
+### 7. Template musicParams (All Stories Sound the Same)
 
 **What happened**: Stories generated with placeholder musicParams (melodyInterval:4000, bassInterval:6000) sound identical.
 
@@ -248,19 +260,19 @@ grep -c "melodyInterval.*4000" src/utils/seedData.js
 # Should be 0 or very low. If high, musicParams need regeneration.
 ```
 
-### 6. Hindi Title Mismatches
+### 8. Hindi Title Mismatches
 
 **What happened**: content.json and seedData.js had different Hindi titles for the same story ID.
 
 **Prevention**: When syncing Hindi content, match by story ID, not title. Run sync_seed_data.py rather than manual copy-paste.
 
-### 7. Default.svg Trap
+### 9. Default.svg Trap
 
 **What happened**: API returns `"/covers/default.svg"` which is truthy but the file renders as a blank/generic cover.
 
 **Prevention**: Use `hasRealCover()` utility function. Never treat `default.svg` as a valid custom cover.
 
-### 8. Audio Files Deleted by Git Operations
+### 10. Audio Files Deleted by Git Operations
 
 **What happened**: `git checkout .`, `git clean -f`, or `git reset --hard` removed uncommitted audio files.
 
