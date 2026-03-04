@@ -89,6 +89,14 @@ def _build_new_entry_js(story: dict) -> str:
     lullaby_lyrics = story.get("lullaby_lyrics", "")
     lullaby_line = f'\n      lullaby_lyrics: "{_js_escape(lullaby_lyrics)}",' if lullaby_lyrics else ""
 
+    # Character card for About tab
+    character = story.get("character", {})
+    if character and character.get("name"):
+        char_js = json.dumps(character, ensure_ascii=False)
+        character_line = f"\n      character: {char_js},"
+    else:
+        character_line = ""
+
     entry = f"""    {{
       id: "{_js_escape(sid)}",
       type: "{stype}",
@@ -96,7 +104,7 @@ def _build_new_entry_js(story: dict) -> str:
       description: "{_js_escape(desc)}",
       cover: "{cover}",
       addedAt: "{added_at}",
-      text: "{_js_escape(text)}",{lullaby_line}
+      text: "{_js_escape(text)}",{lullaby_line}{character_line}
       target_age: {target_age},
       duration: {duration},
       like_count: 0,
@@ -120,8 +128,9 @@ def update_existing(seed_js: str, stories: list) -> tuple:
         variants = story.get("audio_variants", [])
         duration = story.get("duration")
         cover = story.get("cover")
+        character = story.get("character")
         if variants:
-            title_map[title] = {"variants": variants, "duration": duration, "cover": cover}
+            title_map[title] = {"variants": variants, "duration": duration, "cover": cover, "character": character}
 
     replacements = 0
 
@@ -175,6 +184,33 @@ def update_existing(seed_js: str, stories: list) -> tuple:
                 new_cover_full = cover_prefix + f'cover: "{cover}",'
                 if old_cover_full != new_cover_full:
                     seed_js = seed_js.replace(old_cover_full, new_cover_full)
+
+        # Also update character card for About tab
+        character = info.get("character")
+        if character and character.get("name"):
+            char_json = json.dumps(character, ensure_ascii=False)
+            # Check if character field already exists for this entry
+            char_existing_pattern = (
+                r'(title:\s*"' + escaped_title + r'".*?)'
+                r'character:\s*\{[^}]*\},'
+            )
+            char_match = re.search(char_existing_pattern, seed_js, re.DOTALL)
+            if char_match:
+                old_char = char_match.group(0)
+                char_prefix = char_match.group(1)
+                new_char = char_prefix + f"character: {char_json},"
+                seed_js = seed_js.replace(old_char, new_char)
+            else:
+                # Insert character field after cover line (handles both "..." and COVERS.xxx formats)
+                insert_pattern = (
+                    r'(title:\s*"' + escaped_title + r'".*?'
+                    r'cover:\s*(?:"[^"]*"|COVERS\.\w+),)'
+                )
+                insert_match = re.search(insert_pattern, seed_js, re.DOTALL)
+                if insert_match:
+                    old_block = insert_match.group(0)
+                    new_block = old_block + f"\n      character: {char_json},"
+                    seed_js = seed_js.replace(old_block, new_block, 1)
 
     return seed_js, replacements
 

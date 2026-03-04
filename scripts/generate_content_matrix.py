@@ -447,11 +447,19 @@ FORMAT_JSON = """
 Return ONLY a valid JSON object with these fields (no markdown, no extra text):
 {
     "title": "The story/poem title",
-    "description": "A 1-2 sentence summary",
+    "description": "A 2-3 sentence mood hook (max 50 words). Start with something intriguing happening in the world, then show the character being drawn into it. Never mention sleep, bedtime, or relaxation. Never reveal the ending.",
     "text": "The FULL story/poem text with emotion markers. MUST use \\n\\n between paragraphs/stanzas for readability.",
     "morals": ["Moral 1", "Moral 2"],
-    "categories": ["Category1", "Category2"]
+    "categories": ["Category1", "Category2"],
+    "character": {
+        "name": "The lead character's first name",
+        "identity": "Who they are through personality, not appearance (max 15 words, e.g. 'A bold little dreamer who talks to shadows')",
+        "special": "Their unique ability or quality that drives the story (max 20 words, e.g. 'She can hear the secret songs that flowers sing at night')",
+        "personality_tags": ["Trait1", "Trait2"]
+    }
 }
+
+personality_tags must be exactly 2 warm, aspirational trait words from: Curious, Brave, Gentle, Dreamy, Playful, Kind, Quiet, Wise, Adventurous, Warm, Creative, Patient, Cheerful, Determined, Magical, Peaceful.
 """
 
 HINDI_INSTRUCTION = """
@@ -920,6 +928,7 @@ def generate_one(client, item: Dict, existing_titles: List[str],
                 "is_generated": True,
                 "generation_quality": "pending_review",
                 "lead_gender": item["lead_gender"],
+                "character": parsed.get("character", {"name": "", "identity": "", "special": "", "personality_tags": []}),
                 "lead_character_type": item.get("lead_character_type", "human"),
                 "universe": item["universe"],
                 "geography": item["geography"],

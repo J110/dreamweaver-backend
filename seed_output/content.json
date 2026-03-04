@@ -134,7 +134,16 @@
       "soundscapePreset": "rain",
       "musicLoop": "pianoLullaby"
     },
-    "duration": 2
+    "duration": 2,
+    "character": {
+      "name": "Nimbus",
+      "identity": "The gentle dream-collector who brings magic to sleeping children",
+      "special": "Catches dreams from stars and sprinkles them like starlit snowflakes",
+      "personality_tags": [
+        "Gentle",
+        "Magical"
+      ]
+    }
   },
   {
     "id": "8e516449-aa48-423e-8b53-db5591ce9bed",
@@ -272,7 +281,16 @@
       "soundscapePreset": "wind",
       "musicLoop": "gentleGuitar"
     },
-    "duration": 2
+    "duration": 2,
+    "character": {
+      "name": "Flicker",
+      "identity": "A gentle little guide who turns small light into big courage",
+      "special": "Her soft glow is just enough to light the way for lost friends",
+      "personality_tags": [
+        "Gentle",
+        "Brave"
+      ]
+    }
   },
   {
     "id": "30dec3e8-5354-41ff-aadf-90def8a35df4",
@@ -409,7 +427,16 @@
       "soundscapePreset": "garden",
       "musicLoop": "musicBox"
     },
-    "duration": 2
+    "duration": 2,
+    "character": {
+      "name": "Moon",
+      "identity": "The gentle guardian who sings the world to sleep each night",
+      "special": "Can weave a lullaby so soothing it makes every creature drift peacefully away",
+      "personality_tags": [
+        "Gentle",
+        "Peaceful"
+      ]
+    }
   },
   {
     "id": "d73e9530-b77e-4372-9ad1-070f0fa108e3",
@@ -546,7 +573,16 @@
       "soundscapePreset": "starryNight",
       "musicLoop": "cosmicSynth"
     },
-    "duration": 2
+    "duration": 2,
+    "character": {
+      "name": "Stardust",
+      "identity": "A fearless space explorer who turns wishes into cosmic adventures",
+      "special": "She races comets across galaxies to deliver birthday wishes on time",
+      "personality_tags": [
+        "Brave",
+        "Adventurous"
+      ]
+    }
   },
   {
     "id": "9fba7605-7ffa-488d-93bc-9cca2881cf97",
@@ -683,7 +719,16 @@
       "soundscapePreset": "starryNight",
       "musicLoop": "etherealPad"
     },
-    "duration": 3
+    "duration": 3,
+    "character": {
+      "name": "Maya",
+      "identity": "A curious explorer who discovers hidden magic in ordinary places",
+      "special": "She can hear the stories that flowers whisper to those who listen closely",
+      "personality_tags": [
+        "Curious",
+        "Dreamy"
+      ]
+    }
   },
   {
     "id": "c8796852-6d17-46e0-bcea-7985c4721d1c",
@@ -815,7 +860,16 @@
       "soundscapePreset": "rain",
       "musicLoop": "pianoLullaby"
     },
-    "duration": 1
+    "duration": 1,
+    "character": {
+      "name": "Moon",
+      "identity": "The gentle guardian who watches over children as they sleep",
+      "special": "Wraps the world in silver light to keep dreams safe and bright",
+      "personality_tags": [
+        "Gentle",
+        "Wise"
+      ]
+    }
   },
   {
     "id": "e32eaee0-2c7a-4f65-ace6-1d3a2d3ad5b0",
@@ -951,7 +1005,16 @@
       "soundscapePreset": "forest",
       "musicLoop": "forestFlute"
     },
-    "duration": 1
+    "duration": 1,
+    "character": {
+      "name": "Owl",
+      "identity": "The gentle guardian who tucks the forest into sleep",
+      "special": "Whispers goodnight to every creature, even those hidden from sight",
+      "personality_tags": [
+        "Wise",
+        "Kind"
+      ]
+    }
   },
   {
     "id": "a3945b7b-6b20-4a39-a051-b25dfaec1d8e",
@@ -1070,7 +1133,16 @@
       "soundscapePreset": "rain",
       "musicLoop": "pianoLullaby"
     },
-    "duration": 2
+    "duration": 2,
+    "character": {
+      "name": "Dreamer",
+      "identity": "A gentle guide who sails children to peaceful dreams",
+      "special": "Can turn worries into stardust and waves into lullabies",
+      "personality_tags": [
+        "Gentle",
+        "Magical"
+      ]
+    }
   },
   {
     "id": "hi-neendwala-badal",
@@ -1208,7 +1280,16 @@
       "soundscapePreset": "rain",
       "musicLoop": "pianoLullaby"
     },
-    "duration": 2
+    "duration": 2,
+    "character": {
+      "name": "Nimbus",
+      "identity": "The gentle dream-gatherer who sprinkles magic on sleeping children",
+      "special": "Collects sweet dreams from stars and showers them like soft snowflakes",
+      "personality_tags": [
+        "Gentle",
+        "Magical"
+      ]
+    }
   },
   {
     "id": "hi-bahadur-jugnu",
@@ -1347,7 +1428,16 @@
       "soundscapePreset": "wind",
       "musicLoop": "gentleGuitar"
     },
-    "duration": 2
+    "duration": 2,
+    "character": {
+      "name": "Flicker",
+      "identity": "The humble firefly who guides lost creatures home with courage",
+      "special": "His tiny light shines bright enough to lead others through the darkest paths",
+      "personality_tags": [
+        "Brave",
+        "Kind"
+      ]
+    }
   },
   {
     "id": "hi-chaand-ki-lori",
@@ -1485,7 +1575,16 @@
       "soundscapePreset": "garden",
       "musicLoop": "musicBox"
     },
-    "duration": 1
+    "duration": 1,
+    "character": {
+      "name": "Chaand",
+      "identity": "The gentle night singer who lulls all creatures to sleep",
+      "special": "Whispers sweet lullabies that make the whole world drift into dreams",
+      "personality_tags": [
+        "Gentle",
+        "Warm"
+      ]
+    }
   },
   {
     "id": "hi-captain-sitaara",
@@ -1622,7 +1721,16 @@
       "soundscapePreset": "starryNight",
       "musicLoop": "cosmicSynth"
     },
-    "duration": 2
+    "duration": 2,
+    "character": {
+      "name": "Sitaara",
+      "identity": "The fearless space explorer who races comets for birthday wishes",
+      "special": "She pilots the Silver Dreamer through asteroid fields just to make wishes sparkle",
+      "personality_tags": [
+        "Brave",
+        "Determined"
+      ]
+    }
   },
   {
     "id": "hi-gungunata-baag",
@@ -1760,7 +1868,16 @@
       "soundscapePreset": "starryNight",
       "musicLoop": "etherealPad"
     },
-    "duration": 1
+    "duration": 1,
+    "character": {
+      "name": "Maya",
+      "identity": "A gentle explorer who listens to the magic in nature's whispers",
+      "special": "She discovers a glowing garden where flowers tell stories and sing lullabies",
+      "personality_tags": [
+        "Curious",
+        "Gentle"
+      ]
+    }
   },
   {
     "id": "hi-chamakta-sapna",
@@ -1893,7 +2010,16 @@
       "soundscapePreset": "rain",
       "musicLoop": "pianoLullaby"
     },
-    "duration": 1
+    "duration": 1,
+    "character": {
+      "name": "Chaanda",
+      "identity": "The gentle guardian who wraps the world in silver dreams",
+      "special": "Can cradle the entire world in their shimmering moonlight embrace",
+      "personality_tags": [
+        "Gentle",
+        "Magical"
+      ]
+    }
   },
   {
     "id": "hi-ullu-ki-shubhraatri",
@@ -2030,7 +2156,16 @@
       "soundscapePreset": "forest",
       "musicLoop": "forestFlute"
     },
-    "duration": 1
+    "duration": 1,
+    "character": {
+      "name": "Ullu",
+      "identity": "The wise night guardian who wishes everyone sweet dreams",
+      "special": "Can sing lullabies that reach every creature in the jungle",
+      "personality_tags": [
+        "Wise",
+        "Kind"
+      ]
+    }
   },
   {
     "id": "hi-sapnon-ki-naav",
@@ -2125,7 +2260,16 @@
       "soundscapePreset": "rain",
       "musicLoop": "pianoLullaby"
     },
-    "duration": 1
+    "duration": 1,
+    "character": {
+      "name": "Hum",
+      "identity": "The gentle dreamer sailing through moonlit seas of imagination",
+      "special": "Can ride a silver boat to a land where stars sing lullabies",
+      "personality_tags": [
+        "Dreamy",
+        "Gentle"
+      ]
+    }
   },
   {
     "id": "gen-6e675d15e1f5",
@@ -2263,7 +2407,16 @@
       "soundscapePreset": "ocean",
       "musicLoop": "oceanMelody"
     },
-    "duration": 1
+    "duration": 1,
+    "character": {
+      "name": "Moonbeam",
+      "identity": "A gentle light who befriends the ocean with quiet kindness",
+      "special": "Can shine through water to whisper dreams to sleeping waves",
+      "personality_tags": [
+        "Gentle",
+        "Kind"
+      ]
+    }
   },
   {
     "id": "gen-3de58fd2aa2d",
@@ -2401,7 +2554,16 @@
       "soundscapePreset": "garden",
       "musicLoop": "gentleGuitar"
     },
-    "duration": 1
+    "duration": 1,
+    "character": {
+      "name": "Bella",
+      "identity": "A gentle explorer who finds comfort in nature's quiet magic",
+      "special": "She discovers flowers that cradle her like a bed and sing moonlit lullabies",
+      "personality_tags": [
+        "Gentle",
+        "Dreamy"
+      ]
+    }
   },
   {
     "id": "gen-4f3ff03979dc",
@@ -2540,7 +2702,16 @@
       "soundscapePreset": "starryNight",
       "musicLoop": "etherealPad"
     },
-    "duration": 1
+    "duration": 1,
+    "character": {
+      "name": "Arjun",
+      "identity": "A brave little explorer who discovers friendship in the sky",
+      "special": "He befriends a magical robot that floats and plays with him above the city",
+      "personality_tags": [
+        "Brave",
+        "Playful"
+      ]
+    }
   },
   {
     "id": "gen-a67cde9762b6",
@@ -2678,7 +2849,16 @@
       "soundscapePreset": "rain",
       "musicLoop": "pianoLullaby"
     },
-    "duration": 1
+    "duration": 1,
+    "character": {
+      "name": "Pepper",
+      "identity": "A thoughtful little caregiver who lights up her home with love",
+      "special": "She finds gentle light to soothe her garden family into peaceful sleep",
+      "personality_tags": [
+        "Kind",
+        "Gentle"
+      ]
+    }
   },
   {
     "id": "gen-a8a2146a4f36",
@@ -2822,7 +3002,16 @@
       "soundscapePreset": "garden",
       "musicLoop": "gentleGuitar"
     },
-    "duration": 2
+    "duration": 2,
+    "character": {
+      "name": "Luna",
+      "identity": "The curious fox who bridges ancient forests and modern dreams",
+      "special": "She codes by moonlight, turning algorithms into nature’s melodies",
+      "personality_tags": [
+        "Creative",
+        "Dreamy"
+      ]
+    }
   },
   {
     "id": "gen-9e44d4374d44",
@@ -2961,7 +3150,16 @@
       "soundscapePreset": "river",
       "musicLoop": "etherealPad"
     },
-    "duration": 3
+    "duration": 3,
+    "character": {
+      "name": "Amara",
+      "identity": "The young astronomer who listens to the whispers of the stars",
+      "special": "She sees hidden celestial patterns that reveal the secrets of the cosmos",
+      "personality_tags": [
+        "Curious",
+        "Wise"
+      ]
+    }
   },
   {
     "id": "gen-b8847383ab32",
@@ -3104,7 +3302,16 @@
       "soundscapePreset": "forest",
       "musicLoop": "forestFlute"
     },
-    "duration": 2
+    "duration": 2,
+    "character": {
+      "name": "Nayeli",
+      "identity": "A fearless Arctic explorer who uncovers hidden wonders in the snow",
+      "special": "She finds secret places where animals learn and share magic under the stars",
+      "personality_tags": [
+        "Brave",
+        "Curious"
+      ]
+    }
   },
   {
     "id": "gen-6b4b4122c529",
@@ -3247,7 +3454,16 @@
       "soundscapePreset": "starryNight",
       "musicLoop": "etherealPad"
     },
-    "duration": 1
+    "duration": 1,
+    "character": {
+      "name": "Arjun",
+      "identity": "A playful young dreamer who discovers wonder in everyday magic",
+      "special": "His peacock feather transforms the world around him with joy and imagination",
+      "personality_tags": [
+        "Playful",
+        "Dreamy"
+      ]
+    }
   },
   {
     "id": "gen-2fedd4d6a646",
@@ -3390,7 +3606,16 @@
       "soundscapePreset": "garden",
       "musicLoop": "gentleGuitar"
     },
-    "duration": 2
+    "duration": 2,
+    "character": {
+      "name": "Nayak",
+      "identity": "A gentle explorer who finds magic in the world beneath his feet",
+      "special": "He discovers hidden wonders where others see only snow and ice",
+      "personality_tags": [
+        "Curious",
+        "Gentle"
+      ]
+    }
   },
   {
     "id": "gen-f23316834cfd",
@@ -3533,7 +3758,16 @@
       "soundscapePreset": "garden",
       "musicLoop": "softStrings"
     },
-    "duration": 2
+    "duration": 2,
+    "character": {
+      "name": "Mei",
+      "identity": "A creative girl who learns teamwork makes magic shine brighter",
+      "special": "She folds origami creatures that come alive with her friends' help",
+      "personality_tags": [
+        "Creative",
+        "Determined"
+      ]
+    }
   },
   {
     "id": "gen-df0dbc9d6b74",
@@ -3672,7 +3906,16 @@
       "soundscapePreset": "river",
       "musicLoop": "etherealPad"
     },
-    "duration": 2
+    "duration": 2,
+    "character": {
+      "name": "Coral",
+      "identity": "The brave guardian who learns the sea's hidden healing secrets",
+      "special": "She discovers how tiny plankton create life-giving oxygen for the ocean",
+      "personality_tags": [
+        "Brave",
+        "Wise"
+      ]
+    }
   },
   {
     "id": "gen-e77b10c51e8f",
@@ -3811,7 +4054,16 @@
       "soundscapePreset": "starryNight",
       "musicLoop": "cosmicSynth"
     },
-    "duration": 2
+    "duration": 2,
+    "character": {
+      "name": "Diego",
+      "identity": "A curious young explorer who uncovers cosmic secrets in ancient ruins",
+      "special": "He sees how friendships mirror the glowing constellations in hidden temple maps",
+      "personality_tags": [
+        "Curious",
+        "Dreamy"
+      ]
+    }
   },
   {
     "id": "gen-593c43ad1c11",
@@ -3950,7 +4202,16 @@
       "soundscapePreset": "garden",
       "musicLoop": "gentleGuitar"
     },
-    "duration": 1
+    "duration": 1,
+    "character": {
+      "name": "Nanha Tara",
+      "identity": "The gentle little star who lulls the jungle to sleep with kindness",
+      "special": "Whispers a magical lullaby that makes even the wind and leaves rest",
+      "personality_tags": [
+        "Gentle",
+        "Peaceful"
+      ]
+    }
   },
   {
     "id": "gen-b2e7514e8b8f",
@@ -4089,7 +4350,16 @@
       "soundscapePreset": "ocean",
       "musicLoop": "oceanMelody"
     },
-    "duration": 1
+    "duration": 1,
+    "character": {
+      "name": "Nanhe Khargosh",
+      "identity": "A gentle little explorer who finds friends in the waves and sand",
+      "special": "Can hear the ocean's lullaby and turn every grain of sand into a story",
+      "personality_tags": [
+        "Gentle",
+        "Playful"
+      ]
+    }
   },
   {
     "id": "gen-376993c8e295",
@@ -4228,7 +4498,16 @@
       "soundscapePreset": "garden",
       "musicLoop": "gentleGuitar"
     },
-    "duration": 1
+    "duration": 1,
+    "character": {
+      "name": "Asha",
+      "identity": "A brave little explorer who seeks comfort in dreams with her bear friend",
+      "special": "She finds hidden softness in the snow and turns it into a bed of dreams",
+      "personality_tags": [
+        "Brave",
+        "Dreamy"
+      ]
+    }
   },
   {
     "id": "gen-aad0a6e0c0c0",
@@ -4369,7 +4648,16 @@
       "soundscapePreset": "fireplace",
       "musicLoop": "calmHarp"
     },
-    "duration": 1
+    "duration": 1,
+    "character": {
+      "name": "Kira",
+      "identity": "A brave little explorer who finds joy in hidden family treasures",
+      "special": "She discovers secret ocean rooms where waves sing lullabies and pearls whisper stories",
+      "personality_tags": [
+        "Adventurous",
+        "Curious"
+      ]
+    }
   },
   {
     "id": "gen-ddc437037568",
@@ -4509,7 +4797,16 @@
       "soundscapePreset": "garden",
       "musicLoop": "softStrings"
     },
-    "duration": 3
+    "duration": 3,
+    "character": {
+      "name": "Nova",
+      "identity": "The boundless soul who carries a universe of dreams within",
+      "special": "Knows of a hidden temple only seen by those who truly listen to their heart",
+      "personality_tags": [
+        "Dreamy",
+        "Adventurous"
+      ]
+    }
   },
   {
     "id": "gen-2b9fdf8a1222",
@@ -4651,7 +4948,16 @@
       "soundscapePreset": "garden",
       "musicLoop": "gentleGuitar"
     },
-    "duration": 2
+    "duration": 2,
+    "character": {
+      "name": "Riya",
+      "identity": "The young nature guardian who discovers Earth's hidden treasures",
+      "special": "She sees the magic in rivers, forests, and animals—whispering secrets only the heart can hear",
+      "personality_tags": [
+        "Adventurous",
+        "Curious"
+      ]
+    }
   },
   {
     "id": "gen-60370cf66525",
@@ -4795,7 +5101,16 @@
       "soundscapePreset": "forest",
       "musicLoop": "forestFlute"
     },
-    "duration": 2
+    "duration": 2,
+    "character": {
+      "name": "Naina",
+      "identity": "A brave and curious girl who befriends magical seals in a snowy land",
+      "special": "She learns to dance on ice and swim with seals, discovering their hidden world",
+      "personality_tags": [
+        "Brave",
+        "Adventurous"
+      ]
+    }
   },
   {
     "id": "gen-032fdef6f753",
@@ -4935,7 +5250,16 @@
       "soundscapePreset": "starryNight",
       "musicLoop": "etherealPad"
     },
-    "duration": 1
+    "duration": 1,
+    "character": {
+      "name": "Hannu",
+      "identity": "A playful little dreamer who uncovers magic in every game",
+      "special": "His touch turns ordinary things into sparkling wonders and hidden surprises",
+      "personality_tags": [
+        "Playful",
+        "Dreamy"
+      ]
+    }
   },
   {
     "id": "gen-febbf324eecb",
@@ -5076,7 +5400,16 @@
       "soundscapePreset": "starryNight",
       "musicLoop": "etherealPad"
     },
-    "duration": 2
+    "duration": 2,
+    "character": {
+      "name": "Kiran",
+      "identity": "The fearless little explorer who finds magic in friendship across floating islands",
+      "special": "He can turn strangers into family with just a smile and a shared adventure",
+      "personality_tags": [
+        "Adventurous",
+        "Gentle"
+      ]
+    }
   },
   {
     "id": "gen-230502b905ba",
@@ -5220,7 +5553,16 @@
       "soundscapePreset": "wind",
       "musicLoop": "gentleGuitar"
     },
-    "duration": 1
+    "duration": 1,
+    "character": {
+      "name": "Priya",
+      "identity": "A brave and curious learner who becomes a wise and gentle teacher",
+      "special": "She discovers her inner light that teaches others through math, music, and dreams",
+      "personality_tags": [
+        "Brave",
+        "Wise"
+      ]
+    }
   },
   {
     "id": "gen-bb82f62942d0",
@@ -5358,7 +5700,16 @@
       "soundscapePreset": "river",
       "musicLoop": "etherealPad"
     },
-    "duration": 2
+    "duration": 2,
+    "character": {
+      "name": "Aarav",
+      "identity": "A fearless young explorer who listens to the ocean's secrets",
+      "special": "He dives into the deep and discovers magical creatures hidden beneath the waves",
+      "personality_tags": [
+        "Adventurous",
+        "Curious"
+      ]
+    }
   },
   {
     "id": "gen-0027e1835f09",
@@ -5497,7 +5848,16 @@
       "soundscapePreset": "wind",
       "musicLoop": "gentleGuitar"
     },
-    "duration": 4
+    "duration": 4,
+    "character": {
+      "name": "Advait",
+      "identity": "The curious leader who unites friends on extraordinary journeys",
+      "special": "He turns dreams into adventures where imagination shapes the future",
+      "personality_tags": [
+        "Curious",
+        "Adventurous"
+      ]
+    }
   },
   {
     "id": "gen-586908c26fc2",
@@ -5639,7 +5999,16 @@
       "soundscapePreset": "forest",
       "musicLoop": "nightPiano"
     },
-    "duration": 3
+    "duration": 3,
+    "character": {
+      "name": "Pina",
+      "identity": "A curious girl who follows secrets to uncover family magic",
+      "special": "She sees hidden trails and whispers that others miss in the dark",
+      "personality_tags": [
+        "Curious",
+        "Adventurous"
+      ]
+    }
   },
   {
     "id": "gen-1a5a91def9ae",
@@ -5782,7 +6151,16 @@
       "soundscapePreset": "fireplace",
       "musicLoop": "calmHarp"
     },
-    "duration": 2
+    "duration": 2,
+    "character": {
+      "name": "Pina",
+      "identity": "A curious little girl who wonders about the stars' magic",
+      "special": "She believes the stars weave dreams and hum lullabies just for her",
+      "personality_tags": [
+        "Curious",
+        "Dreamy"
+      ]
+    }
   },
   {
     "id": "gen-ae9ed8804fa7",
@@ -5928,7 +6306,16 @@
       "soundscapePreset": "wind",
       "musicLoop": "gentleGuitar"
     },
-    "duration": 2
+    "duration": 2,
+    "character": {
+      "name": "Finn",
+      "identity": "A joyful ocean dreamer who turns loneliness into friendship through song",
+      "special": "He hears and shares melodies that melt ice and warm even the coldest hearts",
+      "personality_tags": [
+        "Creative",
+        "Kind"
+      ]
+    }
   },
   {
     "id": "gen-be475c98edb5",
@@ -6073,7 +6460,16 @@
       "soundscapePreset": "forest",
       "musicLoop": "nightPiano"
     },
-    "duration": 3
+    "duration": 3,
+    "character": {
+      "name": "Aria",
+      "identity": "A gentle dreamer who listens to the whispers of forgotten magic",
+      "special": "She can see hidden patterns in starlight and unlock secrets with ancient keys",
+      "personality_tags": [
+        "Dreamy",
+        "Curious"
+      ]
+    }
   },
   {
     "id": "gen-f9e33d4db1bd",
@@ -6214,7 +6610,16 @@
       "soundscapePreset": "rain",
       "musicLoop": "pianoLullaby"
     },
-    "duration": 1
+    "duration": 1,
+    "character": {
+      "name": "Tiko",
+      "identity": "A peaceful little dreamer who listens to the Arctic night's lullabies",
+      "special": "He feels the magic of the wind and stars whispering secrets in the snow",
+      "personality_tags": [
+        "Gentle",
+        "Dreamy"
+      ]
+    }
   },
   {
     "id": "gen-292e9eadf56e",
@@ -6355,7 +6760,16 @@
       "soundscapePreset": "wind",
       "musicLoop": "gentleGuitar"
     },
-    "duration": 3
+    "duration": 3,
+    "character": {
+      "name": "Pebble",
+      "identity": "A gentle dreamer who listens to the world’s quietest secrets",
+      "special": "He can hear the Whispering Willow’s hidden messages meant only for true friends",
+      "personality_tags": [
+        "Gentle",
+        "Curious"
+      ]
+    }
   },
   {
     "id": "gen-76b0227cc919",
@@ -6496,7 +6910,16 @@
       "soundscapePreset": "rain",
       "musicLoop": "pianoLullaby"
     },
-    "duration": 1
+    "duration": 1,
+    "character": {
+      "name": "Priya",
+      "identity": "A gentle adventurer who brings light to the quiet Arctic night",
+      "special": "She can wake the sleeping glow of snowflakes with her soft, humming song",
+      "personality_tags": [
+        "Gentle",
+        "Adventurous"
+      ]
+    }
   },
   {
     "id": "gen-7cf84ff11c04",
@@ -6639,7 +7062,16 @@
       "soundscapePreset": "starryNight",
       "musicLoop": "etherealPad"
     },
-    "duration": 2
+    "duration": 2,
+    "character": {
+      "name": "Comet",
+      "identity": "A gentle wanderer who turns the sky into a playground of light",
+      "special": "She paints the world with her silver glow and hums tunes that spark friendship",
+      "personality_tags": [
+        "Gentle",
+        "Playful"
+      ]
+    }
   },
   {
     "id": "gen-b5438a861ba4",
@@ -6782,7 +7214,16 @@
       "soundscapePreset": "fireplace",
       "musicLoop": "calmHarp"
     },
-    "duration": 2
+    "duration": 2,
+    "character": {
+      "name": "Sky",
+      "identity": "A gentle little explorer discovering love and strength in her world",
+      "special": "Her feathers grow warm and strong, showing her family’s love helps her fly",
+      "personality_tags": [
+        "Curious",
+        "Gentle"
+      ]
+    }
   },
   {
     "id": "gen-caa3a14bb706",
@@ -6927,7 +7368,16 @@
       "soundscapePreset": "garden",
       "musicLoop": "gentleGuitar"
     },
-    "duration": 2
+    "duration": 2,
+    "character": {
+      "name": "Ember",
+      "identity": "A lonely little dragon who finds warmth in unexpected friendship",
+      "special": "His curiosity lights up hidden wonders in a world of glowing vines and robotic friends",
+      "personality_tags": [
+        "Curious",
+        "Gentle"
+      ]
+    }
   },
   {
     "id": "gen-01f0b88dc42d",
@@ -7073,6 +7523,15 @@
       ],
       "soundscapePreset": "heartbeat",
       "musicLoop": "musicBox"
+    },
+    "character": {
+      "name": "Rusty",
+      "identity": "A gentle little fox who listens to the whispers of the night",
+      "special": "Follows the humming stars that guide them home with sleepy songs",
+      "personality_tags": [
+        "Gentle",
+        "Dreamy"
+      ]
     }
   },
   {
@@ -7214,6 +7673,15 @@
       ],
       "soundscapePreset": "forest",
       "musicLoop": "nightPiano"
+    },
+    "character": {
+      "name": "Bloom",
+      "identity": "The pond's quiet sage who deciphers dreams hidden in the night",
+      "special": "Can read glowing maps inked in stars and moonbeam swirls to guide lost travelers",
+      "personality_tags": [
+        "Wise",
+        "Gentle"
+      ]
     }
   },
   {
@@ -7355,6 +7823,15 @@
       ],
       "soundscapePreset": "starryNight",
       "musicLoop": "etherealPad"
+    },
+    "character": {
+      "name": "Leo",
+      "identity": "A gentle adventurer who finds magic in everyday moments",
+      "special": "He can see and play with dinosaurs that others can’t, unlocking a hidden world",
+      "personality_tags": [
+        "Curious",
+        "Playful"
+      ]
     }
   },
   {
@@ -7501,7 +7978,16 @@
     "updated_at": "2026-02-23T06:30:58.145629",
     "view_count": 0,
     "like_count": 0,
-    "save_count": 0
+    "save_count": 0,
+    "character": {
+      "name": "Lumi",
+      "identity": "A gentle little explorer who finds magic in the quiet sea",
+      "special": "Her soft glow lights up hidden wonders in the deep ocean",
+      "personality_tags": [
+        "Curious",
+        "Gentle"
+      ]
+    }
   },
   {
     "id": "gen-8ea1861bffab",
@@ -7648,7 +8134,16 @@
     "updated_at": "2026-02-24T05:40:15.807785",
     "view_count": 0,
     "like_count": 0,
-    "save_count": 0
+    "save_count": 0,
+    "character": {
+      "name": "Mira",
+      "identity": "The curious young guardian who protects the kingdom's dreams",
+      "special": "She notices when even the smallest dream goes missing from the library",
+      "personality_tags": [
+        "Curious",
+        "Determined"
+      ]
+    }
   },
   {
     "id": "gen-9e87531b7db6",
@@ -7713,7 +8208,16 @@
     ],
     "duration": 3,
     "created_at": "2026-03-01T00:00:00.000000",
-    "updated_at": "2026-03-01T00:00:00.000000"
+    "updated_at": "2026-03-01T00:00:00.000000",
+    "character": {
+      "name": "Leo",
+      "identity": "A gentle dreamer who discovers magic in the ocean's whispers",
+      "special": "He can see the hidden underwater school where sea creatures learn under moonlight",
+      "personality_tags": [
+        "Curious",
+        "Adventurous"
+      ]
+    }
   },
   {
     "id": "gen-3b66368b6682",
@@ -7864,7 +8368,16 @@
     "updated_at": "2026-02-26T03:45:32.993563",
     "view_count": 0,
     "like_count": 0,
-    "save_count": 0
+    "save_count": 0,
+    "character": {
+      "name": "Aarav",
+      "identity": "A young ocean explorer who listens to the sea's hidden messages",
+      "special": "He can sense the ocean's whispers and decode its glowing underwater patterns",
+      "personality_tags": [
+        "Curious",
+        "Gentle"
+      ]
+    }
   },
   {
     "id": "gen-7936c7032060",
@@ -7982,6 +8495,15 @@
       ],
       "soundscapePreset": "starryNight",
       "musicLoop": "cosmicSynth"
+    },
+    "character": {
+      "name": "Priya",
+      "identity": "A gentle dreamer who follows starlight to find her lost friend",
+      "special": "She sees the cosmos as a map woven by kindness and celestial whispers",
+      "personality_tags": [
+        "Dreamy",
+        "Determined"
+      ]
     }
   },
   {
@@ -8123,6 +8645,15 @@
       ],
       "soundscapePreset": "wind",
       "musicLoop": "gentleGuitar"
+    },
+    "character": {
+      "name": "Lumi",
+      "identity": "The gentle guardian who turns fear into light with quiet courage",
+      "special": "Her glow carries stories and guides lost hearts home before they even ask",
+      "personality_tags": [
+        "Gentle",
+        "Wise"
+      ]
     }
   },
   {
@@ -8269,6 +8800,15 @@
       ],
       "soundscapePreset": "garden",
       "musicLoop": "gentleGuitar"
+    },
+    "character": {
+      "name": "Drizzle",
+      "identity": "A tiny dreamer with a heart as vast as the horizon",
+      "special": "She dances on winds and brings life to places touched by drought",
+      "personality_tags": [
+        "Gentle",
+        "Adventurous"
+      ]
     }
   },
   {
@@ -8390,6 +8930,15 @@
       ],
       "soundscapePreset": "garden",
       "musicLoop": "softStrings"
+    },
+    "character": {
+      "name": "Priya",
+      "identity": "A gentle listener who hears the dreams of her village in the river's song",
+      "special": "She understands the river’s whispers, revealing how friendship unites hearts",
+      "personality_tags": [
+        "Gentle",
+        "Dreamy"
+      ]
     }
   },
   {
@@ -8542,7 +9091,16 @@
     "updated_at": "2026-03-01T06:23:55.207668",
     "view_count": 0,
     "like_count": 0,
-    "save_count": 0
+    "save_count": 0,
+    "character": {
+      "name": "Aarohi",
+      "identity": "A gentle explorer who hears the hidden music of light and shadow",
+      "special": "She discovers a river where lanterns hum with forgotten stories and learns to listen to light",
+      "personality_tags": [
+        "Curious",
+        "Gentle"
+      ]
+    }
   },
   {
     "id": "gen-31f50f685a68",
@@ -8688,6 +9246,15 @@
       ],
       "soundscapePreset": "garden",
       "musicLoop": "gentleGuitar"
+    },
+    "character": {
+      "name": "Tick",
+      "identity": "A gentle timekeeper who helps lost friends find their way home",
+      "special": "His steady tick-tock rhythm guides others through the darkest parts of the forest",
+      "personality_tags": [
+        "Gentle",
+        "Patient"
+      ]
     }
   },
   {
@@ -8829,6 +9396,15 @@
       ],
       "soundscapePreset": "heartbeat",
       "musicLoop": "musicBox"
+    },
+    "character": {
+      "name": "Lila",
+      "identity": "A gentle dreamer swaying with the ocean’s lullaby",
+      "special": "She hears the waves sing her to sleep in her treehouse",
+      "personality_tags": [
+        "Gentle",
+        "Dreamy"
+      ]
     }
   },
   {
@@ -8952,6 +9528,15 @@
       ],
       "soundscapePreset": "garden",
       "musicLoop": "gentleGuitar"
+    },
+    "character": {
+      "name": "Finn",
+      "identity": "A gentle nighttime singer who soothes the ancient world to sleep",
+      "special": "His humming lullabies ripple through the lagoon and sing creatures into dreams",
+      "personality_tags": [
+        "Gentle",
+        "Kind"
+      ]
     }
   },
   {
@@ -9069,6 +9654,15 @@
       ],
       "soundscapePreset": "wind",
       "musicLoop": "gentleGuitar"
+    },
+    "character": {
+      "name": "Drizzle",
+      "identity": "A gentle little explorer who brings light to those who need rest",
+      "special": "Can carry the softest glow from the world below to comfort his cloud family",
+      "personality_tags": [
+        "Gentle",
+        "Dreamy"
+      ]
     }
   },
   {
@@ -9212,6 +9806,15 @@
       ],
       "soundscapePreset": "starryNight",
       "musicLoop": "etherealPad"
+    },
+    "character": {
+      "name": "Sylvie",
+      "identity": "A gentle weaver of warmth who teaches patience and inner light",
+      "special": "She spins golden threads that turn frost into sunlight with her quiet magic",
+      "personality_tags": [
+        "Gentle",
+        "Wise"
+      ]
     }
   },
   {
@@ -9355,6 +9958,15 @@
       ],
       "soundscapePreset": "forest",
       "musicLoop": "nightPiano"
+    },
+    "character": {
+      "name": "Priya",
+      "identity": "A thoughtful explorer who listens to the world’s quiet mysteries",
+      "special": "She notices hidden magic in ordinary places before anyone else does",
+      "personality_tags": [
+        "Curious",
+        "Gentle"
+      ]
     }
   },
   {
@@ -9497,6 +10109,15 @@
       ],
       "soundscapePreset": "starryNight",
       "musicLoop": "etherealPad"
+    },
+    "character": {
+      "name": "Aria",
+      "identity": "The curious girl who listens to the whispers of the unseen world",
+      "special": "She sees hidden places where shadows dance and secrets come alive",
+      "personality_tags": [
+        "Curious",
+        "Adventurous"
+      ]
     }
   },
   {
@@ -9643,6 +10264,15 @@
       ],
       "soundscapePreset": "garden",
       "musicLoop": "gentleGuitar"
+    },
+    "character": {
+      "name": "Stripe",
+      "identity": "A dreamy little tiger who listens to nature’s secrets and whispers",
+      "special": "She hears the hidden messages in the wind and bamboo’s ancient rhymes",
+      "personality_tags": [
+        "Dreamy",
+        "Curious"
+      ]
     }
   },
   {
@@ -9766,6 +10396,15 @@
       ],
       "soundscapePreset": "starryNight",
       "musicLoop": "etherealPad"
+    },
+    "character": {
+      "name": "Kite",
+      "identity": "A gentle dreamer who dances on the wind to heal the sky",
+      "special": "Hears the whispers of the breeze and carries healing grace in its flight",
+      "personality_tags": [
+        "Gentle",
+        "Dreamy"
+      ]
     }
   },
   {
@@ -9888,6 +10527,15 @@
       ],
       "soundscapePreset": "fireplace",
       "musicLoop": "calmHarp"
+    },
+    "character": {
+      "name": "Finn",
+      "identity": "A gentle young dreamer who believes in the magic of waiting for kindness",
+      "special": "Finn can hear the hidden songs of the ocean that call friends together",
+      "personality_tags": [
+        "Gentle",
+        "Dreamy"
+      ]
     }
   },
   {
@@ -10034,6 +10682,15 @@
       ],
       "soundscapePreset": "garden",
       "musicLoop": "gentleGuitar"
+    },
+    "character": {
+      "name": "Jai",
+      "identity": "A thoughtful little light who learns his glow matters most",
+      "special": "His golden spark guides lost friends home like a living lantern",
+      "personality_tags": [
+        "Brave",
+        "Kind"
+      ]
     }
   },
   {
@@ -10176,6 +10833,15 @@
       ],
       "soundscapePreset": "starryNight",
       "musicLoop": "cosmicSynth"
+    },
+    "character": {
+      "name": "Jade Lantern",
+      "identity": "The gentle light-bearer who remembers kindness and seeks belonging",
+      "special": "Its glow holds stories of the stars and the power to guide lost hearts home",
+      "personality_tags": [
+        "Gentle",
+        "Determined"
+      ]
     }
   },
   {
@@ -10187,7 +10853,16 @@
     "theme": "nature",
     "age_group": "2-5",
     "cover": "/covers/gen-e47bcd61e515.svg",
-    "created_at": "2026-02-25T00:00:00"
+    "created_at": "2026-02-25T00:00:00",
+    "character": {
+      "name": "Stripe",
+      "identity": "A curious tiger cub discovering his true path and purpose",
+      "special": "His stripes hold the hidden map of his journey and destiny",
+      "personality_tags": [
+        "Curious",
+        "Determined"
+      ]
+    }
   },
   {
     "id": "gen-4ddee3cbe031",
@@ -10198,7 +10873,16 @@
     "theme": "nature",
     "age_group": "2-5",
     "cover": "/covers/gen-4ddee3cbe031.svg",
-    "created_at": "2026-02-25T00:00:00"
+    "created_at": "2026-02-25T00:00:00",
+    "character": {
+      "name": "Lumi",
+      "identity": "A gentle garden robot who listens to nature's quiet beauty",
+      "special": "She understands the whispers of enchanted petals and befriends tiny creatures",
+      "personality_tags": [
+        "Gentle",
+        "Kind"
+      ]
+    }
   },
   {
     "id": "gen-50e929bf696c",
@@ -10209,7 +10893,16 @@
     "theme": "nature",
     "age_group": "2-5",
     "cover": "/covers/gen-50e929bf696c.svg",
-    "created_at": "2026-02-25T00:00:00"
+    "created_at": "2026-02-25T00:00:00",
+    "character": {
+      "name": "Chai",
+      "identity": "A gentle teacup who finds magic in quiet family moments",
+      "special": "Hums lullabies that make moonlight dance through the kitchen",
+      "personality_tags": [
+        "Gentle",
+        "Dreamy"
+      ]
+    }
   },
   {
     "id": "gen-8440041cfc57",
@@ -10220,6 +10913,15 @@
     "theme": "bedtime",
     "age_group": "2-5",
     "cover": "/covers/gen-8440041cfc57.svg",
-    "created_at": "2026-02-25T00:00:00"
+    "created_at": "2026-02-25T00:00:00",
+    "character": {
+      "name": "Pebble",
+      "identity": "A gentle little dreamer who listens to the river's whispers",
+      "special": "She hums a shell song that glows under moonlight like a lullaby",
+      "personality_tags": [
+        "Gentle",
+        "Dreamy"
+      ]
+    }
   }
 ]
