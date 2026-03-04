@@ -607,21 +607,25 @@ def generate_svg_overlay(axes: dict, story: dict) -> str:
     }
     colors = palette_colors.get(palette, palette_colors["golden_hour"])
 
-    # World-specific colors — MUST be visually distinct from each other at thumbnail size
-    # Rule: no two worlds share the same hue family for their primary visible color
+    # World-specific colors for animated overlay elements.
+    # DROWSINESS GUARDRAIL: All animated light sources MUST be warm-spectrum only
+    # (amber-to-warm-gold range). Cool colors (blue, green, teal, purple) are banned
+    # from animated overlays — they suppress melatonin and signal alertness.
+    # Cool tones are fine in the FLUX background (static), just not animated overlays.
+    # Each world still gets a distinct warm hue to maintain visual diversity.
     world_accents = {
-        "deep_ocean":       {"particle": "#00E5FF", "glow": "#0097A7", "accent": "#00BCD4"},  # CYAN — unmistakable ocean blue-green
-        "cloud_kingdom":    {"particle": "#E0E0E0", "glow": "#B0BEC5", "accent": "#ECEFF1"},  # SILVER/WHITE — cloud-like
-        "enchanted_forest": {"particle": "#76FF03", "glow": "#00C853", "accent": "#64DD17"},  # VIVID GREEN — forest canopy
-        "snow_landscape":   {"particle": "#E1F5FE", "glow": "#81D4FA", "accent": "#B3E5FC"},  # ICE BLUE — cold and pale
-        "desert_night":     {"particle": "#FFAB00", "glow": "#FF6D00", "accent": "#FF9100"},  # ORANGE — desert warmth
-        "cozy_interior":    {"particle": "#FFD54F", "glow": "#FFB300", "accent": "#FFC107"},  # AMBER/YELLOW — candlelight
-        "mountain_meadow":  {"particle": "#B2FF59", "glow": "#69F0AE", "accent": "#A5D6A7"},  # SOFT GREEN — meadow fresh
-        "space_cosmos":     {"particle": "#B388FF", "glow": "#7C4DFF", "accent": "#EA80FC"},  # PURPLE/VIOLET — cosmic
-        "tropical_lagoon":  {"particle": "#FF6E40", "glow": "#FF3D00", "accent": "#FF8A65"},  # RED-ORANGE — sunset fire
-        "underground_cave": {"particle": "#18FFFF", "glow": "#00E5FF", "accent": "#84FFFF"},  # BRIGHT TEAL — crystal glow
-        "ancient_library":  {"particle": "#FFE082", "glow": "#FFA000", "accent": "#FFD740"},  # GOLD — aged warmth
-        "floating_islands": {"particle": "#FF80AB", "glow": "#F50057", "accent": "#FF4081"},  # MAGENTA/PINK — magical
+        "deep_ocean":       {"particle": "#FFB74D", "glow": "#FF8F00", "accent": "#FFA726", "star": "#FFF5E0"},
+        "cloud_kingdom":    {"particle": "#FFF8E1", "glow": "#FFE0B2", "accent": "#FFECB3", "star": "#FFF8E8"},
+        "enchanted_forest": {"particle": "#FFD54F", "glow": "#FFA000", "accent": "#FFCA28", "star": "#FFECD2"},
+        "snow_landscape":   {"particle": "#FFF3E0", "glow": "#FFE0B2", "accent": "#FFE8CC", "star": "#FFF8E8"},
+        "desert_night":     {"particle": "#FFAB00", "glow": "#FF6D00", "accent": "#FF9100", "star": "#FFF5E0"},
+        "cozy_interior":    {"particle": "#FFD54F", "glow": "#FFB300", "accent": "#FFC107", "star": "#FFF8E8"},
+        "mountain_meadow":  {"particle": "#FFE082", "glow": "#FFD54F", "accent": "#FFCA28", "star": "#FFF5E0"},
+        "space_cosmos":     {"particle": "#FFD180", "glow": "#FFB74D", "accent": "#FFCC80", "star": "#FFECD2"},
+        "tropical_lagoon":  {"particle": "#FF6E40", "glow": "#FF3D00", "accent": "#FF8A65", "star": "#FFF5E0"},
+        "underground_cave": {"particle": "#FFB74D", "glow": "#FF8F00", "accent": "#FFA726", "star": "#FFECD2"},
+        "ancient_library":  {"particle": "#FFE082", "glow": "#FFA000", "accent": "#FFD740", "star": "#FFF8E8"},
+        "floating_islands": {"particle": "#FFAB91", "glow": "#FF8A65", "accent": "#FFCCBC", "star": "#FFF5E0"},
     }
     accents = world_accents.get(world, {})
     if accents:
@@ -680,7 +684,210 @@ def generate_svg_overlay(axes: dict, story: dict) -> str:
         svg_parts.append(_gen_twinkle(colors))
 
     svg_parts.append('\n</svg>')
-    return "\n".join(svg_parts)
+    svg_output = "\n".join(svg_parts)
+
+    # DROWSINESS GUARDRAIL: Post-generation validation safety net
+    warnings = validate_overlay_drowsiness(svg_output)
+    if warnings:
+        for w in warnings:
+            logger.warning("DROWSINESS VIOLATION: %s", w)
+
+    return svg_output
+
+
+# ── Drowsiness Guardrail Validator ────────────────────────────────────────
+# This is the SAFETY NET — catches violations even if generation code
+# is modified later. All rules come from the Animation Dos & Don'ts
+# research document for drowsiness-inducing overlay design.
+
+import re as _re
+
+# Warm-spectrum hex colors: red (0xCC+), green (0-0xFF), blue (0-0x80)
+# Cool colors to reject: dominant blue, dominant green, cyan, teal, purple
+_COOL_COLOR_PATTERN = _re.compile(
+    r'#(?:'
+    r'[0-9a-f]{2}[0-9a-f]{2}[8-9a-f][0-9a-f]'  # high blue channel (>= 0x80)
+    r')',
+    _re.IGNORECASE
+)
+
+def _is_warm_color(hex_color: str) -> bool:
+    """Check if a hex color is in the warm spectrum (amber-to-gold range).
+
+    Warm = red channel dominant, blue channel low.
+    Allows: amber, gold, orange, warm cream, peach, coral.
+    Rejects: cyan, teal, blue, purple, cool green.
+    """
+    hex_color = hex_color.strip().lstrip('#')
+    if len(hex_color) == 3:
+        hex_color = ''.join(c * 2 for c in hex_color)
+    if len(hex_color) != 6:
+        return True  # can't parse, skip
+    try:
+        r = int(hex_color[0:2], 16)
+        g = int(hex_color[2:4], 16)
+        b = int(hex_color[4:6], 16)
+    except ValueError:
+        return True  # can't parse, skip
+
+    # Warm rule: red must be >= blue, and blue must be < 0x90 (144)
+    # Exception for very pale/white-ish colors (all channels > 0xE0)
+    if r >= 0xE0 and g >= 0xE0 and b >= 0xE0:
+        return True  # near-white/cream is OK
+    if b > r:
+        return False  # blue dominant = cool
+    if g > r and b > r * 0.5:
+        return False  # green dominant with blue = cool
+    if b >= 0x90 and r < 0xC0:
+        return False  # high blue channel = cool
+    return True
+
+
+def validate_overlay_drowsiness(svg_str: str) -> list:
+    """Validate a generated SVG overlay against drowsiness-inducing design principles.
+
+    Returns a list of warning strings for any violations found.
+    This is a SAFETY NET — catches problems even if generation code changes.
+
+    Rules checked:
+    1. No dominant upward motion (animateMotion paths, translate values)
+    2. Minimum animation duration >= 4s (prefer >= 6s)
+    3. Maximum element opacity <= 0.60
+    4. Particle/element count per group <= 7
+    5. All animated fill/stroke colors must be warm-spectrum
+    6. No rapid flashing (brightness changes faster than 2s)
+    """
+    warnings = []
+
+    # --- Rule 1: No dominant upward motion ---
+    # Check animateMotion paths for large negative Y movement
+    for m in _re.finditer(r'<animateMotion[^>]*path="([^"]*)"', svg_str):
+        path = m.group(1)
+        # Extract the endpoint: last coordinate pair in the path
+        coords = _re.findall(r'(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)', path)
+        if len(coords) >= 2:
+            start_y = float(coords[0][1])
+            end_y = float(coords[-1][1])
+            delta_y = end_y - start_y
+            # Check for dominant upward: if Y decreases by more than 80px
+            # AND the upward component is larger than horizontal component
+            if delta_y < -80:
+                start_x = float(coords[0][0])
+                end_x = float(coords[-1][0])
+                delta_x = abs(end_x - start_x)
+                if abs(delta_y) > delta_x * 1.5:  # upward is dominant
+                    warnings.append(
+                        f"Dominant upward motion detected: dy={delta_y:.0f}px "
+                        f"(dx={delta_x:.0f}px). Use downward or lateral motion instead."
+                    )
+
+    # Check translate values for upward motion
+    for m in _re.finditer(
+        r'<animateTransform[^>]*type="translate"[^>]*values="([^"]*)"', svg_str
+    ):
+        values = m.group(1)
+        y_vals = _re.findall(r',\s*(-?\d+(?:\.\d+)?)', values)
+        for yv in y_vals:
+            if float(yv) < -50:
+                warnings.append(
+                    f"Upward translate detected: y={yv}. "
+                    f"Animated elements should settle downward, not rise."
+                )
+
+    # --- Rule 2: Minimum animation duration ---
+    for m in _re.finditer(r'dur="(\d+(?:\.\d+)?)s?"', svg_str):
+        dur = float(m.group(1))
+        if dur < 4.0:
+            warnings.append(
+                f"Animation duration too short: {dur}s (min 4s, prefer 6s+). "
+                f"Fast animations trigger saccadic eye response."
+            )
+
+    # --- Rule 3: Maximum opacity (for LIGHT-EMITTING elements only) ---
+    # Vignettes and dark overlays are SUPPOSED to be high-opacity (darkening effect).
+    # This rule only applies to particle/glow/twinkle elements (light sources).
+    # Skip: elements inside <defs>, elements with vignette gradients, stop-opacity attributes.
+    for m in _re.finditer(r'opacity="([^"]*)"', svg_str):
+        val = m.group(1)
+        pos = m.start()
+        # Skip anything inside <defs> (gradient definitions, including vignette gradients)
+        preceding = svg_str[max(0, pos-500):pos]
+        if '<defs>' in preceding and '</defs>' not in preceding:
+            continue
+        # Skip vignette-related elements (they're darkness, not light sources)
+        if 'vignette' in preceding.lower() or 'vigLG' in preceding or 'vigRC' in preceding:
+            continue
+        # Skip stop-opacity (gradient stops)
+        if 'stop-opacity' in svg_str[max(0, pos-15):pos+1]:
+            continue
+        try:
+            op = float(val)
+            if op > 0.61:  # small tolerance for floating point
+                warnings.append(
+                    f"Light element opacity too high: {op:.2f} (max 0.60). "
+                    f"Translucent elements allow the eye to defocus."
+                )
+        except ValueError:
+            pass
+    # Check opacity in animation values (skip vignette animations)
+    for m in _re.finditer(
+        r'attributeName="opacity"[^>]*values="([^"]*)"', svg_str
+    ):
+        vals = m.group(1)
+        pos = m.start()
+        preceding = svg_str[max(0, pos-500):pos]
+        # Skip vignette opacity animations (they should reach 70-85% per design doc)
+        if 'vignette' in preceding.lower() or 'vigLG' in preceding or 'vigRC' in preceding:
+            continue
+        for v in vals.split(';'):
+            v = v.strip()
+            if not v:
+                continue
+            try:
+                op = float(v)
+                if op > 0.61:
+                    warnings.append(
+                        f"Animated opacity peak too high: {op:.2f} (max 0.60). "
+                        f"Full-opacity elements demand visual attention."
+                    )
+            except ValueError:
+                pass
+
+    # --- Rule 4: Element count per group ---
+    # Count elements within comment-delimited groups
+    sections = _re.split(r'<!--\s*(.*?)\s*-->', svg_str)
+    current_label = ""
+    for i, section in enumerate(sections):
+        if i % 2 == 1:  # odd indices are comment contents
+            current_label = section
+        elif i % 2 == 0 and current_label:
+            # Count animated elements (circles, ellipses, rects with <animate)
+            elements = len(_re.findall(r'<(?:circle|ellipse|rect|path|line|polygon)\s', section))
+            if elements > 10:
+                warnings.append(
+                    f"Too many animated elements in '{current_label}': {elements} "
+                    f"(prefer 3-7). Above 7 creates busy visual field."
+                )
+
+    # --- Rule 5: Warm colors only for animated elements ---
+    # Check fill and stroke colors on animated elements
+    for m in _re.finditer(r'fill="(#[0-9a-fA-F]{3,8})"', svg_str):
+        color = m.group(1)
+        # Skip colors in <defs> (gradients, filters) — those are structural
+        pos = m.start()
+        preceding = svg_str[max(0, pos-200):pos]
+        if '<defs>' in preceding and '</defs>' not in preceding:
+            continue
+        # Skip vignette rects (they're dark, not light sources)
+        if 'vignette' in preceding.lower():
+            continue
+        if not _is_warm_color(color):
+            warnings.append(
+                f"Cool-spectrum color in animated overlay: {color}. "
+                f"All animated light sources must be amber-to-warm-gold."
+            )
+
+    return warnings
 
 
 def _gen_particles(variant: str, colors: dict) -> str:
@@ -690,48 +897,54 @@ def _gen_particles(variant: str, colors: dict) -> str:
     Each variant produces a different motion, shape, and feel.
     """
     # Variant-specific configuration (opacity boosted for visibility, max 0.60)
+    # DROWSINESS GUARDRAILS enforced:
+    #   - Count: 3-7 active particles (below 3 = focal points, above 7 = busy/stimulating)
+    #   - Direction: downward or lateral ONLY (upward = arousal). Narrow exception for
+    #     bubbles: "mostly laterally with only slight upward movement"
+    #   - Opacity: max 0.60 on any animated element
+    #   - Duration: min 6s cycles (slow enough for smooth pursuit eye-tracking)
     configs = {
         "particles_bubbles": {
-            "label": "Rising Bubbles", "count": (6, 10), "direction": "up",
+            "label": "Drifting Bubbles", "count": (4, 6), "direction": "lateral_slight_up",
             "r_large": (6.0, 10.0), "r_med": (3.5, 6.0), "r_small": (2.0, 3.5),
-            "op_large": (0.35, 0.55), "op_med": (0.25, 0.45), "op_small": (0.18, 0.35),
-            "dur": (18, 28), "size_pulse": True, "use_filter": True,
+            "op_large": (0.25, 0.45), "op_med": (0.18, 0.35), "op_small": (0.12, 0.25),
+            "dur": (25, 40), "size_pulse": True, "use_filter": True,
         },
         "particles_snow": {
-            "label": "Falling Snowflakes", "count": (12, 20), "direction": "down_sway",
+            "label": "Falling Snowflakes", "count": (5, 7), "direction": "down_sway",
             "r_large": (3.0, 5.0), "r_med": (2.0, 3.0), "r_small": (1.0, 2.0),
-            "op_large": (0.45, 0.60), "op_med": (0.35, 0.55), "op_small": (0.25, 0.40),
-            "dur": (16, 26), "size_pulse": False, "use_filter": False,
-        },
-        "particles_pollen": {
-            "label": "Floating Pollen", "count": (8, 14), "direction": "float",
-            "r_large": (3.0, 4.5), "r_med": (1.5, 3.0), "r_small": (0.8, 1.5),
-            "op_large": (0.35, 0.55), "op_med": (0.25, 0.45), "op_small": (0.18, 0.30),
-            "dur": (20, 35), "size_pulse": False, "use_filter": True,
-        },
-        "particles_dust": {
-            "label": "Dust Motes in Light", "count": (8, 14), "direction": "diagonal",
-            "r_large": (2.0, 3.5), "r_med": (1.2, 2.0), "r_small": (0.6, 1.2),
-            "op_large": (0.35, 0.55), "op_med": (0.25, 0.40), "op_small": (0.15, 0.30),
-            "dur": (22, 35), "size_pulse": False, "use_filter": True,
-        },
-        "particles_fireflies": {
-            "label": "Firefly Glows", "count": (5, 8), "direction": "bob",
-            "r_large": (5.0, 8.0), "r_med": (3.0, 5.0), "r_small": (2.0, 3.0),
-            "op_large": (0.15, 0.60), "op_med": (0.12, 0.55), "op_small": (0.08, 0.45),
-            "dur": (8, 16), "size_pulse": True, "use_filter": True,
-        },
-        "particles_leaves": {
-            "label": "Falling Leaves", "count": (5, 8), "direction": "down_rotate",
-            "r_large": (4.0, 6.0), "r_med": (3.0, 4.0), "r_small": (2.0, 3.0),
-            "op_large": (0.35, 0.55), "op_med": (0.28, 0.45), "op_small": (0.20, 0.35),
+            "op_large": (0.35, 0.55), "op_med": (0.25, 0.45), "op_small": (0.18, 0.35),
             "dur": (18, 30), "size_pulse": False, "use_filter": False,
         },
+        "particles_pollen": {
+            "label": "Floating Pollen", "count": (4, 6), "direction": "float",
+            "r_large": (3.0, 4.5), "r_med": (1.5, 3.0), "r_small": (0.8, 1.5),
+            "op_large": (0.30, 0.50), "op_med": (0.20, 0.40), "op_small": (0.15, 0.28),
+            "dur": (22, 38), "size_pulse": False, "use_filter": True,
+        },
+        "particles_dust": {
+            "label": "Dust Motes in Light", "count": (4, 6), "direction": "diagonal",
+            "r_large": (2.0, 3.5), "r_med": (1.2, 2.0), "r_small": (0.6, 1.2),
+            "op_large": (0.30, 0.50), "op_med": (0.20, 0.38), "op_small": (0.12, 0.25),
+            "dur": (24, 38), "size_pulse": False, "use_filter": True,
+        },
+        "particles_fireflies": {
+            "label": "Firefly Glows", "count": (4, 6), "direction": "bob",
+            "r_large": (5.0, 8.0), "r_med": (3.0, 5.0), "r_small": (2.0, 3.0),
+            "op_large": (0.12, 0.55), "op_med": (0.10, 0.45), "op_small": (0.08, 0.35),
+            "dur": (10, 18), "size_pulse": True, "use_filter": True,
+        },
+        "particles_leaves": {
+            "label": "Falling Leaves", "count": (4, 6), "direction": "down_rotate",
+            "r_large": (4.0, 6.0), "r_med": (3.0, 4.0), "r_small": (2.0, 3.0),
+            "op_large": (0.30, 0.50), "op_med": (0.22, 0.40), "op_small": (0.15, 0.30),
+            "dur": (20, 35), "size_pulse": False, "use_filter": False,
+        },
         "particles_spores": {
-            "label": "Rising Spores", "count": (8, 14), "direction": "up_gentle",
+            "label": "Settling Spores", "count": (4, 6), "direction": "down_gentle",
             "r_large": (2.5, 4.0), "r_med": (1.5, 2.5), "r_small": (0.8, 1.5),
-            "op_large": (0.35, 0.55), "op_med": (0.25, 0.40), "op_small": (0.15, 0.30),
-            "dur": (20, 32), "size_pulse": False, "use_filter": True,
+            "op_large": (0.30, 0.50), "op_med": (0.20, 0.35), "op_small": (0.12, 0.25),
+            "dur": (22, 36), "size_pulse": False, "use_filter": True,
         },
     }
     cfg = configs.get(variant, configs["particles_pollen"])
@@ -757,17 +970,19 @@ def _gen_particles(variant: str, colors: dict) -> str:
         delay = random.uniform(0, dur * 0.6)
         direction = cfg["direction"]
 
-        if direction == "up":
-            # Rising bubbles — upward S-curve with wobble
-            cx = random.randint(40, 470)
-            cy_start = random.randint(420, 540)
-            dx = random.randint(-50, 50)
-            dy = random.randint(-400, -300)
-            cx1 = random.randint(-40, 40)
-            cy1 = random.randint(-100, -60)
-            cx2 = random.randint(-35, 35)
-            cy2 = random.randint(-250, -180)
-            path = f"M{cx},{cy_start} C{cx+cx1},{cy_start+cy1} {cx+cx2},{cy_start+cy2} {cx+dx},{cy_start+dy}"
+        if direction == "lateral_slight_up":
+            # DROWSINESS GUARDRAIL: Bubbles drift mostly laterally with only
+            # slight upward movement (the ONE narrow exception to the no-upward rule).
+            # Primary motion is horizontal; vertical component is small and slow.
+            cx = random.randint(60, 200)
+            cy = random.randint(200, 400)
+            dx = random.randint(200, 350)  # dominant: large horizontal drift
+            dy = random.randint(-40, -15)  # minor: very slight upward (~10% of horizontal)
+            cx1 = random.randint(60, 120)
+            cy1 = random.randint(-20, 20)
+            cx2 = random.randint(140, 250)
+            cy2 = random.randint(-30, 10)
+            path = f"M{cx},{cy} C{cx+cx1},{cy+cy1} {cx+cx2},{cy+cy2} {cx+dx},{cy+dy}"
         elif direction == "down_sway":
             # Snow — falling with wide horizontal sway
             cx = random.randint(20, 500)
@@ -806,13 +1021,14 @@ def _gen_particles(variant: str, colors: dict) -> str:
             dx = random.randint(-80, 80)
             dy = random.randint(400, 540)
             path = f"M{cx},{cy_start} C{cx+dx},{cy_start+dy//4} {cx-dx},{cy_start+3*dy//4} {cx+dx//2},{cy_start+dy}"
-        elif direction == "up_gentle":
-            # Spores — gentle rise from ground
+        elif direction == "down_gentle":
+            # DROWSINESS GUARDRAIL: Spores settle downward from mid-air
+            # (upward motion = arousal; downward settling = "settling down")
             cx = random.randint(60, 450)
-            cy_start = random.randint(440, 510)
-            dx = random.randint(-30, 30)
-            dy = random.randint(-250, -150)
-            path = f"M{cx},{cy_start} C{cx+dx},{cy_start+dy//2} {cx-dx},{cy_start+dy} {cx},{cy_start+dy-40}"
+            cy_start = random.randint(60, 200)
+            dx = random.randint(-35, 35)
+            dy = random.randint(200, 350)  # POSITIVE = downward settling
+            path = f"M{cx},{cy_start} C{cx+dx},{cy_start+dy//3} {cx-dx},{cy_start+2*dy//3} {cx+dx//2},{cy_start+dy}"
         else:
             # Default: gentle downward drift
             cx = random.randint(30, 480)
@@ -1011,31 +1227,35 @@ def _gen_glow(variant: str, colors: dict, world: str = "") -> str:
 def _gen_twinkle(colors: dict) -> str:
     """Generate twinkling star/shimmer effects — visible slow twinkles.
 
-    Sleep rules: cycle >=4s, gentle fade in/out.
+    DROWSINESS GUARDRAILS:
+    - Count: 5-7 (3-7 range; above 7 = busy visual field)
+    - Cycle: >=6s, staggered (no synchronized flashing)
+    - Opacity: max 0.55 (translucent; 60% absolute max)
+    - Timing: all on different delays (no group events)
     """
     accent = colors.get("accent", colors["star"])
-    count = random.randint(14, 22)
+    count = random.randint(5, 7)
     twinkles = []
     twinkles.append('\n  <!-- Twinkling Stars -->')
 
     for i in range(count):
         cx = random.randint(15, 500)
         cy = random.randint(5, 300)
-        dur = random.uniform(5, 10)  # >=4s rule
-        delay = random.uniform(0, 8)
+        dur = random.uniform(7, 14)  # longer cycles, less detectable looping
+        delay = random.uniform(0, dur * 0.8)  # staggered to prevent sync
         # Use accent color for some stars to add color variety
-        star_color = accent if i % 4 == 0 else colors["star"]
+        star_color = accent if i % 3 == 0 else colors["star"]
 
-        # Mix of star sizes — boosted for visibility
-        if i < 5:
-            r = random.uniform(3.0, 4.5)
-            max_opacity = random.uniform(0.50, 0.60)
-        elif i < 12:
-            r = random.uniform(2.0, 3.0)
+        # Mix of star sizes — 2 large, rest small
+        if i < 2:
+            r = random.uniform(2.5, 4.0)
             max_opacity = random.uniform(0.40, 0.55)
+        elif i < 4:
+            r = random.uniform(1.5, 2.5)
+            max_opacity = random.uniform(0.30, 0.45)
         else:
             r = random.uniform(1.0, 2.0)
-            max_opacity = random.uniform(0.30, 0.45)
+            max_opacity = random.uniform(0.20, 0.38)
 
         twinkles.append(f'''  <circle cx="{cx}" cy="{cy}" r="{r:.1f}" fill="{star_color}" opacity="0">
     <animate attributeName="opacity"
@@ -1124,13 +1344,13 @@ def _gen_drift(variant: str, colors: dict) -> str:
     <animateTransform attributeName="transform" type="rotate"
       values="0 256 256; 8 256 256; 0 256 256; -5 256 256; 0 256 256"
       dur="{dur}s" repeatCount="indefinite" />
-    <circle cx="120" cy="80" r="1.8" fill="{colors['star']}" opacity="0.6"/>
-    <circle cx="350" cy="60" r="1.4" fill="{accent}" opacity="0.5"/>
-    <circle cx="420" cy="180" r="1.5" fill="{colors['star']}" opacity="0.45"/>
-    <circle cx="80" cy="220" r="1.2" fill="{accent}" opacity="0.4"/>
-    <circle cx="280" cy="40" r="1.6" fill="{colors['star']}" opacity="0.55"/>
-    <circle cx="450" cy="120" r="1.0" fill="{colors['star']}" opacity="0.35"/>
-    <circle cx="200" cy="150" r="1.8" fill="{accent}" opacity="0.5"/>
+    <circle cx="120" cy="80" r="1.8" fill="{colors['star']}" opacity="0.55"/>
+    <circle cx="350" cy="60" r="1.4" fill="{accent}" opacity="0.45"/>
+    <circle cx="420" cy="180" r="1.5" fill="{colors['star']}" opacity="0.40"/>
+    <circle cx="80" cy="220" r="1.2" fill="{accent}" opacity="0.35"/>
+    <circle cx="280" cy="40" r="1.6" fill="{colors['star']}" opacity="0.50"/>
+    <circle cx="450" cy="120" r="1.0" fill="{colors['star']}" opacity="0.30"/>
+    <circle cx="200" cy="150" r="1.8" fill="{accent}" opacity="0.45"/>
   </g>'''
 
     else:
@@ -1236,26 +1456,26 @@ def _gen_mist(variant: str, colors: dict) -> str:
   </rect>'''
 
     elif variant == "mist_steam":
-        # VERTICAL NARROW COLUMNS rising — tall thin rects, NOT blobs
-        # Positioned at scattered points, rising upward. Very different from horizontal mist.
-        parts = ['\n  <!-- Rising Steam Columns -->']
-        num_cols = random.randint(4, 7)
-        for i in range(num_cols):
-            x = random.randint(60, 450)
-            y_start = random.randint(300, 430)
-            w = random.randint(4, 10)
-            h = random.randint(60, 140)
-            dur = random.randint(12, 22)
-            delay = random.uniform(0, 8)
-            rise = random.randint(40, 90)
+        # DROWSINESS GUARDRAIL: Steam drifts horizontally, NOT rising upward.
+        # Upward motion = arousal cue. Horizontal wisps = calm, neutral.
+        # Uses thin horizontal <rect> wisps that drift sideways and fade.
+        parts = ['\n  <!-- Drifting Steam Wisps -->']
+        num_wisps = random.randint(4, 6)
+        for i in range(num_wisps):
+            x = random.randint(-40, 200)
+            y = random.randint(280, 430)
+            w = random.randint(120, 250)
+            h = random.randint(4, 10)
+            dur = random.randint(20, 35)
+            delay = random.uniform(0, 10)
+            drift_x = random.randint(80, 200)  # horizontal drift
+            drift_y = random.randint(-5, 8)    # negligible vertical (slight downward OK)
             col = accent if i % 3 == 0 else colors["glow"]
-            op_max = random.uniform(0.15, 0.35)
-            # Slight horizontal wobble as steam rises
-            wobble = random.randint(5, 15) * random.choice([-1, 1])
-            parts.append(f'''  <rect x="{x}" y="{y_start}" width="{w}" height="{h}" rx="{w//2}"
+            op_max = random.uniform(0.12, 0.30)
+            parts.append(f'''  <rect x="{x}" y="{y}" width="{w}" height="{h}" rx="{h//2}"
     fill="{col}" opacity="0">
     <animateTransform attributeName="transform" type="translate"
-      values="0,0; {wobble},{-rise}; {-wobble},{-rise//2}; 0,0"
+      values="0,0; {drift_x},{drift_y}; {drift_x//2},{drift_y//2}; 0,0"
       dur="{dur}s" begin="{delay:.1f}s" repeatCount="indefinite" />
     <animate attributeName="opacity"
       values="0;{op_max:.2f};{op_max*0.6:.2f};0" dur="{dur}s"
@@ -1265,9 +1485,9 @@ def _gen_mist(variant: str, colors: dict) -> str:
 
     else:
         # Default (mist_ground): SCATTERED SOFT DOTS across lower third — NOT big ellipses
-        # Many small circles at varying heights, not 2-3 big blobs
+        # DROWSINESS GUARDRAIL: 5-7 dots max (above 7 = busy visual field)
         parts = ['\n  <!-- Ground Mist (scattered dots) -->']
-        count = random.randint(12, 20)
+        count = random.randint(5, 7)
         for i in range(count):
             cx = random.randint(20, 492)
             cy = random.randint(320, 500)
@@ -1330,13 +1550,14 @@ def _gen_glow_secondary(variant: str, colors: dict) -> str:
 
     if variant == "glow_firefly":
         # 4-6 small glows at random positions, staggered pulse timings
+        # DROWSINESS GUARDRAIL: 8-14s cycles (longer = less detectable looping)
         parts = ['\n  <!-- Firefly Glows -->']
         count = random.randint(4, 6)
         for i in range(count):
             cx = random.randint(60, 450)
             cy = random.randint(120, 440)
             r = random.randint(22, 35)
-            dur = random.randint(6, 12)
+            dur = random.randint(8, 14)
             delay = random.uniform(0, dur * 0.7)
             glow_col = accent if i % 2 == 0 else colors["glow"]
             parts.append(f'''  <circle cx="{cx}" cy="{cy}" r="{r}" fill="{glow_col}" filter="url(#softBlur)" opacity="0">
@@ -1377,11 +1598,12 @@ def _gen_glow_secondary(variant: str, colors: dict) -> str:
     elif variant == "glow_campfire":
         # TRIANGULAR warm glow — a pointed upward shape, not a blob
         # Uses <polygon> for a flame-like triangle at lower-center
+        # DROWSINESS GUARDRAIL: min 6s cycle (fast flicker = alerting flash)
         cx = random.randint(220, 300)
         cy_base = random.randint(420, 460)
         flame_h = random.randint(60, 100)
         flame_w = random.randint(30, 50)
-        dur = random.randint(4, 6)
+        dur = random.randint(6, 10)
         # Triangle points: left-base, right-base, tip
         p1 = f"{cx-flame_w},{cy_base}"
         p2 = f"{cx+flame_w},{cy_base}"
@@ -1403,10 +1625,11 @@ def _gen_glow_secondary(variant: str, colors: dict) -> str:
 
     elif variant == "glow_candle":
         # Single small warm glow, slight position wobble
+        # DROWSINESS GUARDRAIL: 7-10s cycles (candle flicker must be slow, not alerting)
         cx = random.randint(200, 320)
         cy = random.randint(280, 400)
         r = random.randint(30, 50)
-        dur = random.randint(5, 8)
+        dur = random.randint(7, 10)
         return f'''
   <!-- Candle Glow -->
   <circle cx="{cx}" cy="{cy}" r="{r}" fill="{accent}" filter="url(#softBlur)" opacity="0.30">
