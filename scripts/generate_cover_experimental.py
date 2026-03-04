@@ -213,8 +213,8 @@ THEME_TO_PALETTE = {
 WORLD_ELEMENTS = {
     "enchanted_forest": {
         "background": {"pool": ["stars", "moon_glow", "fog", "aurora"], "pick": (3, 4)},
-        "midground":  {"pool": ["fireflies", "dust_motes", "falling_leaves", "closing_flowers"], "pick": (3, 4)},
-        "foreground": {"pool": ["swaying_branches", "fog"], "pick": (2, 3)},
+        "midground":  {"pool": ["fireflies", "dust_motes", "falling_leaves", "closing_flowers", "shadow_play"], "pick": (4, 5)},
+        "foreground": {"pool": ["swaying_branches", "fog", "dust_motes"], "pick": (2, 3)},
         "required":   ["breathing_pacer"],
         "fauna":      ["sleeping_owl", "sleeping_butterfly", "cricket"],
         "rare_event": ["shooting_star"],
@@ -222,49 +222,49 @@ WORLD_ELEMENTS = {
         "pacer_variant": "forest",
     },
     "deep_ocean": {
-        "background": {"pool": ["fog", "caustics", "aurora"], "pick": (2, 3)},
-        "midground":  {"pool": ["bubbles", "caustics", "dust_motes", "water_ripples"], "pick": (3, 5)},
-        "foreground": {"pool": ["fog", "swaying_branches"], "pick": (2, 3)},
+        "background": {"pool": ["fog", "caustics", "aurora", "moon_glow"], "pick": (3, 4)},
+        "midground":  {"pool": ["bubbles", "caustics", "dust_motes", "water_ripples", "shadow_play"], "pick": (4, 5)},
+        "foreground": {"pool": ["fog", "swaying_branches", "dust_motes"], "pick": (2, 3)},
         "required":   ["breathing_pacer"],
         "fauna":      ["sleeping_butterfly"],
-        "rare_event": [],
+        "rare_event": ["shooting_star"],
         "vignette":   "top_heavy",
         "pacer_variant": "ocean",
     },
     "space_cosmos": {
-        "background": {"pool": ["stars", "aurora", "moon_glow"], "pick": (3, 4)},
-        "midground":  {"pool": ["dust_motes", "stars"], "pick": (3, 4)},
-        "foreground": {"pool": ["fog", "dust_motes"], "pick": (2, 3)},
+        "background": {"pool": ["stars", "aurora", "moon_glow", "fog"], "pick": (3, 4)},
+        "midground":  {"pool": ["dust_motes", "stars", "fireflies", "shadow_play"], "pick": (3, 4)},
+        "foreground": {"pool": ["fog", "dust_motes", "stars"], "pick": (2, 3)},
         "required":   ["breathing_pacer"],
-        "fauna":      [],
+        "fauna":      ["sleeping_butterfly"],
         "rare_event": ["shooting_star"],
         "vignette":   "corners_only",
         "pacer_variant": "space",
     },
     "snow_landscape": {
         "background": {"pool": ["stars", "moon_glow", "aurora", "fog"], "pick": (3, 4)},
-        "midground":  {"pool": ["snowfall", "chimney_smoke", "dust_motes"], "pick": (3, 5)},
+        "midground":  {"pool": ["snowfall", "chimney_smoke", "dust_motes", "wind_grass", "shadow_play"], "pick": (4, 5)},
         "foreground": {"pool": ["swaying_branches", "fog", "snowfall"], "pick": (2, 3)},
         "required":   ["breathing_pacer"],
         "fauna":      ["sleeping_owl"],
         "rare_event": ["shooting_star"],
-        "vignette":   "none",
+        "vignette":   "bottom_light",
         "pacer_variant": "forest",
     },
     "cozy_interior": {
-        "background": {"pool": ["stars", "moon_glow", "shadow_play"], "pick": (2, 3)},
-        "midground":  {"pool": ["dust_motes", "candle_flicker", "shadow_play"], "pick": (3, 5)},
-        "foreground": {"pool": ["fog", "dust_motes"], "pick": (2, 3)},
+        "background": {"pool": ["stars", "moon_glow", "shadow_play", "fog"], "pick": (3, 4)},
+        "midground":  {"pool": ["dust_motes", "candle_flicker", "shadow_play", "fireflies", "closing_flowers"], "pick": (4, 5)},
+        "foreground": {"pool": ["fog", "dust_motes", "shadow_play"], "pick": (2, 3)},
         "required":   ["breathing_pacer"],
         "fauna":      ["sleeping_butterfly", "cricket"],
-        "rare_event": [],
+        "rare_event": ["shooting_star"],
         "vignette":   "full_soft",
         "pacer_variant": "interior",
     },
     "desert_night": {
         "background": {"pool": ["stars", "moon_glow", "fog", "aurora"], "pick": (3, 4)},
-        "midground":  {"pool": ["dust_motes", "wind_grass"], "pick": (3, 4)},
-        "foreground": {"pool": ["fog", "dust_motes"], "pick": (2, 3)},
+        "midground":  {"pool": ["dust_motes", "wind_grass", "fireflies", "shadow_play"], "pick": (3, 4)},
+        "foreground": {"pool": ["fog", "dust_motes", "shadow_play"], "pick": (2, 3)},
         "required":   ["breathing_pacer"],
         "fauna":      ["cricket"],
         "rare_event": ["shooting_star"],
@@ -273,8 +273,8 @@ WORLD_ELEMENTS = {
     },
     "mountain_meadow": {
         "background": {"pool": ["stars", "moon_glow", "fog", "aurora"], "pick": (3, 4)},
-        "midground":  {"pool": ["fireflies", "dust_motes", "wind_grass", "falling_leaves"], "pick": (3, 5)},
-        "foreground": {"pool": ["swaying_branches", "fog"], "pick": (2, 3)},
+        "midground":  {"pool": ["fireflies", "dust_motes", "wind_grass", "falling_leaves", "closing_flowers"], "pick": (4, 5)},
+        "foreground": {"pool": ["swaying_branches", "fog", "dust_motes"], "pick": (2, 3)},
         "required":   ["breathing_pacer"],
         "fauna":      ["cricket", "sleeping_butterfly"],
         "rare_event": ["shooting_star"],
@@ -282,29 +282,29 @@ WORLD_ELEMENTS = {
         "pacer_variant": "forest",
     },
     "cloud_kingdom": {
-        "background": {"pool": ["stars", "aurora", "moon_glow"], "pick": (3, 4)},
-        "midground":  {"pool": ["fog", "dust_motes", "stars"], "pick": (3, 4)},
-        "foreground": {"pool": ["fog", "dust_motes"], "pick": (2, 3)},
+        "background": {"pool": ["stars", "aurora", "moon_glow", "fog"], "pick": (3, 4)},
+        "midground":  {"pool": ["dust_motes", "fireflies", "falling_leaves", "wind_grass", "shadow_play"], "pick": (4, 5)},
+        "foreground": {"pool": ["fog", "dust_motes", "swaying_branches"], "pick": (2, 3)},
         "required":   ["breathing_pacer"],
-        "fauna":      [],
+        "fauna":      ["sleeping_butterfly"],
         "rare_event": ["shooting_star"],
-        "vignette":   "none",
+        "vignette":   "full_soft",
         "pacer_variant": "space",
     },
     "underground_cave": {
-        "background": {"pool": ["fog", "caustics"], "pick": (2, 3)},
-        "midground":  {"pool": ["candle_flicker", "dust_motes", "caustics", "bubbles"], "pick": (3, 5)},
-        "foreground": {"pool": ["fog", "shadow_play"], "pick": (2, 3)},
+        "background": {"pool": ["fog", "caustics", "shadow_play", "aurora"], "pick": (3, 4)},
+        "midground":  {"pool": ["candle_flicker", "dust_motes", "caustics", "bubbles", "fireflies"], "pick": (4, 5)},
+        "foreground": {"pool": ["fog", "shadow_play", "dust_motes"], "pick": (2, 3)},
         "required":   ["breathing_pacer"],
-        "fauna":      ["cricket"],
-        "rare_event": [],
+        "fauna":      ["cricket", "sleeping_butterfly"],
+        "rare_event": ["shooting_star"],
         "vignette":   "full_heavy",
         "pacer_variant": "forest",
     },
     "tropical_lagoon": {
-        "background": {"pool": ["stars", "moon_glow", "fog"], "pick": (2, 3)},
-        "midground":  {"pool": ["water_ripples", "fireflies", "bubbles", "dust_motes"], "pick": (3, 5)},
-        "foreground": {"pool": ["swaying_branches", "fog"], "pick": (2, 3)},
+        "background": {"pool": ["stars", "moon_glow", "fog", "aurora"], "pick": (3, 4)},
+        "midground":  {"pool": ["water_ripples", "fireflies", "bubbles", "dust_motes", "caustics"], "pick": (4, 5)},
+        "foreground": {"pool": ["swaying_branches", "fog", "dust_motes"], "pick": (2, 3)},
         "required":   ["breathing_pacer"],
         "fauna":      ["cricket", "sleeping_butterfly"],
         "rare_event": ["shooting_star"],
@@ -312,23 +312,23 @@ WORLD_ELEMENTS = {
         "pacer_variant": "ocean",
     },
     "ancient_library": {
-        "background": {"pool": ["stars", "moon_glow", "shadow_play"], "pick": (2, 3)},
-        "midground":  {"pool": ["dust_motes", "candle_flicker", "shadow_play"], "pick": (3, 5)},
-        "foreground": {"pool": ["fog", "dust_motes"], "pick": (2, 3)},
+        "background": {"pool": ["stars", "moon_glow", "shadow_play", "fog"], "pick": (3, 4)},
+        "midground":  {"pool": ["dust_motes", "candle_flicker", "shadow_play", "fireflies", "closing_flowers"], "pick": (4, 5)},
+        "foreground": {"pool": ["fog", "dust_motes", "shadow_play"], "pick": (2, 3)},
         "required":   ["breathing_pacer"],
         "fauna":      ["sleeping_butterfly", "cricket"],
-        "rare_event": [],
+        "rare_event": ["shooting_star"],
         "vignette":   "full_soft",
         "pacer_variant": "interior",
     },
     "floating_islands": {
         "background": {"pool": ["stars", "aurora", "moon_glow", "fog"], "pick": (3, 4)},
-        "midground":  {"pool": ["fog", "dust_motes", "falling_leaves"], "pick": (3, 4)},
-        "foreground": {"pool": ["fog", "dust_motes"], "pick": (2, 3)},
+        "midground":  {"pool": ["dust_motes", "falling_leaves", "fireflies", "wind_grass", "shadow_play"], "pick": (4, 5)},
+        "foreground": {"pool": ["fog", "swaying_branches", "dust_motes"], "pick": (2, 3)},
         "required":   ["breathing_pacer"],
-        "fauna":      [],
+        "fauna":      ["sleeping_butterfly"],
         "rare_event": ["shooting_star"],
-        "vignette":   "none",
+        "vignette":   "full_soft",
         "pacer_variant": "space",
     },
 }
@@ -2122,6 +2122,7 @@ def _gen_shadow_play(colors, world, story, rng):
 def _gen_breathing_pacer(colors, world, story, rng):
     """F3. Breathing glow orb (MANDATORY) — primary sleep cue.
     4 world-specific variants via pacer_variant. dur=5s (12 bpm). Opacity 0.35-0.65.
+    Sized large enough to be clearly visible on FLUX photographic backgrounds.
     """
     dur = 5
     glow_color = colors.get("glow", "#FFD89C")
@@ -2132,78 +2133,82 @@ def _gen_breathing_pacer(colors, world, story, rng):
 
     if variant == "ocean":
         cx, cy = "50%", "60%"
-        rx_base, ry_base = 20, 25
+        rx_base, ry_base = 40, 50
         return (
             f'<!-- F3: Breathing Pacer (Ocean) -->\n'
             f'<g id="breath-pacer">\n'
             f'  <radialGradient id="{grad_id}">\n'
-            f'    <stop offset="0%" stop-color="{glow_color}" stop-opacity="0.50"/>\n'
-            f'    <stop offset="40%" stop-color="{glow_color}" stop-opacity="0.20"/>\n'
+            f'    <stop offset="0%" stop-color="{glow_color}" stop-opacity="0.65"/>\n'
+            f'    <stop offset="35%" stop-color="{glow_color}" stop-opacity="0.35"/>\n'
+            f'    <stop offset="70%" stop-color="{glow_color}" stop-opacity="0.10"/>\n'
             f'    <stop offset="100%" stop-color="{glow_color}" stop-opacity="0"/>\n'
             f'  </radialGradient>\n'
             f'  <ellipse cx="{cx}" cy="{cy}" rx="{rx_base}" ry="{ry_base}" fill="url(#{grad_id})">\n'
-            f'    <animate attributeName="ry" values="{ry_base - 3};{ry_base + 3};{ry_base - 3}" dur="{dur}s" repeatCount="indefinite"\n'
+            f'    <animate attributeName="ry" values="{ry_base - 5};{ry_base + 5};{ry_base - 5}" dur="{dur}s" repeatCount="indefinite"\n'
             f'      calcMode="spline" keySplines="{_smil_spline(2)}"/>\n'
-            f'    <animate attributeName="rx" values="{rx_base - 2};{rx_base + 2};{rx_base - 2}" dur="{dur}s" repeatCount="indefinite"\n'
+            f'    <animate attributeName="rx" values="{rx_base - 4};{rx_base + 4};{rx_base - 4}" dur="{dur}s" repeatCount="indefinite"\n'
             f'      calcMode="spline" keySplines="{_smil_spline(2)}"/>\n'
-            f'    <animate attributeName="opacity" values="0.35;0.65;0.35" dur="{dur}s" repeatCount="indefinite"\n'
+            f'    <animate attributeName="opacity" values="0.45;0.75;0.45" dur="{dur}s" repeatCount="indefinite"\n'
             f'      calcMode="spline" keySplines="{_smil_spline(2)}"/>\n'
             f'  </ellipse>\n'
             f'</g>'
         )
     elif variant == "space":
         cx, cy = "50%", "50%"
-        r_base = 35
+        r_base = 55
         return (
             f'<!-- F3: Breathing Pacer (Space) -->\n'
             f'<g id="breath-pacer">\n'
             f'  <radialGradient id="{grad_id}">\n'
-            f'    <stop offset="0%" stop-color="{star_color}" stop-opacity="0.45"/>\n'
-            f'    <stop offset="60%" stop-color="{glow_color}" stop-opacity="0.15"/>\n'
+            f'    <stop offset="0%" stop-color="{star_color}" stop-opacity="0.60"/>\n'
+            f'    <stop offset="30%" stop-color="{glow_color}" stop-opacity="0.30"/>\n'
+            f'    <stop offset="70%" stop-color="{glow_color}" stop-opacity="0.08"/>\n'
             f'    <stop offset="100%" stop-color="{glow_color}" stop-opacity="0"/>\n'
             f'  </radialGradient>\n'
             f'  <circle cx="{cx}" cy="{cy}" r="{r_base}" fill="url(#{grad_id})">\n'
-            f'    <animate attributeName="r" values="{r_base - 5};{r_base + 3};{r_base - 5}" dur="{dur}s" repeatCount="indefinite"\n'
+            f'    <animate attributeName="r" values="{r_base - 8};{r_base + 5};{r_base - 8}" dur="{dur}s" repeatCount="indefinite"\n'
             f'      calcMode="spline" keySplines="{_smil_spline(2)}"/>\n'
-            f'    <animate attributeName="opacity" values="0.35;0.60;0.35" dur="{dur}s" repeatCount="indefinite"\n'
+            f'    <animate attributeName="opacity" values="0.45;0.70;0.45" dur="{dur}s" repeatCount="indefinite"\n'
             f'      calcMode="spline" keySplines="{_smil_spline(2)}"/>\n'
             f'  </circle>\n'
             f'</g>'
         )
     elif variant == "interior":
         cx, cy = "35%", "55%"
-        r_base = 30
+        r_base = 50
         return (
             f'<!-- F3: Breathing Pacer (Interior) -->\n'
             f'<g id="breath-pacer">\n'
             f'  <radialGradient id="{grad_id}">\n'
-            f'    <stop offset="0%" stop-color="{glow_color}" stop-opacity="0.55"/>\n'
-            f'    <stop offset="40%" stop-color="{glow_color}" stop-opacity="0.20"/>\n'
+            f'    <stop offset="0%" stop-color="{glow_color}" stop-opacity="0.70"/>\n'
+            f'    <stop offset="30%" stop-color="{glow_color}" stop-opacity="0.35"/>\n'
+            f'    <stop offset="70%" stop-color="{glow_color}" stop-opacity="0.10"/>\n'
             f'    <stop offset="100%" stop-color="{glow_color}" stop-opacity="0"/>\n'
             f'  </radialGradient>\n'
             f'  <circle cx="{cx}" cy="{cy}" r="{r_base}" fill="url(#{grad_id})">\n'
-            f'    <animate attributeName="r" values="{r_base - 4};{r_base + 2};{r_base - 4}" dur="{dur}s" repeatCount="indefinite"\n'
+            f'    <animate attributeName="r" values="{r_base - 6};{r_base + 4};{r_base - 6}" dur="{dur}s" repeatCount="indefinite"\n'
             f'      calcMode="spline" keySplines="{_smil_spline(2)}"/>\n'
-            f'    <animate attributeName="opacity" values="0.40;0.65;0.40" dur="{dur}s" repeatCount="indefinite"\n'
+            f'    <animate attributeName="opacity" values="0.50;0.75;0.50" dur="{dur}s" repeatCount="indefinite"\n'
             f'      calcMode="spline" keySplines="{_smil_spline(2)}"/>\n'
             f'  </circle>\n'
             f'</g>'
         )
     else:  # forest (default)
         cx, cy = "50%", "70%"
-        r_base = 25
+        r_base = 50
         return (
             f'<!-- F3: Breathing Pacer (Forest) -->\n'
             f'<g id="breath-pacer">\n'
             f'  <radialGradient id="{grad_id}">\n'
-            f'    <stop offset="0%" stop-color="{glow_color}" stop-opacity="0.55"/>\n'
-            f'    <stop offset="50%" stop-color="{glow_color}" stop-opacity="0.20"/>\n'
+            f'    <stop offset="0%" stop-color="{glow_color}" stop-opacity="0.70"/>\n'
+            f'    <stop offset="30%" stop-color="{glow_color}" stop-opacity="0.35"/>\n'
+            f'    <stop offset="70%" stop-color="{glow_color}" stop-opacity="0.10"/>\n'
             f'    <stop offset="100%" stop-color="{glow_color}" stop-opacity="0"/>\n'
             f'  </radialGradient>\n'
             f'  <circle cx="{cx}" cy="{cy}" r="{r_base}" fill="url(#{grad_id})">\n'
-            f'    <animate attributeName="r" values="{r_base - 3};{r_base + 3};{r_base - 3}" dur="{dur}s" repeatCount="indefinite"\n'
+            f'    <animate attributeName="r" values="{r_base - 6};{r_base + 5};{r_base - 6}" dur="{dur}s" repeatCount="indefinite"\n'
             f'      calcMode="spline" keySplines="{_smil_spline(2)}"/>\n'
-            f'    <animate attributeName="opacity" values="0.40;0.65;0.40" dur="{dur}s" repeatCount="indefinite"\n'
+            f'    <animate attributeName="opacity" values="0.50;0.75;0.50" dur="{dur}s" repeatCount="indefinite"\n'
             f'      calcMode="spline" keySplines="{_smil_spline(2)}"/>\n'
             f'  </circle>\n'
             f'</g>'
@@ -2489,7 +2494,7 @@ def generate_svg_overlay(axes: dict, story: dict) -> str:
   </defs>''')
 
     element_parts = []
-    budget_remaining = 6600  # ~8000 total - ~1400 fixed overhead
+    budget_remaining = 50000  # No budget constraint — prioritize animation quality and diversity
 
     def _pick_from_layer(layer_key):
         """Pick elements from a layer pool, respecting budget."""
