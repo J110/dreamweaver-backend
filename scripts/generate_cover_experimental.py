@@ -197,21 +197,1493 @@ THEME_TO_PALETTE = {
     "space": ["moonstone", "twilight_cool"],
 }
 
-# World setting → SVG animation types
-WORLD_TO_ANIMATIONS = {
-    "deep_ocean":       ["particles_bubbles", "glow_bioluminescence", "mist_underwater"],
-    "cloud_kingdom":    ["drift_clouds", "twinkle_stars", "vignette"],
-    "enchanted_forest": ["particles_pollen", "glow_firefly", "mist_ground"],
-    "snow_landscape":   ["particles_snow", "twinkle_stars", "vignette"],
-    "desert_night":     ["twinkle_stars", "drift_sand", "glow_campfire"],
-    "cozy_interior":    ["glow_candle", "particles_dust", "vignette"],
-    "mountain_meadow":  ["particles_pollen", "drift_clouds", "mist_valley"],
-    "space_cosmos":     ["twinkle_stars", "glow_nebula", "drift_starfield"],
-    "tropical_lagoon":  ["glow_sunset", "particles_fireflies", "mist_sea"],
-    "underground_cave": ["glow_crystals", "particles_spores", "mist_steam"],
-    "ancient_library":  ["particles_dust", "glow_lantern", "vignette"],
-    "floating_islands": ["drift_clouds", "particles_leaves", "twinkle_distant"],
+
+# ── SMIL Animation Bible v2 — World-to-Element Mapping ──────────────────
+#
+# Replaces flat WORLD_TO_ANIMATIONS with required/select/optional structure.
+# Each world gets exactly 1 breathing pacer (required) + 2-3 pool picks + optional.
+
+WORLD_ELEMENTS = {
+    "enchanted_forest": {
+        "required": ["breathing_pacer"],
+        "select": {"pool": ["fireflies", "dust_motes", "swaying_branches",
+                            "falling_leaves", "sleeping_butterfly", "cricket", "fog"], "pick": (2, 3)},
+        "optional": ["stars", "sleeping_owl"],
+        "vignette": "bottom_heavy",
+        "pacer_variant": "forest",
+    },
+    "deep_ocean": {
+        "required": ["breathing_pacer"],
+        "select": {"pool": ["bubbles", "caustics", "fog"], "pick": (2, 3)},
+        "optional": ["dust_motes"],
+        "vignette": "top_heavy",
+        "pacer_variant": "ocean",
+    },
+    "space_cosmos": {
+        "required": ["breathing_pacer"],
+        "select": {"pool": ["stars", "shooting_star", "aurora"], "pick": (2, 3)},
+        "optional": ["dust_motes"],
+        "vignette": "corners_only",
+        "pacer_variant": "space",
+    },
+    "snow_landscape": {
+        "required": ["breathing_pacer"],
+        "select": {"pool": ["snowfall", "stars", "aurora", "fog"], "pick": (2, 3)},
+        "optional": ["chimney_smoke"],
+        "vignette": "none",
+        "pacer_variant": "forest",
+    },
+    "cozy_interior": {
+        "required": ["breathing_pacer"],
+        "select": {"pool": ["candle_flicker", "dust_motes", "shadow_play"], "pick": (2, 3)},
+        "optional": ["chimney_smoke", "sleeping_butterfly"],
+        "vignette": "full_soft",
+        "pacer_variant": "interior",
+    },
+    "desert_night": {
+        "required": ["breathing_pacer"],
+        "select": {"pool": ["stars", "shooting_star", "fog"], "pick": (2, 3)},
+        "optional": ["cricket", "wind_grass"],
+        "vignette": "top_corners",
+        "pacer_variant": "space",
+    },
+    "mountain_meadow": {
+        "required": ["breathing_pacer"],
+        "select": {"pool": ["fireflies", "stars", "wind_grass", "fog"], "pick": (2, 3)},
+        "optional": ["cricket", "sleeping_butterfly", "falling_leaves"],
+        "vignette": "bottom_light",
+        "pacer_variant": "forest",
+    },
+    "cloud_kingdom": {
+        "required": ["breathing_pacer"],
+        "select": {"pool": ["stars", "fog", "dust_motes"], "pick": (2, 3)},
+        "optional": ["aurora", "moon_glow"],
+        "vignette": "none",
+        "pacer_variant": "space",
+    },
+    "underground_cave": {
+        "required": ["breathing_pacer"],
+        "select": {"pool": ["candle_flicker", "dust_motes", "fog"], "pick": (2, 3)},
+        "optional": ["caustics", "bubbles"],
+        "vignette": "full_heavy",
+        "pacer_variant": "forest",
+    },
+    "tropical_lagoon": {
+        "required": ["breathing_pacer"],
+        "select": {"pool": ["water_ripples", "fireflies", "stars"], "pick": (2, 3)},
+        "optional": ["fog", "cricket"],
+        "vignette": "top_heavy",
+        "pacer_variant": "ocean",
+    },
+    "ancient_library": {
+        "required": ["breathing_pacer"],
+        "select": {"pool": ["dust_motes", "candle_flicker", "shadow_play"], "pick": (2, 3)},
+        "optional": ["sleeping_butterfly", "stars"],
+        "vignette": "full_soft",
+        "pacer_variant": "interior",
+    },
+    "floating_islands": {
+        "required": ["breathing_pacer"],
+        "select": {"pool": ["fog", "stars", "dust_motes"], "pick": (2, 3)},
+        "optional": ["falling_leaves", "aurora"],
+        "vignette": "none",
+        "pacer_variant": "space",
+    },
 }
+
+
+# ── SVG Overlay Generator (SMIL Animation Bible v2) ──────────────────────
+#
+# Implements the 7-category element library from smil-animation-bible.md:
+#   A. Celestial: stars, shooting_star, moon_glow, aurora
+#   B. Atmospheric: fog, rain, snowfall, dust_motes, caustics
+#   C. Flora: swaying_branches, falling_leaves, closing_flowers
+#   D. Fauna: fireflies, sleeping_butterfly, sleeping_owl, cricket
+#   E. Water: water_ripples, bubbles
+#   F. Light & Shadow: candle_flicker, shadow_play, breathing_pacer
+#   G. Environmental: chimney_smoke, wind_grass
+#
+# Every generator: _gen_<element>(colors, world, story, rng) -> str
+# Assembly: WORLD_ELEMENTS with required/select/optional, <5KB budget.
+
+import re as _re
+
+# ── SMIL Helper Functions ────────────────────────────────────────────────
+
+PRIME_DURATIONS = [5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47]
+
+_BIBLE_COLORS = {
+    "star":   ["#FFF5E0", "#FFE8CC", "#FFEFD5", "#FFF0DB", "#FFE4B5"],
+    "glow":   ["#FFD89C", "#FFE4B5", "#FFD080", "#FFBA60", "#FFCA78"],
+    "fog":    ["#F5E6D3", "#EDE0D0", "#F0E4D6", "#D4C8B8", "#E8D8C4"],
+    "leaf":   ["#C4956A", "#B8845A", "#D4A878", "#C8A060"],
+    "shadow": ["#1A0F05", "#2A1F14", "#3D2B1F", "#4A3828"],
+    "flora":  ["#D4A0B8", "#C890A8", "#C8A080"],
+    "rain":   ["#D4C8B8", "#C8BCA8", "#D0C4B0"],
+    "aurora":  ["#D4C8A0", "#D4B8A0", "#E0C8A0", "#C8B0A0", "#D0C0A0"],
+    "snow":   ["#FFF8F0", "#FFF0E0", "#FFF0D0"],
+    "branch": ["#2A1F14", "#3D2B1F", "#4A3828"],
+    "smoke":  ["#D4C8B8", "#C8BCA8", "#D0C4B0"],
+}
+
+
+def _smil_spline(n_segments):
+    """Return keySplines attr value with n copies of gentle ease-in-out."""
+    return ";".join(["0.4 0 0.6 1"] * n_segments)
+
+
+def _pick_prime_dur(lo, hi, rng):
+    """Return a prime-number duration in [lo, hi] to prevent sync."""
+    candidates = [p for p in PRIME_DURATIONS if lo <= p <= hi]
+    return rng.choice(candidates) if candidates else round(rng.uniform(lo, hi), 1)
+
+
+def _fade_values(peak, steps=5):
+    """Generate semicolon-joined opacity fade: 0 -> peak -> 0."""
+    if steps == 3:
+        return f"0;{peak:.2f};0"
+    if steps == 5:
+        return f"0;{peak * 0.4:.2f};{peak:.2f};{peak * 0.6:.2f};0"
+    vals = []
+    mid = steps // 2
+    for i in range(steps):
+        if i <= mid:
+            vals.append(f"{peak * i / mid:.2f}")
+        else:
+            remaining = steps - 1 - mid
+            vals.append(f"{peak * (steps - 1 - i) / remaining:.2f}" if remaining else "0")
+    return ";".join(vals)
+
+
+def _warm_color(rng, palette="glow"):
+    """Pick a random warm color from the Bible's palette tables."""
+    return rng.choice(_BIBLE_COLORS.get(palette, _BIBLE_COLORS["glow"]))
+
+
+def _svg_size(svg_str):
+    """Return byte count for budget tracking."""
+    return len(svg_str.encode("utf-8"))
+
+
+# World-specific warm-spectrum color overrides (drowsiness guardrail)
+world_accents = {
+    "deep_ocean":       {"particle": "#FFB74D", "glow": "#FF8F00", "accent": "#FFA726", "star": "#FFF5E0"},
+    "cloud_kingdom":    {"particle": "#FFF8E1", "glow": "#FFE0B2", "accent": "#FFECB3", "star": "#FFF8E8"},
+    "enchanted_forest": {"particle": "#FFD54F", "glow": "#FFA000", "accent": "#FFCA28", "star": "#FFECD2"},
+    "snow_landscape":   {"particle": "#FFF3E0", "glow": "#FFE0B2", "accent": "#FFE8CC", "star": "#FFF8E8"},
+    "desert_night":     {"particle": "#FFAB00", "glow": "#FF6D00", "accent": "#FF9100", "star": "#FFF5E0"},
+    "cozy_interior":    {"particle": "#FFD54F", "glow": "#FFB300", "accent": "#FFC107", "star": "#FFF8E8"},
+    "mountain_meadow":  {"particle": "#FFE082", "glow": "#FFD54F", "accent": "#FFCA28", "star": "#FFF5E0"},
+    "space_cosmos":     {"particle": "#FFD180", "glow": "#FFB74D", "accent": "#FFCC80", "star": "#FFECD2"},
+    "tropical_lagoon":  {"particle": "#FF6E40", "glow": "#FF3D00", "accent": "#FF8A65", "star": "#FFF5E0"},
+    "underground_cave": {"particle": "#FFB74D", "glow": "#FF8F00", "accent": "#FFA726", "star": "#FFECD2"},
+    "ancient_library":  {"particle": "#FFE082", "glow": "#FFA000", "accent": "#FFD740", "star": "#FFF8E8"},
+    "floating_islands": {"particle": "#FFAB91", "glow": "#FF8A65", "accent": "#FFCCBC", "star": "#FFF5E0"},
+}
+
+
+# ── Category A: Celestial ────────────────────────────────────────────────
+
+def _gen_stars(colors, world, story, rng):
+    """A1. Twinkling stars — warm points fading in/out at staggered intervals.
+    4-8 stars, upper 40%, 6-14s durations, peak 0.25-0.50.
+    """
+    count = rng.randint(4, 8)
+    parts = ['<!-- A1: Twinkling Stars -->\n<g id="stars">']
+    star_colors = _BIBLE_COLORS["star"]
+    for i in range(count):
+        cx = rng.randint(5, 95)
+        cy = rng.randint(5, 40)
+        r = round(rng.uniform(0.8, 2.0), 1)
+        color = rng.choice(star_colors)
+        dur = _pick_prime_dur(6, 14, rng)
+        begin = round(rng.uniform(0, 10), 1)
+        peak = round(rng.uniform(0.25, 0.50), 2)
+        vals = f"0;0;{peak:.2f};{peak * 0.7:.2f};0"
+        n_seg = len(vals.split(";")) - 1
+        parts.append(
+            f'  <circle cx="{cx}%" cy="{cy}%" r="{r}" fill="{color}">\n'
+            f'    <animate attributeName="opacity" values="{vals}"\n'
+            f'      dur="{dur}s" begin="{begin}s" repeatCount="indefinite"\n'
+            f'      calcMode="spline" keySplines="{_smil_spline(n_seg)}"/>\n'
+            f'  </circle>'
+        )
+    parts.append('</g>')
+    return "\n".join(parts)
+
+
+def _gen_shooting_star(colors, world, story, rng):
+    """A2. Shooting star — single soft streak, appears once per 30-90s.
+    Always arcs downward. 6-10s visible portion.
+    """
+    interval = rng.randint(30, 90)
+    vis_dur = _pick_prime_dur(6, 11, rng)
+    x1 = rng.randint(-50, 50)
+    y1 = rng.randint(-30, 20)
+    x2 = rng.randint(200, 350)
+    y2 = rng.randint(50, 100)
+    xm = (x1 + x2) // 2 + rng.randint(-30, 30)
+    ym = (y1 + y2) // 2 + rng.randint(-10, 10)
+    path = f"M{x1},{y1} Q{xm},{ym} {x2},{y2}"
+    color_head = _warm_color(rng, "star")
+    color_tail = _warm_color(rng, "glow")
+    # Mostly invisible with brief flash
+    vis_vals = "0;0;0.5;0.5;0;0;0;0;0;0;0;0;0"
+    n_seg = 12
+    return (
+        f'<!-- A2: Shooting Star -->\n'
+        f'<g id="shooting-star" opacity="0">\n'
+        f'  <line x1="0" y1="0" x2="-20" y2="-8" stroke="{color_tail}" stroke-width="1.5"\n'
+        f'    stroke-linecap="round" opacity="0.5"/>\n'
+        f'  <circle cx="0" cy="0" r="2" fill="{color_head}" opacity="0.6"/>\n'
+        f'  <circle cx="0" cy="0" r="5" fill="{color_tail}" opacity="0.15"/>\n'
+        f'  <animateMotion dur="{vis_dur}s" begin="{interval}s" repeatCount="indefinite"\n'
+        f'    path="{path}"\n'
+        f'    calcMode="spline" keySplines="0.2 0 0.8 1"/>\n'
+        f'  <animate attributeName="opacity" values="{vis_vals}"\n'
+        f'    dur="{interval}s" begin="0s" repeatCount="indefinite"\n'
+        f'    calcMode="spline" keySplines="{_smil_spline(n_seg)}"/>\n'
+        f'</g>'
+    )
+
+
+def _gen_moon_glow(colors, world, story, rng):
+    """A3. Crescent moon glow — soft warm radial in upper 25%, breathing pulse 7-10s."""
+    cx = rng.randint(65, 85)
+    cy = rng.randint(8, 22)
+    halo_r = rng.randint(40, 80)
+    dur = _pick_prime_dur(7, 11, rng)
+    halo_color = colors.get("glow", _warm_color(rng, "glow"))
+    core_color = colors.get("star", _warm_color(rng, "star"))
+    r_lo = halo_r - 5
+    r_hi = halo_r + 10
+    core_r = rng.randint(14, 22)
+    grad_id = f"moonH{rng.randint(100, 999)}"
+    return (
+        f'<!-- A3: Moon Glow -->\n'
+        f'<g id="moon-glow">\n'
+        f'  <radialGradient id="{grad_id}">\n'
+        f'    <stop offset="0%" stop-color="{core_color}" stop-opacity="0.25"/>\n'
+        f'    <stop offset="40%" stop-color="{halo_color}" stop-opacity="0.1"/>\n'
+        f'    <stop offset="100%" stop-color="{halo_color}" stop-opacity="0"/>\n'
+        f'  </radialGradient>\n'
+        f'  <circle cx="{cx}%" cy="{cy}%" r="{halo_r}" fill="url(#{grad_id})">\n'
+        f'    <animate attributeName="r" values="{r_lo};{r_hi};{r_lo}" dur="{dur}s" repeatCount="indefinite"\n'
+        f'      calcMode="spline" keySplines="{_smil_spline(2)}"/>\n'
+        f'    <animate attributeName="opacity" values="0.45;0.60;0.45" dur="{dur}s" repeatCount="indefinite"\n'
+        f'      calcMode="spline" keySplines="{_smil_spline(2)}"/>\n'
+        f'  </circle>\n'
+        f'  <circle cx="{cx}%" cy="{cy}%" r="{core_r}" fill="{core_color}" opacity="0.15">\n'
+        f'    <animate attributeName="opacity" values="0.12;0.18;0.12" dur="{dur}s" repeatCount="indefinite"\n'
+        f'      calcMode="spline" keySplines="{_smil_spline(2)}"/>\n'
+        f'  </circle>\n'
+        f'</g>'
+    )
+
+
+def _gen_aurora(colors, world, story, rng):
+    """A4. Aurora / Northern Lights — very slow undulating bands, upper 30%.
+    2-4 bands, desaturated warm tones, prime-number durations.
+    """
+    count = rng.randint(2, 4)
+    parts = ['<!-- A4: Aurora -->\n<g id="aurora" opacity="0.2">']
+    aurora_colors = _BIBLE_COLORS["aurora"]
+    for i in range(count):
+        cx = rng.randint(35, 65)
+        cy = rng.randint(12, 28)
+        rx = rng.randint(150, 220)
+        ry = rng.randint(20, 40)
+        color = rng.choice(aurora_colors)
+        op_base = round(rng.uniform(0.08, 0.18), 2)
+        dur_t = _pick_prime_dur(23, 37, rng)
+        dur_o = _pick_prime_dur(29, 41, rng)
+        dur_ry = _pick_prime_dur(19, 31, rng)
+        tx1, ty1 = rng.randint(10, 20), rng.randint(2, 6)
+        tx2, ty2 = rng.randint(-15, -5), rng.randint(1, 5)
+        tx3, ty3 = rng.randint(3, 8), rng.randint(-3, -1)
+        op_hi = min(op_base + 0.10, 0.28)
+        op_vals = f"{op_base:.2f};{op_base + 0.08:.2f};{op_base + 0.02:.2f};{op_hi:.2f};{op_base:.2f}"
+        ry_vals = f"{ry - 3};{ry + 7};{ry - 5};{ry + 4};{ry - 3}"
+        parts.append(
+            f'  <ellipse cx="{cx}%" cy="{cy}%" rx="{rx}" ry="{ry}" fill="{color}" opacity="{op_base:.2f}">\n'
+            f'    <animateTransform attributeName="transform" type="translate"\n'
+            f'      values="0,0; {tx1},{ty1}; {tx2},{ty2}; {tx3},{ty3}; 0,0" dur="{dur_t}s" repeatCount="indefinite"\n'
+            f'      calcMode="spline" keySplines="{_smil_spline(4)}"/>\n'
+            f'    <animate attributeName="opacity" values="{op_vals}"\n'
+            f'      dur="{dur_o}s" repeatCount="indefinite"/>\n'
+            f'    <animate attributeName="ry" values="{ry_vals}"\n'
+            f'      dur="{dur_ry}s" repeatCount="indefinite"/>\n'
+            f'  </ellipse>'
+        )
+    parts.append('</g>')
+    return "\n".join(parts)
+
+
+# ── Category B: Atmospheric ──────────────────────────────────────────────
+
+def _gen_fog(colors, world, story, rng):
+    """B1. Drifting fog/mist — large low-opacity shapes, lower 55-85%.
+    2-4 layers, 40-80s cycles, 0.03-0.12 opacity, alternate directions.
+    """
+    count = rng.randint(2, 4)
+    parts = ['<!-- B1: Drifting Fog -->\n<g id="fog-layers">']
+    fog_colors = _BIBLE_COLORS["fog"]
+    for i in range(count):
+        cx = rng.randint(20, 80)
+        cy = rng.randint(55, 85)
+        rx = rng.randint(200, 350)
+        ry = rng.randint(30, 60)
+        color = rng.choice(fog_colors)
+        op_base = round(rng.uniform(0.03, 0.08), 2)
+        dur_t = _pick_prime_dur(41, 79, rng)
+        dur_o = _pick_prime_dur(37, 67, rng)
+        drift = rng.randint(60, 120) * (1 if i % 2 == 0 else -1)
+        op_vals = f"{op_base:.2f};{op_base + 0.04:.2f};{op_base + 0.02:.2f};{min(op_base + 0.06, 0.12):.2f};{op_base:.2f}"
+        parts.append(
+            f'  <ellipse cx="{cx}%" cy="{cy}%" rx="{rx}" ry="{ry}" fill="{color}" opacity="{op_base:.2f}">\n'
+            f'    <animateTransform attributeName="transform" type="translate"\n'
+            f'      values="0,0; {drift},3; {drift * 2},0; {drift},-3; 0,0"\n'
+            f'      dur="{dur_t}s" repeatCount="indefinite"\n'
+            f'      calcMode="spline" keySplines="{_smil_spline(4)}"/>\n'
+            f'    <animate attributeName="opacity" values="{op_vals}"\n'
+            f'      dur="{dur_o}s" repeatCount="indefinite"/>\n'
+            f'  </ellipse>'
+        )
+    parts.append('</g>')
+    return "\n".join(parts)
+
+
+def _gen_rain(colors, world, story, rng):
+    """B2. Gentle rain — thin lines drifting down at slight angle.
+    5-10 drops, 3-8 deg leftward, warm grey, 3.5-5.5s.
+    """
+    count = rng.randint(5, 10)
+    parts = ['<!-- B2: Gentle Rain -->\n<g id="rain" opacity="0.15">']
+    rain_colors = _BIBLE_COLORS["rain"]
+    for i in range(count):
+        x = rng.randint(5, 95)
+        color = rng.choice(rain_colors)
+        dur = round(rng.uniform(3.5, 5.5), 1)
+        begin = round(rng.uniform(0, 4), 1)
+        width = round(rng.uniform(0.4, 0.8), 1)
+        angle_drift = rng.randint(-12, -4)
+        op = round(rng.uniform(0.2, 0.35), 2)
+        parts.append(
+            f'  <line x1="{x}%" y1="-5%" x2="{x - 1}%" y2="2%" stroke="{color}" stroke-width="{width}"\n'
+            f'    stroke-linecap="round" opacity="{op}">\n'
+            f'    <animateMotion dur="{dur}s" repeatCount="indefinite"\n'
+            f'      path="M0,0 L{angle_drift},300" begin="{begin}s"/>\n'
+            f'    <animate attributeName="opacity" values="0;{op};{op};0" dur="{dur}s"\n'
+            f'      repeatCount="indefinite" begin="{begin}s"/>\n'
+            f'  </line>'
+        )
+    parts.append('</g>')
+    return "\n".join(parts)
+
+
+def _gen_snowfall(colors, world, story, rng):
+    """B3. Falling snow — soft circles in wandering bezier paths downward.
+    4-7 flakes, 14-28s, unique paths.
+    """
+    count = rng.randint(4, 7)
+    parts = ['<!-- B3: Falling Snow -->\n<g id="snowfall" opacity="0.25">']
+    snow_colors = _BIBLE_COLORS["snow"]
+    for i in range(count):
+        r = round(rng.uniform(0.8, 3.0), 1)
+        color = rng.choice(snow_colors)
+        dur = _pick_prime_dur(13, 29, rng)
+        begin = round(rng.uniform(0, 8), 1)
+        op = round(rng.uniform(0.25, 0.40), 2)
+        sx = rng.randint(50, 460)
+        # Build wandering bezier downward
+        points = []
+        y = -20
+        for j in range(6):
+            y += rng.randint(50, 80)
+            x_d = rng.randint(-30, 30)
+            points.append(f"{sx + x_d},{y}")
+        path = f"M{sx},-20 C{points[0]} {points[1]} {points[2]} S{points[3]} {points[4]}"
+        n_seg = 4  # C has 3 segments, S adds 1
+        parts.append(
+            f'  <circle cx="0" cy="0" r="{r}" fill="{color}" opacity="{op}">\n'
+            f'    <animateMotion dur="{dur}s" repeatCount="indefinite" begin="{begin}s"\n'
+            f'      path="{path}"\n'
+            f'      calcMode="spline" keySplines="{_smil_spline(n_seg)}"/>\n'
+            f'    <animate attributeName="opacity" values="0;{op};{op};{op * 0.85:.2f};0"\n'
+            f'      dur="{dur}s" repeatCount="indefinite" begin="{begin}s"/>\n'
+            f'  </circle>'
+        )
+    parts.append('</g>')
+    return "\n".join(parts)
+
+
+def _gen_dust_motes(colors, world, story, rng):
+    """B4. Floating dust motes — tiny particles drifting in light area.
+    3-6 motes, non-directional, 10-20s, opacity fluctuates.
+    """
+    count = rng.randint(3, 6)
+    parts = ['<!-- B4: Dust Motes -->\n<g id="dust-motes">']
+    mote_color = colors.get("particle", "#FFE8C8")
+    for i in range(count):
+        r = round(rng.uniform(0.6, 1.8), 1)
+        dur = _pick_prime_dur(11, 19, rng)
+        begin = round(rng.uniform(0, 6), 1)
+        peak_op = round(rng.uniform(0.15, 0.40), 2)
+        cx = rng.randint(100, 400)
+        cy = rng.randint(100, 350)
+        # Micro-drift path (non-directional)
+        pts = []
+        for j in range(6):
+            pts.append(f"{cx + rng.randint(-15, 15)},{cy + rng.randint(-12, 12)}")
+        path = f"M{cx},{cy} C{pts[0]} {pts[1]} {pts[2]} S{pts[3]} {pts[4]}"
+        op_vals = f"0;{peak_op:.2f};{peak_op * 0.5:.2f};{peak_op:.2f};{peak_op * 0.4:.2f};0"
+        parts.append(
+            f'  <circle cx="0" cy="0" r="{r}" fill="{mote_color}" opacity="0">\n'
+            f'    <animateMotion dur="{dur}s" repeatCount="indefinite" begin="{begin}s"\n'
+            f'      path="{path}"/>\n'
+            f'    <animate attributeName="opacity" values="{op_vals}"\n'
+            f'      dur="{dur}s" repeatCount="indefinite" begin="{begin}s"/>\n'
+            f'  </circle>'
+        )
+    parts.append('</g>')
+    return "\n".join(parts)
+
+
+def _gen_caustics(colors, world, story, rng):
+    """B5. Underwater caustics — slow-moving light patterns.
+    2-4 patterns, all properties on different prime durations.
+    """
+    count = rng.randint(2, 4)
+    parts = ['<!-- B5: Underwater Caustics -->\n<g id="caustics" opacity="0.08">']
+    caustic_color = colors.get("glow", "#FFE8C8")
+    for i in range(count):
+        cx = rng.randint(25, 75)
+        cy = rng.randint(40, 80)
+        rx = rng.randint(30, 60)
+        ry = rng.randint(18, 35)
+        op = round(rng.uniform(0.06, 0.14), 2)
+        dur_rx = _pick_prime_dur(13, 23, rng)
+        dur_ry = _pick_prime_dur(17, 29, rng)
+        dur_t = _pick_prime_dur(19, 31, rng)
+        dur_o = _pick_prime_dur(17, 23, rng)
+        tx, ty = rng.randint(5, 15), rng.randint(3, 8)
+        parts.append(
+            f'  <ellipse cx="{cx}%" cy="{cy}%" rx="{rx}" ry="{ry}" fill="{caustic_color}" opacity="{op}">\n'
+            f'    <animate attributeName="rx" values="{rx - 5};{rx + 5};{rx - 2};{rx + 8};{rx - 5}" dur="{dur_rx}s" repeatCount="indefinite"/>\n'
+            f'    <animate attributeName="ry" values="{ry - 3};{ry + 5};{ry - 5};{ry + 3};{ry - 3}" dur="{dur_ry}s" repeatCount="indefinite"/>\n'
+            f'    <animateTransform attributeName="transform" type="translate"\n'
+            f'      values="0,0; {tx},{ty}; {-tx // 2},{ty + 3}; {tx - 3},{-ty // 2}; 0,0" dur="{dur_t}s" repeatCount="indefinite"/>\n'
+            f'    <animate attributeName="opacity" values="{op:.2f};{min(op + 0.06, 0.20):.2f};{op + 0.02:.2f};{min(op + 0.08, 0.20):.2f};{op:.2f}"\n'
+            f'      dur="{dur_o}s" repeatCount="indefinite"/>\n'
+            f'  </ellipse>'
+        )
+    parts.append('</g>')
+    return "\n".join(parts)
+
+
+# ── Category C: Flora ────────────────────────────────────────────────────
+
+def _gen_swaying_branches(colors, world, story, rng):
+    """C1. Swaying branches — silhouettes at frame edges, 2-5 deg, 8-15s."""
+    edges = rng.sample(["left", "right"], k=rng.randint(1, 2))
+    branch_color = _warm_color(rng, "branch")
+    parts = ['<!-- C1: Swaying Branches -->']
+    for edge in edges:
+        dur = _pick_prime_dur(7, 17, rng)
+        sway = rng.randint(2, 5)
+        op = round(rng.uniform(0.08, 0.18), 2)
+        gid = f"branch-{edge}"
+        if edge == "left":
+            py = rng.randint(80, 160)
+            d = f"M0,{py} Q{rng.randint(12, 25)},{py - 30} {rng.randint(10, 20)},{py - 60} Q{rng.randint(20, 35)},{py - 80} {rng.randint(15, 25)},{py - 100}"
+            anchor = f"0,{py}"
+            leaf_cx, leaf_cy = rng.randint(12, 22), py - rng.randint(80, 100)
+        else:
+            py = rng.randint(80, 160)
+            d = f"M512,{py} Q{512 - rng.randint(12, 25)},{py - 30} {512 - rng.randint(10, 20)},{py - 60}"
+            anchor = f"512,{py}"
+            leaf_cx, leaf_cy = 512 - rng.randint(12, 22), py - rng.randint(40, 60)
+        parts.append(
+            f'<g id="{gid}" transform-origin="0% 30%">\n'
+            f'  <path d="{d}" stroke="{branch_color}" stroke-width="2" fill="none" opacity="{op}"/>\n'
+            f'  <ellipse cx="{leaf_cx}" cy="{leaf_cy}" rx="12" ry="6" fill="{branch_color}" opacity="{op * 0.7:.2f}"\n'
+            f'    transform="rotate({rng.randint(-30, 30)},{leaf_cx},{leaf_cy})"/>\n'
+            f'  <animateTransform attributeName="transform" type="rotate"\n'
+            f'    values="0,{anchor}; {sway},{anchor}; 0,{anchor}; {-sway + 1},{anchor}; 0,{anchor}"\n'
+            f'    dur="{dur}s" repeatCount="indefinite"\n'
+            f'    calcMode="spline" keySplines="{_smil_spline(4)}"/>\n'
+            f'</g>'
+        )
+    return "\n".join(parts)
+
+
+def _gen_falling_leaves(colors, world, story, rng):
+    """C2. Falling leaves — 2-4 ellipses spiraling down with rotation.
+    Warm earth tones, 16-28s.
+    """
+    count = rng.randint(2, 4)
+    parts = ['<!-- C2: Falling Leaves -->\n<g id="falling-leaves">']
+    leaf_colors = _BIBLE_COLORS["leaf"]
+    for i in range(count):
+        rx = rng.randint(3, 7)
+        ry = max(2, int(rx * 0.6))
+        color = rng.choice(leaf_colors)
+        dur = _pick_prime_dur(17, 29, rng)
+        begin = round(rng.uniform(0, 8), 1)
+        op = round(rng.uniform(0.15, 0.25), 2)
+        sx = rng.randint(60, 450)
+        pts = []
+        y = -20
+        for j in range(5):
+            y += rng.randint(60, 90)
+            pts.append(f"{sx + rng.randint(-40, 40)},{y}")
+        path = f"M{sx},-20 C{pts[0]} {pts[1]} {pts[2]} S{pts[3]} {pts[4]}"
+        rot_vals = ";".join([str(rng.randint(-60, 60)) for _ in range(7)])
+        parts.append(
+            f'  <ellipse cx="0" cy="0" rx="{rx}" ry="{ry}" fill="{color}" opacity="{op}">\n'
+            f'    <animateMotion dur="{dur}s" repeatCount="indefinite" begin="{begin}s"\n'
+            f'      path="{path}"/>\n'
+            f'    <animateTransform attributeName="transform" type="rotate"\n'
+            f'      values="{rot_vals}" dur="{dur}s" repeatCount="indefinite"/>\n'
+            f'    <animate attributeName="opacity" values="0;{op};{op + 0.05:.2f};{op};{max(op - 0.05, 0.05):.2f};0"\n'
+            f'      dur="{dur}s" repeatCount="indefinite"/>\n'
+            f'  </ellipse>'
+        )
+    parts.append('</g>')
+    return "\n".join(parts)
+
+
+def _gen_closing_flowers(colors, world, story, rng):
+    """C3. Glowing flowers closing — 1-3 at bottom, petals close over 300-900s.
+    fill="freeze" one-time close. Center glow pulses 6-10s.
+    """
+    count = rng.randint(1, 3)
+    parts = ['<!-- C3: Closing Flowers -->']
+    flower_colors = ["#D4A0B8", "#C890A8", "#D4A878", "#C8A080"]
+    center_color = _warm_color(rng, "glow")
+    for i in range(count):
+        fx = rng.randint(15, 85)
+        fy = rng.randint(80, 92)
+        close_dur = rng.randint(300, 900)
+        pulse_dur = _pick_prime_dur(6, 11, rng)
+        petal_color = rng.choice(flower_colors)
+        petal_count = rng.randint(3, 6)
+        petals = []
+        for p in range(petal_count):
+            open_angle = int((360 / petal_count) * p - 30)
+            closed_angle = int((360 / petal_count) * p - 5)
+            mid_angle = (open_angle + closed_angle) // 2
+            pcx = rng.randint(-10, 10)
+            pcy = rng.randint(-6, -2)
+            petals.append(
+                f'    <ellipse cx="{pcx}" cy="{pcy}" rx="10" ry="5" fill="{petal_color}" opacity="0.15"\n'
+                f'      transform="rotate({open_angle},{pcx},{pcy})">\n'
+                f'      <animateTransform attributeName="transform" type="rotate"\n'
+                f'        values="{open_angle},{pcx},{pcy}; {mid_angle},{pcx},{pcy}; {closed_angle},{pcx},{pcy}"\n'
+                f'        dur="{close_dur}s" repeatCount="1" fill="freeze"\n'
+                f'        calcMode="spline" keySplines="{_smil_spline(2)}"/>\n'
+                f'    </ellipse>'
+            )
+        parts.append(
+            f'<g id="flower-{i}" transform="translate({fx}%, {fy}%)">\n'
+            + "\n".join(petals) + "\n"
+            f'  <circle cx="0" cy="0" r="4" fill="{center_color}" opacity="0.3">\n'
+            f'    <animate attributeName="opacity" values="0.2;0.35;0.2" dur="{pulse_dur}s" repeatCount="indefinite"/>\n'
+            f'    <animate attributeName="r" values="3.5;4.5;3.5" dur="{pulse_dur}s" repeatCount="indefinite"/>\n'
+            f'  </circle>\n'
+            f'</g>'
+        )
+    return "\n".join(parts)
+
+
+# ── Category D: Fauna ────────────────────────────────────────────────────
+
+def _gen_fireflies(colors, world, story, rng):
+    """D1. Fireflies — 3-5 warm dots with async glow, core+outer pairs.
+    18-28s drift, 6-12s pulse, mostly dark with brief flash.
+    """
+    count = rng.randint(3, 5)
+    parts = ['<!-- D1: Fireflies -->\n<g id="fireflies">']
+    fly_color = colors.get("glow", "#FFD89C")
+    for i in range(count):
+        core_r = round(rng.uniform(2.0, 2.8), 1)
+        outer_r = round(core_r * 3.5, 1)
+        drift_dur = _pick_prime_dur(17, 29, rng)
+        pulse_dur = _pick_prime_dur(7, 13, rng)
+        begin = round(rng.uniform(0, 8), 1)
+        cx = rng.randint(60, 440)
+        cy = rng.randint(180, 380)
+        pts = []
+        for j in range(6):
+            pts.append(f"{cx + rng.randint(-20, 20)},{cy + rng.randint(-15, 15)}")
+        path = f"M{cx},{cy} C{pts[0]} {pts[1]} {pts[2]} S{pts[3]} {pts[4]}"
+        pulse_vals = "0;0.05;0.4;0.45;0.1;0;0;0"
+        outer_vals = "0;0.01;0.1;0.12;0.03;0;0;0"
+        n_seg = 7
+        parts.append(
+            f'  <circle cx="0" cy="0" r="{core_r}" fill="{fly_color}" opacity="0">\n'
+            f'    <animateMotion dur="{drift_dur}s" repeatCount="indefinite" begin="{begin}s"\n'
+            f'      path="{path}"\n'
+            f'      calcMode="spline" keySplines="{_smil_spline(4)}"/>\n'
+            f'    <animate attributeName="opacity" values="{pulse_vals}"\n'
+            f'      dur="{pulse_dur}s" repeatCount="indefinite"\n'
+            f'      calcMode="spline" keySplines="{_smil_spline(n_seg)}"/>\n'
+            f'  </circle>\n'
+            f'  <circle cx="0" cy="0" r="{outer_r}" fill="{fly_color}" opacity="0">\n'
+            f'    <animateMotion dur="{drift_dur}s" repeatCount="indefinite" begin="{begin}s"\n'
+            f'      path="{path}"/>\n'
+            f'    <animate attributeName="opacity" values="{outer_vals}"\n'
+            f'      dur="{pulse_dur}s" repeatCount="indefinite"/>\n'
+            f'  </circle>'
+        )
+    parts.append('</g>')
+    return "\n".join(parts)
+
+
+def _gen_sleeping_butterfly(colors, world, story, rng):
+    """D2. Sleeping butterfly/moth — 1-2 wing pairs, 10-20 deg open/close, 8-12s."""
+    count = rng.randint(1, 2)
+    parts = ['<!-- D2: Sleeping Butterfly -->']
+    wing_colors = ["#C8A080", "#B8946A", "#D4B890", "#A08060"]
+    body_color = "#8B7355"
+    for i in range(count):
+        bx = rng.randint(15, 85)
+        by = rng.randint(65, 85)
+        wing_color = rng.choice(wing_colors)
+        dur = _pick_prime_dur(7, 13, rng)
+        rx = rng.randint(4, 7)
+        ry = max(2, int(rx * 0.6))
+        wing_open_l = rng.randint(-15, -8)
+        wing_close_l = wing_open_l - rng.randint(10, 20)
+        wing_open_r = -wing_open_l
+        wing_close_r = -wing_close_l
+        op = round(rng.uniform(0.12, 0.18), 2)
+        parts.append(
+            f'<g id="butterfly-{i}" transform="translate({bx}%, {by}%)">\n'
+            f'  <ellipse cx="-5" cy="0" rx="{rx}" ry="{ry}" fill="{wing_color}" opacity="{op}"\n'
+            f'    transform="rotate({wing_open_l},-5,0)">\n'
+            f'    <animateTransform attributeName="transform" type="rotate"\n'
+            f'      values="{wing_open_l},-5,0; {wing_close_l},-5,0; {wing_open_l},-5,0"\n'
+            f'      dur="{dur}s" repeatCount="indefinite"\n'
+            f'      calcMode="spline" keySplines="{_smil_spline(2)}"/>\n'
+            f'  </ellipse>\n'
+            f'  <ellipse cx="5" cy="0" rx="{rx}" ry="{ry}" fill="{wing_color}" opacity="{op}"\n'
+            f'    transform="rotate({wing_open_r},5,0)">\n'
+            f'    <animateTransform attributeName="transform" type="rotate"\n'
+            f'      values="{wing_open_r},5,0; {wing_close_r},5,0; {wing_open_r},5,0"\n'
+            f'      dur="{dur}s" repeatCount="indefinite"\n'
+            f'      calcMode="spline" keySplines="{_smil_spline(2)}"/>\n'
+            f'  </ellipse>\n'
+            f'  <ellipse cx="0" cy="0" rx="1.5" ry="4" fill="{body_color}" opacity="{op + 0.03:.2f}"/>\n'
+            f'</g>'
+        )
+    return "\n".join(parts)
+
+
+def _gen_sleeping_owl(colors, world, story, rng):
+    """D3. Sleeping owl — silhouette at edge, eyes close one-time (fill="freeze")."""
+    ox = rng.choice([rng.randint(80, 92), rng.randint(8, 20)])
+    oy = rng.randint(30, 50)
+    shadow_color = _warm_color(rng, "shadow")
+    eye_color = _warm_color(rng, "glow")
+    eye_begin = rng.randint(10, 60)
+    eye_dur = rng.randint(20, 40)
+    eye2_delay = round(rng.uniform(0.5, 2.0), 1)
+    op = round(rng.uniform(0.15, 0.25), 2)
+    return (
+        f'<!-- D3: Sleeping Owl -->\n'
+        f'<g id="sleeping-owl" transform="translate({ox}%, {oy}%)" opacity="{op}">\n'
+        f'  <ellipse cx="0" cy="0" rx="10" ry="13" fill="{shadow_color}"/>\n'
+        f'  <polygon points="-7,-11 -5,-18 -2,-11" fill="{shadow_color}"/>\n'
+        f'  <polygon points="7,-11 5,-18 2,-11" fill="{shadow_color}"/>\n'
+        f'  <ellipse cx="-4" cy="-2" rx="2.5" ry="2.5" fill="{eye_color}" opacity="0.4">\n'
+        f'    <animate attributeName="ry" values="2.5;2.5;2.5;1.5;0.3"\n'
+        f'      dur="{eye_dur}s" begin="{eye_begin}s" repeatCount="1" fill="freeze"\n'
+        f'      calcMode="spline" keySplines="{_smil_spline(4)}"/>\n'
+        f'    <animate attributeName="opacity" values="0.4;0.4;0.4;0.2;0.05"\n'
+        f'      dur="{eye_dur}s" begin="{eye_begin}s" repeatCount="1" fill="freeze"/>\n'
+        f'  </ellipse>\n'
+        f'  <ellipse cx="4" cy="-2" rx="2.5" ry="2.5" fill="{eye_color}" opacity="0.4">\n'
+        f'    <animate attributeName="ry" values="2.5;2.5;2.5;1.8;0.3"\n'
+        f'      dur="{eye_dur}s" begin="{eye_begin + eye2_delay}s" repeatCount="1" fill="freeze"\n'
+        f'      calcMode="spline" keySplines="{_smil_spline(4)}"/>\n'
+        f'    <animate attributeName="opacity" values="0.4;0.4;0.35;0.2;0.05"\n'
+        f'      dur="{eye_dur}s" begin="{eye_begin + eye2_delay}s" repeatCount="1" fill="freeze"/>\n'
+        f'  </ellipse>\n'
+        f'</g>'
+    )
+
+
+def _gen_cricket(colors, world, story, rng):
+    """D4. Resting cricket — 1-2 tiny silhouettes, rare twitches every 15-25s."""
+    count = rng.randint(1, 2)
+    parts = ['<!-- D4: Cricket -->']
+    bug_color = _warm_color(rng, "shadow")
+    for i in range(count):
+        bx = rng.randint(40, 80)
+        by = rng.randint(86, 94)
+        op = round(rng.uniform(0.08, 0.15), 2)
+        leg_dur = _pick_prime_dur(17, 23, rng)
+        ant_dur = _pick_prime_dur(13, 19, rng)
+        twitch = rng.randint(3, 8)
+        # Mostly still with rare twitch
+        leg_vals = "0,2,1; 0,2,1; 0,2,1; 0,2,1; 0,2,1; 0,2,1; 0,2,1; " + f"{twitch},2,1; 0,2,1; 0,2,1"
+        ant_vals = f"0,-3,-1; {twitch // 2},-3,-1; 0,-3,-1; {-twitch // 2},-3,-1; 0,-3,-1"
+        parts.append(
+            f'<g id="cricket-{i}" transform="translate({bx}%, {by}%)" opacity="{op}">\n'
+            f'  <ellipse cx="0" cy="0" rx="4" ry="1.5" fill="{bug_color}"/>\n'
+            f'  <line x1="2" y1="1" x2="6" y2="4" stroke="{bug_color}" stroke-width="0.5">\n'
+            f'    <animateTransform attributeName="transform" type="rotate"\n'
+            f'      values="{leg_vals}"\n'
+            f'      dur="{leg_dur}s" repeatCount="indefinite"\n'
+            f'      calcMode="spline" keySplines="{_smil_spline(9)}"/>\n'
+            f'  </line>\n'
+            f'  <line x1="-3" y1="-1" x2="-7" y2="-4" stroke="{bug_color}" stroke-width="0.3">\n'
+            f'    <animateTransform attributeName="transform" type="rotate"\n'
+            f'      values="{ant_vals}"\n'
+            f'      dur="{ant_dur}s" repeatCount="indefinite"\n'
+            f'      calcMode="spline" keySplines="{_smil_spline(4)}"/>\n'
+            f'  </line>\n'
+            f'</g>'
+        )
+    return "\n".join(parts)
+
+
+# ── Category E: Water ────────────────────────────────────────────────────
+
+def _gen_water_ripples(colors, world, story, rng):
+    """E1. Gentle ripples — expanding/fading concentric rings.
+    1-2 sources, 2-4 rings each, 10-16s.
+    """
+    sources = rng.randint(1, 2)
+    parts = ['<!-- E1: Water Ripples -->']
+    ring_color = colors.get("particle", "#D4C8B8")
+    for s in range(sources):
+        sx = rng.randint(25, 75)
+        sy = rng.randint(60, 80)
+        ring_count = rng.randint(2, 4)
+        dur = _pick_prime_dur(11, 17, rng)
+        stagger = round(dur / ring_count, 1)
+        max_r = rng.randint(30, 60)
+        rings = []
+        for ri in range(ring_count):
+            begin = round(stagger * ri, 1)
+            op_peak = round(0.2 - ri * 0.03, 2)
+            rings.append(
+                f'  <circle cx="0" cy="0" r="5" fill="none" stroke="{ring_color}" stroke-width="0.5" opacity="0">\n'
+                f'    <animate attributeName="r" values="3;{max_r // 2};{max_r}" dur="{dur}s" begin="{begin}s" repeatCount="indefinite"\n'
+                f'      calcMode="spline" keySplines="{_smil_spline(2)}"/>\n'
+                f'    <animate attributeName="opacity" values="0;{op_peak};0" dur="{dur}s" begin="{begin}s"\n'
+                f'      repeatCount="indefinite" calcMode="spline" keySplines="0.3 0 0.7 1;0.4 0 0.6 1"/>\n'
+                f'    <animate attributeName="stroke-width" values="0.8;0.4;0.1" dur="{dur}s" begin="{begin}s"\n'
+                f'      repeatCount="indefinite"/>\n'
+                f'  </circle>'
+            )
+        parts.append(
+            f'<g id="ripple-{s}" transform="translate({sx}%, {sy}%)">\n'
+            + "\n".join(rings) + "\n"
+            f'</g>'
+        )
+    return "\n".join(parts)
+
+
+def _gen_bubbles(colors, world, story, rng):
+    """E2. Slow underwater bubbles — 2-4 stroke-only circles, slow rise.
+    Grow as they rise, 18-30s. Exception: upward motion is physically correct.
+    """
+    count = rng.randint(2, 4)
+    parts = ['<!-- E2: Slow Bubbles -->\n<g id="bubbles" opacity="0.2">']
+    bubble_color = colors.get("particle", "#E8D8C4")
+    for i in range(count):
+        r_start = round(rng.uniform(1.5, 3.0), 1)
+        r_end = round(r_start + rng.uniform(1.0, 2.0), 1)
+        dur = _pick_prime_dur(17, 31, rng)
+        begin = round(rng.uniform(0, 8), 1)
+        op = round(rng.uniform(0.15, 0.28), 2)
+        sx = rng.randint(80, 430)
+        sy_start = 350 + rng.randint(0, 100)
+        pts = []
+        y = sy_start
+        for j in range(5):
+            y -= rng.randint(50, 80)
+            pts.append(f"{sx + rng.randint(-15, 15)},{y}")
+        path = f"M{sx},{sy_start} C{pts[0]} {pts[1]} {pts[2]} S{pts[3]} {pts[4]}"
+        r_vals = ";".join([f"{r_start + (r_end - r_start) * j / 4:.1f}" for j in range(5)])
+        parts.append(
+            f'  <circle cx="0" cy="0" r="{r_start}" fill="none" stroke="{bubble_color}" stroke-width="0.5" opacity="{op}">\n'
+            f'    <animateMotion dur="{dur}s" repeatCount="indefinite" begin="{begin}s"\n'
+            f'      path="{path}"/>\n'
+            f'    <animate attributeName="opacity" values="0;{op};{min(op + 0.05, 0.33):.2f};{op};{op * 0.5:.2f};0"\n'
+            f'      dur="{dur}s" repeatCount="indefinite"/>\n'
+            f'    <animate attributeName="r" values="{r_vals}"\n'
+            f'      dur="{dur}s" repeatCount="indefinite"/>\n'
+            f'  </circle>'
+        )
+    parts.append('</g>')
+    return "\n".join(parts)
+
+
+# ── Category F: Light & Shadow ───────────────────────────────────────────
+
+def _gen_candle_flicker(colors, world, story, rng):
+    """F1. Candle/lantern flicker — radialGradient, prime-number durations.
+    Irregular +-15% flicker band. Multiple prime durations per property.
+    """
+    cx = rng.randint(20, 80)
+    cy = rng.randint(45, 75)
+    glow_r = rng.randint(30, 60)
+    core_r = rng.randint(4, 6)
+    dur_o = _pick_prime_dur(5, 7, rng)
+    dur_r = _pick_prime_dur(6, 8, rng)
+    dur_core = _pick_prime_dur(4, 6, rng)
+    glow_outer = colors.get("glow", "#FFCA78")
+    glow_inner = colors.get("star", "#FFF0D0")
+    grad_id = f"flameG{rng.randint(100, 999)}"
+    op_vals = ";".join([f"{0.5 + rng.uniform(-0.08, 0.10):.2f}" for _ in range(10)])
+    r_vals = ";".join([str(glow_r + rng.randint(-4, 6)) for _ in range(10)])
+    core_op = ";".join([f"{0.25 + rng.uniform(0, 0.13):.2f}" for _ in range(7)])
+    cy_vals = ";".join([str(-2 + rng.randint(-2, 1)) for _ in range(5)])
+    return (
+        f'<!-- F1: Candle Flicker -->\n'
+        f'<g id="candle-glow" transform="translate({cx}%, {cy}%)">\n'
+        f'  <radialGradient id="{grad_id}">\n'
+        f'    <stop offset="0%" stop-color="{glow_inner}" stop-opacity="0.4"/>\n'
+        f'    <stop offset="30%" stop-color="{glow_outer}" stop-opacity="0.15"/>\n'
+        f'    <stop offset="100%" stop-color="{glow_outer}" stop-opacity="0"/>\n'
+        f'  </radialGradient>\n'
+        f'  <circle cx="0" cy="0" r="{glow_r}" fill="url(#{grad_id})">\n'
+        f'    <animate attributeName="opacity" values="{op_vals}"\n'
+        f'      dur="{dur_o}s" repeatCount="indefinite"\n'
+        f'      calcMode="spline" keySplines="{_smil_spline(9)}"/>\n'
+        f'    <animate attributeName="r" values="{r_vals}"\n'
+        f'      dur="{dur_r}s" repeatCount="indefinite"/>\n'
+        f'  </circle>\n'
+        f'  <circle cx="0" cy="-3" r="{core_r}" fill="{glow_inner}" opacity="0.3">\n'
+        f'    <animate attributeName="opacity" values="{core_op}"\n'
+        f'      dur="{dur_core}s" repeatCount="indefinite"/>\n'
+        f'    <animate attributeName="cy" values="{cy_vals}"\n'
+        f'      dur="{_pick_prime_dur(4, 6, rng)}s" repeatCount="indefinite"/>\n'
+        f'  </circle>\n'
+        f'</g>'
+    )
+
+
+def _gen_shadow_play(colors, world, story, rng):
+    """F2. Shadow play — soft dark shapes, 12-25s, 0.03-0.10 opacity."""
+    count = rng.randint(1, 3)
+    parts = ['<!-- F2: Shadow Play -->\n<g id="window-shadows" opacity="0.06">']
+    shadow_color = _warm_color(rng, "shadow")
+    for i in range(count):
+        dur = _pick_prime_dur(13, 23, rng)
+        op = round(rng.uniform(0.03, 0.10), 2)
+        if rng.random() < 0.5:
+            x1 = rng.randint(40, 200)
+            y1 = rng.randint(80, 200)
+            pts = " ".join([
+                f"Q{x1 + rng.randint(10, 40)},{y1 - rng.randint(5, 20)} {x1 + rng.randint(30, 60)},{y1 + rng.randint(5, 20)}"
+                for _ in range(2)
+            ])
+            parts.append(
+                f'  <path d="M{x1},{y1} {pts}"\n'
+                f'    fill="none" stroke="{shadow_color}" stroke-width="15" stroke-linecap="round" opacity="{op}">\n'
+                f'    <animateTransform attributeName="transform" type="translate"\n'
+                f'      values="0,0; {rng.randint(3, 8)},{rng.randint(1, 3)}; {rng.randint(-4, -1)},{rng.randint(1, 3)}; {rng.randint(2, 6)},{rng.randint(-2, 0)}; 0,0"\n'
+                f'      dur="{dur}s" repeatCount="indefinite"\n'
+                f'      calcMode="spline" keySplines="{_smil_spline(4)}"/>\n'
+                f'  </path>'
+            )
+        else:
+            ex, ey = rng.randint(80, 400), rng.randint(100, 350)
+            erx, ery = rng.randint(20, 40), rng.randint(15, 30)
+            dur_o = _pick_prime_dur(19, 29, rng)
+            parts.append(
+                f'  <ellipse cx="{ex}" cy="{ey}" rx="{erx}" ry="{ery}" fill="{shadow_color}" opacity="{op * 0.8:.2f}">\n'
+                f'    <animateTransform attributeName="transform" type="translate"\n'
+                f'      values="0,0; {rng.randint(2, 5)},{rng.randint(1, 3)}; {rng.randint(-3, -1)},{rng.randint(1, 3)}; {rng.randint(2, 5)},0; 0,0"\n'
+                f'      dur="{dur}s" repeatCount="indefinite"/>\n'
+                f'    <animate attributeName="opacity" values="{op * 0.7:.2f};{op:.2f};{op * 0.5:.2f};{op * 0.8:.2f};{op * 0.7:.2f}"\n'
+                f'      dur="{dur_o}s" repeatCount="indefinite"/>\n'
+                f'  </ellipse>'
+            )
+    parts.append('</g>')
+    return "\n".join(parts)
+
+
+def _gen_breathing_pacer(colors, world, story, rng):
+    """F3. Breathing glow orb (MANDATORY) — primary sleep cue.
+    4 world-specific variants via pacer_variant. dur=8s base.
+    """
+    dur = 8
+    glow_color = colors.get("glow", "#FFD89C")
+    star_color = colors.get("star", "#FFF5E0")
+    mapping = WORLD_ELEMENTS.get(world, WORLD_ELEMENTS["enchanted_forest"])
+    variant = mapping.get("pacer_variant", "forest")
+    grad_id = f"breathG{rng.randint(100, 999)}"
+
+    if variant == "ocean":
+        cx, cy = "50%", "60%"
+        rx_base, ry_base = 20, 25
+        return (
+            f'<!-- F3: Breathing Pacer (Ocean) -->\n'
+            f'<g id="breath-pacer">\n'
+            f'  <radialGradient id="{grad_id}">\n'
+            f'    <stop offset="0%" stop-color="{glow_color}" stop-opacity="0.4"/>\n'
+            f'    <stop offset="40%" stop-color="{glow_color}" stop-opacity="0.15"/>\n'
+            f'    <stop offset="100%" stop-color="{glow_color}" stop-opacity="0"/>\n'
+            f'  </radialGradient>\n'
+            f'  <ellipse cx="{cx}" cy="{cy}" rx="{rx_base}" ry="{ry_base}" fill="url(#{grad_id})">\n'
+            f'    <animate attributeName="ry" values="{ry_base - 3};{ry_base + 3};{ry_base - 3}" dur="{dur}s" repeatCount="indefinite"\n'
+            f'      calcMode="spline" keySplines="{_smil_spline(2)}"/>\n'
+            f'    <animate attributeName="rx" values="{rx_base - 2};{rx_base + 2};{rx_base - 2}" dur="{dur}s" repeatCount="indefinite"\n'
+            f'      calcMode="spline" keySplines="{_smil_spline(2)}"/>\n'
+            f'    <animate attributeName="opacity" values="0.3;0.5;0.3" dur="{dur}s" repeatCount="indefinite"\n'
+            f'      calcMode="spline" keySplines="{_smil_spline(2)}"/>\n'
+            f'  </ellipse>\n'
+            f'</g>'
+        )
+    elif variant == "space":
+        cx, cy = "50%", "50%"
+        r_base = 35
+        return (
+            f'<!-- F3: Breathing Pacer (Space) -->\n'
+            f'<g id="breath-pacer">\n'
+            f'  <radialGradient id="{grad_id}">\n'
+            f'    <stop offset="0%" stop-color="{star_color}" stop-opacity="0.35"/>\n'
+            f'    <stop offset="60%" stop-color="{glow_color}" stop-opacity="0.1"/>\n'
+            f'    <stop offset="100%" stop-color="{glow_color}" stop-opacity="0"/>\n'
+            f'  </radialGradient>\n'
+            f'  <circle cx="{cx}" cy="{cy}" r="{r_base}" fill="url(#{grad_id})">\n'
+            f'    <animate attributeName="r" values="{r_base - 5};{r_base + 3};{r_base - 5}" dur="{dur}s" repeatCount="indefinite"\n'
+            f'      calcMode="spline" keySplines="{_smil_spline(2)}"/>\n'
+            f'    <animate attributeName="opacity" values="0.3;0.5;0.3" dur="{dur}s" repeatCount="indefinite"\n'
+            f'      calcMode="spline" keySplines="{_smil_spline(2)}"/>\n'
+            f'  </circle>\n'
+            f'</g>'
+        )
+    elif variant == "interior":
+        cx, cy = "35%", "55%"
+        r_base = 30
+        return (
+            f'<!-- F3: Breathing Pacer (Interior) -->\n'
+            f'<g id="breath-pacer">\n'
+            f'  <radialGradient id="{grad_id}">\n'
+            f'    <stop offset="0%" stop-color="{glow_color}" stop-opacity="0.45"/>\n'
+            f'    <stop offset="40%" stop-color="{glow_color}" stop-opacity="0.15"/>\n'
+            f'    <stop offset="100%" stop-color="{glow_color}" stop-opacity="0"/>\n'
+            f'  </radialGradient>\n'
+            f'  <circle cx="{cx}" cy="{cy}" r="{r_base}" fill="url(#{grad_id})">\n'
+            f'    <animate attributeName="r" values="{r_base - 4};{r_base + 2};{r_base - 4}" dur="{dur}s" repeatCount="indefinite"\n'
+            f'      calcMode="spline" keySplines="{_smil_spline(2)}"/>\n'
+            f'    <animate attributeName="opacity" values="0.35;0.55;0.35" dur="{dur}s" repeatCount="indefinite"\n'
+            f'      calcMode="spline" keySplines="{_smil_spline(2)}"/>\n'
+            f'  </circle>\n'
+            f'</g>'
+        )
+    else:  # forest (default)
+        cx, cy = "50%", "70%"
+        r_base = 25
+        return (
+            f'<!-- F3: Breathing Pacer (Forest) -->\n'
+            f'<g id="breath-pacer">\n'
+            f'  <radialGradient id="{grad_id}">\n'
+            f'    <stop offset="0%" stop-color="{glow_color}" stop-opacity="0.45"/>\n'
+            f'    <stop offset="50%" stop-color="{glow_color}" stop-opacity="0.15"/>\n'
+            f'    <stop offset="100%" stop-color="{glow_color}" stop-opacity="0"/>\n'
+            f'  </radialGradient>\n'
+            f'  <circle cx="{cx}" cy="{cy}" r="{r_base}" fill="url(#{grad_id})">\n'
+            f'    <animate attributeName="r" values="{r_base - 3};{r_base + 3};{r_base - 3}" dur="{dur}s" repeatCount="indefinite"\n'
+            f'      calcMode="spline" keySplines="{_smil_spline(2)}"/>\n'
+            f'    <animate attributeName="opacity" values="0.35;0.55;0.35" dur="{dur}s" repeatCount="indefinite"\n'
+            f'      calcMode="spline" keySplines="{_smil_spline(2)}"/>\n'
+            f'  </circle>\n'
+            f'</g>'
+        )
+
+
+# ── Category G: Environmental ────────────────────────────────────────────
+
+def _gen_chimney_smoke(colors, world, story, rng):
+    """G1. Chimney wisps — 1-3 expanding wisps, 12-20s, 0.06-0.10 opacity."""
+    count = rng.randint(1, 3)
+    sx = rng.randint(55, 80)
+    sy = rng.randint(18, 30)
+    parts = [f'<!-- G1: Chimney Smoke -->\n<g id="chimney-smoke" transform="translate({sx}%, {sy}%)">']
+    smoke_colors = _BIBLE_COLORS["smoke"]
+    for i in range(count):
+        color = rng.choice(smoke_colors)
+        dur = _pick_prime_dur(11, 19, rng)
+        begin = round(rng.uniform(0, 6), 1)
+        op_peak = round(rng.uniform(0.06, 0.10), 2)
+        rx_start = rng.randint(5, 8)
+        rx_end = rx_start * rng.randint(3, 5)
+        ry_start = max(2, int(rx_start * 0.5))
+        ry_end = max(4, int(rx_end * 0.4))
+        dx = rng.randint(-8, 8)
+        path = f"M0,0 C{dx + 5},-20 {dx - 8},-45 {dx + 3},-70 S{dx - 5},-95 {dx + 2},-120"
+        parts.append(
+            f'  <ellipse cx="0" cy="0" rx="{rx_start}" ry="{ry_start}" fill="{color}" opacity="0">\n'
+            f'    <animateMotion dur="{dur}s" repeatCount="indefinite" begin="{begin}s"\n'
+            f'      path="{path}"/>\n'
+            f'    <animate attributeName="opacity" values="0;{op_peak};{op_peak * 0.75:.2f};{op_peak * 0.4:.2f};0"\n'
+            f'      dur="{dur}s" repeatCount="indefinite" begin="{begin}s"/>\n'
+            f'    <animate attributeName="rx" values="{rx_start};{rx_start + 4};{rx_start + 10};{rx_start + 18};{rx_end}"\n'
+            f'      dur="{dur}s" repeatCount="indefinite" begin="{begin}s"/>\n'
+            f'    <animate attributeName="ry" values="{ry_start};{ry_start + 2};{ry_start + 5};{ry_start + 8};{ry_end}"\n'
+            f'      dur="{dur}s" repeatCount="indefinite" begin="{begin}s"/>\n'
+            f'  </ellipse>'
+        )
+    parts.append('</g>')
+    return "\n".join(parts)
+
+
+def _gen_wind_grass(colors, world, story, rng):
+    """G2. Wind through grass — 8-15 blades, staggered begin delays (traveling wave)."""
+    count = rng.randint(8, 15)
+    parts = ['<!-- G2: Wind Through Grass -->\n<g id="grass-wind" opacity="0.12">']
+    grass_color = _warm_color(rng, "shadow")
+    dur = _pick_prime_dur(7, 11, rng)
+    sway = rng.randint(3, 6)
+    stagger = round(rng.uniform(0.3, 0.6), 2)
+    for i in range(count):
+        x_pct = round(10 + (80 * i / count), 1)
+        h = rng.randint(5, 10)
+        width = round(rng.uniform(0.6, 0.9), 1)
+        begin = round(stagger * i, 1)
+        parts.append(
+            f'  <line x1="{x_pct}%" y1="95%" x2="{x_pct}%" y2="{95 - h}%" stroke="{grass_color}" stroke-width="{width}"\n'
+            f'    stroke-linecap="round">\n'
+            f'    <animateTransform attributeName="transform" type="rotate"\n'
+            f'      values="0,{x_pct}%,95%; {sway},{x_pct}%,95%; 0,{x_pct}%,95%; {-sway + 1},{x_pct}%,95%; 0,{x_pct}%,95%"\n'
+            f'      dur="{dur}s" begin="{begin}s" repeatCount="indefinite"\n'
+            f'      calcMode="spline" keySplines="{_smil_spline(4)}"/>\n'
+            f'  </line>'
+        )
+    parts.append('</g>')
+    return "\n".join(parts)
+
+
+# ── Element Dispatch Table ───────────────────────────────────────────────
+
+ELEMENT_GENERATORS = {
+    "stars":              _gen_stars,
+    "shooting_star":      _gen_shooting_star,
+    "moon_glow":          _gen_moon_glow,
+    "aurora":             _gen_aurora,
+    "fog":                _gen_fog,
+    "rain":               _gen_rain,
+    "snowfall":           _gen_snowfall,
+    "dust_motes":         _gen_dust_motes,
+    "caustics":           _gen_caustics,
+    "swaying_branches":   _gen_swaying_branches,
+    "falling_leaves":     _gen_falling_leaves,
+    "closing_flowers":    _gen_closing_flowers,
+    "fireflies":          _gen_fireflies,
+    "sleeping_butterfly":  _gen_sleeping_butterfly,
+    "sleeping_owl":       _gen_sleeping_owl,
+    "cricket":            _gen_cricket,
+    "water_ripples":      _gen_water_ripples,
+    "bubbles":            _gen_bubbles,
+    "candle_flicker":     _gen_candle_flicker,
+    "shadow_play":        _gen_shadow_play,
+    "breathing_pacer":    _gen_breathing_pacer,
+    "chimney_smoke":      _gen_chimney_smoke,
+    "wind_grass":         _gen_wind_grass,
+}
+
+
+# ── Vignette Generator ──────────────────────────────────────────────────
+
+def _gen_vignette(style, colors):
+    """Generate per-world vignette. NOT the same dark edges on every cover."""
+    vig_color = colors.get("vignette", "#1a0a05")
+    dur = random.randint(8, 10)
+
+    if style == "none":
+        return ""
+
+    elif style == "top_heavy":
+        op = round(random.uniform(0.60, 0.85), 2)
+        grad_id = f"vigLG{random.randint(100, 999)}"
+        return (
+            f'<!-- Vignette: top_heavy -->\n'
+            f'<linearGradient id="{grad_id}" x1="0" y1="0" x2="0" y2="1">\n'
+            f'  <stop offset="0%" stop-color="{vig_color}" stop-opacity="0.15"/>\n'
+            f'  <stop offset="50%" stop-color="{vig_color}" stop-opacity="0.15"/>\n'
+            f'  <stop offset="100%" stop-color="{vig_color}" stop-opacity="0"/>\n'
+            f'</linearGradient>\n'
+            f'<rect width="512" height="512" fill="url(#{grad_id})" opacity="{op}">\n'
+            f'  <animate attributeName="opacity" values="{op};{min(op + 0.05, 0.90)};{op}" dur="{dur}s" repeatCount="indefinite"\n'
+            f'    calcMode="spline" keySplines="{_smil_spline(2)}"/>\n'
+            f'</rect>'
+        )
+
+    elif style == "bottom_heavy":
+        op = round(random.uniform(0.60, 0.85), 2)
+        grad_id = f"vigLG{random.randint(100, 999)}"
+        return (
+            f'<!-- Vignette: bottom_heavy -->\n'
+            f'<linearGradient id="{grad_id}" x1="0" y1="0" x2="0" y2="1">\n'
+            f'  <stop offset="0%" stop-color="{vig_color}" stop-opacity="0"/>\n'
+            f'  <stop offset="50%" stop-color="{vig_color}" stop-opacity="0.15"/>\n'
+            f'  <stop offset="100%" stop-color="{vig_color}" stop-opacity="0.70"/>\n'
+            f'</linearGradient>\n'
+            f'<rect width="512" height="512" fill="url(#{grad_id})" opacity="{op}">\n'
+            f'  <animate attributeName="opacity" values="{op};{min(op + 0.05, 0.90)};{op}" dur="{dur}s" repeatCount="indefinite"\n'
+            f'    calcMode="spline" keySplines="{_smil_spline(2)}"/>\n'
+            f'</rect>'
+        )
+
+    elif style == "bottom_light":
+        op = round(random.uniform(0.50, 0.70), 2)
+        grad_id = f"vigLG{random.randint(100, 999)}"
+        return (
+            f'<!-- Vignette: bottom_light -->\n'
+            f'<linearGradient id="{grad_id}" x1="0" y1="0" x2="0" y2="1">\n'
+            f'  <stop offset="0%" stop-color="{vig_color}" stop-opacity="0"/>\n'
+            f'  <stop offset="70%" stop-color="{vig_color}" stop-opacity="0"/>\n'
+            f'  <stop offset="100%" stop-color="{vig_color}" stop-opacity="0.40"/>\n'
+            f'</linearGradient>\n'
+            f'<rect width="512" height="512" fill="url(#{grad_id})" opacity="{op}"/>'
+        )
+
+    elif style == "top_corners":
+        op = round(random.uniform(0.50, 0.75), 2)
+        grad_id = f"vigRC{random.randint(100, 999)}"
+        return (
+            f'<!-- Vignette: top_corners -->\n'
+            f'<radialGradient id="{grad_id}" cx="0.5" cy="0.3" r="0.7">\n'
+            f'  <stop offset="50%" stop-color="{vig_color}" stop-opacity="0"/>\n'
+            f'  <stop offset="100%" stop-color="{vig_color}" stop-opacity="0.60"/>\n'
+            f'</radialGradient>\n'
+            f'<rect width="512" height="512" fill="url(#{grad_id})" opacity="{op}"/>'
+        )
+
+    elif style == "corners_only":
+        op = round(random.uniform(0.50, 0.70), 2)
+        grad_id = f"vigRC{random.randint(100, 999)}"
+        return (
+            f'<!-- Vignette: corners_only -->\n'
+            f'<radialGradient id="{grad_id}" cx="0.5" cy="0.5" r="0.6">\n'
+            f'  <stop offset="40%" stop-color="{vig_color}" stop-opacity="0"/>\n'
+            f'  <stop offset="100%" stop-color="{vig_color}" stop-opacity="0.55"/>\n'
+            f'</radialGradient>\n'
+            f'<rect width="512" height="512" fill="url(#{grad_id})" opacity="{op}"/>'
+        )
+
+    elif style == "full_heavy":
+        op = round(random.uniform(0.70, 0.90), 2)
+        return (
+            f'<!-- Vignette: full_heavy -->\n'
+            f'<rect width="512" height="512" fill="url(#vignetteGrad)" opacity="{op}">\n'
+            f'  <animate attributeName="opacity" values="{op};{min(op + 0.05, 0.95)};{op}" dur="{dur}s" repeatCount="indefinite"\n'
+            f'    calcMode="spline" keySplines="{_smil_spline(2)}"/>\n'
+            f'</rect>'
+        )
+
+    else:  # full_soft (default)
+        op = round(random.uniform(0.40, 0.60), 2)
+        return (
+            f'<!-- Vignette: full_soft -->\n'
+            f'<rect width="512" height="512" fill="url(#vignetteGrad)" opacity="{op}">\n'
+            f'  <animate attributeName="opacity" values="{op};{min(op + 0.05, 0.65)};{op}" dur="{dur}s" repeatCount="indefinite"\n'
+            f'    calcMode="spline" keySplines="{_smil_spline(2)}"/>\n'
+            f'</rect>'
+        )
+
+
+# ── Assembly ─────────────────────────────────────────────────────────────
+
+def _character_aware_elements(story):
+    """Return extra element names based on protagonist type/keywords."""
+    extras = []
+    char_type = story.get("lead_character_type", "").lower()
+    keywords = (story.get("title", "") + " " + story.get("description", "")).lower()
+    if char_type in ("owl", "bird") or "owl" in keywords:
+        extras.append("sleeping_owl")
+    if char_type == "butterfly" or "butterfly" in keywords:
+        extras.append("sleeping_butterfly")
+    if any(k in keywords for k in ("campfire", "bonfire")):
+        extras.append("chimney_smoke")
+    if "lantern" in keywords:
+        extras.append("candle_flicker")
+    if "rain" in keywords:
+        extras.append("rain")
+    if "window" in keywords:
+        extras.append("shadow_play")
+    return extras
+
+
+def _should_include_optional(elem_name, story, rng):
+    """30% base chance + keyword boost for optional elements."""
+    keywords = (story.get("title", "") + " " + story.get("description", "")).lower()
+    keyword_map = {
+        "stars": ["star", "night", "sky"],
+        "sleeping_owl": ["owl", "bird", "tree"],
+        "sleeping_butterfly": ["butterfly", "moth", "garden", "flower"],
+        "chimney_smoke": ["cabin", "chimney", "fire", "cottage", "campfire"],
+        "cricket": ["cricket", "insect", "meadow", "grass"],
+        "wind_grass": ["grass", "meadow", "wind", "field"],
+        "moon_glow": ["moon", "night"],
+        "aurora": ["northern", "aurora", "arctic"],
+        "fog": ["mist", "fog", "haze"],
+        "dust_motes": ["dust", "light", "beam"],
+        "caustics": ["water", "pool", "underwater"],
+        "bubbles": ["bubble", "underwater", "ocean"],
+        "falling_leaves": ["leaf", "autumn", "fall"],
+        "rain": ["rain", "storm"],
+        "shadow_play": ["shadow", "window"],
+    }
+    boost = any(kw in keywords for kw in keyword_map.get(elem_name, []))
+    chance = 0.6 if boost else 0.3
+    return rng.random() < chance
+
+
+def generate_svg_overlay(axes: dict, story: dict) -> str:
+    """Generate an animated SVG overlay using the SMIL Animation Bible system.
+
+    Uses WORLD_ELEMENTS mapping with required/select/optional structure.
+    Tracks <5KB size budget. Validates drowsiness guardrails.
+    """
+    world = axes["world_setting"]
+    palette = axes["palette"]
+    rng = random.Random(hash(story.get("id", "") + world))
+    mapping = WORLD_ELEMENTS.get(world, WORLD_ELEMENTS["enchanted_forest"])
+
+    # Build colors from palette + world accents
+    palette_colors = {
+        "ember_warm":    {"glow": "#FFD699", "particle": "#FFCC80", "vignette": "#1a0a05", "star": "#FFF5E0"},
+        "twilight_cool": {"glow": "#C8B8E0", "particle": "#D0C4E8", "vignette": "#0a0520", "star": "#E8E0F0"},
+        "forest_deep":   {"glow": "#A8D5A0", "particle": "#C4E0B8", "vignette": "#051005", "star": "#D8F0D0"},
+        "golden_hour":   {"glow": "#FFE4B5", "particle": "#FFD89B", "vignette": "#1a0f00", "star": "#FFF8E8"},
+        "moonstone":     {"glow": "#C0D0E0", "particle": "#B8C8D8", "vignette": "#050810", "star": "#E0E8F0"},
+        "berry_dusk":    {"glow": "#D8A8C8", "particle": "#E0B8D0", "vignette": "#100510", "star": "#F0D8E8"},
+    }
+    colors = palette_colors.get(palette, palette_colors["golden_hour"])
+    accents = world_accents.get(world, {})
+    if accents:
+        colors = {**colors, **accents}
+
+    svg_parts = []
+    svg_parts.append(f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="vignetteGrad">
+      <stop offset="40%" stop-color="transparent"/>
+      <stop offset="100%" stop-color="{colors['vignette']}" stop-opacity="0.75"/>
+    </radialGradient>
+    <filter id="softBlur">
+      <feGaussianBlur stdDeviation="2"/>
+    </filter>
+  </defs>''')
+
+    element_parts = []
+    budget_remaining = 3600  # ~5000 total - ~1400 fixed overhead
+
+    # 1. Required: breathing pacer (always)
+    for elem_name in mapping["required"]:
+        svg = ELEMENT_GENERATORS[elem_name](colors, world, story, rng)
+        element_parts.append(svg)
+        budget_remaining -= _svg_size(svg)
+
+    # 2. Select from pool
+    pool = mapping["select"]["pool"][:]
+    rng.shuffle(pool)
+    pick_min, pick_max = mapping["select"]["pick"]
+    pick_count = rng.randint(pick_min, pick_max)
+
+    # Prioritize character-aware elements
+    char_elements = _character_aware_elements(story)
+    for ce in char_elements:
+        if ce in pool:
+            pool.remove(ce)
+            pool.insert(0, ce)
+        elif ce in ELEMENT_GENERATORS:
+            pool.insert(0, ce)
+
+    selected = 0
+    for elem_name in pool:
+        if selected >= pick_count or budget_remaining < 300:
+            break
+        if elem_name not in ELEMENT_GENERATORS:
+            continue
+        svg = ELEMENT_GENERATORS[elem_name](colors, world, story, rng)
+        size = _svg_size(svg)
+        if budget_remaining - size >= 0:
+            element_parts.append(svg)
+            budget_remaining -= size
+            selected += 1
+
+    # 3. Optional elements
+    for elem_name in mapping.get("optional", []):
+        if budget_remaining < 200:
+            break
+        if elem_name not in ELEMENT_GENERATORS:
+            continue
+        if _should_include_optional(elem_name, story, rng):
+            svg = ELEMENT_GENERATORS[elem_name](colors, world, story, rng)
+            size = _svg_size(svg)
+            if budget_remaining - size >= 0:
+                element_parts.append(svg)
+                budget_remaining -= size
+
+    # 4. Vignette (always)
+    vig_style = mapping.get("vignette", "full_soft")
+    vig = _gen_vignette(vig_style, colors)
+    if vig:
+        element_parts.append(vig)
+
+    # Assemble
+    svg_parts.extend(element_parts)
+    svg_parts.append('\n</svg>')
+    svg_output = "\n".join(svg_parts)
+
+    # Validate drowsiness guardrails
+    warnings = validate_overlay_drowsiness(svg_output)
+    if warnings:
+        for w in warnings:
+            logger.warning("DROWSINESS VIOLATION: %s", w)
+
+    return svg_output
+
+
+# ── Drowsiness Guardrail Validator ────────────────────────────────────────
+
+def _is_warm_color(hex_color: str) -> bool:
+    """Check if a hex color is warm-spectrum (amber-to-gold range)."""
+    hex_color = hex_color.strip().lstrip('#')
+    if len(hex_color) == 3:
+        hex_color = ''.join(c * 2 for c in hex_color)
+    if len(hex_color) != 6:
+        return True
+    try:
+        r = int(hex_color[0:2], 16)
+        g = int(hex_color[2:4], 16)
+        b = int(hex_color[4:6], 16)
+    except ValueError:
+        return True
+    if r >= 0xE0 and g >= 0xE0 and b >= 0xE0:
+        return True
+    if b > r:
+        return False
+    if g > r and b > r * 0.5:
+        return False
+    if b >= 0x90 and r < 0xC0:
+        return False
+    return True
+
+
+def validate_overlay_drowsiness(svg_str: str) -> list:
+    """Validate SVG overlay against drowsiness-inducing design principles.
+
+    Rules: no upward motion, min 4s duration, max 0.60 opacity,
+    max 10 elements/group, warm colors only, exactly 1 breathing pacer.
+    """
+    warnings = []
+
+    # Rule 1: No dominant upward motion
+    for m in _re.finditer(r'<animateMotion[^>]*path="([^"]*)"', svg_str):
+        path = m.group(1)
+        coords = _re.findall(r'(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)', path)
+        if len(coords) >= 2:
+            start_y = float(coords[0][1])
+            end_y = float(coords[-1][1])
+            delta_y = end_y - start_y
+            if delta_y < -80:
+                start_x = float(coords[0][0])
+                end_x = float(coords[-1][0])
+                delta_x = abs(end_x - start_x)
+                # Allow bubbles and smoke (physically correct upward motion)
+                preceding = svg_str[max(0, m.start() - 2500):m.start()]
+                pre_lower = preceding.lower()
+                if 'bubble' in pre_lower or 'smoke' in pre_lower or 'chimney' in pre_lower:
+                    continue
+                if abs(delta_y) > delta_x * 1.5:
+                    warnings.append(
+                        f"Dominant upward motion: dy={delta_y:.0f}px (dx={delta_x:.0f}px)"
+                    )
+
+    for m in _re.finditer(
+        r'<animateTransform[^>]*type="translate"[^>]*values="([^"]*)"', svg_str
+    ):
+        values = m.group(1)
+        y_vals = _re.findall(r',\s*(-?\d+(?:\.\d+)?)', values)
+        for yv in y_vals:
+            if float(yv) < -50:
+                warnings.append(f"Upward translate: y={yv}")
+
+    # Rule 2: Min duration >= 4s
+    for m in _re.finditer(r'dur="(\d+(?:\.\d+)?)s?"', svg_str):
+        dur = float(m.group(1))
+        if dur < 4.0:
+            warnings.append(f"Duration too short: {dur}s (min 4s)")
+
+    # Rule 3: Max opacity 0.60 (light elements only, skip vignettes)
+    for m in _re.finditer(r'opacity="([^"]*)"', svg_str):
+        val = m.group(1)
+        pos = m.start()
+        preceding = svg_str[max(0, pos - 500):pos]
+        if '<defs>' in preceding and '</defs>' not in preceding:
+            continue
+        if 'vignette' in preceding.lower() or 'vigLG' in preceding or 'vigRC' in preceding:
+            continue
+        if 'stop-opacity' in svg_str[max(0, pos - 15):pos + 1]:
+            continue
+        try:
+            op = float(val)
+            if op > 0.61:
+                warnings.append(f"Light opacity too high: {op:.2f} (max 0.60)")
+        except ValueError:
+            pass
+
+    for m in _re.finditer(r'attributeName="opacity"[^>]*values="([^"]*)"', svg_str):
+        vals = m.group(1)
+        pos = m.start()
+        preceding = svg_str[max(0, pos - 500):pos]
+        if 'vignette' in preceding.lower() or 'vigLG' in preceding or 'vigRC' in preceding:
+            continue
+        for v in vals.split(';'):
+            v = v.strip()
+            if not v:
+                continue
+            try:
+                op = float(v)
+                if op > 0.61:
+                    warnings.append(f"Animated opacity peak: {op:.2f} (max 0.60)")
+            except ValueError:
+                pass
+
+    # Rule 4: Element count per group <= 10
+    sections = _re.split(r'<!--\s*(.*?)\s*-->', svg_str)
+    current_label = ""
+    for i, section in enumerate(sections):
+        if i % 2 == 1:
+            current_label = section
+        elif i % 2 == 0 and current_label:
+            elements = len(_re.findall(r'<(?:circle|ellipse|rect|path|line|polygon)\s', section))
+            if elements > 10:
+                warnings.append(f"Too many elements in '{current_label}': {elements}")
+
+    # Rule 5: Warm colors only
+    for m in _re.finditer(r'fill="(#[0-9a-fA-F]{3,8})"', svg_str):
+        color = m.group(1)
+        pos = m.start()
+        preceding = svg_str[max(0, pos - 200):pos]
+        if '<defs>' in preceding and '</defs>' not in preceding:
+            continue
+        if 'vignette' in preceding.lower():
+            continue
+        if not _is_warm_color(color):
+            warnings.append(f"Cool color in overlay: {color}")
+
+    # Rule 6: Exactly one breathing pacer
+    pacer_count = len(_re.findall(r'id="breath-pacer"', svg_str))
+    if pacer_count == 0:
+        warnings.append("Missing breathing pacer (mandatory)")
+    elif pacer_count > 1:
+        warnings.append(f"Multiple breathing pacers: {pacer_count} (must be exactly 1)")
+
+    return warnings
+
+
 
 
 # ── Auto-select axes from story metadata ────────────────────────────────
@@ -579,1336 +2051,6 @@ def save_as_webp(image_bytes: bytes, output_path: Path, quality: int = 80) -> in
 
     return size
 
-
-# ── SVG Overlay Generator ───────────────────────────────────────────────
-
-def generate_svg_overlay(axes: dict, story: dict) -> str:
-    """Generate an animated SVG overlay based on world setting and diversity axes.
-
-    Each world gets a UNIQUE overlay personality — not the same formula with different params.
-    Some worlds are particle-heavy, some are glow-heavy, some are minimal.
-    The vignette style also varies per world to break the "same dark edges" pattern.
-    """
-    world = axes["world_setting"]
-    palette = axes["palette"]
-    time_setting = axes.get("time", "early_night")
-
-    # Get ALL animation types for this world (use all, not just 2-3)
-    anim_types = WORLD_TO_ANIMATIONS.get(world, ["particles_pollen", "glow_firefly", "vignette"])
-
-    # Palette-based colors (base layer)
-    palette_colors = {
-        "ember_warm":   {"glow": "#FFD699", "particle": "#FFCC80", "vignette": "#1a0a05", "star": "#FFF5E0"},
-        "twilight_cool": {"glow": "#C8B8E0", "particle": "#D0C4E8", "vignette": "#0a0520", "star": "#E8E0F0"},
-        "forest_deep":  {"glow": "#A8D5A0", "particle": "#C4E0B8", "vignette": "#051005", "star": "#D8F0D0"},
-        "golden_hour":  {"glow": "#FFE4B5", "particle": "#FFD89B", "vignette": "#1a0f00", "star": "#FFF8E8"},
-        "moonstone":    {"glow": "#C0D0E0", "particle": "#B8C8D8", "vignette": "#050810", "star": "#E0E8F0"},
-        "berry_dusk":   {"glow": "#D8A8C8", "particle": "#E0B8D0", "vignette": "#100510", "star": "#F0D8E8"},
-    }
-    colors = palette_colors.get(palette, palette_colors["golden_hour"])
-
-    # World-specific colors for animated overlay elements.
-    # DROWSINESS GUARDRAIL: All animated light sources MUST be warm-spectrum only
-    # (amber-to-warm-gold range). Cool colors (blue, green, teal, purple) are banned
-    # from animated overlays — they suppress melatonin and signal alertness.
-    # Cool tones are fine in the FLUX background (static), just not animated overlays.
-    # Each world still gets a distinct warm hue to maintain visual diversity.
-    world_accents = {
-        "deep_ocean":       {"particle": "#FFB74D", "glow": "#FF8F00", "accent": "#FFA726", "star": "#FFF5E0"},
-        "cloud_kingdom":    {"particle": "#FFF8E1", "glow": "#FFE0B2", "accent": "#FFECB3", "star": "#FFF8E8"},
-        "enchanted_forest": {"particle": "#FFD54F", "glow": "#FFA000", "accent": "#FFCA28", "star": "#FFECD2"},
-        "snow_landscape":   {"particle": "#FFF3E0", "glow": "#FFE0B2", "accent": "#FFE8CC", "star": "#FFF8E8"},
-        "desert_night":     {"particle": "#FFAB00", "glow": "#FF6D00", "accent": "#FF9100", "star": "#FFF5E0"},
-        "cozy_interior":    {"particle": "#FFD54F", "glow": "#FFB300", "accent": "#FFC107", "star": "#FFF8E8"},
-        "mountain_meadow":  {"particle": "#FFE082", "glow": "#FFD54F", "accent": "#FFCA28", "star": "#FFF5E0"},
-        "space_cosmos":     {"particle": "#FFD180", "glow": "#FFB74D", "accent": "#FFCC80", "star": "#FFECD2"},
-        "tropical_lagoon":  {"particle": "#FF6E40", "glow": "#FF3D00", "accent": "#FF8A65", "star": "#FFF5E0"},
-        "underground_cave": {"particle": "#FFB74D", "glow": "#FF8F00", "accent": "#FFA726", "star": "#FFECD2"},
-        "ancient_library":  {"particle": "#FFE082", "glow": "#FFA000", "accent": "#FFD740", "star": "#FFF8E8"},
-        "floating_islands": {"particle": "#FFAB91", "glow": "#FF8A65", "accent": "#FFCCBC", "star": "#FFF5E0"},
-    }
-    accents = world_accents.get(world, {})
-    if accents:
-        colors = {**colors, **accents}  # world accents override palette defaults
-
-    accent = colors.get("accent", colors["glow"])
-
-    svg_parts = []
-    svg_parts.append(f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
-  <defs>
-    <radialGradient id="vignetteGrad">
-      <stop offset="40%" stop-color="transparent"/>
-      <stop offset="100%" stop-color="{colors['vignette']}" stop-opacity="0.75"/>
-    </radialGradient>
-    <filter id="softBlur">
-      <feGaussianBlur stdDeviation="2"/>
-    </filter>
-    <filter id="heavyBlur">
-      <feGaussianBlur stdDeviation="8"/>
-    </filter>
-  </defs>''')
-
-    # --- Per-world vignette style (NOT the same dark edges on every cover) ---
-    VIGNETTE_STYLE = {
-        "deep_ocean":       "top_heavy",      # dark at top like deep water
-        "cloud_kingdom":    "none",            # clean, no vignette — bright sky
-        "enchanted_forest": "bottom_heavy",    # dark at bottom, light canopy above
-        "snow_landscape":   "none",            # clean white landscape
-        "desert_night":     "top_corners",     # dark sky corners, bright horizon
-        "cozy_interior":    "full_soft",       # gentle all-around darkness
-        "mountain_meadow":  "bottom_light",    # very subtle bottom only
-        "space_cosmos":     "corners_only",    # dark corners, open center
-        "tropical_lagoon":  "top_heavy",       # dark sky, bright water below
-        "underground_cave": "full_heavy",      # heavy darkness, glows punch through
-        "ancient_library":  "full_soft",       # gentle ambient darkness
-        "floating_islands": "none",            # clean, airy
-    }
-    vig_style = VIGNETTE_STYLE.get(world, "full_soft")
-    svg_parts.append(_gen_vignette(vig_style, colors))
-
-    # --- World-specific animations ONLY (no forced layers) ---
-    for anim in anim_types:
-        if anim.startswith("particles"):
-            svg_parts.append(_gen_particles(anim, colors))
-        elif anim.startswith("glow") and anim != "glow_breathing":
-            svg_parts.append(_gen_glow_secondary(anim, colors))
-        elif anim.startswith("twinkle"):
-            svg_parts.append(_gen_twinkle(colors))
-        elif anim.startswith("drift"):
-            svg_parts.append(_gen_drift(anim, colors))
-        elif anim.startswith("mist"):
-            svg_parts.append(_gen_mist(anim, colors))
-
-    # Add twinkle for deep_night only if not already present
-    if time_setting == "deep_night" and not any(a.startswith("twinkle") for a in anim_types):
-        svg_parts.append(_gen_twinkle(colors))
-
-    svg_parts.append('\n</svg>')
-    svg_output = "\n".join(svg_parts)
-
-    # DROWSINESS GUARDRAIL: Post-generation validation safety net
-    warnings = validate_overlay_drowsiness(svg_output)
-    if warnings:
-        for w in warnings:
-            logger.warning("DROWSINESS VIOLATION: %s", w)
-
-    return svg_output
-
-
-# ── Drowsiness Guardrail Validator ────────────────────────────────────────
-# This is the SAFETY NET — catches violations even if generation code
-# is modified later. All rules come from the Animation Dos & Don'ts
-# research document for drowsiness-inducing overlay design.
-
-import re as _re
-
-# Warm-spectrum hex colors: red (0xCC+), green (0-0xFF), blue (0-0x80)
-# Cool colors to reject: dominant blue, dominant green, cyan, teal, purple
-_COOL_COLOR_PATTERN = _re.compile(
-    r'#(?:'
-    r'[0-9a-f]{2}[0-9a-f]{2}[8-9a-f][0-9a-f]'  # high blue channel (>= 0x80)
-    r')',
-    _re.IGNORECASE
-)
-
-def _is_warm_color(hex_color: str) -> bool:
-    """Check if a hex color is in the warm spectrum (amber-to-gold range).
-
-    Warm = red channel dominant, blue channel low.
-    Allows: amber, gold, orange, warm cream, peach, coral.
-    Rejects: cyan, teal, blue, purple, cool green.
-    """
-    hex_color = hex_color.strip().lstrip('#')
-    if len(hex_color) == 3:
-        hex_color = ''.join(c * 2 for c in hex_color)
-    if len(hex_color) != 6:
-        return True  # can't parse, skip
-    try:
-        r = int(hex_color[0:2], 16)
-        g = int(hex_color[2:4], 16)
-        b = int(hex_color[4:6], 16)
-    except ValueError:
-        return True  # can't parse, skip
-
-    # Warm rule: red must be >= blue, and blue must be < 0x90 (144)
-    # Exception for very pale/white-ish colors (all channels > 0xE0)
-    if r >= 0xE0 and g >= 0xE0 and b >= 0xE0:
-        return True  # near-white/cream is OK
-    if b > r:
-        return False  # blue dominant = cool
-    if g > r and b > r * 0.5:
-        return False  # green dominant with blue = cool
-    if b >= 0x90 and r < 0xC0:
-        return False  # high blue channel = cool
-    return True
-
-
-def validate_overlay_drowsiness(svg_str: str) -> list:
-    """Validate a generated SVG overlay against drowsiness-inducing design principles.
-
-    Returns a list of warning strings for any violations found.
-    This is a SAFETY NET — catches problems even if generation code changes.
-
-    Rules checked:
-    1. No dominant upward motion (animateMotion paths, translate values)
-    2. Minimum animation duration >= 4s (prefer >= 6s)
-    3. Maximum element opacity <= 0.60
-    4. Particle/element count per group <= 7
-    5. All animated fill/stroke colors must be warm-spectrum
-    6. No rapid flashing (brightness changes faster than 2s)
-    """
-    warnings = []
-
-    # --- Rule 1: No dominant upward motion ---
-    # Check animateMotion paths for large negative Y movement
-    for m in _re.finditer(r'<animateMotion[^>]*path="([^"]*)"', svg_str):
-        path = m.group(1)
-        # Extract the endpoint: last coordinate pair in the path
-        coords = _re.findall(r'(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)', path)
-        if len(coords) >= 2:
-            start_y = float(coords[0][1])
-            end_y = float(coords[-1][1])
-            delta_y = end_y - start_y
-            # Check for dominant upward: if Y decreases by more than 80px
-            # AND the upward component is larger than horizontal component
-            if delta_y < -80:
-                start_x = float(coords[0][0])
-                end_x = float(coords[-1][0])
-                delta_x = abs(end_x - start_x)
-                if abs(delta_y) > delta_x * 1.5:  # upward is dominant
-                    warnings.append(
-                        f"Dominant upward motion detected: dy={delta_y:.0f}px "
-                        f"(dx={delta_x:.0f}px). Use downward or lateral motion instead."
-                    )
-
-    # Check translate values for upward motion
-    for m in _re.finditer(
-        r'<animateTransform[^>]*type="translate"[^>]*values="([^"]*)"', svg_str
-    ):
-        values = m.group(1)
-        y_vals = _re.findall(r',\s*(-?\d+(?:\.\d+)?)', values)
-        for yv in y_vals:
-            if float(yv) < -50:
-                warnings.append(
-                    f"Upward translate detected: y={yv}. "
-                    f"Animated elements should settle downward, not rise."
-                )
-
-    # --- Rule 2: Minimum animation duration ---
-    for m in _re.finditer(r'dur="(\d+(?:\.\d+)?)s?"', svg_str):
-        dur = float(m.group(1))
-        if dur < 4.0:
-            warnings.append(
-                f"Animation duration too short: {dur}s (min 4s, prefer 6s+). "
-                f"Fast animations trigger saccadic eye response."
-            )
-
-    # --- Rule 3: Maximum opacity (for LIGHT-EMITTING elements only) ---
-    # Vignettes and dark overlays are SUPPOSED to be high-opacity (darkening effect).
-    # This rule only applies to particle/glow/twinkle elements (light sources).
-    # Skip: elements inside <defs>, elements with vignette gradients, stop-opacity attributes.
-    for m in _re.finditer(r'opacity="([^"]*)"', svg_str):
-        val = m.group(1)
-        pos = m.start()
-        # Skip anything inside <defs> (gradient definitions, including vignette gradients)
-        preceding = svg_str[max(0, pos-500):pos]
-        if '<defs>' in preceding and '</defs>' not in preceding:
-            continue
-        # Skip vignette-related elements (they're darkness, not light sources)
-        if 'vignette' in preceding.lower() or 'vigLG' in preceding or 'vigRC' in preceding:
-            continue
-        # Skip stop-opacity (gradient stops)
-        if 'stop-opacity' in svg_str[max(0, pos-15):pos+1]:
-            continue
-        try:
-            op = float(val)
-            if op > 0.61:  # small tolerance for floating point
-                warnings.append(
-                    f"Light element opacity too high: {op:.2f} (max 0.60). "
-                    f"Translucent elements allow the eye to defocus."
-                )
-        except ValueError:
-            pass
-    # Check opacity in animation values (skip vignette animations)
-    for m in _re.finditer(
-        r'attributeName="opacity"[^>]*values="([^"]*)"', svg_str
-    ):
-        vals = m.group(1)
-        pos = m.start()
-        preceding = svg_str[max(0, pos-500):pos]
-        # Skip vignette opacity animations (they should reach 70-85% per design doc)
-        if 'vignette' in preceding.lower() or 'vigLG' in preceding or 'vigRC' in preceding:
-            continue
-        for v in vals.split(';'):
-            v = v.strip()
-            if not v:
-                continue
-            try:
-                op = float(v)
-                if op > 0.61:
-                    warnings.append(
-                        f"Animated opacity peak too high: {op:.2f} (max 0.60). "
-                        f"Full-opacity elements demand visual attention."
-                    )
-            except ValueError:
-                pass
-
-    # --- Rule 4: Element count per group ---
-    # Count elements within comment-delimited groups
-    sections = _re.split(r'<!--\s*(.*?)\s*-->', svg_str)
-    current_label = ""
-    for i, section in enumerate(sections):
-        if i % 2 == 1:  # odd indices are comment contents
-            current_label = section
-        elif i % 2 == 0 and current_label:
-            # Count animated elements (circles, ellipses, rects with <animate)
-            elements = len(_re.findall(r'<(?:circle|ellipse|rect|path|line|polygon)\s', section))
-            if elements > 10:
-                warnings.append(
-                    f"Too many animated elements in '{current_label}': {elements} "
-                    f"(prefer 3-7). Above 7 creates busy visual field."
-                )
-
-    # --- Rule 5: Warm colors only for animated elements ---
-    # Check fill and stroke colors on animated elements
-    for m in _re.finditer(r'fill="(#[0-9a-fA-F]{3,8})"', svg_str):
-        color = m.group(1)
-        # Skip colors in <defs> (gradients, filters) — those are structural
-        pos = m.start()
-        preceding = svg_str[max(0, pos-200):pos]
-        if '<defs>' in preceding and '</defs>' not in preceding:
-            continue
-        # Skip vignette rects (they're dark, not light sources)
-        if 'vignette' in preceding.lower():
-            continue
-        if not _is_warm_color(color):
-            warnings.append(
-                f"Cool-spectrum color in animated overlay: {color}. "
-                f"All animated light sources must be amber-to-warm-gold."
-            )
-
-    return warnings
-
-
-def _gen_particles(variant: str, colors: dict) -> str:
-    """Generate variant-aware particle animations — visually distinct per world.
-
-    Sleep rules: cycle >=4s, opacity <=60%, slow drift.
-    Each variant produces a different motion, shape, and feel.
-    """
-    # Variant-specific configuration (opacity boosted for visibility, max 0.60)
-    # DROWSINESS GUARDRAILS enforced:
-    #   - Count: 3-7 active particles (below 3 = focal points, above 7 = busy/stimulating)
-    #   - Direction: downward or lateral ONLY (upward = arousal). Narrow exception for
-    #     bubbles: "mostly laterally with only slight upward movement"
-    #   - Opacity: max 0.60 on any animated element
-    #   - Duration: min 6s cycles (slow enough for smooth pursuit eye-tracking)
-    configs = {
-        "particles_bubbles": {
-            "label": "Drifting Bubbles", "count": (4, 6), "direction": "lateral_slight_up",
-            "r_large": (6.0, 10.0), "r_med": (3.5, 6.0), "r_small": (2.0, 3.5),
-            "op_large": (0.25, 0.45), "op_med": (0.18, 0.35), "op_small": (0.12, 0.25),
-            "dur": (25, 40), "size_pulse": True, "use_filter": True,
-        },
-        "particles_snow": {
-            "label": "Falling Snowflakes", "count": (5, 7), "direction": "down_sway",
-            "r_large": (3.0, 5.0), "r_med": (2.0, 3.0), "r_small": (1.0, 2.0),
-            "op_large": (0.35, 0.55), "op_med": (0.25, 0.45), "op_small": (0.18, 0.35),
-            "dur": (18, 30), "size_pulse": False, "use_filter": False,
-        },
-        "particles_pollen": {
-            "label": "Floating Pollen", "count": (4, 6), "direction": "float",
-            "r_large": (3.0, 4.5), "r_med": (1.5, 3.0), "r_small": (0.8, 1.5),
-            "op_large": (0.30, 0.50), "op_med": (0.20, 0.40), "op_small": (0.15, 0.28),
-            "dur": (22, 38), "size_pulse": False, "use_filter": True,
-        },
-        "particles_dust": {
-            "label": "Dust Motes in Light", "count": (4, 6), "direction": "diagonal",
-            "r_large": (2.0, 3.5), "r_med": (1.2, 2.0), "r_small": (0.6, 1.2),
-            "op_large": (0.30, 0.50), "op_med": (0.20, 0.38), "op_small": (0.12, 0.25),
-            "dur": (24, 38), "size_pulse": False, "use_filter": True,
-        },
-        "particles_fireflies": {
-            "label": "Firefly Glows", "count": (4, 6), "direction": "bob",
-            "r_large": (5.0, 8.0), "r_med": (3.0, 5.0), "r_small": (2.0, 3.0),
-            "op_large": (0.12, 0.55), "op_med": (0.10, 0.45), "op_small": (0.08, 0.35),
-            "dur": (10, 18), "size_pulse": True, "use_filter": True,
-        },
-        "particles_leaves": {
-            "label": "Falling Leaves", "count": (4, 6), "direction": "down_rotate",
-            "r_large": (4.0, 6.0), "r_med": (3.0, 4.0), "r_small": (2.0, 3.0),
-            "op_large": (0.30, 0.50), "op_med": (0.22, 0.40), "op_small": (0.15, 0.30),
-            "dur": (20, 35), "size_pulse": False, "use_filter": False,
-        },
-        "particles_spores": {
-            "label": "Settling Spores", "count": (4, 6), "direction": "down_gentle",
-            "r_large": (2.5, 4.0), "r_med": (1.5, 2.5), "r_small": (0.8, 1.5),
-            "op_large": (0.30, 0.50), "op_med": (0.20, 0.35), "op_small": (0.12, 0.25),
-            "dur": (22, 36), "size_pulse": False, "use_filter": True,
-        },
-    }
-    cfg = configs.get(variant, configs["particles_pollen"])
-
-    count = random.randint(*cfg["count"])
-    filt = ' filter="url(#softBlur)"' if cfg["use_filter"] else ""
-    particles = []
-    particles.append(f'\n  <!-- {cfg["label"]} -->')
-
-    for i in range(count):
-        # Size tiers: ~25% large, ~40% medium, rest small
-        if i < count // 4:
-            r = random.uniform(*cfg["r_large"])
-            opacity = random.uniform(*cfg["op_large"])
-        elif i < count * 2 // 3:
-            r = random.uniform(*cfg["r_med"])
-            opacity = random.uniform(*cfg["op_med"])
-        else:
-            r = random.uniform(*cfg["r_small"])
-            opacity = random.uniform(*cfg["op_small"])
-
-        dur = random.uniform(*cfg["dur"])
-        delay = random.uniform(0, dur * 0.6)
-        direction = cfg["direction"]
-
-        if direction == "lateral_slight_up":
-            # DROWSINESS GUARDRAIL: Bubbles drift mostly laterally with only
-            # slight upward movement (the ONE narrow exception to the no-upward rule).
-            # Primary motion is horizontal; vertical component is small and slow.
-            cx = random.randint(60, 200)
-            cy = random.randint(200, 400)
-            dx = random.randint(200, 350)  # dominant: large horizontal drift
-            dy = random.randint(-40, -15)  # minor: very slight upward (~10% of horizontal)
-            cx1 = random.randint(60, 120)
-            cy1 = random.randint(-20, 20)
-            cx2 = random.randint(140, 250)
-            cy2 = random.randint(-30, 10)
-            path = f"M{cx},{cy} C{cx+cx1},{cy+cy1} {cx+cx2},{cy+cy2} {cx+dx},{cy+dy}"
-        elif direction == "down_sway":
-            # Snow — falling with wide horizontal sway
-            cx = random.randint(20, 500)
-            cy_start = random.randint(-40, -10)
-            sway = random.randint(40, 80) * random.choice([-1, 1])
-            dy = random.randint(480, 560)
-            path = f"M{cx},{cy_start} C{cx+sway},{cy_start+dy//3} {cx-sway},{cy_start+2*dy//3} {cx+sway//2},{cy_start+dy}"
-        elif direction == "float":
-            # Pollen — lazy figure-8 / random drift, barely moving
-            cx = random.randint(40, 470)
-            cy = random.randint(60, 420)
-            dx1 = random.randint(-25, 25)
-            dy1 = random.randint(-20, 20)
-            dx2 = random.randint(-25, 25)
-            dy2 = random.randint(-20, 20)
-            path = f"M{cx},{cy} C{cx+dx1},{cy+dy1} {cx+dx2},{cy+dy2} {cx-dx1},{cy-dy1} C{cx-dx2},{cy-dy2} {cx+dx1},{cy+dy1} {cx},{cy}"
-        elif direction == "diagonal":
-            # Dust — slow diagonal drift in a light beam area
-            beam_cx = random.randint(150, 380)
-            cx = beam_cx + random.randint(-60, 60)
-            cy_start = random.randint(50, 200)
-            dx = random.randint(20, 50)
-            dy = random.randint(200, 350)
-            path = f"M{cx},{cy_start} C{cx+dx//2},{cy_start+dy//3} {cx+dx},{cy_start+2*dy//3} {cx+dx},{cy_start+dy}"
-        elif direction == "bob":
-            # Fireflies — bobbing in place with random wander
-            cx = random.randint(50, 460)
-            cy = random.randint(100, 420)
-            bx = random.randint(15, 35)
-            by = random.randint(10, 25)
-            path = f"M{cx},{cy} C{cx+bx},{cy-by} {cx-bx},{cy+by} {cx},{cy}"
-        elif direction == "down_rotate":
-            # Leaves — falling with wide S-curve (rotation handled separately)
-            cx = random.randint(30, 480)
-            cy_start = random.randint(-30, 30)
-            dx = random.randint(-80, 80)
-            dy = random.randint(400, 540)
-            path = f"M{cx},{cy_start} C{cx+dx},{cy_start+dy//4} {cx-dx},{cy_start+3*dy//4} {cx+dx//2},{cy_start+dy}"
-        elif direction == "down_gentle":
-            # DROWSINESS GUARDRAIL: Spores settle downward from mid-air
-            # (upward motion = arousal; downward settling = "settling down")
-            cx = random.randint(60, 450)
-            cy_start = random.randint(60, 200)
-            dx = random.randint(-35, 35)
-            dy = random.randint(200, 350)  # POSITIVE = downward settling
-            path = f"M{cx},{cy_start} C{cx+dx},{cy_start+dy//3} {cx-dx},{cy_start+2*dy//3} {cx+dx//2},{cy_start+dy}"
-        else:
-            # Default: gentle downward drift
-            cx = random.randint(30, 480)
-            cy_start = random.randint(-30, 80)
-            dx = random.randint(-40, 40)
-            dy = random.randint(350, 500)
-            path = f"M{cx},{cy_start} C{cx},{cy_start+dy//3} {cx+dx},{cy_start+2*dy//3} {cx+dx},{cy_start+dy}"
-
-        # Use ellipse for leaves, circle for everything else
-        if direction == "down_rotate":
-            rx = r * random.uniform(1.4, 2.0)
-            ry = r * random.uniform(0.6, 0.9)
-            rot_dur = random.uniform(6, 12)
-            rot_dir = random.choice([-1, 1]) * random.randint(180, 360)
-            particles.append(f'''  <ellipse rx="{rx:.1f}" ry="{ry:.1f}" fill="{colors['particle']}" opacity="0"{filt}>
-    <animateMotion dur="{dur:.0f}s" begin="{delay:.1f}s" repeatCount="indefinite" path="{path}" />
-    <animateTransform attributeName="transform" type="rotate"
-      values="0;{rot_dir};0" dur="{rot_dur:.0f}s" begin="{delay:.1f}s" repeatCount="indefinite" additive="sum" />
-    <animate attributeName="opacity"
-      values="0;{opacity:.2f};{opacity:.2f};{opacity*0.3:.2f};0" dur="{dur:.0f}s"
-      begin="{delay:.1f}s" repeatCount="indefinite" />
-  </ellipse>''')
-        else:
-            size_anim = ""
-            if cfg["size_pulse"]:
-                pulse_dur = random.uniform(4, 8)
-                r_max = r * random.uniform(1.3, 1.6)
-                size_anim = f'''
-    <animate attributeName="r" values="{r:.1f};{r_max:.1f};{r:.1f}" dur="{pulse_dur:.0f}s"
-      begin="{delay:.1f}s" repeatCount="indefinite" />'''
-
-            # Fireflies use a distinctive pulse pattern: dim → bright → dim with long dark phases
-            if direction == "bob":
-                op_vals = f"0;{opacity*0.2:.2f};{opacity:.2f};{opacity:.2f};{opacity*0.1:.2f};0;0"
-            else:
-                op_vals = f"0;{opacity:.2f};{opacity:.2f};{opacity*0.4:.2f};0"
-
-            particles.append(f'''  <circle r="{r:.1f}" fill="{colors['particle']}" opacity="0"{filt}>
-    <animateMotion dur="{dur:.0f}s" begin="{delay:.1f}s" repeatCount="indefinite" path="{path}" />{size_anim}
-    <animate attributeName="opacity"
-      values="{op_vals}" dur="{dur:.0f}s"
-      begin="{delay:.1f}s" repeatCount="indefinite" />
-  </circle>''')
-
-    return "\n".join(particles)
-
-
-def _gen_glow(variant: str, colors: dict, world: str = "") -> str:
-    """Generate breathing pacer glow — the primary sleep cue, with shape diversity.
-
-    Sleep rules: 7-9s cycle. Must be clearly visible.
-    Shape varies by world to avoid the "same circles on every cover" look.
-    """
-    dur = random.randint(7, 9)
-    accent = colors.get("accent", colors["glow"])
-
-    # Choose pacer shape based on world setting
-    # Group worlds into shape families to ensure visual diversity
-    SHAPE_MAP = {
-        "deep_ocean": "horizontal_band",
-        "cloud_kingdom": "top_wash",
-        "enchanted_forest": "off_center_orb",
-        "snow_landscape": "top_wash",
-        "desert_night": "horizon_line",
-        "cozy_interior": "corner_glow",
-        "mountain_meadow": "diagonal_band",
-        "space_cosmos": "center_nebula",
-        "tropical_lagoon": "horizon_line",
-        "underground_cave": "bottom_pool",
-        "ancient_library": "corner_glow",
-        "floating_islands": "diagonal_band",
-    }
-    shape = SHAPE_MAP.get(world, random.choice(["off_center_orb", "horizontal_band", "diagonal_band"]))
-
-    if shape == "off_center_orb":
-        # Single off-center orb (NOT centered, NOT bottom)
-        cx = random.choice([random.randint(100, 180), random.randint(340, 420)])
-        cy = random.randint(160, 320)
-        r = random.randint(80, 110)
-        return f'''
-  <!-- Breathing Pacer (off-center orb) -->
-  <circle cx="{cx}" cy="{cy}" r="{r}" fill="url(#glowGrad)" filter="url(#heavyBlur)">
-    <animate attributeName="r"
-      values="{r-12};{r+15};{r-12}" dur="{dur}s" repeatCount="indefinite" />
-    <animate attributeName="opacity"
-      values="0.20;0.45;0.20" dur="{dur}s" repeatCount="indefinite" />
-  </circle>'''
-
-    elif shape == "horizontal_band":
-        # Wide horizontal band across middle — like underwater light
-        cy = random.randint(200, 350)
-        return f'''
-  <!-- Breathing Pacer (horizontal band) -->
-  <rect x="0" y="{cy-40}" width="512" height="80" fill="url(#horizGlow)" filter="url(#heavyBlur)">
-    <animate attributeName="opacity"
-      values="0.15;0.40;0.15" dur="{dur}s" repeatCount="indefinite" />
-    <animate attributeName="height"
-      values="60;100;60" dur="{dur}s" repeatCount="indefinite" />
-  </rect>'''
-
-    elif shape == "top_wash":
-        # Diffuse wash from top — like sky glow or cloud light
-        return f'''
-  <!-- Breathing Pacer (top wash) -->
-  <rect x="0" y="0" width="512" height="280" fill="url(#horizGlow)" filter="url(#heavyBlur)" transform="rotate(180,256,140)">
-    <animate attributeName="opacity"
-      values="0.15;0.38;0.15" dur="{dur}s" repeatCount="indefinite" />
-  </rect>'''
-
-    elif shape == "horizon_line":
-        # Glow along horizon — for sunset/desert worlds
-        cy = random.randint(340, 400)
-        return f'''
-  <!-- Breathing Pacer (horizon glow) -->
-  <ellipse cx="256" cy="{cy}" rx="350" ry="25" fill="{accent}" filter="url(#heavyBlur)">
-    <animate attributeName="opacity"
-      values="0.20;0.50;0.20" dur="{dur}s" repeatCount="indefinite" />
-    <animate attributeName="ry"
-      values="20;40;20" dur="{dur}s" repeatCount="indefinite" />
-  </ellipse>'''
-
-    elif shape == "corner_glow":
-        # Warm glow from one corner — for interior/library worlds
-        corner = random.choice(["top_left", "top_right", "bottom_left", "bottom_right"])
-        cx = 80 if "left" in corner else 430
-        cy = 80 if "top" in corner else 430
-        r = random.randint(100, 140)
-        return f'''
-  <!-- Breathing Pacer (corner glow) -->
-  <circle cx="{cx}" cy="{cy}" r="{r}" fill="{accent}" filter="url(#heavyBlur)">
-    <animate attributeName="r"
-      values="{r-15};{r+20};{r-15}" dur="{dur}s" repeatCount="indefinite" />
-    <animate attributeName="opacity"
-      values="0.18;0.42;0.18" dur="{dur}s" repeatCount="indefinite" />
-  </circle>'''
-
-    elif shape == "diagonal_band":
-        # Diagonal light band across the image
-        return f'''
-  <!-- Breathing Pacer (diagonal band) -->
-  <rect x="-100" y="180" width="712" height="100" fill="url(#diagonalGlow)" filter="url(#heavyBlur)"
-    transform="rotate(-15,256,256)">
-    <animate attributeName="opacity"
-      values="0.15;0.40;0.15" dur="{dur}s" repeatCount="indefinite" />
-  </rect>'''
-
-    elif shape == "center_nebula":
-        # Two overlapping large blobs — for space/cosmos
-        cx1 = random.randint(160, 240)
-        cy1 = random.randint(180, 280)
-        cx2 = random.randint(280, 360)
-        cy2 = random.randint(220, 320)
-        r1 = random.randint(90, 120)
-        r2 = random.randint(80, 110)
-        return f'''
-  <!-- Breathing Pacer (nebula blobs) -->
-  <circle cx="{cx1}" cy="{cy1}" r="{r1}" fill="{accent}" filter="url(#heavyBlur)">
-    <animate attributeName="r"
-      values="{r1-10};{r1+15};{r1-10}" dur="{dur}s" repeatCount="indefinite" />
-    <animate attributeName="opacity"
-      values="0.12;0.30;0.12" dur="{dur}s" repeatCount="indefinite" />
-  </circle>
-  <circle cx="{cx2}" cy="{cy2}" r="{r2}" fill="{colors['glow']}" filter="url(#heavyBlur)">
-    <animate attributeName="r"
-      values="{r2+10};{r2-8};{r2+10}" dur="{dur}s" repeatCount="indefinite" />
-    <animate attributeName="opacity"
-      values="0.10;0.25;0.10" dur="{dur}s" repeatCount="indefinite" />
-  </circle>'''
-
-    elif shape == "bottom_pool":
-        # Glowing pool at bottom — for cave/underground
-        return f'''
-  <!-- Breathing Pacer (bottom pool) -->
-  <ellipse cx="256" cy="480" rx="200" ry="50" fill="{accent}" filter="url(#heavyBlur)">
-    <animate attributeName="opacity"
-      values="0.18;0.45;0.18" dur="{dur}s" repeatCount="indefinite" />
-    <animate attributeName="rx"
-      values="180;220;180" dur="{dur}s" repeatCount="indefinite" />
-  </ellipse>'''
-
-    else:
-        # Fallback: original off-center orb
-        cx = random.randint(150, 370)
-        cy = random.randint(180, 340)
-        r = random.randint(80, 110)
-        return f'''
-  <!-- Breathing Pacer (default orb) -->
-  <circle cx="{cx}" cy="{cy}" r="{r}" fill="url(#glowGrad)" filter="url(#heavyBlur)">
-    <animate attributeName="r"
-      values="{r-12};{r+15};{r-12}" dur="{dur}s" repeatCount="indefinite" />
-    <animate attributeName="opacity"
-      values="0.20;0.45;0.20" dur="{dur}s" repeatCount="indefinite" />
-  </circle>'''
-
-
-def _gen_twinkle(colors: dict) -> str:
-    """Generate twinkling star/shimmer effects — visible slow twinkles.
-
-    DROWSINESS GUARDRAILS:
-    - Count: 5-7 (3-7 range; above 7 = busy visual field)
-    - Cycle: >=6s, staggered (no synchronized flashing)
-    - Opacity: max 0.55 (translucent; 60% absolute max)
-    - Timing: all on different delays (no group events)
-    """
-    accent = colors.get("accent", colors["star"])
-    count = random.randint(5, 7)
-    twinkles = []
-    twinkles.append('\n  <!-- Twinkling Stars -->')
-
-    for i in range(count):
-        cx = random.randint(15, 500)
-        cy = random.randint(5, 300)
-        dur = random.uniform(7, 14)  # longer cycles, less detectable looping
-        delay = random.uniform(0, dur * 0.8)  # staggered to prevent sync
-        # Use accent color for some stars to add color variety
-        star_color = accent if i % 3 == 0 else colors["star"]
-
-        # Mix of star sizes — 2 large, rest small
-        if i < 2:
-            r = random.uniform(2.5, 4.0)
-            max_opacity = random.uniform(0.40, 0.55)
-        elif i < 4:
-            r = random.uniform(1.5, 2.5)
-            max_opacity = random.uniform(0.30, 0.45)
-        else:
-            r = random.uniform(1.0, 2.0)
-            max_opacity = random.uniform(0.20, 0.38)
-
-        twinkles.append(f'''  <circle cx="{cx}" cy="{cy}" r="{r:.1f}" fill="{star_color}" opacity="0">
-    <animate attributeName="opacity"
-      values="0;{max_opacity:.2f};{max_opacity*0.5:.2f};{max_opacity:.2f};0" dur="{dur:.0f}s"
-      begin="{delay:.1f}s" repeatCount="indefinite" />
-    <animate attributeName="r"
-      values="{r:.1f};{r*1.5:.1f};{r:.1f}" dur="{dur:.0f}s"
-      begin="{delay:.1f}s" repeatCount="indefinite" />
-  </circle>''')
-
-    return "\n".join(twinkles)
-
-
-def _gen_drift(variant: str, colors: dict) -> str:
-    """Generate variant-aware drift animations — visually distinct per world.
-
-    Sleep rules: very slow (25-40s cycle), low opacity, no jarring motion.
-    Each variant produces a different drift character.
-    """
-    accent = colors.get("accent", colors["glow"])
-
-    if variant == "drift_clouds":
-        # Large soft cloud shapes at top, slow horizontal pan
-        dur1 = random.randint(30, 45)
-        dur2 = random.randint(35, 50)
-        dx1 = random.randint(25, 50)
-        dx2 = random.randint(20, 40)
-        cy1 = random.randint(60, 120)
-        cy2 = random.randint(90, 160)
-        return f'''
-  <!-- Drifting Clouds -->
-  <ellipse cx="180" cy="{cy1}" rx="220" ry="55" fill="{colors['particle']}" opacity="0.18" filter="url(#softBlur)">
-    <animateTransform attributeName="transform" type="translate"
-      values="0,0; {dx1},3; 0,0; {-dx1},-2; 0,0"
-      dur="{dur1}s" repeatCount="indefinite" />
-    <animate attributeName="opacity"
-      values="0.12;0.28;0.12" dur="{dur1}s" repeatCount="indefinite" />
-  </ellipse>
-  <ellipse cx="380" cy="{cy2}" rx="180" ry="45" fill="{accent}" opacity="0.14" filter="url(#softBlur)">
-    <animateTransform attributeName="transform" type="translate"
-      values="0,0; {-dx2},2; 0,0; {dx2},-3; 0,0"
-      dur="{dur2}s" repeatCount="indefinite" />
-    <animate attributeName="opacity"
-      values="0.10;0.22;0.10" dur="{dur2}s" repeatCount="indefinite" />
-  </ellipse>
-  <ellipse cx="100" cy="{cy1 + 50}" rx="140" ry="30" fill="{colors['glow']}" opacity="0.10" filter="url(#softBlur)">
-    <animateTransform attributeName="transform" type="translate"
-      values="0,0; {dx1+10},1; 0,0; {-dx2},0; 0,0"
-      dur="{dur1 + 8}s" repeatCount="indefinite" />
-  </ellipse>'''
-
-    elif variant == "drift_sand":
-        # Diagonal sand streaks blowing across — like desert wind gusts
-        # Uses <line> elements at various angles, NOT bottom ellipses
-        parts = ['\n  <!-- Desert Sand Streaks -->']
-        for i in range(5):
-            x1 = random.randint(-50, 200)
-            y1 = random.randint(100, 400)
-            length = random.randint(150, 350)
-            angle = random.randint(-10, 15)  # mostly horizontal with slight angle
-            x2 = x1 + length
-            y2 = y1 + int(length * math.sin(math.radians(angle)))
-            dur = random.randint(20, 35)
-            delay = i * random.uniform(1, 3)
-            col = accent if i % 2 == 0 else colors["particle"]
-            op_max = random.uniform(0.12, 0.28)
-            sw = random.uniform(1.5, 4.0)
-            drift = random.randint(20, 50)
-            parts.append(f'''  <line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}"
-    stroke="{col}" stroke-width="{sw:.1f}" stroke-linecap="round" opacity="0">
-    <animateTransform attributeName="transform" type="translate"
-      values="0,0; {drift},{random.randint(-5,5)}; {drift*2},{random.randint(-3,3)}; 0,0"
-      dur="{dur}s" begin="{delay:.1f}s" repeatCount="indefinite" />
-    <animate attributeName="opacity"
-      values="0;{op_max:.2f};{op_max*0.5:.2f};0" dur="{dur}s"
-      begin="{delay:.1f}s" repeatCount="indefinite" />
-  </line>''')
-        return "\n".join(parts)
-
-    elif variant == "drift_starfield":
-        # Very slow rotation of entire star group — subtle sky rotation
-        dur = random.randint(60, 90)
-        return f'''
-  <!-- Starfield Drift (slow sky rotation) -->
-  <g opacity="0.30">
-    <animateTransform attributeName="transform" type="rotate"
-      values="0 256 256; 8 256 256; 0 256 256; -5 256 256; 0 256 256"
-      dur="{dur}s" repeatCount="indefinite" />
-    <circle cx="120" cy="80" r="1.8" fill="{colors['star']}" opacity="0.55"/>
-    <circle cx="350" cy="60" r="1.4" fill="{accent}" opacity="0.45"/>
-    <circle cx="420" cy="180" r="1.5" fill="{colors['star']}" opacity="0.40"/>
-    <circle cx="80" cy="220" r="1.2" fill="{accent}" opacity="0.35"/>
-    <circle cx="280" cy="40" r="1.6" fill="{colors['star']}" opacity="0.50"/>
-    <circle cx="450" cy="120" r="1.0" fill="{colors['star']}" opacity="0.30"/>
-    <circle cx="200" cy="150" r="1.8" fill="{accent}" opacity="0.45"/>
-  </g>'''
-
-    else:
-        # Default: original gentle bottom haze
-        dur = random.randint(25, 40)
-        dx = random.randint(8, 15)
-        dy = random.randint(2, 5)
-        return f'''
-  <!-- Slow Drifting Haze -->
-  <g>
-    <animateTransform attributeName="transform" type="translate"
-      values="0,0; {dx},{dy}; 0,0; {-dx},{-dy}; 0,0"
-      dur="{dur}s" repeatCount="indefinite" />
-    <ellipse cx="256" cy="450" rx="320" ry="60" fill="{colors['particle']}" opacity="0.20" filter="url(#softBlur)"/>
-    <ellipse cx="150" cy="470" rx="220" ry="45" fill="{colors['glow']}" opacity="0.16" filter="url(#softBlur)"/>
-    <ellipse cx="380" cy="440" rx="180" ry="35" fill="{accent}" opacity="0.14" filter="url(#softBlur)"/>
-  </g>'''
-
-
-def _gen_mist(variant: str, colors: dict) -> str:
-    """Generate variant-aware atmosphere effects — each uses DIFFERENT SVG primitives & positions.
-
-    CRITICAL: No two variants should look similar. Each uses different:
-    - SVG shapes (paths, rects, lines — NOT just ellipses)
-    - Positions (top, middle, sides, diagonal — NOT always bottom)
-    - Sizes and counts
-    - Movement patterns
-
-    Sleep rules: slow movement (18-40s), moderate opacity, gentle.
-    """
-    accent = colors.get("accent", colors["glow"])
-
-    if variant == "mist_underwater":
-        # WAVY HORIZONTAL LINES at mid-height — like ocean currents
-        # Uses <path> curves, NOT ellipses. Positioned at MIDDLE of canvas.
-        parts = ['\n  <!-- Underwater Current Lines -->']
-        for i in range(4):
-            y = 160 + i * 70 + random.randint(-15, 15)  # spread across middle
-            dur = random.randint(20, 32)
-            delay = i * random.uniform(1, 3)
-            dx = random.randint(15, 30)
-            # Wavy path — sinusoidal curve across full width
-            amp = random.randint(8, 18)
-            col = accent if i % 2 == 0 else colors["glow"]
-            op_max = random.uniform(0.20, 0.40)
-            stroke_w = random.uniform(2.5, 5.0)
-            # Create a wavy line using cubic bezier — looks like a flowing current
-            path = f"M-20,{y} C80,{y-amp} 160,{y+amp} 256,{y} C352,{y-amp} 432,{y+amp} 532,{y}"
-            parts.append(f'''  <path d="{path}" stroke="{col}" stroke-width="{stroke_w:.1f}"
-    fill="none" opacity="0" stroke-linecap="round">
-    <animateTransform attributeName="transform" type="translate"
-      values="0,0; {dx},{random.randint(-3,3)}; 0,0; {-dx},{random.randint(-3,3)}; 0,0"
-      dur="{dur}s" begin="{delay:.1f}s" repeatCount="indefinite" />
-    <animate attributeName="opacity"
-      values="0;{op_max:.2f};{op_max*0.5:.2f};{op_max:.2f};0" dur="{dur}s"
-      begin="{delay:.1f}s" repeatCount="indefinite" />
-  </path>''')
-        return "\n".join(parts)
-
-    elif variant == "mist_valley":
-        # DIAGONAL SWEEPING BANDS from upper-left to lower-right — like mountain wind
-        # Uses <rect> with rotation, NOT ellipses. Covers diagonal of canvas.
-        parts = ['\n  <!-- Valley Wind Bands -->']
-        angles = [-25, -18, -30]
-        for i in range(3):
-            y = 80 + i * 140 + random.randint(-20, 20)
-            w = 700  # wider than canvas for diagonal coverage
-            h = random.randint(25, 50)
-            angle = angles[i] + random.randint(-5, 5)
-            dur = random.randint(28, 42)
-            delay = i * random.uniform(2, 4)
-            drift = random.randint(30, 60)
-            col = accent if i == 0 else colors["glow"] if i == 1 else colors["particle"]
-            op_max = random.uniform(0.15, 0.30)
-            parts.append(f'''  <rect x="-100" y="{y}" width="{w}" height="{h}" fill="{col}"
-    opacity="0" transform="rotate({angle},256,256)">
-    <animateTransform attributeName="transform" type="translate"
-      values="0,0; {drift},{random.randint(-8,8)}; {drift//2},0; 0,0"
-      dur="{dur}s" begin="{delay:.1f}s" repeatCount="indefinite" additive="sum" />
-    <animate attributeName="opacity"
-      values="0;{op_max:.2f};{op_max*0.7:.2f};{op_max:.2f};0" dur="{dur}s"
-      begin="{delay:.1f}s" repeatCount="indefinite" />
-  </rect>''')
-        return "\n".join(parts)
-
-    elif variant == "mist_sea":
-        # SINGLE THIN HORIZON LINE with glow — like distant sea fog
-        # Uses a thin <rect> at horizon + one accent path. Minimal, clean.
-        dur = random.randint(24, 36)
-        y = random.randint(340, 380)  # horizon level, not very bottom
-        op_max = random.uniform(0.25, 0.40)
-        return f'''
-  <!-- Sea Horizon Line -->
-  <rect x="0" y="{y}" width="512" height="3" fill="{colors['glow']}" opacity="{op_max:.2f}">
-    <animate attributeName="opacity"
-      values="{op_max*0.5:.2f};{op_max:.2f};{op_max*0.5:.2f}" dur="{dur}s" repeatCount="indefinite" />
-    <animate attributeName="height"
-      values="2;5;2" dur="{dur}s" repeatCount="indefinite" />
-  </rect>
-  <rect x="40" y="{y+8}" width="432" height="2" fill="{accent}" opacity="{op_max*0.6:.2f}">
-    <animate attributeName="opacity"
-      values="{op_max*0.3:.2f};{op_max*0.6:.2f};{op_max*0.3:.2f}" dur="{dur+5}s" repeatCount="indefinite" />
-  </rect>'''
-
-    elif variant == "mist_steam":
-        # DROWSINESS GUARDRAIL: Steam drifts horizontally, NOT rising upward.
-        # Upward motion = arousal cue. Horizontal wisps = calm, neutral.
-        # Uses thin horizontal <rect> wisps that drift sideways and fade.
-        parts = ['\n  <!-- Drifting Steam Wisps -->']
-        num_wisps = random.randint(4, 6)
-        for i in range(num_wisps):
-            x = random.randint(-40, 200)
-            y = random.randint(280, 430)
-            w = random.randint(120, 250)
-            h = random.randint(4, 10)
-            dur = random.randint(20, 35)
-            delay = random.uniform(0, 10)
-            drift_x = random.randint(80, 200)  # horizontal drift
-            drift_y = random.randint(-5, 8)    # negligible vertical (slight downward OK)
-            col = accent if i % 3 == 0 else colors["glow"]
-            op_max = random.uniform(0.12, 0.30)
-            parts.append(f'''  <rect x="{x}" y="{y}" width="{w}" height="{h}" rx="{h//2}"
-    fill="{col}" opacity="0">
-    <animateTransform attributeName="transform" type="translate"
-      values="0,0; {drift_x},{drift_y}; {drift_x//2},{drift_y//2}; 0,0"
-      dur="{dur}s" begin="{delay:.1f}s" repeatCount="indefinite" />
-    <animate attributeName="opacity"
-      values="0;{op_max:.2f};{op_max*0.6:.2f};0" dur="{dur}s"
-      begin="{delay:.1f}s" repeatCount="indefinite" />
-  </rect>''')
-        return "\n".join(parts)
-
-    else:
-        # Default (mist_ground): SCATTERED SOFT DOTS across lower third — NOT big ellipses
-        # DROWSINESS GUARDRAIL: 5-7 dots max (above 7 = busy visual field)
-        parts = ['\n  <!-- Ground Mist (scattered dots) -->']
-        count = random.randint(5, 7)
-        for i in range(count):
-            cx = random.randint(20, 492)
-            cy = random.randint(320, 500)
-            r = random.uniform(3.0, 12.0)
-            dur = random.randint(16, 30)
-            delay = random.uniform(0, dur * 0.5)
-            col = accent if i % 3 == 0 else colors["glow"] if i % 3 == 1 else colors["particle"]
-            op_max = random.uniform(0.10, 0.30)
-            dx = random.randint(-15, 15)
-            dy = random.randint(-10, 5)
-            parts.append(f'''  <circle cx="{cx}" cy="{cy}" r="{r:.1f}" fill="{col}" opacity="0" filter="url(#softBlur)">
-    <animateTransform attributeName="transform" type="translate"
-      values="0,0; {dx},{dy}; 0,0"
-      dur="{dur}s" begin="{delay:.1f}s" repeatCount="indefinite" />
-    <animate attributeName="opacity"
-      values="0;{op_max:.2f};{op_max*0.5:.2f};0" dur="{dur}s"
-      begin="{delay:.1f}s" repeatCount="indefinite" />
-  </circle>''')
-        return "\n".join(parts)
-
-
-def _gen_ground_glow(colors: dict) -> str:
-    """Generate a subtle grounding layer — varies shape to avoid sameness."""
-    dur = random.randint(16, 24)
-    accent = colors.get("accent", colors["glow"])
-    # Randomly pick different grounding styles
-    style = random.choice(["bottom_band", "side_fade", "diagonal_stripe"])
-
-    if style == "bottom_band":
-        return f'''
-  <!-- Ground Glow (bottom band) -->
-  <rect x="0" y="440" width="512" height="72" fill="url(#horizGlow)" filter="url(#heavyBlur)" opacity="0.10">
-    <animate attributeName="opacity"
-      values="0.06;0.16;0.06" dur="{dur}s" repeatCount="indefinite" />
-  </rect>'''
-    elif style == "side_fade":
-        return f'''
-  <!-- Ground Glow (side fade) -->
-  <rect x="0" y="0" width="512" height="512" fill="url(#sideGlow)" filter="url(#heavyBlur)" opacity="0.06">
-    <animate attributeName="opacity"
-      values="0.04;0.10;0.04" dur="{dur}s" repeatCount="indefinite" />
-  </rect>'''
-    else:
-        return f'''
-  <!-- Ground Glow (diagonal stripe) -->
-  <rect x="-50" y="380" width="612" height="60" fill="{accent}" filter="url(#heavyBlur)" opacity="0.06"
-    transform="rotate(-8,256,410)">
-    <animate attributeName="opacity"
-      values="0.04;0.12;0.04" dur="{dur}s" repeatCount="indefinite" />
-  </rect>'''
-
-
-def _gen_glow_secondary(variant: str, colors: dict) -> str:
-    """Generate variant-aware secondary glow animations — visually distinct per world.
-
-    Sleep rules: cycle >=4s, gentle pulse, max opacity 60%.
-    Each variant produces a different glow character with world-specific colors.
-    """
-    accent = colors.get("accent", colors["glow"])
-
-    if variant == "glow_firefly":
-        # 4-6 small glows at random positions, staggered pulse timings
-        # DROWSINESS GUARDRAIL: 8-14s cycles (longer = less detectable looping)
-        parts = ['\n  <!-- Firefly Glows -->']
-        count = random.randint(4, 6)
-        for i in range(count):
-            cx = random.randint(60, 450)
-            cy = random.randint(120, 440)
-            r = random.randint(22, 35)
-            dur = random.randint(8, 14)
-            delay = random.uniform(0, dur * 0.7)
-            glow_col = accent if i % 2 == 0 else colors["glow"]
-            parts.append(f'''  <circle cx="{cx}" cy="{cy}" r="{r}" fill="{glow_col}" filter="url(#softBlur)" opacity="0">
-    <animate attributeName="opacity"
-      values="0;0.08;0.50;0.40;0.08;0;0" dur="{dur}s"
-      begin="{delay:.1f}s" repeatCount="indefinite" />
-    <animate attributeName="r"
-      values="{r};{r+10};{r+5};{r}" dur="{dur}s"
-      begin="{delay:.1f}s" repeatCount="indefinite" />
-  </circle>''')
-        return "\n".join(parts)
-
-    elif variant == "glow_bioluminescence":
-        # Glowing VERTICAL STREAKS scattered across canvas — like bioluminescent trails
-        # NOT ellipses at bottom. Tall thin shapes at varied heights.
-        parts = ['\n  <!-- Bioluminescent Streaks -->']
-        count = random.randint(5, 8)
-        for i in range(count):
-            x = random.randint(40, 470)
-            y = random.randint(60, 350)  # spread across upper 2/3, NOT bottom
-            h = random.randint(40, 120)
-            w = random.randint(3, 8)
-            dur = random.randint(8, 16)
-            delay = i * random.uniform(1.5, 3)
-            bio_color = accent if i % 2 == 0 else colors["glow"]
-            op_max = random.uniform(0.20, 0.45)
-            parts.append(f'''  <rect x="{x}" y="{y}" width="{w}" height="{h}" rx="{w//2}"
-    fill="{bio_color}" opacity="0">
-    <animate attributeName="opacity"
-      values="0;{op_max*0.3:.2f};{op_max:.2f};{op_max*0.5:.2f};0" dur="{dur}s"
-      begin="{delay:.1f}s" repeatCount="indefinite" />
-    <animate attributeName="height"
-      values="{h};{h+20};{h-10};{h}" dur="{dur+2}s"
-      begin="{delay:.1f}s" repeatCount="indefinite" />
-  </rect>''')
-        return "\n".join(parts)
-
-    elif variant == "glow_campfire":
-        # TRIANGULAR warm glow — a pointed upward shape, not a blob
-        # Uses <polygon> for a flame-like triangle at lower-center
-        # DROWSINESS GUARDRAIL: min 6s cycle (fast flicker = alerting flash)
-        cx = random.randint(220, 300)
-        cy_base = random.randint(420, 460)
-        flame_h = random.randint(60, 100)
-        flame_w = random.randint(30, 50)
-        dur = random.randint(6, 10)
-        # Triangle points: left-base, right-base, tip
-        p1 = f"{cx-flame_w},{cy_base}"
-        p2 = f"{cx+flame_w},{cy_base}"
-        p3 = f"{cx},{cy_base-flame_h}"
-        p3b = f"{cx+random.randint(-8,8)},{cy_base-flame_h-random.randint(5,15)}"
-        return f'''
-  <!-- Campfire Flame Glow -->
-  <polygon points="{p1} {p2} {p3}" fill="{accent}" opacity="0.25" filter="url(#softBlur)">
-    <animate attributeName="opacity"
-      values="0.18;0.45;0.30;0.50;0.18" dur="{dur}s" repeatCount="indefinite" />
-    <animate attributeName="points"
-      values="{p1} {p2} {p3}; {p1} {p2} {p3b}; {p1} {p2} {p3}" dur="{dur}s" repeatCount="indefinite" />
-  </polygon>
-  <polygon points="{cx-flame_w//2},{cy_base} {cx+flame_w//2},{cy_base} {cx},{cy_base-flame_h*2//3}"
-    fill="{colors['glow']}" opacity="0.15">
-    <animate attributeName="opacity"
-      values="0.10;0.30;0.15;0.28;0.10" dur="{dur-1}s" repeatCount="indefinite" />
-  </polygon>'''
-
-    elif variant == "glow_candle":
-        # Single small warm glow, slight position wobble
-        # DROWSINESS GUARDRAIL: 7-10s cycles (candle flicker must be slow, not alerting)
-        cx = random.randint(200, 320)
-        cy = random.randint(280, 400)
-        r = random.randint(30, 50)
-        dur = random.randint(7, 10)
-        return f'''
-  <!-- Candle Glow -->
-  <circle cx="{cx}" cy="{cy}" r="{r}" fill="{accent}" filter="url(#softBlur)" opacity="0.30">
-    <animate attributeName="opacity"
-      values="0.22;0.50;0.30;0.48;0.22" dur="{dur}s" repeatCount="indefinite" />
-    <animate attributeName="r"
-      values="{r};{r+6};{r-3};{r+4};{r}" dur="{dur}s" repeatCount="indefinite" />
-    <animateTransform attributeName="transform" type="translate"
-      values="0,0; 3,-2; -2,0; 2,1; 0,0"
-      dur="{dur+2}s" repeatCount="indefinite" />
-  </circle>'''
-
-    elif variant == "glow_crystals":
-        # 4-5 sharp small glows, longer dim phases between pulses
-        parts = ['\n  <!-- Crystal Glows -->']
-        count = random.randint(4, 5)
-        for i in range(count):
-            cx = random.randint(80, 440)
-            cy = random.randint(180, 440)
-            r = random.randint(18, 30)
-            dur = random.randint(8, 14)
-            delay = random.uniform(0, dur * 0.5)
-            crystal_color = accent if i % 2 == 0 else colors["glow"]
-            parts.append(f'''  <circle cx="{cx}" cy="{cy}" r="{r}" fill="{crystal_color}" filter="url(#softBlur)" opacity="0">
-    <animate attributeName="opacity"
-      values="0;0;0.08;0.55;0.40;0.08;0;0" dur="{dur}s"
-      begin="{delay:.1f}s" repeatCount="indefinite" />
-    <animate attributeName="r"
-      values="{r};{r};{r+4};{r+8};{r+4};{r}" dur="{dur}s"
-      begin="{delay:.1f}s" repeatCount="indefinite" />
-  </circle>''')
-        return "\n".join(parts)
-
-    elif variant == "glow_nebula":
-        # 2 very large diffuse glows, very slow (16-24s)
-        parts = ['\n  <!-- Nebula Glow -->']
-        count = 2
-        for idx in range(count):
-            cx = random.randint(120, 400)
-            cy = random.randint(120, 380)
-            r = random.randint(130, 200)
-            dur = random.randint(16, 24)
-            delay = random.uniform(0, 5)
-            neb_color = accent if idx == 0 else colors["glow"]
-            parts.append(f'''  <circle cx="{cx}" cy="{cy}" r="{r}" fill="{neb_color}" filter="url(#softBlur)" opacity="0.08">
-    <animate attributeName="opacity"
-      values="0.06;0.20;0.10;0.18;0.06" dur="{dur}s"
-      begin="{delay:.1f}s" repeatCount="indefinite" />
-    <animate attributeName="r"
-      values="{r-20};{r+25};{r-10};{r+15};{r-20}" dur="{dur}s"
-      begin="{delay:.1f}s" repeatCount="indefinite" />
-  </circle>''')
-        return "\n".join(parts)
-
-    elif variant == "glow_sunset":
-        # GRADIENT BANDS at top — warm horizontal stripes like sunset sky
-        # Uses thin <rect> bands at TOP of canvas, not bottom blobs
-        parts = ['\n  <!-- Sunset Sky Bands -->']
-        band_count = random.randint(3, 5)
-        for i in range(band_count):
-            y = 30 + i * random.randint(35, 55)  # TOP of canvas
-            h = random.randint(12, 30)
-            dur = random.randint(10, 18)
-            delay = i * random.uniform(1, 3)
-            col = accent if i % 2 == 0 else colors["glow"]
-            op_max = random.uniform(0.15, 0.35)
-            # Bands breathe in width and opacity
-            parts.append(f'''  <rect x="{random.randint(20, 80)}" y="{y}" width="{random.randint(350, 470)}" height="{h}"
-    rx="{h//2}" fill="{col}" opacity="0">
-    <animate attributeName="opacity"
-      values="0;{op_max:.2f};{op_max*0.5:.2f};{op_max:.2f};0" dur="{dur}s"
-      begin="{delay:.1f}s" repeatCount="indefinite" />
-  </rect>''')
-        return "\n".join(parts)
-
-    elif variant == "glow_lantern":
-        # 2 warm glows in upper area, gentle flicker
-        parts = ['\n  <!-- Lantern Glows -->']
-        count = 2
-        for idx in range(count):
-            cx = random.randint(100, 420)
-            cy = random.randint(80, 250)
-            r = random.randint(35, 55)
-            dur = random.randint(6, 10)
-            delay = random.uniform(0, 3)
-            lantern_color = accent if idx == 0 else colors["glow"]
-            parts.append(f'''  <circle cx="{cx}" cy="{cy}" r="{r}" fill="{lantern_color}" filter="url(#softBlur)" opacity="0.25">
-    <animate attributeName="opacity"
-      values="0.20;0.45;0.28;0.48;0.20" dur="{dur}s"
-      begin="{delay:.1f}s" repeatCount="indefinite" />
-    <animate attributeName="r"
-      values="{r};{r+6};{r-2};{r+4};{r}" dur="{dur}s"
-      begin="{delay:.1f}s" repeatCount="indefinite" />
-  </circle>''')
-        return "\n".join(parts)
-
-    else:
-        # Default: 2 breathing circles
-        parts = ['\n  <!-- Secondary Ambient Glows -->']
-        for idx in range(2):
-            cx = random.randint(80, 440)
-            cy = random.randint(150, 420)
-            r = random.randint(60, 100)
-            dur = random.randint(10, 16)
-            glow_color = accent if idx == 0 else colors["glow"]
-            parts.append(f'''  <circle cx="{cx}" cy="{cy}" r="{r}" fill="{glow_color}" filter="url(#softBlur)">
-    <animate attributeName="r"
-      values="{r-10};{r+12};{r-10}" dur="{dur}s" repeatCount="indefinite" />
-    <animate attributeName="opacity"
-      values="0.18;0.42;0.18" dur="{dur}s" repeatCount="indefinite" />
-  </circle>''')
-        return "\n".join(parts)
-
-
-def _gen_moonlight_wash(colors: dict, world: str = "") -> str:
-    """Generate ambient light wash — varies by world to avoid sameness."""
-    dur = random.randint(14, 20)
-    accent = colors.get("accent", colors["glow"])
-
-    # Choose wash style based on world
-    WASH_MAP = {
-        "deep_ocean": "side_curtains",
-        "cloud_kingdom": "top_down",
-        "enchanted_forest": "dappled",
-        "snow_landscape": "top_down",
-        "desert_night": "none",  # desert has enough glow from horizon
-        "cozy_interior": "none",  # interior has corner glow
-        "mountain_meadow": "side_curtains",
-        "space_cosmos": "none",  # space has nebula blobs
-        "tropical_lagoon": "bottom_warm",
-        "underground_cave": "dappled",
-        "ancient_library": "dappled",
-        "floating_islands": "top_down",
-    }
-    style = WASH_MAP.get(world, "top_down")
-
-    if style == "none":
-        return ""
-
-    elif style == "top_down":
-        return f'''
-  <!-- Moonlight Wash (top-down) -->
-  <rect x="0" y="0" width="512" height="300" fill="url(#horizGlow)" filter="url(#heavyBlur)" opacity="0.08"
-    transform="rotate(180,256,150)">
-    <animate attributeName="opacity"
-      values="0.05;0.14;0.05" dur="{dur}s" repeatCount="indefinite" />
-  </rect>'''
-
-    elif style == "side_curtains":
-        # Soft light from both sides
-        return f'''
-  <!-- Ambient Wash (side curtains) -->
-  <rect x="0" y="0" width="512" height="512" fill="url(#sideGlow)" filter="url(#heavyBlur)" opacity="0.10">
-    <animate attributeName="opacity"
-      values="0.06;0.15;0.06" dur="{dur}s" repeatCount="indefinite" />
-  </rect>'''
-
-    elif style == "dappled":
-        # Scattered light patches — like forest canopy or cave crystals
-        parts = ['\n  <!-- Dappled Light Wash -->']
-        for _ in range(3):
-            cx = random.randint(60, 450)
-            cy = random.randint(60, 400)
-            rx = random.randint(40, 80)
-            ry = random.randint(30, 60)
-            rot = random.randint(-30, 30)
-            pdur = dur + random.randint(-3, 3)
-            delay = random.uniform(0, 5)
-            parts.append(f'''  <ellipse cx="{cx}" cy="{cy}" rx="{rx}" ry="{ry}" fill="{accent}" opacity="0"
-    filter="url(#heavyBlur)" transform="rotate({rot},{cx},{cy})">
-    <animate attributeName="opacity"
-      values="0;0.12;0.06;0.10;0" dur="{pdur}s"
-      begin="{delay:.1f}s" repeatCount="indefinite" />
-  </ellipse>''')
-        return "\n".join(parts)
-
-    elif style == "bottom_warm":
-        return f'''
-  <!-- Bottom Warm Wash -->
-  <rect x="0" y="350" width="512" height="162" fill="url(#horizGlow)" filter="url(#heavyBlur)" opacity="0.10">
-    <animate attributeName="opacity"
-      values="0.06;0.16;0.06" dur="{dur}s" repeatCount="indefinite" />
-  </rect>'''
-
-    else:
-        return ""
-
-
-def _gen_vignette(style: str, colors: dict) -> str:
-    """Generate per-world vignette — NOT the same dark edges on every cover.
-
-    Different worlds get different darkness patterns so covers look distinct.
-    Sleep rules: slow breathing (7-10s), max opacity 0.85.
-    """
-    dur = random.randint(8, 10)
-    vig = colors["vignette"]
-
-    if style == "none":
-        # No vignette at all — clean, bright covers (cloud, snow, floating)
-        return ""
-
-    elif style == "top_heavy":
-        # Dark at top, fading to clear at bottom (ocean, lagoon)
-        return f'''
-  <!-- Vignette (top-heavy) -->
-  <defs><linearGradient id="vigLG" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="{vig}" stop-opacity="0.7"/>
-    <stop offset="50%" stop-color="{vig}" stop-opacity="0.15"/>
-    <stop offset="100%" stop-color="{vig}" stop-opacity="0"/>
-  </linearGradient></defs>
-  <rect width="512" height="512" fill="url(#vigLG)">
-    <animate attributeName="opacity" values="0.6;0.85;0.6" dur="{dur}s" repeatCount="indefinite"/>
-  </rect>'''
-
-    elif style == "bottom_heavy":
-        # Dark at bottom, clear at top (forest — canopy lets light in from above)
-        return f'''
-  <!-- Vignette (bottom-heavy) -->
-  <defs><linearGradient id="vigLG" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="{vig}" stop-opacity="0"/>
-    <stop offset="50%" stop-color="{vig}" stop-opacity="0.15"/>
-    <stop offset="100%" stop-color="{vig}" stop-opacity="0.7"/>
-  </linearGradient></defs>
-  <rect width="512" height="512" fill="url(#vigLG)">
-    <animate attributeName="opacity" values="0.6;0.85;0.6" dur="{dur}s" repeatCount="indefinite"/>
-  </rect>'''
-
-    elif style == "bottom_light":
-        # Very subtle bottom only (meadow)
-        return f'''
-  <!-- Vignette (subtle bottom) -->
-  <defs><linearGradient id="vigLG" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="{vig}" stop-opacity="0"/>
-    <stop offset="70%" stop-color="{vig}" stop-opacity="0"/>
-    <stop offset="100%" stop-color="{vig}" stop-opacity="0.4"/>
-  </linearGradient></defs>
-  <rect width="512" height="512" fill="url(#vigLG)">
-    <animate attributeName="opacity" values="0.5;0.7;0.5" dur="{dur}s" repeatCount="indefinite"/>
-  </rect>'''
-
-    elif style == "top_corners":
-        # Dark in top corners only, open bottom and center (desert)
-        return f'''
-  <!-- Vignette (top corners) -->
-  <defs><radialGradient id="vigRC" cx="0.5" cy="0.3" r="0.7">
-    <stop offset="50%" stop-color="transparent"/>
-    <stop offset="100%" stop-color="{vig}" stop-opacity="0.6"/>
-  </radialGradient></defs>
-  <rect width="512" height="512" fill="url(#vigRC)">
-    <animate attributeName="opacity" values="0.5;0.75;0.5" dur="{dur}s" repeatCount="indefinite"/>
-  </rect>'''
-
-    elif style == "corners_only":
-        # Dark corners only, very open center (space)
-        return f'''
-  <!-- Vignette (corners only) -->
-  <defs><radialGradient id="vigRC" cx="0.5" cy="0.5" r="0.6">
-    <stop offset="40%" stop-color="transparent"/>
-    <stop offset="100%" stop-color="{vig}" stop-opacity="0.55"/>
-  </radialGradient></defs>
-  <rect width="512" height="512" fill="url(#vigRC)">
-    <animate attributeName="opacity" values="0.5;0.7;0.5" dur="{dur}s" repeatCount="indefinite"/>
-  </rect>'''
-
-    elif style == "full_heavy":
-        # Heavy all-around vignette (cave — glows punch through the darkness)
-        return f'''
-  <!-- Vignette (heavy) -->
-  <rect width="512" height="512" fill="url(#vignetteGrad)">
-    <animate attributeName="opacity" values="0.7;0.90;0.7" dur="{dur}s" repeatCount="indefinite"/>
-  </rect>'''
-
-    else:
-        # full_soft — gentle all-around (library, interior)
-        return f'''
-  <!-- Vignette (soft) -->
-  <rect width="512" height="512" fill="url(#vignetteGrad)">
-    <animate attributeName="opacity" values="0.40;0.60;0.40" dur="{dur}s" repeatCount="indefinite"/>
-  </rect>'''
 
 
 # ── Preview HTML Generator ──────────────────────────────────────────────
