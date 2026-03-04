@@ -1974,57 +1974,61 @@ def build_flux_prompt(story: dict, axes: dict) -> str:
 
 # ── Hugging Face FLUX API ────────────────────────────────────────────────
 
-def generate_flux_image(prompt: str, hf_token: str) -> bytes:
-    """Call Hugging Face FLUX.1 Schnell to generate an image."""
-    url = "https://router.huggingface.co/hf-inference/models/black-forest-labs/FLUX.1-schnell"
-    headers = {"Authorization": f"Bearer {hf_token}"}
-    payload = {"inputs": prompt}
+def generate_flux_image_pollinations(prompt: str) -> bytes:
+    """Call Pollinations.ai FLUX endpoint (free, unlimited for flux model).
 
-    logger.info("Calling FLUX.1 Schnell via Hugging Face API...")
+    Pollinations uses a GET URL with prompt in the path, so we truncate
+    long prompts to avoid Cloudflare 400 errors on oversized URLs.
+    """
+    from urllib.parse import quote
+    pollinations_token = os.getenv("POLLINATIONS_API_KEY", "")
+
+    # Truncate prompt to ~450 chars to stay within URL limits after encoding
+    truncated = prompt[:450].rsplit(",", 1)[0] if len(prompt) > 450 else prompt
+    encoded_prompt = quote(truncated, safe="")
+    url = f"https://gen.pollinations.ai/image/{encoded_prompt}?width=512&height=512&model=flux&nologo=true"
+    headers = {}
+    if pollinations_token:
+        headers["Authorization"] = f"Bearer {pollinations_token}"
+
+    logger.info("Calling FLUX via Pollinations.ai...")
     logger.info("Prompt: %s", prompt[:200] + "...")
 
     for attempt in range(3):
         try:
-            response = httpx.post(url, headers=headers, json=payload, timeout=120)
+            response = httpx.get(url, headers=headers, timeout=120, follow_redirects=True)
 
             if response.status_code == 200:
                 content_type = response.headers.get("content-type", "")
                 if "image" in content_type or len(response.content) > 1000:
-                    logger.info("Image received: %d bytes", len(response.content))
+                    logger.info("Pollinations image received: %d bytes", len(response.content))
                     return response.content
                 else:
-                    # Might be JSON error
-                    logger.warning("Unexpected response: %s", response.text[:500])
-
-            elif response.status_code == 503:
-                # Model loading
-                try:
-                    data = response.json()
-                    wait = data.get("estimated_time", 30)
-                except Exception:
-                    wait = 30
-                logger.info("Model loading, waiting %ds...", int(wait))
-                time.sleep(wait + 5)
-                continue
+                    logger.warning("Unexpected Pollinations response: %s", response.text[:500])
 
             elif response.status_code == 429:
-                logger.warning("Rate limited, waiting 60s...")
-                time.sleep(60)
+                logger.warning("Pollinations rate limited, waiting 20s...")
+                time.sleep(20)
                 continue
 
             else:
-                logger.error("API error %d: %s", response.status_code, response.text[:500])
+                logger.error("Pollinations error %d: %s", response.status_code, response.text[:500])
                 if attempt < 2:
                     time.sleep(10)
                     continue
 
         except httpx.TimeoutException:
-            logger.warning("Timeout on attempt %d", attempt + 1)
+            logger.warning("Pollinations timeout on attempt %d", attempt + 1)
             if attempt < 2:
                 time.sleep(10)
                 continue
 
     return None
+
+
+def generate_flux_image(prompt: str, hf_token: str = None) -> bytes:
+    """Generate a FLUX image via Pollinations.ai (free, unlimited for flux model)."""
+    return generate_flux_image_pollinations(prompt)
 
 
 def save_as_webp(image_bytes: bytes, output_path: Path, quality: int = 80) -> int:
@@ -2267,22 +2271,14 @@ def main():
         print(f"\nStory: {title} ({story_id})")
         print(f"\nAxes: {json.dumps(axes, indent=2)}")
         print(f"\nFLUX Prompt:\n{prompt}")
-        print(f"\nAnimations: {WORLD_TO_ANIMATIONS.get(axes['world_setting'], [])}")
+        print(f"\nAnimations: {WORLD_ELEMENTS.get(axes['world_setting'], {})}")
         return
-
-    # Check for HF token
-    hf_token = os.getenv("HF_API_TOKEN")
-    if not hf_token:
-        logger.error("HF_API_TOKEN not set in .env")
-        logger.error("Sign up at https://huggingface.co/ (free), create a Read token,")
-        logger.error("then add HF_API_TOKEN=hf_xxx to dreamweaver-backend/.env")
-        sys.exit(1)
 
     # Create output directory
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-    # Generate FLUX image
-    image_bytes = generate_flux_image(prompt, hf_token)
+    # Generate FLUX image via Pollinations.ai
+    image_bytes = generate_flux_image(prompt)
     if not image_bytes:
         logger.error("Failed to generate FLUX image")
         sys.exit(1)
