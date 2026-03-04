@@ -424,7 +424,8 @@ def step_covers(args, state: dict) -> bool:
             ok, stdout, stderr, elapsed = run_command(
                 cmd, f"Cover (Mistral fallback): {sid[:8]}...", timeout=600
             )
-            if ok and "OK:" in stdout:
+            fb_combined = (stdout or "") + (stderr or "")
+            if ok and "OK:" in fb_combined:
                 covers_fallback.append(sid)
             else:
                 covers_failed.append(sid)
@@ -471,12 +472,10 @@ def step_covers(args, state: dict) -> bool:
             cmd, f"Cover (FLUX): {sid[:8]}...", timeout=300
         )
 
-        # Clean up temp file
-        temp_path = SEED_OUTPUT / f"_temp_{sid}.json"
-        if temp_path.exists():
-            temp_path.unlink()
+        # Check both stdout and stderr for "OK:" — logging module writes to stderr
+        combined_output = (stdout or "") + (stderr or "")
 
-        if ok and "OK:" in stdout:
+        if ok and "OK:" in combined_output:
             covers_flux.append(sid)
         else:
             # Retry FLUX up to FLUX_MAX_RETRIES times before falling back
@@ -489,7 +488,8 @@ def step_covers(args, state: dict) -> bool:
                 ok2, stdout2, stderr2, elapsed2 = run_command(
                     cmd, f"Cover (FLUX retry {attempt}): {sid[:8]}...", timeout=300
                 )
-                if ok2 and "OK:" in stdout2:
+                combined2 = (stdout2 or "") + (stderr2 or "")
+                if ok2 and "OK:" in combined2:
                     covers_flux.append(sid)
                     flux_succeeded = True
                     logger.info("  ✅ FLUX succeeded on retry %d for %s", attempt, sid[:8])
@@ -504,15 +504,21 @@ def step_covers(args, state: dict) -> bool:
                     "--id", sid,
                 ]
                 if not args.dry_run:
-                    fb_ok, fb_stdout, _, _ = run_command(
+                    fb_ok, fb_stdout, fb_stderr, _ = run_command(
                         fallback_cmd, f"Cover (Mistral fallback): {sid[:8]}...", timeout=600
                     )
-                    if fb_ok and "OK:" in fb_stdout:
+                    fb_combined = (fb_stdout or "") + (fb_stderr or "")
+                    if fb_ok and "OK:" in fb_combined:
                         covers_fallback.append(sid)
                     else:
                         covers_failed.append(sid)
                 else:
                     covers_failed.append(sid)
+
+        # Clean up temp file AFTER all attempts (retries need it)
+        temp_path = SEED_OUTPUT / f"_temp_{sid}.json"
+        if temp_path.exists():
+            temp_path.unlink()
 
     state["covers_flux"] = covers_flux
     state["covers_fallback"] = covers_fallback
