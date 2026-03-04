@@ -10186,7 +10186,8 @@
     "language": "en",
     "theme": "nature",
     "age_group": "2-5",
-    "cover": "/covers/gen-e47bcd61e515.svg"
+    "cover": "/covers/gen-e47bcd61e515.svg",
+    "created_at": "2026-02-25T00:00:00"
   },
   {
     "id": "gen-4ddee3cbe031",
@@ -10196,7 +10197,8 @@
     "language": "en",
     "theme": "nature",
     "age_group": "2-5",
-    "cover": "/covers/gen-4ddee3cbe031.svg"
+    "cover": "/covers/gen-4ddee3cbe031.svg",
+    "created_at": "2026-02-25T00:00:00"
   },
   {
     "id": "gen-50e929bf696c",
@@ -10206,7 +10208,8 @@
     "language": "en",
     "theme": "nature",
     "age_group": "2-5",
-    "cover": "/covers/gen-50e929bf696c.svg"
+    "cover": "/covers/gen-50e929bf696c.svg",
+    "created_at": "2026-02-25T00:00:00"
   },
   {
     "id": "gen-8440041cfc57",
@@ -10216,6 +10219,7 @@
     "language": "en",
     "theme": "bedtime",
     "age_group": "2-5",
-    "cover": "/covers/gen-8440041cfc57.svg"
+    "cover": "/covers/gen-8440041cfc57.svg",
+    "created_at": "2026-02-25T00:00:00"
   }
 ]
