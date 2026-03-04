@@ -328,6 +328,895 @@ WORLD_ELEMENTS = {
 }
 
 
+# ── V3 Cinemagraph: Region Templates ─────────────────────────────────────
+#
+# Deterministic region templates per world_setting. Since we control the FLUX
+# prompt, we know what each scene contains — no ML segmentation needed.
+#
+# Each region: id, type (9 types), zone (mask shape), feather_px, is_primary,
+# context_variant (filter style hint).
+
+REGION_TEMPLATES = {
+    "enchanted_forest": [
+        {"id": "sky_main", "type": "sky", "zone": "top_third", "feather_px": 15, "is_primary": False, "context_variant": "thin_wispy"},
+        {"id": "canopy", "type": "vegetation_canopy", "zone": "upper_sides", "feather_px": 12, "is_primary": True, "context_variant": "dense_canopy"},
+        {"id": "ground_veg", "type": "vegetation_ground", "zone": "bottom_strip", "feather_px": 10, "is_primary": False, "context_variant": "flowers"},
+        {"id": "fog_floor", "type": "fog_zone", "zone": "lower_band", "feather_px": 25, "is_primary": False, "context_variant": "forest_mist"},
+        {"id": "glow_mushroom", "type": "glow_source", "zone": "lower_center_circle", "feather_px": 20, "is_primary": False, "context_variant": "bioluminescence"},
+    ],
+    "deep_ocean": [
+        {"id": "water_main", "type": "water", "zone": "full_frame", "feather_px": 20, "is_primary": True, "context_variant": "underwater"},
+        {"id": "glow_bio", "type": "glow_source", "zone": "center_circle", "feather_px": 20, "is_primary": False, "context_variant": "bioluminescence"},
+        {"id": "seaweed", "type": "vegetation_ground", "zone": "bottom_strip", "feather_px": 12, "is_primary": False, "context_variant": "seaweed"},
+        {"id": "fog_depth", "type": "fog_zone", "zone": "upper_band", "feather_px": 25, "is_primary": False, "context_variant": "underwater_haze"},
+    ],
+    "cloud_kingdom": [
+        {"id": "sky_main", "type": "sky", "zone": "top_half", "feather_px": 18, "is_primary": True, "context_variant": "magical"},
+        {"id": "fog_clouds", "type": "fog_zone", "zone": "mid_band", "feather_px": 25, "is_primary": False, "context_variant": "mountain_cloud"},
+        {"id": "glow_light", "type": "glow_source", "zone": "upper_center", "feather_px": 20, "is_primary": False, "context_variant": "moon"},
+    ],
+    "snow_landscape": [
+        {"id": "sky_main", "type": "sky", "zone": "top_third", "feather_px": 15, "is_primary": False, "context_variant": "open_night_sky"},
+        {"id": "fog_snow", "type": "fog_zone", "zone": "lower_band", "feather_px": 25, "is_primary": True, "context_variant": "mountain_cloud"},
+        {"id": "glow_moon", "type": "glow_source", "zone": "upper_right_circle", "feather_px": 18, "is_primary": False, "context_variant": "moon"},
+        {"id": "reflection_ice", "type": "reflection", "zone": "bottom_quarter", "feather_px": 12, "is_primary": False, "context_variant": "crystal_ice"},
+    ],
+    "desert_night": [
+        {"id": "sky_main", "type": "sky", "zone": "top_half", "feather_px": 15, "is_primary": True, "context_variant": "open_night_sky"},
+        {"id": "fog_ground", "type": "fog_zone", "zone": "bottom_strip", "feather_px": 20, "is_primary": False, "context_variant": "magical_shimmer"},
+        {"id": "glow_moon", "type": "glow_source", "zone": "upper_center", "feather_px": 20, "is_primary": False, "context_variant": "moon"},
+    ],
+    "cozy_interior": [
+        {"id": "fire_hearth", "type": "fire", "zone": "lower_center_circle", "feather_px": 15, "is_primary": True, "context_variant": "campfire"},
+        {"id": "glow_fire", "type": "glow_source", "zone": "center_wide", "feather_px": 25, "is_primary": False, "context_variant": "candle_area"},
+        {"id": "smoke_chimney", "type": "smoke", "zone": "upper_center_narrow", "feather_px": 15, "is_primary": False, "context_variant": "chimney"},
+        {"id": "fog_dust", "type": "fog_zone", "zone": "mid_band", "feather_px": 20, "is_primary": False, "context_variant": "cave_steam"},
+    ],
+    "mountain_meadow": [
+        {"id": "sky_main", "type": "sky", "zone": "top_third", "feather_px": 15, "is_primary": False, "context_variant": "thin_wispy"},
+        {"id": "grass", "type": "vegetation_ground", "zone": "bottom_half", "feather_px": 12, "is_primary": True, "context_variant": "tall_grass"},
+        {"id": "fog_meadow", "type": "fog_zone", "zone": "lower_band", "feather_px": 25, "is_primary": False, "context_variant": "forest_mist"},
+        {"id": "glow_moon", "type": "glow_source", "zone": "upper_right_circle", "feather_px": 18, "is_primary": False, "context_variant": "moon"},
+    ],
+    "space_cosmos": [
+        {"id": "sky_main", "type": "sky", "zone": "full_frame", "feather_px": 20, "is_primary": True, "context_variant": "space_nebula"},
+        {"id": "glow_star", "type": "glow_source", "zone": "center_circle", "feather_px": 25, "is_primary": False, "context_variant": "bioluminescence"},
+    ],
+    "tropical_lagoon": [
+        {"id": "water_lagoon", "type": "water", "zone": "bottom_half", "feather_px": 15, "is_primary": True, "context_variant": "lake"},
+        {"id": "sky_main", "type": "sky", "zone": "top_third", "feather_px": 15, "is_primary": False, "context_variant": "thin_wispy"},
+        {"id": "reflection_water", "type": "reflection", "zone": "bottom_quarter", "feather_px": 12, "is_primary": False, "context_variant": "water_reflection"},
+        {"id": "glow_moon", "type": "glow_source", "zone": "upper_center", "feather_px": 20, "is_primary": False, "context_variant": "moon"},
+    ],
+    "underground_cave": [
+        {"id": "water_pool", "type": "water", "zone": "bottom_quarter", "feather_px": 12, "is_primary": False, "context_variant": "pond"},
+        {"id": "fire_torch", "type": "fire", "zone": "right_circle", "feather_px": 12, "is_primary": False, "context_variant": "lantern"},
+        {"id": "fog_steam", "type": "fog_zone", "zone": "mid_band", "feather_px": 25, "is_primary": False, "context_variant": "cave_steam"},
+        {"id": "glow_crystal", "type": "glow_source", "zone": "center_circle", "feather_px": 20, "is_primary": True, "context_variant": "bioluminescence"},
+    ],
+    "ancient_library": [
+        {"id": "fire_candle", "type": "fire", "zone": "right_circle", "feather_px": 12, "is_primary": True, "context_variant": "candle"},
+        {"id": "glow_candle", "type": "glow_source", "zone": "center_wide", "feather_px": 22, "is_primary": False, "context_variant": "candle_area"},
+        {"id": "fog_dust", "type": "fog_zone", "zone": "upper_band", "feather_px": 20, "is_primary": False, "context_variant": "magical_shimmer"},
+    ],
+    "floating_islands": [
+        {"id": "sky_main", "type": "sky", "zone": "full_frame", "feather_px": 20, "is_primary": True, "context_variant": "magical"},
+        {"id": "fog_clouds", "type": "fog_zone", "zone": "mid_band", "feather_px": 25, "is_primary": False, "context_variant": "mountain_cloud"},
+        {"id": "glow_light", "type": "glow_source", "zone": "upper_center", "feather_px": 20, "is_primary": False, "context_variant": "moon"},
+        {"id": "veg_island", "type": "vegetation_canopy", "zone": "center_sides", "feather_px": 12, "is_primary": False, "context_variant": "branches"},
+    ],
+}
+
+
+# ── V3 Cinemagraph: Mask Path Generation ─────────────────────────────────
+
+def _zone_to_mask_path(zone, feather_px, rng, width=512, height=512):
+    """Convert a zone descriptor to an SVG path with organic edges.
+
+    Returns (path_d, mask_type) where mask_type is 'path' or 'circle'.
+    Uses quadratic Bezier curves for natural contours.
+    """
+    w, h = width, height
+    # Small random perturbation for organic edges
+    def _jitter(base, amt=15):
+        return base + rng.randint(-amt, amt)
+
+    if zone == "top_third":
+        # Sky region: organic bottom edge
+        y_base = int(h * 0.35)
+        pts = [
+            (0, 0), (w, 0), (w, _jitter(y_base, 20)),
+            (_jitter(w * 0.75, 10), _jitter(y_base - 15, 12)),
+            (_jitter(w * 0.5, 10), _jitter(y_base + 10, 12)),
+            (_jitter(w * 0.25, 10), _jitter(y_base - 10, 12)),
+            (0, _jitter(y_base, 20)),
+        ]
+        d = f"M{pts[0][0]},{pts[0][1]} L{pts[1][0]},{pts[1][1]} L{pts[2][0]},{pts[2][1]}"
+        d += f" Q{pts[3][0]},{pts[3][1]} {pts[4][0]},{pts[4][1]}"
+        d += f" Q{pts[5][0]},{pts[5][1]} {pts[6][0]},{pts[6][1]} Z"
+        return d, "path"
+
+    elif zone == "top_half":
+        y_base = int(h * 0.55)
+        pts = [
+            (0, 0), (w, 0), (w, _jitter(y_base, 20)),
+            (_jitter(w * 0.7, 10), _jitter(y_base - 20, 15)),
+            (_jitter(w * 0.4, 10), _jitter(y_base + 15, 15)),
+            (0, _jitter(y_base, 20)),
+        ]
+        d = f"M{pts[0][0]},{pts[0][1]} L{pts[1][0]},{pts[1][1]} L{pts[2][0]},{pts[2][1]}"
+        d += f" Q{pts[3][0]},{pts[3][1]} {pts[4][0]},{pts[4][1]}"
+        d += f" Q{pts[4][0]},{pts[4][1]} {pts[5][0]},{pts[5][1]} Z"
+        return d, "path"
+
+    elif zone == "bottom_quarter":
+        y_base = int(h * 0.75)
+        pts = [
+            (0, _jitter(y_base, 15)), (w, _jitter(y_base, 15)),
+            (w, h), (0, h),
+        ]
+        # Organic top edge
+        mid_x = _jitter(w * 0.5, 15)
+        mid_y = _jitter(y_base - 10, 10)
+        d = f"M{pts[0][0]},{pts[0][1]} Q{mid_x},{mid_y} {pts[1][0]},{pts[1][1]}"
+        d += f" L{pts[2][0]},{pts[2][1]} L{pts[3][0]},{pts[3][1]} Z"
+        return d, "path"
+
+    elif zone == "bottom_half":
+        y_base = int(h * 0.48)
+        pts = [
+            (0, _jitter(y_base, 20)),
+            (_jitter(w * 0.3, 10), _jitter(y_base + 15, 12)),
+            (_jitter(w * 0.6, 10), _jitter(y_base - 10, 12)),
+            (w, _jitter(y_base, 20)),
+            (w, h), (0, h),
+        ]
+        d = f"M{pts[0][0]},{pts[0][1]} Q{pts[1][0]},{pts[1][1]} {pts[2][0]},{pts[2][1]}"
+        d += f" Q{pts[2][0]},{pts[2][1]} {pts[3][0]},{pts[3][1]}"
+        d += f" L{pts[4][0]},{pts[4][1]} L{pts[5][0]},{pts[5][1]} Z"
+        return d, "path"
+
+    elif zone == "bottom_strip":
+        y_base = int(h * 0.82)
+        pts = [
+            (0, _jitter(y_base, 12)),
+            (_jitter(w * 0.35, 10), _jitter(y_base - 8, 8)),
+            (_jitter(w * 0.65, 10), _jitter(y_base + 5, 8)),
+            (w, _jitter(y_base, 12)),
+            (w, h), (0, h),
+        ]
+        d = f"M{pts[0][0]},{pts[0][1]} Q{pts[1][0]},{pts[1][1]} {pts[2][0]},{pts[2][1]}"
+        d += f" Q{pts[2][0]},{pts[2][1]} {pts[3][0]},{pts[3][1]}"
+        d += f" L{pts[4][0]},{pts[4][1]} L{pts[5][0]},{pts[5][1]} Z"
+        return d, "path"
+
+    elif zone == "upper_sides":
+        # Two patches left+right for canopy
+        y_top = int(h * 0.08)
+        y_bot = int(h * 0.55)
+        lw = int(w * 0.3)
+        rw_start = int(w * 0.7)
+        d = f"M0,{_jitter(y_top, 10)} L{_jitter(lw, 15)},{_jitter(y_top + 20, 10)}"
+        d += f" Q{_jitter(lw + 20, 10)},{_jitter(y_bot * 0.5, 15)} {_jitter(lw - 10, 15)},{_jitter(y_bot, 15)}"
+        d += f" L0,{_jitter(y_bot, 15)} Z"
+        d += f" M{_jitter(rw_start, 15)},{_jitter(y_top + 10, 10)} L{w},{_jitter(y_top, 10)}"
+        d += f" L{w},{_jitter(y_bot, 15)}"
+        d += f" Q{_jitter(rw_start - 10, 10)},{_jitter(y_bot * 0.6, 15)} {_jitter(rw_start + 10, 15)},{_jitter(y_top + 30, 10)} Z"
+        return d, "path"
+
+    elif zone == "center_sides":
+        # Vegetation on left+right sides of center
+        y_top = int(h * 0.25)
+        y_bot = int(h * 0.75)
+        lw = int(w * 0.25)
+        rw = int(w * 0.75)
+        d = f"M0,{_jitter(y_top, 10)} L{_jitter(lw, 10)},{_jitter(y_top + 20, 10)}"
+        d += f" L{_jitter(lw - 10, 10)},{_jitter(y_bot, 10)} L0,{_jitter(y_bot, 10)} Z"
+        d += f" M{_jitter(rw, 10)},{_jitter(y_top + 10, 10)} L{w},{_jitter(y_top, 10)}"
+        d += f" L{w},{_jitter(y_bot, 10)} L{_jitter(rw + 10, 10)},{_jitter(y_bot - 10, 10)} Z"
+        return d, "path"
+
+    elif zone == "lower_band":
+        # Fog band in lower portion
+        y_top = int(h * 0.6)
+        y_bot = int(h * 0.82)
+        pts_top = [
+            (0, _jitter(y_top, 15)),
+            (_jitter(w * 0.25, 10), _jitter(y_top - 10, 10)),
+            (_jitter(w * 0.5, 10), _jitter(y_top + 12, 10)),
+            (_jitter(w * 0.75, 10), _jitter(y_top - 8, 10)),
+            (w, _jitter(y_top, 15)),
+        ]
+        d = f"M{pts_top[0][0]},{pts_top[0][1]}"
+        d += f" Q{pts_top[1][0]},{pts_top[1][1]} {pts_top[2][0]},{pts_top[2][1]}"
+        d += f" Q{pts_top[3][0]},{pts_top[3][1]} {pts_top[4][0]},{pts_top[4][1]}"
+        d += f" L{w},{_jitter(y_bot, 12)} L0,{_jitter(y_bot, 12)} Z"
+        return d, "path"
+
+    elif zone == "upper_band":
+        y_top = int(h * 0.15)
+        y_bot = int(h * 0.4)
+        d = f"M0,{_jitter(y_top, 10)} L{w},{_jitter(y_top, 10)}"
+        d += f" L{w},{_jitter(y_bot, 12)}"
+        mid_x = _jitter(w * 0.5, 15)
+        mid_y = _jitter(y_bot + 10, 8)
+        d += f" Q{mid_x},{mid_y} 0,{_jitter(y_bot, 12)} Z"
+        return d, "path"
+
+    elif zone == "mid_band":
+        y_top = int(h * 0.35)
+        y_bot = int(h * 0.65)
+        d = f"M0,{_jitter(y_top, 12)} L{w},{_jitter(y_top, 12)}"
+        d += f" L{w},{_jitter(y_bot, 12)} L0,{_jitter(y_bot, 12)} Z"
+        return d, "path"
+
+    elif zone in ("center_circle", "lower_center_circle", "upper_center",
+                   "upper_right_circle", "right_circle", "center_wide"):
+        # Circular or elliptical glow/fire regions
+        if zone == "center_circle":
+            cx, cy, r = w // 2, h // 2, int(min(w, h) * 0.15)
+        elif zone == "lower_center_circle":
+            cx, cy, r = w // 2, int(h * 0.7), int(min(w, h) * 0.12)
+        elif zone == "upper_center":
+            cx, cy, r = w // 2, int(h * 0.2), int(min(w, h) * 0.14)
+        elif zone == "upper_right_circle":
+            cx, cy, r = int(w * 0.75), int(h * 0.18), int(min(w, h) * 0.12)
+        elif zone == "right_circle":
+            cx, cy, r = int(w * 0.78), int(h * 0.45), int(min(w, h) * 0.10)
+        elif zone == "center_wide":
+            cx, cy, r = w // 2, int(h * 0.5), int(min(w, h) * 0.30)
+        else:
+            cx, cy, r = w // 2, h // 2, int(min(w, h) * 0.15)
+        # Add jitter to circle
+        cx = _jitter(cx, 8)
+        cy = _jitter(cy, 8)
+        return f"{cx},{cy},{r}", "circle"
+
+    elif zone == "upper_center_narrow":
+        # Narrow column for chimney smoke
+        x_left = int(w * 0.4)
+        x_right = int(w * 0.6)
+        y_top = 0
+        y_bot = int(h * 0.5)
+        d = f"M{_jitter(x_left, 8)},{y_top} L{_jitter(x_right, 8)},{y_top}"
+        d += f" L{_jitter(x_right + 10, 8)},{_jitter(y_bot, 10)}"
+        d += f" L{_jitter(x_left - 10, 8)},{_jitter(y_bot, 10)} Z"
+        return d, "path"
+
+    elif zone == "full_frame":
+        # Entire frame (for underwater / space)
+        return f"M0,0 L{w},0 L{w},{h} L0,{h} Z", "path"
+
+    else:
+        # Fallback: center rectangle
+        margin = int(min(w, h) * 0.15)
+        return f"M{margin},{margin} L{w - margin},{margin} L{w - margin},{h - margin} L{margin},{h - margin} Z", "path"
+
+
+def _generate_mask_element(region, rng):
+    """Generate a complete SVG <mask> element for a region with feathered edges."""
+    rid = region["id"]
+    zone = region["zone"]
+    feather = region["feather_px"]
+    seed = rng.randint(1, 9999)
+
+    path_data, mask_type = _zone_to_mask_path(zone, feather, rng)
+
+    # Feathering filter for this mask
+    blur_id = f"blur-{rid}"
+    parts = []
+    parts.append(f'    <filter id="{blur_id}"><feGaussianBlur stdDeviation="{feather}"/></filter>')
+
+    if mask_type == "circle":
+        cx, cy, r = path_data.split(",")
+        parts.append(f'    <mask id="mask-{rid}">')
+        parts.append(f'      <circle cx="{cx}" cy="{cy}" r="{int(float(r)) + feather}" fill="white" filter="url(#{blur_id})"/>')
+        parts.append(f'    </mask>')
+    else:
+        parts.append(f'    <mask id="mask-{rid}">')
+        parts.append(f'      <path d="{path_data}" fill="white" filter="url(#{blur_id})"/>')
+        parts.append(f'    </mask>')
+
+    return "\n".join(parts)
+
+
+# ── V3 Cinemagraph: Filter Generators ────────────────────────────────────
+#
+# 8 filter types from animated-cover-plan-v3.md.
+# Each returns an SVG <filter> string with SMIL-animated attributes.
+# Parameters randomized within diversity ranges using seeded rng.
+
+FILTER_GENERATORS = {}  # Populated below: type -> generator function
+
+
+def _gen_filter_water_flow(region, rng):
+    """Water flow: undulating distortion for water surfaces."""
+    rid = region["id"]
+    fid = f"water-flow-{rid}"
+    variant = region.get("context_variant", "lake")
+    seed = rng.randint(1, 999)
+
+    # Context-based parameter ranges
+    params = {
+        "ocean":      {"freq_x": (0.008, 0.012), "freq_y": (0.025, 0.035), "octaves": (3, 4), "scale": (14, 20), "dur_freq": (12, 16), "dur_scale": (13, 17)},
+        "lake":       {"freq_x": (0.012, 0.016), "freq_y": (0.030, 0.040), "octaves": (2, 3), "scale": (10, 14), "dur_freq": (10, 14), "dur_scale": (12, 16)},
+        "pond":       {"freq_x": (0.016, 0.020), "freq_y": (0.040, 0.050), "octaves": (2, 2), "scale": (8, 12),  "dur_freq": (8, 12),  "dur_scale": (10, 14)},
+        "river":      {"freq_x": (0.010, 0.014), "freq_y": (0.040, 0.050), "octaves": (2, 3), "scale": (12, 18), "dur_freq": (9, 13),  "dur_scale": (11, 15)},
+        "underwater": {"freq_x": (0.006, 0.010), "freq_y": (0.015, 0.025), "octaves": (2, 3), "scale": (5, 8),   "dur_freq": (14, 18), "dur_scale": (16, 20)},
+    }.get(variant, {"freq_x": (0.012, 0.016), "freq_y": (0.030, 0.040), "octaves": (2, 3), "scale": (10, 14), "dur_freq": (10, 14), "dur_scale": (12, 16)})
+
+    fx = round(rng.uniform(*params["freq_x"]), 3)
+    fy = round(rng.uniform(*params["freq_y"]), 3)
+    octaves = rng.randint(*params["octaves"])
+    scale_base = rng.randint(*params["scale"])
+    dur_freq = rng.randint(*params["dur_freq"])
+    dur_scale = rng.randint(*params["dur_scale"])
+    # Ensure different primes for staggered recalculation
+    if dur_freq == dur_scale:
+        dur_scale += 1
+
+    # Animation values: base ± variation
+    fx_var = round(fx * 0.25, 3)
+    fy_var = round(fy * 0.15, 3)
+    freq_vals = f"{fx} {fy}; {fx + fx_var:.3f} {fy - fy_var:.3f}; {fx - fx_var:.3f} {fy + fy_var:.3f}; {fx + fx_var * 0.5:.3f} {fy - fy_var * 0.5:.3f}; {fx} {fy}"
+    s_lo = max(scale_base - 3, 4)
+    s_hi = scale_base + 3
+    scale_vals = f"{scale_base};{s_hi};{s_lo};{scale_base + 1};{scale_base}"
+
+    splines = "0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"
+    return f'''    <filter id="{fid}" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="turbulence" baseFrequency="{fx} {fy}" numOctaves="{octaves}" result="noise" seed="{seed}">
+        <animate attributeName="baseFrequency" values="{freq_vals}" dur="{dur_freq}s" repeatCount="indefinite" calcMode="spline" keySplines="{splines}"/>
+      </feTurbulence>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="{scale_base}" xChannelSelector="R" yChannelSelector="G">
+        <animate attributeName="scale" values="{scale_vals}" dur="{dur_scale}s" repeatCount="indefinite" calcMode="spline" keySplines="{splines}"/>
+      </feDisplacementMap>
+    </filter>'''
+
+FILTER_GENERATORS["water"] = _gen_filter_water_flow
+
+
+def _gen_filter_cloud_drift(region, rng):
+    """Cloud drift: slow large-scale distortion for sky regions."""
+    rid = region["id"]
+    fid = f"cloud-drift-{rid}"
+    variant = region.get("context_variant", "open_night_sky")
+    seed = rng.randint(1, 999)
+
+    params = {
+        "open_night_sky": {"freq": (0.004, 0.007), "octaves": (1, 2), "scale": (10, 14), "dur_churn": (25, 35), "dur_drift": (35, 55), "drift_px": (5, 10), "noise_type": "fractalNoise"},
+        "dramatic":       {"freq": (0.005, 0.009), "octaves": (2, 3), "scale": (18, 25), "dur_churn": (20, 30), "dur_drift": (30, 45), "drift_px": (8, 15), "noise_type": "turbulence"},
+        "magical":        {"freq": (0.004, 0.008), "octaves": (2, 3), "scale": (14, 20), "dur_churn": (22, 35), "dur_drift": (30, 50), "drift_px": (6, 12), "noise_type": "fractalNoise"},
+        "space_nebula":   {"freq": (0.003, 0.006), "octaves": (2, 3), "scale": (12, 18), "dur_churn": (30, 50), "dur_drift": (40, 60), "drift_px": (5, 10), "noise_type": "fractalNoise"},
+        "thin_wispy":     {"freq": (0.008, 0.010), "octaves": (1, 2), "scale": (10, 12), "dur_churn": (25, 40), "dur_drift": (35, 55), "drift_px": (5, 8),  "noise_type": "fractalNoise"},
+    }.get(variant, {"freq": (0.005, 0.008), "octaves": (2, 2), "scale": (12, 18), "dur_churn": (25, 35), "dur_drift": (35, 50), "drift_px": (5, 10), "noise_type": "fractalNoise"})
+
+    f_base = round(rng.uniform(*params["freq"]), 3)
+    f_y = round(f_base * rng.uniform(1.2, 1.8), 3)
+    octaves = rng.randint(*params["octaves"])
+    scale_base = rng.randint(*params["scale"])
+    dur_churn = rng.randint(*params["dur_churn"])
+    dur_drift = rng.randint(*params["dur_drift"])
+    drift_px = rng.randint(*params["drift_px"])
+    noise_type = params["noise_type"]
+
+    f_var = round(f_base * 0.3, 3)
+    freq_vals = f"{f_base} {f_y}; {f_base + f_var:.3f} {f_y - f_var:.3f}; {f_base - f_var:.3f} {f_y + f_var:.3f}; {f_base + f_var * 0.5:.3f} {f_y - f_var * 0.3:.3f}; {f_base} {f_y}"
+    s_lo = max(scale_base - 4, 8)
+    s_hi = scale_base + 5
+    scale_vals = f"{s_lo};{s_hi};{s_lo - 1};{s_hi - 2};{s_lo}"
+
+    splines = "0.3 0 0.7 1;0.3 0 0.7 1;0.3 0 0.7 1;0.3 0 0.7 1"
+    drift_half = drift_px // 2
+    return f'''    <filter id="{fid}" x="-10%" y="-5%" width="120%" height="110%">
+      <feTurbulence type="{noise_type}" baseFrequency="{f_base} {f_y}" numOctaves="{octaves}" result="cloud-noise" seed="{seed}">
+        <animate attributeName="baseFrequency" values="{freq_vals}" dur="{dur_churn}s" repeatCount="indefinite" calcMode="spline" keySplines="{splines}"/>
+      </feTurbulence>
+      <feDisplacementMap in="SourceGraphic" in2="cloud-noise" scale="{scale_base}" xChannelSelector="R" yChannelSelector="G">
+        <animate attributeName="scale" values="{scale_vals}" dur="{dur_drift}s" repeatCount="indefinite"/>
+      </feDisplacementMap>
+    </filter>'''
+
+FILTER_GENERATORS["sky"] = _gen_filter_cloud_drift
+
+
+def _gen_filter_fire_flicker(region, rng):
+    """Fire flicker: brightness fluctuation + shape distortion."""
+    rid = region["id"]
+    fid = f"fire-flicker-{rid}"
+    variant = region.get("context_variant", "candle")
+    seed = rng.randint(1, 999)
+
+    params = {
+        "candle":          {"freq": (0.035, 0.050), "scale": (3, 5),  "bright_range": 0.10, "blue_base": 0.85, "dur_shape": (4, 5),   "dur_bright": (3.7, 4.7)},
+        "lantern":         {"freq": (0.035, 0.045), "scale": (5, 7),  "bright_range": 0.12, "blue_base": 0.82, "dur_shape": (3.5, 4.5), "dur_bright": (3.3, 4.3)},
+        "campfire":        {"freq": (0.040, 0.060), "scale": (7, 10), "bright_range": 0.18, "blue_base": 0.78, "dur_shape": (2.5, 3.5), "dur_bright": (3.0, 4.0)},
+        "torch":           {"freq": (0.040, 0.055), "scale": (6, 9),  "bright_range": 0.15, "blue_base": 0.80, "dur_shape": (3.0, 4.0), "dur_bright": (3.5, 4.5)},
+        "bioluminescence": {"freq": (0.020, 0.035), "scale": (2, 4),  "bright_range": 0.08, "blue_base": 0.88, "dur_shape": (6, 8),   "dur_bright": (5.0, 7.0)},
+    }.get(variant, {"freq": (0.035, 0.050), "scale": (3, 5), "bright_range": 0.10, "blue_base": 0.85, "dur_shape": (4, 5), "dur_bright": (3.7, 4.7)})
+
+    freq_base = round(rng.uniform(*params["freq"]), 3)
+    freq_y = round(freq_base * rng.uniform(1.5, 2.2), 3)
+    scale_base = rng.randint(*params["scale"])
+    dur_shape = round(rng.uniform(*params["dur_shape"]), 1)
+    dur_bright = round(rng.uniform(*params["dur_bright"]), 1)
+    br = params["bright_range"]
+    blue_base = params["blue_base"]
+
+    # Shape distortion animation values
+    s_vals = ";".join(str(v) for v in [scale_base, scale_base + 3, scale_base - 1, scale_base + 2, scale_base, scale_base - 1, scale_base + 3, scale_base])
+    # Brightness animation
+    r_vals = f"1.0;{1.0 + br:.2f};{1.0 - br * 0.5:.2f};{1.0 + br * 0.8:.2f};{1.0 - br * 0.6:.2f};{1.0 + br * 0.3:.2f};1.0"
+    g_vals = f"1.0;{1.0 + br * 0.7:.2f};{1.0 - br * 0.6:.2f};{1.0 + br * 0.6:.2f};{1.0 - br * 0.8:.2f};{1.0 + br * 0.2:.2f};1.0"
+    b_vals = f"{blue_base};{blue_base - 0.05:.2f};{blue_base - 0.07:.2f};{blue_base - 0.03:.2f};{blue_base - 0.10:.2f};{blue_base - 0.05:.2f};{blue_base}"
+
+    return f'''    <filter id="{fid}" x="-10%" y="-15%" width="120%" height="130%">
+      <feTurbulence type="turbulence" baseFrequency="{freq_base} {freq_y}" numOctaves="3" result="flame-noise" seed="{seed}">
+        <animate attributeName="baseFrequency" values="{freq_base} {freq_y}; {freq_base + 0.01:.3f} {freq_y - 0.01:.3f}; {freq_base - 0.005:.3f} {freq_y + 0.01:.3f}; {freq_base + 0.005:.3f} {freq_y - 0.005:.3f}; {freq_base} {freq_y}" dur="{dur_shape}s" repeatCount="indefinite"/>
+      </feTurbulence>
+      <feDisplacementMap in="SourceGraphic" in2="flame-noise" scale="{scale_base}" xChannelSelector="R" yChannelSelector="G">
+        <animate attributeName="scale" values="{s_vals}" dur="{dur_shape}s" repeatCount="indefinite"/>
+      </feDisplacementMap>
+      <feComponentTransfer>
+        <feFuncR type="linear" slope="1.0"><animate attributeName="slope" values="{r_vals}" dur="{dur_bright}s" repeatCount="indefinite"/></feFuncR>
+        <feFuncG type="linear" slope="1.0"><animate attributeName="slope" values="{g_vals}" dur="{dur_bright}s" repeatCount="indefinite"/></feFuncG>
+        <feFuncB type="linear" slope="{blue_base}"><animate attributeName="slope" values="{b_vals}" dur="{dur_bright}s" repeatCount="indefinite"/></feFuncB>
+      </feComponentTransfer>
+    </filter>'''
+
+FILTER_GENERATORS["fire"] = _gen_filter_fire_flicker
+
+
+def _gen_filter_veg_sway(region, rng):
+    """Vegetation sway: horizontal displacement for wind-through-leaves."""
+    rid = region["id"]
+    fid = f"veg-sway-{rid}"
+    variant = region.get("context_variant", "branches")
+    seed = rng.randint(1, 999)
+    is_ground = region["type"] == "vegetation_ground"
+
+    params = {
+        "dense_canopy": {"freq_x": (0.005, 0.008), "scale": (10, 14), "dur_freq": (12, 18), "dur_scale": (14, 20)},
+        "branches":     {"freq_x": (0.010, 0.012), "scale": (6, 10),  "dur_freq": (10, 15), "dur_scale": (12, 18)},
+        "tall_grass":   {"freq_x": (0.012, 0.018), "scale": (6, 10),  "dur_freq": (6, 10),  "dur_scale": (8, 12)},
+        "flowers":      {"freq_x": (0.008, 0.012), "scale": (4, 6),   "dur_freq": (10, 16), "dur_scale": (12, 18)},
+        "seaweed":      {"freq_x": (0.004, 0.008), "scale": (6, 10),  "dur_freq": (12, 20), "dur_scale": (14, 22)},
+    }.get(variant, {"freq_x": (0.008, 0.012), "scale": (6, 10), "dur_freq": (10, 15), "dur_scale": (12, 18)})
+
+    fx = round(rng.uniform(*params["freq_x"]), 3)
+    fy = round(fx * rng.uniform(1.5, 2.2), 3)
+    scale_base = rng.randint(*params["scale"])
+    dur_freq = rng.randint(*params["dur_freq"])
+    dur_scale = rng.randint(*params["dur_scale"])
+    if dur_freq == dur_scale:
+        dur_scale += 1
+    # Ground vegetation: slightly delayed start, different seed
+    begin = f'{rng.uniform(0.5, 1.5):.1f}s' if is_ground else "0s"
+
+    fx_var = round(fx * 0.25, 3)
+    freq_vals = f"{fx} {fy}; {fx + fx_var:.3f} {fy - fx_var:.3f}; {fx - fx_var:.3f} {fy + fx_var:.3f}; {fx + fx_var * 0.5:.3f} {fy - fx_var * 0.3:.3f}; {fx} {fy}"
+    s_vals = f"{scale_base - 2};{scale_base + 2};{scale_base - 3};{scale_base + 1};{scale_base - 1};{scale_base + 3};{scale_base - 2}"
+    # R/B channel = mostly horizontal sway
+    ch_y = "B" if variant != "seaweed" else "G"
+
+    splines = "0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"
+    splines6 = "0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"
+    return f'''    <filter id="{fid}" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="{fx} {fy}" numOctaves="2" result="wind-noise" seed="{seed}">
+        <animate attributeName="baseFrequency" values="{freq_vals}" dur="{dur_freq}s" begin="{begin}" repeatCount="indefinite" calcMode="spline" keySplines="{splines}"/>
+      </feTurbulence>
+      <feDisplacementMap in="SourceGraphic" in2="wind-noise" scale="{scale_base}" xChannelSelector="R" yChannelSelector="{ch_y}">
+        <animate attributeName="scale" values="{s_vals}" dur="{dur_scale}s" begin="{begin}" repeatCount="indefinite" calcMode="spline" keySplines="{splines6}"/>
+      </feDisplacementMap>
+    </filter>'''
+
+FILTER_GENERATORS["vegetation_canopy"] = _gen_filter_veg_sway
+FILTER_GENERATORS["vegetation_ground"] = _gen_filter_veg_sway
+
+
+def _gen_filter_reflection_shimmer(region, rng):
+    """Reflection shimmer: high-frequency low-amplitude distortion."""
+    rid = region["id"]
+    fid = f"shimmer-{rid}"
+    variant = region.get("context_variant", "water_reflection")
+    seed = rng.randint(1, 999)
+
+    params = {
+        "water_reflection": {"freq_x": (0.025, 0.035), "freq_y": (0.050, 0.070), "scale": (4, 6), "dur": (6, 8)},
+        "crystal_ice":      {"freq_x": (0.035, 0.040), "freq_y": (0.060, 0.080), "scale": (3, 5), "dur": (5, 7)},
+        "wet_surface":      {"freq_x": (0.030, 0.040), "freq_y": (0.050, 0.070), "scale": (2, 4), "dur": (6, 9)},
+    }.get(variant, {"freq_x": (0.025, 0.035), "freq_y": (0.050, 0.070), "scale": (4, 6), "dur": (6, 8)})
+
+    fx = round(rng.uniform(*params["freq_x"]), 3)
+    fy = round(rng.uniform(*params["freq_y"]), 3)
+    scale_base = rng.randint(*params["scale"])
+    dur = rng.randint(*params["dur"])
+    dur2 = dur + 1
+
+    freq_vals = f"{fx} {fy}; {fx + 0.005:.3f} {fy - 0.005:.3f}; {fx - 0.003:.3f} {fy + 0.005:.3f}; {fx + 0.003:.3f} {fy - 0.002:.3f}; {fx} {fy}"
+    s_vals = f"{scale_base};{scale_base + 2};{scale_base - 1};{scale_base + 1};{scale_base}"
+
+    return f'''    <filter id="{fid}" x="-2%" y="-2%" width="104%" height="104%">
+      <feTurbulence type="turbulence" baseFrequency="{fx} {fy}" numOctaves="2" result="shimmer-noise" seed="{seed}">
+        <animate attributeName="baseFrequency" values="{freq_vals}" dur="{dur}s" repeatCount="indefinite"/>
+      </feTurbulence>
+      <feDisplacementMap in="SourceGraphic" in2="shimmer-noise" scale="{scale_base}" xChannelSelector="R" yChannelSelector="G">
+        <animate attributeName="scale" values="{s_vals}" dur="{dur2}s" repeatCount="indefinite"/>
+      </feDisplacementMap>
+    </filter>'''
+
+FILTER_GENERATORS["reflection"] = _gen_filter_reflection_shimmer
+
+
+def _gen_filter_glow_pulse(region, rng):
+    """Glow pulse: breathing pacer integrated into image glow sources."""
+    rid = region["id"]
+    fid = f"glow-pulse-{rid}"
+    variant = region.get("context_variant", "moon")
+    seed = rng.randint(1, 999)
+
+    params = {
+        "moon":            {"r_peak": (1.10, 1.15), "blur_peak": (0.5, 1.0), "blue_base": 0.88},
+        "candle_area":     {"r_peak": (1.15, 1.20), "blur_peak": (1.0, 1.5), "blue_base": 0.82},
+        "bioluminescence": {"r_peak": (1.20, 1.30), "blur_peak": (1.5, 2.5), "blue_base": 0.85},
+        "window":          {"r_peak": (1.08, 1.12), "blur_peak": (0.3, 0.8), "blue_base": 0.90},
+    }.get(variant, {"r_peak": (1.10, 1.20), "blur_peak": (0.5, 1.5), "blue_base": 0.85})
+
+    r_peak = round(rng.uniform(*params["r_peak"]), 2)
+    g_peak = round(r_peak - 0.05, 2)
+    blur_peak = round(rng.uniform(*params["blur_peak"]), 1)
+    blue_base = params["blue_base"]
+    blue_inhale = round(blue_base - 0.05, 2)
+    dur = 5  # Phase 1: 12 bpm breathing rate
+
+    splines = "0.4 0 0.6 1;0.4 0 0.6 1"
+    return f'''    <filter id="{fid}" x="-15%" y="-15%" width="130%" height="130%">
+      <feComponentTransfer>
+        <feFuncR type="linear" slope="1.0"><animate attributeName="slope" values="1.0;{r_peak};1.0" dur="{dur}s" repeatCount="indefinite" calcMode="spline" keySplines="{splines}"/></feFuncR>
+        <feFuncG type="linear" slope="1.0"><animate attributeName="slope" values="1.0;{g_peak};1.0" dur="{dur}s" repeatCount="indefinite" calcMode="spline" keySplines="{splines}"/></feFuncG>
+        <feFuncB type="linear" slope="{blue_base}"><animate attributeName="slope" values="{blue_base};{blue_inhale};{blue_base}" dur="{dur}s" repeatCount="indefinite" calcMode="spline" keySplines="{splines}"/></feFuncB>
+      </feComponentTransfer>
+      <feGaussianBlur stdDeviation="0">
+        <animate attributeName="stdDeviation" values="0;{blur_peak};0" dur="{dur}s" repeatCount="indefinite" calcMode="spline" keySplines="{splines}"/>
+      </feGaussianBlur>
+    </filter>'''
+
+FILTER_GENERATORS["glow_source"] = _gen_filter_glow_pulse
+
+
+def _gen_filter_fog_drift(region, rng):
+    """Fog drift: displacement + horizontal translation for drifting mist."""
+    rid = region["id"]
+    fid = f"fog-drift-{rid}"
+    variant = region.get("context_variant", "forest_mist")
+    seed = rng.randint(1, 999)
+
+    params = {
+        "forest_mist":     {"freq": (0.005, 0.008), "scale": (8, 12),  "dur_churn": (18, 25), "dur_drift": (28, 40), "drift_px": (8, 12)},
+        "mountain_cloud":  {"freq": (0.004, 0.007), "scale": (10, 14), "dur_churn": (15, 25), "dur_drift": (25, 40), "drift_px": (10, 15)},
+        "underwater_haze": {"freq": (0.003, 0.006), "scale": (5, 8),   "dur_churn": (22, 30), "dur_drift": (35, 50), "drift_px": (5, 8)},
+        "cave_steam":      {"freq": (0.006, 0.010), "scale": (7, 11),  "dur_churn": (18, 25), "dur_drift": (25, 35), "drift_px": (6, 10)},
+        "magical_shimmer": {"freq": (0.007, 0.010), "scale": (5, 8),   "dur_churn": (20, 28), "dur_drift": (30, 45), "drift_px": (6, 10)},
+    }.get(variant, {"freq": (0.005, 0.008), "scale": (8, 12), "dur_churn": (18, 25), "dur_drift": (28, 40), "drift_px": (8, 12)})
+
+    f_base = round(rng.uniform(*params["freq"]), 3)
+    f_y = round(f_base * rng.uniform(1.3, 1.8), 3)
+    scale_base = rng.randint(*params["scale"])
+    dur_churn = rng.randint(*params["dur_churn"])
+    dur_drift = rng.randint(*params["dur_drift"])
+    drift_px = rng.randint(*params["drift_px"])
+
+    f_var = round(f_base * 0.3, 3)
+    freq_vals = f"{f_base} {f_y}; {f_base + f_var:.3f} {f_y - f_var:.3f}; {f_base - f_var:.3f} {f_y + f_var:.3f}; {f_base + f_var * 0.5:.3f} {f_y - f_var * 0.3:.3f}; {f_base} {f_y}"
+    s_vals = f"{scale_base - 2};{scale_base + 2};{scale_base - 3};{scale_base + 1};{scale_base - 2}"
+
+    splines = "0.3 0 0.7 1;0.3 0 0.7 1;0.3 0 0.7 1;0.3 0 0.7 1"
+    return f'''    <filter id="{fid}" x="-15%" y="-5%" width="130%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="{f_base} {f_y}" numOctaves="2" result="fog-noise" seed="{seed}">
+        <animate attributeName="baseFrequency" values="{freq_vals}" dur="{dur_churn}s" repeatCount="indefinite" calcMode="spline" keySplines="{splines}"/>
+      </feTurbulence>
+      <feDisplacementMap in="SourceGraphic" in2="fog-noise" scale="{scale_base}" xChannelSelector="R" yChannelSelector="G">
+        <animate attributeName="scale" values="{s_vals}" dur="{dur_drift}s" repeatCount="indefinite"/>
+      </feDisplacementMap>
+    </filter>'''
+
+FILTER_GENERATORS["fog_zone"] = _gen_filter_fog_drift
+
+
+def _gen_filter_smoke_rise(region, rng):
+    """Smoke rise: displacement + upward translation."""
+    rid = region["id"]
+    fid = f"smoke-rise-{rid}"
+    seed = rng.randint(1, 999)
+
+    f_base = round(rng.uniform(0.008, 0.015), 3)
+    f_y = round(f_base * rng.uniform(1.5, 2.2), 3)
+    scale_base = rng.randint(4, 10)
+    dur_churn = rng.randint(10, 18)
+    dur_rise = rng.randint(15, 25)
+
+    f_var = round(f_base * 0.3, 3)
+    freq_vals = f"{f_base} {f_y}; {f_base + f_var:.3f} {f_y - f_var:.3f}; {f_base - f_var:.3f} {f_y + f_var:.3f}; {f_base + f_var * 0.5:.3f} {f_y - f_var * 0.3:.3f}; {f_base} {f_y}"
+    s_vals = f"{scale_base - 2};{scale_base + 2};{scale_base - 3};{scale_base + 1};{scale_base - 2}"
+
+    return f'''    <filter id="{fid}" x="-10%" y="-20%" width="120%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency="{f_base} {f_y}" numOctaves="2" result="smoke-noise" seed="{seed}">
+        <animate attributeName="baseFrequency" values="{freq_vals}" dur="{dur_churn}s" repeatCount="indefinite"/>
+      </feTurbulence>
+      <feDisplacementMap in="SourceGraphic" in2="smoke-noise" scale="{scale_base}" xChannelSelector="R" yChannelSelector="G">
+        <animate attributeName="scale" values="{s_vals}" dur="{dur_rise}s" repeatCount="indefinite"/>
+      </feDisplacementMap>
+    </filter>'''
+
+FILTER_GENERATORS["smoke"] = _gen_filter_smoke_rise
+
+
+# ── V3 Cinemagraph: Assembly Functions ────────────────────────────────────
+
+# Lean overlay: elements handled by cinemagraph filters, removed from overlay pools
+_FILTER_HANDLED_ELEMENTS = {"fog", "caustics", "water_ripples", "candle_flicker", "shadow_play", "chimney_smoke", "wind_grass"}
+
+WORLD_ELEMENTS_LEAN = {}
+for _ws, _mapping in WORLD_ELEMENTS.items():
+    _lean = {}
+    for _layer in ("background", "midground", "foreground"):
+        if _layer in _mapping:
+            _lean[_layer] = {
+                "pool": [e for e in _mapping[_layer]["pool"] if e not in _FILTER_HANDLED_ELEMENTS],
+                "pick": _mapping[_layer]["pick"],
+            }
+            # Reduce pick counts since fewer elements available
+            _available = len(_lean[_layer]["pool"])
+            _min_pick = min(_lean[_layer]["pick"][0], _available)
+            _max_pick = min(_lean[_layer]["pick"][1], _available)
+            _lean[_layer]["pick"] = (max(1, _min_pick), max(1, _max_pick))
+    _lean["required"] = _mapping.get("required", [])
+    _lean["fauna"] = _mapping.get("fauna", [])
+    _lean["rare_event"] = _mapping.get("rare_event", [])
+    _lean["vignette"] = _mapping.get("vignette", "full_soft")
+    _lean["pacer_variant"] = _mapping.get("pacer_variant", "forest")
+    WORLD_ELEMENTS_LEAN[_ws] = _lean
+
+
+def generate_v3_filters_and_masks(world_setting, rng):
+    """Generate all cinemagraph filter and mask definitions for a world setting.
+
+    Returns dict with 'defs_svg' (combined <filter> and <mask> SVG),
+    'regions' (list of region dicts with filter/mask ids), and metadata.
+    Enforces performance budget: max 4 filters, combined numOctaves <= 12.
+    """
+    regions = REGION_TEMPLATES.get(world_setting, REGION_TEMPLATES["enchanted_forest"])
+
+    # Performance budget
+    MAX_FILTERS = 4
+    MAX_OCTAVES = 12
+
+    # Prioritize: primary first, then glow_source, then others
+    sorted_regions = sorted(regions, key=lambda r: (
+        0 if r.get("is_primary") else (1 if r["type"] == "glow_source" else 2)
+    ))
+
+    active_regions = []
+    total_octaves = 0
+    filters_svg = []
+    masks_svg = []
+
+    for region in sorted_regions:
+        if len(active_regions) >= MAX_FILTERS:
+            break
+
+        rtype = region["type"]
+        gen_fn = FILTER_GENERATORS.get(rtype)
+        if not gen_fn:
+            continue
+
+        # Generate filter
+        filter_svg = gen_fn(region, rng)
+
+        # Estimate octaves from this filter (most use 2-3)
+        octaves_est = 3 if rtype == "fire" else 2
+        if total_octaves + octaves_est > MAX_OCTAVES:
+            continue
+
+        total_octaves += octaves_est
+
+        # Generate mask
+        mask_svg = _generate_mask_element(region, rng)
+
+        filters_svg.append(filter_svg)
+        masks_svg.append(mask_svg)
+        active_regions.append(region)
+
+    # Combine into defs block
+    defs_parts = []
+    for m in masks_svg:
+        defs_parts.append(m)
+    for f in filters_svg:
+        defs_parts.append(f)
+
+    return {
+        "defs_svg": "\n".join(defs_parts),
+        "regions": active_regions,
+        "total_octaves": total_octaves,
+        "filter_count": len(active_regions),
+    }
+
+
+def generate_lean_overlay(axes, story):
+    """Generate a lean SMIL overlay — only elements not handled by cinemagraph filters.
+
+    Reuses existing ELEMENT_GENERATORS but with reduced pools (no fog, caustics,
+    water_ripples, candle_flicker, shadow_play, chimney_smoke, wind_grass).
+    """
+    world = axes["world_setting"]
+    palette = axes["palette"]
+    rng = random.Random(hash(story.get("id", "") + world + "_lean"))
+    mapping = WORLD_ELEMENTS_LEAN.get(world, WORLD_ELEMENTS_LEAN.get("enchanted_forest", {}))
+
+    # Build colors (same as generate_svg_overlay)
+    palette_colors = {
+        "ember_warm":    {"glow": "#FFD699", "particle": "#FFCC80", "vignette": "#1a0a05", "star": "#FFF5E0"},
+        "twilight_cool": {"glow": "#C8B8E0", "particle": "#D0C4E8", "vignette": "#0a0520", "star": "#E8E0F0"},
+        "forest_deep":   {"glow": "#A8D5A0", "particle": "#C4E0B8", "vignette": "#051005", "star": "#D8F0D0"},
+        "golden_hour":   {"glow": "#FFE4B5", "particle": "#FFD89B", "vignette": "#1a0f00", "star": "#FFF8E8"},
+        "moonstone":     {"glow": "#C0D0E0", "particle": "#B8C8D8", "vignette": "#050810", "star": "#E0E8F0"},
+        "berry_dusk":    {"glow": "#D8A8C8", "particle": "#E0B8D0", "vignette": "#100510", "star": "#F0D8E8"},
+    }
+    colors = palette_colors.get(palette, palette_colors["golden_hour"])
+    accents = world_accents.get(world, {})
+    if accents:
+        colors = {**colors, **accents}
+
+    element_parts = []
+    budget_remaining = 4000  # Reduced from 6600 — lean overlay is smaller
+
+    def _pick_lean(layer_key):
+        nonlocal budget_remaining
+        layer = mapping.get(layer_key)
+        if not layer or not layer.get("pool"):
+            return
+        pool = layer["pool"][:]
+        rng.shuffle(pool)
+        pick_min, pick_max = layer["pick"]
+        pick_count = rng.randint(pick_min, pick_max)
+
+        selected = 0
+        for elem_name in pool:
+            if selected >= pick_count or budget_remaining < 150:
+                break
+            if elem_name not in ELEMENT_GENERATORS:
+                continue
+            svg = ELEMENT_GENERATORS[elem_name](colors, world, story, rng)
+            size = _svg_size(svg)
+            if budget_remaining - size >= 0:
+                element_parts.append(svg)
+                budget_remaining -= size
+                selected += 1
+
+    # Required: breathing pacer
+    for elem_name in mapping.get("required", []):
+        if elem_name not in ELEMENT_GENERATORS:
+            continue
+        svg = ELEMENT_GENERATORS[elem_name](colors, world, story, rng)
+        element_parts.append(svg)
+        budget_remaining -= _svg_size(svg)
+
+    _pick_lean("background")
+    _pick_lean("midground")
+    _pick_lean("foreground")
+
+    # Fauna
+    fauna_pool = [f for f in mapping.get("fauna", []) if f in ELEMENT_GENERATORS]
+    if fauna_pool:
+        rng.shuffle(fauna_pool)
+        fauna_count = min(rng.randint(1, 2), len(fauna_pool))
+        for elem_name in fauna_pool[:fauna_count]:
+            if budget_remaining < 150:
+                break
+            svg = ELEMENT_GENERATORS[elem_name](colors, world, story, rng)
+            size = _svg_size(svg)
+            if budget_remaining - size >= 0:
+                element_parts.append(svg)
+                budget_remaining -= size
+
+    # Rare event
+    rare_pool = [r for r in mapping.get("rare_event", []) if r in ELEMENT_GENERATORS]
+    if rare_pool and rng.random() < 0.7 and budget_remaining >= 250:
+        svg = ELEMENT_GENERATORS[rng.choice(rare_pool)](colors, world, story, rng)
+        size = _svg_size(svg)
+        if budget_remaining - size >= 0:
+            element_parts.append(svg)
+            budget_remaining -= size
+
+    # Vignette
+    vig_style = mapping.get("vignette", "full_soft")
+    vig = _gen_vignette(vig_style, colors)
+    if vig:
+        element_parts.append(vig)
+
+    return "\n".join(element_parts)
+
+
+def generate_v3_combined_svg(bg_b64, axes, story):
+    """Create 3-layer V3 SVG: cinemagraph filters on background + lean SMIL overlay.
+
+    Args:
+        bg_b64: Base64-encoded WebP image data (no data: prefix)
+        axes: Diversity axes dict (must have 'world_setting')
+        story: Story dict
+
+    Returns:
+        Complete SVG string with embedded background, filters, masks, and overlay.
+    """
+    world = axes["world_setting"]
+    rng = random.Random(hash(story.get("id", "") + world + "_v3"))
+
+    # Generate cinemagraph filters and masks
+    fm = generate_v3_filters_and_masks(world, rng)
+
+    # Generate lean overlay
+    overlay_content = generate_lean_overlay(axes, story)
+
+    # Build the <use> elements for filtered regions
+    use_elements = []
+    for region in fm["regions"]:
+        rid = region["id"]
+        rtype = region["type"]
+        # Map type to filter id prefix
+        filter_prefixes = {
+            "water": "water-flow", "sky": "cloud-drift", "fire": "fire-flicker",
+            "vegetation_canopy": "veg-sway", "vegetation_ground": "veg-sway",
+            "reflection": "shimmer", "glow_source": "glow-pulse",
+            "fog_zone": "fog-drift", "smoke": "smoke-rise",
+        }
+        fid_prefix = filter_prefixes.get(rtype, rtype)
+        fid = f"{fid_prefix}-{rid}"
+
+        # Fog/smoke get additional drift animateTransform on the <use>
+        drift_transform = ""
+        if rtype == "fog_zone":
+            drift_px = rng.randint(5, 12)
+            drift_dur = rng.randint(28, 45)
+            drift_half = drift_px // 2
+            drift_transform = f'''
+      <animateTransform attributeName="transform" type="translate" values="0,0; {drift_px},1; 0,0; -{drift_half},-1; 0,0" dur="{drift_dur}s" repeatCount="indefinite" calcMode="spline" keySplines="0.3 0 0.7 1;0.3 0 0.7 1;0.3 0 0.7 1;0.3 0 0.7 1"/>'''
+        elif rtype == "smoke":
+            rise_y = rng.randint(3, 8)
+            lateral_x = rng.randint(2, 5)
+            rise_dur = rng.randint(15, 25)
+            drift_transform = f'''
+      <animateTransform attributeName="transform" type="translate" values="0,0; {lateral_x},{-rise_y}; 0,0; {-lateral_x // 2},{-rise_y // 2}; 0,0" dur="{rise_dur}s" repeatCount="indefinite" calcMode="spline" keySplines="0.3 0 0.7 1;0.3 0 0.7 1;0.3 0 0.7 1;0.3 0 0.7 1"/>'''
+        elif rtype == "sky":
+            # Cloud drift: slight horizontal translate
+            drift_px = rng.randint(5, 10)
+            drift_dur = rng.randint(35, 55)
+            drift_transform = f'''
+      <animateTransform attributeName="transform" type="translate" values="0,0; {drift_px},0; 0,0; {-drift_px // 2},0; 0,0" dur="{drift_dur}s" repeatCount="indefinite" calcMode="spline" keySplines="0.3 0 0.7 1;0.3 0 0.7 1;0.3 0 0.7 1;0.3 0 0.7 1"/>'''
+
+        use_elements.append(f'''  <g mask="url(#mask-{rid})">
+    <use href="#bg" filter="url(#{fid})"/>{drift_transform}
+  </g>''')
+
+    # Assemble final SVG
+    svg = f'''<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <image id="bg" width="512" height="512" href="data:image/webp;base64,{bg_b64}"/>
+{fm["defs_svg"]}
+  </defs>
+
+  <!-- Layer 1: Static background -->
+  <use href="#bg"/>
+
+  <!-- Layer 2: Cinemagraph filtered regions ({fm["filter_count"]} filters, {fm["total_octaves"]} octaves) -->
+{chr(10).join(use_elements)}
+
+  <!-- Layer 3: Lean SMIL overlay -->
+{overlay_content}
+</svg>'''
+
+    return svg
+
+
 # ── SVG Overlay Generator (SMIL Animation Bible v2) ──────────────────────
 #
 # Implements the 7-category element library from smil-animation-bible.md:
@@ -2211,11 +3100,11 @@ def save_as_webp(image_bytes: bytes, output_path: Path, quality: int = 80) -> in
 
 # ── Preview HTML Generator ──────────────────────────────────────────────
 
-def generate_combined_svg(bg_path: Path, svg_overlay: str) -> str:
-    """Create a single SVG with the WebP background embedded as base64 + animated overlay.
+def generate_combined_svg(bg_path: Path, svg_overlay: str, axes: dict = None, story: dict = None) -> str:
+    """Create a V3 combined SVG with cinemagraph filters + lean overlay.
 
-    This is the final deliverable — a single .svg file that can be served via <object> tag
-    and renders the FLUX background with animated overlay on top.
+    Uses the 3-layer architecture: background in <defs>, filtered <use> regions,
+    lean SMIL overlay on top. Falls back to v2 (flat overlay) if axes/story missing.
     """
     import base64
     import re
@@ -2223,7 +3112,11 @@ def generate_combined_svg(bg_path: Path, svg_overlay: str) -> str:
     with open(bg_path, "rb") as f:
         b64 = base64.b64encode(f.read()).decode()
 
-    # Extract inner content from overlay SVG (everything between <svg...> and </svg>)
+    # V3 path: use cinemagraph filters + lean overlay
+    if axes and story and axes.get("world_setting"):
+        return generate_v3_combined_svg(b64, axes, story)
+
+    # V2 fallback: simple background + overlay
     match = re.search(r'<svg[^>]*>(.*)</svg>', svg_overlay, re.DOTALL)
     inner = match.group(1) if match else svg_overlay
 
@@ -2448,9 +3341,9 @@ def main():
     svg_size = svg_path.stat().st_size
     logger.info("Saved SVG: %s (%d KB)", svg_path.name, svg_size // 1024)
 
-    # Generate combined SVG (single file: embedded WebP + animated overlay)
-    logger.info("Generating combined SVG...")
-    combined_svg = generate_combined_svg(bg_path, svg_content)
+    # Generate combined SVG (V3: cinemagraph filters + lean overlay)
+    logger.info("Generating V3 combined SVG (cinemagraph filters)...")
+    combined_svg = generate_combined_svg(bg_path, svg_content, axes=axes, story=story)
     combined_path = OUTPUT_DIR / f"{story_id}_combined.svg"
     with open(combined_path, "w", encoding="utf-8") as f:
         f.write(combined_svg)

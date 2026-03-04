@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
-"""Re-overlay existing FLUX-based covers with new SMIL Animation Bible animations.
+"""Re-overlay existing FLUX-based covers with V3 cinemagraph animations.
 
-Extracts the WebP background from existing combined SVGs and generates
-a fresh SMIL overlay using the new animation system.
-No FLUX API call needed — only the overlay changes.
+V3 architecture: 3-layer SVG
+  Layer 1: FLUX WebP background (defined once in <defs>, referenced via <use>)
+  Layer 2: SVG cinemagraph filters (feTurbulence + feDisplacementMap on masked regions)
+  Layer 3: Lean SMIL overlay (particles, breathing pacer, vignette)
+
+Extracts the WebP base64 from existing combined SVGs and generates
+fresh cinemagraph filters + lean overlay. No FLUX API call needed.
 """
 
 import json
@@ -20,42 +24,23 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from scripts.generate_cover_experimental import (
-    generate_svg_overlay,
-    validate_overlay_drowsiness,
+    generate_v3_combined_svg,
     auto_select_axes,
-    WORLD_ELEMENTS,
 )
 
 
-def extract_background_image_tag(svg_content: str):
-    """Extract the <image> tag with base64 WebP data from a combined SVG."""
+def extract_background_b64(svg_content: str):
+    """Extract the base64 WebP data from a combined SVG.
+
+    Handles both v2 format (<image ... href="data:image/webp;base64,..."/>)
+    and v3 format (<image id="bg" ... href="data:image/webp;base64,..."/>).
+    """
     match = re.search(
-        r'<image[^>]*href="data:image/webp;base64,[^"]*"[^/]*/?>',
+        r'href="data:image/webp;base64,([^"]*)"',
         svg_content,
         re.DOTALL,
     )
-    if match:
-        return match.group(0)
-    # Try alternate format
-    match = re.search(
-        r'<image[^>]*href="data:image[^"]*"[^/]*/?>',
-        svg_content,
-        re.DOTALL,
-    )
-    return match.group(0) if match else None
-
-
-def recombine_svg(image_tag: str, overlay_svg: str) -> str:
-    """Combine a background <image> tag with a new SMIL overlay."""
-    # Extract inner content from overlay SVG
-    match = re.search(r'<svg[^>]*>(.*)</svg>', overlay_svg, re.DOTALL)
-    inner = match.group(1) if match else overlay_svg
-
-    return f'''<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" width="512" height="512">
-  <!-- Layer 1: FLUX AI Background (embedded WebP) -->
-  {image_tag}
-{inner}
-</svg>'''
+    return match.group(1) if match else None
 
 
 def main():
@@ -88,7 +73,8 @@ def main():
         en_items.append(s)
 
     print(f"\n{'='*60}")
-    print(f"  RE-OVERLAY: {len(en_items)} English items")
+    print(f"  V3 RE-OVERLAY: {len(en_items)} English items")
+    print(f"  Architecture: Cinemagraph filters + lean SMIL overlay")
     print(f"{'='*60}\n")
 
     successes = []
@@ -110,7 +96,7 @@ def main():
         full_path = covers_dir / cover_file
 
         if not full_path.exists():
-            print(f"[{i:2d}/{len(en_items)}] SKIP (file missing): {title} → {cover_file}")
+            print(f"[{i:2d}/{len(en_items)}] SKIP (file missing): {title} -> {cover_file}")
             skipped_no_cover.append(sid)
             continue
 
@@ -118,51 +104,45 @@ def main():
         with open(full_path, "r", encoding="utf-8") as f:
             existing_svg = f.read()
 
-        # Check if FLUX-based
-        image_tag = extract_background_image_tag(existing_svg)
-        if not image_tag:
+        # Extract base64 WebP
+        bg_b64 = extract_background_b64(existing_svg)
+        if not bg_b64:
             print(f"[{i:2d}/{len(en_items)}] SKIP (hand-crafted): {title}")
             skipped_handcrafted.append(sid)
             continue
 
-        # Generate new overlay
+        # Generate V3 combined SVG
         try:
             axes = auto_select_axes(story, {})
-            new_overlay = generate_svg_overlay(axes, story)
-            warnings = validate_overlay_drowsiness(new_overlay)
-
-            if warnings:
-                print(f"[{i:2d}/{len(en_items)}] ⚠️  WARN: {title} — {warnings}")
-
-            # Recombine
-            new_combined = recombine_svg(image_tag, new_overlay)
+            new_combined = generate_v3_combined_svg(bg_b64, axes, story)
 
             # Write back
             with open(full_path, "w", encoding="utf-8") as f:
                 f.write(new_combined)
 
-            overlay_size = len(new_overlay.encode("utf-8"))
             total_size = len(new_combined.encode("utf-8"))
             world = axes.get("world_setting", "?")
             print(
-                f"[{i:2d}/{len(en_items)}] ✅ {title[:45]:45s} "
-                f"({world}, overlay={overlay_size}B, total={total_size//1024}KB)"
+                f"[{i:2d}/{len(en_items)}] OK {title[:45]:45s} "
+                f"({world}, total={total_size//1024}KB)"
             )
             successes.append(sid)
 
         except Exception as e:
-            print(f"[{i:2d}/{len(en_items)}] ❌ FAILED: {title} — {e}")
+            print(f"[{i:2d}/{len(en_items)}] FAILED: {title} -- {e}")
+            import traceback
+            traceback.print_exc()
             failures.append((sid, str(e)))
 
     # Summary
     print(f"\n{'='*60}")
-    print(f"  RE-OVERLAY COMPLETE")
+    print(f"  V3 RE-OVERLAY COMPLETE")
     print(f"{'='*60}")
-    print(f"  ✅ Re-overlayed:      {len(successes)}")
-    print(f"  ⏭️  Hand-crafted:      {len(skipped_handcrafted)} (need FLUX API)")
-    print(f"  ⏭️  No cover:          {len(skipped_no_cover)} (need FLUX API)")
-    print(f"  ❌ Failed:            {len(failures)}")
-    print(f"  Total:               {len(en_items)}")
+    print(f"  OK:              {len(successes)}")
+    print(f"  Hand-crafted:    {len(skipped_handcrafted)} (need FLUX API)")
+    print(f"  No cover:        {len(skipped_no_cover)} (need FLUX API)")
+    print(f"  Failed:          {len(failures)}")
+    print(f"  Total:           {len(en_items)}")
 
     if failures:
         print(f"\n  Failed items:")
