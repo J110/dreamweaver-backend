@@ -198,95 +198,131 @@ THEME_TO_PALETTE = {
 }
 
 
-# ── SMIL Animation Bible v2 — World-to-Element Mapping ──────────────────
+# ── SMIL Animation — 3-Layer World-to-Element Mapping (Revised) ─────────
 #
-# Replaces flat WORLD_TO_ANIMATIONS with required/select/optional structure.
-# Each world gets exactly 1 breathing pacer (required) + 2-3 pool picks + optional.
+# Rich, layered animations: 12-20 elements per cover across 3 depth layers.
+# Background (4-6): atmosphere, depth. Midground (4-7): living world. Foreground (3-5): framing.
+# Plus fauna detail (1-2) and rare events (0-1).
 
 WORLD_ELEMENTS = {
     "enchanted_forest": {
-        "required": ["breathing_pacer"],
-        "select": {"pool": ["fireflies", "dust_motes", "swaying_branches",
-                            "falling_leaves", "sleeping_butterfly", "cricket", "fog"], "pick": (2, 3)},
-        "optional": ["stars", "sleeping_owl"],
-        "vignette": "bottom_heavy",
+        "background": {"pool": ["stars", "moon_glow", "fog", "aurora"], "pick": (3, 4)},
+        "midground":  {"pool": ["fireflies", "dust_motes", "falling_leaves", "closing_flowers"], "pick": (3, 4)},
+        "foreground": {"pool": ["swaying_branches", "fog"], "pick": (2, 3)},
+        "required":   ["breathing_pacer"],
+        "fauna":      ["sleeping_owl", "sleeping_butterfly", "cricket"],
+        "rare_event": ["shooting_star"],
+        "vignette":   "bottom_heavy",
         "pacer_variant": "forest",
     },
     "deep_ocean": {
-        "required": ["breathing_pacer"],
-        "select": {"pool": ["bubbles", "caustics", "fog"], "pick": (2, 3)},
-        "optional": ["dust_motes"],
-        "vignette": "top_heavy",
+        "background": {"pool": ["fog", "caustics", "aurora"], "pick": (2, 3)},
+        "midground":  {"pool": ["bubbles", "caustics", "dust_motes", "water_ripples"], "pick": (3, 5)},
+        "foreground": {"pool": ["fog", "swaying_branches"], "pick": (2, 3)},
+        "required":   ["breathing_pacer"],
+        "fauna":      ["sleeping_butterfly"],
+        "rare_event": [],
+        "vignette":   "top_heavy",
         "pacer_variant": "ocean",
     },
     "space_cosmos": {
-        "required": ["breathing_pacer"],
-        "select": {"pool": ["stars", "shooting_star", "aurora"], "pick": (2, 3)},
-        "optional": ["dust_motes"],
-        "vignette": "corners_only",
+        "background": {"pool": ["stars", "aurora", "moon_glow"], "pick": (3, 4)},
+        "midground":  {"pool": ["dust_motes", "stars"], "pick": (3, 4)},
+        "foreground": {"pool": ["fog", "dust_motes"], "pick": (2, 3)},
+        "required":   ["breathing_pacer"],
+        "fauna":      [],
+        "rare_event": ["shooting_star"],
+        "vignette":   "corners_only",
         "pacer_variant": "space",
     },
     "snow_landscape": {
-        "required": ["breathing_pacer"],
-        "select": {"pool": ["snowfall", "stars", "aurora", "fog"], "pick": (2, 3)},
-        "optional": ["chimney_smoke"],
-        "vignette": "none",
+        "background": {"pool": ["stars", "moon_glow", "aurora", "fog"], "pick": (3, 4)},
+        "midground":  {"pool": ["snowfall", "chimney_smoke", "dust_motes"], "pick": (3, 5)},
+        "foreground": {"pool": ["swaying_branches", "fog", "snowfall"], "pick": (2, 3)},
+        "required":   ["breathing_pacer"],
+        "fauna":      ["sleeping_owl"],
+        "rare_event": ["shooting_star"],
+        "vignette":   "none",
         "pacer_variant": "forest",
     },
     "cozy_interior": {
-        "required": ["breathing_pacer"],
-        "select": {"pool": ["candle_flicker", "dust_motes", "shadow_play"], "pick": (2, 3)},
-        "optional": ["chimney_smoke", "sleeping_butterfly"],
-        "vignette": "full_soft",
+        "background": {"pool": ["stars", "moon_glow", "shadow_play"], "pick": (2, 3)},
+        "midground":  {"pool": ["dust_motes", "candle_flicker", "shadow_play"], "pick": (3, 5)},
+        "foreground": {"pool": ["fog", "dust_motes"], "pick": (2, 3)},
+        "required":   ["breathing_pacer"],
+        "fauna":      ["sleeping_butterfly", "cricket"],
+        "rare_event": [],
+        "vignette":   "full_soft",
         "pacer_variant": "interior",
     },
     "desert_night": {
-        "required": ["breathing_pacer"],
-        "select": {"pool": ["stars", "shooting_star", "fog"], "pick": (2, 3)},
-        "optional": ["cricket", "wind_grass"],
-        "vignette": "top_corners",
+        "background": {"pool": ["stars", "moon_glow", "fog", "aurora"], "pick": (3, 4)},
+        "midground":  {"pool": ["dust_motes", "wind_grass"], "pick": (3, 4)},
+        "foreground": {"pool": ["fog", "dust_motes"], "pick": (2, 3)},
+        "required":   ["breathing_pacer"],
+        "fauna":      ["cricket"],
+        "rare_event": ["shooting_star"],
+        "vignette":   "top_corners",
         "pacer_variant": "space",
     },
     "mountain_meadow": {
-        "required": ["breathing_pacer"],
-        "select": {"pool": ["fireflies", "stars", "wind_grass", "fog"], "pick": (2, 3)},
-        "optional": ["cricket", "sleeping_butterfly", "falling_leaves"],
-        "vignette": "bottom_light",
+        "background": {"pool": ["stars", "moon_glow", "fog", "aurora"], "pick": (3, 4)},
+        "midground":  {"pool": ["fireflies", "dust_motes", "wind_grass", "falling_leaves"], "pick": (3, 5)},
+        "foreground": {"pool": ["swaying_branches", "fog"], "pick": (2, 3)},
+        "required":   ["breathing_pacer"],
+        "fauna":      ["cricket", "sleeping_butterfly"],
+        "rare_event": ["shooting_star"],
+        "vignette":   "bottom_light",
         "pacer_variant": "forest",
     },
     "cloud_kingdom": {
-        "required": ["breathing_pacer"],
-        "select": {"pool": ["stars", "fog", "dust_motes"], "pick": (2, 3)},
-        "optional": ["aurora", "moon_glow"],
-        "vignette": "none",
+        "background": {"pool": ["stars", "aurora", "moon_glow"], "pick": (3, 4)},
+        "midground":  {"pool": ["fog", "dust_motes", "stars"], "pick": (3, 4)},
+        "foreground": {"pool": ["fog", "dust_motes"], "pick": (2, 3)},
+        "required":   ["breathing_pacer"],
+        "fauna":      [],
+        "rare_event": ["shooting_star"],
+        "vignette":   "none",
         "pacer_variant": "space",
     },
     "underground_cave": {
-        "required": ["breathing_pacer"],
-        "select": {"pool": ["candle_flicker", "dust_motes", "fog"], "pick": (2, 3)},
-        "optional": ["caustics", "bubbles"],
-        "vignette": "full_heavy",
+        "background": {"pool": ["fog", "caustics"], "pick": (2, 3)},
+        "midground":  {"pool": ["candle_flicker", "dust_motes", "caustics", "bubbles"], "pick": (3, 5)},
+        "foreground": {"pool": ["fog", "shadow_play"], "pick": (2, 3)},
+        "required":   ["breathing_pacer"],
+        "fauna":      ["cricket"],
+        "rare_event": [],
+        "vignette":   "full_heavy",
         "pacer_variant": "forest",
     },
     "tropical_lagoon": {
-        "required": ["breathing_pacer"],
-        "select": {"pool": ["water_ripples", "fireflies", "stars"], "pick": (2, 3)},
-        "optional": ["fog", "cricket"],
-        "vignette": "top_heavy",
+        "background": {"pool": ["stars", "moon_glow", "fog"], "pick": (2, 3)},
+        "midground":  {"pool": ["water_ripples", "fireflies", "bubbles", "dust_motes"], "pick": (3, 5)},
+        "foreground": {"pool": ["swaying_branches", "fog"], "pick": (2, 3)},
+        "required":   ["breathing_pacer"],
+        "fauna":      ["cricket", "sleeping_butterfly"],
+        "rare_event": ["shooting_star"],
+        "vignette":   "top_heavy",
         "pacer_variant": "ocean",
     },
     "ancient_library": {
-        "required": ["breathing_pacer"],
-        "select": {"pool": ["dust_motes", "candle_flicker", "shadow_play"], "pick": (2, 3)},
-        "optional": ["sleeping_butterfly", "stars"],
-        "vignette": "full_soft",
+        "background": {"pool": ["stars", "moon_glow", "shadow_play"], "pick": (2, 3)},
+        "midground":  {"pool": ["dust_motes", "candle_flicker", "shadow_play"], "pick": (3, 5)},
+        "foreground": {"pool": ["fog", "dust_motes"], "pick": (2, 3)},
+        "required":   ["breathing_pacer"],
+        "fauna":      ["sleeping_butterfly", "cricket"],
+        "rare_event": [],
+        "vignette":   "full_soft",
         "pacer_variant": "interior",
     },
     "floating_islands": {
-        "required": ["breathing_pacer"],
-        "select": {"pool": ["fog", "stars", "dust_motes"], "pick": (2, 3)},
-        "optional": ["falling_leaves", "aurora"],
-        "vignette": "none",
+        "background": {"pool": ["stars", "aurora", "moon_glow", "fog"], "pick": (3, 4)},
+        "midground":  {"pool": ["fog", "dust_motes", "falling_leaves"], "pick": (3, 4)},
+        "foreground": {"pool": ["fog", "dust_motes"], "pick": (2, 3)},
+        "required":   ["breathing_pacer"],
+        "fauna":      [],
+        "rare_event": ["shooting_star"],
+        "vignette":   "none",
         "pacer_variant": "space",
     },
 }
@@ -386,19 +422,19 @@ world_accents = {
 
 def _gen_stars(colors, world, story, rng):
     """A1. Twinkling stars — warm points fading in/out at staggered intervals.
-    4-8 stars, upper 40%, 6-14s durations, peak 0.25-0.50.
+    5-10 stars, upper 40%, 4-8s durations, peak 0.30-0.70.
     """
-    count = rng.randint(4, 8)
+    count = rng.randint(5, 10)
     parts = ['<!-- A1: Twinkling Stars -->\n<g id="stars">']
     star_colors = _BIBLE_COLORS["star"]
     for i in range(count):
         cx = rng.randint(5, 95)
         cy = rng.randint(5, 40)
-        r = round(rng.uniform(0.8, 2.0), 1)
+        r = round(rng.uniform(1.0, 3.0), 1)
         color = rng.choice(star_colors)
-        dur = _pick_prime_dur(6, 14, rng)
+        dur = round(rng.uniform(4, 8), 1)
         begin = round(rng.uniform(0, 10), 1)
-        peak = round(rng.uniform(0.25, 0.50), 2)
+        peak = round(rng.uniform(0.30, 0.70), 2)
         vals = f"0;0;{peak:.2f};{peak * 0.7:.2f};0"
         n_seg = len(vals.split(";")) - 1
         parts.append(
@@ -414,10 +450,10 @@ def _gen_stars(colors, world, story, rng):
 
 def _gen_shooting_star(colors, world, story, rng):
     """A2. Shooting star — single soft streak, appears once per 30-90s.
-    Always arcs downward. 6-10s visible portion.
+    Always arcs downward. 5-7s visible portion. Peak 0.50-0.80.
     """
     interval = rng.randint(30, 90)
-    vis_dur = _pick_prime_dur(6, 11, rng)
+    vis_dur = round(rng.uniform(5, 7), 1)
     x1 = rng.randint(-50, 50)
     y1 = rng.randint(-30, 20)
     x2 = rng.randint(200, 350)
@@ -427,8 +463,9 @@ def _gen_shooting_star(colors, world, story, rng):
     path = f"M{x1},{y1} Q{xm},{ym} {x2},{y2}"
     color_head = _warm_color(rng, "star")
     color_tail = _warm_color(rng, "glow")
-    # Mostly invisible with brief flash
-    vis_vals = "0;0;0.5;0.5;0;0;0;0;0;0;0;0;0"
+    # Mostly invisible with brief bright flash
+    peak = round(rng.uniform(0.50, 0.80), 2)
+    vis_vals = f"0;0;{peak};{peak};0;0;0;0;0;0;0;0;0"
     n_seg = 12
     return (
         f'<!-- A2: Shooting Star -->\n'
@@ -448,7 +485,9 @@ def _gen_shooting_star(colors, world, story, rng):
 
 
 def _gen_moon_glow(colors, world, story, rng):
-    """A3. Crescent moon glow — soft warm radial in upper 25%, breathing pulse 7-10s."""
+    """A3. Crescent moon glow — soft warm radial in upper 25%, breathing pulse 7-10s.
+    Opacity 0.30-0.60.
+    """
     cx = rng.randint(65, 85)
     cy = rng.randint(8, 22)
     halo_r = rng.randint(40, 80)
@@ -463,18 +502,18 @@ def _gen_moon_glow(colors, world, story, rng):
         f'<!-- A3: Moon Glow -->\n'
         f'<g id="moon-glow">\n'
         f'  <radialGradient id="{grad_id}">\n'
-        f'    <stop offset="0%" stop-color="{core_color}" stop-opacity="0.25"/>\n'
-        f'    <stop offset="40%" stop-color="{halo_color}" stop-opacity="0.1"/>\n'
+        f'    <stop offset="0%" stop-color="{core_color}" stop-opacity="0.35"/>\n'
+        f'    <stop offset="40%" stop-color="{halo_color}" stop-opacity="0.15"/>\n'
         f'    <stop offset="100%" stop-color="{halo_color}" stop-opacity="0"/>\n'
         f'  </radialGradient>\n'
         f'  <circle cx="{cx}%" cy="{cy}%" r="{halo_r}" fill="url(#{grad_id})">\n'
         f'    <animate attributeName="r" values="{r_lo};{r_hi};{r_lo}" dur="{dur}s" repeatCount="indefinite"\n'
         f'      calcMode="spline" keySplines="{_smil_spline(2)}"/>\n'
-        f'    <animate attributeName="opacity" values="0.45;0.60;0.45" dur="{dur}s" repeatCount="indefinite"\n'
+        f'    <animate attributeName="opacity" values="0.30;0.60;0.30" dur="{dur}s" repeatCount="indefinite"\n'
         f'      calcMode="spline" keySplines="{_smil_spline(2)}"/>\n'
         f'  </circle>\n'
-        f'  <circle cx="{cx}%" cy="{cy}%" r="{core_r}" fill="{core_color}" opacity="0.15">\n'
-        f'    <animate attributeName="opacity" values="0.12;0.18;0.12" dur="{dur}s" repeatCount="indefinite"\n'
+        f'  <circle cx="{cx}%" cy="{cy}%" r="{core_r}" fill="{core_color}" opacity="0.20">\n'
+        f'    <animate attributeName="opacity" values="0.15;0.25;0.15" dur="{dur}s" repeatCount="indefinite"\n'
         f'      calcMode="spline" keySplines="{_smil_spline(2)}"/>\n'
         f'  </circle>\n'
         f'</g>'
@@ -482,11 +521,11 @@ def _gen_moon_glow(colors, world, story, rng):
 
 
 def _gen_aurora(colors, world, story, rng):
-    """A4. Aurora / Northern Lights — very slow undulating bands, upper 30%.
-    2-4 bands, desaturated warm tones, prime-number durations.
+    """A4. Aurora / Northern Lights — slow undulating bands, upper 30%.
+    2-4 bands, desaturated warm tones, 20-35s durations. Opacity 0.15-0.35.
     """
     count = rng.randint(2, 4)
-    parts = ['<!-- A4: Aurora -->\n<g id="aurora" opacity="0.2">']
+    parts = ['<!-- A4: Aurora -->\n<g id="aurora" opacity="0.3">']
     aurora_colors = _BIBLE_COLORS["aurora"]
     for i in range(count):
         cx = rng.randint(35, 65)
@@ -494,14 +533,14 @@ def _gen_aurora(colors, world, story, rng):
         rx = rng.randint(150, 220)
         ry = rng.randint(20, 40)
         color = rng.choice(aurora_colors)
-        op_base = round(rng.uniform(0.08, 0.18), 2)
-        dur_t = _pick_prime_dur(23, 37, rng)
-        dur_o = _pick_prime_dur(29, 41, rng)
+        op_base = round(rng.uniform(0.15, 0.25), 2)
+        dur_t = _pick_prime_dur(19, 37, rng)
+        dur_o = _pick_prime_dur(23, 37, rng)
         dur_ry = _pick_prime_dur(19, 31, rng)
         tx1, ty1 = rng.randint(10, 20), rng.randint(2, 6)
         tx2, ty2 = rng.randint(-15, -5), rng.randint(1, 5)
         tx3, ty3 = rng.randint(3, 8), rng.randint(-3, -1)
-        op_hi = min(op_base + 0.10, 0.28)
+        op_hi = min(op_base + 0.10, 0.35)
         op_vals = f"{op_base:.2f};{op_base + 0.08:.2f};{op_base + 0.02:.2f};{op_hi:.2f};{op_base:.2f}"
         ry_vals = f"{ry - 3};{ry + 7};{ry - 5};{ry + 4};{ry - 3}"
         parts.append(
@@ -522,11 +561,12 @@ def _gen_aurora(colors, world, story, rng):
 # ── Category B: Atmospheric ──────────────────────────────────────────────
 
 def _gen_fog(colors, world, story, rng):
-    """B1. Drifting fog/mist — large low-opacity shapes, lower 55-85%.
-    2-4 layers, 40-80s cycles, 0.03-0.12 opacity, alternate directions.
+    """B1. Drifting fog/mist — large shapes, lower 55-85%.
+    2-4 layers, 30-50s cycles, 0.08-0.20 opacity, alternate directions.
     """
     count = rng.randint(2, 4)
-    parts = ['<!-- B1: Drifting Fog -->\n<g id="fog-layers">']
+    fog_id = f"fog-{rng.randint(100, 999)}"
+    parts = [f'<!-- B1: Drifting Fog -->\n<g id="{fog_id}">']
     fog_colors = _BIBLE_COLORS["fog"]
     for i in range(count):
         cx = rng.randint(20, 80)
@@ -534,11 +574,11 @@ def _gen_fog(colors, world, story, rng):
         rx = rng.randint(200, 350)
         ry = rng.randint(30, 60)
         color = rng.choice(fog_colors)
-        op_base = round(rng.uniform(0.03, 0.08), 2)
-        dur_t = _pick_prime_dur(41, 79, rng)
-        dur_o = _pick_prime_dur(37, 67, rng)
+        op_base = round(rng.uniform(0.08, 0.14), 2)
+        dur_t = _pick_prime_dur(29, 47, rng)
+        dur_o = _pick_prime_dur(31, 47, rng)
         drift = rng.randint(60, 120) * (1 if i % 2 == 0 else -1)
-        op_vals = f"{op_base:.2f};{op_base + 0.04:.2f};{op_base + 0.02:.2f};{min(op_base + 0.06, 0.12):.2f};{op_base:.2f}"
+        op_vals = f"{op_base:.2f};{op_base + 0.04:.2f};{op_base + 0.02:.2f};{min(op_base + 0.06, 0.20):.2f};{op_base:.2f}"
         parts.append(
             f'  <ellipse cx="{cx}%" cy="{cy}%" rx="{rx}" ry="{ry}" fill="{color}" opacity="{op_base:.2f}">\n'
             f'    <animateTransform attributeName="transform" type="translate"\n'
@@ -555,10 +595,10 @@ def _gen_fog(colors, world, story, rng):
 
 def _gen_rain(colors, world, story, rng):
     """B2. Gentle rain — thin lines drifting down at slight angle.
-    5-10 drops, 3-8 deg leftward, warm grey, 3.5-5.5s.
+    6-10 drops, 3-8 deg leftward, warm grey, 3.5-5.5s. Opacity 0.20-0.40.
     """
-    count = rng.randint(5, 10)
-    parts = ['<!-- B2: Gentle Rain -->\n<g id="rain" opacity="0.15">']
+    count = rng.randint(6, 10)
+    parts = ['<!-- B2: Gentle Rain -->\n<g id="rain" opacity="0.25">']
     rain_colors = _BIBLE_COLORS["rain"]
     for i in range(count):
         x = rng.randint(5, 95)
@@ -567,7 +607,7 @@ def _gen_rain(colors, world, story, rng):
         begin = round(rng.uniform(0, 4), 1)
         width = round(rng.uniform(0.4, 0.8), 1)
         angle_drift = rng.randint(-12, -4)
-        op = round(rng.uniform(0.2, 0.35), 2)
+        op = round(rng.uniform(0.20, 0.40), 2)
         parts.append(
             f'  <line x1="{x}%" y1="-5%" x2="{x - 1}%" y2="2%" stroke="{color}" stroke-width="{width}"\n'
             f'    stroke-linecap="round" opacity="{op}">\n'
@@ -583,17 +623,17 @@ def _gen_rain(colors, world, story, rng):
 
 def _gen_snowfall(colors, world, story, rng):
     """B3. Falling snow — soft circles in wandering bezier paths downward.
-    4-7 flakes, 14-28s, unique paths.
+    5-8 flakes, 12-22s, unique paths. Opacity 0.25-0.55.
     """
-    count = rng.randint(4, 7)
-    parts = ['<!-- B3: Falling Snow -->\n<g id="snowfall" opacity="0.25">']
+    count = rng.randint(5, 8)
+    parts = ['<!-- B3: Falling Snow -->\n<g id="snowfall" opacity="0.40">']
     snow_colors = _BIBLE_COLORS["snow"]
     for i in range(count):
-        r = round(rng.uniform(0.8, 3.0), 1)
+        r = round(rng.uniform(1.5, 4.0), 1)
         color = rng.choice(snow_colors)
-        dur = _pick_prime_dur(13, 29, rng)
+        dur = round(rng.uniform(12, 22), 1)
         begin = round(rng.uniform(0, 8), 1)
-        op = round(rng.uniform(0.25, 0.40), 2)
+        op = round(rng.uniform(0.25, 0.55), 2)
         sx = rng.randint(50, 460)
         # Build wandering bezier downward
         points = []
@@ -618,17 +658,18 @@ def _gen_snowfall(colors, world, story, rng):
 
 
 def _gen_dust_motes(colors, world, story, rng):
-    """B4. Floating dust motes — tiny particles drifting in light area.
-    3-6 motes, non-directional, 10-20s, opacity fluctuates.
+    """B4. Floating dust motes — particles drifting in light area.
+    4-8 motes, non-directional, 10-20s, opacity 0.25-0.55.
     """
-    count = rng.randint(3, 6)
-    parts = ['<!-- B4: Dust Motes -->\n<g id="dust-motes">']
+    count = rng.randint(4, 8)
+    mote_id = f"dust-motes-{rng.randint(100, 999)}"
+    parts = [f'<!-- B4: Dust Motes -->\n<g id="{mote_id}">']
     mote_color = colors.get("particle", "#FFE8C8")
     for i in range(count):
-        r = round(rng.uniform(0.6, 1.8), 1)
+        r = round(rng.uniform(1.0, 2.0), 1)
         dur = _pick_prime_dur(11, 19, rng)
         begin = round(rng.uniform(0, 6), 1)
-        peak_op = round(rng.uniform(0.15, 0.40), 2)
+        peak_op = round(rng.uniform(0.25, 0.55), 2)
         cx = rng.randint(100, 400)
         cy = rng.randint(100, 350)
         # Micro-drift path (non-directional)
@@ -651,17 +692,17 @@ def _gen_dust_motes(colors, world, story, rng):
 
 def _gen_caustics(colors, world, story, rng):
     """B5. Underwater caustics — slow-moving light patterns.
-    2-4 patterns, all properties on different prime durations.
+    2-4 patterns, all properties on different prime durations. Opacity 0.10-0.25.
     """
     count = rng.randint(2, 4)
-    parts = ['<!-- B5: Underwater Caustics -->\n<g id="caustics" opacity="0.08">']
+    parts = ['<!-- B5: Underwater Caustics -->\n<g id="caustics" opacity="0.18">']
     caustic_color = colors.get("glow", "#FFE8C8")
     for i in range(count):
         cx = rng.randint(25, 75)
         cy = rng.randint(40, 80)
         rx = rng.randint(30, 60)
         ry = rng.randint(18, 35)
-        op = round(rng.uniform(0.06, 0.14), 2)
+        op = round(rng.uniform(0.10, 0.25), 2)
         dur_rx = _pick_prime_dur(13, 23, rng)
         dur_ry = _pick_prime_dur(17, 29, rng)
         dur_t = _pick_prime_dur(19, 31, rng)
@@ -673,7 +714,7 @@ def _gen_caustics(colors, world, story, rng):
             f'    <animate attributeName="ry" values="{ry - 3};{ry + 5};{ry - 5};{ry + 3};{ry - 3}" dur="{dur_ry}s" repeatCount="indefinite"/>\n'
             f'    <animateTransform attributeName="transform" type="translate"\n'
             f'      values="0,0; {tx},{ty}; {-tx // 2},{ty + 3}; {tx - 3},{-ty // 2}; 0,0" dur="{dur_t}s" repeatCount="indefinite"/>\n'
-            f'    <animate attributeName="opacity" values="{op:.2f};{min(op + 0.06, 0.20):.2f};{op + 0.02:.2f};{min(op + 0.08, 0.20):.2f};{op:.2f}"\n'
+            f'    <animate attributeName="opacity" values="{op:.2f};{min(op + 0.06, 0.25):.2f};{op + 0.02:.2f};{min(op + 0.08, 0.25):.2f};{op:.2f}"\n'
             f'      dur="{dur_o}s" repeatCount="indefinite"/>\n'
             f'  </ellipse>'
         )
@@ -684,14 +725,16 @@ def _gen_caustics(colors, world, story, rng):
 # ── Category C: Flora ────────────────────────────────────────────────────
 
 def _gen_swaying_branches(colors, world, story, rng):
-    """C1. Swaying branches — silhouettes at frame edges, 2-5 deg, 8-15s."""
+    """C1. Swaying branches — silhouettes at frame edges, 2-5 deg, 5-10s.
+    Opacity 0.15-0.35.
+    """
     edges = rng.sample(["left", "right"], k=rng.randint(1, 2))
     branch_color = _warm_color(rng, "branch")
     parts = ['<!-- C1: Swaying Branches -->']
     for edge in edges:
-        dur = _pick_prime_dur(7, 17, rng)
+        dur = round(rng.uniform(5, 10), 1)
         sway = rng.randint(2, 5)
-        op = round(rng.uniform(0.08, 0.18), 2)
+        op = round(rng.uniform(0.15, 0.35), 2)
         gid = f"branch-{edge}"
         if edge == "left":
             py = rng.randint(80, 160)
@@ -719,18 +762,18 @@ def _gen_swaying_branches(colors, world, story, rng):
 
 def _gen_falling_leaves(colors, world, story, rng):
     """C2. Falling leaves — 2-4 ellipses spiraling down with rotation.
-    Warm earth tones, 16-28s.
+    Warm earth tones, 12-20s. Opacity 0.25-0.50.
     """
     count = rng.randint(2, 4)
     parts = ['<!-- C2: Falling Leaves -->\n<g id="falling-leaves">']
     leaf_colors = _BIBLE_COLORS["leaf"]
     for i in range(count):
-        rx = rng.randint(3, 7)
+        rx = rng.randint(4, 7)
         ry = max(2, int(rx * 0.6))
         color = rng.choice(leaf_colors)
-        dur = _pick_prime_dur(17, 29, rng)
+        dur = round(rng.uniform(12, 20), 1)
         begin = round(rng.uniform(0, 8), 1)
-        op = round(rng.uniform(0.15, 0.25), 2)
+        op = round(rng.uniform(0.25, 0.50), 2)
         sx = rng.randint(60, 450)
         pts = []
         y = -20
@@ -800,16 +843,16 @@ def _gen_closing_flowers(colors, world, story, rng):
 
 def _gen_fireflies(colors, world, story, rng):
     """D1. Fireflies — 3-5 warm dots with async glow, core+outer pairs.
-    18-28s drift, 6-12s pulse, mostly dark with brief flash.
+    18-28s drift, 4-7s pulse. Core 0.40-0.75, halo 0.10-0.25.
     """
     count = rng.randint(3, 5)
     parts = ['<!-- D1: Fireflies -->\n<g id="fireflies">']
     fly_color = colors.get("glow", "#FFD89C")
     for i in range(count):
-        core_r = round(rng.uniform(2.0, 2.8), 1)
-        outer_r = round(core_r * 3.5, 1)
+        core_r = round(rng.uniform(2.0, 3.0), 1)
+        outer_r = round(rng.uniform(7, 12), 1)
         drift_dur = _pick_prime_dur(17, 29, rng)
-        pulse_dur = _pick_prime_dur(7, 13, rng)
+        pulse_dur = round(rng.uniform(4, 7), 1)
         begin = round(rng.uniform(0, 8), 1)
         cx = rng.randint(60, 440)
         cy = rng.randint(180, 380)
@@ -817,8 +860,10 @@ def _gen_fireflies(colors, world, story, rng):
         for j in range(6):
             pts.append(f"{cx + rng.randint(-20, 20)},{cy + rng.randint(-15, 15)}")
         path = f"M{cx},{cy} C{pts[0]} {pts[1]} {pts[2]} S{pts[3]} {pts[4]}"
-        pulse_vals = "0;0.05;0.4;0.45;0.1;0;0;0"
-        outer_vals = "0;0.01;0.1;0.12;0.03;0;0;0"
+        core_peak = round(rng.uniform(0.40, 0.75), 2)
+        pulse_vals = f"0;0.05;{core_peak:.2f};{core_peak * 0.95:.2f};0.1;0;0;0"
+        halo_peak = round(rng.uniform(0.10, 0.25), 2)
+        outer_vals = f"0;0.02;{halo_peak:.2f};{halo_peak * 0.9:.2f};0.03;0;0;0"
         n_seg = 7
         parts.append(
             f'  <circle cx="0" cy="0" r="{core_r}" fill="{fly_color}" opacity="0">\n'
@@ -841,7 +886,9 @@ def _gen_fireflies(colors, world, story, rng):
 
 
 def _gen_sleeping_butterfly(colors, world, story, rng):
-    """D2. Sleeping butterfly/moth — 1-2 wing pairs, 10-20 deg open/close, 8-12s."""
+    """D2. Sleeping butterfly/moth — 1-2 wing pairs, 10-20 deg open/close, 8-12s.
+    Opacity 0.20-0.40.
+    """
     count = rng.randint(1, 2)
     parts = ['<!-- D2: Sleeping Butterfly -->']
     wing_colors = ["#C8A080", "#B8946A", "#D4B890", "#A08060"]
@@ -857,7 +904,7 @@ def _gen_sleeping_butterfly(colors, world, story, rng):
         wing_close_l = wing_open_l - rng.randint(10, 20)
         wing_open_r = -wing_open_l
         wing_close_r = -wing_close_l
-        op = round(rng.uniform(0.12, 0.18), 2)
+        op = round(rng.uniform(0.20, 0.40), 2)
         parts.append(
             f'<g id="butterfly-{i}" transform="translate({bx}%, {by}%)">\n'
             f'  <ellipse cx="-5" cy="0" rx="{rx}" ry="{ry}" fill="{wing_color}" opacity="{op}"\n'
@@ -881,7 +928,9 @@ def _gen_sleeping_butterfly(colors, world, story, rng):
 
 
 def _gen_sleeping_owl(colors, world, story, rng):
-    """D3. Sleeping owl — silhouette at edge, eyes close one-time (fill="freeze")."""
+    """D3. Sleeping owl — silhouette at edge, eyes close one-time (fill="freeze").
+    Opacity 0.20-0.40.
+    """
     ox = rng.choice([rng.randint(80, 92), rng.randint(8, 20)])
     oy = rng.randint(30, 50)
     shadow_color = _warm_color(rng, "shadow")
@@ -889,7 +938,7 @@ def _gen_sleeping_owl(colors, world, story, rng):
     eye_begin = rng.randint(10, 60)
     eye_dur = rng.randint(20, 40)
     eye2_delay = round(rng.uniform(0.5, 2.0), 1)
-    op = round(rng.uniform(0.15, 0.25), 2)
+    op = round(rng.uniform(0.20, 0.40), 2)
     return (
         f'<!-- D3: Sleeping Owl -->\n'
         f'<g id="sleeping-owl" transform="translate({ox}%, {oy}%)" opacity="{op}">\n'
@@ -915,16 +964,18 @@ def _gen_sleeping_owl(colors, world, story, rng):
 
 
 def _gen_cricket(colors, world, story, rng):
-    """D4. Resting cricket — 1-2 tiny silhouettes, rare twitches every 15-25s."""
+    """D4. Resting cricket — 1-2 tiny silhouettes, twitches every 8-15s.
+    Opacity 0.15-0.30.
+    """
     count = rng.randint(1, 2)
     parts = ['<!-- D4: Cricket -->']
     bug_color = _warm_color(rng, "shadow")
     for i in range(count):
         bx = rng.randint(40, 80)
         by = rng.randint(86, 94)
-        op = round(rng.uniform(0.08, 0.15), 2)
-        leg_dur = _pick_prime_dur(17, 23, rng)
-        ant_dur = _pick_prime_dur(13, 19, rng)
+        op = round(rng.uniform(0.15, 0.30), 2)
+        leg_dur = _pick_prime_dur(7, 13, rng)
+        ant_dur = _pick_prime_dur(7, 13, rng)
         twitch = rng.randint(3, 8)
         # Mostly still with rare twitch
         leg_vals = "0,2,1; 0,2,1; 0,2,1; 0,2,1; 0,2,1; 0,2,1; 0,2,1; " + f"{twitch},2,1; 0,2,1; 0,2,1"
@@ -953,22 +1004,22 @@ def _gen_cricket(colors, world, story, rng):
 
 def _gen_water_ripples(colors, world, story, rng):
     """E1. Gentle ripples — expanding/fading concentric rings.
-    1-2 sources, 2-4 rings each, 10-16s.
+    2-3 sources, 2-4 rings each, 6-10s. Opacity 0.20-0.45.
     """
-    sources = rng.randint(1, 2)
+    sources = rng.randint(2, 3)
     parts = ['<!-- E1: Water Ripples -->']
     ring_color = colors.get("particle", "#D4C8B8")
     for s in range(sources):
         sx = rng.randint(25, 75)
         sy = rng.randint(60, 80)
         ring_count = rng.randint(2, 4)
-        dur = _pick_prime_dur(11, 17, rng)
+        dur = round(rng.uniform(6, 10), 1)
         stagger = round(dur / ring_count, 1)
         max_r = rng.randint(30, 60)
         rings = []
         for ri in range(ring_count):
             begin = round(stagger * ri, 1)
-            op_peak = round(0.2 - ri * 0.03, 2)
+            op_peak = round(0.35 - ri * 0.05, 2)
             rings.append(
                 f'  <circle cx="0" cy="0" r="5" fill="none" stroke="{ring_color}" stroke-width="0.5" opacity="0">\n'
                 f'    <animate attributeName="r" values="3;{max_r // 2};{max_r}" dur="{dur}s" begin="{begin}s" repeatCount="indefinite"\n'
@@ -988,18 +1039,19 @@ def _gen_water_ripples(colors, world, story, rng):
 
 
 def _gen_bubbles(colors, world, story, rng):
-    """E2. Slow underwater bubbles — 2-4 stroke-only circles, slow rise.
-    Grow as they rise, 18-30s. Exception: upward motion is physically correct.
+    """E2. Slow underwater bubbles — 3-5 stroke-only circles, slow rise.
+    Grow as they rise, 14-22s. Exception: upward motion is physically correct.
+    Opacity 0.25-0.50.
     """
-    count = rng.randint(2, 4)
-    parts = ['<!-- E2: Slow Bubbles -->\n<g id="bubbles" opacity="0.2">']
+    count = rng.randint(3, 5)
+    parts = ['<!-- E2: Slow Bubbles -->\n<g id="bubbles" opacity="0.35">']
     bubble_color = colors.get("particle", "#E8D8C4")
     for i in range(count):
-        r_start = round(rng.uniform(1.5, 3.0), 1)
-        r_end = round(r_start + rng.uniform(1.0, 2.0), 1)
-        dur = _pick_prime_dur(17, 31, rng)
+        r_start = round(rng.uniform(2.0, 5.0), 1)
+        r_end = round(r_start + rng.uniform(1.0, 2.5), 1)
+        dur = round(rng.uniform(14, 22), 1)
         begin = round(rng.uniform(0, 8), 1)
-        op = round(rng.uniform(0.15, 0.28), 2)
+        op = round(rng.uniform(0.25, 0.50), 2)
         sx = rng.randint(80, 430)
         sy_start = 350 + rng.randint(0, 100)
         pts = []
@@ -1027,28 +1079,28 @@ def _gen_bubbles(colors, world, story, rng):
 
 def _gen_candle_flicker(colors, world, story, rng):
     """F1. Candle/lantern flicker — radialGradient, prime-number durations.
-    Irregular +-15% flicker band. Multiple prime durations per property.
+    Irregular +-15% flicker band. 3-5s cycles. Opacity 0.40-0.70.
     """
     cx = rng.randint(20, 80)
     cy = rng.randint(45, 75)
     glow_r = rng.randint(30, 60)
     core_r = rng.randint(4, 6)
-    dur_o = _pick_prime_dur(5, 7, rng)
-    dur_r = _pick_prime_dur(6, 8, rng)
-    dur_core = _pick_prime_dur(4, 6, rng)
+    dur_o = round(rng.uniform(3, 5), 1)
+    dur_r = round(rng.uniform(3.5, 5.5), 1)
+    dur_core = round(rng.uniform(3, 5), 1)
     glow_outer = colors.get("glow", "#FFCA78")
     glow_inner = colors.get("star", "#FFF0D0")
     grad_id = f"flameG{rng.randint(100, 999)}"
-    op_vals = ";".join([f"{0.5 + rng.uniform(-0.08, 0.10):.2f}" for _ in range(10)])
+    op_vals = ";".join([f"{0.55 + rng.uniform(-0.12, 0.15):.2f}" for _ in range(10)])
     r_vals = ";".join([str(glow_r + rng.randint(-4, 6)) for _ in range(10)])
-    core_op = ";".join([f"{0.25 + rng.uniform(0, 0.13):.2f}" for _ in range(7)])
+    core_op = ";".join([f"{0.35 + rng.uniform(0, 0.18):.2f}" for _ in range(7)])
     cy_vals = ";".join([str(-2 + rng.randint(-2, 1)) for _ in range(5)])
     return (
         f'<!-- F1: Candle Flicker -->\n'
         f'<g id="candle-glow" transform="translate({cx}%, {cy}%)">\n'
         f'  <radialGradient id="{grad_id}">\n'
-        f'    <stop offset="0%" stop-color="{glow_inner}" stop-opacity="0.4"/>\n'
-        f'    <stop offset="30%" stop-color="{glow_outer}" stop-opacity="0.15"/>\n'
+        f'    <stop offset="0%" stop-color="{glow_inner}" stop-opacity="0.55"/>\n'
+        f'    <stop offset="30%" stop-color="{glow_outer}" stop-opacity="0.25"/>\n'
         f'    <stop offset="100%" stop-color="{glow_outer}" stop-opacity="0"/>\n'
         f'  </radialGradient>\n'
         f'  <circle cx="0" cy="0" r="{glow_r}" fill="url(#{grad_id})">\n'
@@ -1058,24 +1110,24 @@ def _gen_candle_flicker(colors, world, story, rng):
         f'    <animate attributeName="r" values="{r_vals}"\n'
         f'      dur="{dur_r}s" repeatCount="indefinite"/>\n'
         f'  </circle>\n'
-        f'  <circle cx="0" cy="-3" r="{core_r}" fill="{glow_inner}" opacity="0.3">\n'
+        f'  <circle cx="0" cy="-3" r="{core_r}" fill="{glow_inner}" opacity="0.45">\n'
         f'    <animate attributeName="opacity" values="{core_op}"\n'
         f'      dur="{dur_core}s" repeatCount="indefinite"/>\n'
         f'    <animate attributeName="cy" values="{cy_vals}"\n'
-        f'      dur="{_pick_prime_dur(4, 6, rng)}s" repeatCount="indefinite"/>\n'
+        f'      dur="{round(rng.uniform(3, 5), 1)}s" repeatCount="indefinite"/>\n'
         f'  </circle>\n'
         f'</g>'
     )
 
 
 def _gen_shadow_play(colors, world, story, rng):
-    """F2. Shadow play — soft dark shapes, 12-25s, 0.03-0.10 opacity."""
+    """F2. Shadow play — soft dark shapes, 10-20s, 0.06-0.15 opacity."""
     count = rng.randint(1, 3)
-    parts = ['<!-- F2: Shadow Play -->\n<g id="window-shadows" opacity="0.06">']
+    parts = ['<!-- F2: Shadow Play -->\n<g id="window-shadows" opacity="0.10">']
     shadow_color = _warm_color(rng, "shadow")
     for i in range(count):
-        dur = _pick_prime_dur(13, 23, rng)
-        op = round(rng.uniform(0.03, 0.10), 2)
+        dur = round(rng.uniform(10, 20), 1)
+        op = round(rng.uniform(0.06, 0.15), 2)
         if rng.random() < 0.5:
             x1 = rng.randint(40, 200)
             y1 = rng.randint(80, 200)
@@ -1111,9 +1163,9 @@ def _gen_shadow_play(colors, world, story, rng):
 
 def _gen_breathing_pacer(colors, world, story, rng):
     """F3. Breathing glow orb (MANDATORY) — primary sleep cue.
-    4 world-specific variants via pacer_variant. dur=8s base.
+    4 world-specific variants via pacer_variant. dur=5s (12 bpm). Opacity 0.35-0.65.
     """
-    dur = 8
+    dur = 5
     glow_color = colors.get("glow", "#FFD89C")
     star_color = colors.get("star", "#FFF5E0")
     mapping = WORLD_ELEMENTS.get(world, WORLD_ELEMENTS["enchanted_forest"])
@@ -1127,8 +1179,8 @@ def _gen_breathing_pacer(colors, world, story, rng):
             f'<!-- F3: Breathing Pacer (Ocean) -->\n'
             f'<g id="breath-pacer">\n'
             f'  <radialGradient id="{grad_id}">\n'
-            f'    <stop offset="0%" stop-color="{glow_color}" stop-opacity="0.4"/>\n'
-            f'    <stop offset="40%" stop-color="{glow_color}" stop-opacity="0.15"/>\n'
+            f'    <stop offset="0%" stop-color="{glow_color}" stop-opacity="0.50"/>\n'
+            f'    <stop offset="40%" stop-color="{glow_color}" stop-opacity="0.20"/>\n'
             f'    <stop offset="100%" stop-color="{glow_color}" stop-opacity="0"/>\n'
             f'  </radialGradient>\n'
             f'  <ellipse cx="{cx}" cy="{cy}" rx="{rx_base}" ry="{ry_base}" fill="url(#{grad_id})">\n'
@@ -1136,7 +1188,7 @@ def _gen_breathing_pacer(colors, world, story, rng):
             f'      calcMode="spline" keySplines="{_smil_spline(2)}"/>\n'
             f'    <animate attributeName="rx" values="{rx_base - 2};{rx_base + 2};{rx_base - 2}" dur="{dur}s" repeatCount="indefinite"\n'
             f'      calcMode="spline" keySplines="{_smil_spline(2)}"/>\n'
-            f'    <animate attributeName="opacity" values="0.3;0.5;0.3" dur="{dur}s" repeatCount="indefinite"\n'
+            f'    <animate attributeName="opacity" values="0.35;0.65;0.35" dur="{dur}s" repeatCount="indefinite"\n'
             f'      calcMode="spline" keySplines="{_smil_spline(2)}"/>\n'
             f'  </ellipse>\n'
             f'</g>'
@@ -1148,14 +1200,14 @@ def _gen_breathing_pacer(colors, world, story, rng):
             f'<!-- F3: Breathing Pacer (Space) -->\n'
             f'<g id="breath-pacer">\n'
             f'  <radialGradient id="{grad_id}">\n'
-            f'    <stop offset="0%" stop-color="{star_color}" stop-opacity="0.35"/>\n'
-            f'    <stop offset="60%" stop-color="{glow_color}" stop-opacity="0.1"/>\n'
+            f'    <stop offset="0%" stop-color="{star_color}" stop-opacity="0.45"/>\n'
+            f'    <stop offset="60%" stop-color="{glow_color}" stop-opacity="0.15"/>\n'
             f'    <stop offset="100%" stop-color="{glow_color}" stop-opacity="0"/>\n'
             f'  </radialGradient>\n'
             f'  <circle cx="{cx}" cy="{cy}" r="{r_base}" fill="url(#{grad_id})">\n'
             f'    <animate attributeName="r" values="{r_base - 5};{r_base + 3};{r_base - 5}" dur="{dur}s" repeatCount="indefinite"\n'
             f'      calcMode="spline" keySplines="{_smil_spline(2)}"/>\n'
-            f'    <animate attributeName="opacity" values="0.3;0.5;0.3" dur="{dur}s" repeatCount="indefinite"\n'
+            f'    <animate attributeName="opacity" values="0.35;0.60;0.35" dur="{dur}s" repeatCount="indefinite"\n'
             f'      calcMode="spline" keySplines="{_smil_spline(2)}"/>\n'
             f'  </circle>\n'
             f'</g>'
@@ -1167,14 +1219,14 @@ def _gen_breathing_pacer(colors, world, story, rng):
             f'<!-- F3: Breathing Pacer (Interior) -->\n'
             f'<g id="breath-pacer">\n'
             f'  <radialGradient id="{grad_id}">\n'
-            f'    <stop offset="0%" stop-color="{glow_color}" stop-opacity="0.45"/>\n'
-            f'    <stop offset="40%" stop-color="{glow_color}" stop-opacity="0.15"/>\n'
+            f'    <stop offset="0%" stop-color="{glow_color}" stop-opacity="0.55"/>\n'
+            f'    <stop offset="40%" stop-color="{glow_color}" stop-opacity="0.20"/>\n'
             f'    <stop offset="100%" stop-color="{glow_color}" stop-opacity="0"/>\n'
             f'  </radialGradient>\n'
             f'  <circle cx="{cx}" cy="{cy}" r="{r_base}" fill="url(#{grad_id})">\n'
             f'    <animate attributeName="r" values="{r_base - 4};{r_base + 2};{r_base - 4}" dur="{dur}s" repeatCount="indefinite"\n'
             f'      calcMode="spline" keySplines="{_smil_spline(2)}"/>\n'
-            f'    <animate attributeName="opacity" values="0.35;0.55;0.35" dur="{dur}s" repeatCount="indefinite"\n'
+            f'    <animate attributeName="opacity" values="0.40;0.65;0.40" dur="{dur}s" repeatCount="indefinite"\n'
             f'      calcMode="spline" keySplines="{_smil_spline(2)}"/>\n'
             f'  </circle>\n'
             f'</g>'
@@ -1186,14 +1238,14 @@ def _gen_breathing_pacer(colors, world, story, rng):
             f'<!-- F3: Breathing Pacer (Forest) -->\n'
             f'<g id="breath-pacer">\n'
             f'  <radialGradient id="{grad_id}">\n'
-            f'    <stop offset="0%" stop-color="{glow_color}" stop-opacity="0.45"/>\n'
-            f'    <stop offset="50%" stop-color="{glow_color}" stop-opacity="0.15"/>\n'
+            f'    <stop offset="0%" stop-color="{glow_color}" stop-opacity="0.55"/>\n'
+            f'    <stop offset="50%" stop-color="{glow_color}" stop-opacity="0.20"/>\n'
             f'    <stop offset="100%" stop-color="{glow_color}" stop-opacity="0"/>\n'
             f'  </radialGradient>\n'
             f'  <circle cx="{cx}" cy="{cy}" r="{r_base}" fill="url(#{grad_id})">\n'
             f'    <animate attributeName="r" values="{r_base - 3};{r_base + 3};{r_base - 3}" dur="{dur}s" repeatCount="indefinite"\n'
             f'      calcMode="spline" keySplines="{_smil_spline(2)}"/>\n'
-            f'    <animate attributeName="opacity" values="0.35;0.55;0.35" dur="{dur}s" repeatCount="indefinite"\n'
+            f'    <animate attributeName="opacity" values="0.40;0.65;0.40" dur="{dur}s" repeatCount="indefinite"\n'
             f'      calcMode="spline" keySplines="{_smil_spline(2)}"/>\n'
             f'  </circle>\n'
             f'</g>'
@@ -1203,7 +1255,7 @@ def _gen_breathing_pacer(colors, world, story, rng):
 # ── Category G: Environmental ────────────────────────────────────────────
 
 def _gen_chimney_smoke(colors, world, story, rng):
-    """G1. Chimney wisps — 1-3 expanding wisps, 12-20s, 0.06-0.10 opacity."""
+    """G1. Chimney wisps — 1-3 expanding wisps, 12-20s, 0.08-0.15 opacity."""
     count = rng.randint(1, 3)
     sx = rng.randint(55, 80)
     sy = rng.randint(18, 30)
@@ -1213,7 +1265,7 @@ def _gen_chimney_smoke(colors, world, story, rng):
         color = rng.choice(smoke_colors)
         dur = _pick_prime_dur(11, 19, rng)
         begin = round(rng.uniform(0, 6), 1)
-        op_peak = round(rng.uniform(0.06, 0.10), 2)
+        op_peak = round(rng.uniform(0.08, 0.15), 2)
         rx_start = rng.randint(5, 8)
         rx_end = rx_start * rng.randint(3, 5)
         ry_start = max(2, int(rx_start * 0.5))
@@ -1237,11 +1289,13 @@ def _gen_chimney_smoke(colors, world, story, rng):
 
 
 def _gen_wind_grass(colors, world, story, rng):
-    """G2. Wind through grass — 8-15 blades, staggered begin delays (traveling wave)."""
+    """G2. Wind through grass — 8-15 blades, staggered begin delays (traveling wave).
+    5-10s sway cycle. Opacity 0.15-0.35.
+    """
     count = rng.randint(8, 15)
-    parts = ['<!-- G2: Wind Through Grass -->\n<g id="grass-wind" opacity="0.12">']
+    parts = ['<!-- G2: Wind Through Grass -->\n<g id="grass-wind" opacity="0.25">']
     grass_color = _warm_color(rng, "shadow")
-    dur = _pick_prime_dur(7, 11, rng)
+    dur = round(rng.uniform(5, 10), 1)
     sway = rng.randint(3, 6)
     stagger = round(rng.uniform(0.3, 0.6), 2)
     for i in range(count):
@@ -1439,10 +1493,11 @@ def _should_include_optional(elem_name, story, rng):
 
 
 def generate_svg_overlay(axes: dict, story: dict) -> str:
-    """Generate an animated SVG overlay using the SMIL Animation Bible system.
+    """Generate an animated SVG overlay using the 3-layer system.
 
-    Uses WORLD_ELEMENTS mapping with required/select/optional structure.
-    Tracks <5KB size budget. Validates drowsiness guardrails.
+    Layers: background (4-6), midground (4-7), foreground (3-5).
+    Plus fauna (1-2), rare events (0-1), vignette.
+    Target: 12-20 elements total. Budget: 8KB.
     """
     world = axes["world_setting"]
     palette = axes["palette"]
@@ -1476,56 +1531,86 @@ def generate_svg_overlay(axes: dict, story: dict) -> str:
   </defs>''')
 
     element_parts = []
-    budget_remaining = 3600  # ~5000 total - ~1400 fixed overhead
+    budget_remaining = 6600  # ~8000 total - ~1400 fixed overhead
 
-    # 1. Required: breathing pacer (always)
-    for elem_name in mapping["required"]:
+    def _pick_from_layer(layer_key):
+        """Pick elements from a layer pool, respecting budget."""
+        nonlocal budget_remaining
+        layer = mapping.get(layer_key)
+        if not layer:
+            return
+        pool = layer["pool"][:]
+        rng.shuffle(pool)
+        pick_min, pick_max = layer["pick"]
+        pick_count = rng.randint(pick_min, pick_max)
+
+        # Prioritize character-aware elements in this layer
+        char_elements = _character_aware_elements(story)
+        for ce in char_elements:
+            if ce in pool:
+                pool.remove(ce)
+                pool.insert(0, ce)
+
+        selected = 0
+        for elem_name in pool:
+            if selected >= pick_count or budget_remaining < 200:
+                break
+            if elem_name not in ELEMENT_GENERATORS:
+                continue
+            svg = ELEMENT_GENERATORS[elem_name](colors, world, story, rng)
+            size = _svg_size(svg)
+            if budget_remaining - size >= 0:
+                element_parts.append(svg)
+                budget_remaining -= size
+                selected += 1
+
+    # 1. Required: breathing pacer (always first)
+    for elem_name in mapping.get("required", []):
+        if elem_name not in ELEMENT_GENERATORS:
+            continue
         svg = ELEMENT_GENERATORS[elem_name](colors, world, story, rng)
         element_parts.append(svg)
         budget_remaining -= _svg_size(svg)
 
-    # 2. Select from pool
-    pool = mapping["select"]["pool"][:]
-    rng.shuffle(pool)
-    pick_min, pick_max = mapping["select"]["pick"]
-    pick_count = rng.randint(pick_min, pick_max)
+    # 2. Background layer (4-6 elements: atmosphere, depth)
+    _pick_from_layer("background")
 
-    # Prioritize character-aware elements
-    char_elements = _character_aware_elements(story)
-    for ce in char_elements:
-        if ce in pool:
-            pool.remove(ce)
-            pool.insert(0, ce)
-        elif ce in ELEMENT_GENERATORS:
-            pool.insert(0, ce)
+    # 3. Midground layer (4-7 elements: living world)
+    _pick_from_layer("midground")
 
-    selected = 0
-    for elem_name in pool:
-        if selected >= pick_count or budget_remaining < 300:
-            break
-        if elem_name not in ELEMENT_GENERATORS:
-            continue
-        svg = ELEMENT_GENERATORS[elem_name](colors, world, story, rng)
-        size = _svg_size(svg)
-        if budget_remaining - size >= 0:
-            element_parts.append(svg)
-            budget_remaining -= size
-            selected += 1
+    # 4. Foreground layer (2-3 elements: framing, close particles)
+    _pick_from_layer("foreground")
 
-    # 3. Optional elements
-    for elem_name in mapping.get("optional", []):
-        if budget_remaining < 200:
-            break
-        if elem_name not in ELEMENT_GENERATORS:
-            continue
-        if _should_include_optional(elem_name, story, rng):
+    # 5. Fauna detail (pick 1-2 from fauna list)
+    fauna_pool = [f for f in mapping.get("fauna", []) if f in ELEMENT_GENERATORS]
+    if fauna_pool:
+        rng.shuffle(fauna_pool)
+        char_elements = _character_aware_elements(story)
+        for ce in char_elements:
+            if ce in fauna_pool:
+                fauna_pool.remove(ce)
+                fauna_pool.insert(0, ce)
+        fauna_count = min(rng.randint(1, 2), len(fauna_pool))
+        for elem_name in fauna_pool[:fauna_count]:
+            if budget_remaining < 200:
+                break
             svg = ELEMENT_GENERATORS[elem_name](colors, world, story, rng)
             size = _svg_size(svg)
             if budget_remaining - size >= 0:
                 element_parts.append(svg)
                 budget_remaining -= size
 
-    # 4. Vignette (always)
+    # 6. Rare event (0-1 from rare_event list)
+    rare_pool = [r for r in mapping.get("rare_event", []) if r in ELEMENT_GENERATORS]
+    if rare_pool and rng.random() < 0.7 and budget_remaining >= 300:
+        elem_name = rng.choice(rare_pool)
+        svg = ELEMENT_GENERATORS[elem_name](colors, world, story, rng)
+        size = _svg_size(svg)
+        if budget_remaining - size >= 0:
+            element_parts.append(svg)
+            budget_remaining -= size
+
+    # 7. Vignette (always)
     vig_style = mapping.get("vignette", "full_soft")
     vig = _gen_vignette(vig_style, colors)
     if vig:
@@ -1574,8 +1659,8 @@ def _is_warm_color(hex_color: str) -> bool:
 def validate_overlay_drowsiness(svg_str: str) -> list:
     """Validate SVG overlay against drowsiness-inducing design principles.
 
-    Rules: no upward motion, min 4s duration, max 0.60 opacity,
-    max 10 elements/group, warm colors only, exactly 1 breathing pacer.
+    Rules: no upward motion, min 3s duration, max 0.80 opacity,
+    max 20 elements/group, warm colors only, exactly 1 breathing pacer.
     """
     warnings = []
 
@@ -1610,13 +1695,13 @@ def validate_overlay_drowsiness(svg_str: str) -> list:
             if float(yv) < -50:
                 warnings.append(f"Upward translate: y={yv}")
 
-    # Rule 2: Min duration >= 4s
+    # Rule 2: Min duration >= 3s
     for m in _re.finditer(r'dur="(\d+(?:\.\d+)?)s?"', svg_str):
         dur = float(m.group(1))
-        if dur < 4.0:
-            warnings.append(f"Duration too short: {dur}s (min 4s)")
+        if dur < 3.0:
+            warnings.append(f"Duration too short: {dur}s (min 3s)")
 
-    # Rule 3: Max opacity 0.60 (light elements only, skip vignettes)
+    # Rule 3: Max opacity 0.80 (light elements only, skip vignettes)
     for m in _re.finditer(r'opacity="([^"]*)"', svg_str):
         val = m.group(1)
         pos = m.start()
@@ -1629,8 +1714,8 @@ def validate_overlay_drowsiness(svg_str: str) -> list:
             continue
         try:
             op = float(val)
-            if op > 0.61:
-                warnings.append(f"Light opacity too high: {op:.2f} (max 0.60)")
+            if op > 0.81:
+                warnings.append(f"Light opacity too high: {op:.2f} (max 0.80)")
         except ValueError:
             pass
 
@@ -1646,12 +1731,12 @@ def validate_overlay_drowsiness(svg_str: str) -> list:
                 continue
             try:
                 op = float(v)
-                if op > 0.61:
-                    warnings.append(f"Animated opacity peak: {op:.2f} (max 0.60)")
+                if op > 0.81:
+                    warnings.append(f"Animated opacity peak: {op:.2f} (max 0.80)")
             except ValueError:
                 pass
 
-    # Rule 4: Element count per group <= 10
+    # Rule 4: Element count per group <= 20
     sections = _re.split(r'<!--\s*(.*?)\s*-->', svg_str)
     current_label = ""
     for i, section in enumerate(sections):
@@ -1659,7 +1744,7 @@ def validate_overlay_drowsiness(svg_str: str) -> list:
             current_label = section
         elif i % 2 == 0 and current_label:
             elements = len(_re.findall(r'<(?:circle|ellipse|rect|path|line|polygon)\s', section))
-            if elements > 10:
+            if elements > 20:
                 warnings.append(f"Too many elements in '{current_label}': {elements}")
 
     # Rule 5: Warm colors only
