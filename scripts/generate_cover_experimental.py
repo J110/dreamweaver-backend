@@ -1688,12 +1688,79 @@ def validate_overlay_drowsiness(svg_str: str) -> list:
 
 # ── Auto-select axes from story metadata ────────────────────────────────
 
+def _infer_character_type(story: dict) -> str:
+    """Infer lead_character_type from title/description when not explicitly set.
+
+    Uses the protagonist phrase (extracted from description) to determine
+    if the lead character is non-human. This avoids false positives from
+    keywords that appear in settings or supporting characters.
+    """
+    import re as _re
+
+    # Get the protagonist phrase from the description
+    char_phrase = _extract_character_phrase(story).lower()
+    title = story.get("title", "").lower()
+
+    # Extract title subject: "The Owl's Goodnight" → "owl"
+    title_subject = ""
+    title_match = _re.match(r"^the\s+(\w+(?:'s)?)\s+", title)
+    if title_match:
+        title_subject = title_match.group(1).rstrip("'s").rstrip("s")
+
+    # Combined text to check: protagonist phrase + title subject
+    check_text = f"{char_phrase} {title_subject}"
+
+    # Check non-human keywords FIRST (before human indicators)
+    # This ensures "a young fox" matches "fox" → animal, not "young" → human
+    keyword_map = [
+        # Birds
+        (["owl", "parrot", "eagle", "sparrow", "robin", "heron", "penguin",
+          "flamingo", "peacock", "hummingbird", "dove", "crow", "raven"], "bird"),
+        # Sea creatures
+        (["dolphin", "whale", "jellyfish", "octopus", "seahorse", "coral",
+          "fish", "shark", "seal", "turtle", "crab", "starfish",
+          "mermaid", "ocean spirit"], "sea_creature"),
+        # Insects
+        (["firefly", "butterfly", "caterpillar", "moth", "bee", "ladybug",
+          "cricket", "dragonfly", "beetle", "ant", "spider"], "insect"),
+        # Animals (mammals/reptiles)
+        (["rabbit", "bunny", "fox", "bear", "deer", "mouse", "squirrel",
+          "hedgehog", "kitten", "puppy", "wolf", "tiger", "lion", "elephant",
+          "monkey", "panda", "raccoon", "otter", "badger", "tortoise",
+          "dinosaur", "dragon", "frog", "gecko", "chameleon"], "animal"),
+        # Celestial — include "moon" and "star" (safe: only checked in protagonist phrase)
+        (["moon", "star", "comet", "sun", "moonbeam", "moonlight",
+          "starlight", "aurora"], "celestial"),
+        # Atmospheric / weather
+        (["cloud", "raindrop", "snowflake", "breeze", "drizzle", "thunder",
+          "rainbow"], "atmospheric"),
+        # Plants
+        (["flower", "tree", "leaf", "seed", "vine", "mushroom", "petal",
+          "blossom", "bamboo"], "plant"),
+        # Objects
+        (["lantern", "clock", "teacup", "chai", "kite", "bell",
+          "candle", "lamp", "compass", "pebble", "stone",
+          "feather", "blanket", "pillow"], "object"),
+        # Robot / mechanical
+        (["robot", "automaton", "clockwork", "mechanical"], "robot"),
+    ]
+
+    for keywords, char_type in keyword_map:
+        for kw in keywords:
+            if _re.search(r'\b' + _re.escape(kw) + r'\b', check_text):
+                return char_type
+
+    return "human"
+
+
 def auto_select_axes(story: dict, overrides: dict = None) -> dict:
     """Select 7 diversity axes from story metadata with optional overrides."""
     overrides = overrides or {}
     theme = story.get("theme", "fantasy")
     age_group = story.get("age_group", "6-8")
-    char_type = story.get("lead_character_type", "human")
+    char_type = story.get("lead_character_type", "")
+    if not char_type:
+        char_type = _infer_character_type(story)
 
     # World setting
     world_options = THEME_TO_WORLD.get(theme, list(WORLD_SETTINGS.keys()))

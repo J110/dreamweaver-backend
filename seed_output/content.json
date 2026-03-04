@@ -10177,5 +10177,45 @@
       "soundscapePreset": "starryNight",
       "musicLoop": "cosmicSynth"
     }
+  },
+  {
+    "id": "gen-e47bcd61e515",
+    "title": "Stripe and the Whispering Bamboo",
+    "type": "song",
+    "description": "A prehistoric tiger cub discovers his true self beneath the rustling bamboo grove, learning that his stripes are not just marks but the map of his journey.",
+    "language": "en",
+    "theme": "nature",
+    "age_group": "2-5",
+    "cover": "/covers/gen-e47bcd61e515.svg"
+  },
+  {
+    "id": "gen-4ddee3cbe031",
+    "title": "Lumi and the Whispering Petals",
+    "type": "poem",
+    "description": "A gentle garden robot named Lumi tends to an enchanted greenhouse, where she befriends a lonely firefly and learns the magic of friendship and nature's quiet beauty.",
+    "language": "en",
+    "theme": "nature",
+    "age_group": "2-5",
+    "cover": "/covers/gen-4ddee3cbe031.svg"
+  },
+  {
+    "id": "gen-50e929bf696c",
+    "title": "Chai's Moonlit Steam Song",
+    "type": "story",
+    "description": "A tiny porcelain teacup named Chai hums a gentle lullaby as moonlight dances through the kitchen, discovering the warmth of family and the quiet magic of night.",
+    "language": "en",
+    "theme": "nature",
+    "age_group": "2-5",
+    "cover": "/covers/gen-50e929bf696c.svg"
+  },
+  {
+    "id": "gen-8440041cfc57",
+    "title": "Pebble's Moonlit Shell Song",
+    "type": "song",
+    "description": "A gentle lullaby about a little tortoise named Pebble, drifting to sleep under the stars in a magical Indian-inspired riverbank, wrapped in the comfort of moonlight and soft breezes.",
+    "language": "en",
+    "theme": "bedtime",
+    "age_group": "2-5",
+    "cover": "/covers/gen-8440041cfc57.svg"
   }
 ]
