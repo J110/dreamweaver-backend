@@ -665,14 +665,14 @@ def _gen_filter_water_flow(region, rng):
     variant = region.get("context_variant", "lake")
     seed = rng.randint(1, 999)
 
-    # Context-based parameter ranges
+    # Context-based parameter ranges (subtle cinemagraph — gentle motion, not warping)
     params = {
-        "ocean":      {"freq_x": (0.008, 0.012), "freq_y": (0.025, 0.035), "octaves": (3, 4), "scale": (14, 20), "dur_freq": (12, 16), "dur_scale": (13, 17)},
-        "lake":       {"freq_x": (0.012, 0.016), "freq_y": (0.030, 0.040), "octaves": (2, 3), "scale": (10, 14), "dur_freq": (10, 14), "dur_scale": (12, 16)},
-        "pond":       {"freq_x": (0.016, 0.020), "freq_y": (0.040, 0.050), "octaves": (2, 2), "scale": (8, 12),  "dur_freq": (8, 12),  "dur_scale": (10, 14)},
-        "river":      {"freq_x": (0.010, 0.014), "freq_y": (0.040, 0.050), "octaves": (2, 3), "scale": (12, 18), "dur_freq": (9, 13),  "dur_scale": (11, 15)},
-        "underwater": {"freq_x": (0.006, 0.010), "freq_y": (0.015, 0.025), "octaves": (2, 3), "scale": (5, 8),   "dur_freq": (14, 18), "dur_scale": (16, 20)},
-    }.get(variant, {"freq_x": (0.012, 0.016), "freq_y": (0.030, 0.040), "octaves": (2, 3), "scale": (10, 14), "dur_freq": (10, 14), "dur_scale": (12, 16)})
+        "ocean":      {"freq_x": (0.008, 0.012), "freq_y": (0.025, 0.035), "octaves": (3, 4), "scale": (8, 12),  "dur_freq": (12, 16), "dur_scale": (13, 17)},
+        "lake":       {"freq_x": (0.012, 0.016), "freq_y": (0.030, 0.040), "octaves": (2, 3), "scale": (6, 9),   "dur_freq": (10, 14), "dur_scale": (12, 16)},
+        "pond":       {"freq_x": (0.016, 0.020), "freq_y": (0.040, 0.050), "octaves": (2, 2), "scale": (5, 7),   "dur_freq": (8, 12),  "dur_scale": (10, 14)},
+        "river":      {"freq_x": (0.010, 0.014), "freq_y": (0.040, 0.050), "octaves": (2, 3), "scale": (7, 10),  "dur_freq": (9, 13),  "dur_scale": (11, 15)},
+        "underwater": {"freq_x": (0.006, 0.010), "freq_y": (0.015, 0.025), "octaves": (2, 3), "scale": (3, 5),   "dur_freq": (14, 18), "dur_scale": (16, 20)},
+    }.get(variant, {"freq_x": (0.012, 0.016), "freq_y": (0.030, 0.040), "octaves": (2, 3), "scale": (6, 9), "dur_freq": (10, 14), "dur_scale": (12, 16)})
 
     fx = round(rng.uniform(*params["freq_x"]), 3)
     fy = round(rng.uniform(*params["freq_y"]), 3)
@@ -684,12 +684,12 @@ def _gen_filter_water_flow(region, rng):
     if dur_freq == dur_scale:
         dur_scale += 1
 
-    # Animation values: base ± variation
-    fx_var = round(fx * 0.25, 3)
-    fy_var = round(fy * 0.15, 3)
+    # Animation values: base ± variation (gentle swing)
+    fx_var = round(fx * 0.20, 3)
+    fy_var = round(fy * 0.12, 3)
     freq_vals = f"{fx} {fy}; {fx + fx_var:.3f} {fy - fy_var:.3f}; {fx - fx_var:.3f} {fy + fy_var:.3f}; {fx + fx_var * 0.5:.3f} {fy - fy_var * 0.5:.3f}; {fx} {fy}"
-    s_lo = max(scale_base - 3, 4)
-    s_hi = scale_base + 3
+    s_lo = max(scale_base - 2, 3)
+    s_hi = scale_base + 2
     scale_vals = f"{scale_base};{s_hi};{s_lo};{scale_base + 1};{scale_base}"
 
     splines = "0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"
@@ -713,12 +713,12 @@ def _gen_filter_cloud_drift(region, rng):
     seed = rng.randint(1, 999)
 
     params = {
-        "open_night_sky": {"freq": (0.004, 0.007), "octaves": (1, 2), "scale": (10, 14), "dur_churn": (25, 35), "dur_drift": (35, 55), "drift_px": (5, 10), "noise_type": "fractalNoise"},
-        "dramatic":       {"freq": (0.005, 0.009), "octaves": (2, 3), "scale": (18, 25), "dur_churn": (20, 30), "dur_drift": (30, 45), "drift_px": (8, 15), "noise_type": "turbulence"},
-        "magical":        {"freq": (0.004, 0.008), "octaves": (2, 3), "scale": (14, 20), "dur_churn": (22, 35), "dur_drift": (30, 50), "drift_px": (6, 12), "noise_type": "fractalNoise"},
-        "space_nebula":   {"freq": (0.003, 0.006), "octaves": (2, 3), "scale": (12, 18), "dur_churn": (30, 50), "dur_drift": (40, 60), "drift_px": (5, 10), "noise_type": "fractalNoise"},
-        "thin_wispy":     {"freq": (0.008, 0.010), "octaves": (1, 2), "scale": (10, 12), "dur_churn": (25, 40), "dur_drift": (35, 55), "drift_px": (5, 8),  "noise_type": "fractalNoise"},
-    }.get(variant, {"freq": (0.005, 0.008), "octaves": (2, 2), "scale": (12, 18), "dur_churn": (25, 35), "dur_drift": (35, 50), "drift_px": (5, 10), "noise_type": "fractalNoise"})
+        "open_night_sky": {"freq": (0.004, 0.007), "octaves": (1, 2), "scale": (5, 8),   "dur_churn": (25, 35), "dur_drift": (35, 55), "drift_px": (5, 10), "noise_type": "fractalNoise"},
+        "dramatic":       {"freq": (0.005, 0.009), "octaves": (2, 3), "scale": (10, 14),  "dur_churn": (20, 30), "dur_drift": (30, 45), "drift_px": (8, 15), "noise_type": "turbulence"},
+        "magical":        {"freq": (0.004, 0.008), "octaves": (2, 3), "scale": (8, 12),   "dur_churn": (22, 35), "dur_drift": (30, 50), "drift_px": (6, 12), "noise_type": "fractalNoise"},
+        "space_nebula":   {"freq": (0.003, 0.006), "octaves": (2, 3), "scale": (7, 10),   "dur_churn": (30, 50), "dur_drift": (40, 60), "drift_px": (5, 10), "noise_type": "fractalNoise"},
+        "thin_wispy":     {"freq": (0.008, 0.010), "octaves": (1, 2), "scale": (5, 7),    "dur_churn": (25, 40), "dur_drift": (35, 55), "drift_px": (5, 8),  "noise_type": "fractalNoise"},
+    }.get(variant, {"freq": (0.005, 0.008), "octaves": (2, 2), "scale": (7, 10), "dur_churn": (25, 35), "dur_drift": (35, 50), "drift_px": (5, 10), "noise_type": "fractalNoise"})
 
     f_base = round(rng.uniform(*params["freq"]), 3)
     f_y = round(f_base * rng.uniform(1.2, 1.8), 3)
@@ -729,11 +729,11 @@ def _gen_filter_cloud_drift(region, rng):
     drift_px = rng.randint(*params["drift_px"])
     noise_type = params["noise_type"]
 
-    f_var = round(f_base * 0.3, 3)
+    f_var = round(f_base * 0.2, 3)
     freq_vals = f"{f_base} {f_y}; {f_base + f_var:.3f} {f_y - f_var:.3f}; {f_base - f_var:.3f} {f_y + f_var:.3f}; {f_base + f_var * 0.5:.3f} {f_y - f_var * 0.3:.3f}; {f_base} {f_y}"
-    s_lo = max(scale_base - 4, 8)
-    s_hi = scale_base + 5
-    scale_vals = f"{s_lo};{s_hi};{s_lo - 1};{s_hi - 2};{s_lo}"
+    s_lo = max(scale_base - 2, 3)
+    s_hi = scale_base + 2
+    scale_vals = f"{s_lo};{s_hi};{s_lo};{s_hi - 1};{s_lo}"
 
     splines = "0.3 0 0.7 1;0.3 0 0.7 1;0.3 0 0.7 1;0.3 0 0.7 1"
     drift_half = drift_px // 2
@@ -757,12 +757,12 @@ def _gen_filter_fire_flicker(region, rng):
     seed = rng.randint(1, 999)
 
     params = {
-        "candle":          {"freq": (0.035, 0.050), "scale": (3, 5),  "bright_range": 0.10, "blue_base": 0.85, "dur_shape": (4, 5),   "dur_bright": (3.7, 4.7)},
-        "lantern":         {"freq": (0.035, 0.045), "scale": (5, 7),  "bright_range": 0.12, "blue_base": 0.82, "dur_shape": (3.5, 4.5), "dur_bright": (3.3, 4.3)},
-        "campfire":        {"freq": (0.040, 0.060), "scale": (7, 10), "bright_range": 0.18, "blue_base": 0.78, "dur_shape": (2.5, 3.5), "dur_bright": (3.0, 4.0)},
-        "torch":           {"freq": (0.040, 0.055), "scale": (6, 9),  "bright_range": 0.15, "blue_base": 0.80, "dur_shape": (3.0, 4.0), "dur_bright": (3.5, 4.5)},
-        "bioluminescence": {"freq": (0.020, 0.035), "scale": (2, 4),  "bright_range": 0.08, "blue_base": 0.88, "dur_shape": (6, 8),   "dur_bright": (5.0, 7.0)},
-    }.get(variant, {"freq": (0.035, 0.050), "scale": (3, 5), "bright_range": 0.10, "blue_base": 0.85, "dur_shape": (4, 5), "dur_bright": (3.7, 4.7)})
+        "candle":          {"freq": (0.035, 0.050), "scale": (2, 3),  "bright_range": 0.10, "blue_base": 0.85, "dur_shape": (4, 5),   "dur_bright": (3.7, 4.7)},
+        "lantern":         {"freq": (0.035, 0.045), "scale": (3, 5),  "bright_range": 0.12, "blue_base": 0.82, "dur_shape": (3.5, 4.5), "dur_bright": (3.3, 4.3)},
+        "campfire":        {"freq": (0.040, 0.060), "scale": (4, 6),  "bright_range": 0.18, "blue_base": 0.78, "dur_shape": (2.5, 3.5), "dur_bright": (3.0, 4.0)},
+        "torch":           {"freq": (0.040, 0.055), "scale": (4, 6),  "bright_range": 0.15, "blue_base": 0.80, "dur_shape": (3.0, 4.0), "dur_bright": (3.5, 4.5)},
+        "bioluminescence": {"freq": (0.020, 0.035), "scale": (1, 3),  "bright_range": 0.08, "blue_base": 0.88, "dur_shape": (6, 8),   "dur_bright": (5.0, 7.0)},
+    }.get(variant, {"freq": (0.035, 0.050), "scale": (2, 3), "bright_range": 0.10, "blue_base": 0.85, "dur_shape": (4, 5), "dur_bright": (3.7, 4.7)})
 
     freq_base = round(rng.uniform(*params["freq"]), 3)
     freq_y = round(freq_base * rng.uniform(1.5, 2.2), 3)
@@ -805,12 +805,12 @@ def _gen_filter_veg_sway(region, rng):
     is_ground = region["type"] == "vegetation_ground"
 
     params = {
-        "dense_canopy": {"freq_x": (0.005, 0.008), "scale": (10, 14), "dur_freq": (12, 18), "dur_scale": (14, 20)},
-        "branches":     {"freq_x": (0.010, 0.012), "scale": (6, 10),  "dur_freq": (10, 15), "dur_scale": (12, 18)},
-        "tall_grass":   {"freq_x": (0.012, 0.018), "scale": (6, 10),  "dur_freq": (6, 10),  "dur_scale": (8, 12)},
-        "flowers":      {"freq_x": (0.008, 0.012), "scale": (4, 6),   "dur_freq": (10, 16), "dur_scale": (12, 18)},
-        "seaweed":      {"freq_x": (0.004, 0.008), "scale": (6, 10),  "dur_freq": (12, 20), "dur_scale": (14, 22)},
-    }.get(variant, {"freq_x": (0.008, 0.012), "scale": (6, 10), "dur_freq": (10, 15), "dur_scale": (12, 18)})
+        "dense_canopy": {"freq_x": (0.005, 0.008), "scale": (6, 8),   "dur_freq": (12, 18), "dur_scale": (14, 20)},
+        "branches":     {"freq_x": (0.010, 0.012), "scale": (4, 6),   "dur_freq": (10, 15), "dur_scale": (12, 18)},
+        "tall_grass":   {"freq_x": (0.012, 0.018), "scale": (4, 6),   "dur_freq": (6, 10),  "dur_scale": (8, 12)},
+        "flowers":      {"freq_x": (0.008, 0.012), "scale": (3, 4),   "dur_freq": (10, 16), "dur_scale": (12, 18)},
+        "seaweed":      {"freq_x": (0.004, 0.008), "scale": (4, 6),   "dur_freq": (12, 20), "dur_scale": (14, 22)},
+    }.get(variant, {"freq_x": (0.008, 0.012), "scale": (4, 6), "dur_freq": (10, 15), "dur_scale": (12, 18)})
 
     fx = round(rng.uniform(*params["freq_x"]), 3)
     fy = round(fx * rng.uniform(1.5, 2.2), 3)
@@ -822,9 +822,9 @@ def _gen_filter_veg_sway(region, rng):
     # Ground vegetation: slightly delayed start, different seed
     begin = f'{rng.uniform(0.5, 1.5):.1f}s' if is_ground else "0s"
 
-    fx_var = round(fx * 0.25, 3)
+    fx_var = round(fx * 0.20, 3)
     freq_vals = f"{fx} {fy}; {fx + fx_var:.3f} {fy - fx_var:.3f}; {fx - fx_var:.3f} {fy + fx_var:.3f}; {fx + fx_var * 0.5:.3f} {fy - fx_var * 0.3:.3f}; {fx} {fy}"
-    s_vals = f"{scale_base - 2};{scale_base + 2};{scale_base - 3};{scale_base + 1};{scale_base - 1};{scale_base + 3};{scale_base - 2}"
+    s_vals = f"{scale_base - 1};{scale_base + 1};{scale_base - 2};{scale_base + 1};{scale_base - 1};{scale_base + 2};{scale_base - 1}"
     # R/B channel = mostly horizontal sway
     ch_y = "B" if variant != "seaweed" else "G"
 
@@ -851,10 +851,10 @@ def _gen_filter_reflection_shimmer(region, rng):
     seed = rng.randint(1, 999)
 
     params = {
-        "water_reflection": {"freq_x": (0.025, 0.035), "freq_y": (0.050, 0.070), "scale": (4, 6), "dur": (6, 8)},
-        "crystal_ice":      {"freq_x": (0.035, 0.040), "freq_y": (0.060, 0.080), "scale": (3, 5), "dur": (5, 7)},
-        "wet_surface":      {"freq_x": (0.030, 0.040), "freq_y": (0.050, 0.070), "scale": (2, 4), "dur": (6, 9)},
-    }.get(variant, {"freq_x": (0.025, 0.035), "freq_y": (0.050, 0.070), "scale": (4, 6), "dur": (6, 8)})
+        "water_reflection": {"freq_x": (0.025, 0.035), "freq_y": (0.050, 0.070), "scale": (3, 5), "dur": (6, 8)},
+        "crystal_ice":      {"freq_x": (0.035, 0.040), "freq_y": (0.060, 0.080), "scale": (2, 4), "dur": (5, 7)},
+        "wet_surface":      {"freq_x": (0.030, 0.040), "freq_y": (0.050, 0.070), "scale": (2, 3), "dur": (6, 9)},
+    }.get(variant, {"freq_x": (0.025, 0.035), "freq_y": (0.050, 0.070), "scale": (3, 5), "dur": (6, 8)})
 
     fx = round(rng.uniform(*params["freq_x"]), 3)
     fy = round(rng.uniform(*params["freq_y"]), 3)
@@ -921,12 +921,12 @@ def _gen_filter_fog_drift(region, rng):
     seed = rng.randint(1, 999)
 
     params = {
-        "forest_mist":     {"freq": (0.005, 0.008), "scale": (8, 12),  "dur_churn": (18, 25), "dur_drift": (28, 40), "drift_px": (8, 12)},
-        "mountain_cloud":  {"freq": (0.004, 0.007), "scale": (10, 14), "dur_churn": (15, 25), "dur_drift": (25, 40), "drift_px": (10, 15)},
-        "underwater_haze": {"freq": (0.003, 0.006), "scale": (5, 8),   "dur_churn": (22, 30), "dur_drift": (35, 50), "drift_px": (5, 8)},
-        "cave_steam":      {"freq": (0.006, 0.010), "scale": (7, 11),  "dur_churn": (18, 25), "dur_drift": (25, 35), "drift_px": (6, 10)},
-        "magical_shimmer": {"freq": (0.007, 0.010), "scale": (5, 8),   "dur_churn": (20, 28), "dur_drift": (30, 45), "drift_px": (6, 10)},
-    }.get(variant, {"freq": (0.005, 0.008), "scale": (8, 12), "dur_churn": (18, 25), "dur_drift": (28, 40), "drift_px": (8, 12)})
+        "forest_mist":     {"freq": (0.005, 0.008), "scale": (5, 7),   "dur_churn": (18, 25), "dur_drift": (28, 40), "drift_px": (8, 12)},
+        "mountain_cloud":  {"freq": (0.004, 0.007), "scale": (6, 8),   "dur_churn": (15, 25), "dur_drift": (25, 40), "drift_px": (10, 15)},
+        "underwater_haze": {"freq": (0.003, 0.006), "scale": (3, 5),   "dur_churn": (22, 30), "dur_drift": (35, 50), "drift_px": (5, 8)},
+        "cave_steam":      {"freq": (0.006, 0.010), "scale": (4, 6),   "dur_churn": (18, 25), "dur_drift": (25, 35), "drift_px": (6, 10)},
+        "magical_shimmer": {"freq": (0.007, 0.010), "scale": (3, 5),   "dur_churn": (20, 28), "dur_drift": (30, 45), "drift_px": (6, 10)},
+    }.get(variant, {"freq": (0.005, 0.008), "scale": (5, 7), "dur_churn": (18, 25), "dur_drift": (28, 40), "drift_px": (8, 12)})
 
     f_base = round(rng.uniform(*params["freq"]), 3)
     f_y = round(f_base * rng.uniform(1.3, 1.8), 3)
@@ -935,9 +935,9 @@ def _gen_filter_fog_drift(region, rng):
     dur_drift = rng.randint(*params["dur_drift"])
     drift_px = rng.randint(*params["drift_px"])
 
-    f_var = round(f_base * 0.3, 3)
+    f_var = round(f_base * 0.2, 3)
     freq_vals = f"{f_base} {f_y}; {f_base + f_var:.3f} {f_y - f_var:.3f}; {f_base - f_var:.3f} {f_y + f_var:.3f}; {f_base + f_var * 0.5:.3f} {f_y - f_var * 0.3:.3f}; {f_base} {f_y}"
-    s_vals = f"{scale_base - 2};{scale_base + 2};{scale_base - 3};{scale_base + 1};{scale_base - 2}"
+    s_vals = f"{scale_base - 1};{scale_base + 1};{scale_base - 2};{scale_base + 1};{scale_base - 1}"
 
     splines = "0.3 0 0.7 1;0.3 0 0.7 1;0.3 0 0.7 1;0.3 0 0.7 1"
     return f'''    <filter id="{fid}" x="-15%" y="-5%" width="130%" height="110%">
@@ -960,13 +960,13 @@ def _gen_filter_smoke_rise(region, rng):
 
     f_base = round(rng.uniform(0.008, 0.015), 3)
     f_y = round(f_base * rng.uniform(1.5, 2.2), 3)
-    scale_base = rng.randint(4, 10)
+    scale_base = rng.randint(3, 6)
     dur_churn = rng.randint(10, 18)
     dur_rise = rng.randint(15, 25)
 
-    f_var = round(f_base * 0.3, 3)
+    f_var = round(f_base * 0.2, 3)
     freq_vals = f"{f_base} {f_y}; {f_base + f_var:.3f} {f_y - f_var:.3f}; {f_base - f_var:.3f} {f_y + f_var:.3f}; {f_base + f_var * 0.5:.3f} {f_y - f_var * 0.3:.3f}; {f_base} {f_y}"
-    s_vals = f"{scale_base - 2};{scale_base + 2};{scale_base - 3};{scale_base + 1};{scale_base - 2}"
+    s_vals = f"{scale_base - 1};{scale_base + 1};{scale_base - 2};{scale_base + 1};{scale_base - 1}"
 
     return f'''    <filter id="{fid}" x="-10%" y="-20%" width="120%" height="140%">
       <feTurbulence type="fractalNoise" baseFrequency="{f_base} {f_y}" numOctaves="2" result="smoke-noise" seed="{seed}">
