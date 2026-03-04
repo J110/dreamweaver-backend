@@ -1191,8 +1191,15 @@ def generate_v3_combined_svg(bg_b64, axes, story):
     composition = axes.get("composition")
     fm = generate_v3_filters_and_masks(world, rng, composition=composition)
 
-    # Generate lean overlay
-    overlay_content = generate_lean_overlay(axes, story)
+    # Generate full rich overlay (same as v2 but layered on top of cinemagraph filters)
+    # The full overlay follows the revised SMIL guidelines: 12-20 elements, 3 depth layers,
+    # breathing pacer, fauna, rare events, etc. Cinemagraph filters add image-level motion
+    # underneath — they complement, not replace, the SMIL overlay.
+    full_overlay_svg = generate_svg_overlay(axes, story)
+    # Extract inner content (strip the <svg> wrapper since V3 has its own)
+    import re as _re
+    _inner_match = _re.search(r'<svg[^>]*>(.*)</svg>', full_overlay_svg, _re.DOTALL)
+    overlay_content = _inner_match.group(1) if _inner_match else full_overlay_svg
 
     # Build the <use> elements for filtered regions
     use_elements = []
@@ -1247,7 +1254,7 @@ def generate_v3_combined_svg(bg_b64, axes, story):
   <!-- Layer 2: Cinemagraph filtered regions ({fm["filter_count"]} filters, {fm["total_octaves"]} octaves) -->
 {chr(10).join(use_elements)}
 
-  <!-- Layer 3: Lean SMIL overlay -->
+  <!-- Layer 3: Full SMIL overlay (12-20 elements, 3 depth layers) -->
 {overlay_content}
 </svg>'''
 
