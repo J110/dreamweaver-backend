@@ -26,10 +26,16 @@ import json
 import logging
 import math
 import os
+import hashlib
 import random
 import sys
 import time
 from pathlib import Path
+
+
+def _stable_seed(s: str) -> int:
+    """Deterministic seed from string. Unlike hash(), same across Python processes."""
+    return int(hashlib.md5(s.encode()).hexdigest(), 16) % (2**31)
 
 BASE_DIR = Path(__file__).parent.parent
 sys.path.insert(0, str(BASE_DIR))
@@ -342,33 +348,27 @@ REGION_TEMPLATES = {
         {"id": "canopy", "type": "vegetation_canopy", "zone": "upper_sides", "feather_px": 12, "is_primary": True, "context_variant": "dense_canopy"},
         {"id": "ground_veg", "type": "vegetation_ground", "zone": "bottom_strip", "feather_px": 10, "is_primary": False, "context_variant": "flowers"},
         {"id": "fog_floor", "type": "fog_zone", "zone": "lower_band", "feather_px": 25, "is_primary": False, "context_variant": "forest_mist"},
-        {"id": "glow_mushroom", "type": "glow_source", "zone": "lower_center_circle", "feather_px": 20, "is_primary": False, "context_variant": "bioluminescence"},
     ],
     "deep_ocean": [
         {"id": "water_main", "type": "water", "zone": "full_frame", "feather_px": 20, "is_primary": True, "context_variant": "underwater"},
-        {"id": "glow_bio", "type": "glow_source", "zone": "center_circle", "feather_px": 20, "is_primary": False, "context_variant": "bioluminescence"},
         {"id": "seaweed", "type": "vegetation_ground", "zone": "bottom_strip", "feather_px": 12, "is_primary": False, "context_variant": "seaweed"},
         {"id": "fog_depth", "type": "fog_zone", "zone": "upper_band", "feather_px": 25, "is_primary": False, "context_variant": "underwater_haze"},
     ],
     "cloud_kingdom": [
         {"id": "sky_main", "type": "sky", "zone": "top_half", "feather_px": 18, "is_primary": True, "context_variant": "magical"},
         {"id": "fog_clouds", "type": "fog_zone", "zone": "mid_band", "feather_px": 25, "is_primary": False, "context_variant": "mountain_cloud"},
-        {"id": "glow_light", "type": "glow_source", "zone": "upper_center", "feather_px": 20, "is_primary": False, "context_variant": "moon"},
     ],
     "snow_landscape": [
         {"id": "sky_main", "type": "sky", "zone": "top_third", "feather_px": 15, "is_primary": False, "context_variant": "open_night_sky"},
         {"id": "fog_snow", "type": "fog_zone", "zone": "lower_band", "feather_px": 25, "is_primary": True, "context_variant": "mountain_cloud"},
-        {"id": "glow_moon", "type": "glow_source", "zone": "upper_right_circle", "feather_px": 18, "is_primary": False, "context_variant": "moon"},
         {"id": "reflection_ice", "type": "reflection", "zone": "bottom_quarter", "feather_px": 12, "is_primary": False, "context_variant": "crystal_ice"},
     ],
     "desert_night": [
         {"id": "sky_main", "type": "sky", "zone": "top_half", "feather_px": 15, "is_primary": True, "context_variant": "open_night_sky"},
         {"id": "fog_ground", "type": "fog_zone", "zone": "bottom_strip", "feather_px": 20, "is_primary": False, "context_variant": "magical_shimmer"},
-        {"id": "glow_moon", "type": "glow_source", "zone": "upper_center", "feather_px": 20, "is_primary": False, "context_variant": "moon"},
     ],
     "cozy_interior": [
         {"id": "fire_hearth", "type": "fire", "zone": "lower_center_circle", "feather_px": 15, "is_primary": True, "context_variant": "campfire"},
-        {"id": "glow_fire", "type": "glow_source", "zone": "center_wide", "feather_px": 25, "is_primary": False, "context_variant": "candle_area"},
         {"id": "smoke_chimney", "type": "smoke", "zone": "upper_center_narrow", "feather_px": 15, "is_primary": False, "context_variant": "chimney"},
         {"id": "fog_dust", "type": "fog_zone", "zone": "mid_band", "feather_px": 20, "is_primary": False, "context_variant": "cave_steam"},
     ],
@@ -376,33 +376,27 @@ REGION_TEMPLATES = {
         {"id": "sky_main", "type": "sky", "zone": "top_third", "feather_px": 15, "is_primary": False, "context_variant": "thin_wispy"},
         {"id": "grass", "type": "vegetation_ground", "zone": "bottom_half", "feather_px": 12, "is_primary": True, "context_variant": "tall_grass"},
         {"id": "fog_meadow", "type": "fog_zone", "zone": "lower_band", "feather_px": 25, "is_primary": False, "context_variant": "forest_mist"},
-        {"id": "glow_moon", "type": "glow_source", "zone": "upper_right_circle", "feather_px": 18, "is_primary": False, "context_variant": "moon"},
     ],
     "space_cosmos": [
         {"id": "sky_main", "type": "sky", "zone": "full_frame", "feather_px": 20, "is_primary": True, "context_variant": "space_nebula"},
-        {"id": "glow_star", "type": "glow_source", "zone": "center_circle", "feather_px": 25, "is_primary": False, "context_variant": "bioluminescence"},
     ],
     "tropical_lagoon": [
         {"id": "water_lagoon", "type": "water", "zone": "bottom_half", "feather_px": 15, "is_primary": True, "context_variant": "lake"},
         {"id": "sky_main", "type": "sky", "zone": "top_third", "feather_px": 15, "is_primary": False, "context_variant": "thin_wispy"},
         {"id": "reflection_water", "type": "reflection", "zone": "bottom_quarter", "feather_px": 12, "is_primary": False, "context_variant": "water_reflection"},
-        {"id": "glow_moon", "type": "glow_source", "zone": "upper_center", "feather_px": 20, "is_primary": False, "context_variant": "moon"},
     ],
     "underground_cave": [
         {"id": "water_pool", "type": "water", "zone": "bottom_quarter", "feather_px": 12, "is_primary": False, "context_variant": "pond"},
-        {"id": "fire_torch", "type": "fire", "zone": "right_circle", "feather_px": 12, "is_primary": False, "context_variant": "lantern"},
+        {"id": "fire_torch", "type": "fire", "zone": "right_circle", "feather_px": 12, "is_primary": True, "context_variant": "lantern"},
         {"id": "fog_steam", "type": "fog_zone", "zone": "mid_band", "feather_px": 25, "is_primary": False, "context_variant": "cave_steam"},
-        {"id": "glow_crystal", "type": "glow_source", "zone": "center_circle", "feather_px": 20, "is_primary": True, "context_variant": "bioluminescence"},
     ],
     "ancient_library": [
         {"id": "fire_candle", "type": "fire", "zone": "right_circle", "feather_px": 12, "is_primary": True, "context_variant": "candle"},
-        {"id": "glow_candle", "type": "glow_source", "zone": "center_wide", "feather_px": 22, "is_primary": False, "context_variant": "candle_area"},
         {"id": "fog_dust", "type": "fog_zone", "zone": "upper_band", "feather_px": 20, "is_primary": False, "context_variant": "magical_shimmer"},
     ],
     "floating_islands": [
         {"id": "sky_main", "type": "sky", "zone": "full_frame", "feather_px": 20, "is_primary": True, "context_variant": "magical"},
         {"id": "fog_clouds", "type": "fog_zone", "zone": "mid_band", "feather_px": 25, "is_primary": False, "context_variant": "mountain_cloud"},
-        {"id": "glow_light", "type": "glow_source", "zone": "upper_center", "feather_px": 20, "is_primary": False, "context_variant": "moon"},
         {"id": "veg_island", "type": "vegetation_canopy", "zone": "center_sides", "feather_px": 12, "is_primary": False, "context_variant": "branches"},
     ],
 }
@@ -1086,7 +1080,7 @@ def generate_lean_overlay(axes, story):
     """
     world = axes["world_setting"]
     palette = axes["palette"]
-    rng = random.Random(hash(story.get("id", "") + world + "_lean"))
+    rng = random.Random(_stable_seed(story.get("id", "") + world + "_lean"))
     mapping = WORLD_ELEMENTS_LEAN.get(world, WORLD_ELEMENTS_LEAN.get("enchanted_forest", {}))
 
     # Build colors (same as generate_svg_overlay)
@@ -1185,7 +1179,7 @@ def generate_v3_combined_svg(bg_b64, axes, story):
         Complete SVG string with embedded background, filters, masks, and overlay.
     """
     world = axes["world_setting"]
-    rng = random.Random(hash(story.get("id", "") + world + "_v3"))
+    rng = random.Random(_stable_seed(story.get("id", "") + world + "_v3"))
 
     # Generate cinemagraph filters and masks
     composition = axes.get("composition")
@@ -1455,29 +1449,42 @@ def _gen_moon_glow(colors, world, story, rng):
 
 def _gen_aurora(colors, world, story, rng):
     """A4. Aurora / Northern Lights — slow undulating bands, upper 30%.
-    2-4 bands, desaturated warm tones, 20-35s durations. Opacity 0.15-0.35.
+    2-3 bands, radialGradient fills for soft edges on FLUX backgrounds.
+    20-35s durations. Opacity 0.12-0.25.
     """
-    count = rng.randint(2, 4)
-    parts = ['<!-- A4: Aurora -->\n<g id="aurora" opacity="0.3">']
+    count = rng.randint(2, 3)
+    uid = rng.randint(100, 999)
     aurora_colors = _BIBLE_COLORS["aurora"]
+    # Build gradient defs and ellipses
+    defs_parts = []
+    ellipse_parts = []
     for i in range(count):
+        gid = f"aur-g{uid}-{i}"
         cx = rng.randint(35, 65)
-        cy = rng.randint(12, 28)
-        rx = rng.randint(150, 220)
-        ry = rng.randint(20, 40)
+        cy = rng.randint(10, 25)
+        rx = rng.randint(120, 180)
+        ry = rng.randint(18, 35)
         color = rng.choice(aurora_colors)
-        op_base = round(rng.uniform(0.15, 0.25), 2)
+        op_base = round(rng.uniform(0.10, 0.18), 2)
         dur_t = _pick_prime_dur(19, 37, rng)
         dur_o = _pick_prime_dur(23, 37, rng)
         dur_ry = _pick_prime_dur(19, 31, rng)
         tx1, ty1 = rng.randint(10, 20), rng.randint(2, 6)
         tx2, ty2 = rng.randint(-15, -5), rng.randint(1, 5)
         tx3, ty3 = rng.randint(3, 8), rng.randint(-3, -1)
-        op_hi = min(op_base + 0.10, 0.35)
-        op_vals = f"{op_base:.2f};{op_base + 0.08:.2f};{op_base + 0.02:.2f};{op_hi:.2f};{op_base:.2f}"
-        ry_vals = f"{ry - 3};{ry + 7};{ry - 5};{ry + 4};{ry - 3}"
-        parts.append(
-            f'  <ellipse cx="{cx}%" cy="{cy}%" rx="{rx}" ry="{ry}" fill="{color}" opacity="{op_base:.2f}">\n'
+        op_hi = min(op_base + 0.08, 0.25)
+        op_vals = f"{op_base:.2f};{op_base + 0.06:.2f};{op_base + 0.02:.2f};{op_hi:.2f};{op_base:.2f}"
+        ry_vals = f"{ry - 3};{ry + 5};{ry - 4};{ry + 3};{ry - 3}"
+        # Radial gradient: center color fades to transparent at edges
+        defs_parts.append(
+            f'  <radialGradient id="{gid}">'
+            f'<stop offset="0%" stop-color="{color}" stop-opacity="0.6"/>'
+            f'<stop offset="50%" stop-color="{color}" stop-opacity="0.3"/>'
+            f'<stop offset="100%" stop-color="{color}" stop-opacity="0"/>'
+            f'</radialGradient>'
+        )
+        ellipse_parts.append(
+            f'  <ellipse cx="{cx}%" cy="{cy}%" rx="{rx}" ry="{ry}" fill="url(#{gid})" opacity="{op_base:.2f}">\n'
             f'    <animateTransform attributeName="transform" type="translate"\n'
             f'      values="0,0; {tx1},{ty1}; {tx2},{ty2}; {tx3},{ty3}; 0,0" dur="{dur_t}s" repeatCount="indefinite"\n'
             f'      calcMode="spline" keySplines="{_smil_spline(4)}"/>\n'
@@ -1487,6 +1494,9 @@ def _gen_aurora(colors, world, story, rng):
             f'      dur="{dur_ry}s" repeatCount="indefinite"/>\n'
             f'  </ellipse>'
         )
+    parts = [f'<!-- A4: Aurora -->\n<g id="aurora-{uid}">']
+    parts.append(f'  <defs>{"".join(defs_parts)}</defs>')
+    parts.extend(ellipse_parts)
     parts.append('</g>')
     return "\n".join(parts)
 
@@ -1495,25 +1505,37 @@ def _gen_aurora(colors, world, story, rng):
 
 def _gen_fog(colors, world, story, rng):
     """B1. Drifting fog/mist — large shapes, lower 55-85%.
-    2-4 layers, 30-50s cycles, 0.08-0.20 opacity, alternate directions.
+    2-3 layers, radialGradient fills for soft edges on FLUX backgrounds.
+    30-50s cycles, 0.06-0.15 opacity, alternate directions.
     """
-    count = rng.randint(2, 4)
-    fog_id = f"fog-{rng.randint(100, 999)}"
-    parts = [f'<!-- B1: Drifting Fog -->\n<g id="{fog_id}">']
+    count = rng.randint(2, 3)
+    uid = rng.randint(100, 999)
     fog_colors = _BIBLE_COLORS["fog"]
+    defs_parts = []
+    ellipse_parts = []
     for i in range(count):
+        gid = f"fog-g{uid}-{i}"
         cx = rng.randint(20, 80)
         cy = rng.randint(55, 85)
-        rx = rng.randint(200, 350)
-        ry = rng.randint(30, 60)
+        rx = rng.randint(160, 280)
+        ry = rng.randint(25, 50)
         color = rng.choice(fog_colors)
-        op_base = round(rng.uniform(0.08, 0.14), 2)
+        op_base = round(rng.uniform(0.06, 0.12), 2)
         dur_t = _pick_prime_dur(29, 47, rng)
         dur_o = _pick_prime_dur(31, 47, rng)
-        drift = rng.randint(60, 120) * (1 if i % 2 == 0 else -1)
-        op_vals = f"{op_base:.2f};{op_base + 0.04:.2f};{op_base + 0.02:.2f};{min(op_base + 0.06, 0.20):.2f};{op_base:.2f}"
-        parts.append(
-            f'  <ellipse cx="{cx}%" cy="{cy}%" rx="{rx}" ry="{ry}" fill="{color}" opacity="{op_base:.2f}">\n'
+        drift = rng.randint(50, 100) * (1 if i % 2 == 0 else -1)
+        op_hi = min(op_base + 0.05, 0.15)
+        op_vals = f"{op_base:.2f};{op_base + 0.03:.2f};{op_base + 0.01:.2f};{op_hi:.2f};{op_base:.2f}"
+        # Radial gradient: soft center to fully transparent edges
+        defs_parts.append(
+            f'  <radialGradient id="{gid}">'
+            f'<stop offset="0%" stop-color="{color}" stop-opacity="0.5"/>'
+            f'<stop offset="40%" stop-color="{color}" stop-opacity="0.25"/>'
+            f'<stop offset="100%" stop-color="{color}" stop-opacity="0"/>'
+            f'</radialGradient>'
+        )
+        ellipse_parts.append(
+            f'  <ellipse cx="{cx}%" cy="{cy}%" rx="{rx}" ry="{ry}" fill="url(#{gid})" opacity="{op_base:.2f}">\n'
             f'    <animateTransform attributeName="transform" type="translate"\n'
             f'      values="0,0; {drift},3; {drift * 2},0; {drift},-3; 0,0"\n'
             f'      dur="{dur_t}s" repeatCount="indefinite"\n'
@@ -1522,6 +1544,9 @@ def _gen_fog(colors, world, story, rng):
             f'      dur="{dur_o}s" repeatCount="indefinite"/>\n'
             f'  </ellipse>'
         )
+    parts = [f'<!-- B1: Drifting Fog -->\n<g id="fog-{uid}">']
+    parts.append(f'  <defs>{"".join(defs_parts)}</defs>')
+    parts.extend(ellipse_parts)
     parts.append('</g>')
     return "\n".join(parts)
 
@@ -2434,7 +2459,7 @@ def generate_svg_overlay(axes: dict, story: dict) -> str:
     """
     world = axes["world_setting"]
     palette = axes["palette"]
-    rng = random.Random(hash(story.get("id", "") + world))
+    rng = random.Random(_stable_seed(story.get("id", "") + world))
     mapping = WORLD_ELEMENTS.get(world, WORLD_ELEMENTS["enchanted_forest"])
 
     # Build colors from palette + world accents
@@ -2772,7 +2797,10 @@ def _infer_character_type(story: dict) -> str:
 
 
 def auto_select_axes(story: dict, overrides: dict = None) -> dict:
-    """Select 7 diversity axes from story metadata with optional overrides."""
+    """Select 7 diversity axes from story metadata with optional overrides.
+
+    Uses a per-story seeded RNG so axes are deterministic across batch runs.
+    """
     overrides = overrides or {}
     theme = story.get("theme", "fantasy")
     age_group = story.get("age_group", "6-8")
@@ -2780,13 +2808,16 @@ def auto_select_axes(story: dict, overrides: dict = None) -> dict:
     if not char_type:
         char_type = _infer_character_type(story)
 
+    # Per-story seeded RNG for deterministic axis selection
+    _rng = random.Random(_stable_seed(story.get("id", "") + theme + "_axes"))
+
     # World setting
     world_options = THEME_TO_WORLD.get(theme, list(WORLD_SETTINGS.keys()))
-    world = overrides.get("world_setting") or random.choice(world_options)
+    world = overrides.get("world_setting") or _rng.choice(world_options)
 
     # Palette
     palette_options = THEME_TO_PALETTE.get(theme, list(COLOR_PALETTES.keys()))
-    palette = overrides.get("palette") or random.choice(palette_options)
+    palette = overrides.get("palette") or _rng.choice(palette_options)
 
     # Composition — choose based on story content
     if "river" in story.get("title", "").lower() or "path" in story.get("title", "").lower():
@@ -2794,7 +2825,7 @@ def auto_select_axes(story: dict, overrides: dict = None) -> dict:
     elif "cave" in story.get("title", "").lower() or "nest" in story.get("title", "").lower():
         comp = "circular_nest"
     else:
-        comp = random.choice(list(COMPOSITIONS.keys()))
+        comp = _rng.choice(list(COMPOSITIONS.keys()))
     comp = overrides.get("composition") or comp
 
     # Character visual — map all 12 lead_character_type values to the correct visual
@@ -2837,7 +2868,7 @@ def auto_select_axes(story: dict, overrides: dict = None) -> dict:
     if age_group in ("2-5", "0-1"):
         texture = "watercolor_soft"
     elif age_group == "6-8":
-        texture = random.choice(["digital_painterly", "watercolor_soft"])
+        texture = _rng.choice(["digital_painterly", "watercolor_soft"])
     else:
         texture = "digital_painterly"
     texture = overrides.get("texture") or texture
@@ -2848,7 +2879,7 @@ def auto_select_axes(story: dict, overrides: dict = None) -> dict:
     elif "sunset" in story.get("description", "").lower() or "dusk" in story.get("description", "").lower():
         time_marker = "eternal_dusk"
     else:
-        time_marker = random.choice(["early_night", "deep_night"])
+        time_marker = _rng.choice(["early_night", "deep_night"])
     time_marker = overrides.get("time") or time_marker
 
     return {
