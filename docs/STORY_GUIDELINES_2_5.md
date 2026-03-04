@@ -1,6 +1,6 @@
 # Dream Valley — Immersive Story Guidelines for Ages 2-5
 
-> **Purpose**: Guide the generation of long-form (8-12 min) sleep-inducing audio stories for the 2-5 age group. These are the youngest listeners — they live in a world where animals talk, magic is real, and bedtime is a warm, safe ritual. The story wraps them in wonder and gently carries them to sleep.
+> **Purpose**: Guide the generation of long-form (15-22 min) sleep-inducing audio stories for the 2-5 age group. These are the youngest listeners — they live in a world where animals talk, magic is real, and bedtime is a warm, safe ritual. The story wraps them in wonder and gently carries them to sleep.
 
 ---
 
@@ -9,8 +9,9 @@
 - **Everything is real and alive.** A jellyfish can glow, a fox can whisper, flowers can hum. Don't explain magic — just let it happen. Children this age accept wonder without question.
 - **They need warmth, safety, and repetition.** Repetition is not boring to a 2-5 year old — it's comforting. Repeated phrases become anchors. "So warm... so safe... so sleepy" works because they can predict what's coming next.
 - **Concrete and sensory, never abstract.** No "felt a sense of belonging" — instead "the warm water hugged her like a blanket." Everything must be touchable, seeable, hearable.
-- **Animal and creature characters preferred.** A glowing jellyfish, a sleepy fox, a tiny firefly — these are the heroes. NOT human children (unlike 9-12). Fantasy creatures with simple personalities are ideal.
-- **Attention span: 8-12 minutes.** This is generous for bedtime. The story should feel complete at 8 minutes and dissolve by 12.
+- **Animal protagonists engage this age group most.** Research shows 2-5 year olds connect most deeply with animal characters. A glowing jellyfish, a sleepy fox, a tiny firefly — these are the heroes. NOT human children (unlike 9-12). Fantasy creatures with simple personalities are ideal.
+- **One character, one storyline, no subplots.** One main character discovers one magical thing. Keep it simple and linear. The bunny finds a magical door. The whale hears a strange sound. The bear discovers his shadow can talk. That's the whole plot.
+- **Use "you" and engagement hooks.** Lots of "you" in the narration creates intimacy: "Can you guess what the bunny saw?" "Can you hear that?" These should be **rhetorical** in a bedtime context — inviting wonder, not requiring response.
 - **The parent is often listening too.** The story should be genuinely pleasant — warm narration that a parent enjoys hearing alongside their child.
 - **Bedtime is welcome, not feared.** Unlike 9-12 who reject "bedtime story" framing, 2-5 year olds WANT bedtime stories. Lean into the cozy ritual.
 
@@ -20,93 +21,104 @@
 
 | Phase | Name | Duration | Word Count | Speed | Purpose |
 |-------|------|----------|------------|-------|---------|
-| 1 | CAPTURE | 3-4 min | 250-350 words | 80% (0.8x) | Hook with a fun, sensory discovery |
-| 2 | DESCENT | 2-3 min | 200-300 words | 75% (0.75x) | Character physically relaxes — child mirrors |
-| 3 | SLEEP | 2-4 min | 150-250 words | 65% (0.65x) | Dissolving fragments → silence |
-| 4 | LULLABY | 2-3 min | 80-120 words | 60% (0.6x) | Sung lullaby connected to story imagery |
+| 1 | CAPTURE | 3-5 min | 250-400 words | 80% (0.8x) | Hook with a fun, sensory discovery |
+| 2 | DESCENT | 5-8 min | 400-600 words | 75% (0.75x) | Character physically relaxes — child mirrors |
+| 3 | SLEEP | 5-7 min | 350-500 words | 65% (0.65x) | Dissolving fragments → silence |
+| 4 | LULLABY | 2-3 min | 80-120 words | 60% (0.6x) | Fades in under final story fragments |
 
-**Total: 600-900 words + lullaby → 8-12 minutes at slow narration pace with pauses**
+**Total: 1000-1500 words + lullaby → 15-22 minutes at slow narration pace with pauses**
 
 ---
 
-## Phase 1 — CAPTURE (250-350 words)
+## Phase 1 — CAPTURE (250-400 words)
 
-**Goal:** Hook the child with a simple, vivid discovery. The character finds something magical and beautiful. The world is warm, colorful, and safe.
+**Goal:** Hook the child with a simple, vivid scenario. One main character, one clear situation, one magical discovery. The world is warm, colorful, and safe.
 
 ### What works:
+- **One character, one situation**: the bunny finds a magical door, the little whale hears a strange sound in the ocean, the bear discovers his shadow can talk
+- **No subplots** — just one clear storyline unfolding
 - Open in a cozy, familiar-feeling world: underwater, forest, meadow, garden, clouds
-- The character discovers something wonderful: glowing flowers, a singing shell, a trail of stars, a tiny door
 - Rich sensory language but SIMPLE words: "sparkly," "warm," "glowing," "soft," "tickly"
 - Short sentences (5-12 words). One idea per sentence.
-- The character expresses delight: "It's so beautiful!" "Can you hear that?" "Look at that!"
+- **Lots of "you" and engagement hooks** — "Can you guess what the bunny saw?" "Can you hear that?" These should be **rhetorical** in bedtime context, inviting wonder without requiring response
 - 3-5 lines of character dialogue in [CHAR_START]...[CHAR_END]
-- Voice: warm, cozy storytelling — like a loving parent reading aloud
-- Build gentle excitement — not frantic energy, just happy wonder
+- Voice: warm, gently animated, with character voices that are fun but **not loud or jarring** — cozy storytelling, not cartoon energy
+- Build gentle excitement — happy wonder, not frantic energy
 - End Phase 1 with the character arriving somewhere quieter (a cozy nook, a soft clearing, a warm pool)
 
 ### Technical requirements:
 - Start with `[GENTLE]`, progress through `[CURIOUS]`, `[EXCITED]`, `[JOYFUL]`
 - 3-5 dialogue blocks in `[CHAR_START]...[CHAR_END]`
-- 1-2 `[PAUSE]` markers for natural rhythm
+- 2-4 `[PAUSE]` markers for natural rhythm
 - End on a warm, settling note — character has arrived somewhere cozy
 
 ---
 
-## Phase 2 — DESCENT (200-300 words)
+## Phase 2 — DESCENT (400-600 words)
 
-**Goal:** The character physically relaxes, and the child mirrors them. This is disguised progressive relaxation through character modeling — the character stretches, breathes, yawns, curls up, and the child's body naturally follows.
+**Goal:** The adventure moves to a quieter place. The character physically relaxes, and the child mirrors them. This is where **disguised progressive relaxation** lives — the longest and most important phase. The journey language shifts heavily to sensory and body-based description.
 
 ### The key insight:
-2-5 year olds accept direct relaxation cues much more readily than older children. The character can openly breathe, yawn, and curl up. This isn't embarrassing for them — it's what they do at bedtime. The character models the exact physical process of falling asleep.
+2-5 year olds accept direct relaxation cues much more readily than older children. Breathing cues are **simple and explicit** because kids this age will **actually follow along** if the story invites it. "The bunny took a biiiiig breath in... and blew it out slow like blowing a dandelion..." The character models the exact physical process of falling asleep, and the child copies naturally.
+
+### The setting shift:
+- The bunny goes through the magical door and finds a meadow at sunset
+- The whale swims deeper where the water is warm and still
+- The firefly lands on a branch where the bark is warm and bumpy
+- The adventure naturally arrives at a quieter, cozier place
 
 ### Character-modeled relaxation (CORE TECHNIQUE):
 The character does what the child should do. Mark each with `[BREATH_CUE]`:
 
 | Character Action | Child Response |
 |-----------------|---------------|
-| Takes a biiiiig breath in... and blows it out slow | Deep breath, slow exhale |
+| Takes a biiiiig breath in... and blows it out slow like blowing a dandelion | Deep breath, slow exhale |
 | Stretches arms/tentacles/wings wide, then goes floppy | Stretches and releases tension |
 | Yawns a great big yawn | Yawns (contagious) |
-| Curls up into a tiny ball | Curls into sleeping position |
+| Curls up into a tiny ball, smaller and smaller | Curls into sleeping position |
 | Feels warm water/blanket wrapping around them | Body awareness → warmth → heaviness |
 | Eyes grow heavy, eyelids flutter | Closing eyes |
 
 ### What works:
+- **Language shifts to body-based, sensory descriptions**: "the grass felt soft and tickly under her paws," "the air was warm like a blanket"
 - The cozy place wraps around the character: warm water, soft moss, fluffy clouds
-- Sensory descriptions shift to body-focused: "so warm," "so heavy," "so cozy"
+- Sensory descriptions are **overwhelmingly physical**: warmth, heaviness, softness, coziness
 - The character's glow/light/energy dims gradually
 - Environmental sounds become lullaby-like: humming shell, whispering wind, soft rain
 - 1-2 whispered dialogue lines: "Maybe I should rest here..."
-- Sentences get shorter. Pace slows visibly.
-- 3-4 `[BREATH_CUE]` markers with explicit breathing modeled by character
+- **Voice pacing slows noticeably.** Pauses stretch. Sentences get shorter.
+- 4-6 `[BREATH_CUE]` markers with explicit breathing modeled by character
+- The breathing visual pacer (in the app) is doing its work alongside the narration
 
 ### Technical requirements:
 - Mark with `[PHASE_2]` on its own line
 - Use `[CALM]` shifting to `[SLEEPY]` markers
-- 3-4 `[BREATH_CUE]` markers
+- 4-6 `[BREATH_CUE]` markers (explicit, character-modeled breathing)
 - 1-2 whispered `[CHAR_START]...[CHAR_END]` dialogue lines
 - `[PAUSE]` markers increase in frequency
 - End with character's eyes closing or glow dimming
 
 ---
 
-## Phase 3 — SLEEP (150-250 words)
+## Phase 3 — SLEEP (350-500 words)
 
-**Goal:** The story dissolves. Narrative fragments repeat with slight variations, growing quieter and simpler until only warmth, safety, and silence remain. This is ambient music in word form.
+**Goal:** The character is now in their cozy place. The narrative becomes **extremely repetitive and cyclical** — the story doesn't really end, it dissolves. The last few "sentences" are fragments with long pauses. This is ambient music in word form.
 
 ### What works:
-- "One star lit up... then another... then another... each one softer... and quieter..."
+- "One star lit up... then another... then another... each one soft and quiet..."
+- Descriptions of **heaviness, warmth, softness, closing eyes**
 - Single sensory words repeated: "Warm... so warm... soft... so soft..."
 - The character's glow/light flickers once... twice... then goes out
 - Environmental details fade: music becomes a whisper, lights dim one by one
 - Fragments get shorter and shorter — full sentences → phrases → single words
 - Long silences between fragments (4-second pauses)
+- **The story doesn't end — it DISSOLVES**
 
 ### The dissolving structure:
 ```
 [SLEEPY] Full sentence describing the cozy state. [LONG_PAUSE]
-[WHISPERING] Shorter phrase... dimming, fading. [LONG_PAUSE]
-[SLEEPY] Even shorter... warmth... safety. [LONG_PAUSE]
+[SLEEPY] Shorter sentence... warmth... dimming. [LONG_PAUSE]
+[WHISPERING] Even shorter... a phrase... [LONG_PAUSE]
 [WHISPERING] Two words... so soft... [LONG_PAUSE]
 [WHISPERING] One word... sleep... [LONG_PAUSE]
 ```
@@ -115,8 +127,8 @@ The character does what the child should do. Mark each with `[BREATH_CUE]`:
 - Mark with `[PHASE_3]` on its own line
 - Use ONLY `[SLEEPY]` and `[WHISPERING]` markers
 - NO character dialogue — just the narrator's soft voice
-- 6-10 `[LONG_PAUSE]` markers (4-second silences)
-- Last 5-6 lines are fragments dissolving into silence
+- 10-15 `[LONG_PAUSE]` markers (4-second silences)
+- Last 6-8 lines are fragments dissolving into silence
 - Story DISSOLVES — it does not end. No "The End."
 - Final fragment should evoke safety and warmth: "sleep now... little one..."
 
@@ -124,7 +136,10 @@ The character does what the child should do. Mark each with `[BREATH_CUE]`:
 
 ## Lullaby (80-120 words)
 
-**Goal:** A sung lullaby that connects to the story's world. Simple enough for a 3-year-old to absorb, melodic enough that a parent enjoys it. Think nursery rhyme warmth with slightly more poetry.
+**Goal:** A sung lullaby that fades in under the final story fragments. It references the story's imagery — simple, slow, repetitive. The lullaby IS the final transition to sleep.
+
+### How it works in practice:
+The lullaby audio is stitched to fade in during the end of Phase 3. The narrator's voice dissolves, and the lullaby takes over — a seamless handoff from story to song. The child experiences it as one continuous descent into sleep.
 
 ### What works:
 - 3 verses + chorus structure (chorus repeats identically between verses)
@@ -132,7 +147,7 @@ The character does what the child should do. Mark each with `[BREATH_CUE]`:
 - Very simple rhyme: AABB or ABAB
 - Repetitive chorus with a rocking, rhythmic quality
 - Emotional tone: "you are safe, sleep is warm, the world is gentle"
-- Think: the warmth of a traditional lullaby with story-specific imagery
+- Simple, slow, repetitive — a true lullaby
 
 ### Technical requirements:
 - Format: `[verse]` and `[chorus]` section markers
@@ -254,7 +269,7 @@ The generation script outputs JSON with these 2-5-specific fields:
     "age_min": 2,
     "age_max": 5,
     "age_group": "2-5",
-    "duration": 10,
+    "duration": 18,
     "lullaby_lyrics": "[verse]\n...\n[chorus]\n...",
     "lead_character_type": "sea_creature | animal | bird | insect | plant | mythical",
     "character_name": "Simple 1-2 syllable name",
@@ -298,6 +313,8 @@ The benchmark story is "Lumi and the Glowing Tide" (`seed_output/content.json`, 
 - Lullaby: 3 verses + chorus referencing glowing tide, ocean beat, shell music
 - Produces ~10 minutes of audio at 0.8x speed
 - No abstract concepts — everything concrete and sensory
+
+**Note:** This benchmark was an early generation at the lower end of the word count range. New stories should target 1000-1500 words for the full 15-22 minute experience, with Phase 2 (400-600 words) and Phase 3 (350-500 words) being significantly longer.
 
 ---
 

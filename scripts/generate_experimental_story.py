@@ -110,7 +110,8 @@ The celebration/event should wind down naturally as the character gets sleepy in
 """
 
     return f"""Write a 3-phase bedtime story for children aged 2-5 years old.
-The story should be 600-900 words total and designed to last 8-12 minutes when narrated slowly.
+The story MUST be 1000-1500 words total (this is CRITICAL — stories under 1000 words are too short).
+Target 1200 words. Designed to last 15-22 minutes when narrated slowly.
 
 ## CHARACTER
 - The main character should be an ANIMAL or FANTASY CREATURE (NOT a human child).
@@ -121,7 +122,7 @@ The story should be 600-900 words total and designed to last 8-12 minutes when n
 {setting_block}
 ## STORY STRUCTURE
 
-### Phase 1 — CAPTURE (250-350 words)
+### Phase 1 — CAPTURE (250-400 words)
 Goal: Hook the child's attention with a fun, sensory discovery.
 
 - Start with [GENTLE] marker, then use [CURIOUS], [EXCITED], [JOYFUL] as the adventure builds
@@ -133,9 +134,9 @@ Goal: Hook the child's attention with a fun, sensory discovery.
 - Voice should feel warm and cozy — like a loving parent reading aloud
 - End Phase 1 with the character arriving somewhere quieter and cozier
 
-### Phase 2 — DESCENT (200-300 words)
+### Phase 2 — DESCENT (400-600 words)
 Mark the start with [PHASE_2] on its own line.
-Goal: The character physically relaxes — the child mirrors them.
+Goal: The adventure moves to a quieter place. The character physically relaxes — the child mirrors them. This is the LONGEST phase.
 
 - Use [CALM] and [SLEEPY] markers as the pace slows
 - The character settles into a cozy place
@@ -145,14 +146,16 @@ Goal: The character physically relaxes — the child mirrors them.
   * Yawns a great big yawn
   * Curls up into a tiny ball
   * Feels warmth wrapping around them like a blanket
-- Include 3-4 breathing cues marked with [BREATH_CUE]:
+- Include 4-6 breathing cues marked with [BREATH_CUE]:
   "[BREATH_CUE] She breathed in deep—whoosh—and out—ahhh—slow and steady."
+- The character takes big breaths: "took a biiiiig breath in... and blew it out slow like blowing a dandelion"
 - Include 1-2 whispered character dialogue lines in [CHAR_START]...[CHAR_END]
-- Descriptions of warmth, heaviness, coziness increase
-- Sentences get shorter. More [PAUSE] markers.
+- Language shifts to body-based: "the grass felt soft and tickly under her paws," "the air was warm like a blanket"
+- Descriptions of warmth, heaviness, coziness increase. Voice pacing slows noticeably.
+- Sentences get shorter. More [PAUSE] markers. Pauses stretch.
 - Character's glow/light/energy starts dimming
 
-### Phase 3 — SLEEP (150-250 words)
+### Phase 3 — SLEEP (350-500 words)
 Mark the start with [PHASE_3] on its own line.
 Goal: The story dissolves into fragments and silence.
 
@@ -162,7 +165,7 @@ Goal: The story dissolves into fragments and silence.
   "Warm... so warm... soft... so soft..."
   "One light dimmed... then another... then another..."
 - Use [LONG_PAUSE] between fragments (4-second silences)
-- 6-10 [LONG_PAUSE] markers total
+- 10-15 [LONG_PAUSE] markers total
 - Fragments get shorter: sentences → phrases → single words
 - The story DISSOLVES — it does NOT end. No "The End."
 - Last 5-6 lines should be just fragments with long pauses:
@@ -272,7 +275,7 @@ def generate_story():
         return
 
     logger.info("Generating 3-phase experimental story via Mistral...")
-    logger.info("Target: 600-900 words, ages 2-5")
+    logger.info("Target: 1000-1500 words, ages 2-5")
     if args.setting:
         logger.info("Setting: %s", args.setting)
 
