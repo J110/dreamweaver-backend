@@ -1151,7 +1151,7 @@ def generate_lean_overlay(axes, story):
 
     # Rare event
     rare_pool = [r for r in mapping.get("rare_event", []) if r in ELEMENT_GENERATORS]
-    if rare_pool and rng.random() < 0.7 and budget_remaining >= 250:
+    if rare_pool and rng.random() < 0.95 and budget_remaining >= 250:
         svg = ELEMENT_GENERATORS[rng.choice(rare_pool)](colors, world, story, rng)
         size = _svg_size(svg)
         if budget_remaining - size >= 0:
@@ -1922,8 +1922,8 @@ def _gen_sleeping_owl(colors, world, story, rng):
 
 
 def _gen_cricket(colors, world, story, rng):
-    """D4. Resting cricket — 1-2 tiny silhouettes, twitches every 8-15s.
-    Opacity 0.15-0.30.
+    """D4. Resting cricket — 1-2 tiny silhouettes, twitches every 15-25s.
+    Opacity 0.08-0.15. Bible: antenna 15s, legs 20s, twitch every 15-25s.
     """
     count = rng.randint(1, 2)
     parts = ['<!-- D4: Cricket -->']
@@ -1931,9 +1931,9 @@ def _gen_cricket(colors, world, story, rng):
     for i in range(count):
         bx = rng.randint(40, 80)
         by = rng.randint(86, 94)
-        op = round(rng.uniform(0.15, 0.30), 2)
-        leg_dur = _pick_prime_dur(7, 13, rng)
-        ant_dur = _pick_prime_dur(7, 13, rng)
+        op = round(rng.uniform(0.08, 0.15), 2)
+        leg_dur = _pick_prime_dur(17, 23, rng)
+        ant_dur = _pick_prime_dur(13, 19, rng)
         twitch = rng.randint(3, 8)
         # Mostly still with rare twitch
         leg_vals = "0,2,1; 0,2,1; 0,2,1; 0,2,1; 0,2,1; 0,2,1; 0,2,1; " + f"{twitch},2,1; 0,2,1; 0,2,1"
@@ -2565,7 +2565,7 @@ def generate_svg_overlay(axes: dict, story: dict) -> str:
 
     # 6. Rare event (0-1 from rare_event list)
     rare_pool = [r for r in mapping.get("rare_event", []) if r in ELEMENT_GENERATORS]
-    if rare_pool and rng.random() < 0.7 and budget_remaining >= 300:
+    if rare_pool and rng.random() < 0.95 and budget_remaining >= 300:
         elem_name = rng.choice(rare_pool)
         svg = ELEMENT_GENERATORS[elem_name](colors, world, story, rng)
         size = _svg_size(svg)
