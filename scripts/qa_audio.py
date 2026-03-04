@@ -67,6 +67,11 @@ DEFAULT_FIDELITY_PASS = 0.70
 DEFAULT_FIDELITY_FAIL = 0.49
 DURATION_OUTLIER_PCT = 0.15  # 15%
 
+# Songs/lullabies: singing distorts pronunciation, so lower thresholds
+# but we still catch skipped lines and truncation
+SONG_FIDELITY_PASS = 0.50
+SONG_FIDELITY_FAIL = 0.30
+
 # ── Logging ──────────────────────────────────────────────────────────────
 logging.basicConfig(
     level=logging.INFO,
@@ -138,10 +143,20 @@ def get_mp3_duration(path: Path) -> float:
 
 
 def resolve_audio_path(url: str) -> Optional[Path]:
-    """Convert /audio/pre-gen/xxx.mp3 URL to local file path."""
+    """Convert /audio/pre-gen/xxx.mp3 URL to local file path.
+
+    Searches both the backend audio dir and the web public audio dir
+    (songs may only exist in the web repo after sync).
+    """
     filename = url.split("/")[-1]
     path = AUDIO_DIR / filename
-    return path if path.exists() else None
+    if path.exists():
+        return path
+    # Also check the web repo's audio dir
+    web_audio = BASE_DIR.parent / "dreamweaver-web" / "public" / "audio" / "pre-gen" / filename
+    if web_audio.exists():
+        return web_audio
+    return None
 
 
 def api_call_with_retry(func, *args, max_retries=8, **kwargs):
@@ -407,16 +422,23 @@ def phase2_transcription_fidelity(
     for story in stories:
         story_id = story["id"]
         title = story.get("title", "untitled")
+        is_song = story.get("type") == "song"
 
-        # Skip fidelity check for songs — singing distorts pronunciation,
-        # making transcription-based comparison unreliable
-        if story.get("type") == "song":
-            logger.info("  [SKIP] %s — song (fidelity QA not applicable for singing)", title)
-            continue
-
-        source_text = story.get("annotated_text_devanagari", "")
-        if not source_text:
-            source_text = story.get("annotated_text", story.get("text", ""))
+        # Songs use the raw text field (with [Verse]/[Chorus] markers)
+        # Stories use annotated_text_devanagari or annotated_text
+        if is_song:
+            source_text = story.get("text", "")
+            # Use song-specific thresholds (singing distorts pronunciation)
+            pass_thresh = SONG_FIDELITY_PASS
+            fail_thresh = SONG_FIDELITY_FAIL
+            logger.info("  [SONG] %s — using song fidelity thresholds (pass=%.2f, fail=%.2f)",
+                        title, pass_thresh, fail_thresh)
+        else:
+            source_text = story.get("annotated_text_devanagari", "")
+            if not source_text:
+                source_text = story.get("annotated_text", story.get("text", ""))
+            pass_thresh = DEFAULT_FIDELITY_PASS
+            fail_thresh = DEFAULT_FIDELITY_FAIL
 
         story_results = {}
 
@@ -457,12 +479,34 @@ def phase2_transcription_fidelity(
                 fidelity = compute_text_fidelity(source_text, transcript)
 
                 score = fidelity["combined"]
-                if score >= DEFAULT_FIDELITY_PASS:
+                if score >= pass_thresh:
                     verdict = "PASS"
-                elif score >= DEFAULT_FIDELITY_FAIL:
+                elif score >= fail_thresh:
                     verdict = "WARN"
                 else:
                     verdict = "FAIL"
+
+                # Song completeness check: verify the last 20% of lyrics
+                # appear in transcript (catches truncation from duration limit)
+                completeness_note = ""
+                if is_song:
+                    src_words = normalize_devanagari(source_text).split()
+                    trs_words = normalize_devanagari(transcript).split()
+                    if src_words:
+                        tail_start = max(0, len(src_words) - len(src_words) // 5)
+                        tail_words = src_words[tail_start:]
+                        tail_found = sum(
+                            1 for w in tail_words
+                            if any(difflib.SequenceMatcher(None, w, tw).ratio() >= 0.5
+                                   for tw in trs_words[-len(tail_words) * 3:])
+                        ) if tail_words else 0
+                        tail_coverage = tail_found / max(len(tail_words), 1)
+                        completeness_note = f" tail={tail_coverage:.0%}"
+                        if tail_coverage < 0.30:
+                            # Last 20% of lyrics mostly missing → truncated
+                            if verdict == "PASS":
+                                verdict = "WARN"
+                            completeness_note += " (TRUNCATED?)"
 
                 story_results[voice] = {
                     "transcript": transcript,
@@ -471,7 +515,7 @@ def phase2_transcription_fidelity(
                 }
 
                 symbol = "✓" if verdict == "PASS" else ("⚠" if verdict == "WARN" else "✗")
-                logger.info("    %s fidelity=%.2f (%s)", symbol, score, verdict)
+                logger.info("    %s fidelity=%.2f (%s)%s", symbol, score, verdict, completeness_note)
 
             except Exception as e:
                 logger.error("    ✗ Transcription failed: %s", e)
@@ -732,6 +776,7 @@ def compute_verdict(
     quality_info: Optional[dict],
     fidelity_pass_threshold: float = DEFAULT_FIDELITY_PASS,
     fidelity_fail_threshold: float = DEFAULT_FIDELITY_FAIL,
+    content_type: str = "story",
 ) -> dict:
     """Combine all phases into a final PASS / WARN / FAIL verdict.
 
@@ -739,7 +784,12 @@ def compute_verdict(
         duration_info: {deviation_pct, is_outlier} from Phase 1
         fidelity_info: {fidelity: {combined, ...}, transcript, verdict} from Phase 2
         quality_info: {pronunciation: {score, reason}, ...} from Phase 3
+        content_type: "story" or "song" — songs use relaxed fidelity thresholds
     """
+    # Songs use relaxed thresholds (singing distorts pronunciation)
+    if content_type == "song":
+        fidelity_pass_threshold = SONG_FIDELITY_PASS
+        fidelity_fail_threshold = SONG_FIDELITY_FAIL
     reasons = []
     verdict = "PASS"
 
@@ -833,6 +883,7 @@ def generate_report(
     for story in stories:
         story_id = story["id"]
         title = story.get("title", "untitled")
+        content_type = story.get("type", "story")
         p1 = phase1.get(story_id, {})
         p2 = phase2.get(story_id, {}) if phase2 else {}
         p3 = phase3.get(story_id, {}) if phase3 else {}
@@ -852,10 +903,11 @@ def generate_report(
             fid_info = p2.get(voice)
             qual_info = p3.get(voice)
 
-            # Compute combined verdict
+            # Compute combined verdict (songs use relaxed thresholds)
             combined = compute_verdict(
                 dur_info, fid_info, qual_info,
                 fidelity_pass_threshold, fidelity_fail_threshold,
+                content_type=content_type,
             )
 
             if fid_info and "fidelity" in fid_info:

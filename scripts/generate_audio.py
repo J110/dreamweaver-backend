@@ -311,45 +311,107 @@ _EMOTION_MARKER_RE = re.compile(
 def prepare_lyrics_for_songgen(story: dict) -> str:
     """Convert story text to ACE-Step-compatible lyrics format.
 
-    Uses the raw `text` field (which has [Verse 1]/[Chorus] structure) and
-    converts to ACE-Step tags: [verse], [chorus], [bridge].
-    Sections separated by blank lines, lyrics as newline-separated lines.
+    Cleans up TTS emotion markers, parenthetical stage directions, and
+    re-groups lines into proper 4-line verse stanzas. Humming lines become
+    [chorus] sections. This produces a clean structure ACE-Step can follow
+    without skipping or garbling lyrics.
     """
     text = story.get("text", "")
     if not text:
         return ""
 
-    # Strip any TTS emotion markers that might be in the text
+    # Strip TTS emotion markers: [SINGING], [GENTLE], [PAUSE], etc.
     text = _EMOTION_MARKER_RE.sub("", text)
 
-    # Split into sections by double newline
-    sections = [s.strip() for s in text.split("\n\n") if s.strip()]
+    # Regex for parenthetical stage directions: (Hum a soft melody...), (Whisper)...
+    _STAGE_DIR_RE = re.compile(r"^\s*\(.*?\)\s*$")
+    # Regex for humming lines: "Hmmm, hmmm..." or "La la la..."
+    _HUMMING_RE = re.compile(r"^(?:h[mu]+m+|la\s+la|do\s+do|na\s+na)[,\s]", re.IGNORECASE)
+
+    # First pass: split into lines, classify each
+    raw_lines = text.split("\n")
+    classified = []  # (type, text) where type is "lyric", "hum", "header", "blank"
+
+    for line in raw_lines:
+        stripped = line.strip()
+        if not stripped:
+            classified.append(("blank", ""))
+        elif _STAGE_DIR_RE.match(stripped):
+            # Skip parenthetical directions entirely
+            continue
+        elif re.match(r"\[?(?:Verse|Chorus|Bridge)\s*\d*\]?", stripped, re.IGNORECASE):
+            classified.append(("header", stripped))
+        elif _HUMMING_RE.match(stripped):
+            classified.append(("hum", stripped))
+        elif stripped.lower().startswith("(whisper)"):
+            # Convert whisper direction to lyric
+            classified.append(("lyric", stripped.split(")", 1)[-1].strip()))
+        else:
+            classified.append(("lyric", stripped))
+
+    # Second pass: detect if original text has [Verse]/[Chorus] structure
+    has_section_headers = any(t == "header" for t, _ in classified)
+
+    if has_section_headers:
+        # Text already has proper section structure — use it
+        ace_parts = []
+        current_tag = "[verse]"
+        current_lines = []
+
+        for ctype, ctext in classified:
+            if ctype == "header":
+                # Flush previous section
+                if current_lines:
+                    ace_parts.append(f"{current_tag}\n" + "\n".join(current_lines))
+                    current_lines = []
+                # Detect tag
+                if re.match(r"\[?Chorus\]?", ctext, re.IGNORECASE):
+                    current_tag = "[chorus]"
+                elif re.match(r"\[?Bridge\]?", ctext, re.IGNORECASE):
+                    current_tag = "[bridge]"
+                else:
+                    current_tag = "[verse]"
+            elif ctype == "lyric" and ctext:
+                current_lines.append(ctext)
+            elif ctype == "hum" and ctext:
+                # Flush lyrics before hum, add hum as chorus
+                if current_lines:
+                    ace_parts.append(f"{current_tag}\n" + "\n".join(current_lines))
+                    current_lines = []
+                ace_parts.append(f"[chorus]\n{ctext}")
+
+        if current_lines:
+            ace_parts.append(f"{current_tag}\n" + "\n".join(current_lines))
+
+        return "\n\n".join(ace_parts)
+
+    # No section headers — regroup flat lines into 4-line verses
+    # Collect all lyric and hum lines
+    lyric_lines = []
+    hum_lines = []
+    for ctype, ctext in classified:
+        if ctype == "lyric" and ctext:
+            lyric_lines.append(ctext)
+        elif ctype == "hum" and ctext:
+            hum_lines.append(ctext)
 
     ace_parts = []
+    verse_num = 0
 
-    for section in sections:
-        lines = section.split("\n")
-        header = lines[0].strip() if lines else ""
+    # Group lyric lines into 4-line stanzas
+    for i in range(0, len(lyric_lines), 4):
+        chunk = lyric_lines[i:i + 4]
+        if chunk:
+            ace_parts.append("[verse]\n" + "\n".join(chunk))
+            verse_num += 1
+            # Insert a humming chorus after every 2 verses (if we have hum lines)
+            if verse_num % 2 == 0 and hum_lines:
+                hum = hum_lines.pop(0)
+                ace_parts.append(f"[chorus]\n{hum}")
 
-        # Detect section type from header
-        if re.match(r"\[?Verse\s*\d*\]?", header, re.IGNORECASE):
-            tag = "[verse]"
-            lyrics_lines = lines[1:] if len(lines) > 1 else lines
-        elif re.match(r"\[?Chorus\]?", header, re.IGNORECASE):
-            tag = "[chorus]"
-            lyrics_lines = lines[1:] if len(lines) > 1 else lines
-        elif re.match(r"\[?Bridge\]?", header, re.IGNORECASE):
-            tag = "[bridge]"
-            lyrics_lines = lines[1:] if len(lines) > 1 else lines
-        else:
-            # No section header — treat as a verse
-            tag = "[verse]"
-            lyrics_lines = lines
-
-        # ACE-Step uses newline-separated lyrics under each tag
-        lyric_text = "\n".join(line.strip() for line in lyrics_lines if line.strip())
-        if lyric_text:
-            ace_parts.append(f"{tag}\n{lyric_text}")
+    # Append any remaining hum lines as a final chorus
+    for hum in hum_lines:
+        ace_parts.append(f"[chorus]\n{hum}")
 
     return "\n\n".join(ace_parts)
 
@@ -425,20 +487,20 @@ LULLABY_STYLES = {
     "female_1": {
         "name": "Piano Lullaby",
         "mode": "full",
-        "description": "gentle lullaby, {gender} vocal, warm, soft, relaxed, unhurried, piano, soft strings, slow tempo 55 bpm, dreamy, peaceful, bedtime",
-        "duration": 120,
+        "description": "gentle lullaby, {gender} vocal, clear vocals, enunciate lyrics, warm, soft, relaxed, unhurried, piano, soft strings, slow tempo 65 bpm, dreamy, peaceful, bedtime",
+        "duration": 240,
     },
     "female_3": {
         "name": "Guitar Lullaby",
         "mode": "full",
-        "description": "acoustic lullaby, {gender} vocal, sweet, tender, relaxed, unhurried, acoustic guitar, fingerpicking, slow tempo 55 bpm, cozy, folk, bedtime",
-        "duration": 120,
+        "description": "acoustic lullaby, {gender} vocal, clear vocals, enunciate lyrics, sweet, tender, relaxed, unhurried, acoustic guitar, fingerpicking, slow tempo 65 bpm, cozy, folk, bedtime",
+        "duration": 240,
     },
     "male_1": {
         "name": "Music Box Lullaby",
         "mode": "full",
-        "description": "delicate lullaby, {gender} vocal, soft, gentle, relaxed, unhurried, music box, bells, chimes, very slow tempo 50 bpm, magical, enchanting, bedtime",
-        "duration": 120,
+        "description": "delicate lullaby, {gender} vocal, clear vocals, enunciate lyrics, soft, gentle, relaxed, unhurried, music box, bells, chimes, slow tempo 60 bpm, magical, enchanting, bedtime",
+        "duration": 240,
     },
 }
 # Hindi variants use the same styles
@@ -601,13 +663,13 @@ def generate_lullaby_audio(
     # Build description based on gender
     if voice_gender == "female":
         description = (
-            "gentle lullaby, female vocal, warm, soft, relaxed, unhurried, "
-            "piano, soft strings, slow tempo 55 bpm, dreamy, peaceful, bedtime"
+            "gentle lullaby, female vocal, clear vocals, enunciate lyrics, warm, soft, relaxed, "
+            "unhurried, piano, soft strings, slow tempo 65 bpm, dreamy, peaceful, bedtime"
         )
     else:
         description = (
-            "gentle lullaby, male vocal, soft, whispered, very slow, hushed, "
-            "minimal piano, ambient pads, slow tempo 50 bpm, dreamy, peaceful, bedtime, "
+            "gentle lullaby, male vocal, clear vocals, enunciate lyrics, soft, hushed, "
+            "minimal piano, ambient pads, slow tempo 60 bpm, dreamy, peaceful, bedtime, "
             "quiet, intimate, sleepy, fade to silence"
         )
 
@@ -617,7 +679,7 @@ def generate_lullaby_audio(
         "description": description,
         "mode": "full",
         "format": "mp3",
-        "duration": 120,  # 2 minutes
+        "duration": 240,  # 4 minutes — enough for all lyrics at slow lullaby tempo
         "seed": voice_seed,
     }
 
