@@ -1,20 +1,24 @@
 """Generate an experimental 3-phase bedtime story with character voice + lullaby lyrics.
 
-This is a one-off script for creating a long-form (15-20 min) sleep-inducing story
+This is a one-off script for creating a long-form (8-12 min) sleep-inducing story
 for ages 2-5 with:
-  Phase 1 (Capture):  Fun, engaging, sensory — 400-600 words
-  Phase 2 (Descent):  Progressive relaxation, breathing — 600-900 words
-  Phase 3 (Sleep):    Dissolving, repetitive, fragments — 500-800 words
-  Lullaby:            2-3 verse song referencing story imagery
+  Phase 1 (Capture):  Fun, engaging, sensory — 250-350 words
+  Phase 2 (Descent):  Progressive relaxation, breathing — 200-300 words
+  Phase 3 (Sleep):    Dissolving, repetitive, fragments — 150-250 words
+  Lullaby:            3 verse + chorus song referencing story imagery
 
 Character dialogue uses [CHAR_START]/[CHAR_END] markers for dual-voice TTS.
 Phase transitions use [PHASE_2]/[PHASE_3] markers for pacing changes.
 
+See docs/STORY_GUIDELINES_2_5.md for full guidelines.
+
 Usage:
     python3 scripts/generate_experimental_story.py
-    python3 scripts/generate_experimental_story.py --dry-run   # Show prompt only
+    python3 scripts/generate_experimental_story.py --setting "Holi festival"
+    python3 scripts/generate_experimental_story.py --dry-run
 """
 
+import argparse
 import json
 import logging
 import os
@@ -79,7 +83,7 @@ CRITICAL RULES:
 - Return ONLY valid JSON. No markdown fences, no extra text."""
 
 
-def build_prompt(existing_titles, existing_char_types):
+def build_prompt(existing_titles, existing_char_types, setting=None):
     """Build the generation prompt for the 3-phase story + lullaby."""
 
     # Determine which character types are underrepresented
@@ -88,85 +92,92 @@ def build_prompt(existing_titles, existing_char_types):
         type_counts[t] = type_counts.get(t, 0) + 1
 
     underrepresented = [
-        t for t in ["animal", "bird", "sea_creature", "plant", "mythical"]
+        t for t in ["animal", "bird", "sea_creature", "plant", "mythical", "insect"]
         if type_counts.get(t, 0) < 2
     ]
     char_suggestion = ", ".join(underrepresented[:3]) if underrepresented else "animal"
 
     anti_dup = "\n".join(f"  - {t}" for t in existing_titles[-15:]) if existing_titles else "  (none yet)"
 
+    setting_block = ""
+    if setting:
+        setting_block = f"""
+## STORY SETTING
+Set this story during: {setting}
+Weave this setting naturally into the story — it should feel like a normal part of the character's world.
+The setting provides sensory material (colors, sounds, smells, activities) but the 3-phase sleep structure still takes priority.
+The celebration/event should wind down naturally as the character gets sleepy in Phase 2-3.
+"""
+
     return f"""Write a 3-phase bedtime story for children aged 2-5 years old.
-The story should be 1500-2500 words total and designed to last 15-20 minutes when narrated slowly.
+The story should be 600-900 words total and designed to last 8-12 minutes when narrated slowly.
 
 ## CHARACTER
-- The main character should be an ANIMAL (choose one that's NOT already in our catalog).
+- The main character should be an ANIMAL or FANTASY CREATURE (NOT a human child).
 - Pick from underrepresented types: {char_suggestion}
-- Give the character a simple, memorable name
+- Give the character a simple, memorable name (1-2 syllables: Pip, Lumi, Fern, Milo, Dot, Kai)
 - The character should be warm, curious, and lovable
-- The character speaks in short, simple sentences
-
+- The character speaks in short, simple sentences (5-12 words)
+{setting_block}
 ## STORY STRUCTURE
 
-### Phase 1 — CAPTURE (400-600 words)
-Goal: Hook the child's attention with a fun, vivid scenario.
+### Phase 1 — CAPTURE (250-350 words)
+Goal: Hook the child's attention with a fun, sensory discovery.
 
-- Start with [GENTLE] marker, then use [EXCITED], [CURIOUS], [JOYFUL] as the adventure builds
-- One clear, simple storyline — the character discovers something magical
+- Start with [GENTLE] marker, then use [CURIOUS], [EXCITED], [JOYFUL] as the adventure builds
+- One clear, simple storyline — the character discovers something magical and beautiful
 - Include 3-5 lines of character dialogue wrapped in [CHAR_START]...[CHAR_END]
-- Use lots of sensory language: colors, textures, sounds, smells
-- Include 2-3 rhetorical engagement hooks like "Can you guess what happened next?"
-- Voice should feel warm and gently animated — cozy storytelling, not cartoon energy
-- End Phase 1 with the character arriving somewhere quieter
+- Use lots of sensory language: colors, textures, sounds, smells, warmth
+- Simple vocabulary — "sparkly," "warm," "glowing," "soft," "tickly"
+- Short sentences: one idea per sentence
+- Voice should feel warm and cozy — like a loving parent reading aloud
+- End Phase 1 with the character arriving somewhere quieter and cozier
 
-### Phase 2 — DESCENT (600-900 words)
+### Phase 2 — DESCENT (200-300 words)
 Mark the start with [PHASE_2] on its own line.
-Goal: Guide the child toward relaxation through the story.
+Goal: The character physically relaxes — the child mirrors them.
 
 - Use [CALM] and [SLEEPY] markers as the pace slows
-- The adventure moves to a quiet, cozy place
-- Language shifts to body-based, sensory descriptions:
-  "the grass felt soft and tickly under her paws"
-  "the air was warm like a blanket"
-- DISGUISED PROGRESSIVE RELAXATION: The character physically does what the child should do:
-  * Stretches arms wide, then goes floppy
-  * Takes big breaths ("took a biiiiig breath in... and blew it out slow like blowing a dandelion")
-  * Yawns great big yawns
-  * Curls up smaller and smaller
-- Include 3-4 explicit breathing cues marked with [BREATH_CUE]:
-  "[BREATH_CUE] The little [character] breathed in deep... in through the nose... and out through the mouth... ahhhhh."
-- Include 1-2 quiet character dialogue lines in [CHAR_START]...[CHAR_END] (whispered)
+- The character settles into a cozy place
+- CHARACTER-MODELED RELAXATION: The character physically does what the child should do:
+  * Takes a biiiiig breath in... and blows it out slow — ahhhhh
+  * Stretches arms/tentacles/wings wide, then goes floppy
+  * Yawns a great big yawn
+  * Curls up into a tiny ball
+  * Feels warmth wrapping around them like a blanket
+- Include 3-4 breathing cues marked with [BREATH_CUE]:
+  "[BREATH_CUE] She breathed in deep—whoosh—and out—ahhh—slow and steady."
+- Include 1-2 whispered character dialogue lines in [CHAR_START]...[CHAR_END]
 - Descriptions of warmth, heaviness, coziness increase
-- Pacing slows noticeably — shorter sentences, more pauses [PAUSE]
+- Sentences get shorter. More [PAUSE] markers.
+- Character's glow/light/energy starts dimming
 
-### Phase 3 — SLEEP (500-800 words)
+### Phase 3 — SLEEP (150-250 words)
 Mark the start with [PHASE_3] on its own line.
-Goal: The story dissolves. Induce sleep through extreme repetition and fragmentation.
+Goal: The story dissolves into fragments and silence.
 
-- Use only [SLEEPY] and [WHISPERING] markers
+- Use ONLY [SLEEPY] and [WHISPERING] markers
 - NO character dialogue — just the narrator's soft voice
-- The character is now in their cozy sleeping place
-- Narrative becomes extremely repetitive and cyclical:
-  "One star lit up... then another... then another... each one soft and quiet..."
+- Narrative becomes extremely repetitive:
   "Warm... so warm... soft... so soft..."
-- Descriptions focus on: heaviness, warmth, softness, closing eyes, sinking into bed
-- Use [LONG_PAUSE] between fragments (these become 4-second silences)
-- The story doesn't end — it DISSOLVES
-- Last 5-6 "sentences" should be just fragments with long pauses:
-  "[WHISPERING] soft blanket of stars..."
-  "[LONG_PAUSE]"
-  "[WHISPERING] warm... and safe..."
-  "[LONG_PAUSE]"
-  "[WHISPERING] sleep now..."
-  "[LONG_PAUSE]"
+  "One light dimmed... then another... then another..."
+- Use [LONG_PAUSE] between fragments (4-second silences)
+- 6-10 [LONG_PAUSE] markers total
+- Fragments get shorter: sentences → phrases → single words
+- The story DISSOLVES — it does NOT end. No "The End."
+- Last 5-6 lines should be just fragments with long pauses:
+  "[WHISPERING] Warm... and safe... [LONG_PAUSE]"
+  "[WHISPERING] Sleep now... little one... [LONG_PAUSE]"
+  "[WHISPERING] Sleep... [LONG_PAUSE]"
 
 ## LULLABY LYRICS
-Also write a simple lullaby (3 verses + 1 chorus) that:
-- References the story's character and imagery
-- Has a very simple, repetitive chorus
+Also write a lullaby (3 verses + 1 repeating chorus) that:
+- References the story's character and imagery (at least 2 story-specific images)
+- Has a very simple, repetitive chorus (identical each time)
 - Uses [verse] and [chorus] section markers
-- Is soothing, slow, and sleep-inducing
-- Each verse: 4 lines, simple rhyme scheme (AABB or ABAB)
-- Chorus: 4 lines, very repetitive
+- Each verse: 4 lines, simple rhyme scheme (AABB or ABAB), ~20-30 words
+- Chorus: 4 lines, ~15-25 words
+- Total: 80-120 words
 
 ## EMOTION MARKERS REFERENCE
 Available markers (place at start of paragraph or sentence):
@@ -197,7 +208,7 @@ Return ONLY a JSON object (no markdown fences):
     "text": "Full story text with all emotion markers, character markers, and phase markers. Use \\n\\n between paragraphs.",
     "lullaby_lyrics": "Lullaby with [verse] and [chorus] markers",
     "character_name": "Name of the animal character",
-    "character_type": "animal type (e.g., otter, hedgehog, deer)",
+    "character_type": "animal type (e.g., jellyfish, firefly, fox, butterfly)",
     "morals": ["lesson1"],
     "categories": ["Bedtime", "category2", "category3"],
     "theme": "bedtime",
@@ -231,6 +242,13 @@ def parse_json_response(raw: str) -> dict:
 
 def generate_story():
     """Generate the experimental 3-phase story via Mistral."""
+    parser = argparse.ArgumentParser(description="Generate a 3-phase bedtime story for ages 2-5")
+    parser.add_argument("--setting", type=str, default=None,
+                        help="Story setting/situation (e.g., 'Holi festival celebrations')")
+    parser.add_argument("--dry-run", action="store_true",
+                        help="Show prompt only, don't call API")
+    args = parser.parse_args()
+
     api_key = os.getenv("MISTRAL_API_KEY")
     if not api_key:
         logger.error("MISTRAL_API_KEY not set")
@@ -241,19 +259,22 @@ def generate_story():
     existing_titles = get_existing_titles()
     existing_char_types = get_existing_character_types()
 
-    prompt = build_prompt(existing_titles, existing_char_types)
+    prompt = build_prompt(existing_titles, existing_char_types, setting=args.setting)
 
-    # Check for --dry-run
-    if "--dry-run" in sys.argv:
+    if args.dry_run:
         print("\n=== SYSTEM PROMPT ===")
         print(SYSTEM_PROMPT)
         print("\n=== USER PROMPT ===")
         print(prompt)
         print(f"\nPrompt length: {len(prompt)} chars")
+        if args.setting:
+            print(f"Setting: {args.setting}")
         return
 
     logger.info("Generating 3-phase experimental story via Mistral...")
-    logger.info("Target: 1500-2500 words, ages 2-5")
+    logger.info("Target: 600-900 words, ages 2-5")
+    if args.setting:
+        logger.info("Setting: %s", args.setting)
 
     max_retries = 5
     for attempt in range(max_retries):
@@ -328,7 +349,7 @@ def generate_story():
 
     content_obj = {
         "id": content_id,
-        "type": "story",
+        "type": "long_story",
         "lang": "en",
         "title": title,
         "description": description,
@@ -342,7 +363,7 @@ def generate_story():
         "length": "LONG",
         "word_count": word_count,
         "duration_seconds": 0,
-        "duration": 18,
+        "duration": 10,
         "categories": categories,
         "theme": theme,
         "morals": morals,
