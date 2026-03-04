@@ -1863,7 +1863,7 @@ def _extract_character_phrase(story: dict) -> str:
     first_sent = re.split(r'[.!?]', desc)[0].strip()
 
     # Common story-start verbs that mark the end of the character phrase
-    verb_pattern = r'\b(embarks?|discovers?|learns?|finds?|begins?|sets?\s+out|ventures?|travels?|journeys?|explores?|weaves?|must|hears?|meets?|wakes?|searches?|stumbles?|follows?|seeks?|drifts?|wanders?|deciphers?|helps?|uncovers?|lights?|creates?|forges?|teaches?|guides?)\b'
+    verb_pattern = r'\b(embarks?|discovers?|learns?|finds?|begins?|sets?\s+out|ventures?|travels?|journeys?|explores?|weaves?|must|hears?|meets?|wakes?|searches?|stumbles?|follows?|seeks?|drifts?|wanders?|deciphers?|helps?|uncovers?|lights?|creates?|forges?|teaches?|guides?|says?|sings?|tells?|flies?|swims?|runs?|walks?|sits?|goes?|hums?|dances?|plays?|tends?|whispers?|races?|gathers?|collects?|lives?|works?)\b'
 
     # Strip common prefixes that precede the character phrase
     # "When seven-year-old Aarohi discovers..." → "seven-year-old Aarohi discovers..."
@@ -1906,7 +1906,7 @@ def _extract_character_phrase(story: dict) -> str:
     # Fallback: use title-based character name
     title = story.get("title", "")
     # Try to extract name from title patterns: "X and the Y", "X's Y"
-    title_match = re.match(r"^(.+?)\s+(?:and the|'s)\s+", title)
+    title_match = re.match(r"^(.+?)(?:\s+and the|[''\u2019]s)\s+", title)
     if title_match:
         return title_match.group(1).strip()
 
