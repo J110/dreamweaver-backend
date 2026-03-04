@@ -82,6 +82,8 @@ Not every story should have a human lead. Rotate across these entity types to ke
 - Non-human characters can still explore human themes (friendship, courage, identity)
 - For ages 0-3, animals and simple objects work best. Aliens and complex entities for ages 4+.
 - Ensure each entity type gets representation across different themes and age groups
+- **CRITICAL for cover art**: Every story MUST have `lead_character_type` set in content.json. Without it, the FLUX cover generator defaults to "human child" and produces a girl/boy even for non-human protagonists (e.g., an owl story gets a sparrow cover). Valid values: `human`, `animal`, `bird`, `sea_creature`, `insect`, `plant`, `celestial`, `atmospheric`, `mythical`, `object`, `alien`, `robot`.
+- **Description format for covers**: The first sentence of the description should start with the protagonist and a common verb, e.g., "A wise owl says goodnight..." not "Goodnight is said by..." — this ensures `_extract_character_phrase()` can parse the character identity for the FLUX prompt.
 
 ### 2.4 Cultural Representation & Geography
 

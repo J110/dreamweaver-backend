@@ -12,6 +12,7 @@
 4. **Every content item MUST have `created_at` and `updated_at` as ISO strings.** Missing `created_at` crashes the entire API sort, making ALL content disappear. Always validate after manual edits.
 5. **Audio files must exist in BOTH backend AND frontend `public/` directories.** nginx serves from frontend `public/`. Backend stores the source copies.
 6. **NEVER remove audio files from `public/audio/pre-gen/` unless the corresponding seedData.js entries are also removed.** Orphan URLs → 404 errors → broken playback.
+7. **Every content item MUST have `lead_character_type` set.** Without it, FLUX cover generation defaults to "human child" — producing a girl/boy for stories about owls, clouds, fireflies, etc. Pipeline-generated stories set this automatically. For manually added stories, set it explicitly or ensure the `_infer_character_type()` fallback in `generate_cover_experimental.py` can detect the correct type from the title/description.
 
 ---
 
@@ -280,6 +281,42 @@ grep -c "melodyInterval.*4000" src/utils/seedData.js
 - ALWAYS commit audio files immediately after generating/copying them
 - Never run destructive git commands without checking for uncommitted audio files first
 - The pipeline should commit audio files in the same commit as seedData.js changes
+
+### 11. Cover Shows Wrong Character (THE OWL BUG)
+
+**What happened**: "The Owl's Goodnight" cover showed a sparrow instead of an owl. "Chai's Moonlit Steam Song" showed a generic object instead of a teacup.
+
+**Root cause (two-part)**:
+1. **Missing `lead_character_type`**: Stories created before the pipeline don't have `lead_character_type` set. The cover generator defaults to `"human"`, producing a girl/boy for non-human protagonists.
+2. **Character phrase extraction failures**: `_extract_character_phrase()` in `generate_cover_experimental.py` couldn't parse the character from descriptions using unrecognized verbs (e.g., "says", "sings", "hums"). Without the specific phrase (e.g., "A wise owl"), FLUX receives only the generic visual like "a small bird" → renders a sparrow.
+
+**Prevention**:
+```bash
+# Before generating covers, verify character detection for all stories:
+cd dreamweaver-backend
+python3 -c "
+import json, sys
+sys.path.insert(0, '.')
+from scripts.generate_cover_experimental import _extract_character_phrase, _infer_character_type, auto_select_axes
+
+content = json.load(open('seed_output/content.json'))
+for s in content:
+    if s.get('language', s.get('lang', 'en')) != 'en':
+        continue
+    phrase = _extract_character_phrase(s)
+    char_type = s.get('lead_character_type', '') or _infer_character_type(s)
+    axes = auto_select_axes(s, {})
+    if not phrase and char_type != 'human':
+        print(f'WARNING: {s[\"title\"]} — type={char_type} but no char phrase extracted')
+    if not s.get('lead_character_type') and char_type != 'human':
+        print(f'MISSING lead_character_type: {s[\"title\"]} (inferred: {char_type})')
+"
+```
+
+**When adding new stories manually**:
+- ALWAYS set `lead_character_type` (one of: human, animal, bird, sea_creature, insect, plant, celestial, atmospheric, mythical, object, robot)
+- Ensure the description's first sentence starts with the protagonist and a recognizable verb (e.g., "A wise owl discovers..." not "Goodnight is what the owl says...")
+- After generating a cover, visually verify the character matches before publishing
 
 ---
 
