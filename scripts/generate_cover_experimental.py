@@ -593,8 +593,31 @@ def _zone_to_mask_path(zone, feather_px, rng, width=512, height=512):
         return f"M{margin},{margin} L{w - margin},{margin} L{w - margin},{h - margin} L{margin},{h - margin} Z", "path"
 
 
-def _generate_mask_element(region, rng):
-    """Generate a complete SVG <mask> element for a region with feathered edges."""
+# ── Character Exclusion Zones ────────────────────────────────────────────
+#
+# Maps composition type → approximate character bounding ellipse (cx, cy, rx, ry)
+# as fractions of the 512x512 canvas. A black ellipse is added inside every
+# cinemagraph mask to prevent filters from distorting the character's face/body.
+# The exclusion has a soft feathered edge (20px blur) so the transition is seamless.
+
+CHARACTER_EXCLUSION_ZONES = {
+    "vast_landscape":    {"cx": 0.50, "cy": 0.72, "rx": 0.10, "ry": 0.14},  # Small character at bottom center
+    "intimate_closeup":  {"cx": 0.50, "cy": 0.45, "rx": 0.28, "ry": 0.35},  # Character fills most of frame
+    "overhead_canopy":   {"cx": 0.50, "cy": 0.78, "rx": 0.12, "ry": 0.12},  # Small at bottom
+    "winding_path":      {"cx": 0.45, "cy": 0.60, "rx": 0.12, "ry": 0.18},  # On path, mid-lower
+    "circular_nest":     {"cx": 0.50, "cy": 0.50, "rx": 0.18, "ry": 0.22},  # Center of frame
+}
+
+# Fallback: most compositions place the character in the lower-center
+_DEFAULT_EXCLUSION = {"cx": 0.50, "cy": 0.62, "rx": 0.15, "ry": 0.20}
+
+
+def _generate_mask_element(region, rng, composition=None):
+    """Generate a complete SVG <mask> element for a region with feathered edges.
+
+    Includes a character exclusion zone — a soft black ellipse that prevents
+    cinemagraph filters from distorting the character's face/body.
+    """
     rid = region["id"]
     zone = region["zone"]
     feather = region["feather_px"]
@@ -607,14 +630,26 @@ def _generate_mask_element(region, rng):
     parts = []
     parts.append(f'    <filter id="{blur_id}"><feGaussianBlur stdDeviation="{feather}"/></filter>')
 
+    # Character exclusion: soft black ellipse to protect character face/body
+    char_zone = CHARACTER_EXCLUSION_ZONES.get(composition, _DEFAULT_EXCLUSION) if composition else _DEFAULT_EXCLUSION
+    char_cx = int(char_zone["cx"] * 512)
+    char_cy = int(char_zone["cy"] * 512)
+    char_rx = int(char_zone["rx"] * 512)
+    char_ry = int(char_zone["ry"] * 512)
+    # Feathered exclusion filter
+    char_blur_id = f"char-blur-{rid}"
+    parts.append(f'    <filter id="{char_blur_id}"><feGaussianBlur stdDeviation="20"/></filter>')
+
     if mask_type == "circle":
         cx, cy, r = path_data.split(",")
         parts.append(f'    <mask id="mask-{rid}">')
         parts.append(f'      <circle cx="{cx}" cy="{cy}" r="{int(float(r)) + feather}" fill="white" filter="url(#{blur_id})"/>')
+        parts.append(f'      <ellipse cx="{char_cx}" cy="{char_cy}" rx="{char_rx}" ry="{char_ry}" fill="black" filter="url(#{char_blur_id})"/>')
         parts.append(f'    </mask>')
     else:
         parts.append(f'    <mask id="mask-{rid}">')
         parts.append(f'      <path d="{path_data}" fill="white" filter="url(#{blur_id})"/>')
+        parts.append(f'      <ellipse cx="{char_cx}" cy="{char_cy}" rx="{char_rx}" ry="{char_ry}" fill="black" filter="url(#{char_blur_id})"/>')
         parts.append(f'    </mask>')
 
     return "\n".join(parts)
@@ -978,12 +1013,13 @@ for _ws, _mapping in WORLD_ELEMENTS.items():
     WORLD_ELEMENTS_LEAN[_ws] = _lean
 
 
-def generate_v3_filters_and_masks(world_setting, rng):
+def generate_v3_filters_and_masks(world_setting, rng, composition=None):
     """Generate all cinemagraph filter and mask definitions for a world setting.
 
     Returns dict with 'defs_svg' (combined <filter> and <mask> SVG),
     'regions' (list of region dicts with filter/mask ids), and metadata.
     Enforces performance budget: max 4 filters, combined numOctaves <= 12.
+    Character exclusion zone is applied to all masks based on composition.
     """
     regions = REGION_TEMPLATES.get(world_setting, REGION_TEMPLATES["enchanted_forest"])
 
@@ -1020,8 +1056,8 @@ def generate_v3_filters_and_masks(world_setting, rng):
 
         total_octaves += octaves_est
 
-        # Generate mask
-        mask_svg = _generate_mask_element(region, rng)
+        # Generate mask with character exclusion zone
+        mask_svg = _generate_mask_element(region, rng, composition=composition)
 
         filters_svg.append(filter_svg)
         masks_svg.append(mask_svg)
@@ -1152,7 +1188,8 @@ def generate_v3_combined_svg(bg_b64, axes, story):
     rng = random.Random(hash(story.get("id", "") + world + "_v3"))
 
     # Generate cinemagraph filters and masks
-    fm = generate_v3_filters_and_masks(world, rng)
+    composition = axes.get("composition")
+    fm = generate_v3_filters_and_masks(world, rng, composition=composition)
 
     # Generate lean overlay
     overlay_content = generate_lean_overlay(axes, story)
