@@ -1,34 +1,32 @@
 #!/usr/bin/env python3
 """
-Generate unique musicParams for each story using Mistral API.
+Generate Musical Briefs for each story using Mistral API.
 
-Each story gets a unique ambient music specification based on its theme,
-mood, setting, and content. The params are used by the Web Audio API
-engine to create a distinct procedural soundscape per story.
+Each story gets a unique Musical Brief (~500 bytes of creative direction)
+that the browser-side musicComposer.js translates into full musicParams
+at runtime. This replaces the old system of generating raw synthesis
+parameters (multi-KB) per story.
 
-v2 — DIVERSITY-ENFORCED:
-- Tracks padType, noiseType, events across stories to enforce variety
-- Assigns padType via round-robin with theme-appropriate bias
-- Adds programmatic jitter so even similar AI outputs sound distinct
-- Stronger prompt with explicit constraints against repetition
-- Post-generation diversity scoring and re-roll if too similar
+v3 — MUSICAL BRIEF SYSTEM:
+- Mistral generates high-level creative choices (not synthesis numbers)
+- Client-side composition turns briefs into musicParams deterministically
+- Diversity enforced via last-5-briefs tracking
+- ~500 bytes per story instead of multi-KB
 
 Usage:
     python3 scripts/generate_music_params.py                  # Generate for all stories
     python3 scripts/generate_music_params.py --id gen-xxx     # Specific story
     python3 scripts/generate_music_params.py --dry-run        # Show plan only
-    python3 scripts/generate_music_params.py --new-only       # Only stories without musicParams
+    python3 scripts/generate_music_params.py --new-only       # Only stories without musicalBrief
 """
 
 import argparse
 import json
-import math
 import os
 import random
 import re
 import sys
 import time
-from collections import Counter
 from pathlib import Path
 
 from mistralai import Mistral
@@ -44,276 +42,122 @@ MODEL = "mistral-large-latest"
 CONTENT_JSON = BASE_DIR / "seed_output" / "content.json"
 SEED_DATA_JS = BASE_DIR.parent / "dreamweaver-web" / "src" / "utils" / "seedData.js"
 
-# ── Musical key definitions (common bedtime-friendly keys) ──
-KEYS = {
-    "C": {"root": 130.81, "notes": [130.81, 146.83, 164.81, 174.61, 196.00, 220.00, 246.94]},
-    "Cm": {"root": 130.81, "notes": [130.81, 146.83, 155.56, 174.61, 196.00, 207.65, 233.08]},
-    "D": {"root": 146.83, "notes": [146.83, 164.81, 185.00, 196.00, 220.00, 246.94, 277.18]},
-    "Dm": {"root": 146.83, "notes": [146.83, 164.81, 174.61, 196.00, 220.00, 233.08, 261.63]},
-    "E": {"root": 164.81, "notes": [164.81, 185.00, 207.65, 220.00, 246.94, 277.18, 311.13]},
-    "Em": {"root": 82.41, "notes": [82.41, 92.50, 98.00, 110.00, 123.47, 130.81, 146.83]},
-    "F": {"root": 174.61, "notes": [174.61, 196.00, 220.00, 233.08, 261.63, 293.66, 329.63]},
-    "Fm": {"root": 174.61, "notes": [174.61, 196.00, 207.65, 233.08, 261.63, 277.18, 329.63]},
-    "G": {"root": 98.00, "notes": [98.00, 110.00, 123.47, 130.81, 146.83, 164.81, 185.00]},
-    "Gm": {"root": 98.00, "notes": [98.00, 110.00, 116.54, 130.81, 146.83, 155.56, 174.61]},
-    "A": {"root": 110.00, "notes": [110.00, 123.47, 138.59, 146.83, 164.81, 185.00, 207.65]},
-    "Am": {"root": 110.00, "notes": [110.00, 123.47, 130.81, 146.83, 164.81, 174.61, 196.00]},
-    "Bb": {"root": 116.54, "notes": [116.54, 130.81, 146.83, 155.56, 174.61, 196.00, 220.00]},
-    "Bbm": {"root": 116.54, "notes": [116.54, 130.81, 138.59, 155.56, 174.61, 185.00, 207.65]},
-}
+# ── Valid choices for Musical Brief fields ──
 
-# Available event types with descriptions for the prompt
-EVENT_TYPES = [
-    "windGust", "cricket", "frog", "owl", "waterDrop",
-    "waveCycle", "birdChirp", "whaleCall", "heartbeat",
-    "chimes", "leaves",
+CULTURAL_REFERENCES = [
+    "celtic", "japanese", "african", "nordic", "indian",
+    "middle_eastern", "latin", "chinese", "ambient_electronic",
+    "music_box", "orchestral", "folk_acoustic",
 ]
 
-# Events that should only play during Phase 1 (Capture phase)
-PHASE1_ONLY_EVENTS = {"frog", "birdChirp"}
+PRIMARY_LOOPS = [
+    "harp_arpeggios", "koto_plucks", "kalimba_melody",
+    "singing_bowl_rings", "cello_sustains", "hang_drum_melody",
+    "guitar_fingerpick", "music_box_melody", "flute_breathy",
+    "marimba_soft", "dulcimer_gentle", "piano_lullaby",
+]
 
-EVENT_DESCRIPTIONS = {
-    "windGust": "gentle pink noise breeze — nature, autumn, sky scenes",
-    "cricket": "rhythmic high-pitched chirps — nights, fields, calm outdoors",
-    "frog": "low croaking pulses — ponds, rain, jungle (Phase 1 only)",
-    "owl": "two-tone hoot — deep forests, nighttime wisdom",
-    "waterDrop": "single water plop — caves, rain, puddles, calm",
-    "waveCycle": "ocean wave wash — beaches, ocean, boats, sea",
-    "birdChirp": "quick triple tweet — morning, gardens, meadows (Phase 1 only)",
-    "whaleCall": "deep low moan — deep ocean, whale, vast seascapes",
-    "heartbeat": "double low thud — comfort, sleep, safety, infant",
-    "chimes": "random wind chimes — breeze, gardens, porches, temples",
-    "leaves": "light white noise rustle — forests, autumn, trees, wind",
-}
+PAD_CHARACTERS = [
+    "warm_strings", "crystal_air", "deep_ocean", "forest_hum",
+    "starfield", "earth_drone", "silk_veil", "cave_resonance",
+]
 
-# Pad types with descriptions
-PAD_TYPES = ["fm", "chorus", "resonant", "plucked", "simple"]
-PAD_DESCRIPTIONS = {
-    "fm": "warm evolving FM bells — dreamy, cosmic, shimmering, complex",
-    "chorus": "lush detuned string pad — warm, rich, enveloping, orchestral",
-    "resonant": "organic breathy filtered noise — earthy, raw, nature, forest",
-    "plucked": "magical kalimba/harp plucks — fairy, delicate, crystalline, bright",
-    "simple": "clean pure sine tones — minimal, gentle, infant, peaceful, lullaby",
-}
+MODES = [
+    "major_pentatonic", "minor_pentatonic", "dorian",
+    "aeolian", "mixolydian",
+]
 
-# ── Theme-to-sound mapping for intelligent assignment ──
-THEME_PAD_PREFERENCES = {
-    "dreamy":     ["fm", "chorus", "simple"],
-    "adventure":  ["fm", "plucked", "chorus"],
-    "animals":    ["resonant", "chorus", "plucked"],
-    "space":      ["fm", "simple", "chorus"],
-    "fantasy":    ["plucked", "fm", "chorus"],
-    "fairy_tale": ["plucked", "chorus", "fm"],
-    "nature":     ["resonant", "chorus", "simple"],
-    "ocean":      ["chorus", "resonant", "simple"],
-    "bedtime":    ["simple", "chorus", "fm"],
-    "friendship": ["chorus", "plucked", "simple"],
-    "family":     ["simple", "chorus", "fm"],
-    "science":    ["fm", "simple", "plucked"],
-}
+ROOT_NOTES = ["C", "D", "Eb", "E", "F", "G", "Ab", "A", "Bb", "B"]
 
-THEME_NOISE_PREFERENCES = {
-    "dreamy":     ["pink", "brown"],
-    "adventure":  ["brown", "pink"],
-    "animals":    ["pink", "brown"],
-    "space":      ["brown", "pink"],
-    "fantasy":    ["pink", "brown"],
-    "fairy_tale": ["pink", "brown"],
-    "nature":     ["pink", "brown"],
-    "ocean":      ["brown", "pink"],
-    "bedtime":    ["pink", "brown"],
-    "friendship": ["pink", "brown"],
-    "family":     ["pink", "brown"],
-    "science":    ["brown", "pink"],
-}
+MELODIC_CHARACTERS = [
+    "descending_lullaby", "cycling_arpeggio",
+    "drone_with_ornaments", "stillness",
+]
 
-THEME_EVENT_POOLS = {
-    "dreamy":     ["chimes", "windGust", "heartbeat", "owl"],
-    "adventure":  ["windGust", "birdChirp", "leaves", "owl", "waterDrop"],
-    "animals":    ["cricket", "frog", "owl", "birdChirp", "leaves", "windGust"],
-    "space":      ["whaleCall", "heartbeat", "windGust", "chimes"],
-    "fantasy":    ["chimes", "windGust", "waterDrop", "birdChirp"],
-    "fairy_tale": ["chimes", "birdChirp", "windGust", "leaves"],
-    "nature":     ["windGust", "leaves", "birdChirp", "cricket", "waterDrop", "owl"],
-    "ocean":      ["waveCycle", "whaleCall", "waterDrop", "windGust"],
-    "bedtime":    ["heartbeat", "chimes", "owl", "cricket"],
-    "friendship": ["birdChirp", "chimes", "leaves", "windGust"],
-    "family":     ["heartbeat", "chimes", "windGust", "owl"],
-    "science":    ["waterDrop", "whaleCall", "chimes", "windGust"],
-}
+NATURE_SOUNDS_PRIMARY = [
+    "forest_night", "rain_steady", "rain_light",
+    "ocean_waves_close", "ocean_waves_distant",
+    "river_stream", "wind_gentle", "wind_high",
+    "underwater", "fireplace_crackle", "near_silence",
+]
 
-# ── v4: Theme → Soundscape + Music Loop alternatives ──
-# Each theme maps to a list of (soundscapePreset, musicLoop) options.
-# The engine picks the best fit based on story context + diversity.
-THEME_SOUNDSCAPE_ALTERNATIVES = {
-    "ocean":      [("ocean", "oceanMelody"), ("river", "softStrings"), ("wind", "etherealPad")],
-    "animals":    [("forest", "forestFlute"), ("garden", "gentleGuitar"), ("river", "softStrings")],
-    "nature":     [("garden", "gentleGuitar"), ("forest", "forestFlute"), ("river", "softStrings"), ("wind", "calmHarp")],
-    "fantasy":    [("starryNight", "etherealPad"), ("garden", "musicBox"), ("forest", "calmHarp")],
-    "adventure":  [("wind", "gentleGuitar"), ("forest", "forestFlute"), ("river", "nightPiano"), ("desert", "etherealPad")],
-    "space":      [("starryNight", "cosmicSynth"), ("starryNight", "etherealPad"), ("desert", "nightPiano")],
-    "bedtime":    [("rain", "pianoLullaby"), ("fireplace", "calmHarp"), ("river", "softStrings"), ("snow", "musicBox"), ("starryNight", "nightPiano")],
-    "friendship": [("garden", "softStrings"), ("garden", "gentleGuitar"), ("forest", "forestFlute"), ("river", "calmHarp")],
-    "mystery":    [("forest", "nightPiano"), ("starryNight", "etherealPad"), ("wind", "cosmicSynth")],
-    "science":    [("river", "etherealPad"), ("starryNight", "cosmicSynth"), ("desert", "nightPiano")],
-    "family":     [("fireplace", "calmHarp"), ("garden", "softStrings"), ("rain", "pianoLullaby")],
-    "dreamy":     [("rain", "pianoLullaby"), ("starryNight", "etherealPad"), ("garden", "softStrings"), ("snow", "calmHarp")],
-    "fairy_tale": [("garden", "musicBox"), ("forest", "calmHarp"), ("starryNight", "musicBox")],
-}
-BABY_SOUNDSCAPE = {"soundscapePreset": "heartbeat", "musicLoop": "musicBox"}
+NATURE_SOUNDS_SECONDARY = [
+    "distant_stream", "distant_thunder", "underwater_bubbling",
+    "fireplace_crackle", "wind_gentle", None,
+]
 
-# Keywords in title/description that suggest specific soundscapes
-CONTEXT_SOUNDSCAPE_HINTS = {
-    "rain":        ["rain", "storm", "thunder", "monsoon", "umbrella", "puddle", "drizzle"],
-    "ocean":       ["ocean", "sea", "beach", "whale", "dolphin", "coral", "fish", "mermaid", "ship", "boat", "sailor", "wave", "shore"],
-    "forest":      ["forest", "tree", "woods", "jungle", "deer", "fox", "bear", "squirrel", "mushroom", "moss"],
-    "wind":        ["wind", "breeze", "kite", "cloud", "mountain", "peak", "climb", "hawk", "eagle", "flying"],
-    "fireplace":   ["fire", "warm", "cozy", "cabin", "winter", "blanket", "cocoa", "hot chocolate", "chimney"],
-    "starryNight": ["star", "night", "moon", "constellation", "galaxy", "aurora", "lantern", "glow", "celestial", "cosmic"],
-    "garden":      ["garden", "flower", "butterfly", "bee", "meadow", "petal", "bloom", "blossom", "mango", "grove"],
-    "snow":        ["snow", "ice", "frost", "arctic", "polar", "penguin", "igloo", "cold", "frozen", "blizzard"],
-    "river":       ["river", "stream", "creek", "waterfall", "pond", "lake", "frog", "lily"],
-    "desert":      ["desert", "sand", "camel", "oasis", "dune", "cactus", "scorpion"],
-}
-
-# Keywords that suggest specific music loops
-CONTEXT_LOOP_HINTS = {
-    "pianoLullaby": ["lullaby", "piano", "gentle", "soft", "baby"],
-    "musicBox":     ["music box", "toy", "doll", "magical", "fairy", "tiny", "small", "little"],
-    "gentleGuitar": ["guitar", "strum", "campfire", "folk", "country"],
-    "etherealPad":  ["ethereal", "cosmic", "space", "dream", "float", "drift"],
-    "softStrings":  ["violin", "string", "orchestra", "elegant", "royal", "palace", "castle"],
-    "calmHarp":     ["harp", "angel", "heaven", "peaceful", "serene"],
-    "cosmicSynth":  ["spaceship", "robot", "alien", "planet", "sci-fi", "future"],
-    "forestFlute":  ["flute", "bamboo", "tribal", "ancient", "meditation"],
-    "nightPiano":   ["mystery", "detective", "shadow", "midnight", "dark"],
-}
+AMBIENT_EVENTS = [
+    "owl", "leaves", "waterDrop", "waveCycle",
+    "windGust", "cricket", "heartbeat", "chimes",
+]
 
 
-def _get_soundscape_preset(theme, target_age=5, story=None):
-    """Return soundscapePreset + musicLoop based on theme, story context, and diversity."""
+def get_age_group(target_age):
+    """Map numeric target age to age group string."""
     if target_age <= 1:
-        return dict(BABY_SOUNDSCAPE)
-
-    alternatives = THEME_SOUNDSCAPE_ALTERNATIVES.get(theme, THEME_SOUNDSCAPE_ALTERNATIVES["bedtime"])
-
-    if story:
-        # Build context string from story metadata
-        ctx = " ".join([
-            story.get("title", ""),
-            story.get("description", ""),
-            story.get("character", {}).get("name", "") if isinstance(story.get("character"), dict) else "",
-            story.get("character", {}).get("special", "") if isinstance(story.get("character"), dict) else "",
-        ]).lower()
-
-        # Score each alternative by context keyword matches
-        scored = []
-        for sc, ml in alternatives:
-            score = 0
-            # Check soundscape hints
-            for hint_sc, keywords in CONTEXT_SOUNDSCAPE_HINTS.items():
-                if hint_sc == sc:
-                    score += sum(2 for kw in keywords if kw in ctx)
-            # Check music loop hints
-            for hint_ml, keywords in CONTEXT_LOOP_HINTS.items():
-                if hint_ml == ml:
-                    score += sum(1 for kw in keywords if kw in ctx)
-            # Diversity bonus: prefer combos not yet used
-            combo_key = f"{sc}:{ml}"
-            if hasattr(tracker, 'soundscapes_used') and combo_key in tracker.soundscapes_used:
-                score -= 5  # heavy penalty for already-used combos
-            scored.append((sc, ml, score))
-
-        # Sort by score descending, pick best
-        scored.sort(key=lambda x: -x[2])
-        best_sc, best_ml = scored[0][0], scored[0][1]
+        return "0-1"
+    elif target_age <= 5:
+        return "2-5"
+    elif target_age <= 8:
+        return "6-8"
     else:
-        # No story context — pick randomly
-        best_sc, best_ml = random.choice(alternatives)
-
-    return {"soundscapePreset": best_sc, "musicLoop": best_ml}
+        return "9-12"
 
 
-# ── Diversity tracking ──
-class DiversityTracker:
-    """Tracks what has been used across all stories to enforce variety."""
+# ── Diversity Tracking ──
+
+class BriefDiversityTracker:
+    """Track recent briefs to enforce variety."""
 
     def __init__(self):
-        self.keys_used = []
-        self.pad_types_used = Counter()
-        self.noise_types_used = Counter()
-        self.events_used = Counter()
-        self.soundscapes_used = set()  # "preset:loop" combos
-        self.param_ranges = {
-            "padGain": [], "padFilter": [], "padLfo": [],
-            "noiseGain": [], "droneGain": [],
-            "melodyInterval": [], "melodyGain": [],
-            "bassInterval": [],
-        }
+        self.recent_briefs = []
 
-    def record(self, params):
-        """Record a generated params set for diversity tracking."""
-        self.keys_used.append(params["key"])
-        self.pad_types_used[params["padType"]] += 1
-        self.noise_types_used[params["noiseType"]] += 1
-        for evt in params.get("events", []):
-            self.events_used[evt["type"]] += 1
-        if "soundscapePreset" in params and "musicLoop" in params:
-            self.soundscapes_used.add(f"{params['soundscapePreset']}:{params['musicLoop']}")
-        for k in self.param_ranges:
-            if k in params:
-                self.param_ranges[k].append(params[k])
+    def record(self, brief):
+        self.recent_briefs.append(brief)
 
-    def get_least_used_pad(self, theme):
-        """Get the least-used pad type that fits the theme."""
-        preferences = THEME_PAD_PREFERENCES.get(theme, PAD_TYPES[:3])
-        # Score: lower count = more preferred
-        scored = [(p, self.pad_types_used.get(p, 0)) for p in preferences]
-        scored.sort(key=lambda x: x[1])
-        return scored[0][0]
+    def get_last_n(self, n):
+        return self.recent_briefs[-n:] if len(self.recent_briefs) >= n else list(self.recent_briefs)
 
-    def get_least_used_noise(self, theme):
-        """Get the least-used noise type that fits the theme."""
-        preferences = THEME_NOISE_PREFERENCES.get(theme, ["pink", "brown"])
-        scored = [(n, self.noise_types_used.get(n, 0)) for n in preferences]
-        scored.sort(key=lambda x: x[1])
-        return scored[0][0]
-
-    def get_underrepresented_events(self, theme, count=3):
-        """Pick events from the theme pool, preferring underrepresented ones."""
-        pool = THEME_EVENT_POOLS.get(theme, EVENT_TYPES[:6])
-        scored = [(e, self.events_used.get(e, 0)) for e in pool]
-        scored.sort(key=lambda x: x[1])
-        # Pick the `count` least used events from the pool
-        return [e for e, _ in scored[:count]]
-
-    def get_recently_unused_key(self):
-        """Get a key that hasn't been used in the last 6 stories."""
-        all_keys = list(KEYS.keys())
-        recent = set(self.keys_used[-6:]) if self.keys_used else set()
-        unused = [k for k in all_keys if k not in recent]
-        if unused:
-            return random.choice(unused)
-        return random.choice(all_keys)
+    def get_summary_for_prompt(self):
+        """Build a summary of recent briefs for the Mistral prompt."""
+        last5 = self.get_last_n(5)
+        if not last5:
+            return "No previous briefs generated yet."
+        lines = []
+        for i, b in enumerate(last5):
+            mi = b.get("musicalIdentity", {})
+            t = b.get("tonality", {})
+            lines.append(
+                f"  {i+1}. culture={mi.get('culturalReference')}, "
+                f"loop={mi.get('primaryLoop')}, "
+                f"mode={t.get('mode')}, root={t.get('rootNote')}"
+            )
+        return "\n".join(lines)
 
     def summary(self):
-        """Print diversity summary statistics."""
+        if not self.recent_briefs:
+            print("  No briefs generated.")
+            return
+        from collections import Counter
+        cultures = Counter(b["musicalIdentity"]["culturalReference"] for b in self.recent_briefs)
+        loops = Counter(b["musicalIdentity"]["primaryLoop"] for b in self.recent_briefs)
+        modes = Counter(b["tonality"]["mode"] for b in self.recent_briefs)
+        roots = Counter(b["tonality"]["rootNote"] for b in self.recent_briefs)
         print(f"\n{'─'*50}")
-        print(f"  DIVERSITY REPORT")
+        print(f"  MUSICAL BRIEF DIVERSITY REPORT")
         print(f"{'─'*50}")
-        print(f"  Pad types:  {dict(self.pad_types_used)}")
-        print(f"  Noise types: {dict(self.noise_types_used)}")
-        print(f"  Keys used:  {dict(Counter(self.keys_used))}")
-        print(f"  Events:     {dict(self.events_used)}")
-        print(f"  Soundscapes: {self.soundscapes_used}")
-        for k, vals in self.param_ranges.items():
-            if vals:
-                print(f"  {k}: min={min(vals):.4f}, max={max(vals):.4f}, range={max(vals)-min(vals):.4f}")
+        print(f"  Cultural refs: {dict(cultures)}")
+        print(f"  Primary loops: {dict(loops)}")
+        print(f"  Modes: {dict(modes)}")
+        print(f"  Root notes: {dict(roots)}")
+        print(f"  Total briefs: {len(self.recent_briefs)}")
         print(f"{'─'*50}\n")
 
 
-tracker = DiversityTracker()
+tracker = BriefDiversityTracker()
 
+
+# ── Mistral API ──
 
 def call_mistral(prompt, max_tokens=2000, temperature=0.5, max_retries=5):
     for attempt in range(max_retries):
@@ -361,445 +205,451 @@ def parse_json_response(text):
     raise ValueError(f"Could not parse JSON: {text[:300]}")
 
 
-def add_jitter(value, range_pct=0.15, min_val=None, max_val=None):
-    """Add random variation to a numeric value to ensure uniqueness."""
-    jitter = value * range_pct * (random.random() * 2 - 1)
-    result = value + jitter
-    if min_val is not None:
-        result = max(min_val, result)
-    if max_val is not None:
-        result = min(max_val, result)
-    return round(result, 4)
+# ── Brief Validation ──
+
+def validate_brief_schema(brief):
+    """Validate the Musical Brief has all required fields with valid values."""
+    errors = []
+
+    mi = brief.get("musicalIdentity", {})
+    if mi.get("culturalReference") not in CULTURAL_REFERENCES:
+        errors.append(f"invalid culturalReference: {mi.get('culturalReference')}")
+    if mi.get("primaryLoop") not in PRIMARY_LOOPS:
+        errors.append(f"invalid primaryLoop: {mi.get('primaryLoop')}")
+    if mi.get("padCharacter") not in PAD_CHARACTERS:
+        errors.append(f"invalid padCharacter: {mi.get('padCharacter')}")
+
+    t = brief.get("tonality", {})
+    if t.get("mode") not in MODES:
+        errors.append(f"invalid mode: {t.get('mode')}")
+    if t.get("rootNote") not in ROOT_NOTES:
+        errors.append(f"invalid rootNote: {t.get('rootNote')}")
+
+    if brief.get("melodicCharacter") not in MELODIC_CHARACTERS:
+        errors.append(f"invalid melodicCharacter: {brief.get('melodicCharacter')}")
+
+    r = brief.get("rhythm", {})
+    tempo = r.get("baseTempo", 0)
+    if not (58 <= tempo <= 75):
+        errors.append(f"baseTempo {tempo} outside 58-75 range")
+
+    env = brief.get("environment", {})
+    if env.get("natureSoundPrimary") not in NATURE_SOUNDS_PRIMARY:
+        errors.append(f"invalid natureSoundPrimary: {env.get('natureSoundPrimary')}")
+
+    events = env.get("ambientEvents", [])
+    for e in events:
+        if e not in AMBIENT_EVENTS:
+            errors.append(f"invalid ambientEvent: {e}")
+
+    return errors
 
 
-def generate_music_params_for_story(story, story_index, total_stories):
-    """Generate unique musicParams for a story using Mistral + diversity enforcement."""
+def validate_brief_diversity(new_brief, recent_briefs):
+    """Check diversity constraints. Returns list of errors."""
+    errors = []
 
-    # Prepare context
+    last_3 = recent_briefs[-3:] if len(recent_briefs) >= 3 else recent_briefs
+    last_5 = recent_briefs[-5:] if len(recent_briefs) >= 5 else recent_briefs
+
+    mi = new_brief.get("musicalIdentity", {})
+    t = new_brief.get("tonality", {})
+
+    # No same culturalReference in last 3
+    if last_3:
+        recent_cultures = [b["musicalIdentity"]["culturalReference"] for b in last_3]
+        if mi.get("culturalReference") in recent_cultures:
+            errors.append("culturalReference repeated in last 3")
+
+    # No same primaryLoop in last 5
+    if last_5:
+        recent_loops = [b["musicalIdentity"]["primaryLoop"] for b in last_5]
+        if mi.get("primaryLoop") in recent_loops:
+            errors.append("primaryLoop repeated in last 5")
+
+    # No same rootNote in last 5
+    if last_5:
+        recent_roots = [b["tonality"]["rootNote"] for b in last_5]
+        if t.get("rootNote") in recent_roots:
+            errors.append("rootNote repeated in last 5")
+
+    # No same mode in last 3
+    if last_3:
+        recent_modes = [b["tonality"]["mode"] for b in last_3]
+        if t.get("mode") in recent_modes:
+            errors.append("mode repeated in last 3")
+
+    # Age-specific validation
+    age = new_brief.get("ageGroup", "6-8")
+    mode = t.get("mode", "")
+    melody = new_brief.get("melodicCharacter", "")
+    tempo = new_brief.get("rhythm", {}).get("baseTempo", 66)
+
+    if age == "2-5" and mode not in ["major_pentatonic", "minor_pentatonic"]:
+        errors.append("ages 2-5 require pentatonic modes")
+    if age == "2-5" and melody not in ["descending_lullaby", "cycling_arpeggio"]:
+        errors.append("ages 2-5 require lullaby or arpeggio melody")
+    if age == "9-12" and len(new_brief.get("environment", {}).get("ambientEvents", [])) > 0:
+        errors.append("ages 9-12 should have no ambient events")
+
+    return errors
+
+
+def fix_brief(brief, age_group):
+    """Auto-fix common issues in the brief to avoid re-generation."""
+    mi = brief.setdefault("musicalIdentity", {})
+    t = brief.setdefault("tonality", {})
+    r = brief.setdefault("rhythm", {})
+    env = brief.setdefault("environment", {})
+
+    # Fix invalid enum values
+    if mi.get("culturalReference") not in CULTURAL_REFERENCES:
+        mi["culturalReference"] = random.choice(CULTURAL_REFERENCES)
+    if mi.get("primaryLoop") not in PRIMARY_LOOPS:
+        mi["primaryLoop"] = random.choice(PRIMARY_LOOPS)
+    if mi.get("padCharacter") not in PAD_CHARACTERS:
+        mi["padCharacter"] = random.choice(PAD_CHARACTERS)
+    if t.get("mode") not in MODES:
+        t["mode"] = "major_pentatonic"
+    if t.get("rootNote") not in ROOT_NOTES:
+        t["rootNote"] = random.choice(ROOT_NOTES)
+    if brief.get("melodicCharacter") not in MELODIC_CHARACTERS:
+        brief["melodicCharacter"] = "descending_lullaby"
+
+    # Fix tempo
+    tempo = r.get("baseTempo", 66)
+    r["baseTempo"] = max(58, min(75, int(tempo)))
+
+    # Fix nature sounds
+    if env.get("natureSoundPrimary") not in NATURE_SOUNDS_PRIMARY:
+        env["natureSoundPrimary"] = "rain_steady"
+    sec = env.get("natureSoundSecondary")
+    if sec is not None and sec not in [s for s in NATURE_SOUNDS_SECONDARY if s]:
+        env["natureSoundSecondary"] = None
+
+    # Fix ambient events
+    env["ambientEvents"] = [e for e in env.get("ambientEvents", []) if e in AMBIENT_EVENTS]
+
+    # Age-specific fixes
+    if age_group == "2-5":
+        if t["mode"] not in ["major_pentatonic", "minor_pentatonic"]:
+            t["mode"] = "major_pentatonic"
+        if brief["melodicCharacter"] not in ["descending_lullaby", "cycling_arpeggio"]:
+            brief["melodicCharacter"] = "descending_lullaby"
+    if age_group == "9-12":
+        env["ambientEvents"] = []
+        if brief["melodicCharacter"] not in ["drone_with_ornaments", "stillness"]:
+            brief["melodicCharacter"] = "drone_with_ornaments"
+
+    # Fix rhythm feel
+    if r.get("feel") not in ["free_rubato", "gentle_pulse"]:
+        r["feel"] = "free_rubato"
+
+    return brief
+
+
+# ── Brief Generation ──
+
+def generate_brief_for_story(story, story_index, total_stories):
+    """Generate a Musical Brief for a story using Mistral."""
     title = story.get("title", "Untitled")
     theme = story.get("theme", "dreamy")
     description = story.get("description", "")
     content_type = story.get("type", "story")
     target_age = story.get("target_age", 5)
-    lang = story.get("lang", "en")
+    age_group = get_age_group(target_age)
 
-    # ── PRE-ASSIGN constraints based on diversity tracking ──
-    assigned_pad = tracker.get_least_used_pad(theme)
-    assigned_noise = tracker.get_least_used_noise(theme)
-    suggested_events = tracker.get_underrepresented_events(theme, count=3)
-    suggested_key = tracker.get_recently_unused_key()
+    # Build story metadata string
+    char_info = ""
+    if isinstance(story.get("character"), dict):
+        char_info = f"Character: {story['character'].get('name', '')}"
+        if story['character'].get('special'):
+            char_info += f" ({story['character']['special']})"
 
-    # Build event descriptions for prompt
-    events_desc = "\n".join(
-        f"  - {e}: {EVENT_DESCRIPTIONS[e]}" for e in EVENT_TYPES
-    )
+    story_metadata = f"""Title: "{title}"
+Theme: {theme}
+Type: {content_type}
+Description: {description}
+{char_info}
+Target age: {target_age} years
+Language: {story.get('lang', 'en')}"""
 
-    # Recent usage stats for the prompt
-    recent_pads = dict(tracker.pad_types_used) if tracker.pad_types_used else "none yet"
-    recent_events = dict(tracker.events_used) if tracker.events_used else "none yet"
+    last_5_summary = tracker.get_summary_for_prompt()
 
-    prompt = f"""You are an expert ambient music designer creating a UNIQUE soundscape for a children's bedtime {content_type}.
-This music accompanies a sleep story — it must help children fall asleep.
+    prompt = f"""You are a music director for a children's bedtime story app.
+Generate a Musical Brief — a high-level creative description
+of the background music for this story.
 
-STORY:
-- Title: "{title}"
-- Theme: {theme}
-- Description: {description}
-- Target age: {target_age} years
-- Language: {lang}
-- Story #{story_index + 1} of {total_stories}
+STORY METADATA:
+{story_metadata}
 
-═══ SLEEP SCIENCE CONSTRAINTS ═══
-- NO counter melody (only one melody line allowed)
-- NO white noise (only pink or brown)
-- NO sparkle, radarPing, or starTwinkle events (too stimulating)
-- melodyInterval MINIMUM 4000ms (sparse, meditative)
-- bassInterval MINIMUM 5000ms (slow, grounding)
-- frog and birdChirp events only play in early part of story
+AGE GROUP: {age_group}
 
-═══ MANDATORY CONSTRAINTS ═══
+Choose from these options:
 
-1. PAD TYPE: You MUST use "{assigned_pad}"
-   ({PAD_DESCRIPTIONS[assigned_pad]})
+culturalReference (pick ONE):
+  celtic | japanese | african | nordic | indian |
+  middle_eastern | latin | chinese | ambient_electronic |
+  music_box | orchestral | folk_acoustic
 
-2. NOISE TYPE: You MUST use "{assigned_noise}"
+primaryLoop (pick ONE matching the culturalReference):
+  harp_arpeggios | koto_plucks | kalimba_melody |
+  singing_bowl_rings | cello_sustains | hang_drum_melody |
+  piano_lullaby | guitar_fingerpick | music_box_melody |
+  flute_breathy | marimba_soft | dulcimer_gentle
 
-3. SUGGESTED KEY: {suggested_key} (you may pick a different one if it better fits the mood)
+padCharacter (pick ONE):
+  warm_strings | crystal_air | deep_ocean | forest_hum |
+  starfield | earth_drone | silk_veil | cave_resonance
 
-4. EVENTS: Choose 2-4 from the catalog below. Try to include at least one from: {', '.join(suggested_events)}
+mode (pick ONE):
+  major_pentatonic | minor_pentatonic | dorian |
+  aeolian | mixolydian
 
-FULL EVENT CATALOG:
-{events_desc}
+rootNote (pick ONE):
+  C | D | Eb | E | F | G | Ab | A | Bb | B
 
-═══ PARAMETER RANGES ═══
-Use the FULL range, don't cluster in the middle:
-- padGain: 0.025 to 0.065 (lower = subtle/intimate, higher = rich/enveloping)
-- padFilter: 400 to 1400 (lower = dark/warm, higher = bright/airy)
-- padLfo: 0.02 to 0.14 (lower = still/calm, higher = undulating/breathing)
-- noiseGain: 0.003 to 0.022 (lower = hint of texture, higher = prominent atmosphere)
-- droneGain: 0.015 to 0.055 (lower = barely there, higher = deep grounding)
-- melodyInterval: 4000 to 6000 ms (sparse, meditative — sleep-appropriate)
-- melodyGain: 0.008 to 0.028 (lower = whisper melody, higher = clear gentle melody)
-- bassInterval: 5000 to 9000 ms (slow, deep, grounding)
-- event intervals: 6000 to 28000 ms (vary by event — common sounds more frequent, rare sounds less)
+melodicCharacter (pick ONE):
+  descending_lullaby | cycling_arpeggio |
+  drone_with_ornaments | stillness
 
-AGE-BASED PERSONALITY:
-- Baby (0-1): very slow melodyInterval (5500+), simple, heartbeat/chimes events, low padFilter (400-600)
-- Toddler (2-3): gentle, moderate pace (4500-5500), waterDrop/chimes events
-- Child (4-5): gentle, moderate (4000-5000), birdChirp/chimes events
-- Kid (6-8): calm, slightly more varied (4000-4500), windGust/leaves/cricket events
-- Tween (8-12): deeper, owl/whaleCall events, higher padFilter (800-1200)
-- Teen (12+): sophisticated, rich, full range
+rhythm.feel (pick ONE):
+  free_rubato | gentle_pulse
 
-USAGE SO FAR (avoid over-representing):
-- Pad types used: {recent_pads}
-- Events used: {recent_events}
+baseTempo: integer between 58 and 75
 
-Respond with ONLY a JSON object (no explanation, no markdown):
+natureSoundPrimary (pick ONE):
+  forest_night | rain_steady | rain_light |
+  ocean_waves_close | ocean_waves_distant |
+  river_stream | wind_gentle | wind_high |
+  underwater | fireplace_crackle | near_silence
+
+natureSoundSecondary (pick ONE or null):
+  distant_stream | distant_thunder | underwater_bubbling |
+  fireplace_crackle | wind_gentle | null
+
+ambientEvents (pick 0-2):
+  owl | leaves | waterDrop | waveCycle |
+  windGust | cricket | heartbeat | chimes
+
+RULES:
+- baseTempo must be 58-75 BPM
+- For ages 2-5: mode must be major_pentatonic or minor_pentatonic
+- For ages 2-5: melodicCharacter must be descending_lullaby or cycling_arpeggio
+- For ages 9-12: melodicCharacter should be drone_with_ornaments or stillness
+- For ages 9-12: ambientEvents should be empty []
+- Match culturalReference to the story's world, but be creative.
+  A forest story could be celtic OR japanese OR african.
+  An ocean story could be ambient_electronic OR latin.
+- emotionalArc.phase3 must always be "deep_stillness" or "warm_silence"
+
+IMPORTANT — DIVERSITY: Here are the last 5 briefs generated.
+Do NOT repeat the same culturalReference, primaryLoop, mode,
+or rootNote as any of these:
+{last_5_summary}
+
+Respond with ONLY the JSON brief. No explanation.
+
 {{
-    "key": "<key name>",
-    "padGain": <number>,
-    "padFilter": <number>,
-    "padLfo": <number>,
-    "noiseGain": <number>,
-    "droneGain": <number>,
-    "melodyInterval": <number>,
-    "melodyGain": <number>,
-    "bassInterval": <number>,
-    "events": [
-        {{"type": "<event>", "interval": <number>}},
-        {{"type": "<event>", "interval": <number>}},
-        {{"type": "<event>", "interval": <number>}}
-    ]
+  "storyId": "{story.get('id', '')}",
+  "ageGroup": "{age_group}",
+  "musicalIdentity": {{
+    "culturalReference": "...",
+    "primaryLoop": "...",
+    "padCharacter": "..."
+  }},
+  "tonality": {{
+    "mode": "...",
+    "rootNote": "..."
+  }},
+  "melodicCharacter": "...",
+  "rhythm": {{
+    "feel": "...",
+    "baseTempo": 66
+  }},
+  "environment": {{
+    "natureSoundPrimary": "...",
+    "natureSoundSecondary": "..." or null,
+    "ambientEvents": ["..."]
+  }},
+  "emotionalArc": {{
+    "phase1": "...",
+    "phase2": "...",
+    "phase3": "deep_stillness"
+  }}
 }}"""
 
-    raw = call_mistral(prompt, max_tokens=600, temperature=0.85)
-    result = parse_json_response(raw)
+    max_attempts = 3
+    for attempt in range(max_attempts):
+        raw = call_mistral(prompt, max_tokens=600, temperature=0.85)
+        brief = parse_json_response(raw)
 
-    # ── Validate and build params with diversity enforcement ──
-    key_name = result.get("key", suggested_key)
-    if key_name not in KEYS:
-        key_name = suggested_key
+        # Ensure storyId and ageGroup are set
+        brief["storyId"] = story.get("id", "")
+        brief["ageGroup"] = age_group
 
-    key_data = KEYS[key_name]
-    notes = key_data["notes"]
-    root = key_data["root"]
+        # Auto-fix common issues
+        brief = fix_brief(brief, age_group)
 
-    # Use the ASSIGNED pad and noise (not what Mistral picked — it may have ignored the constraint)
-    pad_type = assigned_pad
-    noise_type = assigned_noise
+        # Validate schema
+        schema_errors = validate_brief_schema(brief)
+        if schema_errors:
+            print(f"  [attempt {attempt+1}] schema errors: {schema_errors}")
+            if attempt < max_attempts - 1:
+                time.sleep(2)
+                continue
+            # Last attempt — fix what we can
+            brief = fix_brief(brief, age_group)
 
-    # Extract numeric values with jitter for uniqueness
-    raw_pad_gain = result.get("padGain", 0.04 + random.random() * 0.02)
-    raw_pad_filter = result.get("padFilter", 500 + random.random() * 800)
-    raw_pad_lfo = result.get("padLfo", 0.03 + random.random() * 0.09)
-    raw_noise_gain = result.get("noiseGain", 0.005 + random.random() * 0.015)
-    raw_drone_gain = result.get("droneGain", 0.02 + random.random() * 0.03)
-    raw_melody_interval = result.get("melodyInterval", 4000 + random.random() * 2000)
-    raw_melody_gain = result.get("melodyGain", 0.01 + random.random() * 0.015)
-    raw_bass_interval = result.get("bassInterval", 5000 + random.random() * 4000)
+        # Validate diversity (soft — we don't retry for this, just warn)
+        diversity_errors = validate_brief_diversity(brief, tracker.recent_briefs)
+        if diversity_errors:
+            print(f"  [diversity warning] {diversity_errors}")
+            if attempt < max_attempts - 1:
+                time.sleep(2)
+                continue
+            # Accept on last attempt even with diversity issues
 
-    # Apply jitter to ensure uniqueness even with similar AI outputs
-    params = {
-        "key": key_name,
-        "chordNotes": [notes[0], notes[2], notes[4], notes[0] * 2],  # I-III-V-I(octave)
-        "padType": pad_type,
-        "padGain": add_jitter(raw_pad_gain, 0.12, 0.025, 0.065),
-        "padFilter": round(add_jitter(raw_pad_filter, 0.10, 400, 1400)),
-        "padLfo": add_jitter(raw_pad_lfo, 0.15, 0.02, 0.14),
-        "noiseType": noise_type,
-        "noiseGain": add_jitter(raw_noise_gain, 0.12, 0.003, 0.022),
-        "droneFreq": round(root / 2, 2),
-        "droneGain": add_jitter(raw_drone_gain, 0.12, 0.015, 0.055),
-        "melodyNotes": [round(n * 2, 2) for n in [notes[0], notes[2], notes[4], notes[3]]],
-        "melodyInterval": round(add_jitter(raw_melody_interval, 0.10, 4000, 6000)),
-        "melodyGain": add_jitter(raw_melody_gain, 0.12, 0.008, 0.028),
-        "bassNotes": [round(root / 2, 2), round(notes[4] / 2, 2), round(notes[2] / 2, 2)],
-        "bassInterval": round(add_jitter(raw_bass_interval, 0.10, 5000, 9000)),
-        "counterMelody": False,
-        "events": [],
-    }
+        break
 
-    # ── Validate events with diversity enforcement ──
-    raw_events = result.get("events", [])
-    seen_event_types = set()
-
-    for evt in raw_events[:4]:
-        if isinstance(evt, dict) and evt.get("type") in EVENT_TYPES:
-            evt_type = evt["type"]
-            if evt_type not in seen_event_types:
-                interval = evt.get("interval", 10000)
-                interval = round(add_jitter(interval, 0.15, 6000, 28000))
-                event_entry = {"type": evt_type, "interval": interval}
-                if evt_type in PHASE1_ONLY_EVENTS:
-                    event_entry["phases"] = [1]
-                params["events"].append(event_entry)
-                seen_event_types.add(evt_type)
-
-    # Ensure at least 2 events, using suggested underrepresented ones
-    while len(params["events"]) < 2:
-        for evt_type in suggested_events:
-            if evt_type not in seen_event_types:
-                params["events"].append({
-                    "type": evt_type,
-                    "interval": 8000 + round(random.random() * 12000),
-                })
-                seen_event_types.add(evt_type)
-                if len(params["events"]) >= 2:
-                    break
-
-    # Last resort fallback
-    if len(params["events"]) < 2:
-        fallback_pool = [e for e in EVENT_TYPES if e not in seen_event_types]
-        for evt_type in fallback_pool[:2]:
-            params["events"].append({
-                "type": evt_type,
-                "interval": 10000 + round(random.random() * 10000),
-            })
-
-    # v4: Add soundscape and music loop presets based on theme + story context
-    params.update(_get_soundscape_preset(theme, target_age, story))
-
-    # Validate sleep constraints
-    params = validate_sleep_params(params)
-
-    # Derive phase 2/3 and build v2 output
-    output = build_v2_output(params)
-
-    # Record in diversity tracker (use phase1 flat params)
-    tracker.record(params)
-
-    return output, key_name
+    return brief
 
 
-BANNED_EVENTS = {"sparkle", "radarPing", "starTwinkle"}
+# ── Seed Data Update ──
 
-
-def validate_sleep_params(params):
-    """Safety net: enforce sleep science constraints after generation."""
-    # Clamp melody interval
-    if params["melodyInterval"] < 4000:
-        params["melodyInterval"] = 4000
-    # Clamp bass interval
-    if params["bassInterval"] < 5000:
-        params["bassInterval"] = 5000
-    # No white noise
-    if params.get("noiseType") not in ("pink", "brown"):
-        params["noiseType"] = "pink"
-    # No counter melody
-    params["counterMelody"] = False
-    # Remove banned events
-    params["events"] = [
-        e for e in params["events"]
-        if e["type"] not in BANNED_EVENTS
-    ]
-    # Clamp event intervals
-    for evt in params["events"]:
-        if evt["interval"] < 6000:
-            evt["interval"] = 6000
-    return params
-
-
-def build_v2_output(phase1_params):
-    """Build v2 output with phase1/phase2/phase3 derived from Phase 1 params."""
-    p1 = dict(phase1_params)
-
-    # Extract top-level fields that aren't per-phase
-    soundscape = p1.pop("soundscapePreset", "rain")
-    music_loop = p1.pop("musicLoop", "pianoLullaby")
-    counter_melody = p1.pop("counterMelody", False)
-
-    # ── Phase 2 (Descent): reduce melody, warm filter, stretch intervals ──
-    p2 = dict(p1)
-    p2["padGain"] = round(p1["padGain"] * 0.8, 4)
-    p2["melodyGain"] = round(p1["melodyGain"] * 0.5, 4)
-    p2["noiseGain"] = round(p1["noiseGain"] * 1.2, 4)
-    p2["melodyInterval"] = round(p1["melodyInterval"] * 1.4)
-    p2["bassInterval"] = round(p1["bassInterval"] * 1.3)
-    p2["padFilter"] = round(p1["padFilter"] * 0.7)
-    # Simplify chords: root + fifth only
-    if len(p1["chordNotes"]) >= 3:
-        p2["chordNotes"] = [p1["chordNotes"][0], p1["chordNotes"][2]]
-    # Remove phase-1-only events, stretch remaining intervals
-    p2["events"] = []
-    for evt in p1["events"]:
-        if evt["type"] not in PHASE1_ONLY_EVENTS:
-            p2["events"].append({
-                "type": evt["type"],
-                "interval": round(evt["interval"] * 1.5),
-            })
-
-    # ── Phase 3 (Sleep): near-silent, no melody, no events ──
-    p3 = dict(p1)
-    p3["padGain"] = round(p1["padGain"] * 0.5, 4)
-    p3["melodyGain"] = 0
-    p3["noiseGain"] = round(p1["noiseGain"] * 1.5, 4)
-    p3["droneGain"] = round(p1["droneGain"] * 0.6, 4)
-    p3["padFilter"] = round(p1["padFilter"] * 0.4)
-    p3["padType"] = "simple"
-    # Root note only
-    if len(p1["chordNotes"]) >= 1:
-        p3["chordNotes"] = [p1["chordNotes"][0]]
-    p3["events"] = []
-
-    return {
-        "version": 2,
-        "counterMelody": counter_melody,
-        "soundscapePreset": soundscape,
-        "musicLoop": music_loop,
-        "phase1": p1,
-        "phase2": p2,
-        "phase3": p3,
-        "masterLowpass": {"1": 8000, "2": 4000, "3": 2000},
-        "transitions": {
-            "1to2": {"duration": 30},
-            "2to3": {"duration": 45},
-        },
-    }
-
-
-def update_seed_data_music_params(story_id, music_params):
-    """Add musicParams field to a story in seedData.js."""
+def update_seed_data_musical_brief(story_id, brief):
+    """Add musicalBrief field to a story in seedData.js."""
     if not SEED_DATA_JS.exists():
         print(f"  WARNING: seedData.js not found")
         return False
 
     content = SEED_DATA_JS.read_text(encoding="utf-8")
     escaped_id = re.escape(story_id)
-    params_json = json.dumps(music_params)
+    brief_json = json.dumps(brief)
 
-    # Strategy: find the story's id, then locate the insertion point within
-    # the SAME object block (don't cross into the next story).
+    # Find the story's id line
     id_match = re.search(rf'id:\s*"{escaped_id}"', content)
     if not id_match:
         print(f"  WARNING: {story_id} not found in seedData.js")
         return False
 
-    # Find the end of this story's object block — look for the next `id:` line
-    # or end of array. We limit our search to this block only.
+    # Find the end of this story's object block
     block_start = id_match.start()
     next_id = re.search(r'\n\s*id:\s*"', content[block_start + 10:])
     block_end = block_start + 10 + next_id.start() if next_id else len(content)
     block = content[block_start:block_end]
 
-    # Check if musicParams already exists in this block
-    mp_match = re.search(
-        r',\s*musicParams:\s*(\{(?:[^{}]|\{(?:[^{}]|\{[^{}]*\})*\})*\})',
+    # Check if musicalBrief already exists in this block
+    mb_match = re.search(
+        r',\s*musicalBrief:\s*(\{(?:[^{}]|\{(?:[^{}]|\{[^{}]*\})*\})*\})',
         block
     )
-    if mp_match:
-        # Replace existing musicParams
-        abs_start = block_start + mp_match.start()
-        abs_end = block_start + mp_match.end()
-        new_content = content[:abs_start] + f",\n      musicParams: {params_json}" + content[abs_end:]
+    if mb_match:
+        # Replace existing musicalBrief
+        abs_start = block_start + mb_match.start()
+        abs_end = block_start + mb_match.end()
+        new_content = content[:abs_start] + f",\n      musicalBrief: {brief_json}" + content[abs_end:]
         SEED_DATA_JS.write_text(new_content, encoding="utf-8")
         return True
 
-    # No existing musicParams — insert after musicProfile if it exists in this block
-    prof_match = re.search(r'musicProfile:\s*"[^"]*"', block)
-    if prof_match:
-        insert_point = block_start + prof_match.end()
+    # No existing musicalBrief — insert after musicProfile or musicParams or id
+    for pattern in [r'musicParams:\s*\{(?:[^{}]|\{(?:[^{}]|\{[^{}]*\})*\})*\}',
+                    r'musicProfile:\s*"[^"]*"',
+                    rf'id:\s*"{escaped_id}"']:
+        match = re.search(pattern, block)
+        if match:
+            insert_point = block_start + match.end()
+            break
     else:
-        # No musicProfile either — insert after the id line
-        id_line_end = re.search(r'id:\s*"[^"]*"', block)
-        insert_point = block_start + id_line_end.end() if id_line_end else block_start + len(story_id) + 10
+        insert_point = block_start + len(story_id) + 10
 
-    new_content = content[:insert_point] + f",\n      musicParams: {params_json}" + content[insert_point:]
+    new_content = content[:insert_point] + f",\n      musicalBrief: {brief_json}" + content[insert_point:]
     SEED_DATA_JS.write_text(new_content, encoding="utf-8")
     return True
 
 
+# ── Main ──
+
 def run():
-    parser = argparse.ArgumentParser(description="Generate unique musicParams per story (v2 diversity-enforced)")
+    parser = argparse.ArgumentParser(description="Generate Musical Briefs per story (v3)")
     parser.add_argument("--id", help="Generate for specific story ID")
     parser.add_argument("--dry-run", action="store_true")
-    parser.add_argument("--new-only", action="store_true", help="Only stories without musicParams")
+    parser.add_argument("--new-only", action="store_true", help="Only stories without musicalBrief")
     args = parser.parse_args()
 
     with open(CONTENT_JSON, "r", encoding="utf-8") as f:
         all_content = json.load(f)
 
-    # Select stories to process
-    stories = all_content
+    # Skip songs — they use their own audio, no background music needed
+    stories = [s for s in all_content if s.get("type") != "song"]
     if args.id:
-        # Pre-seed DiversityTracker with existing musicParams from other stories
-        # so we avoid generating duplicates of what's already in use
+        # Pre-seed tracker with existing briefs from other stories
         for s in all_content:
-            mp = s.get("musicParams")
-            if mp and s["id"] != args.id:
-                # Handle both v2 (phase1 nested) and flat formats
-                flat = mp.get("phase1", mp) if isinstance(mp, dict) else {}
-                if isinstance(flat, dict) and "key" in flat:
-                    tracker.record(flat)
-                    # Also track soundscape combo
-                    sc = mp.get("soundscapePreset", flat.get("soundscapePreset", ""))
-                    ml = mp.get("musicLoop", flat.get("musicLoop", ""))
-                    if sc and ml:
-                        tracker.soundscapes_used.add(f"{sc}:{ml}")
-        print(f"  Pre-seeded tracker with {len(tracker.keys_used)} existing stories' params")
+            mb = s.get("musicalBrief")
+            if mb and s["id"] != args.id:
+                tracker.record(mb)
+        print(f"  Pre-seeded tracker with {len(tracker.recent_briefs)} existing briefs")
         stories = [s for s in stories if s["id"] == args.id]
     if args.new_only:
-        stories = [s for s in stories if not s.get("musicParams")]
+        stories = [s for s in stories if not s.get("musicalBrief")]
 
-    # Shuffle to avoid alphabetical bias in diversity assignment
-    # But use a fixed seed so results are reproducible
+    # Shuffle for diversity fairness
     story_order = list(enumerate(stories))
     random.seed(42)
     random.shuffle(story_order)
 
     print(f"\n{'='*60}")
-    print(f"  MUSIC PARAMS GENERATION v2 (Diversity-Enforced)")
+    print(f"  MUSICAL BRIEF GENERATION v3")
     print(f"  Stories: {len(stories)}")
     print(f"  API: Mistral ({MODEL})")
-    print(f"  Pad types: {', '.join(PAD_TYPES)}")
-    print(f"  Target distribution: ~{len(stories)//5}-{len(stories)//5+1} stories per pad type")
+    print(f"  Output: ~500-byte Musical Briefs (composed client-side)")
     print(f"{'='*60}\n")
 
     results = {}
     total = len(story_order)
 
     for proc_idx, (orig_idx, story) in enumerate(story_order):
-        print(f"[{proc_idx+1}/{total}] {story['title']} ({story.get('theme', '?')}, {story.get('lang', '?')}, age {story.get('target_age', '?')})")
+        age_group = get_age_group(story.get("target_age", 5))
+        print(f"[{proc_idx+1}/{total}] {story['title']} ({story.get('theme', '?')}, age {age_group})")
 
         if args.dry_run:
-            assigned_pad = tracker.get_least_used_pad(story.get("theme", "dreamy"))
-            print(f"  → Would assign: pad={assigned_pad}, noise={tracker.get_least_used_noise(story.get('theme', 'dreamy'))}")
-            # Still record a mock to keep diversity tracking accurate for dry-run
-            tracker.pad_types_used[assigned_pad] += 1
+            print(f"  → Would generate Musical Brief")
             continue
 
         try:
-            params, key_name = generate_music_params_for_story(story, proc_idx, total)
-            results[story["id"]] = params
+            brief = generate_brief_for_story(story, proc_idx, total)
+            results[story["id"]] = brief
+            tracker.record(brief)
 
-            p1 = params.get("phase1", params)
-            print(f"  ✓ Key: {key_name}, Pad: {p1['padType']}, Noise: {p1['noiseType']}, "
-                  f"Filter: {p1['padFilter']}, MelodyInt: {p1['melodyInterval']}")
-            print(f"    Soundscape: {params.get('soundscapePreset')}, Loop: {params.get('musicLoop')}")
-            print(f"    Events: {[e['type'] for e in p1['events']]}")
-            if params.get("version") == 2:
-                print(f"    v2: phase2 melGain={params['phase2']['melodyGain']}, phase3 melGain={params['phase3']['melodyGain']}")
+            mi = brief["musicalIdentity"]
+            t = brief["tonality"]
+            print(f"  ✓ culture={mi['culturalReference']}, loop={mi['primaryLoop']}, "
+                  f"pad={mi['padCharacter']}")
+            print(f"    mode={t['mode']}, root={t['rootNote']}, "
+                  f"melody={brief['melodicCharacter']}")
+            print(f"    nature={brief['environment']['natureSoundPrimary']}, "
+                  f"events={brief['environment']['ambientEvents']}")
 
             time.sleep(2)  # Rate limit buffer
 
         except Exception as e:
             print(f"  ✗ ERROR: {e}")
+            import traceback
+            traceback.print_exc()
 
-    # Now apply results to all_content in original order
+    # Apply results
     if not args.dry_run:
         updated_count = 0
         for story in all_content:
             if story["id"] in results:
-                story["musicParams"] = results[story["id"]]
-                # Update seedData.js
-                update_seed_data_music_params(story["id"], results[story["id"]])
+                story["musicalBrief"] = results[story["id"]]
+                update_seed_data_musical_brief(story["id"], results[story["id"]])
                 updated_count += 1
 
         with open(CONTENT_JSON, "w", encoding="utf-8") as f:
             json.dump(all_content, f, ensure_ascii=False, indent=2)
         print(f"\n✓ Updated {updated_count} stories in {CONTENT_JSON}")
 
-    # Print diversity report
     tracker.summary()
 
 

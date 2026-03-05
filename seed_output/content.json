@@ -143,6 +143,37 @@
         "Gentle",
         "Magical"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "7fe248e1-f1ad-44a0-9c4e-95924d27fb5e",
+      "ageGroup": "2-5",
+      "musicalIdentity": {
+        "culturalReference": "nordic",
+        "primaryLoop": "harp_arpeggios",
+        "padCharacter": "starfield"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "F"
+      },
+      "melodicCharacter": "cycling_arpeggio",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "wind_gentle",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "chimes",
+          "cricket"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "light_wonder",
+        "phase2": "soft_drifting",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -290,6 +321,37 @@
         "Gentle",
         "Brave"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "8e516449-aa48-423e-8b53-db5591ce9bed",
+      "ageGroup": "2-5",
+      "musicalIdentity": {
+        "culturalReference": "african",
+        "primaryLoop": "kalimba_melody",
+        "padCharacter": "forest_hum"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "Bb"
+      },
+      "melodicCharacter": "cycling_arpeggio",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 66
+      },
+      "environment": {
+        "natureSoundPrimary": "forest_night",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "cricket",
+          "leaves"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "gentle_wonder",
+        "phase2": "warm_guidance",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -436,6 +498,37 @@
         "Gentle",
         "Peaceful"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "30dec3e8-5354-41ff-aadf-90def8a35df4",
+      "ageGroup": "2-5",
+      "musicalIdentity": {
+        "culturalReference": "chinese",
+        "primaryLoop": "piano_lullaby",
+        "padCharacter": "silk_veil"
+      },
+      "tonality": {
+        "mode": "minor_pentatonic",
+        "rootNote": "A"
+      },
+      "melodicCharacter": "descending_lullaby",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "forest_night",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "cricket",
+          "chimes"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "gentle_awakening",
+        "phase2": "warm_embrace",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -582,6 +675,37 @@
         "Brave",
         "Adventurous"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "d73e9530-b77e-4372-9ad1-070f0fa108e3",
+      "ageGroup": "6-8",
+      "musicalIdentity": {
+        "culturalReference": "chinese",
+        "primaryLoop": "piano_lullaby",
+        "padCharacter": "starfield"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "G"
+      },
+      "melodicCharacter": "cycling_arpeggio",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 66
+      },
+      "environment": {
+        "natureSoundPrimary": "wind_gentle",
+        "natureSoundSecondary": "distant_thunder",
+        "ambientEvents": [
+          "chimes",
+          "waterDrop"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "whimsical_curiosity",
+        "phase2": "gentle_excitement",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -728,6 +852,37 @@
         "Curious",
         "Dreamy"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "9fba7605-7ffa-488d-93bc-9cca2881cf97",
+      "ageGroup": "6-8",
+      "musicalIdentity": {
+        "culturalReference": "celtic",
+        "primaryLoop": "harp_arpeggios",
+        "padCharacter": "forest_hum"
+      },
+      "tonality": {
+        "mode": "dorian",
+        "rootNote": "F"
+      },
+      "melodicCharacter": "cycling_arpeggio",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 66
+      },
+      "environment": {
+        "natureSoundPrimary": "forest_night",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "leaves",
+          "waterDrop"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "curious_wonder",
+        "phase2": "gentle_flow",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -869,6 +1024,37 @@
         "Gentle",
         "Wise"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "c8796852-6d17-46e0-bcea-7985c4721d1c",
+      "ageGroup": "2-5",
+      "musicalIdentity": {
+        "culturalReference": "nordic",
+        "primaryLoop": "cello_sustains",
+        "padCharacter": "starfield"
+      },
+      "tonality": {
+        "mode": "minor_pentatonic",
+        "rootNote": "D"
+      },
+      "melodicCharacter": "descending_lullaby",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "wind_gentle",
+        "natureSoundSecondary": "distant_thunder",
+        "ambientEvents": [
+          "chimes",
+          "cricket"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "soft_glow",
+        "phase2": "gentle_embrace",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -1014,6 +1200,37 @@
         "Wise",
         "Kind"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "e32eaee0-2c7a-4f65-ace6-1d3a2d3ad5b0",
+      "ageGroup": "2-5",
+      "musicalIdentity": {
+        "culturalReference": "african",
+        "primaryLoop": "kalimba_melody",
+        "padCharacter": "forest_hum"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "G"
+      },
+      "melodicCharacter": "descending_lullaby",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "forest_night",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "owl",
+          "cricket"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "gentle_warmth",
+        "phase2": "soft_whispers",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -1289,6 +1506,37 @@
         "Gentle",
         "Magical"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "hi-neendwala-badal",
+      "ageGroup": "2-5",
+      "musicalIdentity": {
+        "culturalReference": "middle_eastern",
+        "primaryLoop": "hang_drum_melody",
+        "padCharacter": "silk_veil"
+      },
+      "tonality": {
+        "mode": "minor_pentatonic",
+        "rootNote": "A"
+      },
+      "melodicCharacter": "cycling_arpeggio",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "wind_gentle",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "cricket",
+          "chimes"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "soft_wonder",
+        "phase2": "gentle_floating",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -1437,6 +1685,37 @@
         "Brave",
         "Kind"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "hi-bahadur-jugnu",
+      "ageGroup": "2-5",
+      "musicalIdentity": {
+        "culturalReference": "indian",
+        "primaryLoop": "flute_breathy",
+        "padCharacter": "silk_veil"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "D"
+      },
+      "melodicCharacter": "cycling_arpeggio",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "forest_night",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "cricket",
+          "leaves"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "gentle_wonder",
+        "phase2": "warm_guidance",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -1584,6 +1863,37 @@
         "Gentle",
         "Warm"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "hi-chaand-ki-lori",
+      "ageGroup": "2-5",
+      "musicalIdentity": {
+        "culturalReference": "middle_eastern",
+        "primaryLoop": "flute_breathy",
+        "padCharacter": "silk_veil"
+      },
+      "tonality": {
+        "mode": "minor_pentatonic",
+        "rootNote": "G"
+      },
+      "melodicCharacter": "descending_lullaby",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "wind_gentle",
+        "natureSoundSecondary": "distant_thunder",
+        "ambientEvents": [
+          "chimes",
+          "cricket"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "gentle_whisper",
+        "phase2": "dreamy_float",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -1730,6 +2040,37 @@
         "Brave",
         "Determined"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "hi-captain-sitaara",
+      "ageGroup": "6-8",
+      "musicalIdentity": {
+        "culturalReference": "chinese",
+        "primaryLoop": "piano_lullaby",
+        "padCharacter": "starfield"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "A"
+      },
+      "melodicCharacter": "cycling_arpeggio",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "wind_gentle",
+        "natureSoundSecondary": "distant_thunder",
+        "ambientEvents": [
+          "chimes",
+          "waterDrop"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "playful_wonder",
+        "phase2": "gentle_excitement",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -1877,6 +2218,37 @@
         "Curious",
         "Gentle"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "hi-gungunata-baag",
+      "ageGroup": "6-8",
+      "musicalIdentity": {
+        "culturalReference": "japanese",
+        "primaryLoop": "koto_plucks",
+        "padCharacter": "silk_veil"
+      },
+      "tonality": {
+        "mode": "minor_pentatonic",
+        "rootNote": "A"
+      },
+      "melodicCharacter": "cycling_arpeggio",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "forest_night",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "cricket",
+          "leaves"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "whimsical_discovery",
+        "phase2": "gentle_wonder",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -2019,6 +2391,37 @@
         "Gentle",
         "Magical"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "hi-chamakta-sapna",
+      "ageGroup": "2-5",
+      "musicalIdentity": {
+        "culturalReference": "japanese",
+        "primaryLoop": "koto_plucks",
+        "padCharacter": "silk_veil"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "D"
+      },
+      "melodicCharacter": "cycling_arpeggio",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "wind_gentle",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "cricket",
+          "chimes"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "soft_wonder",
+        "phase2": "gentle_embrace",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -2165,6 +2568,37 @@
         "Wise",
         "Kind"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "hi-ullu-ki-shubhraatri",
+      "ageGroup": "2-5",
+      "musicalIdentity": {
+        "culturalReference": "japanese",
+        "primaryLoop": "koto_plucks",
+        "padCharacter": "silk_veil"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "D"
+      },
+      "melodicCharacter": "descending_lullaby",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "forest_night",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "owl",
+          "cricket"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "gentle_awakening",
+        "phase2": "soft_embrace",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -2416,6 +2850,37 @@
         "Gentle",
         "Kind"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-6e675d15e1f5",
+      "ageGroup": "0-1",
+      "musicalIdentity": {
+        "culturalReference": "ambient_electronic",
+        "primaryLoop": "hang_drum_melody",
+        "padCharacter": "deep_ocean"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "D"
+      },
+      "melodicCharacter": "descending_lullaby",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "ocean_waves_distant",
+        "natureSoundSecondary": "underwater_bubbling",
+        "ambientEvents": [
+          "waveCycle",
+          "waterDrop"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "soft_wonder",
+        "phase2": "gentle_embrace",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -2563,6 +3028,37 @@
         "Gentle",
         "Dreamy"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-3de58fd2aa2d",
+      "ageGroup": "0-1",
+      "musicalIdentity": {
+        "culturalReference": "japanese",
+        "primaryLoop": "koto_plucks",
+        "padCharacter": "silk_veil"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "F"
+      },
+      "melodicCharacter": "descending_lullaby",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "forest_night",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "cricket",
+          "leaves"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "gentle_curiosity",
+        "phase2": "soft_comfort",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -2711,6 +3207,37 @@
         "Brave",
         "Playful"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-4f3ff03979dc",
+      "ageGroup": "2-5",
+      "musicalIdentity": {
+        "culturalReference": "indian",
+        "primaryLoop": "flute_breathy",
+        "padCharacter": "silk_veil"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "D"
+      },
+      "melodicCharacter": "descending_lullaby",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "wind_gentle",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "cricket",
+          "chimes"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "gentle_wonder",
+        "phase2": "playful_floating",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -2858,6 +3385,37 @@
         "Kind",
         "Gentle"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-a67cde9762b6",
+      "ageGroup": "2-5",
+      "musicalIdentity": {
+        "culturalReference": "nordic",
+        "primaryLoop": "cello_sustains",
+        "padCharacter": "silk_veil"
+      },
+      "tonality": {
+        "mode": "minor_pentatonic",
+        "rootNote": "Eb"
+      },
+      "melodicCharacter": "descending_lullaby",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "forest_night",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "cricket",
+          "leaves"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "gentle_curiosity",
+        "phase2": "soft_warmth",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -3011,6 +3569,34 @@
         "Creative",
         "Dreamy"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-a8a2146a4f36",
+      "ageGroup": "9-12",
+      "musicalIdentity": {
+        "culturalReference": "japanese",
+        "primaryLoop": "koto_plucks",
+        "padCharacter": "forest_hum"
+      },
+      "tonality": {
+        "mode": "mixolydian",
+        "rootNote": "G"
+      },
+      "melodicCharacter": "drone_with_ornaments",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "forest_night",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": []
+      },
+      "emotionalArc": {
+        "phase1": "curious_discovery",
+        "phase2": "gentle_wonder",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -3159,6 +3745,34 @@
         "Curious",
         "Wise"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-9e44d4374d44",
+      "ageGroup": "9-12",
+      "musicalIdentity": {
+        "culturalReference": "african",
+        "primaryLoop": "marimba_soft",
+        "padCharacter": "starfield"
+      },
+      "tonality": {
+        "mode": "mixolydian",
+        "rootNote": "Eb"
+      },
+      "melodicCharacter": "drone_with_ornaments",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "wind_gentle",
+        "natureSoundSecondary": "distant_thunder",
+        "ambientEvents": []
+      },
+      "emotionalArc": {
+        "phase1": "curious_discovery",
+        "phase2": "wondrous_journey",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -3311,6 +3925,37 @@
         "Brave",
         "Curious"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-b8847383ab32",
+      "ageGroup": "2-5",
+      "musicalIdentity": {
+        "culturalReference": "folk_acoustic",
+        "primaryLoop": "piano_lullaby",
+        "padCharacter": "starfield"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "G"
+      },
+      "melodicCharacter": "descending_lullaby",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "wind_gentle",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "chimes",
+          "waterDrop"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "curious_wonder",
+        "phase2": "gentle_joy",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -3463,6 +4108,37 @@
         "Playful",
         "Dreamy"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-6b4b4122c529",
+      "ageGroup": "2-5",
+      "musicalIdentity": {
+        "culturalReference": "indian",
+        "primaryLoop": "flute_breathy",
+        "padCharacter": "silk_veil"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "E"
+      },
+      "melodicCharacter": "cycling_arpeggio",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "forest_night",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "cricket",
+          "leaves"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "playful_wonder",
+        "phase2": "gentle_magic",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -3615,6 +4291,37 @@
         "Curious",
         "Gentle"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-2fedd4d6a646",
+      "ageGroup": "6-8",
+      "musicalIdentity": {
+        "culturalReference": "chinese",
+        "primaryLoop": "piano_lullaby",
+        "padCharacter": "crystal_air"
+      },
+      "tonality": {
+        "mode": "dorian",
+        "rootNote": "Bb"
+      },
+      "melodicCharacter": "descending_lullaby",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "wind_gentle",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "waterDrop",
+          "chimes"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "curious_wonder",
+        "phase2": "gentle_discovery",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -3767,6 +4474,37 @@
         "Creative",
         "Determined"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-f23316834cfd",
+      "ageGroup": "6-8",
+      "musicalIdentity": {
+        "culturalReference": "chinese",
+        "primaryLoop": "dulcimer_gentle",
+        "padCharacter": "silk_veil"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "Bb"
+      },
+      "melodicCharacter": "cycling_arpeggio",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 66
+      },
+      "environment": {
+        "natureSoundPrimary": "forest_night",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "cricket",
+          "leaves"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "whimsical_curiosity",
+        "phase2": "collaborative_warmth",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -3915,6 +4653,34 @@
         "Brave",
         "Wise"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-df0dbc9d6b74",
+      "ageGroup": "9-12",
+      "musicalIdentity": {
+        "culturalReference": "japanese",
+        "primaryLoop": "koto_plucks",
+        "padCharacter": "deep_ocean"
+      },
+      "tonality": {
+        "mode": "dorian",
+        "rootNote": "A"
+      },
+      "melodicCharacter": "drone_with_ornaments",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "ocean_waves_distant",
+        "natureSoundSecondary": "underwater_bubbling",
+        "ambientEvents": []
+      },
+      "emotionalArc": {
+        "phase1": "curious_discovery",
+        "phase2": "gentle_revelation",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -4063,6 +4829,34 @@
         "Curious",
         "Dreamy"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-e77b10c51e8f",
+      "ageGroup": "9-12",
+      "musicalIdentity": {
+        "culturalReference": "latin",
+        "primaryLoop": "marimba_soft",
+        "padCharacter": "starfield"
+      },
+      "tonality": {
+        "mode": "mixolydian",
+        "rootNote": "Eb"
+      },
+      "melodicCharacter": "drone_with_ornaments",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "wind_gentle",
+        "natureSoundSecondary": "distant_thunder",
+        "ambientEvents": []
+      },
+      "emotionalArc": {
+        "phase1": "curious_wonder",
+        "phase2": "gentle_revelation",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -4211,6 +5005,37 @@
         "Gentle",
         "Peaceful"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-593c43ad1c11",
+      "ageGroup": "0-1",
+      "musicalIdentity": {
+        "culturalReference": "chinese",
+        "primaryLoop": "piano_lullaby",
+        "padCharacter": "silk_veil"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "C"
+      },
+      "melodicCharacter": "descending_lullaby",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "forest_night",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "cricket",
+          "leaves"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "soft_wonder",
+        "phase2": "gentle_embrace",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -4359,6 +5184,37 @@
         "Gentle",
         "Playful"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-b2e7514e8b8f",
+      "ageGroup": "0-1",
+      "musicalIdentity": {
+        "culturalReference": "ambient_electronic",
+        "primaryLoop": "singing_bowl_rings",
+        "padCharacter": "deep_ocean"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "F"
+      },
+      "melodicCharacter": "descending_lullaby",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "ocean_waves_distant",
+        "natureSoundSecondary": "underwater_bubbling",
+        "ambientEvents": [
+          "waveCycle",
+          "waterDrop"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "gentle_curiosity",
+        "phase2": "soothing_embrace",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -4507,6 +5363,37 @@
         "Brave",
         "Dreamy"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-376993c8e295",
+      "ageGroup": "2-5",
+      "musicalIdentity": {
+        "culturalReference": "indian",
+        "primaryLoop": "flute_breathy",
+        "padCharacter": "silk_veil"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "Bb"
+      },
+      "melodicCharacter": "descending_lullaby",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "wind_gentle",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "leaves",
+          "waterDrop"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "curious_wonder",
+        "phase2": "gentle_exploration",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -4657,6 +5544,37 @@
         "Adventurous",
         "Curious"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-aad0a6e0c0c0",
+      "ageGroup": "2-5",
+      "musicalIdentity": {
+        "culturalReference": "ambient_electronic",
+        "primaryLoop": "hang_drum_melody",
+        "padCharacter": "deep_ocean"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "C"
+      },
+      "melodicCharacter": "cycling_arpeggio",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "ocean_waves_distant",
+        "natureSoundSecondary": "underwater_bubbling",
+        "ambientEvents": [
+          "waveCycle",
+          "waterDrop"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "gentle_curiosity",
+        "phase2": "warm_discovery",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -4806,6 +5724,34 @@
         "Dreamy",
         "Adventurous"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-ddc437037568",
+      "ageGroup": "9-12",
+      "musicalIdentity": {
+        "culturalReference": "indian",
+        "primaryLoop": "flute_breathy",
+        "padCharacter": "silk_veil"
+      },
+      "tonality": {
+        "mode": "dorian",
+        "rootNote": "D"
+      },
+      "melodicCharacter": "drone_with_ornaments",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "forest_night",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": []
+      },
+      "emotionalArc": {
+        "phase1": "mystical_wonder",
+        "phase2": "gentle_journey",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -4957,6 +5903,34 @@
         "Adventurous",
         "Curious"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-2b9fdf8a1222",
+      "ageGroup": "9-12",
+      "musicalIdentity": {
+        "culturalReference": "japanese",
+        "primaryLoop": "koto_plucks",
+        "padCharacter": "forest_hum"
+      },
+      "tonality": {
+        "mode": "aeolian",
+        "rootNote": "A"
+      },
+      "melodicCharacter": "drone_with_ornaments",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "river_stream",
+        "natureSoundSecondary": "distant_thunder",
+        "ambientEvents": []
+      },
+      "emotionalArc": {
+        "phase1": "curious_wonder",
+        "phase2": "gentle_reflection",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -5110,6 +6084,37 @@
         "Brave",
         "Adventurous"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-60370cf66525",
+      "ageGroup": "2-5",
+      "musicalIdentity": {
+        "culturalReference": "nordic",
+        "primaryLoop": "hang_drum_melody",
+        "padCharacter": "deep_ocean"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "F"
+      },
+      "melodicCharacter": "cycling_arpeggio",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "ocean_waves_distant",
+        "natureSoundSecondary": "underwater_bubbling",
+        "ambientEvents": [
+          "waveCycle",
+          "waterDrop"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "gentle_curiosity",
+        "phase2": "playful_discovery",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -5259,6 +6264,37 @@
         "Playful",
         "Dreamy"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-032fdef6f753",
+      "ageGroup": "2-5",
+      "musicalIdentity": {
+        "culturalReference": "indian",
+        "primaryLoop": "flute_breathy",
+        "padCharacter": "silk_veil"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "D"
+      },
+      "melodicCharacter": "descending_lullaby",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "forest_night",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "cricket",
+          "waterDrop"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "playful_wonder",
+        "phase2": "gentle_mystery",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -5409,6 +6445,37 @@
         "Adventurous",
         "Gentle"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-febbf324eecb",
+      "ageGroup": "6-8",
+      "musicalIdentity": {
+        "culturalReference": "latin",
+        "primaryLoop": "guitar_fingerpick",
+        "padCharacter": "warm_strings"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "E"
+      },
+      "melodicCharacter": "cycling_arpeggio",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 66
+      },
+      "environment": {
+        "natureSoundPrimary": "ocean_waves_distant",
+        "natureSoundSecondary": "underwater_bubbling",
+        "ambientEvents": [
+          "waveCycle",
+          "waterDrop"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "playful_wonder",
+        "phase2": "gentle_soothing",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -5562,6 +6629,37 @@
         "Brave",
         "Wise"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-230502b905ba",
+      "ageGroup": "6-8",
+      "musicalIdentity": {
+        "culturalReference": "indian",
+        "primaryLoop": "dulcimer_gentle",
+        "padCharacter": "silk_veil"
+      },
+      "tonality": {
+        "mode": "dorian",
+        "rootNote": "F"
+      },
+      "melodicCharacter": "cycling_arpeggio",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "forest_night",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "cricket",
+          "leaves"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "curious_wonder",
+        "phase2": "gentle_discovery",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -5709,6 +6807,34 @@
         "Adventurous",
         "Curious"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-bb82f62942d0",
+      "ageGroup": "9-12",
+      "musicalIdentity": {
+        "culturalReference": "ambient_electronic",
+        "primaryLoop": "singing_bowl_rings",
+        "padCharacter": "deep_ocean"
+      },
+      "tonality": {
+        "mode": "mixolydian",
+        "rootNote": "F"
+      },
+      "melodicCharacter": "drone_with_ornaments",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "underwater",
+        "natureSoundSecondary": "underwater_bubbling",
+        "ambientEvents": []
+      },
+      "emotionalArc": {
+        "phase1": "curious_exploration",
+        "phase2": "magical_discovery",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -5857,6 +6983,34 @@
         "Curious",
         "Adventurous"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-0027e1835f09",
+      "ageGroup": "9-12",
+      "musicalIdentity": {
+        "culturalReference": "indian",
+        "primaryLoop": "flute_breathy",
+        "padCharacter": "warm_strings"
+      },
+      "tonality": {
+        "mode": "dorian",
+        "rootNote": "G"
+      },
+      "melodicCharacter": "drone_with_ornaments",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 66
+      },
+      "environment": {
+        "natureSoundPrimary": "forest_night",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": []
+      },
+      "emotionalArc": {
+        "phase1": "curious_wonder",
+        "phase2": "gentle_exploration",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -6008,6 +7162,37 @@
         "Curious",
         "Adventurous"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-586908c26fc2",
+      "ageGroup": "6-8",
+      "musicalIdentity": {
+        "culturalReference": "latin",
+        "primaryLoop": "guitar_fingerpick",
+        "padCharacter": "warm_strings"
+      },
+      "tonality": {
+        "mode": "minor_pentatonic",
+        "rootNote": "A"
+      },
+      "melodicCharacter": "cycling_arpeggio",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "ocean_waves_distant",
+        "natureSoundSecondary": "distant_thunder",
+        "ambientEvents": [
+          "waveCycle",
+          "chimes"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "curious_wonder",
+        "phase2": "gentle_mystery",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -6160,6 +7345,37 @@
         "Curious",
         "Dreamy"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-1a5a91def9ae",
+      "ageGroup": "6-8",
+      "musicalIdentity": {
+        "culturalReference": "latin",
+        "primaryLoop": "guitar_fingerpick",
+        "padCharacter": "warm_strings"
+      },
+      "tonality": {
+        "mode": "dorian",
+        "rootNote": "Bb"
+      },
+      "melodicCharacter": "descending_lullaby",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "wind_gentle",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "cricket",
+          "chimes"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "gentle_warmth",
+        "phase2": "dreamy_wonder",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -6315,6 +7531,34 @@
         "Creative",
         "Kind"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-ae9ed8804fa7",
+      "ageGroup": "9-12",
+      "musicalIdentity": {
+        "culturalReference": "nordic",
+        "primaryLoop": "cello_sustains",
+        "padCharacter": "deep_ocean"
+      },
+      "tonality": {
+        "mode": "dorian",
+        "rootNote": "F"
+      },
+      "melodicCharacter": "drone_with_ornaments",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "underwater",
+        "natureSoundSecondary": "underwater_bubbling",
+        "ambientEvents": []
+      },
+      "emotionalArc": {
+        "phase1": "mysterious_wonder",
+        "phase2": "gentle_discovery",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -6469,6 +7713,34 @@
         "Dreamy",
         "Curious"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-be475c98edb5",
+      "ageGroup": "9-12",
+      "musicalIdentity": {
+        "culturalReference": "ambient_electronic",
+        "primaryLoop": "music_box_melody",
+        "padCharacter": "starfield"
+      },
+      "tonality": {
+        "mode": "mixolydian",
+        "rootNote": "G"
+      },
+      "melodicCharacter": "drone_with_ornaments",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 66
+      },
+      "environment": {
+        "natureSoundPrimary": "ocean_waves_distant",
+        "natureSoundSecondary": "underwater_bubbling",
+        "ambientEvents": []
+      },
+      "emotionalArc": {
+        "phase1": "curious_discovery",
+        "phase2": "floating_wonder",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -6619,6 +7891,37 @@
         "Gentle",
         "Dreamy"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-f9e33d4db1bd",
+      "ageGroup": "0-1",
+      "musicalIdentity": {
+        "culturalReference": "nordic",
+        "primaryLoop": "cello_sustains",
+        "padCharacter": "starfield"
+      },
+      "tonality": {
+        "mode": "aeolian",
+        "rootNote": "F"
+      },
+      "melodicCharacter": "descending_lullaby",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "wind_gentle",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "chimes",
+          "waterDrop"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "whispering_wonder",
+        "phase2": "floating_calm",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -6769,6 +8072,37 @@
         "Gentle",
         "Curious"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-292e9eadf56e",
+      "ageGroup": "6-8",
+      "musicalIdentity": {
+        "culturalReference": "celtic",
+        "primaryLoop": "harp_arpeggios",
+        "padCharacter": "forest_hum"
+      },
+      "tonality": {
+        "mode": "dorian",
+        "rootNote": "F"
+      },
+      "melodicCharacter": "cycling_arpeggio",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 66
+      },
+      "environment": {
+        "natureSoundPrimary": "forest_night",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "owl",
+          "leaves"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "gentle_curiosity",
+        "phase2": "warm_wonder",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -6919,6 +8253,37 @@
         "Gentle",
         "Adventurous"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-76b0227cc919",
+      "ageGroup": "2-5",
+      "musicalIdentity": {
+        "culturalReference": "ambient_electronic",
+        "primaryLoop": "hang_drum_melody",
+        "padCharacter": "starfield"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "G"
+      },
+      "melodicCharacter": "cycling_arpeggio",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "wind_gentle",
+        "natureSoundSecondary": "underwater_bubbling",
+        "ambientEvents": [
+          "chimes",
+          "waterDrop"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "gentle_wonder",
+        "phase2": "cozy_mystery",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -7071,6 +8436,37 @@
         "Gentle",
         "Playful"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-7cf84ff11c04",
+      "ageGroup": "2-5",
+      "musicalIdentity": {
+        "culturalReference": "chinese",
+        "primaryLoop": "dulcimer_gentle",
+        "padCharacter": "silk_veil"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "Bb"
+      },
+      "melodicCharacter": "cycling_arpeggio",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "wind_gentle",
+        "natureSoundSecondary": "distant_thunder",
+        "ambientEvents": [
+          "chimes",
+          "waterDrop"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "whimsical_wonder",
+        "phase2": "gentle_playfulness",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -7223,6 +8619,37 @@
         "Curious",
         "Gentle"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-b5438a861ba4",
+      "ageGroup": "2-5",
+      "musicalIdentity": {
+        "culturalReference": "celtic",
+        "primaryLoop": "harp_arpeggios",
+        "padCharacter": "warm_strings"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "G"
+      },
+      "melodicCharacter": "descending_lullaby",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "wind_gentle",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "owl",
+          "chimes"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "soft_wonder",
+        "phase2": "tender_warmth",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -7377,6 +8804,34 @@
         "Curious",
         "Gentle"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-caa3a14bb706",
+      "ageGroup": "9-12",
+      "musicalIdentity": {
+        "culturalReference": "ambient_electronic",
+        "primaryLoop": "hang_drum_melody",
+        "padCharacter": "starfield"
+      },
+      "tonality": {
+        "mode": "mixolydian",
+        "rootNote": "D"
+      },
+      "melodicCharacter": "drone_with_ornaments",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 66
+      },
+      "environment": {
+        "natureSoundPrimary": "fireplace_crackle",
+        "natureSoundSecondary": "underwater_bubbling",
+        "ambientEvents": []
+      },
+      "emotionalArc": {
+        "phase1": "curious_wonder",
+        "phase2": "gentle_discovery",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -7532,6 +8987,37 @@
         "Gentle",
         "Dreamy"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-01f0b88dc42d",
+      "ageGroup": "0-1",
+      "musicalIdentity": {
+        "culturalReference": "japanese",
+        "primaryLoop": "koto_plucks",
+        "padCharacter": "starfield"
+      },
+      "tonality": {
+        "mode": "minor_pentatonic",
+        "rootNote": "A"
+      },
+      "melodicCharacter": "descending_lullaby",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "forest_night",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "cricket",
+          "chimes"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "gentle_wonder",
+        "phase2": "soft_guidance",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -7682,6 +9168,34 @@
         "Wise",
         "Gentle"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-2f87d69ca6a2",
+      "ageGroup": "9-12",
+      "musicalIdentity": {
+        "culturalReference": "middle_eastern",
+        "primaryLoop": "hang_drum_melody",
+        "padCharacter": "starfield"
+      },
+      "tonality": {
+        "mode": "aeolian",
+        "rootNote": "Bb"
+      },
+      "melodicCharacter": "drone_with_ornaments",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "forest_night",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": []
+      },
+      "emotionalArc": {
+        "phase1": "mystical_curiosity",
+        "phase2": "gentle_journey",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -7832,6 +9346,37 @@
         "Curious",
         "Playful"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-d5bc0057ca40",
+      "ageGroup": "2-5",
+      "musicalIdentity": {
+        "culturalReference": "celtic",
+        "primaryLoop": "harp_arpeggios",
+        "padCharacter": "forest_hum"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "G"
+      },
+      "melodicCharacter": "cycling_arpeggio",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "forest_night",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "leaves",
+          "cricket"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "whimsical_discovery",
+        "phase2": "playful_wonder",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -7987,6 +9532,37 @@
         "Curious",
         "Gentle"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-308d5f0d1268",
+      "ageGroup": "2-5",
+      "musicalIdentity": {
+        "culturalReference": "nordic",
+        "primaryLoop": "harp_arpeggios",
+        "padCharacter": "starfield"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "Eb"
+      },
+      "melodicCharacter": "descending_lullaby",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "ocean_waves_distant",
+        "natureSoundSecondary": "underwater_bubbling",
+        "ambientEvents": [
+          "waterDrop",
+          "chimes"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "whimsical_discovery",
+        "phase2": "gentle_sway",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -8143,6 +9719,37 @@
         "Curious",
         "Determined"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-8ea1861bffab",
+      "ageGroup": "6-8",
+      "musicalIdentity": {
+        "culturalReference": "indian",
+        "primaryLoop": "dulcimer_gentle",
+        "padCharacter": "silk_veil"
+      },
+      "tonality": {
+        "mode": "dorian",
+        "rootNote": "Bb"
+      },
+      "melodicCharacter": "cycling_arpeggio",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "forest_night",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "cricket",
+          "waterDrop"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "whimsical_curiosity",
+        "phase2": "gentle_mystery",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -8217,6 +9824,37 @@
         "Curious",
         "Adventurous"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-9e87531b7db6",
+      "ageGroup": "2-5",
+      "musicalIdentity": {
+        "culturalReference": "latin",
+        "primaryLoop": "guitar_fingerpick",
+        "padCharacter": "deep_ocean"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "D"
+      },
+      "melodicCharacter": "descending_lullaby",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "ocean_waves_distant",
+        "natureSoundSecondary": "underwater_bubbling",
+        "ambientEvents": [
+          "waveCycle",
+          "waterDrop"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "whimsical_discovery",
+        "phase2": "gentle_wonder",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -8377,6 +10015,34 @@
         "Curious",
         "Gentle"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-3b66368b6682",
+      "ageGroup": "9-12",
+      "musicalIdentity": {
+        "culturalReference": "ambient_electronic",
+        "primaryLoop": "hang_drum_melody",
+        "padCharacter": "deep_ocean"
+      },
+      "tonality": {
+        "mode": "mixolydian",
+        "rootNote": "Bb"
+      },
+      "melodicCharacter": "drone_with_ornaments",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "underwater",
+        "natureSoundSecondary": "underwater_bubbling",
+        "ambientEvents": []
+      },
+      "emotionalArc": {
+        "phase1": "curious_exploration",
+        "phase2": "mystical_revelation",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -8654,6 +10320,37 @@
         "Gentle",
         "Wise"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-a32abc379f3e",
+      "ageGroup": "2-5",
+      "musicalIdentity": {
+        "culturalReference": "celtic",
+        "primaryLoop": "dulcimer_gentle",
+        "padCharacter": "warm_strings"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "D"
+      },
+      "melodicCharacter": "cycling_arpeggio",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "ocean_waves_distant",
+        "natureSoundSecondary": "distant_thunder",
+        "ambientEvents": [
+          "waveCycle",
+          "chimes"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "gentle_wonder",
+        "phase2": "soft_journey",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -8809,6 +10506,37 @@
         "Gentle",
         "Adventurous"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-a4a5bf8ba702",
+      "ageGroup": "6-8",
+      "musicalIdentity": {
+        "culturalReference": "celtic",
+        "primaryLoop": "harp_arpeggios",
+        "padCharacter": "forest_hum"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "E"
+      },
+      "melodicCharacter": "cycling_arpeggio",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 66
+      },
+      "environment": {
+        "natureSoundPrimary": "rain_light",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "waterDrop",
+          "cricket"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "whimsical_wonder",
+        "phase2": "gentle_flow",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -9100,6 +10828,37 @@
         "Curious",
         "Gentle"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-8cbe4f84a9ac",
+      "ageGroup": "6-8",
+      "musicalIdentity": {
+        "culturalReference": "japanese",
+        "primaryLoop": "koto_plucks",
+        "padCharacter": "silk_veil"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "Bb"
+      },
+      "melodicCharacter": "descending_lullaby",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "river_stream",
+        "natureSoundSecondary": "distant_thunder",
+        "ambientEvents": [
+          "waterDrop",
+          "chimes"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "curious_wonder",
+        "phase2": "gentle_flow",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -9255,6 +11014,37 @@
         "Gentle",
         "Patient"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-31f50f685a68",
+      "ageGroup": "6-8",
+      "musicalIdentity": {
+        "culturalReference": "nordic",
+        "primaryLoop": "harp_arpeggios",
+        "padCharacter": "forest_hum"
+      },
+      "tonality": {
+        "mode": "dorian",
+        "rootNote": "F"
+      },
+      "melodicCharacter": "cycling_arpeggio",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "forest_night",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "cricket",
+          "leaves"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "curious_wonder",
+        "phase2": "gentle_journey",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -9405,6 +11195,37 @@
         "Gentle",
         "Dreamy"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-3947965e8c2e",
+      "ageGroup": "0-1",
+      "musicalIdentity": {
+        "culturalReference": "latin",
+        "primaryLoop": "guitar_fingerpick",
+        "padCharacter": "silk_veil"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "D"
+      },
+      "melodicCharacter": "descending_lullaby",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "ocean_waves_close",
+        "natureSoundSecondary": "wind_gentle",
+        "ambientEvents": [
+          "waveCycle",
+          "waterDrop"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "gentle_sway",
+        "phase2": "soft_embrace",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -9815,6 +11636,37 @@
         "Gentle",
         "Wise"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-3fc983f95d8b",
+      "ageGroup": "6-8",
+      "musicalIdentity": {
+        "culturalReference": "nordic",
+        "primaryLoop": "dulcimer_gentle",
+        "padCharacter": "silk_veil"
+      },
+      "tonality": {
+        "mode": "aeolian",
+        "rootNote": "Eb"
+      },
+      "melodicCharacter": "descending_lullaby",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "wind_gentle",
+        "natureSoundSecondary": "distant_thunder",
+        "ambientEvents": [
+          "chimes",
+          "waterDrop"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "whispered_mystery",
+        "phase2": "gentle_warmth",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -9967,6 +11819,34 @@
         "Curious",
         "Gentle"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-6034c85ea602",
+      "ageGroup": "9-12",
+      "musicalIdentity": {
+        "culturalReference": "nordic",
+        "primaryLoop": "cello_sustains",
+        "padCharacter": "forest_hum"
+      },
+      "tonality": {
+        "mode": "aeolian",
+        "rootNote": "F"
+      },
+      "melodicCharacter": "drone_with_ornaments",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "wind_gentle",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": []
+      },
+      "emotionalArc": {
+        "phase1": "curious_discovery",
+        "phase2": "gentle_mystery",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -10118,6 +11998,34 @@
         "Curious",
         "Adventurous"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-0333c2f092c0",
+      "ageGroup": "9-12",
+      "musicalIdentity": {
+        "culturalReference": "chinese",
+        "primaryLoop": "dulcimer_gentle",
+        "padCharacter": "starfield"
+      },
+      "tonality": {
+        "mode": "aeolian",
+        "rootNote": "A"
+      },
+      "melodicCharacter": "drone_with_ornaments",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "wind_gentle",
+        "natureSoundSecondary": "distant_thunder",
+        "ambientEvents": []
+      },
+      "emotionalArc": {
+        "phase1": "whispering_mystery",
+        "phase2": "ethereal_wonder",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -10273,6 +12181,34 @@
         "Dreamy",
         "Curious"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-638cb2facd22",
+      "ageGroup": "9-12",
+      "musicalIdentity": {
+        "culturalReference": "japanese",
+        "primaryLoop": "koto_plucks",
+        "padCharacter": "forest_hum"
+      },
+      "tonality": {
+        "mode": "dorian",
+        "rootNote": "G"
+      },
+      "melodicCharacter": "drone_with_ornaments",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "wind_gentle",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": []
+      },
+      "emotionalArc": {
+        "phase1": "curious_whispers",
+        "phase2": "gentle_journey",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -10777,6 +12713,37 @@
         "Brave",
         "Kind"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-bbf23f82bfec",
+      "ageGroup": "6-8",
+      "musicalIdentity": {
+        "culturalReference": "indian",
+        "primaryLoop": "flute_breathy",
+        "padCharacter": "silk_veil"
+      },
+      "tonality": {
+        "mode": "minor_pentatonic",
+        "rootNote": "E"
+      },
+      "melodicCharacter": "descending_lullaby",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "forest_night",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "cricket",
+          "leaves"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "gentle_wonder",
+        "phase2": "soft_mystery",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -11011,6 +12978,34 @@
         "Gentle",
         "Determined"
       ]
+    },
+    "musicalBrief": {
+      "storyId": "gen-beb0f3862024",
+      "ageGroup": "9-12",
+      "musicalIdentity": {
+        "culturalReference": "middle_eastern",
+        "primaryLoop": "dulcimer_gentle",
+        "padCharacter": "starfield"
+      },
+      "tonality": {
+        "mode": "aeolian",
+        "rootNote": "A"
+      },
+      "melodicCharacter": "drone_with_ornaments",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "wind_gentle",
+        "natureSoundSecondary": "distant_thunder",
+        "ambientEvents": []
+      },
+      "emotionalArc": {
+        "phase1": "mystical_wonder",
+        "phase2": "gentle_journey",
+        "phase3": "deep_stillness"
+      }
     }
   },
   {
@@ -11115,7 +13110,38 @@
         "duration_seconds": 87.26,
         "provider": "chatterbox"
       }
-    ]
+    ],
+    "musicalBrief": {
+      "storyId": "gen-4ddee3cbe031",
+      "ageGroup": "2-5",
+      "musicalIdentity": {
+        "culturalReference": "celtic",
+        "primaryLoop": "harp_arpeggios",
+        "padCharacter": "forest_hum"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "E"
+      },
+      "melodicCharacter": "cycling_arpeggio",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "forest_night",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "cricket",
+          "leaves"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "gentle_curiosity",
+        "phase2": "warm_discovery",
+        "phase3": "deep_stillness"
+      }
+    }
   },
   {
     "id": "gen-50e929bf696c",
@@ -11179,7 +13205,38 @@
         "duration_seconds": 38.81,
         "provider": "chatterbox"
       }
-    ]
+    ],
+    "musicalBrief": {
+      "storyId": "gen-50e929bf696c",
+      "ageGroup": "2-5",
+      "musicalIdentity": {
+        "culturalReference": "indian",
+        "primaryLoop": "harp_arpeggios",
+        "padCharacter": "silk_veil"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "E"
+      },
+      "melodicCharacter": "descending_lullaby",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "wind_gentle",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "cricket",
+          "chimes"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "whimsical_warmth",
+        "phase2": "gentle_sway",
+        "phase3": "deep_stillness"
+      }
+    }
   },
   {
     "id": "gen-8440041cfc57",
@@ -11457,7 +13514,38 @@
         "Playful"
       ]
     },
-    "addedAt": "2026-03-05"
+    "addedAt": "2026-03-05",
+    "musicalBrief": {
+      "storyId": "gen-e3e07799ab05",
+      "ageGroup": "2-5",
+      "musicalIdentity": {
+        "culturalReference": "indian",
+        "primaryLoop": "flute_breathy",
+        "padCharacter": "silk_veil"
+      },
+      "tonality": {
+        "mode": "minor_pentatonic",
+        "rootNote": "G"
+      },
+      "melodicCharacter": "descending_lullaby",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "forest_night",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "cricket",
+          "waterDrop"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "playful_wonder",
+        "phase2": "gentle_fading",
+        "phase3": "deep_stillness"
+      }
+    }
   },
   {
     "id": "gen-3e20147f02a1",
