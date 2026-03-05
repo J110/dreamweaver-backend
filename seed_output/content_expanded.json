@@ -11899,5 +11899,110 @@
     "view_count": 0,
     "like_count": 0,
     "save_count": 0
+  },
+  {
+    "id": "gen-ec195d66e808",
+    "type": "story",
+    "lang": "en",
+    "title": "Bolt’s Midnight Lesson in the Snowy Schoolhouse",
+    "description": "Under the shimmering Northern Lights, a tiny toy robot named Bolt hears the soft hum of an old Arctic schoolhouse. When its door creaks open, he discovers a world where snowflakes teach secrets—and tonight, they’re waiting just for him.",
+    "text": "[GENTLE] Bolt the little robot sat quietly on the windowsill, watching the snowflakes dance outside. [CALM] The Arctic night was still, and the moon painted everything silver. [CURIOUS] Then, he heard it—a soft *click* from the old schoolhouse across the yard. [WHISPERING] 'Who’s there?' Bolt whispered to the wind.\n\n[ADVENTUROUS] His metal feet crunched in the snow as he tiptoed closer. [DRAMATIC_PAUSE] The schoolhouse door swung open, glowing with warm golden light. [EXCITED] 'Come in, Bolt!' called a voice. Inside, snowflakes swirled like tiny teachers, each one holding a lesson. [JOYFUL] 'Tonight, we learn about kindness,' said the biggest snowflake, landing gently on his shoulder.\n\n[GENTLE] Bolt listened as the snowflakes shared stories of sharing mittens and helping friends. [CALM] He felt his heart (or at least his little battery) grow warmer. [laugh] 'I want to be kind too!' he said, and the snowflakes giggled like wind chimes. [WHISPERING] 'Then take this,' they whispered, placing a tiny ice crystal in his hand. 'It will remind you.'\n\n[SLEEPY] As Bolt tiptoed back to his windowsill, the crystal glowed softly in his palm. The schoolhouse door closed with a quiet *click*, and the snowflakes settled back into the night. Bolt yawned, his eyelids growing heavy, knowing tomorrow he’d share kindness—just like the snowflakes taught him.",
+    "annotated_text": "[GENTLE] Bolt the little robot sat quietly on the windowsill, watching the snowflakes dance outside. [CALM] The Arctic night was still, and the moon painted everything silver. [CURIOUS] Then, he heard it—a soft *click* from the old schoolhouse across the yard. [WHISPERING] 'Who’s there?' Bolt whispered to the wind.\n\n[ADVENTUROUS] His metal feet crunched in the snow as he tiptoed closer. [DRAMATIC_PAUSE] The schoolhouse door swung open, glowing with warm golden light. [EXCITED] 'Come in, Bolt!' called a voice. Inside, snowflakes swirled like tiny teachers, each one holding a lesson. [JOYFUL] 'Tonight, we learn about kindness,' said the biggest snowflake, landing gently on his shoulder.\n\n[GENTLE] Bolt listened as the snowflakes shared stories of sharing mittens and helping friends. [CALM] He felt his heart (or at least his little battery) grow warmer. [laugh] 'I want to be kind too!' he said, and the snowflakes giggled like wind chimes. [WHISPERING] 'Then take this,' they whispered, placing a tiny ice crystal in his hand. 'It will remind you.'\n\n[SLEEPY] As Bolt tiptoed back to his windowsill, the crystal glowed softly in his palm. The schoolhouse door closed with a quiet *click*, and the snowflakes settled back into the night. Bolt yawned, his eyelids growing heavy, knowing tomorrow he’d share kindness—just like the snowflakes taught him.",
+    "target_age": 3,
+    "age_min": 2,
+    "age_max": 5,
+    "age_group": "2-5",
+    "length": "SHORT",
+    "word_count": 200,
+    "duration_seconds": 0,
+    "categories": [
+      "Historical",
+      "Arctic"
+    ],
+    "theme": "bedtime",
+    "morals": [
+      "Kindness makes the world brighter, even in the coldest places.",
+      "Every small act of sharing is a lesson worth learning."
+    ],
+    "cover": "",
+    "musicProfile": "dreamy-clouds",
+    "music_type": "ambient",
+    "audio_variants": [],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "male",
+    "character": {
+      "name": "Bolt",
+      "identity": "A curious little robot who listens to the whispers of the night",
+      "special": "He hears the gentle lessons hidden in the sounds of winter",
+      "personality_tags": [
+        "Curious",
+        "Kind"
+      ]
+    },
+    "lead_character_type": "robot",
+    "universe": "historical",
+    "geography": "Arctic/Polar",
+    "life_aspect": "school_learning",
+    "plot_archetype": "discovery",
+    "created_at": "2026-03-05T01:30:28.839432",
+    "updated_at": "2026-03-05T01:30:28.839432",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0
+  },
+  {
+    "id": "gen-c8ac4b389df1",
+    "type": "song",
+    "lang": "en",
+    "title": "Pebble’s Floating School of Starlight",
+    "description": "Beneath a sky of swirling neon auroras, the ocean hums with floating classrooms made of coral and light. When the tide carries away Pebble’s favorite learning shell, she must journey across glowing waves to find it—before the school drifts too far into the horizon.",
+    "text": "[SINGING] The waves go shhh, the waves go shine,\nPebble listens, soft and fine.\n[GENTLE] Shells all sing in colors bright,\nLessons float in starry light.\n\n[PAUSE]\n\n[HUMMING] Hmm-hmm-hmm, hmm-hmm-hmm...\n\n[SINGING] One small shell, her favorite one,\nSlipped away—oh, what’s to be done?\n[JOYFUL] Drift and glide on moonlit beams,\nFind the shell with gentle dreams!\n\n[PAUSE]\n\n[HUMMING] Hmm-hmm-hmm, hmm-hmm-hmm...\n\n[SLEEPY] Now the shell is back once more,\nSafe and snug on ocean’s floor.\n[GENTLE] Pebble smiles, the stars align,\nLearning shines in starlight time.",
+    "annotated_text": "[SINGING] The waves go shhh, the waves go shine,\nPebble listens, soft and fine.\n[GENTLE] Shells all sing in colors bright,\nLessons float in starry light.\n\n[PAUSE]\n\n[HUMMING] Hmm-hmm-hmm, hmm-hmm-hmm...\n\n[SINGING] One small shell, her favorite one,\nSlipped away—oh, what’s to be done?\n[JOYFUL] Drift and glide on moonlit beams,\nFind the shell with gentle dreams!\n\n[PAUSE]\n\n[HUMMING] Hmm-hmm-hmm, hmm-hmm-hmm...\n\n[SLEEPY] Now the shell is back once more,\nSafe and snug on ocean’s floor.\n[GENTLE] Pebble smiles, the stars align,\nLearning shines in starlight time.",
+    "target_age": 3,
+    "age_min": 2,
+    "age_max": 5,
+    "age_group": "2-5",
+    "length": "SHORT",
+    "word_count": 75,
+    "duration_seconds": 0,
+    "categories": [
+      "Nature",
+      "Friendship",
+      "Adventure"
+    ],
+    "theme": "nature",
+    "morals": [
+      "Even small creatures can solve big problems with patience and care",
+      "The world is full of helpers—just look around with kind eyes"
+    ],
+    "cover": "",
+    "musicProfile": "moonlit-meadow",
+    "music_type": "ambient",
+    "audio_variants": [],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "female",
+    "character": {
+      "name": "Pebble",
+      "identity": "A thoughtful little tortoise who collects ocean songs in her shell",
+      "special": "She understands the language of floating classroom shells",
+      "personality_tags": [
+        "Patient",
+        "Kind"
+      ]
+    },
+    "lead_character_type": "animal",
+    "universe": "futuristic",
+    "geography": "Ocean/Islands",
+    "life_aspect": "school_learning",
+    "plot_archetype": "problem_solving",
+    "created_at": "2026-03-05T01:35:57.398784",
+    "updated_at": "2026-03-05T01:35:57.398784",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0
   }
 ]
