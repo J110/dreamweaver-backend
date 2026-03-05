@@ -212,6 +212,7 @@ Return ONLY a JSON object (no markdown fences):
     "lullaby_lyrics": "Lullaby with [verse] and [chorus] markers",
     "character_name": "Name of the animal character",
     "character_description": "Brief visual description of the character (e.g., 'A tiny glowing jellyfish with soft blue tentacles')",
+    "cover_context": "1-2 sentence visual scene description for the cover illustration. Describe ONLY the world/scene (NOT the character). Focus on setting, cultural elements, colors, objects, atmosphere, time of day. Example: 'A meadow dusted with vibrant pink and blue gulal powder at golden hour, festive garlands between trees, flower petals floating in warm light'",
     "character_type": "animal type (e.g., jellyfish, firefly, fox, butterfly)",
     "morals": ["lesson1"],
     "categories": ["Bedtime", "category2", "category3"],
@@ -322,6 +323,7 @@ def generate_story():
     description = parsed.get("description", "").strip()
     character_name = parsed.get("character_name", "").strip()
     character_description = parsed.get("character_description", "").strip()
+    cover_context = parsed.get("cover_context", "").strip()
     character_type = parsed.get("character_type", "animal").strip()
     morals = parsed.get("morals", ["Feeling safe and cozy helps you sleep"])
     categories = parsed.get("categories", ["Bedtime", "Animals", "Relaxation"])
@@ -384,6 +386,7 @@ def generate_story():
         "lead_character_type": character_type,
         "character_name": character_name,
         "character_description": character_description,
+        "cover_context": cover_context,
         "universe": "fantasy_realm",
         "geography": geography,
         "life_aspect": "sleep_comfort",

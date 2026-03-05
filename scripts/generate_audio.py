@@ -111,10 +111,10 @@ VOICE_MAP = {
     "hi": ["female_1_hi", "female_2_hi", "female_3_hi", "male_1_hi", "male_2_hi", "male_3_hi", "asmr_hi"],
 }
 
-# Fewer variants for songs (more expensive to generate via SongGen)
+# Song variants: 5 instrument-specific lullaby styles (Harp, Guitar, Piano, Cello, Flute)
 SONG_VOICE_MAP = {
-    "en": ["female_1", "female_3", "male_1"],
-    "hi": ["female_1_hi", "female_3_hi", "male_1_hi"],
+    "en": ["female_1", "female_2", "female_3", "male_1", "male_2"],
+    "hi": ["female_1_hi", "female_2_hi", "female_3_hi", "male_1_hi", "male_2_hi"],
 }
 
 # ── Logging ──────────────────────────────────────────────────────────────
@@ -308,17 +308,123 @@ _EMOTION_MARKER_RE = re.compile(
 )
 
 
+# ── Lullaby performance directions for section markers ─────────────────
+# These replace bare [verse]/[chorus] tags with ACE-Step-compatible
+# performance hints that guide vocal delivery and dynamics.
+_LULLABY_VERSE_DIRECTIONS = [
+    "[verse - whispered, extremely soft, breathy, slow]",
+    "[verse - tender, softer, intimate]",
+    "[verse - softer still, fading, slower]",
+    "[verse - barely audible, trailing, sleepy]",
+]
+_LULLABY_CHORUS_DIRECTION = "[chorus - soft, warm, gentle rocking]"
+_LULLABY_OUTRO_DIRECTION = "[outro - humming only, fading to silence]"
+
+
+def _inject_lullaby_directions(lyrics: str) -> str:
+    """Replace bare [verse]/[chorus] tags with performance-directed versions.
+
+    Only applied to song-type content to guide ACE-Step vocal delivery.
+    """
+    lines = lyrics.split("\n")
+    result = []
+    verse_idx = 0
+    chorus_count = 0
+
+    for line in lines:
+        stripped = line.strip()
+        if stripped == "[verse]":
+            direction = _LULLABY_VERSE_DIRECTIONS[
+                min(verse_idx, len(_LULLABY_VERSE_DIRECTIONS) - 1)
+            ]
+            result.append(direction)
+            verse_idx += 1
+        elif stripped == "[chorus]":
+            chorus_count += 1
+            result.append(_LULLABY_CHORUS_DIRECTION)
+        elif stripped == "[bridge]":
+            result.append("[bridge - gentle, soft, transitional]")
+        else:
+            result.append(line)
+
+    # Add outro if last section is a humming line
+    joined = "\n".join(result)
+    if "mmm" in joined.lower().split("\n")[-3:] or "humming" in joined.lower()[-100:]:
+        # Already has humming at the end — no need to add outro marker
+        pass
+
+    return joined
+
+
+def validate_lullaby_lyrics(lyrics: str) -> list:
+    """Validate lullaby lyrics against ACE-Step formatting rules.
+
+    Returns a list of warning strings. Empty list = all checks pass.
+    Does NOT block generation — diagnostic only.
+    """
+    warnings = []
+    lines = [l.strip() for l in lyrics.split("\n") if l.strip()]
+
+    # Count non-header lines
+    content_lines = [l for l in lines if not l.startswith("[")]
+    if len(content_lines) > 30:
+        warnings.append(f"Too many lyric lines: {len(content_lines)} (max 30 for 120s)")
+
+    # Check line lengths
+    for i, line in enumerate(content_lines):
+        word_count = len(line.split())
+        if word_count > 15:
+            warnings.append(f"Line {i+1} has {word_count} words (max 15): '{line[:50]}...'")
+
+    # Count sections
+    section_headers = [l for l in lines if l.startswith("[")]
+    if len(section_headers) > 8:
+        warnings.append(f"Too many sections: {len(section_headers)} (max 8)")
+
+    # Check chorus repetition
+    chorus_texts = []
+    in_chorus = False
+    current_chorus = []
+    for line in lines:
+        if "[chorus" in line.lower():
+            if current_chorus:
+                chorus_texts.append("\n".join(current_chorus))
+            current_chorus = []
+            in_chorus = True
+        elif line.startswith("["):
+            if current_chorus:
+                chorus_texts.append("\n".join(current_chorus))
+            current_chorus = []
+            in_chorus = False
+        elif in_chorus:
+            current_chorus.append(line)
+    if current_chorus:
+        chorus_texts.append("\n".join(current_chorus))
+
+    if len(chorus_texts) >= 2:
+        unique_choruses = set(chorus_texts)
+        if len(unique_choruses) > 1:
+            warnings.append(
+                f"Choruses are not identical ({len(unique_choruses)} unique versions). "
+                "Non-repeating choruses cause ACE-Step melodic drift."
+            )
+
+    return warnings
+
+
 def prepare_lyrics_for_songgen(story: dict) -> str:
     """Convert story text to ACE-Step-compatible lyrics format.
 
     Cleans up TTS emotion markers, parenthetical stage directions, and
     re-groups lines into proper 4-line verse stanzas. Humming lines become
-    [chorus] sections. This produces a clean structure ACE-Step can follow
-    without skipping or garbling lyrics.
+    [chorus] sections. For songs, injects performance directions into
+    section markers to guide ACE-Step vocal delivery.
     """
     text = story.get("text", "")
     if not text:
         return ""
+
+    content_type = story.get("type", "story").lower()
 
     # Strip TTS emotion markers: [SINGING], [GENTLE], [PAUSE], etc.
     text = _EMOTION_MARKER_RE.sub("", text)
@@ -383,37 +489,48 @@ def prepare_lyrics_for_songgen(story: dict) -> str:
         if current_lines:
             ace_parts.append(f"{current_tag}\n" + "\n".join(current_lines))
 
-        return "\n\n".join(ace_parts)
+        lyrics = "\n\n".join(ace_parts)
+    else:
+        # No section headers — regroup flat lines into 4-line verses
+        lyric_lines = []
+        hum_lines = []
+        for ctype, ctext in classified:
+            if ctype == "lyric" and ctext:
+                lyric_lines.append(ctext)
+            elif ctype == "hum" and ctext:
+                hum_lines.append(ctext)
 
-    # No section headers — regroup flat lines into 4-line verses
-    # Collect all lyric and hum lines
-    lyric_lines = []
-    hum_lines = []
-    for ctype, ctext in classified:
-        if ctype == "lyric" and ctext:
-            lyric_lines.append(ctext)
-        elif ctype == "hum" and ctext:
-            hum_lines.append(ctext)
+        ace_parts = []
+        verse_num = 0
 
-    ace_parts = []
-    verse_num = 0
+        # Group lyric lines into 4-line stanzas
+        for i in range(0, len(lyric_lines), 4):
+            chunk = lyric_lines[i:i + 4]
+            if chunk:
+                ace_parts.append("[verse]\n" + "\n".join(chunk))
+                verse_num += 1
+                # Insert a humming chorus after every 2 verses (if we have hum lines)
+                if verse_num % 2 == 0 and hum_lines:
+                    hum = hum_lines.pop(0)
+                    ace_parts.append(f"[chorus]\n{hum}")
 
-    # Group lyric lines into 4-line stanzas
-    for i in range(0, len(lyric_lines), 4):
-        chunk = lyric_lines[i:i + 4]
-        if chunk:
-            ace_parts.append("[verse]\n" + "\n".join(chunk))
-            verse_num += 1
-            # Insert a humming chorus after every 2 verses (if we have hum lines)
-            if verse_num % 2 == 0 and hum_lines:
-                hum = hum_lines.pop(0)
-                ace_parts.append(f"[chorus]\n{hum}")
+        # Append any remaining hum lines as a final chorus
+        for hum in hum_lines:
+            ace_parts.append(f"[chorus]\n{hum}")
 
-    # Append any remaining hum lines as a final chorus
-    for hum in hum_lines:
-        ace_parts.append(f"[chorus]\n{hum}")
+        lyrics = "\n\n".join(ace_parts)
 
-    return "\n\n".join(ace_parts)
+    # For songs: inject performance directions and validate
+    if content_type == "song":
+        lyrics = _inject_lullaby_directions(lyrics)
+
+        # Run diagnostic validation
+        warnings = validate_lullaby_lyrics(lyrics)
+        if warnings:
+            for w in warnings:
+                logger.warning("  Lyrics validation: %s", w)
+
+    return lyrics
 
 
 def build_song_description(story: dict, voice: str) -> str:
@@ -481,32 +598,405 @@ def build_song_description(story: dict, voice: str) -> str:
 
 
 # ── Lullaby style variations for songs ──────────────────────────────────
-# Each voice slot maps to a distinct musical style, giving users meaningfully
-# different listening experiences instead of identical a cappella variants.
+# 5 instrument-specific styles with hyper-specific ACE-Step tags.
+# Evidence-based parameters: 55-72 BPM, 6/8 or 3/4 meter, pentatonic,
+# solo voice + one instrument, pianissimo, breathy/intimate vocals.
+# Negative exclusions prevent ACE-Step from adding unwanted instrumentation.
 LULLABY_STYLES = {
     "female_1": {
-        "name": "Piano Lullaby",
+        "name": "Harp Lullaby",
         "mode": "full",
-        "description": "gentle lullaby, {gender} vocal, clear vocals, enunciate lyrics, warm, soft, relaxed, unhurried, piano, soft strings, slow tempo 65 bpm, dreamy, peaceful, bedtime",
+        "description": (
+            "solo {gender} vocal lullaby with solo harp, "
+            "extremely soft breathy intimate singing, "
+            "66 BPM, 6/8 time signature, pentatonic major, "
+            "pianissimo, legato, sparse arrangement, "
+            "gentle rocking rhythm, warm tone, "
+            "traditional cradle song, folk lullaby, "
+            "no drums, no bass, no percussion, no synth, "
+            "no electric instruments, no full arrangement, "
+            "extremely repetitive, simple melody, "
+            "narrow vocal range, descending phrases"
+        ),
+        "duration": 240,
+    },
+    "female_2": {
+        "name": "Guitar Lullaby",
+        "mode": "full",
+        "description": (
+            "solo {gender} vocal lullaby with fingerpicked acoustic guitar, "
+            "extremely soft breathy intimate singing, "
+            "64 BPM, 3/4 time signature, major key, "
+            "pianissimo, legato, sparse, "
+            "gentle waltz rhythm, warm folk, "
+            "traditional lullaby, cradle song, "
+            "no drums, no bass, no percussion, no synth, "
+            "no electric instruments, no strumming, "
+            "extremely repetitive simple melody, "
+            "one guitar only, minimal accompaniment"
+        ),
         "duration": 240,
     },
     "female_3": {
-        "name": "Guitar Lullaby",
+        "name": "Piano Lullaby",
         "mode": "full",
-        "description": "acoustic lullaby, {gender} vocal, clear vocals, enunciate lyrics, sweet, tender, relaxed, unhurried, acoustic guitar, fingerpicking, slow tempo 65 bpm, cozy, folk, bedtime",
+        "description": (
+            "solo gentle vocal lullaby with soft piano, "
+            "extremely soft breathy {gender} singing, intimate, "
+            "62 BPM, 6/8 time signature, pentatonic, "
+            "pianissimo, legato, sparse, "
+            "gentle rocking rhythm, classical lullaby, "
+            "berceuse, cradle song, "
+            "no drums, no bass, no percussion, no synth, "
+            "no full arrangement, no orchestral, "
+            "extremely repetitive, simple melody, "
+            "soft piano arpeggios only, minimal chords"
+        ),
         "duration": 240,
     },
     "male_1": {
-        "name": "Music Box Lullaby",
+        "name": "Cello Lullaby",
         "mode": "full",
-        "description": "delicate lullaby, {gender} vocal, clear vocals, enunciate lyrics, soft, gentle, relaxed, unhurried, music box, bells, chimes, slow tempo 60 bpm, magical, enchanting, bedtime",
+        "description": (
+            "solo {gender} vocal lullaby with solo cello, "
+            "extremely soft breathy intimate singing, "
+            "62 BPM, 6/8 time signature, minor pentatonic, "
+            "pianissimo, legato, sparse, "
+            "gentle rocking rhythm, warm rich tone, "
+            "classical lullaby, berceuse, "
+            "no drums, no bass, no percussion, no synth, "
+            "no piano, no guitar, no full arrangement, "
+            "extremely repetitive, simple melody, "
+            "cello sustains and drones only"
+        ),
+        "duration": 240,
+    },
+    "male_2": {
+        "name": "Flute Lullaby",
+        "mode": "full",
+        "description": (
+            "solo {gender} vocal lullaby with solo wooden flute, "
+            "extremely soft breathy singing, intimate whisper, "
+            "64 BPM, 3/4 time signature, pentatonic, "
+            "pianissimo, legato, sparse, airy, "
+            "gentle folk lullaby, pastoral, "
+            "no drums, no bass, no percussion, no synth, "
+            "no electric instruments, no full arrangement, "
+            "extremely repetitive, simple melody, "
+            "flute and voice only, nothing else"
+        ),
         "duration": 240,
     },
 }
 # Hindi variants use the same styles
 LULLABY_STYLES.update({
-    f"{k}_hi": v for k, v in LULLABY_STYLES.items()
+    f"{k}_hi": v for k, v in list(LULLABY_STYLES.items())
 })
+
+# ── Age 0-1 infant lullaby styles ──────────────────────────────────────
+# Pure physiological entrainment: a cappella only, no instruments, slower BPM,
+# nonsense syllables, maximum sparsity. Uses "vocal" mode (no instruments).
+INFANT_LULLABY_STYLES = {
+    "female_1": {
+        "name": "A Cappella Lullaby",
+        "mode": "vocal",
+        "description": (
+            "solo female vocal lullaby, a cappella, no instruments, "
+            "extremely soft breathy intimate whisper singing, "
+            "62 BPM, 6/8 time signature, pentatonic, "
+            "pianissimo, legato, minimal, sparse, "
+            "humming, gentle rocking rhythm, "
+            "no drums, no bass, no percussion, no synth, "
+            "no guitar, no piano, no strings section, "
+            "no reverb tail, no delay effects, "
+            "nursery, cradle song, ancient lullaby, "
+            "extremely repetitive, simple melody"
+        ),
+        "duration": 180,
+    },
+    "male_1": {
+        "name": "A Cappella Lullaby (Male)",
+        "mode": "vocal",
+        "description": (
+            "solo male vocal lullaby, a cappella, no instruments, "
+            "extremely soft breathy intimate whisper singing, "
+            "62 BPM, 6/8 time signature, pentatonic, "
+            "pianissimo, legato, minimal, sparse, "
+            "humming, gentle rocking rhythm, "
+            "no drums, no bass, no percussion, no synth, "
+            "no guitar, no piano, no strings section, "
+            "no reverb tail, no delay effects, "
+            "nursery, cradle song, ancient lullaby, "
+            "extremely repetitive, simple melody"
+        ),
+        "duration": 180,
+    },
+}
+INFANT_LULLABY_STYLES.update({
+    f"{k}_hi": v for k, v in list(INFANT_LULLABY_STYLES.items())
+})
+
+# Voice map for infant lullabies (fewer variants — a cappella only)
+INFANT_SONG_VOICE_MAP = {
+    "en": ["female_1", "male_1"],
+    "hi": ["female_1_hi", "male_1_hi"],
+}
+
+
+def get_lullaby_config(story: dict) -> tuple:
+    """Return (styles_dict, voice_map) based on story's target age.
+
+    Ages 0-1: a cappella only, 2 variants (female + male)
+    Ages 2-5: voice + instrument, 5 variants (harp, guitar, piano, cello, flute)
+    Ages 6+:  no lullabies (returns None, None)
+    """
+    target_age = story.get("target_age", 4)
+    age_min = story.get("age_min", target_age)
+
+    if age_min >= 6 or target_age >= 6:
+        return None, None  # No lullabies for 6+
+    elif target_age <= 1 or age_min <= 1:
+        return INFANT_LULLABY_STYLES, INFANT_SONG_VOICE_MAP
+    else:
+        return LULLABY_STYLES, SONG_VOICE_MAP
+
+
+# ── Lullaby post-processing helpers ─────────────────────────────────────
+
+def _normalize_lullaby(audio: AudioSegment, target_lufs: float = -24.0) -> AudioSegment:
+    """Normalize lullaby audio to -24 LUFS (research-based bedtime loudness).
+
+    Falls back to -20 dBFS if pyloudnorm is unavailable.
+    """
+    try:
+        import pyloudnorm as pyln
+        import numpy as np
+
+        samples = np.array(audio.get_array_of_samples(), dtype=np.float64)
+        # Normalize sample values to [-1, 1] range
+        max_val = float(2 ** (audio.sample_width * 8 - 1))
+        samples = samples / max_val
+
+        if audio.channels == 2:
+            samples = samples.reshape((-1, 2))
+        elif audio.channels == 1:
+            samples = samples.reshape((-1, 1))
+
+        meter = pyln.Meter(audio.frame_rate)
+        current_lufs = meter.integrated_loudness(samples)
+
+        if current_lufs == float('-inf'):
+            logger.warning("  LUFS measurement returned -inf (silent audio?), using dBFS fallback")
+            gain = -20.0 - audio.dBFS
+        else:
+            gain = target_lufs - current_lufs
+            logger.info("  LUFS: %.1f → %.1f (gain: %.1f dB)", current_lufs, target_lufs, gain)
+
+        return audio.apply_gain(gain)
+    except ImportError:
+        logger.warning("  pyloudnorm not available, using dBFS fallback (-20 dBFS)")
+        gain = -20.0 - audio.dBFS
+        return audio.apply_gain(gain)
+    except Exception as e:
+        logger.warning("  LUFS normalization failed (using dBFS fallback): %s", e)
+        gain = -20.0 - audio.dBFS
+        return audio.apply_gain(gain)
+
+
+def _apply_lullaby_fade(audio: AudioSegment) -> AudioSegment:
+    """Apply extended lullaby fade-out starting at 80% of track duration.
+
+    Two-stage fade: gentle from 80%-95%, steeper from 95%-100%.
+    Appends 5 seconds of silence after fade for clean ending.
+    """
+    total_ms = len(audio)
+    if total_ms < 10000:  # Too short for extended fade
+        return audio.fade_in(500).fade_out(1500)
+
+    # Gentle fade-in (1 second)
+    audio = audio.fade_in(1000)
+
+    # Split at 80% point
+    fade_start = int(total_ms * 0.80)
+    mid_point = int(total_ms * 0.95)
+
+    pre_fade = audio[:fade_start]
+    gentle_section = audio[fade_start:mid_point]
+    steep_section = audio[mid_point:]
+
+    # Stage 1: gentle fade (80% → 95%) — reduce by ~6 dB
+    gentle_section = gentle_section.fade(to_gain=-6.0, start=0, end=len(gentle_section))
+
+    # Stage 2: steep fade (95% → 100%) — fade to near-silence
+    steep_section = steep_section.apply_gain(-6.0)  # already 6dB down from stage 1
+    steep_section = steep_section.fade_out(len(steep_section))
+
+    # Combine + append 5 seconds of silence
+    result = pre_fade + gentle_section + steep_section
+    result = result + AudioSegment.silent(duration=5000)
+
+    return result
+
+
+def _score_lullaby_quality(audio: AudioSegment, style: Optional[dict] = None) -> dict:
+    """Score a lullaby candidate on multiple quality dimensions.
+
+    Runs local audio analysis (no API calls) to evaluate adherence to
+    lullaby guidelines. Used both during retake selection and post-generation QA.
+
+    Returns dict with per-dimension scores (0.0-1.0, higher=better) and
+    a composite 'score' (lower=better, for retake selection compatibility).
+    """
+    import numpy as np
+
+    duration_ms = len(audio)
+    duration_sec = duration_ms / 1000.0
+    target_duration = (style or {}).get("duration", 240)
+    results = {"dimensions": {}, "warnings": []}
+
+    # ── 1. Duration accuracy ────────────────────────────────────────────
+    duration_deviation = abs(duration_sec - target_duration) / target_duration
+    duration_score = max(0.0, 1.0 - duration_deviation)
+    results["dimensions"]["duration_accuracy"] = {
+        "score": round(duration_score, 3),
+        "actual": round(duration_sec, 1),
+        "target": target_duration,
+        "deviation_pct": round(duration_deviation * 100, 1),
+    }
+    if duration_deviation > 0.30:
+        results["warnings"].append(f"duration {duration_sec:.0f}s vs target {target_duration}s ({duration_deviation:.0%} off)")
+
+    # ── 2. Volume consistency (dBFS variance across chunks) ─────────────
+    chunk_len = max(duration_ms // 10, 1000)
+    chunks_dbfs = []
+    for j in range(0, duration_ms - chunk_len, chunk_len):
+        chunk = audio[j:j + chunk_len]
+        if chunk.dBFS > -80:
+            chunks_dbfs.append(chunk.dBFS)
+
+    dbfs_variance = 0.0
+    dbfs_range = 0.0
+    if len(chunks_dbfs) >= 3:
+        mean_db = sum(chunks_dbfs) / len(chunks_dbfs)
+        dbfs_variance = sum((d - mean_db) ** 2 for d in chunks_dbfs) / len(chunks_dbfs)
+        dbfs_range = max(chunks_dbfs) - min(chunks_dbfs)
+
+    # Lower variance = better. Variance < 10 is good, > 30 is bad.
+    vol_score = max(0.0, 1.0 - (dbfs_variance / 30.0))
+    results["dimensions"]["volume_consistency"] = {
+        "score": round(vol_score, 3),
+        "variance": round(dbfs_variance, 1),
+        "range_db": round(dbfs_range, 1),
+    }
+    if dbfs_range > 12:
+        results["warnings"].append(f"dynamic range {dbfs_range:.0f}dB (max 8dB recommended)")
+
+    # ── 3. Overall loudness level ───────────────────────────────────────
+    avg_dbfs = audio.dBFS
+    # Target: -24 LUFS ≈ roughly -20 to -28 dBFS range is acceptable
+    loudness_deviation = abs(avg_dbfs - (-22.0))  # rough center
+    loudness_score = max(0.0, 1.0 - (loudness_deviation / 15.0))
+    results["dimensions"]["loudness"] = {
+        "score": round(loudness_score, 3),
+        "avg_dbfs": round(avg_dbfs, 1),
+    }
+    if avg_dbfs > -14:
+        results["warnings"].append(f"too loud: avg {avg_dbfs:.0f} dBFS (target ~-22)")
+
+    # ── 4. Sparsity: presence of near-silence gaps ──────────────────────
+    # Good lullabies have moments of near-silence between phrases
+    silence_threshold = avg_dbfs - 20  # 20dB below average = near-silence
+    short_chunk = max(duration_ms // 40, 500)  # ~40 chunks
+    quiet_chunks = 0
+    total_chunks = 0
+    for j in range(0, duration_ms - short_chunk, short_chunk):
+        chunk = audio[j:j + short_chunk]
+        total_chunks += 1
+        if chunk.dBFS < silence_threshold:
+            quiet_chunks += 1
+
+    sparsity_ratio = quiet_chunks / max(total_chunks, 1)
+    # Target: 10-40% quiet chunks. 0% = continuous, >50% = too sparse
+    if sparsity_ratio < 0.05:
+        sparsity_score = 0.3  # too continuous
+    elif sparsity_ratio > 0.50:
+        sparsity_score = 0.5  # too sparse
+    else:
+        sparsity_score = min(1.0, sparsity_ratio / 0.15)  # peaks at ~15%
+    results["dimensions"]["sparsity"] = {
+        "score": round(sparsity_score, 3),
+        "quiet_ratio": round(sparsity_ratio, 3),
+    }
+    if sparsity_ratio < 0.03:
+        results["warnings"].append("no gaps between phrases (continuous audio)")
+
+    # ── 5. Spectral brightness: flag excessive high-frequency energy ────
+    try:
+        samples = np.array(audio.get_array_of_samples(), dtype=np.float64)
+        max_val = float(2 ** (audio.sample_width * 8 - 1))
+        samples = samples / max_val
+        if audio.channels == 2:
+            samples = samples[::2]  # take one channel
+
+        # Compute FFT and check energy above 4kHz
+        from scipy.fft import rfft, rfftfreq
+        N = len(samples)
+        fft_vals = np.abs(rfft(samples))
+        freqs = rfftfreq(N, 1.0 / audio.frame_rate)
+
+        total_energy = np.sum(fft_vals ** 2)
+        high_freq_mask = freqs > 4000
+        high_energy = np.sum(fft_vals[high_freq_mask] ** 2)
+        high_ratio = high_energy / max(total_energy, 1e-10)
+
+        # Lullabies should have <15% energy above 4kHz
+        brightness_score = max(0.0, 1.0 - (high_ratio / 0.20))
+        results["dimensions"]["spectral_softness"] = {
+            "score": round(brightness_score, 3),
+            "high_freq_ratio": round(high_ratio, 4),
+        }
+        if high_ratio > 0.20:
+            results["warnings"].append(f"bright/harsh audio: {high_ratio:.0%} energy above 4kHz")
+    except Exception as e:
+        results["dimensions"]["spectral_softness"] = {
+            "score": 0.5, "error": str(e),
+        }
+
+    # ── 6. Peak detection: flag sudden loud moments ─────────────────────
+    peak_count = 0
+    if len(chunks_dbfs) >= 3:
+        mean_db = sum(chunks_dbfs) / len(chunks_dbfs)
+        for db in chunks_dbfs:
+            if db > mean_db + 6:  # 6dB spike = sudden loud moment
+                peak_count += 1
+    peak_score = max(0.0, 1.0 - (peak_count / 3.0))
+    results["dimensions"]["no_peaks"] = {
+        "score": round(peak_score, 3),
+        "spike_count": peak_count,
+    }
+    if peak_count > 0:
+        results["warnings"].append(f"{peak_count} sudden volume spike(s) detected")
+
+    # ── Composite score (lower = better, for retake selection) ──────────
+    dim_scores = [d["score"] for d in results["dimensions"].values()]
+    avg_quality = sum(dim_scores) / len(dim_scores) if dim_scores else 0.5
+
+    # Composite: weight duration + volume most, penalize warnings
+    composite = (
+        (1.0 - results["dimensions"]["duration_accuracy"]["score"]) * 0.25
+        + (1.0 - results["dimensions"]["volume_consistency"]["score"]) * 0.25
+        + (1.0 - results["dimensions"]["spectral_softness"]["score"]) * 0.15
+        + (1.0 - results["dimensions"]["sparsity"]["score"]) * 0.15
+        + (1.0 - results["dimensions"]["no_peaks"]["score"]) * 0.10
+        + (1.0 - results["dimensions"]["loudness"]["score"]) * 0.10
+    )
+
+    results["composite_score"] = round(composite, 4)
+    results["quality_avg"] = round(avg_quality, 3)
+    results["warning_count"] = len(results["warnings"])
+    results["verdict"] = "PASS" if len(results["warnings"]) == 0 else ("WARN" if len(results["warnings"]) <= 2 else "FAIL")
+
+    return results
 
 
 def generate_song_variant(
@@ -520,7 +1010,8 @@ def generate_song_variant(
 
     Unlike stories (segment-by-segment via Chatterbox), songs are generated
     as a single piece for musical coherence. Each voice slot maps to a distinct
-    lullaby style (piano, guitar, music box, a cappella) via LULLABY_STYLES.
+    lullaby style (harp, guitar, piano, cello, flute) via LULLABY_STYLES.
+    Generates 2 retakes, scores each on lullaby quality dimensions, and selects the best.
     """
     story_id = story["id"]
     title = story["title"]
@@ -546,10 +1037,11 @@ def generate_song_variant(
         logger.error("  No lyrics for song %s", story_id)
         return None
 
-    # Use lullaby style variation if available, otherwise fall back to generic
+    # Use age-appropriate lullaby style (0-1: a cappella, 2-5: instrument variants)
     voice_base = voice.replace("_hi", "")
     gender = "female" if "female" in voice else "male"
-    style = LULLABY_STYLES.get(voice)
+    styles_dict, _ = get_lullaby_config(story)
+    style = (styles_dict or LULLABY_STYLES).get(voice)
 
     if style:
         description = style["description"].format(gender=gender)
@@ -561,55 +1053,75 @@ def generate_song_variant(
         logger.info("  Generating song %s / %s via ACE-Step...", title, voice)
     logger.info("  Mode: %s | Description: %s", mode, description[:100])
 
-    # POST to ACE-Step Modal endpoint
-    # Use voice-based seed so each variant gets a unique performance
+    # Generate 2 retakes with different seeds, select the best
     voice_seed = hash(voice) % 999999 + 1
     style_duration = style.get("duration", 90) if style else 90
-    payload = {
-        "lyrics": lyrics,
-        "description": description,
-        "mode": mode,
-        "format": "mp3",
-        "duration": style_duration,
-        "seed": voice_seed,
-    }
+    num_retakes = 2
 
-    try:
-        resp = client.post(SONGGEN_URL, json=payload, timeout=600.0, follow_redirects=True)
-        if resp.status_code != 200:
-            logger.error("  ACE-Step HTTP %d: %s", resp.status_code, resp.text[:200])
-            return None
-        audio_bytes = resp.content
-    except Exception as e:
-        logger.error("  ACE-Step request failed: %s", e)
+    candidates = []  # list of (AudioSegment, seed, score)
+
+    for retake_idx in range(num_retakes):
+        seed = voice_seed + (retake_idx * 1000)
+        payload = {
+            "lyrics": lyrics,
+            "description": description,
+            "mode": mode,
+            "format": "mp3",
+            "duration": style_duration,
+            "seed": seed,
+        }
+
+        logger.info("  Retake %d/%d (seed=%d)...", retake_idx + 1, num_retakes, seed)
+        try:
+            resp = client.post(SONGGEN_URL, json=payload, timeout=600.0, follow_redirects=True)
+            if resp.status_code != 200:
+                logger.error("  ACE-Step HTTP %d: %s", resp.status_code, resp.text[:200])
+                continue
+            audio_bytes = resp.content
+        except Exception as e:
+            logger.error("  ACE-Step request failed: %s", e)
+            continue
+
+        if not audio_bytes or len(audio_bytes) < 1000:
+            logger.error("  ACE-Step returned empty/tiny audio (%d bytes)", len(audio_bytes))
+            continue
+
+        try:
+            audio = audio_from_bytes(audio_bytes)
+        except Exception as e:
+            logger.error("  Failed to decode ACE-Step audio: %s", e)
+            continue
+
+        # Run lullaby quality analysis on this candidate
+        qa_result = _score_lullaby_quality(audio, style)
+        score = qa_result["composite_score"]
+        candidates.append((audio, seed, score, qa_result))
+
+        duration_ms = len(audio)
+        logger.info("    Retake %d: %.1fs, quality=%.3f (%s), warnings=%d",
+                     retake_idx + 1, duration_ms / 1000, qa_result["quality_avg"],
+                     qa_result["verdict"], qa_result["warning_count"])
+        for w in qa_result["warnings"]:
+            logger.info("      ⚠ %s", w)
+
+    if not candidates:
+        logger.error("  All retakes failed for %s / %s", title, voice)
         return None
 
-    if not audio_bytes or len(audio_bytes) < 1000:
-        logger.error("  ACE-Step returned empty/tiny audio (%d bytes)", len(audio_bytes))
-        return None
+    # Select best candidate (lowest composite score)
+    candidates.sort(key=lambda x: x[2])
+    audio, best_seed, best_score, best_qa = candidates[0]
+    if len(candidates) > 1:
+        logger.info("  Selected retake seed=%d (composite=%.4f, quality=%.3f, %s)",
+                     best_seed, best_score, best_qa["quality_avg"], best_qa["verdict"])
+        for dim_name, dim_data in best_qa["dimensions"].items():
+            logger.info("    %s: %.3f", dim_name, dim_data["score"])
 
-    # Load and post-process
-    try:
-        audio = audio_from_bytes(audio_bytes)
-    except Exception as e:
-        logger.error("  Failed to decode ACE-Step audio: %s", e)
-        return None
+    # Normalize to -24 LUFS (research-based bedtime loudness)
+    audio = _normalize_lullaby(audio)
 
-    # Normalize to -16 dBFS (gentle level, good for bedtime)
-    try:
-        target_db = -16.0
-        gain = target_db - audio.dBFS
-        audio = audio.apply_gain(gain)
-    except Exception as e:
-        logger.warning("  Normalization failed (continuing): %s", e)
-
-    # Apply gentle fade in/out
-    try:
-        fade_in_ms = min(500, len(audio) // 4)
-        fade_out_ms = min(1500, len(audio) // 3)
-        audio = audio.fade_in(fade_in_ms).fade_out(fade_out_ms)
-    except Exception as e:
-        logger.warning("  Fade failed (continuing): %s", e)
+    # Extended fade-out: begin at 80% of duration, two-stage exponential-like curve
+    audio = _apply_lullaby_fade(audio)
 
     # Export as MP3 at 256kbps
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -660,17 +1172,28 @@ def generate_lullaby_audio(
         logger.warning("  SONGGEN_URL not set, skipping lullaby generation")
         return None
 
-    # Build description based on gender
+    # Build description based on gender — uses Piano Lullaby template (most universal)
     if voice_gender == "female":
         description = (
-            "gentle lullaby, female vocal, clear vocals, enunciate lyrics, warm, soft, relaxed, "
-            "unhurried, piano, soft strings, slow tempo 65 bpm, dreamy, peaceful, bedtime"
+            "solo gentle vocal lullaby with soft piano, "
+            "extremely soft breathy female singing, intimate, "
+            "62 BPM, 6/8 time signature, pentatonic, "
+            "pianissimo, legato, sparse, "
+            "gentle rocking rhythm, classical lullaby, berceuse, "
+            "no drums, no bass, no percussion, no synth, "
+            "no full arrangement, extremely repetitive, simple melody, "
+            "soft piano arpeggios only, minimal chords"
         )
     else:
         description = (
-            "gentle lullaby, male vocal, clear vocals, enunciate lyrics, soft, hushed, "
-            "minimal piano, ambient pads, slow tempo 60 bpm, dreamy, peaceful, bedtime, "
-            "quiet, intimate, sleepy, fade to silence"
+            "solo gentle vocal lullaby with soft piano, "
+            "extremely soft breathy male singing, intimate, "
+            "62 BPM, 6/8 time signature, pentatonic, "
+            "pianissimo, legato, sparse, "
+            "gentle rocking rhythm, classical lullaby, berceuse, "
+            "no drums, no bass, no percussion, no synth, "
+            "no full arrangement, extremely repetitive, simple melody, "
+            "soft piano arpeggios only, minimal chords"
         )
 
     voice_seed = hash(f"lullaby_{voice_gender}_{story_title}") % 999999 + 1
@@ -942,9 +1465,13 @@ def main():
     for story in stories:
         lang = story.get("lang", "en")
         content_type = story.get("type", "story")
-        # Songs use fewer voice variants (SongGen is more expensive)
+        # Songs use age-appropriate voice variants via get_lullaby_config()
         if content_type == "song" and SONGGEN_URL:
-            voices = SONG_VOICE_MAP.get(lang, SONG_VOICE_MAP["en"])
+            styles, voice_map = get_lullaby_config(story)
+            if styles is None:
+                logger.info("Skipping song %s (age 6+ — no lullabies)", story["title"])
+                continue
+            voices = voice_map.get(lang, voice_map["en"])
         else:
             voices = VOICE_MAP.get(lang, VOICE_MAP["en"])
         if args.voice:

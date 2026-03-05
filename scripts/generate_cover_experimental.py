@@ -667,12 +667,12 @@ def _gen_filter_water_flow(region, rng):
 
     # Context-based parameter ranges (subtle cinemagraph — gentle motion, not warping)
     params = {
-        "ocean":      {"freq_x": (0.008, 0.012), "freq_y": (0.025, 0.035), "octaves": (3, 4), "scale": (8, 12),  "dur_freq": (12, 16), "dur_scale": (13, 17)},
-        "lake":       {"freq_x": (0.012, 0.016), "freq_y": (0.030, 0.040), "octaves": (2, 3), "scale": (6, 9),   "dur_freq": (10, 14), "dur_scale": (12, 16)},
-        "pond":       {"freq_x": (0.016, 0.020), "freq_y": (0.040, 0.050), "octaves": (2, 2), "scale": (5, 7),   "dur_freq": (8, 12),  "dur_scale": (10, 14)},
-        "river":      {"freq_x": (0.010, 0.014), "freq_y": (0.040, 0.050), "octaves": (2, 3), "scale": (7, 10),  "dur_freq": (9, 13),  "dur_scale": (11, 15)},
-        "underwater": {"freq_x": (0.006, 0.010), "freq_y": (0.015, 0.025), "octaves": (2, 3), "scale": (3, 5),   "dur_freq": (14, 18), "dur_scale": (16, 20)},
-    }.get(variant, {"freq_x": (0.012, 0.016), "freq_y": (0.030, 0.040), "octaves": (2, 3), "scale": (6, 9), "dur_freq": (10, 14), "dur_scale": (12, 16)})
+        "ocean":      {"freq_x": (0.008, 0.012), "freq_y": (0.025, 0.035), "octaves": (3, 4), "scale": (12, 12), "dur_freq": (12, 16), "dur_scale": (13, 17)},
+        "lake":       {"freq_x": (0.012, 0.016), "freq_y": (0.030, 0.040), "octaves": (2, 3), "scale": (9, 9),   "dur_freq": (10, 14), "dur_scale": (12, 16)},
+        "pond":       {"freq_x": (0.016, 0.020), "freq_y": (0.040, 0.050), "octaves": (2, 2), "scale": (7, 7),   "dur_freq": (8, 12),  "dur_scale": (10, 14)},
+        "river":      {"freq_x": (0.010, 0.014), "freq_y": (0.040, 0.050), "octaves": (2, 3), "scale": (10, 10), "dur_freq": (9, 13),  "dur_scale": (11, 15)},
+        "underwater": {"freq_x": (0.006, 0.010), "freq_y": (0.015, 0.025), "octaves": (2, 3), "scale": (5, 5),   "dur_freq": (14, 18), "dur_scale": (16, 20)},
+    }.get(variant, {"freq_x": (0.012, 0.016), "freq_y": (0.030, 0.040), "octaves": (2, 3), "scale": (9, 9), "dur_freq": (10, 14), "dur_scale": (12, 16)})
 
     fx = round(rng.uniform(*params["freq_x"]), 3)
     fy = round(rng.uniform(*params["freq_y"]), 3)
@@ -713,12 +713,12 @@ def _gen_filter_cloud_drift(region, rng):
     seed = rng.randint(1, 999)
 
     params = {
-        "open_night_sky": {"freq": (0.004, 0.007), "octaves": (1, 2), "scale": (5, 8),   "dur_churn": (25, 35), "dur_drift": (35, 55), "drift_px": (5, 10), "noise_type": "fractalNoise"},
-        "dramatic":       {"freq": (0.005, 0.009), "octaves": (2, 3), "scale": (10, 14),  "dur_churn": (20, 30), "dur_drift": (30, 45), "drift_px": (8, 15), "noise_type": "turbulence"},
-        "magical":        {"freq": (0.004, 0.008), "octaves": (2, 3), "scale": (8, 12),   "dur_churn": (22, 35), "dur_drift": (30, 50), "drift_px": (6, 12), "noise_type": "fractalNoise"},
-        "space_nebula":   {"freq": (0.003, 0.006), "octaves": (2, 3), "scale": (7, 10),   "dur_churn": (30, 50), "dur_drift": (40, 60), "drift_px": (5, 10), "noise_type": "fractalNoise"},
-        "thin_wispy":     {"freq": (0.008, 0.010), "octaves": (1, 2), "scale": (5, 7),    "dur_churn": (25, 40), "dur_drift": (35, 55), "drift_px": (5, 8),  "noise_type": "fractalNoise"},
-    }.get(variant, {"freq": (0.005, 0.008), "octaves": (2, 2), "scale": (7, 10), "dur_churn": (25, 35), "dur_drift": (35, 50), "drift_px": (5, 10), "noise_type": "fractalNoise"})
+        "open_night_sky": {"freq": (0.004, 0.007), "octaves": (1, 2), "scale": (8, 8),   "dur_churn": (25, 35), "dur_drift": (35, 55), "drift_px": (8, 10), "noise_type": "fractalNoise"},
+        "dramatic":       {"freq": (0.005, 0.009), "octaves": (2, 3), "scale": (14, 14),  "dur_churn": (20, 30), "dur_drift": (30, 45), "drift_px": (12, 15), "noise_type": "turbulence"},
+        "magical":        {"freq": (0.004, 0.008), "octaves": (2, 3), "scale": (12, 12),  "dur_churn": (22, 35), "dur_drift": (30, 50), "drift_px": (10, 12), "noise_type": "fractalNoise"},
+        "space_nebula":   {"freq": (0.003, 0.006), "octaves": (2, 3), "scale": (10, 10),  "dur_churn": (30, 50), "dur_drift": (40, 60), "drift_px": (8, 10), "noise_type": "fractalNoise"},
+        "thin_wispy":     {"freq": (0.008, 0.010), "octaves": (1, 2), "scale": (7, 7),    "dur_churn": (25, 40), "dur_drift": (35, 55), "drift_px": (7, 8),  "noise_type": "fractalNoise"},
+    }.get(variant, {"freq": (0.005, 0.008), "octaves": (2, 2), "scale": (10, 10), "dur_churn": (25, 35), "dur_drift": (35, 50), "drift_px": (8, 10), "noise_type": "fractalNoise"})
 
     f_base = round(rng.uniform(*params["freq"]), 3)
     f_y = round(f_base * rng.uniform(1.2, 1.8), 3)
@@ -805,12 +805,12 @@ def _gen_filter_veg_sway(region, rng):
     is_ground = region["type"] == "vegetation_ground"
 
     params = {
-        "dense_canopy": {"freq_x": (0.005, 0.008), "scale": (6, 8),   "dur_freq": (12, 18), "dur_scale": (14, 20)},
-        "branches":     {"freq_x": (0.010, 0.012), "scale": (4, 6),   "dur_freq": (10, 15), "dur_scale": (12, 18)},
-        "tall_grass":   {"freq_x": (0.012, 0.018), "scale": (4, 6),   "dur_freq": (6, 10),  "dur_scale": (8, 12)},
-        "flowers":      {"freq_x": (0.008, 0.012), "scale": (3, 4),   "dur_freq": (10, 16), "dur_scale": (12, 18)},
-        "seaweed":      {"freq_x": (0.004, 0.008), "scale": (4, 6),   "dur_freq": (12, 20), "dur_scale": (14, 22)},
-    }.get(variant, {"freq_x": (0.008, 0.012), "scale": (4, 6), "dur_freq": (10, 15), "dur_scale": (12, 18)})
+        "dense_canopy": {"freq_x": (0.005, 0.008), "scale": (8, 8),   "dur_freq": (12, 18), "dur_scale": (14, 20)},
+        "branches":     {"freq_x": (0.010, 0.012), "scale": (6, 6),   "dur_freq": (10, 15), "dur_scale": (12, 18)},
+        "tall_grass":   {"freq_x": (0.012, 0.018), "scale": (6, 6),   "dur_freq": (6, 10),  "dur_scale": (8, 12)},
+        "flowers":      {"freq_x": (0.008, 0.012), "scale": (4, 4),   "dur_freq": (10, 16), "dur_scale": (12, 18)},
+        "seaweed":      {"freq_x": (0.004, 0.008), "scale": (6, 6),   "dur_freq": (12, 20), "dur_scale": (14, 22)},
+    }.get(variant, {"freq_x": (0.008, 0.012), "scale": (6, 6), "dur_freq": (10, 15), "dur_scale": (12, 18)})
 
     fx = round(rng.uniform(*params["freq_x"]), 3)
     fy = round(fx * rng.uniform(1.5, 2.2), 3)
@@ -851,10 +851,10 @@ def _gen_filter_reflection_shimmer(region, rng):
     seed = rng.randint(1, 999)
 
     params = {
-        "water_reflection": {"freq_x": (0.025, 0.035), "freq_y": (0.050, 0.070), "scale": (3, 5), "dur": (6, 8)},
-        "crystal_ice":      {"freq_x": (0.035, 0.040), "freq_y": (0.060, 0.080), "scale": (2, 4), "dur": (5, 7)},
-        "wet_surface":      {"freq_x": (0.030, 0.040), "freq_y": (0.050, 0.070), "scale": (2, 3), "dur": (6, 9)},
-    }.get(variant, {"freq_x": (0.025, 0.035), "freq_y": (0.050, 0.070), "scale": (3, 5), "dur": (6, 8)})
+        "water_reflection": {"freq_x": (0.025, 0.035), "freq_y": (0.050, 0.070), "scale": (5, 5), "dur": (6, 8)},
+        "crystal_ice":      {"freq_x": (0.035, 0.040), "freq_y": (0.060, 0.080), "scale": (4, 4), "dur": (5, 7)},
+        "wet_surface":      {"freq_x": (0.030, 0.040), "freq_y": (0.050, 0.070), "scale": (3, 3), "dur": (6, 9)},
+    }.get(variant, {"freq_x": (0.025, 0.035), "freq_y": (0.050, 0.070), "scale": (5, 5), "dur": (6, 8)})
 
     fx = round(rng.uniform(*params["freq_x"]), 3)
     fy = round(rng.uniform(*params["freq_y"]), 3)
@@ -921,12 +921,12 @@ def _gen_filter_fog_drift(region, rng):
     seed = rng.randint(1, 999)
 
     params = {
-        "forest_mist":     {"freq": (0.005, 0.008), "scale": (5, 7),   "dur_churn": (18, 25), "dur_drift": (28, 40), "drift_px": (8, 12)},
-        "mountain_cloud":  {"freq": (0.004, 0.007), "scale": (6, 8),   "dur_churn": (15, 25), "dur_drift": (25, 40), "drift_px": (10, 15)},
-        "underwater_haze": {"freq": (0.003, 0.006), "scale": (3, 5),   "dur_churn": (22, 30), "dur_drift": (35, 50), "drift_px": (5, 8)},
-        "cave_steam":      {"freq": (0.006, 0.010), "scale": (4, 6),   "dur_churn": (18, 25), "dur_drift": (25, 35), "drift_px": (6, 10)},
-        "magical_shimmer": {"freq": (0.007, 0.010), "scale": (3, 5),   "dur_churn": (20, 28), "dur_drift": (30, 45), "drift_px": (6, 10)},
-    }.get(variant, {"freq": (0.005, 0.008), "scale": (5, 7), "dur_churn": (18, 25), "dur_drift": (28, 40), "drift_px": (8, 12)})
+        "forest_mist":     {"freq": (0.005, 0.008), "scale": (7, 7),   "dur_churn": (18, 25), "dur_drift": (28, 40), "drift_px": (10, 12)},
+        "mountain_cloud":  {"freq": (0.004, 0.007), "scale": (8, 8),   "dur_churn": (15, 25), "dur_drift": (25, 40), "drift_px": (12, 15)},
+        "underwater_haze": {"freq": (0.003, 0.006), "scale": (5, 5),   "dur_churn": (22, 30), "dur_drift": (35, 50), "drift_px": (7, 8)},
+        "cave_steam":      {"freq": (0.006, 0.010), "scale": (6, 6),   "dur_churn": (18, 25), "dur_drift": (25, 35), "drift_px": (8, 10)},
+        "magical_shimmer": {"freq": (0.007, 0.010), "scale": (5, 5),   "dur_churn": (20, 28), "dur_drift": (30, 45), "drift_px": (8, 10)},
+    }.get(variant, {"freq": (0.005, 0.008), "scale": (7, 7), "dur_churn": (18, 25), "dur_drift": (28, 40), "drift_px": (10, 12)})
 
     f_base = round(rng.uniform(*params["freq"]), 3)
     f_y = round(f_base * rng.uniform(1.3, 1.8), 3)
@@ -960,7 +960,7 @@ def _gen_filter_smoke_rise(region, rng):
 
     f_base = round(rng.uniform(0.008, 0.015), 3)
     f_y = round(f_base * rng.uniform(1.5, 2.2), 3)
-    scale_base = rng.randint(3, 6)
+    scale_base = rng.randint(6, 6)
     dur_churn = rng.randint(10, 18)
     dur_rise = rng.randint(15, 25)
 
@@ -1213,7 +1213,7 @@ def generate_v3_combined_svg(bg_b64, axes, story):
         # Fog/smoke get additional drift animateTransform on the <use>
         drift_transform = ""
         if rtype == "fog_zone":
-            drift_px = rng.randint(5, 12)
+            drift_px = rng.randint(10, 12)
             drift_dur = rng.randint(28, 45)
             drift_half = drift_px // 2
             drift_transform = f'''
@@ -1225,8 +1225,8 @@ def generate_v3_combined_svg(bg_b64, axes, story):
             drift_transform = f'''
       <animateTransform attributeName="transform" type="translate" values="0,0; {lateral_x},{-rise_y}; 0,0; {-lateral_x // 2},{-rise_y // 2}; 0,0" dur="{rise_dur}s" repeatCount="indefinite" calcMode="spline" keySplines="0.3 0 0.7 1;0.3 0 0.7 1;0.3 0 0.7 1;0.3 0 0.7 1"/>'''
         elif rtype == "sky":
-            # Cloud drift: slight horizontal translate
-            drift_px = rng.randint(5, 10)
+            # Cloud drift: horizontal translate
+            drift_px = rng.randint(10, 10)
             drift_dur = rng.randint(35, 55)
             drift_transform = f'''
       <animateTransform attributeName="transform" type="translate" values="0,0; {drift_px},0; 0,0; {-drift_px // 2},0; 0,0" dur="{drift_dur}s" repeatCount="indefinite" calcMode="spline" keySplines="0.3 0 0.7 1;0.3 0 0.7 1;0.3 0 0.7 1;0.3 0 0.7 1"/>'''
@@ -2824,6 +2824,25 @@ def auto_select_axes(story: dict, overrides: dict = None) -> dict:
     palette_options = THEME_TO_PALETTE.get(theme, list(COLOR_PALETTES.keys()))
     palette = overrides.get("palette") or _rng.choice(palette_options)
 
+    # Override from cover_context — festivals/outdoor scenes need appropriate axes
+    ctx = story.get("cover_context", "").lower()
+    if ctx and "world_setting" not in (overrides or {}):
+        if any(w in ctx for w in ("festival", "holi", "diwali", "celebration", "meadow", "garden", "field")):
+            world = "mountain_meadow"
+        elif any(w in ctx for w in ("ocean", "underwater", "coral", "sea")):
+            world = "deep_ocean"
+        elif any(w in ctx for w in ("forest", "jungle", "woods")):
+            world = "enchanted_forest"
+        elif any(w in ctx for w in ("snow", "winter", "ice", "frost")):
+            world = "mountain_meadow"
+        elif any(w in ctx for w in ("library", "room", "house", "kitchen", "indoor")):
+            world = "cozy_interior"
+    if ctx and "palette" not in (overrides or {}):
+        if any(w in ctx for w in ("holi", "gulal", "vibrant", "colorful", "festival")):
+            palette = "ember_warm"
+        elif any(w in ctx for w in ("snow", "winter", "frost", "ice")):
+            palette = "twilight_cool"
+
     # Composition — choose based on story content
     if "river" in story.get("title", "").lower() or "path" in story.get("title", "").lower():
         comp = "winding_path"
@@ -3050,20 +3069,18 @@ def build_flux_prompt(story: dict, axes: dict) -> str:
             )
     else:
         # Non-human character — use the actual character identity
+        # Strip diminutive size words so FLUX renders the character large
         if char_phrase:
-            # Use the extracted phrase directly: "a tiny raindrop named Drizzle"
-            char_section = (
-                f"{char_phrase}, {char_visual_desc}, "
-                f"gentle and friendly expression, "
-                f"in a magical world"
-            )
+            clean_phrase = re.sub(
+                r'\b(a\s+)?(tiny|small|little|miniature|wee|itty-bitty)\b\s*',
+                '', char_phrase, flags=re.IGNORECASE
+            ).strip()
+            clean_phrase = re.sub(r'\s+', ' ', clean_phrase)  # collapse double spaces
+            # Remove leading "a/an" since we prepend "large"
+            clean_phrase = re.sub(r'^(?:a|an)\s+', '', clean_phrase, flags=re.IGNORECASE)
+            char_section = f"large {clean_phrase} character centered in frame, friendly expression"
         else:
-            # Fallback to generic visual description
-            char_section = (
-                f"{char_visual_desc}, "
-                f"gentle and friendly expression, "
-                f"in a magical world"
-            )
+            char_section = f"large {char_visual_desc} character centered in frame, friendly expression"
 
     # Age-specific art style additions
     if age_group in ("2-5", "0-1"):
@@ -3073,24 +3090,29 @@ def build_flux_prompt(story: dict, axes: dict) -> str:
     else:
         age_addition = "cinematic concept art, atmospheric landscape, matte painting quality, sophisticated color grading, film still aesthetic"
 
+    # Story-specific scene context (festivals, cultural elements, weather, etc.)
+    cover_context = story.get("cover_context", "").strip()
+    # Trim cover_context to keep prompt within URL limits
+    if cover_context and len(cover_context) > 100:
+        cover_context = cover_context[:100].rsplit(",", 1)[0].strip()
+    context_section = f"{cover_context.lower().rstrip('.')}, " if cover_context else ""
+
     # Extract clean texture and composition names
     texture_name = texture_desc.split(",")[0].strip()
     comp_name = comp_desc.split(",")[0].strip().lower()
 
+    # Character goes FIRST — FLUX weighs early tokens more, and truncation cuts from the end
     prompt = (
-        f"Children's book illustration, {texture_name} style, "
+        f"{char_section}, "
+        f"children's book illustration, {texture_name} style, "
+        f"{context_section}"
         f"atmospheric {world_info.get('signature', 'magical scene').lower()}, "
         f"{comp_name}, "
-        f"{char_section}, "
         f"{light_desc.lower()}, "
-        f"rich {palette_info.get('mood', 'warm').lower()} color palette with "
-        f"{palette_info.get('base', 'warm tones').lower()} and "
-        f"{palette_info.get('accents', 'soft accents').lower()} accents, "
+        f"{palette_info.get('mood', 'warm').lower()} palette, "
         f"{time_desc.lower()}, "
         f"{age_addition}, "
-        f"warm inviting mood, no text, no harsh contrasts, soft atmospheric depth, "
-        f"no bright whites, maximum 70% luminance, sleep-safe colors, "
-        f"absolutely no sad expressions, no tears, no frowning, no closed eyes, no sleepy face"
+        f"warm inviting mood, no text, soft atmospheric depth, sleep-safe muted colors"
     )
 
     return prompt
@@ -3107,8 +3129,9 @@ def generate_flux_image_pollinations(prompt: str) -> bytes:
     from urllib.parse import quote
     pollinations_token = os.getenv("POLLINATIONS_API_KEY", "")
 
-    # Truncate prompt to ~450 chars to stay within URL limits after encoding
-    truncated = prompt[:450].rsplit(",", 1)[0] if len(prompt) > 450 else prompt
+    # Truncate prompt to ~600 chars to stay within URL limits after encoding
+    # (600 chars → ~900 encoded → ~1000 total URL, well under Cloudflare's 2048 limit)
+    truncated = prompt[:600].rsplit(",", 1)[0] if len(prompt) > 600 else prompt
     encoded_prompt = quote(truncated, safe="")
     url = f"https://gen.pollinations.ai/image/{encoded_prompt}?width=512&height=512&model=flux&nologo=true"
     headers = {}

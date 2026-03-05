@@ -257,6 +257,206 @@ def phase1_duration_analysis(stories: List[dict]) -> Dict[str, dict]:
 
 
 # ═══════════════════════════════════════════════════════════════════════════
+#  Phase L: Lullaby Audio Quality Analysis (songs only, no API calls)
+# ═══════════════════════════════════════════════════════════════════════════
+
+def phase_lullaby_quality(
+    stories: List[dict],
+    voice_filter: Optional[str] = None,
+) -> Dict[str, Dict[str, dict]]:
+    """Analyze lullaby audio quality using local audio analysis (no API calls).
+
+    Only runs on songs (type=song). Checks:
+    - Volume consistency (dBFS variance across chunks)
+    - Dynamic range (peak vs avg)
+    - Spectral softness (high-frequency energy < 4kHz)
+    - Sparsity (gaps between phrases)
+    - Loudness level (target -24 LUFS / ~-22 dBFS)
+    - No sudden volume spikes
+
+    Returns nested dict: {story_id: {voice: qa_result_dict}}
+    """
+    import numpy as np
+    try:
+        from scipy.fft import rfft, rfftfreq
+        has_scipy = True
+    except ImportError:
+        has_scipy = False
+
+    logger.info("═══ Phase L: Lullaby Audio Quality Analysis ═══")
+    results = {}
+    total = 0
+    passed = 0
+    warned = 0
+    failed = 0
+
+    songs = [s for s in stories if s.get("type") == "song"]
+    if not songs:
+        logger.info("  No songs found, skipping lullaby QA")
+        return results
+
+    for story in songs:
+        story_id = story["id"]
+        title = story.get("title", "untitled")
+        story_results = {}
+
+        for v in story.get("audio_variants", []):
+            voice = v["voice"]
+            if voice_filter and voice != voice_filter:
+                continue
+
+            audio_path = resolve_audio_path(v["url"])
+            if not audio_path:
+                logger.warning("  Missing: %s", v["url"])
+                continue
+
+            total += 1
+            try:
+                audio = AudioSegment.from_mp3(str(audio_path))
+            except Exception as e:
+                logger.error("  Failed to load %s: %s", audio_path.name, e)
+                story_results[voice] = {"verdict": "FAIL", "error": str(e)}
+                failed += 1
+                continue
+
+            duration_ms = len(audio)
+            duration_sec = duration_ms / 1000.0
+            qa = {"dimensions": {}, "warnings": []}
+
+            # ── Volume consistency ──────────────────────────────────────
+            chunk_len = max(duration_ms // 10, 1000)
+            chunks_dbfs = []
+            for j in range(0, duration_ms - chunk_len, chunk_len):
+                chunk = audio[j:j + chunk_len]
+                if chunk.dBFS > -80:
+                    chunks_dbfs.append(chunk.dBFS)
+
+            dbfs_variance = 0.0
+            dbfs_range = 0.0
+            if len(chunks_dbfs) >= 3:
+                mean_db = sum(chunks_dbfs) / len(chunks_dbfs)
+                dbfs_variance = sum((d - mean_db) ** 2 for d in chunks_dbfs) / len(chunks_dbfs)
+                dbfs_range = max(chunks_dbfs) - min(chunks_dbfs)
+
+            vol_score = max(0.0, 1.0 - (dbfs_variance / 30.0))
+            qa["dimensions"]["volume_consistency"] = {
+                "score": round(vol_score, 3),
+                "variance": round(dbfs_variance, 1),
+                "range_db": round(dbfs_range, 1),
+            }
+            if dbfs_range > 12:
+                qa["warnings"].append(f"dynamic range {dbfs_range:.0f}dB (max 8dB recommended)")
+
+            # ── Loudness level ──────────────────────────────────────────
+            avg_dbfs = audio.dBFS
+            loudness_deviation = abs(avg_dbfs - (-22.0))
+            loudness_score = max(0.0, 1.0 - (loudness_deviation / 15.0))
+            qa["dimensions"]["loudness"] = {
+                "score": round(loudness_score, 3),
+                "avg_dbfs": round(avg_dbfs, 1),
+            }
+            if avg_dbfs > -14:
+                qa["warnings"].append(f"too loud: avg {avg_dbfs:.0f} dBFS")
+
+            # ── Sparsity ────────────────────────────────────────────────
+            silence_threshold = avg_dbfs - 20
+            short_chunk = max(duration_ms // 40, 500)
+            quiet_chunks = 0
+            total_chunks = 0
+            for j in range(0, duration_ms - short_chunk, short_chunk):
+                chunk = audio[j:j + short_chunk]
+                total_chunks += 1
+                if chunk.dBFS < silence_threshold:
+                    quiet_chunks += 1
+
+            sparsity_ratio = quiet_chunks / max(total_chunks, 1)
+            if sparsity_ratio < 0.05:
+                sparsity_score = 0.3
+            elif sparsity_ratio > 0.50:
+                sparsity_score = 0.5
+            else:
+                sparsity_score = min(1.0, sparsity_ratio / 0.15)
+            qa["dimensions"]["sparsity"] = {
+                "score": round(sparsity_score, 3),
+                "quiet_ratio": round(sparsity_ratio, 3),
+            }
+            if sparsity_ratio < 0.03:
+                qa["warnings"].append("no gaps between phrases")
+
+            # ── Spectral softness ───────────────────────────────────────
+            if has_scipy:
+                try:
+                    samples = np.array(audio.get_array_of_samples(), dtype=np.float64)
+                    max_val = float(2 ** (audio.sample_width * 8 - 1))
+                    samples = samples / max_val
+                    if audio.channels == 2:
+                        samples = samples[::2]
+
+                    N = len(samples)
+                    fft_vals = np.abs(rfft(samples))
+                    freqs = rfftfreq(N, 1.0 / audio.frame_rate)
+                    total_energy = np.sum(fft_vals ** 2)
+                    high_energy = np.sum(fft_vals[freqs > 4000] ** 2)
+                    high_ratio = high_energy / max(total_energy, 1e-10)
+
+                    brightness_score = max(0.0, 1.0 - (high_ratio / 0.20))
+                    qa["dimensions"]["spectral_softness"] = {
+                        "score": round(brightness_score, 3),
+                        "high_freq_ratio": round(high_ratio, 4),
+                    }
+                    if high_ratio > 0.20:
+                        qa["warnings"].append(f"bright/harsh: {high_ratio:.0%} energy above 4kHz")
+                except Exception as e:
+                    qa["dimensions"]["spectral_softness"] = {"score": 0.5, "error": str(e)}
+            else:
+                qa["dimensions"]["spectral_softness"] = {"score": 0.5, "note": "scipy not available"}
+
+            # ── Peak detection ──────────────────────────────────────────
+            peak_count = 0
+            if len(chunks_dbfs) >= 3:
+                mean_db = sum(chunks_dbfs) / len(chunks_dbfs)
+                for db in chunks_dbfs:
+                    if db > mean_db + 6:
+                        peak_count += 1
+            peak_score = max(0.0, 1.0 - (peak_count / 3.0))
+            qa["dimensions"]["no_peaks"] = {
+                "score": round(peak_score, 3),
+                "spike_count": peak_count,
+            }
+            if peak_count > 0:
+                qa["warnings"].append(f"{peak_count} volume spike(s)")
+
+            # ── Verdict ─────────────────────────────────────────────────
+            dim_scores = [d["score"] for d in qa["dimensions"].values()]
+            qa["quality_avg"] = round(sum(dim_scores) / len(dim_scores), 3) if dim_scores else 0.5
+            qa["warning_count"] = len(qa["warnings"])
+            qa["duration_seconds"] = round(duration_sec, 2)
+
+            if len(qa["warnings"]) == 0:
+                qa["verdict"] = "PASS"
+                passed += 1
+            elif len(qa["warnings"]) <= 2:
+                qa["verdict"] = "WARN"
+                warned += 1
+            else:
+                qa["verdict"] = "FAIL"
+                failed += 1
+
+            story_results[voice] = qa
+
+            symbol = "✓" if qa["verdict"] == "PASS" else ("⚠" if qa["verdict"] == "WARN" else "✗")
+            logger.info("  %s %s / %s — quality=%.3f (%s)", symbol, title[:30], voice, qa["quality_avg"], qa["verdict"])
+            for w in qa["warnings"]:
+                logger.info("      ⚠ %s", w)
+
+        if story_results:
+            results[story_id] = story_results
+
+    logger.info("Phase L complete: %d lullabies — %d PASS, %d WARN, %d FAIL", total, passed, warned, failed)
+    return results
+
+
+# ═══════════════════════════════════════════════════════════════════════════
 #  Phase 2: Voxtral Transcription + Text Fidelity
 # ═══════════════════════════════════════════════════════════════════════════
 
@@ -886,6 +1086,7 @@ def generate_report(
     phase3: Optional[Dict[str, Dict[str, dict]]],
     fidelity_pass_threshold: float = DEFAULT_FIDELITY_PASS,
     fidelity_fail_threshold: float = DEFAULT_FIDELITY_FAIL,
+    phase_l: Optional[Dict[str, Dict[str, dict]]] = None,
 ) -> dict:
     """Combine all phase results into a comprehensive QA report."""
     report_stories = []
@@ -900,9 +1101,11 @@ def generate_report(
         story_id = story["id"]
         title = story.get("title", "untitled")
         content_type = story.get("type", "story")
+        is_song = content_type == "song"
         p1 = phase1.get(story_id, {})
         p2 = phase2.get(story_id, {}) if phase2 else {}
         p3 = phase3.get(story_id, {}) if phase3 else {}
+        pl = phase_l.get(story_id, {}) if phase_l else {}
 
         variant_reports = []
 
@@ -916,16 +1119,28 @@ def generate_report(
                 dur_match = [d for d in p1["variants"] if d["voice"] == voice]
                 dur_info = dur_match[0] if dur_match else None
 
-            fid_info = p2.get(voice)
-            qual_info = p3.get(voice)
+            lullaby_qa = pl.get(voice)  # Phase L (songs only)
+            fid_info = p2.get(voice)    # Phase 2 (stories/poems only)
+            qual_info = p3.get(voice)   # Phase 3 (stories/poems only)
 
-            # Compute combined verdict (songs/asmr use relaxed thresholds)
-            combined = compute_verdict(
-                dur_info, fid_info, qual_info,
-                fidelity_pass_threshold, fidelity_fail_threshold,
-                content_type=content_type,
-                voice=voice,
-            )
+            # Songs use lullaby QA verdict; stories use transcription-based verdict
+            if is_song and lullaby_qa:
+                # Lullaby verdict comes from Phase L audio analysis
+                combined = {
+                    "verdict": lullaby_qa["verdict"],
+                    "reasons": lullaby_qa.get("warnings", []),
+                    "text_fidelity": 0,
+                    "quality_average": lullaby_qa.get("quality_avg", 0),
+                    "duration_outlier": False,
+                }
+            else:
+                # Stories/poems use Voxtral transcription verdict
+                combined = compute_verdict(
+                    dur_info, fid_info, qual_info,
+                    fidelity_pass_threshold, fidelity_fail_threshold,
+                    content_type=content_type,
+                    voice=voice,
+                )
 
             if fid_info and "fidelity" in fid_info:
                 all_fidelities.append(fid_info["fidelity"]["combined"])
@@ -944,23 +1159,30 @@ def generate_report(
                 "duration_seconds": v.get("duration_seconds", 0),
                 "verdict": combined["verdict"],
                 "reasons": combined["reasons"],
-                "text_fidelity_combined": combined["text_fidelity"],
-                "quality_average": combined["quality_average"],
-                "duration_outlier": combined["duration_outlier"],
+                "text_fidelity_combined": combined.get("text_fidelity", 0),
+                "quality_average": combined.get("quality_average", 0),
+                "duration_outlier": combined.get("duration_outlier", False),
             }
 
             # Include phase 1 details
             if dur_info:
                 variant_report["duration_deviation_pct"] = dur_info.get("deviation_pct", 0)
 
-            # Include phase 2 details
+            # Include lullaby QA details (songs only)
+            if lullaby_qa:
+                variant_report["lullaby_qa"] = {
+                    "dimensions": lullaby_qa.get("dimensions", {}),
+                    "quality_avg": lullaby_qa.get("quality_avg", 0),
+                    "warnings": lullaby_qa.get("warnings", []),
+                }
+
+            # Include phase 2 details (stories/poems only)
             if fid_info:
                 variant_report["text_fidelity"] = fid_info.get("fidelity", {})
-                # Include transcript snippet for WARN/FAIL
                 if combined["verdict"] != "PASS" and fid_info.get("transcript"):
                     variant_report["transcript_snippet"] = fid_info["transcript"][:300]
 
-            # Include phase 3 details with reasons
+            # Include phase 3 details with reasons (stories/poems only)
             if qual_info:
                 variant_report["quality_scores"] = {
                     dim: qual_info[dim] for dim in QUALITY_DIMENSIONS if dim in qual_info
@@ -994,7 +1216,7 @@ def generate_report(
                 # Include listen_for if available
                 if v.get("listen_for"):
                     entry["listen_for"] = v["listen_for"]
-                # Include per-dim reasons for scores < 6
+                # Include per-dim reasons for scores < 6 (stories/poems)
                 if v.get("quality_scores"):
                     low_scores = {}
                     for dim, info in v["quality_scores"].items():
@@ -1002,6 +1224,10 @@ def generate_report(
                             low_scores[dim] = info
                     if low_scores:
                         entry["low_quality_details"] = low_scores
+                # Include lullaby QA dimensions (songs)
+                if v.get("lullaby_qa"):
+                    entry["lullaby_dimensions"] = v["lullaby_qa"].get("dimensions", {})
+                    entry["lullaby_quality_avg"] = v["lullaby_qa"].get("quality_avg", 0)
                 failures.append(entry)
 
     report = {
@@ -1053,10 +1279,14 @@ def print_summary(report: dict):
             if f.get("listen_for"):
                 for lf in f["listen_for"]:
                     print(f"    👂 Listen for: {lf}")
-            # Show low quality dimension details
+            # Show low quality dimension details (stories/poems)
             if f.get("low_quality_details"):
                 for dim, info in f["low_quality_details"].items():
                     print(f"    📉 {dim}: {info['score']}/10 — {info['reason']}")
+            # Show lullaby QA dimension details (songs)
+            if f.get("lullaby_dimensions"):
+                for dim, info in f["lullaby_dimensions"].items():
+                    print(f"    🎵 {dim}: {info.get('score', '?')}")
             print()
     else:
         print("\n  All variants passed! 🎉\n")
@@ -1123,12 +1353,14 @@ def main():
         print(f"  Stories:    {len(stories)}")
         print(f"  Variants:   {variant_count}")
         print(f"  Duration:   {total_duration / 60:.1f} min")
+        song_count = sum(1 for s in stories if s.get("type") == "song")
+        print(f"  Songs:      {song_count} (lullaby QA)")
         print(f"  Phases:     ", end="")
-        phases = ["1 (duration)"]
+        phases = ["1 (duration)", "L (lullaby audio analysis)"]
         if not args.duration_only and not args.quality_only:
-            phases.append("2 (transcription)")
+            phases.append("2 (transcription, stories only)")
         if not args.duration_only and not args.no_quality_score:
-            phases.append("3 (quality)")
+            phases.append("3 (quality, stories only)")
         print(", ".join(phases))
         est_cost = total_duration / 60 * 0.003  # transcription only
         if not args.duration_only:
@@ -1141,20 +1373,29 @@ def main():
     # ── Phase 1: always runs ──
     phase1 = phase1_duration_analysis(stories)
 
-    # ── Phase 2: transcription fidelity ──
+    # ── Phase L: lullaby quality (songs only, no API cost) — always runs ──
+    phase_l = phase_lullaby_quality(stories, voice_filter=args.voice)
+
+    # ── Phase 2: transcription fidelity (stories/poems only) ──
     phase2 = None
     if not args.duration_only and not args.quality_only:
-        phase2 = phase2_transcription_fidelity(stories, voice_filter=args.voice, language=args.lang)
+        # Only transcribe non-song content (lullabies use Phase L instead)
+        non_songs = [s for s in stories if s.get("type") != "song"]
+        if non_songs:
+            phase2 = phase2_transcription_fidelity(non_songs, voice_filter=args.voice, language=args.lang)
 
-    # ── Phase 3: quality scoring ──
+    # ── Phase 3: quality scoring (stories/poems only) ──
     phase3 = None
     if not args.duration_only and not args.no_quality_score:
-        phase3 = phase3_quality_scoring(stories, voice_filter=args.voice)
+        non_songs = [s for s in stories if s.get("type") != "song"]
+        if non_songs:
+            phase3 = phase3_quality_scoring(non_songs, voice_filter=args.voice)
 
     # ── Generate report ──
     report = generate_report(
         stories, phase1, phase2, phase3,
         fidelity_pass_threshold=args.threshold,
+        phase_l=phase_l,
     )
 
     # Save report

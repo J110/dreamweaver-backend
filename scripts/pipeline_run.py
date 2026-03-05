@@ -293,7 +293,11 @@ def step_audio(args, state: dict) -> bool:
 
 
 def step_qa(args, state: dict) -> bool:
-    """Step 3: QA audio (phase 1 duration + phase 2 fidelity only, no quality scoring)."""
+    """Step 3: QA audio.
+
+    Stories/poems: Phase 1 (duration) + Phase 2 (transcription fidelity).
+    Songs/lullabies: Phase 1 (duration) + Phase L (lullaby audio analysis).
+    """
     logger.info("\n╔══════════════════════════════════════╗")
     logger.info("║  STEP 3: AUDIO QA                    ║")
     logger.info("╚══════════════════════════════════════╝")
@@ -358,7 +362,22 @@ def step_enrich(args, state: dict) -> bool:
         save_state(state)
         return True
 
+    # Load content to check types — songs (lullabies) don't need musicParams
+    content = []
+    content_path = SCRIPTS_DIR.parent / "seed_output" / "content.json"
+    if content_path.exists():
+        import json as _json
+        with open(content_path) as _f:
+            content = _json.load(_f)
+    content_by_id = {item["id"]: item for item in content if isinstance(item, dict)}
+
     for sid in qa_passed:
+        # Songs (lullabies) don't need musicParams — ACE-Step output has vocals + instrument
+        item = content_by_id.get(sid, {})
+        if item.get("type", "").lower() == "song":
+            logger.info("  Skipping musicParams for %s (song/lullaby — no background music)", sid[:8])
+            continue
+
         cmd = [
             sys.executable, str(SCRIPTS_DIR / "generate_music_params.py"),
             "--id", sid,

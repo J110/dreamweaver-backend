@@ -50,6 +50,7 @@ except ImportError:
 
 from app.services.ai.prompts import (
     AGE_GROUP_INSTRUCTIONS,
+    INFANT_SONG_SYSTEM_PROMPT,
     POEM_SYSTEM_PROMPT,
     SAFETY_GUIDELINES,
     SONG_SYSTEM_PROMPT,
@@ -456,7 +457,8 @@ Return ONLY a valid JSON object with these fields (no markdown, no extra text):
         "identity": "Who they are through personality, not appearance (max 15 words, e.g. 'A bold little dreamer who talks to shadows')",
         "special": "Their unique ability or quality that drives the story (max 20 words, e.g. 'She can hear the secret songs that flowers sing at night')",
         "personality_tags": ["Trait1", "Trait2"]
-    }
+    },
+    "cover_context": "1-2 sentence visual scene description for the cover illustration. Describe ONLY the world/scene (NOT the character). Focus on setting, cultural elements, colors, objects, atmosphere, time of day. Example: 'A meadow dusted with vibrant pink and blue gulal powder at golden hour, festive garlands between trees, flower petals floating in warm light'"
 }
 
 personality_tags must be exactly 2 warm, aspirational trait words from: Curious, Brave, Gentle, Dreamy, Playful, Kind, Quiet, Wise, Adventurous, Warm, Creative, Patient, Cheerful, Determined, Magical, Peaceful.
@@ -491,7 +493,8 @@ def build_generation_prompt(item: Dict, existing_titles: List[str]) -> str:
     if content_type == "story":
         base_prompt = STORY_SYSTEM_PROMPT
     elif content_type == "song":
-        base_prompt = SONG_SYSTEM_PROMPT
+        # Age 0-1 uses infant lullaby prompt (a cappella, nonsense syllables)
+        base_prompt = INFANT_SONG_SYSTEM_PROMPT if age_group == "0-1" else SONG_SYSTEM_PROMPT
     else:
         base_prompt = POEM_SYSTEM_PROMPT
 
@@ -929,6 +932,7 @@ def generate_one(client, item: Dict, existing_titles: List[str],
                 "generation_quality": "pending_review",
                 "lead_gender": item["lead_gender"],
                 "character": parsed.get("character", {"name": "", "identity": "", "special": "", "personality_tags": []}),
+                "cover_context": parsed.get("cover_context", ""),
                 "lead_character_type": item.get("lead_character_type", "human"),
                 "universe": item["universe"],
                 "geography": item["geography"],
