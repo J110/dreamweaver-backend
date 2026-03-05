@@ -142,30 +142,96 @@ THEME_EVENT_POOLS = {
     "science":    ["waterDrop", "whaleCall", "chimes", "windGust"],
 }
 
-# ── v4: Theme → Soundscape + Music Loop mapping ──
-THEME_SOUNDSCAPE_MAP = {
-    "ocean":      {"soundscapePreset": "ocean",      "musicLoop": "oceanMelody"},
-    "animals":    {"soundscapePreset": "forest",     "musicLoop": "forestFlute"},
-    "nature":     {"soundscapePreset": "garden",     "musicLoop": "gentleGuitar"},
-    "fantasy":    {"soundscapePreset": "starryNight", "musicLoop": "etherealPad"},
-    "adventure":  {"soundscapePreset": "wind",       "musicLoop": "gentleGuitar"},
-    "space":      {"soundscapePreset": "starryNight", "musicLoop": "cosmicSynth"},
-    "bedtime":    {"soundscapePreset": "rain",       "musicLoop": "pianoLullaby"},
-    "friendship": {"soundscapePreset": "garden",     "musicLoop": "softStrings"},
-    "mystery":    {"soundscapePreset": "forest",     "musicLoop": "nightPiano"},
-    "science":    {"soundscapePreset": "river",      "musicLoop": "etherealPad"},
-    "family":     {"soundscapePreset": "fireplace",  "musicLoop": "calmHarp"},
-    "dreamy":     {"soundscapePreset": "rain",       "musicLoop": "pianoLullaby"},
-    "fairy_tale": {"soundscapePreset": "garden",     "musicLoop": "musicBox"},
+# ── v4: Theme → Soundscape + Music Loop alternatives ──
+# Each theme maps to a list of (soundscapePreset, musicLoop) options.
+# The engine picks the best fit based on story context + diversity.
+THEME_SOUNDSCAPE_ALTERNATIVES = {
+    "ocean":      [("ocean", "oceanMelody"), ("river", "softStrings"), ("wind", "etherealPad")],
+    "animals":    [("forest", "forestFlute"), ("garden", "gentleGuitar"), ("river", "softStrings")],
+    "nature":     [("garden", "gentleGuitar"), ("forest", "forestFlute"), ("river", "softStrings"), ("wind", "calmHarp")],
+    "fantasy":    [("starryNight", "etherealPad"), ("garden", "musicBox"), ("forest", "calmHarp")],
+    "adventure":  [("wind", "gentleGuitar"), ("forest", "forestFlute"), ("river", "nightPiano"), ("desert", "etherealPad")],
+    "space":      [("starryNight", "cosmicSynth"), ("starryNight", "etherealPad"), ("desert", "nightPiano")],
+    "bedtime":    [("rain", "pianoLullaby"), ("fireplace", "calmHarp"), ("river", "softStrings"), ("snow", "musicBox"), ("starryNight", "nightPiano")],
+    "friendship": [("garden", "softStrings"), ("garden", "gentleGuitar"), ("forest", "forestFlute"), ("river", "calmHarp")],
+    "mystery":    [("forest", "nightPiano"), ("starryNight", "etherealPad"), ("wind", "cosmicSynth")],
+    "science":    [("river", "etherealPad"), ("starryNight", "cosmicSynth"), ("desert", "nightPiano")],
+    "family":     [("fireplace", "calmHarp"), ("garden", "softStrings"), ("rain", "pianoLullaby")],
+    "dreamy":     [("rain", "pianoLullaby"), ("starryNight", "etherealPad"), ("garden", "softStrings"), ("snow", "calmHarp")],
+    "fairy_tale": [("garden", "musicBox"), ("forest", "calmHarp"), ("starryNight", "musicBox")],
 }
 BABY_SOUNDSCAPE = {"soundscapePreset": "heartbeat", "musicLoop": "musicBox"}
 
+# Keywords in title/description that suggest specific soundscapes
+CONTEXT_SOUNDSCAPE_HINTS = {
+    "rain":        ["rain", "storm", "thunder", "monsoon", "umbrella", "puddle", "drizzle"],
+    "ocean":       ["ocean", "sea", "beach", "whale", "dolphin", "coral", "fish", "mermaid", "ship", "boat", "sailor", "wave", "shore"],
+    "forest":      ["forest", "tree", "woods", "jungle", "deer", "fox", "bear", "squirrel", "mushroom", "moss"],
+    "wind":        ["wind", "breeze", "kite", "cloud", "mountain", "peak", "climb", "hawk", "eagle", "flying"],
+    "fireplace":   ["fire", "warm", "cozy", "cabin", "winter", "blanket", "cocoa", "hot chocolate", "chimney"],
+    "starryNight": ["star", "night", "moon", "constellation", "galaxy", "aurora", "lantern", "glow", "celestial", "cosmic"],
+    "garden":      ["garden", "flower", "butterfly", "bee", "meadow", "petal", "bloom", "blossom", "mango", "grove"],
+    "snow":        ["snow", "ice", "frost", "arctic", "polar", "penguin", "igloo", "cold", "frozen", "blizzard"],
+    "river":       ["river", "stream", "creek", "waterfall", "pond", "lake", "frog", "lily"],
+    "desert":      ["desert", "sand", "camel", "oasis", "dune", "cactus", "scorpion"],
+}
 
-def _get_soundscape_preset(theme, target_age=5):
-    """Return soundscapePreset + musicLoop for a given theme & age."""
+# Keywords that suggest specific music loops
+CONTEXT_LOOP_HINTS = {
+    "pianoLullaby": ["lullaby", "piano", "gentle", "soft", "baby"],
+    "musicBox":     ["music box", "toy", "doll", "magical", "fairy", "tiny", "small", "little"],
+    "gentleGuitar": ["guitar", "strum", "campfire", "folk", "country"],
+    "etherealPad":  ["ethereal", "cosmic", "space", "dream", "float", "drift"],
+    "softStrings":  ["violin", "string", "orchestra", "elegant", "royal", "palace", "castle"],
+    "calmHarp":     ["harp", "angel", "heaven", "peaceful", "serene"],
+    "cosmicSynth":  ["spaceship", "robot", "alien", "planet", "sci-fi", "future"],
+    "forestFlute":  ["flute", "bamboo", "tribal", "ancient", "meditation"],
+    "nightPiano":   ["mystery", "detective", "shadow", "midnight", "dark"],
+}
+
+
+def _get_soundscape_preset(theme, target_age=5, story=None):
+    """Return soundscapePreset + musicLoop based on theme, story context, and diversity."""
     if target_age <= 1:
         return dict(BABY_SOUNDSCAPE)
-    return dict(THEME_SOUNDSCAPE_MAP.get(theme, THEME_SOUNDSCAPE_MAP["bedtime"]))
+
+    alternatives = THEME_SOUNDSCAPE_ALTERNATIVES.get(theme, THEME_SOUNDSCAPE_ALTERNATIVES["bedtime"])
+
+    if story:
+        # Build context string from story metadata
+        ctx = " ".join([
+            story.get("title", ""),
+            story.get("description", ""),
+            story.get("character", {}).get("name", "") if isinstance(story.get("character"), dict) else "",
+            story.get("character", {}).get("special", "") if isinstance(story.get("character"), dict) else "",
+        ]).lower()
+
+        # Score each alternative by context keyword matches
+        scored = []
+        for sc, ml in alternatives:
+            score = 0
+            # Check soundscape hints
+            for hint_sc, keywords in CONTEXT_SOUNDSCAPE_HINTS.items():
+                if hint_sc == sc:
+                    score += sum(2 for kw in keywords if kw in ctx)
+            # Check music loop hints
+            for hint_ml, keywords in CONTEXT_LOOP_HINTS.items():
+                if hint_ml == ml:
+                    score += sum(1 for kw in keywords if kw in ctx)
+            # Diversity bonus: prefer combos not yet used
+            combo_key = f"{sc}:{ml}"
+            if hasattr(tracker, 'soundscapes_used') and combo_key in tracker.soundscapes_used:
+                score -= 5  # heavy penalty for already-used combos
+            scored.append((sc, ml, score))
+
+        # Sort by score descending, pick best
+        scored.sort(key=lambda x: -x[2])
+        best_sc, best_ml = scored[0][0], scored[0][1]
+    else:
+        # No story context — pick randomly
+        best_sc, best_ml = random.choice(alternatives)
+
+    return {"soundscapePreset": best_sc, "musicLoop": best_ml}
 
 
 # ── Diversity tracking ──
@@ -177,6 +243,7 @@ class DiversityTracker:
         self.pad_types_used = Counter()
         self.noise_types_used = Counter()
         self.events_used = Counter()
+        self.soundscapes_used = set()  # "preset:loop" combos
         self.param_ranges = {
             "padGain": [], "padFilter": [], "padLfo": [],
             "noiseGain": [], "droneGain": [],
@@ -191,6 +258,8 @@ class DiversityTracker:
         self.noise_types_used[params["noiseType"]] += 1
         for evt in params.get("events", []):
             self.events_used[evt["type"]] += 1
+        if "soundscapePreset" in params and "musicLoop" in params:
+            self.soundscapes_used.add(f"{params['soundscapePreset']}:{params['musicLoop']}")
         for k in self.param_ranges:
             if k in params:
                 self.param_ranges[k].append(params[k])
@@ -236,6 +305,7 @@ class DiversityTracker:
         print(f"  Noise types: {dict(self.noise_types_used)}")
         print(f"  Keys used:  {dict(Counter(self.keys_used))}")
         print(f"  Events:     {dict(self.events_used)}")
+        print(f"  Soundscapes: {self.soundscapes_used}")
         for k, vals in self.param_ranges.items():
             if vals:
                 print(f"  {k}: min={min(vals):.4f}, max={max(vals):.4f}, range={max(vals)-min(vals):.4f}")
@@ -487,8 +557,8 @@ Respond with ONLY a JSON object (no explanation, no markdown):
                 "interval": 10000 + round(random.random() * 10000),
             })
 
-    # v4: Add soundscape and music loop presets based on theme
-    params.update(_get_soundscape_preset(theme, target_age))
+    # v4: Add soundscape and music loop presets based on theme + story context
+    params.update(_get_soundscape_preset(theme, target_age, story))
 
     # Validate sleep constraints
     params = validate_sleep_params(params)
@@ -652,6 +722,21 @@ def run():
     # Select stories to process
     stories = all_content
     if args.id:
+        # Pre-seed DiversityTracker with existing musicParams from other stories
+        # so we avoid generating duplicates of what's already in use
+        for s in all_content:
+            mp = s.get("musicParams")
+            if mp and s["id"] != args.id:
+                # Handle both v2 (phase1 nested) and flat formats
+                flat = mp.get("phase1", mp) if isinstance(mp, dict) else {}
+                if isinstance(flat, dict) and "key" in flat:
+                    tracker.record(flat)
+                    # Also track soundscape combo
+                    sc = mp.get("soundscapePreset", flat.get("soundscapePreset", ""))
+                    ml = mp.get("musicLoop", flat.get("musicLoop", ""))
+                    if sc and ml:
+                        tracker.soundscapes_used.add(f"{sc}:{ml}")
+        print(f"  Pre-seeded tracker with {len(tracker.keys_used)} existing stories' params")
         stories = [s for s in stories if s["id"] == args.id]
     if args.new_only:
         stories = [s for s in stories if not s.get("musicParams")]
@@ -690,6 +775,7 @@ def run():
             p1 = params.get("phase1", params)
             print(f"  ✓ Key: {key_name}, Pad: {p1['padType']}, Noise: {p1['noiseType']}, "
                   f"Filter: {p1['padFilter']}, MelodyInt: {p1['melodyInterval']}")
+            print(f"    Soundscape: {params.get('soundscapePreset')}, Loop: {params.get('musicLoop')}")
             print(f"    Events: {[e['type'] for e in p1['events']]}")
             if params.get("version") == 2:
                 print(f"    v2: phase2 melGain={params['phase2']['melodyGain']}, phase3 melGain={params['phase3']['melodyGain']}")
