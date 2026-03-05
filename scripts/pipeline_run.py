@@ -317,6 +317,7 @@ def step_qa(args, state: dict) -> bool:
 
     for sid in qa_ids:
         cmd = [
+            "nice", "-n", "19",  # Lowest CPU priority — don't starve the app
             sys.executable, str(SCRIPTS_DIR / "qa_audio.py"),
             "--story-id", sid,
             "--no-quality-score",  # Skip phase 3 (expensive quality scoring)

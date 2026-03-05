@@ -732,7 +732,10 @@ def get_lullaby_config(story: dict) -> tuple:
     """Return (styles_dict, voice_map) based on story's target age.
 
     Ages 0-1: a cappella only, 2 variants (female + male)
-    Ages 2-5: voice + instrument, 5 variants (harp, guitar, piano, cello, flute)
+    Ages 2-5: voice + instrument, 2 randomly chosen from 5 styles
+              (harp, guitar, piano, cello, flute). Keeps generation
+              time and QA manageable while maintaining variety across
+              the catalog.
     Ages 6+:  no lullabies (returns None, None)
     """
     target_age = story.get("target_age", 4)
@@ -743,7 +746,14 @@ def get_lullaby_config(story: dict) -> tuple:
     elif target_age <= 1 or age_min <= 1:
         return INFANT_LULLABY_STYLES, INFANT_SONG_VOICE_MAP
     else:
-        return LULLABY_STYLES, SONG_VOICE_MAP
+        # Randomly pick 2 of 5 instrument variants for variety without
+        # generating all 5 (which takes too long for generation + QA)
+        import random
+        picked_voices = {
+            lang: random.sample(voices, min(2, len(voices)))
+            for lang, voices in SONG_VOICE_MAP.items()
+        }
+        return LULLABY_STYLES, picked_voices
 
 
 # ── Lullaby post-processing helpers ─────────────────────────────────────

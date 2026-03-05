@@ -35,7 +35,7 @@ Two age tiers with distinct parameters. No background music for lullabies — AC
 | Duration | 3-4 minutes |
 | Dynamics | Pianissimo to mezzo-piano (pp-mp). No crescendos. |
 | ACE-Step mode | `"full"` (with instrument) |
-| Variants | 5 (Harp, Guitar, Piano, Cello, Flute) |
+| Variants | 2 randomly chosen from 5 styles (Harp, Guitar, Piano, Cello, Flute) |
 
 ### Ages 6+: No Lullabies
 
