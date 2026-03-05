@@ -11206,5 +11206,160 @@
       ]
     },
     "addedAt": "2026-03-05"
+  },
+  {
+    "id": "gen-3e20147f02a1",
+    "type": "song",
+    "lang": "en",
+    "title": "Kai’s Whispering Tide and the Dragon’s Pearl",
+    "description": "Beneath the jade moon, the ocean hums an ancient melody only the waves understand. When the tide’s song pulls Kai from his family home, he finds a glowing pearl resting on the shore—one said to carry the breath of the sea dragon. But the pearl is fading, and the whispers say it must return to the heart of the waves before dawn.",
+    "text": "[HUMMING]\nShh la la, shh la la,\nLoo loo loo, loo loo loo,\nMmm mmm mmm, mmm mmm mmm,\nShh sleep, shh hush.\n\n[HUMMING]\nOoh ooh ooh, ooh ooh ooh,\nNa na na, na na na,\nAah aah aah, aah aah aah,\nShh sleep, shh hush.\n\n[HUMMING]\nLoo loo loo, loo loo loo,\nShh la la, shh la la,\nMmm mmm mmm, mmm mmm mmm,\nHush now, shh sleep.\n\n[SLEEPY]\nAah aah aah, aah aah aah,\nNa na na, na na na,\nOoh ooh ooh, ooh ooh ooh,\nShh hush, shh sleep.",
+    "annotated_text": "[HUMMING]\nShh la la, shh la la,\nLoo loo loo, loo loo loo,\nMmm mmm mmm, mmm mmm mmm,\nShh sleep, shh hush.\n\n[HUMMING]\nOoh ooh ooh, ooh ooh ooh,\nNa na na, na na na,\nAah aah aah, aah aah aah,\nShh sleep, shh hush.\n\n[HUMMING]\nLoo loo loo, loo loo loo,\nShh la la, shh la la,\nMmm mmm mmm, mmm mmm mmm,\nHush now, shh sleep.\n\n[SLEEPY]\nAah aah aah, aah aah aah,\nNa na na, na na na,\nOoh ooh ooh, ooh ooh ooh,\nShh hush, shh sleep.",
+    "target_age": 0,
+    "age_min": 0,
+    "age_max": 1,
+    "age_group": "0-1",
+    "length": "SHORT",
+    "word_count": 88,
+    "duration_seconds": 0,
+    "categories": [
+      "Nature",
+      "Mythological",
+      "Family",
+      "Adventure"
+    ],
+    "theme": "nature",
+    "morals": [
+      "Even the smallest hands can carry the weight of great kindness.",
+      "The world hums with magic when we listen with our hearts."
+    ],
+    "cover": "",
+    "musicProfile": "forest-night",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-3e20_female_1.mp3",
+        "duration_seconds": 184.91,
+        "provider": "ace-step"
+      },
+      {
+        "voice": "male_1",
+        "url": "/audio/pre-gen/gen-3e20_male_1.mp3",
+        "duration_seconds": 184.91,
+        "provider": "ace-step"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "male",
+    "character": {
+      "name": "Kai",
+      "identity": "A gentle beachside dreamer who hears the songs of the sea",
+      "special": "He understands the whispers of the tide and the secrets it carries",
+      "personality_tags": [
+        "Gentle",
+        "Dreamy"
+      ]
+    },
+    "cover_context": "A misty East Asian beach at twilight, where the ocean glows with soft blue bioluminescence. A jade moon hangs low over the waves, and paper lanterns drift along the shore, their golden light reflecting on the water. Cherry blossoms float on the tide, and distant mountains fade into the indigo sky.",
+    "lead_character_type": "human",
+    "universe": "mythological",
+    "geography": "East Asia",
+    "life_aspect": "family_home",
+    "plot_archetype": "quest_journey",
+    "created_at": "2026-03-05T07:54:27.070620",
+    "updated_at": "2026-03-05T07:54:27.070620",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 4
+  },
+  {
+    "id": "gen-5232e740399d",
+    "type": "song",
+    "lang": "en",
+    "title": "Chai’s Frosted Window Lullaby",
+    "description": "In a snug Arctic cottage, frost paints silver lace on every pane. A little teacup named Chai watches the northern lights dance, wondering if the sky sings a song only the quiet can hear.",
+    "text": "[SINGING]\nLittle Chai sits so warm and bright,\nWatching stars through frosty light.\nMoonbeams tap the window pane,\nSoft as snowflakes in the lane.\n\n[PAUSE]\n\n[SINGING]\nClose your eyes, my little dear,\nI’ll hum soft while night draws near.\nDream the sky’s own lullaby,\nDrifting slow beneath the sky.\n\n[PAUSE]\n\n[SINGING]\nSnowflakes fall in silver rows,\nBlanketing the sleepy snows.\nHearth fire glows so golden low,\nWhispering the wind’s soft glow.\n\n[PAUSE]\n\n[SINGING]\nClose your eyes, my little dear,\nI’ll hum soft while night draws near.\nDream the sky’s own lullaby,\nDrifting slow beneath the sky.\n\n[PAUSE]\n\n[SLEEPY]\nNow the stars are tucked in tight,\nChai hums soft into the night.\nEyes grow heavy, dreams take flight,\nWrapped in warmth and moonlit white.\n\n[PAUSE]\n\n[HUMMING]\nMmm mmm mmm...\nMmm mmm mmm...\nMmm mmm...",
+    "annotated_text": "[SINGING]\nLittle Chai sits so warm and bright,\nWatching stars through frosty light.\nMoonbeams tap the window pane,\nSoft as snowflakes in the lane.\n\n[PAUSE]\n\n[SINGING]\nClose your eyes, my little dear,\nI’ll hum soft while night draws near.\nDream the sky’s own lullaby,\nDrifting slow beneath the sky.\n\n[PAUSE]\n\n[SINGING]\nSnowflakes fall in silver rows,\nBlanketing the sleepy snows.\nHearth fire glows so golden low,\nWhispering the wind’s soft glow.\n\n[PAUSE]\n\n[SINGING]\nClose your eyes, my little dear,\nI’ll hum soft while night draws near.\nDream the sky’s own lullaby,\nDrifting slow beneath the sky.\n\n[PAUSE]\n\n[SLEEPY]\nNow the stars are tucked in tight,\nChai hums soft into the night.\nEyes grow heavy, dreams take flight,\nWrapped in warmth and moonlit white.\n\n[PAUSE]\n\n[HUMMING]\nMmm mmm mmm...\nMmm mmm mmm...\nMmm mmm...",
+    "target_age": 3,
+    "age_min": 2,
+    "age_max": 5,
+    "age_group": "2-5",
+    "length": "SHORT",
+    "word_count": 122,
+    "duration_seconds": 0,
+    "categories": [
+      "Lullaby",
+      "Nature",
+      "Historical"
+    ],
+    "theme": "nature",
+    "morals": [
+      "Even the smallest things can bring warmth and comfort to others.",
+      "Quiet moments hold the sweetest magic when shared with love."
+    ],
+    "cover": "/covers/gen-5232e740399d.svg",
+    "musicProfile": "moonlit-meadow",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-5232_male_2.mp3",
+        "duration_seconds": 244.91,
+        "provider": "ace-step"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-5232_female_1.mp3",
+        "duration_seconds": 244.91,
+        "provider": "ace-step"
+      },
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-5232_female_2.mp3",
+        "duration_seconds": 244.91,
+        "provider": "ace-step"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-5232_female_3.mp3",
+        "duration_seconds": 244.91,
+        "provider": "ace-step"
+      },
+      {
+        "voice": "male_1",
+        "url": "/audio/pre-gen/gen-5232_male_1.mp3",
+        "duration_seconds": 244.91,
+        "provider": "ace-step"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "female",
+    "character": {
+      "name": "Chai",
+      "identity": "A gentle teacup who carries stories in her steam",
+      "special": "She hums melodies that make the northern lights shimmer brighter",
+      "personality_tags": [
+        "Gentle",
+        "Warm"
+      ]
+    },
+    "cover_context": "A cozy Arctic cottage at twilight, frost lacing the windowpanes with silver patterns, soft golden firelight spilling onto wooden floors, and the aurora borealis swirling in pastel greens and blues above snow-dusted rooftops.",
+    "lead_character_type": "object",
+    "universe": "historical",
+    "geography": "Arctic/Polar",
+    "life_aspect": "family_home",
+    "plot_archetype": "transformation",
+    "created_at": "2026-03-05T07:55:22.366809",
+    "updated_at": "2026-03-05T07:55:22.366809",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 5
   }
 ]
