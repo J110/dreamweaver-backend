@@ -11183,7 +11183,7 @@
     "is_generated": true,
     "generation_quality": "pending_review",
     "lead_gender": "neutral",
-    "lead_character_type": "firefly",
+    "lead_character_type": "insect",
     "universe": "fantasy_realm",
     "geography": "India",
     "life_aspect": "sleep_comfort",
@@ -11194,6 +11194,17 @@
     "like_count": 0,
     "save_count": 0,
     "character_name": "Kai",
-    "character_description": "A tiny firefly with softly glowing wings that shimmer in pink and gold"
+    "character_description": "A tiny firefly with softly glowing wings that shimmer in pink and gold",
+    "character": {
+      "name": "Kai",
+      "identity": "A tiny firefly with softly glowing wings that shimmer in pink and gold",
+      "special": "Kai discovers the magic of Holi's fading colors and learns to glow softly as the festival winds down",
+      "personality_tags": [
+        "Curious",
+        "Gentle",
+        "Playful"
+      ]
+    },
+    "addedAt": "2026-03-05"
   }
 ]
