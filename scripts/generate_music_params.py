@@ -64,26 +64,26 @@ KEYS = {
 
 # Available event types with descriptions for the prompt
 EVENT_TYPES = [
-    "sparkle", "windGust", "cricket", "frog", "owl", "waterDrop",
-    "waveCycle", "starTwinkle", "birdChirp", "whaleCall", "heartbeat",
-    "chimes", "leaves", "radarPing",
+    "windGust", "cricket", "frog", "owl", "waterDrop",
+    "waveCycle", "birdChirp", "whaleCall", "heartbeat",
+    "chimes", "leaves",
 ]
 
+# Events that should only play during Phase 1 (Capture phase)
+PHASE1_ONLY_EVENTS = {"frog", "birdChirp"}
+
 EVENT_DESCRIPTIONS = {
-    "sparkle": "magical twinkling high notes — fairy tales, magic, wonder",
     "windGust": "gentle pink noise breeze — nature, autumn, sky scenes",
     "cricket": "rhythmic high-pitched chirps — nights, fields, calm outdoors",
-    "frog": "low croaking pulses — ponds, rain, jungle",
+    "frog": "low croaking pulses — ponds, rain, jungle (Phase 1 only)",
     "owl": "two-tone hoot — deep forests, nighttime wisdom",
     "waterDrop": "single water plop — caves, rain, puddles, calm",
     "waveCycle": "ocean wave wash — beaches, ocean, boats, sea",
-    "starTwinkle": "single high sparkle — stars, night sky, space",
-    "birdChirp": "quick triple tweet — morning, gardens, meadows",
+    "birdChirp": "quick triple tweet — morning, gardens, meadows (Phase 1 only)",
     "whaleCall": "deep low moan — deep ocean, whale, vast seascapes",
     "heartbeat": "double low thud — comfort, sleep, safety, infant",
     "chimes": "random wind chimes — breeze, gardens, porches, temples",
     "leaves": "light white noise rustle — forests, autumn, trees, wind",
-    "radarPing": "clean sonar ping — space, underwater, tech, science",
 }
 
 # Pad types with descriptions
@@ -116,30 +116,30 @@ THEME_NOISE_PREFERENCES = {
     "dreamy":     ["pink", "brown"],
     "adventure":  ["brown", "pink"],
     "animals":    ["pink", "brown"],
-    "space":      ["brown", "white"],
-    "fantasy":    ["pink", "white"],
-    "fairy_tale": ["pink", "white"],
+    "space":      ["brown", "pink"],
+    "fantasy":    ["pink", "brown"],
+    "fairy_tale": ["pink", "brown"],
     "nature":     ["pink", "brown"],
     "ocean":      ["brown", "pink"],
     "bedtime":    ["pink", "brown"],
-    "friendship": ["pink", "white"],
+    "friendship": ["pink", "brown"],
     "family":     ["pink", "brown"],
-    "science":    ["white", "brown"],
+    "science":    ["brown", "pink"],
 }
 
 THEME_EVENT_POOLS = {
-    "dreamy":     ["sparkle", "chimes", "starTwinkle", "windGust", "heartbeat"],
+    "dreamy":     ["chimes", "windGust", "heartbeat", "owl"],
     "adventure":  ["windGust", "birdChirp", "leaves", "owl", "waterDrop"],
     "animals":    ["cricket", "frog", "owl", "birdChirp", "leaves", "windGust"],
-    "space":      ["radarPing", "starTwinkle", "sparkle", "whaleCall"],
-    "fantasy":    ["sparkle", "chimes", "windGust", "waterDrop", "birdChirp"],
-    "fairy_tale": ["sparkle", "chimes", "birdChirp", "windGust", "leaves"],
+    "space":      ["whaleCall", "heartbeat", "windGust", "chimes"],
+    "fantasy":    ["chimes", "windGust", "waterDrop", "birdChirp"],
+    "fairy_tale": ["chimes", "birdChirp", "windGust", "leaves"],
     "nature":     ["windGust", "leaves", "birdChirp", "cricket", "waterDrop", "owl"],
     "ocean":      ["waveCycle", "whaleCall", "waterDrop", "windGust"],
-    "bedtime":    ["heartbeat", "chimes", "starTwinkle", "owl", "cricket"],
-    "friendship": ["sparkle", "birdChirp", "chimes", "leaves", "windGust"],
-    "family":     ["heartbeat", "chimes", "sparkle", "windGust"],
-    "science":    ["radarPing", "starTwinkle", "sparkle", "waterDrop"],
+    "bedtime":    ["heartbeat", "chimes", "owl", "cricket"],
+    "friendship": ["birdChirp", "chimes", "leaves", "windGust"],
+    "family":     ["heartbeat", "chimes", "windGust", "owl"],
+    "science":    ["waterDrop", "whaleCall", "chimes", "windGust"],
 }
 
 # ── v4: Theme → Soundscape + Music Loop mapping ──
@@ -181,7 +181,7 @@ class DiversityTracker:
             "padGain": [], "padFilter": [], "padLfo": [],
             "noiseGain": [], "droneGain": [],
             "melodyInterval": [], "melodyGain": [],
-            "bassInterval": [], "counterInterval": [],
+            "bassInterval": [],
         }
 
     def record(self, params):
@@ -205,7 +205,7 @@ class DiversityTracker:
 
     def get_least_used_noise(self, theme):
         """Get the least-used noise type that fits the theme."""
-        preferences = THEME_NOISE_PREFERENCES.get(theme, ["pink", "brown", "white"])
+        preferences = THEME_NOISE_PREFERENCES.get(theme, ["pink", "brown"])
         scored = [(n, self.noise_types_used.get(n, 0)) for n in preferences]
         scored.sort(key=lambda x: x[1])
         return scored[0][0]
@@ -329,6 +329,7 @@ def generate_music_params_for_story(story, story_index, total_stories):
     recent_events = dict(tracker.events_used) if tracker.events_used else "none yet"
 
     prompt = f"""You are an expert ambient music designer creating a UNIQUE soundscape for a children's bedtime {content_type}.
+This music accompanies a sleep story — it must help children fall asleep.
 
 STORY:
 - Title: "{title}"
@@ -337,6 +338,14 @@ STORY:
 - Target age: {target_age} years
 - Language: {lang}
 - Story #{story_index + 1} of {total_stories}
+
+═══ SLEEP SCIENCE CONSTRAINTS ═══
+- NO counter melody (only one melody line allowed)
+- NO white noise (only pink or brown)
+- NO sparkle, radarPing, or starTwinkle events (too stimulating)
+- melodyInterval MINIMUM 4000ms (sparse, meditative)
+- bassInterval MINIMUM 5000ms (slow, grounding)
+- frog and birdChirp events only play in early part of story
 
 ═══ MANDATORY CONSTRAINTS ═══
 
@@ -347,32 +356,30 @@ STORY:
 
 3. SUGGESTED KEY: {suggested_key} (you may pick a different one if it better fits the mood)
 
-4. EVENTS: Choose 2-4 from the FULL catalog below. Try to include at least one from: {', '.join(suggested_events)}
-   Do NOT always pick starTwinkle — it should only appear for night sky / space stories.
+4. EVENTS: Choose 2-4 from the catalog below. Try to include at least one from: {', '.join(suggested_events)}
 
 FULL EVENT CATALOG:
 {events_desc}
 
-═══ PARAMETER VARIETY RULES ═══
-These ranges are WIDE — use the FULL range, don't cluster in the middle:
+═══ PARAMETER RANGES ═══
+Use the FULL range, don't cluster in the middle:
 - padGain: 0.025 to 0.065 (lower = subtle/intimate, higher = rich/enveloping)
 - padFilter: 400 to 1400 (lower = dark/warm, higher = bright/airy)
 - padLfo: 0.02 to 0.14 (lower = still/calm, higher = undulating/breathing)
 - noiseGain: 0.003 to 0.022 (lower = hint of texture, higher = prominent atmosphere)
 - droneGain: 0.015 to 0.055 (lower = barely there, higher = deep grounding)
-- melodyInterval: 2500 to 5500 ms (lower = more active melody, higher = sparse/meditative)
+- melodyInterval: 4000 to 6000 ms (sparse, meditative — sleep-appropriate)
 - melodyGain: 0.008 to 0.028 (lower = whisper melody, higher = clear gentle melody)
-- bassInterval: 4000 to 9000 ms (lower = walking bass, higher = slow deep)
-- counterInterval: 3000 to 7000 ms (lower = active harmony, higher = sparse echoes)
-- event intervals: 4000 to 28000 ms (vary by event — common sounds more frequent, rare sounds less)
+- bassInterval: 5000 to 9000 ms (slow, deep, grounding)
+- event intervals: 6000 to 28000 ms (vary by event — common sounds more frequent, rare sounds less)
 
 AGE-BASED PERSONALITY:
-- Baby (0-1): very slow melodyInterval (4500+), simple, heartbeat/chimes events, low padFilter (400-600)
-- Toddler (2-3): gentle, moderate pace (3500-4500), waterDrop/sparkle events
-- Child (4-5): magical, moderate (3000-4000), sparkle/birdChirp/chimes events
-- Kid (6-8): adventurous, slightly faster (2500-3500), windGust/leaves/cricket events
-- Tween (8-12): complex, varied pace, owl/whaleCall/radarPing events, higher padFilter (800-1200)
-- Teen (12+): sophisticated, rich, full range, all event types appropriate
+- Baby (0-1): very slow melodyInterval (5500+), simple, heartbeat/chimes events, low padFilter (400-600)
+- Toddler (2-3): gentle, moderate pace (4500-5500), waterDrop/chimes events
+- Child (4-5): gentle, moderate (4000-5000), birdChirp/chimes events
+- Kid (6-8): calm, slightly more varied (4000-4500), windGust/leaves/cricket events
+- Tween (8-12): deeper, owl/whaleCall events, higher padFilter (800-1200)
+- Teen (12+): sophisticated, rich, full range
 
 USAGE SO FAR (avoid over-representing):
 - Pad types used: {recent_pads}
@@ -389,7 +396,6 @@ Respond with ONLY a JSON object (no explanation, no markdown):
     "melodyInterval": <number>,
     "melodyGain": <number>,
     "bassInterval": <number>,
-    "counterInterval": <number>,
     "events": [
         {{"type": "<event>", "interval": <number>}},
         {{"type": "<event>", "interval": <number>}},
@@ -419,10 +425,9 @@ Respond with ONLY a JSON object (no explanation, no markdown):
     raw_pad_lfo = result.get("padLfo", 0.03 + random.random() * 0.09)
     raw_noise_gain = result.get("noiseGain", 0.005 + random.random() * 0.015)
     raw_drone_gain = result.get("droneGain", 0.02 + random.random() * 0.03)
-    raw_melody_interval = result.get("melodyInterval", 2500 + random.random() * 3000)
+    raw_melody_interval = result.get("melodyInterval", 4000 + random.random() * 2000)
     raw_melody_gain = result.get("melodyGain", 0.01 + random.random() * 0.015)
-    raw_bass_interval = result.get("bassInterval", 4000 + random.random() * 5000)
-    raw_counter_interval = result.get("counterInterval", 3000 + random.random() * 4000)
+    raw_bass_interval = result.get("bassInterval", 5000 + random.random() * 4000)
 
     # Apply jitter to ensure uniqueness even with similar AI outputs
     params = {
@@ -437,12 +442,11 @@ Respond with ONLY a JSON object (no explanation, no markdown):
         "droneFreq": round(root / 2, 2),
         "droneGain": add_jitter(raw_drone_gain, 0.12, 0.015, 0.055),
         "melodyNotes": [round(n * 2, 2) for n in [notes[0], notes[2], notes[4], notes[3]]],
-        "melodyInterval": round(add_jitter(raw_melody_interval, 0.10, 2500, 5500)),
+        "melodyInterval": round(add_jitter(raw_melody_interval, 0.10, 4000, 6000)),
         "melodyGain": add_jitter(raw_melody_gain, 0.12, 0.008, 0.028),
         "bassNotes": [round(root / 2, 2), round(notes[4] / 2, 2), round(notes[2] / 2, 2)],
-        "bassInterval": round(add_jitter(raw_bass_interval, 0.10, 4000, 9000)),
-        "counterNotes": [round(n * 2.5, 2) for n in [notes[2], notes[4], notes[0]]],
-        "counterInterval": round(add_jitter(raw_counter_interval, 0.10, 3000, 7000)),
+        "bassInterval": round(add_jitter(raw_bass_interval, 0.10, 5000, 9000)),
+        "counterMelody": False,
         "events": [],
     }
 
@@ -455,12 +459,11 @@ Respond with ONLY a JSON object (no explanation, no markdown):
             evt_type = evt["type"]
             if evt_type not in seen_event_types:
                 interval = evt.get("interval", 10000)
-                # Apply jitter to intervals too
-                interval = round(add_jitter(interval, 0.15, 4000, 28000))
-                params["events"].append({
-                    "type": evt_type,
-                    "interval": interval,
-                })
+                interval = round(add_jitter(interval, 0.15, 6000, 28000))
+                event_entry = {"type": evt_type, "interval": interval}
+                if evt_type in PHASE1_ONLY_EVENTS:
+                    event_entry["phases"] = [1]
+                params["events"].append(event_entry)
                 seen_event_types.add(evt_type)
 
     # Ensure at least 2 events, using suggested underrepresented ones
@@ -487,10 +490,102 @@ Respond with ONLY a JSON object (no explanation, no markdown):
     # v4: Add soundscape and music loop presets based on theme
     params.update(_get_soundscape_preset(theme, target_age))
 
-    # Record in diversity tracker
+    # Validate sleep constraints
+    params = validate_sleep_params(params)
+
+    # Derive phase 2/3 and build v2 output
+    output = build_v2_output(params)
+
+    # Record in diversity tracker (use phase1 flat params)
     tracker.record(params)
 
-    return params, key_name
+    return output, key_name
+
+
+BANNED_EVENTS = {"sparkle", "radarPing", "starTwinkle"}
+
+
+def validate_sleep_params(params):
+    """Safety net: enforce sleep science constraints after generation."""
+    # Clamp melody interval
+    if params["melodyInterval"] < 4000:
+        params["melodyInterval"] = 4000
+    # Clamp bass interval
+    if params["bassInterval"] < 5000:
+        params["bassInterval"] = 5000
+    # No white noise
+    if params.get("noiseType") not in ("pink", "brown"):
+        params["noiseType"] = "pink"
+    # No counter melody
+    params["counterMelody"] = False
+    # Remove banned events
+    params["events"] = [
+        e for e in params["events"]
+        if e["type"] not in BANNED_EVENTS
+    ]
+    # Clamp event intervals
+    for evt in params["events"]:
+        if evt["interval"] < 6000:
+            evt["interval"] = 6000
+    return params
+
+
+def build_v2_output(phase1_params):
+    """Build v2 output with phase1/phase2/phase3 derived from Phase 1 params."""
+    p1 = dict(phase1_params)
+
+    # Extract top-level fields that aren't per-phase
+    soundscape = p1.pop("soundscapePreset", "rain")
+    music_loop = p1.pop("musicLoop", "pianoLullaby")
+    counter_melody = p1.pop("counterMelody", False)
+
+    # ── Phase 2 (Descent): reduce melody, warm filter, stretch intervals ──
+    p2 = dict(p1)
+    p2["padGain"] = round(p1["padGain"] * 0.8, 4)
+    p2["melodyGain"] = round(p1["melodyGain"] * 0.5, 4)
+    p2["noiseGain"] = round(p1["noiseGain"] * 1.2, 4)
+    p2["melodyInterval"] = round(p1["melodyInterval"] * 1.4)
+    p2["bassInterval"] = round(p1["bassInterval"] * 1.3)
+    p2["padFilter"] = round(p1["padFilter"] * 0.7)
+    # Simplify chords: root + fifth only
+    if len(p1["chordNotes"]) >= 3:
+        p2["chordNotes"] = [p1["chordNotes"][0], p1["chordNotes"][2]]
+    # Remove phase-1-only events, stretch remaining intervals
+    p2["events"] = []
+    for evt in p1["events"]:
+        if evt["type"] not in PHASE1_ONLY_EVENTS:
+            p2["events"].append({
+                "type": evt["type"],
+                "interval": round(evt["interval"] * 1.5),
+            })
+
+    # ── Phase 3 (Sleep): near-silent, no melody, no events ──
+    p3 = dict(p1)
+    p3["padGain"] = round(p1["padGain"] * 0.5, 4)
+    p3["melodyGain"] = 0
+    p3["noiseGain"] = round(p1["noiseGain"] * 1.5, 4)
+    p3["droneGain"] = round(p1["droneGain"] * 0.6, 4)
+    p3["padFilter"] = round(p1["padFilter"] * 0.4)
+    p3["padType"] = "simple"
+    # Root note only
+    if len(p1["chordNotes"]) >= 1:
+        p3["chordNotes"] = [p1["chordNotes"][0]]
+    p3["events"] = []
+
+    return {
+        "version": 2,
+        "counterMelody": counter_melody,
+        "soundscapePreset": soundscape,
+        "musicLoop": music_loop,
+        "phase1": p1,
+        "phase2": p2,
+        "phase3": p3,
+        "masterLowpass": {"1": 8000, "2": 4000, "3": 2000},
+        "transitions": {
+            "1to2": {"duration": 30},
+            "2to3": {"duration": 45},
+        },
+    }
 
 
 def update_seed_data_music_params(story_id, music_params):
@@ -579,9 +674,12 @@ def run():
             params, key_name = generate_music_params_for_story(story, proc_idx, total)
             results[story["id"]] = params
 
-            print(f"  ✓ Key: {key_name}, Pad: {params['padType']}, Noise: {params['noiseType']}, "
-                  f"Filter: {params['padFilter']}, MelodyInt: {params['melodyInterval']}")
-            print(f"    Events: {[e['type'] for e in params['events']]}")
+            p1 = params.get("phase1", params)
+            print(f"  ✓ Key: {key_name}, Pad: {p1['padType']}, Noise: {p1['noiseType']}, "
+                  f"Filter: {p1['padFilter']}, MelodyInt: {p1['melodyInterval']}")
+            print(f"    Events: {[e['type'] for e in p1['events']]}")
+            if params.get("version") == 2:
+                print(f"    v2: phase2 melGain={params['phase2']['melodyGain']}, phase3 melGain={params['phase3']['melodyGain']}")
 
             time.sleep(2)  # Rate limit buffer
 
