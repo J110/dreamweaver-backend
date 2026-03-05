@@ -1104,16 +1104,18 @@ def main():
     # ── Summary ──
     print_summary(state, total_elapsed)
 
-    # ── Email notification (ALWAYS — success or failure) ──
+    # ── Email notifications (ALWAYS — success or failure) ──
     try:
-        from pipeline_notify import send_pipeline_notification
+        from pipeline_notify import send_pipeline_notification, send_qa_notification
         send_pipeline_notification(state, str(log_file), total_elapsed)
+        send_qa_notification(state)
     except ImportError:
         # Try with full path
         try:
             sys.path.insert(0, str(SCRIPTS_DIR))
-            from pipeline_notify import send_pipeline_notification
+            from pipeline_notify import send_pipeline_notification, send_qa_notification
             send_pipeline_notification(state, str(log_file), total_elapsed)
+            send_qa_notification(state)
         except Exception as e:
             logger.warning("  Email notification failed: %s", e)
     except Exception as e:
