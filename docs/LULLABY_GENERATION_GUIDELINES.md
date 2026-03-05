@@ -218,9 +218,9 @@ Expected yield with optimized prompts: 15-25% pass rate. Generate 2 retakes per 
 
 ## 10. Automated Lullaby QA (Phase L)
 
-Lullaby QA is separate from story/poem QA. Stories use Voxtral transcription fidelity. Lullabies use local audio analysis (no API calls, instant, free).
+Lullaby QA is separate from story/poem QA. Stories use Voxtral transcription fidelity. Lullabies use local audio analysis + Whisper-based lyrics fidelity (no API calls, all local, free).
 
-### Retake Selection QA
+### 10.1 Audio Quality Scoring (6 dimensions)
 
 During generation, 2 retakes are scored on 6 dimensions:
 
@@ -233,29 +233,60 @@ During generation, 2 retakes are scored on 6 dimensions:
 | `spectral_softness` | Energy above 4kHz < 20% (not harsh/bright) | > 0.7 |
 | `no_peaks` | No sudden 6dB+ volume spikes | 1.0 |
 
-Composite score (lower=better) selects the best retake.
+### 10.2 Lyrics Fidelity (3-gate Whisper-based)
 
-### Pipeline QA (Phase L in qa_audio.py)
+Uses faster-whisper (local, CPU, "small" model, int8) to transcribe lullaby audio and check lyrics integrity. Three content types are classified by real-word ratio in original lyrics:
 
-Runs the same 6-dimension analysis on saved audio files post-generation. Verdicts:
-- **PASS**: 0 warnings
-- **WARN**: 1-2 warnings
-- **FAIL**: 3+ warnings
+| Type | Real-word Ratio | Ages | Example |
+|------|----------------|------|---------|
+| **L** (Lyrical) | > 60% | 2-5 | "Close your eyes and dream of stars" |
+| **N** (Nonsense) | < 20% | 0-1 | "Shh la la, mmm, loo loo" |
+| **M** (Mixed) | 20-60% | Any | Mix of real words + vocables |
 
-Warning triggers:
-- Dynamic range > 12 dB
-- Average loudness > -14 dBFS
-- No gaps between phrases (< 3% quiet)
-- Brightness > 20% energy above 4kHz
-- Volume spikes detected
+**Gate 1 — Content Fidelity:**
+- Type L: Word overlap between original lyrics and transcript >= 75%
+- Type N: Real-word ratio in transcript <= 30% (nonsense purity)
+- Type M: Both overlap AND unexpected word ratio <= 25%
 
-### QA Flow Comparison
+**Gate 2 — Purpose-Specific Words:**
+- Type L: >= 80% of sleep-cue words (sleep, dream, eyes, night, etc.) detected in transcript
+- Type N: Zero high-severity phantom words (blocklist words hallucinated from nonsense)
+- Type M: Both checks combined
+
+**Gate 3 — Safety Blocklist (zero tolerance):**
+- Scans transcript against `data/blocklist.txt` (~170 words across profanity, violence, fear, sexual, substances, sleep-inappropriate)
+- Any match = REJECT regardless of other gates
+
+Fidelity verdicts: PASS / WARN / REJECT. Fidelity score (0-1) used for retake comparison.
+
+### 10.3 Retake Selection
+
+Combined score: 60% audio quality + 40% fidelity (lower=better). Fidelity REJECT adds +10 penalty (never selected). Best candidate kept.
+
+### 10.4 Pipeline QA (Phase L in qa_audio.py)
+
+Runs both audio analysis AND fidelity checking on saved files. Verdict rules:
+- Fidelity REJECT → FAIL (override)
+- 0 warnings → PASS
+- 1-2 warnings → WARN
+- 3+ warnings → FAIL
+
+### 10.5 Data Files
+
+| File | Purpose |
+|------|---------|
+| `data/blocklist.txt` | ~170 safety words (Gate 3) |
+| `data/english_common.txt` | ~3300 common English words (Type N detection) |
+| `scripts/lullaby_fidelity.py` | Core 3-gate fidelity module |
+
+### 10.6 QA Flow Comparison
 
 | Aspect | Stories/Poems | Lullabies (Songs) |
 |--------|--------------|-------------------|
 | Phase 1 | Duration anomaly | Duration anomaly |
-| Phase 2 | Voxtral transcription + fidelity | N/A (singing distorts) |
-| Phase L | N/A | Audio analysis (6 dims) |
+| Phase 2 | Voxtral transcription + fidelity | N/A (singing distorts TTS QA) |
+| Phase L | N/A | Audio analysis (6 dims) + fidelity (3 gates) |
 | Phase 3 | Voxtral quality scoring (optional) | N/A |
-| Retakes | N/A | 2 retakes, QA-scored selection |
+| Retakes | N/A | 2 retakes, combined QA selection |
+| Dependencies | Mistral API (paid) | faster-whisper, scipy, numpy (local, free) |
 | API Cost | ~$0.01-0.02 per file | $0 (all local) |

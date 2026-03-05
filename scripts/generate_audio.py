@@ -1094,13 +1094,50 @@ def generate_song_variant(
 
         # Run lullaby quality analysis on this candidate
         qa_result = _score_lullaby_quality(audio, style)
-        score = qa_result["composite_score"]
-        candidates.append((audio, seed, score, qa_result))
+        audio_score = qa_result["composite_score"]
+
+        # Run Whisper-based fidelity check (optional — skipped if faster-whisper not installed)
+        fidelity_result = None
+        combined_score = audio_score
+        tmp_path = None
+        try:
+            from scripts.lullaby_fidelity import check_lullaby_fidelity
+            import tempfile as _tempfile
+            with _tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as tmp:
+                tmp_path = tmp.name
+            audio.export(tmp_path, format="mp3", bitrate="128k")
+            fidelity_result = check_lullaby_fidelity(tmp_path, lyrics)
+            os.unlink(tmp_path)
+            tmp_path = None
+
+            # Blend: 60% audio quality + 40% fidelity (both 0-1, lower=better for combined)
+            fidelity_penalty = 1.0 - fidelity_result["fidelity_score"]
+            combined_score = audio_score * 0.6 + fidelity_penalty * 0.4
+            # REJECT = never select this take
+            if fidelity_result["verdict"] == "REJECT":
+                combined_score += 10.0
+        except ImportError:
+            logger.debug("    faster-whisper not available, skipping fidelity check")
+        except Exception as e:
+            logger.warning("    Fidelity check error: %s", e)
+            if tmp_path:
+                try:
+                    os.unlink(tmp_path)
+                except OSError:
+                    pass
+
+        candidates.append((audio, seed, combined_score, qa_result, fidelity_result))
 
         duration_ms = len(audio)
         logger.info("    Retake %d: %.1fs, quality=%.3f (%s), warnings=%d",
                      retake_idx + 1, duration_ms / 1000, qa_result["quality_avg"],
                      qa_result["verdict"], qa_result["warning_count"])
+        if fidelity_result:
+            logger.info("    Fidelity: %s (score=%.3f, type=%s)",
+                         fidelity_result["verdict"], fidelity_result["fidelity_score"],
+                         fidelity_result["content_type"])
+            if fidelity_result["gate3"]["hits"]:
+                logger.warning("    ⛔ Blocklist: %s", fidelity_result["gate3"]["hits"])
         for w in qa_result["warnings"]:
             logger.info("      ⚠ %s", w)
 
@@ -1108,14 +1145,18 @@ def generate_song_variant(
         logger.error("  All retakes failed for %s / %s", title, voice)
         return None
 
-    # Select best candidate (lowest composite score)
+    # Select best candidate (lowest combined score)
     candidates.sort(key=lambda x: x[2])
-    audio, best_seed, best_score, best_qa = candidates[0]
+    audio, best_seed, best_score, best_qa, best_fidelity = candidates[0]
     if len(candidates) > 1:
-        logger.info("  Selected retake seed=%d (composite=%.4f, quality=%.3f, %s)",
+        logger.info("  Selected retake seed=%d (combined=%.4f, quality=%.3f, %s)",
                      best_seed, best_score, best_qa["quality_avg"], best_qa["verdict"])
         for dim_name, dim_data in best_qa["dimensions"].items():
             logger.info("    %s: %.3f", dim_name, dim_data["score"])
+        if best_fidelity:
+            logger.info("    fidelity: %.3f (%s, type=%s)",
+                         best_fidelity["fidelity_score"], best_fidelity["verdict"],
+                         best_fidelity["content_type"])
 
     # Normalize to -24 LUFS (research-based bedtime loudness)
     audio = _normalize_lullaby(audio)

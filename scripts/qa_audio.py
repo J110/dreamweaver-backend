@@ -264,15 +264,20 @@ def phase_lullaby_quality(
     stories: List[dict],
     voice_filter: Optional[str] = None,
 ) -> Dict[str, Dict[str, dict]]:
-    """Analyze lullaby audio quality using local audio analysis (no API calls).
+    """Analyze lullaby audio quality and lyrics fidelity (local, no API calls).
 
-    Only runs on songs (type=song). Checks:
+    Only runs on songs (type=song). Two analysis layers:
+    Audio quality:
     - Volume consistency (dBFS variance across chunks)
     - Dynamic range (peak vs avg)
     - Spectral softness (high-frequency energy < 4kHz)
     - Sparsity (gaps between phrases)
     - Loudness level (target -24 LUFS / ~-22 dBFS)
     - No sudden volume spikes
+    Lyrics fidelity (requires faster-whisper, optional):
+    - Gate 1: Content fidelity (word overlap / nonsense purity)
+    - Gate 2: Sleep-cue / phantom word check
+    - Gate 3: Safety blocklist (zero tolerance)
 
     Returns nested dict: {story_id: {voice: qa_result_dict}}
     """
@@ -283,7 +288,7 @@ def phase_lullaby_quality(
     except ImportError:
         has_scipy = False
 
-    logger.info("═══ Phase L: Lullaby Audio Quality Analysis ═══")
+    logger.info("═══ Phase L: Lullaby Audio Quality + Fidelity Analysis ═══")
     results = {}
     total = 0
     passed = 0
@@ -426,13 +431,43 @@ def phase_lullaby_quality(
             if peak_count > 0:
                 qa["warnings"].append(f"{peak_count} volume spike(s)")
 
+            # ── Lyrics fidelity check (Whisper-based, optional) ──────
+            fidelity = None
+            try:
+                from scripts.lullaby_fidelity import check_lullaby_fidelity
+                original_lyrics = story.get("content", "")
+                if original_lyrics:
+                    fidelity = check_lullaby_fidelity(str(audio_path), original_lyrics)
+                    qa["fidelity"] = {
+                        "verdict": fidelity["verdict"],
+                        "content_type": fidelity["content_type"],
+                        "fidelity_score": fidelity["fidelity_score"],
+                        "gate1": fidelity["gate1"],
+                        "gate2": fidelity["gate2"],
+                        "gate3": fidelity["gate3"],
+                    }
+                    if fidelity["gate3"]["hits"]:
+                        qa["warnings"].append(f"blocklist: {', '.join(fidelity['gate3']['hits'])}")
+                    if not fidelity["gate1"]["pass"]:
+                        qa["warnings"].append("fidelity gate1 fail")
+                    if not fidelity["gate2"]["pass"]:
+                        qa["warnings"].append("fidelity gate2 fail")
+            except ImportError:
+                logger.debug("    faster-whisper not available, skipping fidelity")
+            except Exception as e:
+                logger.warning("    Fidelity check error: %s", e)
+
             # ── Verdict ─────────────────────────────────────────────────
             dim_scores = [d["score"] for d in qa["dimensions"].values()]
             qa["quality_avg"] = round(sum(dim_scores) / len(dim_scores), 3) if dim_scores else 0.5
             qa["warning_count"] = len(qa["warnings"])
             qa["duration_seconds"] = round(duration_sec, 2)
 
-            if len(qa["warnings"]) == 0:
+            # Fidelity REJECT forces FAIL regardless of audio quality
+            if fidelity and fidelity["verdict"] == "REJECT":
+                qa["verdict"] = "FAIL"
+                failed += 1
+            elif len(qa["warnings"]) == 0:
                 qa["verdict"] = "PASS"
                 passed += 1
             elif len(qa["warnings"]) <= 2:
@@ -446,6 +481,10 @@ def phase_lullaby_quality(
 
             symbol = "✓" if qa["verdict"] == "PASS" else ("⚠" if qa["verdict"] == "WARN" else "✗")
             logger.info("  %s %s / %s — quality=%.3f (%s)", symbol, title[:30], voice, qa["quality_avg"], qa["verdict"])
+            if fidelity:
+                logger.info("    Fidelity: %s (score=%.3f, type=%s)",
+                            fidelity["verdict"], fidelity["fidelity_score"],
+                            fidelity["content_type"])
             for w in qa["warnings"]:
                 logger.info("      ⚠ %s", w)
 
@@ -1175,6 +1214,8 @@ def generate_report(
                     "quality_avg": lullaby_qa.get("quality_avg", 0),
                     "warnings": lullaby_qa.get("warnings", []),
                 }
+                if lullaby_qa.get("fidelity"):
+                    variant_report["lullaby_qa"]["fidelity"] = lullaby_qa["fidelity"]
 
             # Include phase 2 details (stories/poems only)
             if fid_info:
@@ -1228,6 +1269,8 @@ def generate_report(
                 if v.get("lullaby_qa"):
                     entry["lullaby_dimensions"] = v["lullaby_qa"].get("dimensions", {})
                     entry["lullaby_quality_avg"] = v["lullaby_qa"].get("quality_avg", 0)
+                    if v["lullaby_qa"].get("fidelity"):
+                        entry["lullaby_fidelity"] = v["lullaby_qa"]["fidelity"]
                 failures.append(entry)
 
     report = {
@@ -1287,6 +1330,12 @@ def print_summary(report: dict):
             if f.get("lullaby_dimensions"):
                 for dim, info in f["lullaby_dimensions"].items():
                     print(f"    🎵 {dim}: {info.get('score', '?')}")
+            # Show fidelity details (songs)
+            if f.get("lullaby_fidelity"):
+                fid = f["lullaby_fidelity"]
+                print(f"    🔤 fidelity: {fid['verdict']} (score={fid['fidelity_score']}, type={fid['content_type']})")
+                if fid["gate3"].get("hits"):
+                    print(f"    ⛔ blocklist: {', '.join(fid['gate3']['hits'])}")
             print()
     else:
         print("\n  All variants passed! 🎉\n")
@@ -1354,7 +1403,7 @@ def main():
         print(f"  Variants:   {variant_count}")
         print(f"  Duration:   {total_duration / 60:.1f} min")
         song_count = sum(1 for s in stories if s.get("type") == "song")
-        print(f"  Songs:      {song_count} (lullaby QA)")
+        print(f"  Songs:      {song_count} (lullaby QA + fidelity)")
         print(f"  Phases:     ", end="")
         phases = ["1 (duration)", "L (lullaby audio analysis)"]
         if not args.duration_only and not args.quality_only:

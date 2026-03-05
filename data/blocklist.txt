@@ -1,0 +1,164 @@
+# Lullaby Safety Blocklist
+# Words that should NEVER appear in children's sleep content.
+# Used by Gate 3 of lullaby fidelity QA.
+# One word per line. Lines starting with # are comments.
+# Categories organized for maintenance.
+
+# ── Profanity & Vulgarity ──────────────────────────────────────────
+ass
+bastard
+bitch
+bloody
+bollocks
+bullshit
+crap
+damn
+dick
+douchebag
+fag
+fuck
+fucking
+goddamn
+hell
+ho
+hoe
+idiot
+jerk
+nigger
+piss
+prick
+pussy
+shit
+slut
+suck
+whore
+
+# ── Violence & Danger ──────────────────────────────────────────────
+attack
+bite
+blood
+bloody
+bomb
+bullet
+burn
+cage
+choke
+crush
+dead
+death
+destroy
+die
+drown
+explode
+fight
+gun
+hit
+hurt
+kill
+knife
+murder
+pain
+poison
+punch
+shoot
+slash
+smash
+stab
+sword
+trap
+war
+weapon
+wound
+
+# ── Fear & Distress ────────────────────────────────────────────────
+abandoned
+afraid
+agony
+curse
+demon
+despair
+devil
+doom
+dread
+ghost
+haunted
+helpless
+hopeless
+horror
+monster
+nightmare
+panic
+scream
+screaming
+shriek
+scary
+suffer
+terrified
+torment
+trapped
+witch
+
+# ── Sexual Content ─────────────────────────────────────────────────
+erotic
+fetish
+horny
+intercourse
+kinky
+lust
+moan
+naked
+nude
+orgasm
+penis
+porn
+rape
+seduce
+sex
+sexual
+sexy
+strip
+vagina
+virgin
+
+# ── Substances ─────────────────────────────────────────────────────
+alcohol
+beer
+cigarette
+cocaine
+drug
+drugs
+drunk
+heroin
+marijuana
+pill
+pills
+smoke
+smoking
+vodka
+whiskey
+wine
+weed
+
+# ── Contextually Inappropriate for Sleep ───────────────────────────
+# These words break the sleep atmosphere in nonsense lullabies.
+# NOTE: Do NOT add words that are valid in sleep lyrics
+# (e.g., "dark" in "dark sky", "still" in "the world is still").
+# These are only flagged when they appear as phantom words in Type N.
+alarm
+alert
+awake
+bang
+bright
+energy
+fast
+hurry
+jump
+loud
+morning
+rush
+running
+shout
+sunrise
+wake
+waking
+yell
