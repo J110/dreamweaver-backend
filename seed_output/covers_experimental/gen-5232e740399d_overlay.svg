@@ -470,11 +470,11 @@
     calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
 </g>
 <!-- Vignette: bottom_light -->
-<linearGradient id="vigLG429" x1="0" y1="0" x2="0" y2="1">
+<linearGradient id="vigLG233" x1="0" y1="0" x2="0" y2="1">
   <stop offset="0%" stop-color="#0a0520" stop-opacity="0"/>
   <stop offset="70%" stop-color="#0a0520" stop-opacity="0"/>
   <stop offset="100%" stop-color="#0a0520" stop-opacity="0.40"/>
 </linearGradient>
-<rect width="512" height="512" fill="url(#vigLG429)" opacity="0.67"/>
+<rect width="512" height="512" fill="url(#vigLG233)" opacity="0.55"/>
 
 </svg>

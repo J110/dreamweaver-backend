@@ -150,19 +150,31 @@ extremely repetitive, simple melody
 
 No real lyrics. Use only: "Shh la la", "Loo loo loo", "Mmm mmm mmm", "Ooh ooh ooh", "Na na na".
 
-## 4. Performance-Directed Section Markers
+## 4. Section Markers (Bare Tags Only)
 
-Section headers include performance directions for ACE-Step:
+**CRITICAL**: ACE-Step section markers MUST use bare tags only. Do NOT add performance directions after the tag name — ACE-Step reads everything inside `[...]` as lyrics text and will narrate/sing the directions.
 
+```
+[verse]
+[chorus]
+[verse]
+[chorus]
+[verse]
+[chorus]
+[outro]
+```
+
+**Wrong** (ACE-Step sings "whispered extremely soft breathy slow"):
 ```
 [verse - whispered, extremely soft, breathy, slow]
-[chorus - soft, warm, gentle rocking]
-[verse - tender, softer, intimate]
-[chorus - soft, warm, gentle rocking]
-[verse - softer still, fading, slower]
-[chorus - barely audible, trailing off]
-[outro - humming only, fading to silence]
 ```
+
+**Right** (style controlled by LULLABY_STYLES description field):
+```
+[verse]
+```
+
+All vocal style control (tempo, breathiness, dynamics, instrumentation) is handled by the `description` field in `LULLABY_STYLES` which is passed as ACE-Step tags, NOT by section markers.
 
 ## 5. Post-Processing Pipeline
 
@@ -189,8 +201,10 @@ Stories and poems continue to use `musicParams` for ambient background music.
 | >6 sections in 120s | Compression/skipping | Limit to V-C-V-C-V-C |
 | Non-repeating choruses | Model confusion, drift | Copy-paste identical text |
 | Emotion markers in lyrics | Read as lyrics | Strip before ACE-Step |
+| **Directions in section markers** | **Narrated as lyrics** ("whisper extremely slow") | **Use bare `[verse]`/`[chorus]` only** — see Section 4 |
 | Complex rhyme (ABCABC) | Melodic drift | Use AABB or ABAB |
 | Names >2 syllables | Garbled/skipped | Simplify names |
+| QA fidelity using wrong field | Whisper check silently skipped | Use `story["text"]` not `story["content"]` |
 
 ## 8. ACE-Step Parameter Reference
 
