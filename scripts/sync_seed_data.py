@@ -83,7 +83,7 @@ def _build_new_entry_js(story: dict) -> str:
     # Build audio_variants
     av_js = _build_audio_variants_js(audio_variants) if audio_variants else "[]"
 
-    added_at = story.get("created_at", date.today().isoformat())[:10]
+    added_at = (story.get("addedAt") or story.get("created_at", date.today().isoformat()))[:10]
 
     # Optional lullaby_lyrics (for long stories with lullaby)
     lullaby_lyrics = story.get("lullaby_lyrics", "")
