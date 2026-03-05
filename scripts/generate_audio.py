@@ -309,51 +309,36 @@ _EMOTION_MARKER_RE = re.compile(
 
 
 # ── Lullaby performance directions for section markers ─────────────────
-# These replace bare [verse]/[chorus] tags with ACE-Step-compatible
-# performance hints that guide vocal delivery and dynamics.
-_LULLABY_VERSE_DIRECTIONS = [
-    "[verse - whispered, extremely soft, breathy, slow]",
-    "[verse - tender, softer, intimate]",
-    "[verse - softer still, fading, slower]",
-    "[verse - barely audible, trailing, sleepy]",
-]
-_LULLABY_CHORUS_DIRECTION = "[chorus - soft, warm, gentle rocking]"
-_LULLABY_OUTRO_DIRECTION = "[outro - humming only, fading to silence]"
+# ACE-Step section markers — bare tags only.
+# Performance directions (e.g. "whispered, extremely soft") MUST NOT appear
+# in section markers because ACE-Step reads them as lyrics to sing.
+# All style/mood control goes in the LULLABY_STYLES description field instead.
 
 
 def _inject_lullaby_directions(lyrics: str) -> str:
-    """Replace bare [verse]/[chorus] tags with performance-directed versions.
+    """Ensure section markers use bare tags only (no performance directions).
 
-    Only applied to song-type content to guide ACE-Step vocal delivery.
+    ACE-Step reads anything after '[verse -' as lyrics text, causing it to
+    narrate directions like 'whisper extremely slow'. All vocal style control
+    is handled by the description field in LULLABY_STYLES.
     """
     lines = lyrics.split("\n")
     result = []
-    verse_idx = 0
-    chorus_count = 0
 
     for line in lines:
         stripped = line.strip()
         if stripped == "[verse]":
-            direction = _LULLABY_VERSE_DIRECTIONS[
-                min(verse_idx, len(_LULLABY_VERSE_DIRECTIONS) - 1)
-            ]
-            result.append(direction)
-            verse_idx += 1
+            result.append("[verse]")
         elif stripped == "[chorus]":
-            chorus_count += 1
-            result.append(_LULLABY_CHORUS_DIRECTION)
+            result.append("[chorus]")
         elif stripped == "[bridge]":
-            result.append("[bridge - gentle, soft, transitional]")
+            result.append("[bridge]")
+        elif stripped == "[outro]":
+            result.append("[outro]")
         else:
             result.append(line)
 
-    # Add outro if last section is a humming line
-    joined = "\n".join(result)
-    if "mmm" in joined.lower().split("\n")[-3:] or "humming" in joined.lower()[-100:]:
-        # Already has humming at the end — no need to add outro marker
-        pass
-
-    return joined
+    return "\n".join(result)
 
 
 def validate_lullaby_lyrics(lyrics: str) -> list:

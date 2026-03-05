@@ -2930,13 +2930,27 @@ def _extract_character_phrase(story: dict) -> str:
     e.g. "A tiny raindrop named Drizzle embarks on..." → "a tiny raindrop named Drizzle"
          "When seven-year-old Aarohi discovers..." → "seven-year-old Aarohi"
          "A gentle tortoise named Pebble embarks..." → "a gentle tortoise named Pebble"
+         "In a cottage... A little teacup named Chai watches..." → "a little teacup named Chai"
     """
     desc = story.get("description", "")
     if not desc:
         return ""
 
-    # Take first sentence
-    first_sent = re.split(r'[.!?]', desc)[0].strip()
+    # Try all sentences (not just the first) — character may be introduced later
+    # e.g. "In a snug Arctic cottage... A little teacup named Chai watches..."
+    sentences = re.split(r'[.!?]', desc)
+
+    # First: scan for "a/an/the <descriptor> named <Name>" across ALL sentences
+    for sent in sentences:
+        sent = sent.strip()
+        named_match = re.search(
+            r'\b(an?\s+\w+(?:\s+\w+)?\s+named\s+\w+)',
+            sent, re.IGNORECASE
+        )
+        if named_match:
+            return named_match.group(1).strip()
+
+    first_sent = sentences[0].strip()
 
     # Common story-start verbs that mark the end of the character phrase
     verb_pattern = r'\b(embarks?|discovers?|learns?|finds?|begins?|sets?\s+out|ventures?|travels?|journeys?|explores?|weaves?|must|hears?|meets?|wakes?|searches?|stumbles?|follows?|seeks?|drifts?|wanders?|deciphers?|helps?|uncovers?|lights?|creates?|forges?|teaches?|guides?|says?|sings?|tells?|flies?|swims?|runs?|walks?|sits?|goes?|hums?|dances?|plays?|tends?|whispers?|races?|gathers?|collects?|lives?|works?)\b'
