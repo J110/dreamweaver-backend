@@ -19,6 +19,7 @@ Dependencies:
   - No API calls, no cost. Everything runs locally.
 """
 
+import difflib
 import logging
 import re
 from pathlib import Path
@@ -186,8 +187,14 @@ def clean_lyrics(raw_lyrics: str) -> dict:
 #  Whisper Transcription
 # ═════════════════════════════════════════════════════════════════════════
 
-def transcribe_with_whisper(audio_path: str) -> str:
+def transcribe_with_whisper(audio_path: str, is_singing: bool = False) -> str:
     """Transcribe audio file using faster-whisper (local, free).
+
+    Args:
+        audio_path: Path to audio file
+        is_singing: If True, disable VAD filter. Whisper's VAD treats singing
+            as non-speech and discards 90%+ of the audio, producing near-empty
+            transcripts. For lullabies/songs, we need VAD off.
 
     Returns lowercase transcript text.
     """
@@ -196,7 +203,7 @@ def transcribe_with_whisper(audio_path: str) -> str:
         audio_path,
         language="en",
         beam_size=5,
-        vad_filter=True,  # Skip silence segments
+        vad_filter=not is_singing,
     )
     # Collect all segment texts
     texts = [seg.text.strip() for seg in segments]
@@ -207,26 +214,64 @@ def transcribe_with_whisper(audio_path: str) -> str:
 #  Gate 1: Content Fidelity Check
 # ═════════════════════════════════════════════════════════════════════════
 
+def _fuzzy_match(word: str, candidates: set, threshold: float = 0.80) -> Optional[str]:
+    """Check if word fuzzy-matches any candidate (SequenceMatcher ratio).
+
+    Singing distorts words — "dreaming" → "dreamin", "snowflakes" → "snow".
+    Returns the best match if ratio >= threshold, else None.
+    """
+    if len(word) < 3:
+        return None  # Too short for meaningful fuzzy match
+    best_match = None
+    best_ratio = 0.0
+    for c in candidates:
+        if abs(len(word) - len(c)) > 3:
+            continue  # Skip wildly different lengths
+        ratio = difflib.SequenceMatcher(None, word, c).ratio()
+        if ratio > best_ratio:
+            best_ratio = ratio
+            best_match = c
+    return best_match if best_ratio >= threshold else None
+
+
 def gate1_word_overlap(lyrics_real: str, transcript: str) -> dict:
     """Gate 1 for Type L: word overlap between original and transcript.
 
-    Returns {"pass": bool, "score": float, "matched": list, "missing": list}
+    Uses exact match first, then fuzzy match (SequenceMatcher >= 0.80)
+    for words distorted by singing melody.
+
+    Returns {"pass": bool, "score": float, "matched": list, "missing": list,
+             "fuzzy_matched": list}
     """
     orig_words = lyrics_real.lower().split()
     trans_words = set(transcript.lower().split())
 
     if not orig_words:
-        return {"pass": True, "score": 1.0, "matched": [], "missing": []}
+        return {"pass": True, "score": 1.0, "matched": [], "missing": [],
+                "fuzzy_matched": []}
 
-    matched = [w for w in orig_words if w in trans_words]
-    missing = [w for w in orig_words if w not in trans_words]
-    # Deduplicate for reporting (but count uses full list)
+    matched = []
+    fuzzy_matched = []
+    missing = []
+
+    for w in orig_words:
+        if w in trans_words:
+            matched.append(w)
+        else:
+            fm = _fuzzy_match(w, trans_words)
+            if fm:
+                fuzzy_matched.append(f"{w}~{fm}")
+                matched.append(w)  # Count as matched
+            else:
+                missing.append(w)
+
     score = len(matched) / len(orig_words)
 
     return {
         "pass": score >= 0.75,
         "score": round(score, 3),
-        "matched": sorted(set(matched)),
+        "matched": sorted(set(m for m in matched if m not in [p.split("~")[0] for p in fuzzy_matched])),
+        "fuzzy_matched": sorted(set(fuzzy_matched)),
         "missing": sorted(set(missing)),
     }
 
@@ -293,6 +338,8 @@ def gate1_mixed(lyrics_real: str, transcript: str, english_words: Set[str]) -> d
 def gate2_cue_words(lyrics_real: str, transcript: str) -> dict:
     """Gate 2 for Type L: verify sleep-conditioning words come through.
 
+    Uses exact match first, then fuzzy match for words distorted by singing.
+
     Returns {"pass": bool, "score": float, "detected": list, "missing": list}
     """
     orig_words = set(lyrics_real.lower().split())
@@ -302,8 +349,16 @@ def gate2_cue_words(lyrics_real: str, transcript: str) -> dict:
     if not cues_in_original:
         return {"pass": True, "score": 1.0, "detected": [], "missing": []}
 
-    detected = sorted(cues_in_original & trans_words)
-    missing = sorted(cues_in_original - trans_words)
+    detected = []
+    missing = []
+    for cue in sorted(cues_in_original):
+        if cue in trans_words:
+            detected.append(cue)
+        elif _fuzzy_match(cue, trans_words, threshold=0.80):
+            detected.append(cue)
+        else:
+            missing.append(cue)
+
     score = len(detected) / len(cues_in_original)
 
     return {
@@ -334,13 +389,25 @@ def gate2_phantom_words(detected_real_words: List[str], blocklist: Set[str]) -> 
 #  Gate 3: Safety Blocklist
 # ═════════════════════════════════════════════════════════════════════════
 
-def gate3_blocklist(transcript: str, blocklist: Set[str]) -> dict:
+def gate3_blocklist(transcript: str, blocklist: Set[str],
+                    original_words: Optional[Set[str]] = None) -> dict:
     """Gate 3: zero-tolerance scan for blocked words in transcript.
+
+    Args:
+        transcript: Whisper transcript text
+        blocklist: Set of blocked words
+        original_words: Words from original lyrics. If a blocked word appears
+            in the original lyrics (e.g., "bright" in "warm and bright"),
+            it's intentional and should not be flagged.
 
     Returns {"pass": bool, "hits": list}
     """
     trans_words = set(transcript.lower().split())
     hits = sorted(trans_words & blocklist)
+
+    # Don't flag words that are in the original lyrics
+    if original_words and hits:
+        hits = [w for w in hits if w not in original_words]
 
     return {
         "pass": len(hits) == 0,
@@ -386,7 +453,11 @@ def check_lullaby_fidelity(
     # Transcribe if not provided
     if transcript is None:
         try:
-            transcript = transcribe_with_whisper(audio_path)
+            # Singing content needs VAD disabled — VAD treats singing as
+            # non-speech and discards 90%+ of the audio
+            transcript = transcribe_with_whisper(
+                audio_path, is_singing=(content_type in ("L", "M"))
+            )
         except Exception as e:
             logger.error("Whisper transcription failed: %s", e)
             return {
@@ -425,7 +496,9 @@ def check_lullaby_fidelity(
         }
 
     # ── Gate 3 ──────────────────────────────────────────────────────────
-    g3 = gate3_blocklist(transcript, blocklist)
+    # Pass original lyrics words so intentional words aren't flagged
+    orig_word_set = set(cleaned["lyrics_real"].split()) if content_type in ("L", "M") else None
+    g3 = gate3_blocklist(transcript, blocklist, original_words=orig_word_set)
 
     # ── Verdict ─────────────────────────────────────────────────────────
     if not g3["pass"]:
