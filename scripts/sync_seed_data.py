@@ -129,8 +129,9 @@ def update_existing(seed_js: str, stories: list) -> tuple:
         duration = story.get("duration")
         cover = story.get("cover")
         character = story.get("character")
+        added_at = (story.get("addedAt") or story.get("created_at", ""))[:10] or None
         if variants:
-            title_map[title] = {"variants": variants, "duration": duration, "cover": cover, "character": character}
+            title_map[title] = {"variants": variants, "duration": duration, "cover": cover, "character": character, "addedAt": added_at}
 
     replacements = 0
 
@@ -211,6 +212,21 @@ def update_existing(seed_js: str, stories: list) -> tuple:
                     old_block = insert_match.group(0)
                     new_block = old_block + f"\n      character: {char_json},"
                     seed_js = seed_js.replace(old_block, new_block, 1)
+
+        # Also update addedAt if explicitly set in content.json
+        explicit_added = info.get("addedAt")
+        if explicit_added:
+            added_pattern = (
+                r'(title:\s*"' + escaped_title + r'".*?)'
+                r'addedAt:\s*"[^"]*",'
+            )
+            added_match = re.search(added_pattern, seed_js, re.DOTALL)
+            if added_match:
+                old_added = added_match.group(0)
+                added_prefix = added_match.group(1)
+                new_added = added_prefix + f'addedAt: "{explicit_added}",'
+                if old_added != new_added:
+                    seed_js = seed_js.replace(old_added, new_added)
 
     return seed_js, replacements
 
