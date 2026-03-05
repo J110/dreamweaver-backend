@@ -251,9 +251,20 @@ def validate_brief_diversity(new_brief, recent_briefs):
 
     last_3 = recent_briefs[-3:] if len(recent_briefs) >= 3 else recent_briefs
     last_5 = recent_briefs[-5:] if len(recent_briefs) >= 5 else recent_briefs
+    all_briefs = recent_briefs  # check global uniqueness too
 
     mi = new_brief.get("musicalIdentity", {})
     t = new_brief.get("tonality", {})
+
+    # GLOBAL: No duplicate (primaryLoop, mode, rootNote, padCharacter) 4-tuple
+    new_sig = (mi.get("primaryLoop"), t.get("mode"), t.get("rootNote"), mi.get("padCharacter"))
+    for b in all_briefs:
+        bmi = b.get("musicalIdentity", {})
+        bt = b.get("tonality", {})
+        old_sig = (bmi.get("primaryLoop"), bt.get("mode"), bt.get("rootNote"), bmi.get("padCharacter"))
+        if new_sig == old_sig:
+            errors.append(f"duplicate 4-tuple signature: {new_sig}")
+            break
 
     # No same culturalReference in last 3
     if last_3:
@@ -272,6 +283,14 @@ def validate_brief_diversity(new_brief, recent_briefs):
         recent_roots = [b["tonality"]["rootNote"] for b in last_5]
         if t.get("rootNote") in recent_roots:
             errors.append("rootNote repeated in last 5")
+
+    # No same (primaryLoop, padCharacter) pair in all briefs
+    new_loop_pad = (mi.get("primaryLoop"), mi.get("padCharacter"))
+    for b in all_briefs:
+        bmi = b.get("musicalIdentity", {})
+        if (bmi.get("primaryLoop"), bmi.get("padCharacter")) == new_loop_pad:
+            errors.append(f"duplicate loop+pad pair: {new_loop_pad}")
+            break
 
     # No same mode in last 3
     if last_3:
@@ -346,6 +365,62 @@ def fix_brief(brief, age_group):
         r["feel"] = "free_rubato"
 
     return brief
+
+
+def fix_duplicate_signature(brief, existing_briefs, age_group):
+    """Mutate brief to avoid duplicate (loop, mode, rootNote, pad) 4-tuple."""
+    mi = brief.get("musicalIdentity", {})
+    t = brief.get("tonality", {})
+
+    existing_sigs = set()
+    existing_loop_pads = set()
+    for b in existing_briefs:
+        bmi = b.get("musicalIdentity", {})
+        bt = b.get("tonality", {})
+        existing_sigs.add((bmi.get("primaryLoop"), bt.get("mode"), bt.get("rootNote"), bmi.get("padCharacter")))
+        existing_loop_pads.add((bmi.get("primaryLoop"), bmi.get("padCharacter")))
+
+    current_sig = (mi.get("primaryLoop"), t.get("mode"), t.get("rootNote"), mi.get("padCharacter"))
+    if current_sig not in existing_sigs:
+        return brief  # already unique
+
+    # Try changing rootNote first (cheapest change musically)
+    allowed_modes = MODES
+    if age_group == "2-5":
+        allowed_modes = ["major_pentatonic", "minor_pentatonic"]
+
+    for root in ROOT_NOTES:
+        test_sig = (mi.get("primaryLoop"), t.get("mode"), root, mi.get("padCharacter"))
+        if test_sig not in existing_sigs:
+            t["rootNote"] = root
+            return brief
+
+    # Try changing mode
+    for mode in allowed_modes:
+        for root in ROOT_NOTES:
+            test_sig = (mi.get("primaryLoop"), mode, root, mi.get("padCharacter"))
+            if test_sig not in existing_sigs:
+                t["mode"] = mode
+                t["rootNote"] = root
+                return brief
+
+    # Try changing pad
+    for pad in PAD_CHARACTERS:
+        test_sig = (mi.get("primaryLoop"), t.get("mode"), t.get("rootNote"), pad)
+        if test_sig not in existing_sigs:
+            mi["padCharacter"] = pad
+            return brief
+
+    # Last resort: change loop
+    for loop in PRIMARY_LOOPS:
+        for root in ROOT_NOTES:
+            test_sig = (loop, t.get("mode"), root, mi.get("padCharacter"))
+            if test_sig not in existing_sigs:
+                mi["primaryLoop"] = loop
+                t["rootNote"] = root
+                return brief
+
+    return brief  # couldn't fix — accept as-is
 
 
 # ── Brief Generation ──
@@ -501,14 +576,18 @@ Respond with ONLY the JSON brief. No explanation.
             # Last attempt — fix what we can
             brief = fix_brief(brief, age_group)
 
-        # Validate diversity (soft — we don't retry for this, just warn)
+        # Validate diversity
         diversity_errors = validate_brief_diversity(brief, tracker.recent_briefs)
         if diversity_errors:
             print(f"  [diversity warning] {diversity_errors}")
-            if attempt < max_attempts - 1:
+            # Try to auto-fix duplicate signature
+            brief = fix_duplicate_signature(brief, tracker.recent_briefs, age_group)
+            # Re-check after fix
+            diversity_errors = validate_brief_diversity(brief, tracker.recent_briefs)
+            if diversity_errors and attempt < max_attempts - 1:
                 time.sleep(2)
                 continue
-            # Accept on last attempt even with diversity issues
+            # Accept on last attempt even with remaining diversity issues
 
         break
 
