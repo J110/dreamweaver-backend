@@ -71,6 +71,7 @@ def _build_new_entry_js(story: dict) -> str:
     categories = story.get("categories", [])
     theme = story.get("theme", "fantasy")
     music_params = story.get("musicParams", {})
+    musical_brief = story.get("musicalBrief", {})
     audio_variants = story.get("audio_variants", [])
     cover = story.get("cover", "/covers/default.svg")
 
@@ -79,6 +80,9 @@ def _build_new_entry_js(story: dict) -> str:
 
     # Build musicParams
     mp_js = _build_music_params_js(music_params) if music_params else "{}"
+
+    # Build musicalBrief (v3 music system — compact JSON composed client-side)
+    mb_js = json.dumps(musical_brief, ensure_ascii=False) if musical_brief else ""
 
     # Build audio_variants
     av_js = _build_audio_variants_js(audio_variants) if audio_variants else "[]"
@@ -97,6 +101,9 @@ def _build_new_entry_js(story: dict) -> str:
     else:
         character_line = ""
 
+    # musicalBrief line (v3 music system — preferred over musicParams)
+    musical_brief_line = f"\n      musicalBrief: {mb_js}," if mb_js else ""
+
     entry = f"""    {{
       id: "{_js_escape(sid)}",
       type: "{stype}",
@@ -112,7 +119,7 @@ def _build_new_entry_js(story: dict) -> str:
       view_count: 0,
       categories: {cats_js},
       theme: "{theme}",
-      musicParams: {mp_js},
+      musicParams: {mp_js},{musical_brief_line}
       audio_variants: {av_js},
     }}"""
     return entry
@@ -129,9 +136,10 @@ def update_existing(seed_js: str, stories: list) -> tuple:
         duration = story.get("duration")
         cover = story.get("cover")
         character = story.get("character")
+        musical_brief = story.get("musicalBrief")
         added_at = (story.get("addedAt") or story.get("created_at", ""))[:10] or None
         if variants:
-            title_map[title] = {"variants": variants, "duration": duration, "cover": cover, "character": character, "addedAt": added_at}
+            title_map[title] = {"variants": variants, "duration": duration, "cover": cover, "character": character, "musicalBrief": musical_brief, "addedAt": added_at}
 
     replacements = 0
 
@@ -227,6 +235,34 @@ def update_existing(seed_js: str, stories: list) -> tuple:
                 new_added = added_prefix + f'addedAt: "{explicit_added}",'
                 if old_added != new_added:
                     seed_js = seed_js.replace(old_added, new_added)
+
+        # Also update musicalBrief (v3 music system)
+        musical_brief = info.get("musicalBrief")
+        if musical_brief:
+            mb_json = json.dumps(musical_brief, ensure_ascii=False)
+            # Check if musicalBrief already exists for this entry
+            mb_existing_pattern = (
+                r'(title:\s*"' + escaped_title + r'".*?)'
+                r'musicalBrief:\s*\{[^}]*(?:\{[^}]*\}[^}]*)*\},'
+            )
+            mb_match = re.search(mb_existing_pattern, seed_js, re.DOTALL)
+            if mb_match:
+                old_mb = mb_match.group(0)
+                mb_prefix = mb_match.group(1)
+                new_mb = mb_prefix + f"musicalBrief: {mb_json},"
+                if old_mb != new_mb:
+                    seed_js = seed_js.replace(old_mb, new_mb)
+            else:
+                # Insert musicalBrief after musicParams line
+                insert_mb_pattern = (
+                    r'(title:\s*"' + escaped_title + r'".*?'
+                    r'musicParams:\s*\{[^}]*(?:\{[^}]*\}[^}]*)*\},)'
+                )
+                insert_mb_match = re.search(insert_mb_pattern, seed_js, re.DOTALL)
+                if insert_mb_match:
+                    old_block = insert_mb_match.group(0)
+                    new_block = old_block + f"\n      musicalBrief: {mb_json},"
+                    seed_js = seed_js.replace(old_block, new_block, 1)
 
     return seed_js, replacements
 

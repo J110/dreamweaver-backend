@@ -351,9 +351,9 @@ def step_qa(args, state: dict) -> bool:
 
 
 def step_enrich(args, state: dict) -> bool:
-    """Step 4: Generate musicParams for QA-passed stories via Mistral AI."""
+    """Step 4: Generate Musical Briefs (v3) for QA-passed stories via Mistral AI."""
     logger.info("\n╔══════════════════════════════════════╗")
-    logger.info("║  STEP 4: ENRICH (musicParams)        ║")
+    logger.info("║  STEP 4: ENRICH (Musical Briefs)     ║")
     logger.info("╚══════════════════════════════════════╝")
 
     qa_passed = state.get("qa_passed", [])
@@ -363,7 +363,7 @@ def step_enrich(args, state: dict) -> bool:
         save_state(state)
         return True
 
-    # Load content to check types — songs (lullabies) don't need musicParams
+    # Load content to check types — songs (lullabies) don't need Musical Briefs
     content = []
     content_path = SCRIPTS_DIR.parent / "seed_output" / "content.json"
     if content_path.exists():
@@ -373,10 +373,10 @@ def step_enrich(args, state: dict) -> bool:
     content_by_id = {item["id"]: item for item in content if isinstance(item, dict)}
 
     for sid in qa_passed:
-        # Songs (lullabies) don't need musicParams — ACE-Step output has vocals + instrument
+        # Songs (lullabies) don't need Musical Briefs — ACE-Step output has vocals + instrument
         item = content_by_id.get(sid, {})
         if item.get("type", "").lower() == "song":
-            logger.info("  Skipping musicParams for %s (song/lullaby — no background music)", sid[:8])
+            logger.info("  Skipping Musical Brief for %s (song/lullaby — no background music)", sid[:8])
             continue
 
         cmd = [
@@ -387,10 +387,10 @@ def step_enrich(args, state: dict) -> bool:
             cmd += ["--dry-run"]
 
         ok, stdout, stderr, elapsed = run_command(
-            cmd, f"Music params: {sid[:8]}...", timeout=300
+            cmd, f"Musical Brief: {sid[:8]}...", timeout=300
         )
         if not ok:
-            logger.warning("  Music params generation failed for %s (non-fatal)", sid)
+            logger.warning("  Musical Brief generation failed for %s (non-fatal)", sid)
 
     state["step_enrich"] = "done"
     save_state(state)
