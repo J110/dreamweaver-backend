@@ -10862,7 +10862,27 @@
         "Curious",
         "Determined"
       ]
-    }
+    },
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-e47b_female_1.mp3",
+        "duration_seconds": 119.95,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-e47b_female_3.mp3",
+        "duration_seconds": 119.95,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_1",
+        "url": "/audio/pre-gen/gen-e47b_male_1.mp3",
+        "duration_seconds": 119.95,
+        "provider": "chatterbox"
+      }
+    ]
   },
   {
     "id": "gen-4ddee3cbe031",
@@ -10882,7 +10902,51 @@
         "Gentle",
         "Kind"
       ]
-    }
+    },
+    "audio_variants": [
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-4dde_asmr.mp3",
+        "duration_seconds": 97.2,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-4dde_female_1.mp3",
+        "duration_seconds": 116.45,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-4dde_female_2.mp3",
+        "duration_seconds": 98.64,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-4dde_female_3.mp3",
+        "duration_seconds": 90.14,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_1",
+        "url": "/audio/pre-gen/gen-4dde_male_1.mp3",
+        "duration_seconds": 82.3,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-4dde_male_2.mp3",
+        "duration_seconds": 90.5,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_3",
+        "url": "/audio/pre-gen/gen-4dde_male_3.mp3",
+        "duration_seconds": 87.26,
+        "provider": "chatterbox"
+      }
+    ]
   },
   {
     "id": "gen-50e929bf696c",
@@ -10902,7 +10966,51 @@
         "Gentle",
         "Dreamy"
       ]
-    }
+    },
+    "audio_variants": [
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-50e9_asmr.mp3",
+        "duration_seconds": 46.78,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-50e9_female_1.mp3",
+        "duration_seconds": 68.47,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-50e9_female_2.mp3",
+        "duration_seconds": 43.32,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-50e9_female_3.mp3",
+        "duration_seconds": 41.5,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_1",
+        "url": "/audio/pre-gen/gen-50e9_male_1.mp3",
+        "duration_seconds": 40.18,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-50e9_male_2.mp3",
+        "duration_seconds": 38.78,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_3",
+        "url": "/audio/pre-gen/gen-50e9_male_3.mp3",
+        "duration_seconds": 38.81,
+        "provider": "chatterbox"
+      }
+    ]
   },
   {
     "id": "gen-8440041cfc57",
@@ -10922,7 +11030,27 @@
         "Gentle",
         "Dreamy"
       ]
-    }
+    },
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-8440_female_1.mp3",
+        "duration_seconds": 119.95,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-8440_female_3.mp3",
+        "duration_seconds": 119.95,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_1",
+        "url": "/audio/pre-gen/gen-8440_male_1.mp3",
+        "duration_seconds": 119.95,
+        "provider": "chatterbox"
+      }
+    ]
   },
   {
     "id": "gen-e3e07799ab05",
@@ -10940,7 +11068,7 @@
     "length": "LONG",
     "word_count": 605,
     "duration_seconds": 0,
-    "duration": 8,
+    "duration": 12,
     "categories": [
       "Bedtime",
       "Cultural Celebrations",
@@ -10959,31 +11087,43 @@
       {
         "voice": "male_1",
         "url": "/audio/pre-gen/gen-e3e0_male_1.mp3",
-        "duration_seconds": 409.35,
+        "duration_seconds": 652.26,
         "provider": "chatterbox"
       },
       {
         "voice": "female_1",
         "url": "/audio/pre-gen/gen-e3e0_female_1.mp3",
-        "duration_seconds": 484.62,
+        "duration_seconds": 727.53,
         "provider": "chatterbox"
       },
       {
         "voice": "female_2",
         "url": "/audio/pre-gen/gen-e3e0_female_2.mp3",
-        "duration_seconds": 445.71,
+        "duration_seconds": 688.62,
         "provider": "chatterbox"
       },
       {
         "voice": "male_2",
         "url": "/audio/pre-gen/gen-e3e0_male_2.mp3",
-        "duration_seconds": 421.4,
+        "duration_seconds": 664.3,
         "provider": "chatterbox"
       },
       {
         "voice": "female_3",
         "url": "/audio/pre-gen/gen-e3e0_female_3.mp3",
-        "duration_seconds": 421.68,
+        "duration_seconds": 664.59,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_3",
+        "url": "/audio/pre-gen/gen-e3e0_male_3.mp3",
+        "duration_seconds": 662.58,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-e3e0_asmr.mp3",
+        "duration_seconds": 721.81,
         "provider": "chatterbox"
       }
     ],
