@@ -12004,5 +12004,110 @@
     "view_count": 0,
     "like_count": 0,
     "save_count": 0
+  },
+  {
+    "id": "gen-80060dd0077e",
+    "type": "poem",
+    "lang": "en",
+    "title": "Liora’s Lantern and the Autumn Schoolhouse",
+    "description": "In a cobblestone village where autumn leaves swirl like golden parchment, an old brass lantern named Liora gathers dust on a schoolhouse attic shelf. When a curious wind whispers secrets through the eaves, she awakens to a world of forgotten lessons—and a chance to light the way for a lonely new student.",
+    "text": "[RHYTHMIC]High in the attic, cool and deep,\nwhere spiders weave their dreams to keep,\nLiora waits with patient glow—\na lantern wise from long ago.\n\n[GENTLE]Her brass once shone in morning light,\nto guide the scholars, sharp and bright.\nNow shadows dance on rusted seams,\nand dust has dimmed her golden dreams.\n\n[PAUSE]\n\n[CALM]Then came the wind, so soft, so sly,\nto stir the leaves and tickle high.\nIt curled around her tarnished frame,\nand whispered words without a name.\n\n[PAUSE]\n\n[JOYFUL]“Oh, Liora! Don’t you see?\nThe schoolhouse hums with history!\nA child arrives with quiet tread,\nwho fears the dark where doubts are fed.”\n\n[PAUSE]\n\n[WHISPERING]So Liora woke with crackling spark,\nher flame a tiny, trembling arc.\nShe rolled and tumbled, clink!—then fell\nright where the little girl could tell.\n\n[PAUSE]\n\n[RHYTHMIC]“I’ll be your guide,” the lantern sighed,\n“through sums and stories, far and wide.\nFor every heart that learns to shine\nholds worlds as vast as yours—or mine.”\n\n[PAUSE]\n\n[SLEEPY]Now every eve, when lessons cease,\nthe schoolhouse glows with golden peace.\nAnd Liora? She hums so low,\na lullaby of long ago.",
+    "annotated_text": "[RHYTHMIC]High in the attic, cool and deep,\nwhere spiders weave their dreams to keep,\nLiora waits with patient glow—\na lantern wise from long ago.\n\n[GENTLE]Her brass once shone in morning light,\nto guide the scholars, sharp and bright.\nNow shadows dance on rusted seams,\nand dust has dimmed her golden dreams.\n\n[PAUSE]\n\n[CALM]Then came the wind, so soft, so sly,\nto stir the leaves and tickle high.\nIt curled around her tarnished frame,\nand whispered words without a name.\n\n[PAUSE]\n\n[JOYFUL]“Oh, Liora! Don’t you see?\nThe schoolhouse hums with history!\nA child arrives with quiet tread,\nwho fears the dark where doubts are fed.”\n\n[PAUSE]\n\n[WHISPERING]So Liora woke with crackling spark,\nher flame a tiny, trembling arc.\nShe rolled and tumbled, clink!—then fell\nright where the little girl could tell.\n\n[PAUSE]\n\n[RHYTHMIC]“I’ll be your guide,” the lantern sighed,\n“through sums and stories, far and wide.\nFor every heart that learns to shine\nholds worlds as vast as yours—or mine.”\n\n[PAUSE]\n\n[SLEEPY]Now every eve, when lessons cease,\nthe schoolhouse glows with golden peace.\nAnd Liora? She hums so low,\na lullaby of long ago.",
+    "target_age": 7,
+    "age_min": 6,
+    "age_max": 8,
+    "age_group": "6-8",
+    "length": "MEDIUM",
+    "word_count": 179,
+    "duration_seconds": 0,
+    "categories": [
+      "Historical Fantasy",
+      "Nature Appreciation"
+    ],
+    "theme": "nature",
+    "morals": [
+      "Even the smallest light can guide someone through their darkest moments.",
+      "Every object, no matter how old, has a story worth sharing."
+    ],
+    "cover": "",
+    "musicProfile": "forest-night",
+    "music_type": "ambient",
+    "audio_variants": [],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "female",
+    "character": {
+      "name": "Liora",
+      "identity": "A forgotten lantern with a scholar’s heart and a poet’s soul",
+      "special": "She remembers every lesson ever taught beneath her glow and shares wisdom like starlight",
+      "personality_tags": [
+        "Wise",
+        "Gentle"
+      ]
+    },
+    "lead_character_type": "object",
+    "universe": "historical",
+    "geography": "Europe",
+    "life_aspect": "school_learning",
+    "plot_archetype": "transformation",
+    "created_at": "2026-03-05T02:53:11.694375",
+    "updated_at": "2026-03-05T02:53:11.694375",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0
+  },
+  {
+    "id": "gen-3f1cd792afd9",
+    "type": "poem",
+    "lang": "en",
+    "title": "The Wandering Star’s Silk Road Lullaby",
+    "description": "High above the ancient Silk Road, a lonely comet hums a forgotten tune. As lanterns flicker in village homes below, he glides past paper windows, weaving his glow into the dreams of sleeping children. But tonight, something pulls him closer—a melody only the earth can sing.",
+    "text": "[RHYTHMIC] Hush, little star, so far, so bright,\nGold tail trails through the velvet night.\n[PAUSE]\n\n[GENTLE] Over mountains, soft and wide,\nPast the rivers, slow with pride,\nHe hums low, a lullaby,\nFor the earth that drifts below.\n[PAUSE]\n\n[CALM] Lanterns glow in wooden frames,\nMama sings, Papa calls by name,\nComet pauses, listens deep,\nTo the songs the families keep.\n[PAUSE]\n\n[WHISPERING] Silk threads shimmer in the breeze,\nWeaving dreams through ancient trees,\nHe leaves his light—a silver thread,\nTo tuck the world in bed.\n[PAUSE]\n\n[SLEEPY] Now the star grows soft and slow,\nDrifting where the warm winds go,\nSleep, little one, the night is long,\nDream the comet’s gentle song.",
+    "annotated_text": "[RHYTHMIC] Hush, little star, so far, so bright,\nGold tail trails through the velvet night.\n[PAUSE]\n\n[GENTLE] Over mountains, soft and wide,\nPast the rivers, slow with pride,\nHe hums low, a lullaby,\nFor the earth that drifts below.\n[PAUSE]\n\n[CALM] Lanterns glow in wooden frames,\nMama sings, Papa calls by name,\nComet pauses, listens deep,\nTo the songs the families keep.\n[PAUSE]\n\n[WHISPERING] Silk threads shimmer in the breeze,\nWeaving dreams through ancient trees,\nHe leaves his light—a silver thread,\nTo tuck the world in bed.\n[PAUSE]\n\n[SLEEPY] Now the star grows soft and slow,\nDrifting where the warm winds go,\nSleep, little one, the night is long,\nDream the comet’s gentle song.",
+    "target_age": 0,
+    "age_min": 0,
+    "age_max": 1,
+    "age_group": "0-1",
+    "length": "MEDIUM",
+    "word_count": 105,
+    "duration_seconds": 0,
+    "categories": [
+      "Nature",
+      "Historical",
+      "Celestial"
+    ],
+    "theme": "nature",
+    "morals": [
+      "Even the smallest light can bring warmth to those below.",
+      "Home is where the heart finds its melody."
+    ],
+    "cover": "",
+    "musicProfile": "moonlit-meadow",
+    "music_type": "ambient",
+    "audio_variants": [],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "male",
+    "character": {
+      "name": "Lian",
+      "identity": "A wandering storyteller who carries the night’s secrets in his glow",
+      "special": "He weaves starlight into the dreams of children along the Silk Road",
+      "personality_tags": [
+        "Gentle",
+        "Dreamy"
+      ]
+    },
+    "lead_character_type": "celestial",
+    "universe": "historical",
+    "geography": "East Asia",
+    "life_aspect": "family_home",
+    "plot_archetype": "transformation",
+    "created_at": "2026-03-05T02:54:29.443465",
+    "updated_at": "2026-03-05T02:54:29.443465",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0
   }
 ]
