@@ -72,6 +72,13 @@ DURATION_OUTLIER_PCT = 0.15  # 15%
 SONG_FIDELITY_PASS = 0.50
 SONG_FIDELITY_FAIL = 0.30
 
+# ASMR whisper voice: Voxtral struggles to transcribe breathy whispers
+# accurately, producing artificially low fidelity scores even when audio
+# is perfect. Use relaxed thresholds similar to songs.
+ASMR_FIDELITY_PASS = 0.40
+ASMR_FIDELITY_FAIL = 0.20
+ASMR_DURATION_OUTLIER_PCT = 0.25  # ASMR tends to run longer, allow 25%
+
 # ── Logging ──────────────────────────────────────────────────────────────
 logging.basicConfig(
     level=logging.INFO,
@@ -777,6 +784,7 @@ def compute_verdict(
     fidelity_pass_threshold: float = DEFAULT_FIDELITY_PASS,
     fidelity_fail_threshold: float = DEFAULT_FIDELITY_FAIL,
     content_type: str = "story",
+    voice: str = "",
 ) -> dict:
     """Combine all phases into a final PASS / WARN / FAIL verdict.
 
@@ -785,18 +793,26 @@ def compute_verdict(
         fidelity_info: {fidelity: {combined, ...}, transcript, verdict} from Phase 2
         quality_info: {pronunciation: {score, reason}, ...} from Phase 3
         content_type: "story" or "song" — songs use relaxed fidelity thresholds
+        voice: voice variant name — "asmr" gets relaxed thresholds
     """
     # Songs use relaxed thresholds (singing distorts pronunciation)
     if content_type == "song":
         fidelity_pass_threshold = SONG_FIDELITY_PASS
         fidelity_fail_threshold = SONG_FIDELITY_FAIL
+    # ASMR whisper voice: Voxtral can't transcribe breathy audio well,
+    # producing artificially low fidelity scores on perfectly good audio
+    elif voice == "asmr":
+        fidelity_pass_threshold = ASMR_FIDELITY_PASS
+        fidelity_fail_threshold = ASMR_FIDELITY_FAIL
     reasons = []
     verdict = "PASS"
 
-    # Phase 1: duration
+    # Phase 1: duration — ASMR tends to run longer due to whisper pacing
     is_outlier = False
     if duration_info:
-        is_outlier = duration_info.get("is_outlier", False)
+        outlier_pct = ASMR_DURATION_OUTLIER_PCT if voice == "asmr" else DURATION_OUTLIER_PCT
+        deviation = duration_info.get("deviation_pct", 0) / 100.0
+        is_outlier = deviation > outlier_pct
         if is_outlier:
             reasons.append(f"duration_outlier ({duration_info.get('deviation_pct', 0)}% off)")
 
@@ -903,11 +919,12 @@ def generate_report(
             fid_info = p2.get(voice)
             qual_info = p3.get(voice)
 
-            # Compute combined verdict (songs use relaxed thresholds)
+            # Compute combined verdict (songs/asmr use relaxed thresholds)
             combined = compute_verdict(
                 dur_info, fid_info, qual_info,
                 fidelity_pass_threshold, fidelity_fail_threshold,
                 content_type=content_type,
+                voice=voice,
             )
 
             if fid_info and "fidelity" in fid_info:
