@@ -1,44 +1,29 @@
 {
-  "started_at": "2026-02-28T01:30:01.497202",
+  "started_at": "2026-03-04T21:45:12.044839",
   "args": {
     "count_stories": 1,
     "count_poems": 1,
     "count_lullabies": 1,
     "lang": "en",
-    "dry_run": false,
+    "dry_run": true,
     "skip_publish": false,
     "skip_deploy_prod": false,
     "resume": false,
     "step": null
   },
   "last_step": "deploy_prod",
-  "generated_stories": 0,
-  "generated_poems": 0,
-  "generated_lullabies": 1,
-  "generated_ids": [
-    "gen-69ca3c81363d"
-  ],
+  "generation_warning": "Expected 3, got 0",
+  "generated_ids": [],
   "step_generate": "done",
-  "audio_elapsed_seconds": 283.4787163734436,
-  "step_audio": "done",
-  "qa_passed": [
-    "gen-69ca3c81363d"
-  ],
-  "qa_failed": [],
-  "step_qa": "done",
-  "step_enrich": "done",
-  "covers_generated": [
-    "gen-69ca3c81363d"
-  ],
+  "step_audio": "skipped",
+  "step_qa": "skipped",
+  "step_enrich": "skipped",
+  "step_covers": "skipped",
+  "covers_generated": [],
   "covers_failed": [],
-  "step_covers": "done",
-  "step_sync": "done",
-  "step_publish": "done",
-  "publish_backend": "ok",
-  "publish_frontend": "ok",
-  "step_deploy_prod": "done",
-  "deploy_prod_frontend": "ok",
-  "deploy_prod_backend": "ok",
+  "step_sync": "dry_run",
+  "step_publish": "skipped",
+  "step_deploy_prod": "skipped",
   "status": "completed",
-  "completed_at": "2026-02-28T01:46:23.309426"
+  "completed_at": "2026-03-04T21:45:12.705907"
 }
