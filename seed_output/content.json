@@ -10627,61 +10627,147 @@
     "save_count": 0,
     "duration": 2,
     "musicParams": {
-      "key": "A",
-      "chordNotes": [
-        110.0,
-        138.59,
-        164.81,
-        220.0
-      ],
-      "padType": "resonant",
-      "padGain": 0.0406,
-      "padFilter": 852,
-      "padLfo": 0.0824,
-      "noiseType": "pink",
-      "noiseGain": 0.0122,
-      "droneFreq": 55.0,
-      "droneGain": 0.0368,
-      "melodyNotes": [
-        220.0,
-        277.18,
-        329.62,
-        293.66
-      ],
-      "melodyInterval": 3329,
-      "melodyGain": 0.0177,
-      "bassNotes": [
-        55.0,
-        82.41,
-        69.3
-      ],
-      "bassInterval": 6434,
-      "counterNotes": [
-        346.48,
-        412.02,
-        275.0
-      ],
-      "counterInterval": 4587,
-      "events": [
-        {
-          "type": "windGust",
-          "interval": 13329
-        },
-        {
-          "type": "leaves",
-          "interval": 8621
-        },
-        {
-          "type": "birdChirp",
-          "interval": 5387
-        },
-        {
-          "type": "cricket",
-          "interval": 17582
-        }
-      ],
+      "version": 2,
+      "counterMelody": false,
       "soundscapePreset": "garden",
-      "musicLoop": "gentleGuitar"
+      "musicLoop": "gentleGuitar",
+      "phase1": {
+        "key": "A",
+        "chordNotes": [
+          110.0,
+          138.59,
+          164.81,
+          220.0
+        ],
+        "padType": "resonant",
+        "padGain": 0.0399,
+        "padFilter": 551,
+        "padLfo": 0.0736,
+        "noiseType": "pink",
+        "noiseGain": 0.0123,
+        "droneFreq": 55.0,
+        "droneGain": 0.0355,
+        "melodyNotes": [
+          220.0,
+          277.18,
+          329.62,
+          293.66
+        ],
+        "melodyInterval": 5007,
+        "melodyGain": 0.0189,
+        "bassNotes": [
+          55.0,
+          82.41,
+          69.3
+        ],
+        "bassInterval": 6887,
+        "events": [
+          {
+            "type": "windGust",
+            "interval": 11817
+          },
+          {
+            "type": "leaves",
+            "interval": 7468
+          },
+          {
+            "type": "birdChirp",
+            "interval": 22216,
+            "phases": [
+              1
+            ]
+          },
+          {
+            "type": "cricket",
+            "interval": 16165
+          }
+        ]
+      },
+      "phase2": {
+        "key": "A",
+        "chordNotes": [
+          110.0,
+          164.81
+        ],
+        "padType": "resonant",
+        "padGain": 0.0319,
+        "padFilter": 386,
+        "padLfo": 0.0736,
+        "noiseType": "pink",
+        "noiseGain": 0.0148,
+        "droneFreq": 55.0,
+        "droneGain": 0.0355,
+        "melodyNotes": [
+          220.0,
+          277.18,
+          329.62,
+          293.66
+        ],
+        "melodyInterval": 7010,
+        "melodyGain": 0.0095,
+        "bassNotes": [
+          55.0,
+          82.41,
+          69.3
+        ],
+        "bassInterval": 8953,
+        "events": [
+          {
+            "type": "windGust",
+            "interval": 17726
+          },
+          {
+            "type": "leaves",
+            "interval": 11202
+          },
+          {
+            "type": "cricket",
+            "interval": 24248
+          }
+        ]
+      },
+      "phase3": {
+        "key": "A",
+        "chordNotes": [
+          110.0
+        ],
+        "padType": "simple",
+        "padGain": 0.0199,
+        "padFilter": 220,
+        "padLfo": 0.0736,
+        "noiseType": "pink",
+        "noiseGain": 0.0185,
+        "droneFreq": 55.0,
+        "droneGain": 0.0213,
+        "melodyNotes": [
+          220.0,
+          277.18,
+          329.62,
+          293.66
+        ],
+        "melodyInterval": 5007,
+        "melodyGain": 0,
+        "bassNotes": [
+          55.0,
+          82.41,
+          69.3
+        ],
+        "bassInterval": 6887,
+        "events": []
+      },
+      "masterLowpass": {
+        "1": 8000,
+        "2": 4000,
+        "3": 2000
+      },
+      "transitions": {
+        "1to2": {
+          "duration": 30
+        },
+        "2to3": {
+          "duration": 45
+        }
+      }
     },
     "character": {
       "name": "Jai",
@@ -10782,57 +10868,140 @@
     "save_count": 0,
     "duration": 4,
     "musicParams": {
-      "key": "A",
-      "chordNotes": [
-        110.0,
-        138.59,
-        164.81,
-        220.0
-      ],
-      "padType": "fm",
-      "padGain": 0.0469,
-      "padFilter": 899,
-      "padLfo": 0.0928,
-      "noiseType": "brown",
-      "noiseGain": 0.0122,
-      "droneFreq": 55.0,
-      "droneGain": 0.0368,
-      "melodyNotes": [
-        220.0,
-        277.18,
-        329.62,
-        293.66
-      ],
-      "melodyInterval": 4369,
-      "melodyGain": 0.0177,
-      "bassNotes": [
-        55.0,
-        82.41,
-        69.3
-      ],
-      "bassInterval": 6434,
-      "counterNotes": [
-        346.48,
-        412.02,
-        275.0
-      ],
-      "counterInterval": 4778,
-      "events": [
-        {
-          "type": "radarPing",
-          "interval": 13329
-        },
-        {
-          "type": "starTwinkle",
-          "interval": 23708
-        },
-        {
-          "type": "sparkle",
-          "interval": 16162
-        }
-      ],
+      "version": 2,
+      "counterMelody": false,
       "soundscapePreset": "starryNight",
-      "musicLoop": "cosmicSynth"
+      "musicLoop": "cosmicSynth",
+      "phase1": {
+        "key": "A",
+        "chordNotes": [
+          110.0,
+          138.59,
+          164.81,
+          220.0
+        ],
+        "padType": "fm",
+        "padGain": 0.0399,
+        "padFilter": 827,
+        "padLfo": 0.0736,
+        "noiseType": "brown",
+        "noiseGain": 0.0123,
+        "droneFreq": 55.0,
+        "droneGain": 0.0355,
+        "melodyNotes": [
+          220.0,
+          277.18,
+          329.62,
+          293.66
+        ],
+        "melodyInterval": 5216,
+        "melodyGain": 0.0189,
+        "bassNotes": [
+          55.0,
+          82.41,
+          69.3
+        ],
+        "bassInterval": 6887,
+        "events": [
+          {
+            "type": "whaleCall",
+            "interval": 21665
+          },
+          {
+            "type": "heartbeat",
+            "interval": 11201
+          },
+          {
+            "type": "windGust",
+            "interval": 19994
+          }
+        ]
+      },
+      "phase2": {
+        "key": "A",
+        "chordNotes": [
+          110.0,
+          164.81
+        ],
+        "padType": "fm",
+        "padGain": 0.0319,
+        "padFilter": 579,
+        "padLfo": 0.0736,
+        "noiseType": "brown",
+        "noiseGain": 0.0148,
+        "droneFreq": 55.0,
+        "droneGain": 0.0355,
+        "melodyNotes": [
+          220.0,
+          277.18,
+          329.62,
+          293.66
+        ],
+        "melodyInterval": 7302,
+        "melodyGain": 0.0095,
+        "bassNotes": [
+          55.0,
+          82.41,
+          69.3
+        ],
+        "bassInterval": 8953,
+        "events": [
+          {
+            "type": "whaleCall",
+            "interval": 32498
+          },
+          {
+            "type": "heartbeat",
+            "interval": 16802
+          },
+          {
+            "type": "windGust",
+            "interval": 29991
+          }
+        ]
+      },
+      "phase3": {
+        "key": "A",
+        "chordNotes": [
+          110.0
+        ],
+        "padType": "simple",
+        "padGain": 0.0199,
+        "padFilter": 331,
+        "padLfo": 0.0736,
+        "noiseType": "brown",
+        "noiseGain": 0.0185,
+        "droneFreq": 55.0,
+        "droneGain": 0.0213,
+        "melodyNotes": [
+          220.0,
+          277.18,
+          329.62,
+          293.66
+        ],
+        "melodyInterval": 5216,
+        "melodyGain": 0,
+        "bassNotes": [
+          55.0,
+          82.41,
+          69.3
+        ],
+        "bassInterval": 6887,
+        "events": []
+      },
+      "masterLowpass": {
+        "1": 8000,
+        "2": 4000,
+        "3": 2000
+      },
+      "transitions": {
+        "1to2": {
+          "duration": 30
+        },
+        "2to3": {
+          "duration": 45
+        }
+      }
     },
     "character": {
       "name": "Jade Lantern",
@@ -11082,57 +11251,140 @@
     "cover": "/covers/gen-e3e07799ab05.svg",
     "musicProfile": "dreamy-clouds",
     "musicParams": {
-      "key": "A",
-      "chordNotes": [
-        110.0,
-        138.59,
-        164.81,
-        220.0
-      ],
-      "padType": "simple",
-      "padGain": 0.0406,
-      "padFilter": 473,
-      "padLfo": 0.0515,
-      "noiseType": "pink",
-      "noiseGain": 0.0122,
-      "droneFreq": 55.0,
-      "droneGain": 0.0316,
-      "melodyNotes": [
-        220.0,
-        277.18,
-        329.62,
-        293.66
-      ],
-      "melodyInterval": 4993,
-      "melodyGain": 0.0177,
-      "bassNotes": [
-        55.0,
-        82.41,
-        69.3
-      ],
-      "bassInterval": 6434,
-      "counterNotes": [
-        346.48,
-        412.02,
-        275.0
-      ],
-      "counterInterval": 4778,
-      "events": [
-        {
-          "type": "heartbeat",
-          "interval": 8886
-        },
-        {
-          "type": "chimes",
-          "interval": 12932
-        },
-        {
-          "type": "sparkle",
-          "interval": 16162
-        }
-      ],
+      "version": 2,
+      "counterMelody": false,
       "soundscapePreset": "rain",
-      "musicLoop": "pianoLullaby"
+      "musicLoop": "pianoLullaby",
+      "phase1": {
+        "key": "A",
+        "chordNotes": [
+          110.0,
+          138.59,
+          164.81,
+          220.0
+        ],
+        "padType": "simple",
+        "padGain": 0.0399,
+        "padFilter": 459,
+        "padLfo": 0.046,
+        "noiseType": "pink",
+        "noiseGain": 0.0123,
+        "droneFreq": 55.0,
+        "droneGain": 0.0355,
+        "melodyNotes": [
+          220.0,
+          277.18,
+          329.62,
+          293.66
+        ],
+        "melodyInterval": 5216,
+        "melodyGain": 0.0189,
+        "bassNotes": [
+          55.0,
+          82.41,
+          69.3
+        ],
+        "bassInterval": 6887,
+        "events": [
+          {
+            "type": "heartbeat",
+            "interval": 11817
+          },
+          {
+            "type": "chimes",
+            "interval": 18669
+          },
+          {
+            "type": "owl",
+            "interval": 28000
+          }
+        ]
+      },
+      "phase2": {
+        "key": "A",
+        "chordNotes": [
+          110.0,
+          164.81
+        ],
+        "padType": "simple",
+        "padGain": 0.0319,
+        "padFilter": 321,
+        "padLfo": 0.046,
+        "noiseType": "pink",
+        "noiseGain": 0.0148,
+        "droneFreq": 55.0,
+        "droneGain": 0.0355,
+        "melodyNotes": [
+          220.0,
+          277.18,
+          329.62,
+          293.66
+        ],
+        "melodyInterval": 7302,
+        "melodyGain": 0.0095,
+        "bassNotes": [
+          55.0,
+          82.41,
+          69.3
+        ],
+        "bassInterval": 8953,
+        "events": [
+          {
+            "type": "heartbeat",
+            "interval": 17726
+          },
+          {
+            "type": "chimes",
+            "interval": 28004
+          },
+          {
+            "type": "owl",
+            "interval": 42000
+          }
+        ]
+      },
+      "phase3": {
+        "key": "A",
+        "chordNotes": [
+          110.0
+        ],
+        "padType": "simple",
+        "padGain": 0.0199,
+        "padFilter": 184,
+        "padLfo": 0.046,
+        "noiseType": "pink",
+        "noiseGain": 0.0185,
+        "droneFreq": 55.0,
+        "droneGain": 0.0213,
+        "melodyNotes": [
+          220.0,
+          277.18,
+          329.62,
+          293.66
+        ],
+        "melodyInterval": 5216,
+        "melodyGain": 0,
+        "bassNotes": [
+          55.0,
+          82.41,
+          69.3
+        ],
+        "bassInterval": 6887,
+        "events": []
+      },
+      "masterLowpass": {
+        "1": 8000,
+        "2": 4000,
+        "3": 2000
+      },
+      "transitions": {
+        "1to2": {
+          "duration": 30
+        },
+        "2to3": {
+          "duration": 45
+        }
+      }
     },
     "music_type": "ambient",
     "audio_variants": [
