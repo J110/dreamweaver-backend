@@ -211,6 +211,7 @@ Return ONLY a JSON object (no markdown fences):
     "text": "Full story text with all emotion markers, character markers, and phase markers. Use \\n\\n between paragraphs.",
     "lullaby_lyrics": "Lullaby with [verse] and [chorus] markers",
     "character_name": "Name of the animal character",
+    "character_description": "Brief visual description of the character (e.g., 'A tiny glowing jellyfish with soft blue tentacles')",
     "character_type": "animal type (e.g., jellyfish, firefly, fox, butterfly)",
     "morals": ["lesson1"],
     "categories": ["Bedtime", "category2", "category3"],
@@ -320,6 +321,7 @@ def generate_story():
     lullaby_lyrics = parsed.get("lullaby_lyrics", "").strip()
     description = parsed.get("description", "").strip()
     character_name = parsed.get("character_name", "").strip()
+    character_description = parsed.get("character_description", "").strip()
     character_type = parsed.get("character_type", "animal").strip()
     morals = parsed.get("morals", ["Feeling safe and cozy helps you sleep"])
     categories = parsed.get("categories", ["Bedtime", "Animals", "Relaxation"])
@@ -380,6 +382,8 @@ def generate_story():
         "generation_quality": "pending_review",
         "lead_gender": "neutral",
         "lead_character_type": character_type,
+        "character_name": character_name,
+        "character_description": character_description,
         "universe": "fantasy_realm",
         "geography": geography,
         "life_aspect": "sleep_comfort",
