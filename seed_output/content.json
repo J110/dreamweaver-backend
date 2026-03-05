@@ -10641,7 +10641,7 @@
         ],
         "padType": "resonant",
         "padGain": 0.0399,
-        "padFilter": 551,
+        "padFilter": 643,
         "padLfo": 0.0736,
         "noiseType": "pink",
         "noiseGain": 0.0123,
@@ -10671,15 +10671,15 @@
             "interval": 7468
           },
           {
+            "type": "cricket",
+            "interval": 22216
+          },
+          {
             "type": "birdChirp",
-            "interval": 22216,
+            "interval": 26941,
             "phases": [
               1
             ]
-          },
-          {
-            "type": "cricket",
-            "interval": 16165
           }
         ]
       },
@@ -10691,7 +10691,7 @@
         ],
         "padType": "resonant",
         "padGain": 0.0319,
-        "padFilter": 386,
+        "padFilter": 450,
         "padLfo": 0.0736,
         "noiseType": "pink",
         "noiseGain": 0.0148,
@@ -10722,7 +10722,7 @@
           },
           {
             "type": "cricket",
-            "interval": 24248
+            "interval": 33324
           }
         ]
       },
@@ -10733,7 +10733,7 @@
         ],
         "padType": "simple",
         "padGain": 0.0199,
-        "padFilter": 220,
+        "padFilter": 257,
         "padLfo": 0.0736,
         "noiseType": "pink",
         "noiseGain": 0.0185,

@@ -596,34 +596,47 @@ def update_seed_data_music_params(story_id, music_params):
 
     content = SEED_DATA_JS.read_text(encoding="utf-8")
     escaped_id = re.escape(story_id)
+    params_json = json.dumps(music_params)
 
-    # Find the musicProfile line for this story and add musicParams after it
-    pattern = rf'(id:\s*"{escaped_id}".*?musicProfile:\s*"[^"]*")'
-    match = re.search(pattern, content, re.DOTALL)
+    # Strategy: find the story's id, then locate the insertion point within
+    # the SAME object block (don't cross into the next story).
+    id_match = re.search(rf'id:\s*"{escaped_id}"', content)
+    if not id_match:
+        print(f"  WARNING: {story_id} not found in seedData.js")
+        return False
 
-    if match:
-        insert_point = match.end()
-        params_json = json.dumps(music_params)
-        # Check if musicParams already exists
-        next_chunk = content[insert_point:insert_point + 500]
-        if "musicParams:" in next_chunk:
-            # Replace existing musicParams — need to match the entire nested object
-            # The musicParams object may contain nested arrays/objects, so use a more robust pattern
-            mp_match = re.search(
-                r',\s*musicParams:\s*(\{(?:[^{}]|\{(?:[^{}]|\{[^{}]*\})*\})*\})',
-                next_chunk
-            )
-            if mp_match:
-                end_pos = insert_point + mp_match.end()
-                new_content = content[:insert_point] + f",\n      musicParams: {params_json}" + content[end_pos:]
-                SEED_DATA_JS.write_text(new_content, encoding="utf-8")
-                return True
-        new_content = content[:insert_point] + f",\n      musicParams: {params_json}" + content[insert_point:]
+    # Find the end of this story's object block — look for the next `id:` line
+    # or end of array. We limit our search to this block only.
+    block_start = id_match.start()
+    next_id = re.search(r'\n\s*id:\s*"', content[block_start + 10:])
+    block_end = block_start + 10 + next_id.start() if next_id else len(content)
+    block = content[block_start:block_end]
+
+    # Check if musicParams already exists in this block
+    mp_match = re.search(
+        r',\s*musicParams:\s*(\{(?:[^{}]|\{(?:[^{}]|\{[^{}]*\})*\})*\})',
+        block
+    )
+    if mp_match:
+        # Replace existing musicParams
+        abs_start = block_start + mp_match.start()
+        abs_end = block_start + mp_match.end()
+        new_content = content[:abs_start] + f",\n      musicParams: {params_json}" + content[abs_end:]
         SEED_DATA_JS.write_text(new_content, encoding="utf-8")
         return True
+
+    # No existing musicParams — insert after musicProfile if it exists in this block
+    prof_match = re.search(r'musicProfile:\s*"[^"]*"', block)
+    if prof_match:
+        insert_point = block_start + prof_match.end()
     else:
-        print(f"  WARNING: Could not find musicProfile for {story_id} in seedData.js")
-        return False
+        # No musicProfile either — insert after the id line
+        id_line_end = re.search(r'id:\s*"[^"]*"', block)
+        insert_point = block_start + id_line_end.end() if id_line_end else block_start + len(story_id) + 10
+
+    new_content = content[:insert_point] + f",\n      musicParams: {params_json}" + content[insert_point:]
+    SEED_DATA_JS.write_text(new_content, encoding="utf-8")
+    return True
 
 
 def run():
