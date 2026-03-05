@@ -434,7 +434,7 @@ def phase_lullaby_quality(
             # ── Lyrics fidelity check (Whisper-based, optional) ──────
             fidelity = None
             try:
-                from scripts.lullaby_fidelity import check_lullaby_fidelity
+                from lullaby_fidelity import check_lullaby_fidelity
                 original_lyrics = story.get("text", "") or story.get("content", "")
                 if original_lyrics:
                     fidelity = check_lullaby_fidelity(str(audio_path), original_lyrics)
