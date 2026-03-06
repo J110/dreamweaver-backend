@@ -566,6 +566,24 @@ def build_generation_prompt(item: Dict, existing_titles: List[str],
         titles_str = ", ".join(f'"{t}"' for t in existing_titles[-10:])
         avoid = f"\nTitles already used (yours MUST be different): {titles_str}\n"
 
+    # For 0-1 lullabies: show recent syllable patterns so the LLM avoids them
+    if content_type == "song" and age_group == "0-1" and recent_fingerprints:
+        recent_songs = [s for s in recent_fingerprints
+                        if s.get("type") == "song" and s.get("age_group") == "0-1"]
+        if recent_songs:
+            lines = []
+            for s in recent_songs[-3:]:
+                # Extract first 2 lines to show the syllable pattern
+                text = s.get("text", "")
+                text_lines = [l.strip() for l in text.split("\n")
+                              if l.strip() and not l.strip().startswith("[")]
+                snippet = " / ".join(text_lines[:2]) if text_lines else ""
+                if snippet:
+                    lines.append(f'  - "{snippet}"')
+            if lines:
+                avoid += "\nRECENT LULLABY PATTERNS (yours MUST use completely different syllable combinations):\n"
+                avoid += "\n".join(lines) + "\n"
+
     # Hindi
     hindi_block = HINDI_INSTRUCTION if lang == "hi" else ""
 

@@ -308,31 +308,41 @@ INFANT_SONG_SYSTEM_PROMPT = """You are creating a lullaby for infants (ages 0-1)
 At this age, lullabies work through biology alone. The infant responds to acoustic
 structure: tempo, pitch contour, repetition, and vocal warmth — not words.
 
-STRUCTURE (STRICT):
-- Use EXACTLY this pattern: Verse, Verse, Verse, Verse (no chorus needed)
-- Each verse: EXACTLY 4 lines of nonsense syllables
-- Total: 16 lines maximum
-- Every verse uses the SAME 4-bar melodic phrase with ZERO variation
-- This is NOT a song with meaning — it is a rhythmic vocal pattern
+STRUCTURE:
+- 3-5 verses, each 3-5 lines
+- Pick ONE structure style per lullaby (vary across lullabies):
+  A) Pure vocal — all nonsense syllables, no real words
+  B) Anchor word — one soothing word per verse anchors the syllables (e.g. "dream", "moon", "star", "warm", "gentle", "glow", "soft", "float", "sway")
+  C) Call-and-echo — alternating lines of different syllable families
+  D) Descending — each verse gets shorter/quieter (5 lines → 4 → 3 → 2)
+- Within each verse, repeat a rhythmic motif but allow gentle variation between verses
+- This is NOT a song with narrative meaning — it is a soothing vocal pattern
 
-SYLLABLES (use ONLY these):
-- "Shh la la, shh la la"
-- "Loo loo loo, loo loo loo"
-- "Mmm mmm mmm, mmm mmm mmm"
-- "Ooh ooh ooh, ooh ooh ooh"
-- "Aah aah aah, aah aah aah"
-- "Na na na, na na na"
-- Simple sleep words OK: "sleep", "shh", "hush"
+SYLLABLE PALETTE (mix and combine creatively — do NOT use all of them):
+  Soft consonants: la, lu, li, lo, le, da, du, di, do, ba, bu, bo, bi
+  Nasal hums: ma, mu, mi, mo, na, nu, ni, no, mm, nn
+  Breathy: ha, hu, ho, shh, sha, shu, hoo, haa, whoo
+  Round vowels: oo, ooh, aah, ohh, eee, ah
+  Gliding: wa, wi, wo, ya, yo, yu
+  Liquid: ra, ru, ri, ro (soft, not rolled)
+Combine syllables into your own unique patterns. Examples of variety:
+  "Sha lu lu, sha lu lu" / "Doo ba dee, doo ba dee" / "Mm wa ni, mm wa ni"
+  "Hoo la la, hoo li li" / "Na yo na, na yo na" / "Bu di baa, bu di baa"
+Create 2-4 ORIGINAL syllable phrases per lullaby — do NOT reuse patterns from other lullabies.
+
+SIMPLE SOOTHING WORDS (sprinkle sparingly — max 1-2 per verse):
+  sleep, hush, shh, dream, rest, soft, warm, night, moon, star, glow, sway, float, peace, gentle, calm, still
 
 DO NOT USE:
-- Real sentences or narrative lyrics
-- Character names
-- Descriptive imagery
-- Any words that require cognitive processing
+- Full sentences or narrative lyrics
+- Character names in the lyrics
+- Descriptive imagery or storytelling
+- More than 3 real words per verse
 
 NARRATION SINGING MARKERS:
-- [HUMMING] — Before every verse (hummed, not sung)
-- [SLEEPY] — Before the final verse"""
+- [HUMMING] — Before the first verse and optionally before other verses
+- [SLEEPY] — Before the final verse
+- [GENTLE] — Optional, before a particularly soft verse"""
 
 # Safety guidelines for all content
 SAFETY_GUIDELINES = """
