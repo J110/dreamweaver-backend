@@ -92,11 +92,61 @@ PAUSE_MARKERS = {
     "breath_cue": 2000,       # breathing cue pause
 }
 
+# ── Per-phase TTS parameters for LONG stories (age-specific) ─────────
+# Values from long-story-generation-guidelines.md
+# Key differences: 9-12 has higher exaggeration/cfg in P2, softer volume curve
+#
+# Phase 1: engaged, natural speed
+# Phase 2: softer, slower (cfg_weight controls pacing natively)
+# Phase 3: ASMR voice, whispered
+#
+# Speed = post-processing stretch. Spec says "minimal or no stretching"
+# and use cfg_weight as primary speed control. Speed is a last resort.
+
+PHASE_TTS_PARAMS = {
+    # Ages 2-5 and 6-8 share the same TTS params
+    "2-5": {
+        1: {"exaggeration": 0.5,  "cfg_weight": 0.5,  "speed": 1.0,  "use_asmr": False},
+        2: {"exaggeration": 0.25, "cfg_weight": 0.3,  "speed": 0.95, "use_asmr": False},
+        3: {"exaggeration": 0.25, "cfg_weight": 0.2,  "speed": 0.88, "use_asmr": True},
+    },
+    "6-8": {
+        1: {"exaggeration": 0.5,  "cfg_weight": 0.5,  "speed": 1.0,  "use_asmr": False},
+        2: {"exaggeration": 0.25, "cfg_weight": 0.3,  "speed": 0.95, "use_asmr": False},
+        3: {"exaggeration": 0.25, "cfg_weight": 0.2,  "speed": 0.88, "use_asmr": True},
+    },
+    # Ages 9-12: slightly higher energy in P2 (exag 0.3, cfg 0.35)
+    "9-12": {
+        1: {"exaggeration": 0.5,  "cfg_weight": 0.5,  "speed": 1.0,  "use_asmr": False},
+        2: {"exaggeration": 0.3,  "cfg_weight": 0.35, "speed": 0.95, "use_asmr": False},
+        3: {"exaggeration": 0.25, "cfg_weight": 0.22, "speed": 0.90, "use_asmr": True},
+    },
+}
+
+# Per-phase volume reduction (dB) — age-specific
+# Applied before final normalization; normalization preserves RELATIVE differences
+PHASE_VOLUME_DB = {
+    "2-5":  {1: 0, 2: -3, 3: -6},
+    "6-8":  {1: 0, 2: -3, 3: -6},
+    "9-12": {1: 0, 2: -2, 3: -5},   # Spec: gentler curve for older kids
+}
+
+# Per-phase inter-paragraph pause (ms) — age-specific
+# Spec: P3 for 2-5 = 3-5s, P3 for 9-12 = 4-6s
+PHASE_PARA_PAUSE_MS = {
+    "2-5":  {1: 1000, 2: 1500, 3: 3500},
+    "6-8":  {1: 1000, 2: 1500, 3: 3000},
+    "9-12": {1: 1000, 2: 1500, 3: 4500},
+}
+
+# ASMR voice used for Phase 3 (already soft/breathy, no new clips needed)
+ASMR_VOICE = {"en": "asmr", "hi": "asmr_hi"}
+
 _MARKER_RE = re.compile(
-    r"\["
+    r"\[/?"
     r"(SLEEPY|GENTLE|CALM|EXCITED|CURIOUS|ADVENTUROUS|MYSTERIOUS|"
     r"JOYFUL|DRAMATIC|WHISPERING|DRAMATIC_PAUSE|RHYTHMIC|SINGING|"
-    r"HUMMING|PAUSE|CHAR_START|CHAR_END|PHASE_2|PHASE_3|LONG_PAUSE|"
+    r"HUMMING|PAUSE|CHAR_START|CHAR_END|PHASE_1|PHASE_2|PHASE_3|LONG_PAUSE|"
     r"BREATH_CUE|laugh|chuckle)"
     r"\]",
     re.IGNORECASE,
@@ -187,6 +237,10 @@ def parse_annotated_text(text: str, content_type: str = "story") -> List[dict]:
         # Character voice markers — strip only (narrator voice used for all)
         if marker_lower in ("char_start", "char_end"):
             continue
+        # Phase tags — opening/closing markers from structured long stories
+        elif marker_lower == "phase_1":
+            # Phase 1 start (or closing tag) — no state change needed
+            continue
         # Phase transitions
         elif marker_lower == "phase_2":
             current_phase = 2
@@ -217,6 +271,65 @@ def parse_annotated_text(text: str, content_type: str = "story") -> List[dict]:
                 segments.append(seg)
 
     return segments
+
+
+# ═════════════════════════════════════════════════════════════════════════
+# Phase-based audio generation (LONG stories with [PHASE_N] tags)
+# ═════════════════════════════════════════════════════════════════════════
+
+def parse_phases(story_text: str) -> Dict[int, str]:
+    """Extract phase texts from [PHASE_N]...[/PHASE_N] tagged story.
+
+    Returns dict: {1: "phase 1 text", 2: "phase 2 text", 3: "phase 3 text"}
+    Fallback: if no phase tags found, treat entire text as Phase 1 (backward compat).
+    """
+    phases = {}
+    for phase_num in [1, 2, 3]:
+        pattern = rf'\[PHASE_{phase_num}\](.*?)\[/PHASE_{phase_num}\]'
+        match = re.search(pattern, story_text, re.DOTALL)
+        if match:
+            phases[phase_num] = match.group(1).strip()
+
+    if not phases:
+        # No phase tags → legacy story, treat all as Phase 1
+        phases[1] = story_text
+
+    return phases
+
+
+def get_phase_voice(base_voice: str, phase_num: int, lang: str, age_group: str = "2-5") -> str:
+    """Get voice for a phase. Phase 3 uses ASMR voice for whispered delivery."""
+    params = PHASE_TTS_PARAMS.get(age_group, PHASE_TTS_PARAMS["2-5"])
+    if params[phase_num].get("use_asmr"):
+        return ASMR_VOICE.get(lang, "asmr")
+    return base_voice
+
+
+def apply_phase_volume(audio: "AudioSegment", phase_num: int, age_group: str = "2-5") -> "AudioSegment":
+    """Apply age-specific per-phase volume reduction.
+
+    After crossfading and final normalization, the RELATIVE differences are preserved.
+    """
+    vol_db = PHASE_VOLUME_DB.get(age_group, PHASE_VOLUME_DB["2-5"])
+    reduction = vol_db.get(phase_num, 0)
+    if reduction == 0:
+        return audio
+    return audio.apply_gain(reduction)
+
+
+def crossfade_phases(phase_audios: list, crossfade_ms: int = 3000) -> "AudioSegment":
+    """Stitch phase AudioSegments with crossfade overlaps using pydub's append()."""
+    result = phase_audios[0]
+    for next_audio in phase_audios[1:]:
+        if next_audio is None or len(next_audio) == 0:
+            continue
+        # Clamp crossfade to safe limits (half of shorter audio)
+        safe_xfade = min(crossfade_ms, len(result) // 2, len(next_audio) // 2)
+        if safe_xfade < 100:
+            result = result + next_audio  # too short for crossfade
+        else:
+            result = result.append(next_audio, crossfade=safe_xfade)
+    return result
 
 
 # ═════════════════════════════════════════════════════════════════════════
@@ -1304,6 +1417,142 @@ def stitch_lullaby(
     return story_faded + silence + lullaby_faded
 
 
+# ═════════════════════════════════════════════════════════════════════════
+# Phase-based long story audio generation
+# ═════════════════════════════════════════════════════════════════════════
+
+def generate_phase_audio(
+    client: httpx.Client,
+    phase_text: str,
+    voice: str,
+    phase_num: int,
+    lang: str = "en",
+    content_type: str = "story",
+    age_group: str = "2-5",
+) -> Optional[AudioSegment]:
+    """Generate audio for one phase with age-specific TTS params and voice.
+
+    Uses parse_annotated_text() to strip emotion markers and handle pauses,
+    but overrides per-segment emotion values with phase-level params.
+    Phase 3 uses the ASMR voice for whispered delivery.
+    """
+    if not phase_text.strip():
+        return None
+
+    age_params = PHASE_TTS_PARAMS.get(age_group, PHASE_TTS_PARAMS["2-5"])
+    params = age_params[phase_num]
+    phase_voice = get_phase_voice(voice, phase_num, lang, age_group)
+    paragraphs = phase_text.split("\n\n")
+    audio_segments: List[AudioSegment] = []
+    age_pauses = PHASE_PARA_PAUSE_MS.get(age_group, PHASE_PARA_PAUSE_MS["2-5"])
+    para_pause_ms = age_pauses[phase_num]
+
+    for i, para in enumerate(paragraphs):
+        para = para.strip()
+        if not para:
+            continue
+
+        # parse_annotated_text strips emotion markers and handles pauses
+        segments = parse_annotated_text(para, content_type)
+
+        for seg in segments:
+            if seg["type"] == "pause":
+                audio_segments.append(generate_silence(seg["duration_ms"]))
+            elif seg["type"] == "speech":
+                # Override emotion values with PHASE-LEVEL params
+                audio_bytes = generate_tts_for_segment(
+                    client,
+                    text=seg["text"],
+                    voice=phase_voice,
+                    exaggeration=params["exaggeration"],
+                    cfg_weight=params["cfg_weight"],
+                    lang=lang,
+                    speed=params["speed"],
+                )
+                if audio_bytes:
+                    try:
+                        audio_segments.append(audio_from_bytes(audio_bytes))
+                    except Exception as e:
+                        logger.error("  Phase %d decode error: %s", phase_num, e)
+                        return None
+                else:
+                    logger.error("  Phase %d TTS failed: %.50s...", phase_num, seg["text"])
+                    return None
+
+        # Inter-paragraph pause (except after last)
+        if i < len(paragraphs) - 1:
+            audio_segments.append(generate_silence(para_pause_ms))
+
+    if not audio_segments:
+        return None
+
+    # Concatenate all segments within this phase
+    combined = audio_segments[0]
+    for seg_audio in audio_segments[1:]:
+        combined = combined + seg_audio
+    return combined
+
+
+def generate_long_story_audio(
+    client: httpx.Client,
+    story_text: str,
+    voice: str,
+    lang: str = "en",
+    content_type: str = "story",
+    age_group: str = "2-5",
+) -> Optional[AudioSegment]:
+    """Generate long story audio with age-specific per-phase TTS params and ASMR Phase 3.
+
+    Flow: parse phases → generate per-phase audio → apply volume
+          → add silence padding → crossfade → normalize
+    """
+    phases = parse_phases(story_text)
+
+    phase_audios = []
+    for phase_num in [1, 2, 3]:
+        phase_text = phases.get(phase_num, "")
+        if not phase_text:
+            continue
+
+        phase_voice = get_phase_voice(voice, phase_num, lang, age_group)
+        logger.info("  Phase %d: %d chars, voice=%s, age=%s",
+                     phase_num, len(phase_text), phase_voice, age_group)
+
+        audio = generate_phase_audio(
+            client, phase_text, voice, phase_num, lang, content_type, age_group
+        )
+        if audio is None:
+            logger.error("  Phase %d generation failed", phase_num)
+            return None
+
+        # Apply age-specific per-phase volume reduction
+        audio = apply_phase_volume(audio, phase_num, age_group)
+
+        # Add 1.5s silence padding at end of phase (spec: "1-2 seconds of silence
+        # between the last word of Phase N and the first word of Phase N+1, before
+        # crossfading"). Applied to all phases except the last.
+        if phase_num < 3 and phases.get(phase_num + 1):
+            audio = audio + generate_silence(1500)
+
+        logger.info("  Phase %d: %.1f sec", phase_num, len(audio) / 1000.0)
+        phase_audios.append(audio)
+
+    if not phase_audios:
+        return None
+
+    # Crossfade stitch (3-5 second transitions between phases)
+    combined = crossfade_phases(phase_audios, crossfade_ms=3000)
+
+    # Normalize to -16 dBFS (preserves relative phase volume differences)
+    try:
+        gain = -16.0 - combined.dBFS
+        combined = combined.apply_gain(gain)
+    except Exception as e:
+        logger.warning("  Normalization failed: %s", e)
+
+    return combined
+
+
 def generate_story_variant(
     client: httpx.Client,
     story: dict,
@@ -1340,6 +1589,42 @@ def generate_story_variant(
 
     logger.info("  Generating %s / %s (%s)...", title, voice, lang)
 
+    # ── Phase-based generation for new LONG stories ──────────────
+    is_phased = "[PHASE_1]" in text and "[/PHASE_1]" in text
+    if is_phased:
+        age_group = story.get("age_group", "2-5")
+        logger.info("  Phase-tagged story — using phase-based generation (age %s)", age_group)
+        combined = generate_long_story_audio(
+            client, text, voice, lang, content_type, age_group
+        )
+        if combined is None:
+            logger.error("  Phase-based generation failed for %s", story_id)
+            return None
+
+        # Apply gentle fade in + longer fade out (spec: 5s fade-out for Phase 3 ending)
+        try:
+            fade_in_ms = min(500, len(combined) // 4)
+            fade_out_ms = min(5000, len(combined) // 3)
+            combined = combined.fade_in(fade_in_ms).fade_out(fade_out_ms)
+        except Exception as e:
+            logger.warning("  Fade failed (continuing): %s", e)
+
+        # Export (skip lullaby stitching — Phase 3 + ASMR voice replaces it)
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        combined.export(str(output_path), format="mp3", bitrate="256k")
+
+        duration = len(combined) / 1000.0
+        size_kb = output_path.stat().st_size / 1024
+        logger.info("  Saved %s (%.0f KB, %.1f sec, phased)", output_path.name, size_kb, duration)
+
+        return {
+            "voice": voice,
+            "url": f"/audio/pre-gen/{output_path.name}",
+            "duration_seconds": round(duration, 2),
+            "provider": "chatterbox",
+        }
+
+    # ── Legacy flow (existing code, unchanged) ────────────────────
     # Parse annotated text into segments
     paragraphs = text.split("\n\n")
     audio_segments: List[AudioSegment] = []

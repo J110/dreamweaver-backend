@@ -45,6 +45,186 @@ PARAGRAPH FORMATTING (CRITICAL):
 - Aim for 4-8 paragraphs depending on story length
 - This is essential for readability on mobile screens"""
 
+# ── Phase-structured prompt for LONG stories (fully age-specific) ──────
+#
+# Each age group has distinct Phase 1, Phase 2, AND Phase 3 instructions.
+# Key differences:
+#   Phase 1 timing: 30-35% for 2-5/6-8, 25-30% for 9-12 (older kids engage faster)
+#   Phase 2 style:  2-5 uses repetition; 6-8/9-12 use longer clauses (no repetition)
+#   Phase 3 style:  2-5 incantatory; 6-8 poetic; 9-12 literary prose poetry
+
+_LONG_STORY_PHASE_FOOTER = """
+You MUST include all six tags: [PHASE_1], [/PHASE_1], [PHASE_2], [/PHASE_2], [PHASE_3], [/PHASE_3].
+The phase tags go AROUND the story text. Emotion markers go INSIDE the phase text as usual.
+"""
+
+# ── Ages 2-5 ──────────────────────────────────────────────────────────
+_LONG_STORY_PHASES_2_5 = """
+IMPORTANT: Structure the story in three phases using these EXACT tags.
+
+[PHASE_1]
+Engagement — first 30-35% of the story.
+- Story introduction: setting, character, situation
+- Something interesting or magical happens
+- The world is described in vivid, engaging terms
+- Dialogue is allowed (characters talking)
+- Emotional tone: curious, warm, engaging
+- Narration style: an engaged, warm storyteller. Not excited or dramatic — but present and alive.
+  Think: a parent settling into the bedside, opening the book, beginning with warmth.
+- Use varied emotion markers: [EXCITED], [CURIOUS], [ADVENTUROUS], [MYSTERIOUS], [JOYFUL]
+[/PHASE_1]
+
+[PHASE_2]
+Settling — next 35-40%. The story's action resolves here — not in Phase 3.
+- Action resolves into observation and description
+- Character is settling, resting, or finding a peaceful place
+- Sensory descriptions dominate: what things feel like, sound like, smell like
+- Repetitive language patterns emerge: "The moss was soft. The air was soft. The light was soft."
+- Sensory words over action words: "cool," "still," "soft," "gentle," "steady"
+- Descending energy in sentence length: sentences get shorter as the phase progresses
+- No new tension, no new characters, no surprises
+- No questions, no exclamations, no dialogue in the second half of Phase 2
+- Emotional tone: calm, peaceful, contemplative
+- Use calming emotion markers: [GENTLE], [CALM], [MYSTERIOUS]
+[/PHASE_2]
+
+[PHASE_3]
+Sleep — final 25-30%. The narrator becomes the lullaby.
+- No story progression. Nothing happens. No new events, no dialogue, no questions, no action.
+- The character is at rest. The world is asleep.
+- Nothing scary, surprising, or stimulating
+- Extremely short sentences (3-7 words)
+- Heavy repetition of "still," "soft," "quiet," "warm," "sleep"
+- Use parallel structure: "The trees were still. The wind was still. The world was still."
+- Sleep imagery only: stars, moon, quiet, warm, safe, close your eyes, sleeping, still, soft, gentle
+- Direct address is allowed: "Close your eyes" as part of the rhythm
+- Final 2-3 sentences dissolve into fragments with ellipses
+- Final line can trail off: "Safe... and warm... and still..." or "mmm..." or "shh..."
+- The text should read like a lullaby even without music
+- Use only: [SLEEPY], [WHISPERING]
+[/PHASE_3]
+"""
+
+# ── Ages 6-8 ──────────────────────────────────────────────────────────
+_LONG_STORY_PHASES_6_8 = """
+IMPORTANT: Structure the story in three phases using these EXACT tags.
+
+[PHASE_1]
+Engagement — first 30-35% of the story.
+- Richer, more complex story world than younger ages
+- The character faces a situation that requires thought, not just wonder
+- More sophisticated vocabulary (but still clear and concrete)
+- Can include mild mystery, exploration, discovery
+- Emotional tone: intriguing, warm, adventurous (not hyper)
+- Slightly more energetic narration — these kids are more attentive
+- Use varied emotion markers: [EXCITED], [CURIOUS], [ADVENTUROUS], [MYSTERIOUS], [JOYFUL]
+[/PHASE_1]
+
+[PHASE_2]
+Settling — next 35-40%. The story's mystery/exploration resolves here — not in Phase 3.
+- The mystery resolves or the exploration reaches a resting point
+- Descriptive, sensory writing — what the character perceives
+- Character finds a safe, comfortable place
+- Pacing slows through LONGER sentences with more clauses, NOT through repetition
+- Do NOT use parallel repetition ("X was soft. Y was soft.") — these kids notice repetition and it annoys them
+- Use varied sentence structure instead
+- Longer, more complex sentences that naturally slow the pace through subordinate clauses
+- The warmth and stillness are described, not commanded
+- No new tension, no new characters, no surprises
+- No questions, no exclamations, no dialogue in the second half
+- Emotional tone: satisfied, peaceful, gently wondrous
+- Use calming emotion markers: [GENTLE], [CALM], [MYSTERIOUS]
+[/PHASE_2]
+
+[PHASE_3]
+Sleep — final 25-30%. Poetic, descriptive, NOT babyish.
+- No more story. Just the character at rest in the world.
+- Descriptive, contemplative, spacious
+- Short sentences return, but they're poetic rather than incantatory
+- Focus on sensory detail: what the character sees, hears, feels
+- The environment settles: lights dimming, sounds fading, warmth increasing
+- NO direct address to the child. NO "close your eyes." NO sleep commands.
+- The sleep invitation is environmental: describe the world going quiet and the child infers the rest
+- Do NOT use parallel repetition ("X was still. Y was still.") — that reads as too young
+- Varied sentence structure, overall shortening as the phase progresses
+- Narration style: soft and slow, but dignified. Not baby-talk territory.
+  Think of how a thoughtful adult reads the final page of a beautiful book — quietly, with respect for the silence that will follow.
+- End with a single, warm, conclusive line that feels complete — a period, not an ellipsis.
+  Examples: "And the night was kind." "And that was more than enough." "And the lighthouse kept its watch."
+- No trailing ellipses, no fragments, no humming cues
+- No new tension, no unresolved questions, no cliffhangers
+- Use only: [SLEEPY], [WHISPERING]
+[/PHASE_3]
+"""
+
+# ── Ages 9-12 ─────────────────────────────────────────────────────────
+_LONG_STORY_PHASES_9_12 = """
+IMPORTANT: Structure the story in three phases using these EXACT tags.
+
+[PHASE_1]
+Engagement — first 25-30% of the story (shorter — older kids engage faster).
+- Sophisticated world-building. Complex characters with inner lives.
+- Can address themes that matter to this age: belonging, identity, courage, the unknown
+- Descriptive but also intellectual — the character thinks, not just observes
+- Pacing can be dynamic (varied sentence lengths) to hold attention
+- Closer to natural conversational pace — these kids are sharp listeners
+- Emotional tone: compelling, thoughtful, slightly mysterious
+- Use varied emotion markers: [EXCITED], [CURIOUS], [ADVENTUROUS], [MYSTERIOUS], [JOYFUL]
+[/PHASE_1]
+
+[PHASE_2]
+Settling — next 35-40%. THE STORY MUST RESOLVE IN THIS PHASE.
+- The story's energy resolves. Questions are answered, or accepted as unanswerable.
+- All plot events, discoveries, and resolutions happen HERE — not in Phase 3
+- The character reaches a place of acceptance, calm, or understanding
+- Writing becomes more introspective — inner experience over outer action
+- More psychological depth — the character's inner state matters
+- Sentences LENGTHEN with more subordinate clauses, naturally slowing the reading pace
+- Longer sentences that unfold slowly (this is natural pacing, not artificial slowing)
+- Do NOT use repetition for pacing. Each sentence should be unique and varied.
+- Sensory detail increases: temperature, texture, sound, light
+- Can reference real emotions this age group experiences: loneliness, uncertainty, wonder, nostalgia
+- No new tension, no new characters, no surprises
+- Emotional tone: reflective, warm, accepting
+- Use calming emotion markers: [GENTLE], [CALM], [MYSTERIOUS]
+[/PHASE_2]
+
+[PHASE_3]
+Sleep — final 30-40% (longer — older kids take longer to fall asleep).
+Contemplative prose poetry. Mature and literary.
+THIS IS NOT THE STORY'S ENDING. The story is ALREADY over (it resolved in Phase 2).
+Phase 3 is the contemplative aftermath — the character resting in the world after the story is done.
+- The character has settled. The world has settled. Nothing is happening.
+- No plot, no progression, no new events, no action, no crowd scenes, no discoveries.
+  Just the character existing in stillness.
+- Writing is spare and precise. Each sentence carries weight.
+- Contemplative and introspective — the character's inner experience matters more than the outer world
+- Large gaps between sentences implied through paragraph breaks
+- The emotional register is mature — acceptance, peace, awe — not comfort or safety
+- Can reference mature emotions: acceptance, awe, nostalgia, peace, the feeling of being small in a vast world
+- Absolutely NO direct address. NO sleep language. NO "close your eyes."
+- This is NOT a bedtime instruction — it's literature that happens to make you sleepy.
+  This is a beautiful piece of writing being shared with a person who happens to be falling asleep.
+- NO repetition for rhythm. Each sentence is unique.
+  The pacing comes from sentence length and silence, not from repeated structures.
+- Sentence length varies but overall trend is toward shorter by the end
+- The final line should have thematic weight — it should feel like the last line of a short story
+  you'd remember. Not a sleep cue. A thought that lingers. A conclusion that happens to make
+  you want to close your eyes.
+  Examples: "And that was enough." "She closed her eyes, and the sea closed its."
+  "The stars didn't answer, but she hadn't expected them to."
+- No unresolved plot, no cliffhangers, no sequel-baiting
+- Use only: [SLEEPY], [WHISPERING]
+[/PHASE_3]
+"""
+
+# Pre-built per age group (fully age-specific Phase 1 + Phase 2 + Phase 3)
+LONG_STORY_PHASE_INSTRUCTIONS = {
+    "2-5": _LONG_STORY_PHASES_2_5 + _LONG_STORY_PHASE_FOOTER,
+    "6-8": _LONG_STORY_PHASES_6_8 + _LONG_STORY_PHASE_FOOTER,
+    "9-12": _LONG_STORY_PHASES_9_12 + _LONG_STORY_PHASE_FOOTER,
+}
+
 POEM_SYSTEM_PROMPT = """You are a talented children's poet specializing in bedtime poetry.
 Create rhythmic, soothing poems that are perfect for relaxation and sleep.
 Your poems use simple yet beautiful language, age-appropriate vocabulary, and calming themes.

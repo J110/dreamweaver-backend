@@ -51,6 +51,7 @@ except ImportError:
 from app.services.ai.prompts import (
     AGE_GROUP_INSTRUCTIONS,
     INFANT_SONG_SYSTEM_PROMPT,
+    LONG_STORY_PHASE_INSTRUCTIONS,
     POEM_SYSTEM_PROMPT,
     SAFETY_GUIDELINES,
     SONG_SYSTEM_PROMPT,
@@ -107,13 +108,13 @@ WORD_COUNTS = {
     ("0-1", "story", "MEDIUM"): (60, 120),
     ("2-5", "story", "SHORT"): (60, 250),
     ("2-5", "story", "MEDIUM"): (120, 500),
-    ("2-5", "story", "LONG"): (500, 800),
+    ("2-5", "story", "LONG"): (1000, 1600),   # ~12-18 min audio with phase-based TTS
     ("6-8", "story", "SHORT"): (200, 400),
     ("6-8", "story", "MEDIUM"): (400, 700),
-    ("6-8", "story", "LONG"): (700, 1200),
+    ("6-8", "story", "LONG"): (1400, 2200),   # ~15-22 min audio with phase-based TTS
     ("9-12", "story", "SHORT"): (300, 500),
     ("9-12", "story", "MEDIUM"): (500, 900),
-    ("9-12", "story", "LONG"): (900, 1500),
+    ("9-12", "story", "LONG"): (1800, 3000),  # ~18-28 min audio with phase-based TTS
     # Poems
     ("0-1", "poem", "SHORT"): (20, 40),
     ("0-1", "poem", "MEDIUM"): (40, 70),
@@ -560,6 +561,35 @@ DIVERSITY REQUIREMENTS — Make this piece UNIQUE:
     # Hindi
     hindi_block = HINDI_INSTRUCTION if lang == "hi" else ""
 
+    # Phase structuring for LONG stories — age-specific [PHASE_1]...[/PHASE_3] tags
+    phase_instructions = ""
+    phase_word_budget = ""
+    if length == "LONG" and content_type == "story":
+        phase_instructions = LONG_STORY_PHASE_INSTRUCTIONS.get(age_group, LONG_STORY_PHASE_INSTRUCTIONS["2-5"])
+        # Per-phase word count targets help the model budget its output
+        # (models are bad at hitting high total word counts without phase guidance)
+        phase_pcts = {
+            "2-5":  {"p1": (0.30, 0.35), "p2": (0.35, 0.40), "p3": (0.25, 0.30)},
+            "6-8":  {"p1": (0.30, 0.35), "p2": (0.35, 0.40), "p3": (0.25, 0.30)},
+            "9-12": {"p1": (0.25, 0.30), "p2": (0.35, 0.40), "p3": (0.30, 0.40)},
+        }.get(age_group, {"p1": (0.30, 0.35), "p2": (0.35, 0.40), "p3": (0.25, 0.30)})
+        p1_min = int(min_words * phase_pcts["p1"][0])
+        p1_max = int(max_words * phase_pcts["p1"][1])
+        p2_min = int(min_words * phase_pcts["p2"][0])
+        p2_max = int(max_words * phase_pcts["p2"][1])
+        p3_min = int(min_words * phase_pcts["p3"][0])
+        p3_max = int(max_words * phase_pcts["p3"][1])
+        phase_word_budget = f"""
+CRITICAL — WORD COUNT PER PHASE (you MUST hit these targets):
+- Phase 1: {p1_min}-{p1_max} words
+- Phase 2: {p2_min}-{p2_max} words
+- Phase 3: {p3_min}-{p3_max} words
+- TOTAL: {min_words}-{max_words} words
+
+This is a LONG bedtime story. Write a FULL, LENGTHY, richly detailed narrative.
+Do NOT abbreviate, summarize, or write a short version. Each phase must be substantial.
+"""
+
     prompt = f"""{base_prompt}
 
 {age_inst}
@@ -567,7 +597,8 @@ DIVERSITY REQUIREMENTS — Make this piece UNIQUE:
 {theme_inst}
 
 LENGTH: {length_desc}
-
+{phase_instructions}
+{phase_word_budget}
 {diversity}
 {avoid}
 {SAFETY_GUIDELINES}
@@ -830,11 +861,15 @@ def generate_one(client, item: Dict, existing_titles: List[str],
     # Poems are trickier (stanza structure, word count variability) — more attempts
     if item.get("type") == "poem":
         max_retries = max(max_retries, 5)
+    # LONG stories need more attempts — models struggle with high word counts
+    if item.get("length") == "LONG" and item.get("type") == "story":
+        max_retries = max(max_retries, 5)
 
     prompt = build_generation_prompt(item, existing_titles)
 
     # Determine max_tokens based on word count range
-    max_tokens = min(8192, max(1024, item["max_words"] * 4))
+    # LONG stories (up to 3000 words) need ~12K+ tokens — raise cap to 16384
+    max_tokens = min(16384, max(1024, item["max_words"] * 4))
 
     # Mistral free tier = 2 req/min — need longer waits between retries
     retry_delay = 35 if api == "mistral" else 2
@@ -875,6 +910,17 @@ def generate_one(client, item: Dict, existing_titles: List[str],
             text = ensure_paragraph_breaks(text, item["type"])
             if text_devanagari:
                 text_devanagari = ensure_paragraph_breaks(text_devanagari, item["type"])
+
+            # Validate phase markers for LONG stories
+            if item["length"] == "LONG" and item["type"] == "story":
+                if "[PHASE_1]" not in text or "[/PHASE_3]" not in text:
+                    logger.warning("  Attempt %d: LONG story missing phase markers, retrying...",
+                                   attempt + 1)
+                    if attempt < max_retries - 1:
+                        time.sleep(retry_delay)
+                        continue
+                    # Accept on last attempt anyway (will fall back to legacy audio flow)
+                    logger.warning("  Accepting unphased LONG story on final attempt")
 
             # Validate word count
             wc = count_words(text)
