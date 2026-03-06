@@ -170,18 +170,18 @@ if len(text.strip()) < 20:
 
 ### Current Voice Lineup
 
-**English (7 voices)**:
-| Voice ID | Gender | Character |
-|----------|--------|-----------|
-| `female_1` | Female | Warm, maternal |
-| `female_2` | Female | Young, gentle |
-| `female_3` | Female | Soft, soothing |
-| `male_1` | Male | Deep, calming |
-| `male_2` | Male | Warm, friendly |
-| `male_3` | Male | Gentle, storyteller |
-| `asmr` | Neutral | Ultra-soft whisper |
+**English (5 voices)**:
+| Voice ID | Character |
+|----------|-----------|
+| `female_1` | Calm, maternal |
+| `female_2` | Soft, gentle |
+| `female_3` | Melodic, soothing |
+| `male_2` | Gentle, friendly |
+| `asmr` | Ultra-soft whisper |
 
-**Hindi (7 voices)** — `_hi` suffix variants with Hindi-specific recordings.
+> **Retired voices:** `male_1` (Warm) and `male_3` (Musical) are no longer generated for new content. Existing audio files remain but are hidden from the UI.
+
+**Hindi (5 voices)** — `_hi` suffix variants with Hindi-specific recordings.
 
 ### Voice Reference Best Practices
 

@@ -85,8 +85,8 @@ _MARKER_RE = re.compile(
 )
 
 VOICE_MAP = {
-    "en": ["female_1", "female_2", "female_3", "male_1", "male_2", "male_3", "asmr"],
-    "hi": ["female_1_hi", "female_2_hi", "female_3_hi", "male_1_hi", "male_2_hi", "male_3_hi", "asmr_hi"],
+    "en": ["female_1", "female_2", "female_3", "male_2", "asmr"],
+    "hi": ["female_1_hi", "female_2_hi", "female_3_hi", "male_2_hi", "asmr_hi"],
 }
 
 NATIVE_SAMPLE_RATE = 24000

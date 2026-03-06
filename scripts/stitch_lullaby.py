@@ -46,9 +46,7 @@ VOICE_GENDER = {
     "female_2": "female",
     "female_3": "female",
     "asmr": "female",
-    "male_1": "male",
     "male_2": "male",
-    "male_3": "male",
 }
 
 # ── Atmospheric ambient descriptions (Sigur Rós / Ólafur Arnalds mood) ──
