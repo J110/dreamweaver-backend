@@ -205,6 +205,7 @@ def step_generate(args, state: dict) -> bool:
         "--count-stories", str(args.count_stories),
         "--count-poems", str(args.count_poems),
         "--count-lullabies", str(args.count_lullabies),
+        "--count-long-stories", str(args.count_long_stories),
     ]
     if args.lang:
         cmd += ["--lang", args.lang]
@@ -236,7 +237,7 @@ def step_generate(args, state: dict) -> bool:
             pass
 
     # Validate generation count — warn (don't halt) on partial failure
-    expected = args.count_stories + args.count_poems + args.count_lullabies
+    expected = args.count_stories + args.count_long_stories + args.count_poems + args.count_lullabies
     actual = len(new_ids)
     if actual < expected:
         logger.warning("  PARTIAL GENERATION: expected %d items but only got %d", expected, actual)
@@ -247,6 +248,19 @@ def step_generate(args, state: dict) -> bool:
         merge_expanded_to_content(new_ids)
 
     state["generated_ids"] = new_ids
+
+    # Log diversity fingerprint stats
+    if new_ids and CONTENT_PATH.exists():
+        try:
+            with open(CONTENT_PATH, "r") as f:
+                all_content = json.load(f)
+            new_stories = [s for s in all_content if s.get("id") in set(new_ids)]
+            fp_count = sum(1 for s in new_stories if s.get("diversityFingerprint"))
+            logger.info("  Diversity fingerprints: %d/%d new stories", fp_count, len(new_stories))
+            state["fingerprint_count"] = fp_count
+        except Exception:
+            pass
+
     state["step_generate"] = "done"
     save_state(state)
     return True
@@ -1012,6 +1026,8 @@ def main():
                         help="Number of poems to generate (default: 1)")
     parser.add_argument("--count-lullabies", type=int, default=1,
                         help="Number of lullabies to generate (default: 1)")
+    parser.add_argument("--count-long-stories", type=int, default=0,
+                        help="Number of additional LONG stories to generate (default: 0)")
     parser.add_argument("--lang", default="en",
                         help="Language to generate (default: en)")
     parser.add_argument("--dry-run", action="store_true",
@@ -1032,8 +1048,8 @@ def main():
     logger.info("║  %s                            ║", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     logger.info("╚══════════════════════════════════════════════╝")
     logger.info("")
-    logger.info("  Stories: %d | Poems: %d | Lullabies: %d | Lang: %s",
-                args.count_stories, args.count_poems, args.count_lullabies, args.lang)
+    logger.info("  Stories: %d | Long stories: %d | Poems: %d | Lullabies: %d | Lang: %s",
+                args.count_stories, args.count_long_stories, args.count_poems, args.count_lullabies, args.lang)
     logger.info("  Dry run: %s | Skip publish: %s", args.dry_run, args.skip_publish)
     logger.info("")
 

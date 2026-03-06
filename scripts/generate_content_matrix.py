@@ -448,6 +448,19 @@ def build_generation_plan(lang_filter: Optional[str] = None,
 FORMAT_JSON = """
 Return ONLY a valid JSON object with these fields (no markdown, no extra text):
 {
+    "characterType": "main character type (land_mammal, bird, sea_creature, insect, reptile_amphibian, human_child, mythical_creature, object_alive, plant_tree, celestial_weather, robot_mechanical)",
+    "setting": "where it happens (forest_woodland, ocean_water, sky_space, mountain_highland, meadow_field, desert_arid, arctic_polar, cozy_indoor, village_town, city_urban, underground_cave, garden_farm, island_tropical, imaginary_surreal, miniature_world)",
+    "plotShape": "story structure (journey_destination, discovery_reveal, lost_and_found, helping_someone, building_growing, transformation, gathering_reunion, pure_observation, routine_ritual, cyclical_seasonal)",
+    "timeOfDay": "sunset_golden_hour, twilight_blue_hour, deep_night_starlight, late_afternoon, or timeless",
+    "weather": "clear_calm, gentle_rain, misty_foggy, snowy, warm_breeze, overcast_grey, stormy_distant, or magical_atmospheric",
+    "theme": "curiosity_wonder, courage, kindness, friendship, patience, creativity, belonging, gratitude, letting_go, self_acceptance, gentleness, or rest_stillness",
+    "scale": "tiny_intimate, personal, local_adventure, journey, or epic_vast",
+    "companion": "solo, duo, group_community, meets_stranger, or character_and_environment",
+    "movement": "sleeping_resting, sitting_watching, floating_drifting, walking_wandering, flying_swimming, or building_making",
+    "magicType": "glowing_bioluminescent, talking_sentient_world, transformation_metamorphosis, miniaturization, music_sound_magic, weather_magic, dream_imagination_bleed, time_magic, color_magic, or no_magic_realistic",
+    "season": "spring, summer, autumn, winter, seasonal_transition, or seasonless_timeless",
+    "senseEmphasis": "dominant sense: visual, auditory, tactile, olfactory, or kinesthetic",
+    "characterTrait": "shy_quiet, bold_adventurous, dreamy_imaginative, kind_nurturing, clumsy_silly, wise_old_soul, anxious_worried, stubborn_determined, lonely_seeking, or playful_mischievous",
     "title": "The story/poem title",
     "description": "A 2-3 sentence mood hook (max 50 words). Start with something intriguing happening in the world, then show the character being drawn into it. Never mention sleep, bedtime, or relaxation. Never reveal the ending.",
     "text": "The FULL story/poem text with emotion markers. MUST use \\n\\n between paragraphs/stanzas for readability.",
@@ -479,7 +492,9 @@ Emotion markers like [GENTLE], [SLEEPY] etc. stay in English square brackets in 
 """
 
 
-def build_generation_prompt(item: Dict, existing_titles: List[str]) -> str:
+def build_generation_prompt(item: Dict, existing_titles: List[str],
+                            recent_fingerprints: List[Dict] = None,
+                            catalog_gaps: Dict = None) -> str:
     """Build a complete prompt for generating one content piece."""
 
     content_type = item["type"]
@@ -528,28 +543,21 @@ def build_generation_prompt(item: Dict, existing_titles: List[str]) -> str:
         else:
             char_type_guidance = f"- Lead Character Entity Type: HUMAN — The main character is a human child/teen."
 
-    # Diversity instructions — poem-specific vs story/song
-    if content_type == "poem":
-        diversity = f"""
-DIVERSITY REQUIREMENTS — Make this poem UNIQUE:
-- Universe/Setting Era: {item['universe'].upper()} — set this poem in a {item['universe']} world
-- Geography/Culture: {item['geography']} — draw imagery and metaphors from {item['geography']}
-- Life Aspect: {item['life_aspect'].replace('_', ' ')} — weave this theme into the poem's imagery
-- Poetic Mood: {item['plot_archetype'].replace('_', ' ').upper()} — use this as the emotional arc
-- Subject: {item['character_name']} ({item['character_species']}) in {item['character_setting']}
-{char_type_guidance}
-- Subject Gender: {'The subject should be {}'.format(item['lead_gender']) if item['lead_gender'] != 'neutral' else 'The subject can be any gender or non-human'}
-"""
+    # Diversity instructions — new fingerprint-based system + character guidance
+    from scripts.diversity import build_diversity_prompt
+    if recent_fingerprints is not None:
+        diversity_block = build_diversity_prompt(recent_fingerprints[-5:], catalog_gaps or {})
     else:
-        diversity = f"""
-DIVERSITY REQUIREMENTS — Make this piece UNIQUE:
-- Universe/Setting Era: {item['universe'].upper()} — set this in a {item['universe']} world/time period
-- Geography/Culture: {item['geography']} — the setting should be inspired by {item['geography']}
-- Life Aspect: {item['life_aspect'].replace('_', ' ')} — weave this life theme into the narrative
-- Plot Structure: {item['plot_archetype'].replace('_', ' ').upper()} — use this as the core plot archetype
-- Lead Character: {item['character_name']} ({item['character_species']}) in {item['character_setting']}
+        diversity_block = ""
+
+    gender_line = ""
+    if item.get("lead_gender") and item["lead_gender"] != "neutral":
+        gender_line = f"- Lead character gender: {item['lead_gender']}"
+
+    diversity = f"""
 {char_type_guidance}
-- Lead Character Gender: {'The lead character should be {}'.format(item['lead_gender']) if item['lead_gender'] != 'neutral' else 'The lead character should be non-human or an ensemble cast'}
+{gender_line}
+{diversity_block}
 """
 
     # Anti-duplication
@@ -855,7 +863,9 @@ def _call_mistral(client, prompt: str, max_tokens: int,
 
 
 def generate_one(client, item: Dict, existing_titles: List[str],
-                 max_retries: int = 3, api: str = "claude") -> Optional[Dict]:
+                 max_retries: int = 3, api: str = "claude",
+                 recent_fingerprints: List[Dict] = None,
+                 catalog_gaps: Dict = None) -> Optional[Dict]:
     """Generate a single content piece via Claude or Groq API."""
 
     # Poems are trickier (stanza structure, word count variability) — more attempts
@@ -865,7 +875,9 @@ def generate_one(client, item: Dict, existing_titles: List[str],
     if item.get("length") == "LONG" and item.get("type") == "story":
         max_retries = max(max_retries, 5)
 
-    prompt = build_generation_prompt(item, existing_titles)
+    prompt = build_generation_prompt(item, existing_titles,
+                                     recent_fingerprints=recent_fingerprints,
+                                     catalog_gaps=catalog_gaps)
 
     # Determine max_tokens based on word count range
     # LONG stories (up to 3000 words) need ~12K+ tokens — raise cap to 16384
@@ -893,6 +905,35 @@ def generate_one(client, item: Dict, existing_titles: List[str],
                 logger.warning("  Attempt %d: Failed to parse JSON", attempt + 1)
                 time.sleep(retry_delay)
                 continue
+
+            # Extract and validate diversity fingerprint from LLM output
+            from scripts.diversity import (DIMENSION_NAMES, validate_fingerprint,
+                                           check_hard_rules, check_collision)
+            raw_fp = {}
+            for dim in DIMENSION_NAMES:
+                val = parsed.pop(dim, None)
+                if val:
+                    raw_fp[dim] = val
+            fingerprint = validate_fingerprint(raw_fp) if raw_fp else None
+
+            # Collision check against recent stories
+            if fingerprint and recent_fingerprints:
+                passes_hard, violations = check_hard_rules(fingerprint, recent_fingerprints)
+                if not passes_hard and attempt < max_retries - 1:
+                    logger.warning("  Attempt %d: Hard rule violation: %s — retrying",
+                                   attempt + 1, "; ".join(violations[:3]))
+                    time.sleep(retry_delay)
+                    continue
+
+                passes_soft, details = check_collision(fingerprint, recent_fingerprints)
+                if not passes_soft and attempt < max_retries - 1:
+                    logger.warning("  Attempt %d: Collision score %d (threshold 18) — retrying",
+                                   attempt + 1, details["score"])
+                    time.sleep(retry_delay)
+                    continue
+
+                if not passes_hard or not passes_soft:
+                    logger.warning("  Accepting on final attempt despite diversity collision")
 
             title = parsed.get("title", "").strip()
             text = parsed.get("text", parsed.get("content", "")).strip()
@@ -995,6 +1036,7 @@ def generate_one(client, item: Dict, existing_titles: List[str],
                 "geography": item["geography"],
                 "life_aspect": item["life_aspect"],
                 "plot_archetype": item["plot_archetype"],
+                "diversityFingerprint": fingerprint,
                 "created_at": now,
                 "updated_at": now,
                 "view_count": 0,
@@ -1100,12 +1142,14 @@ def show_stats(content: List[Dict]):
 # ═══════════════════════════════════════════════════════════════════════
 
 def build_fresh_plan(count_stories: int = 1, count_poems: int = 1,
-                     count_lullabies: int = 0,
+                     count_lullabies: int = 0, count_long_stories: int = 0,
                      lang: str = "en", existing: list = None) -> list:
     """Build a plan for N stories + M poems + L lullabies with full diversity randomization.
 
     Unlike the matrix-based plan, this generates fresh items regardless
     of what's already been produced. Used by the daily pipeline.
+
+    count_long_stories adds extra stories forced to LONG length (on top of count_stories).
     """
     import random as _rng
 
@@ -1115,14 +1159,18 @@ def build_fresh_plan(count_stories: int = 1, count_poems: int = 1,
     plan = []
     age_groups_list = list(AGE_GROUPS.keys())
 
-    total = count_stories + count_poems + count_lullabies
+    all_stories = count_stories + count_long_stories
+    total = all_stories + count_poems + count_lullabies
     for i in range(total):
-        if i < count_stories:
+        if i < all_stories:
             content_type = "story"
-        elif i < count_stories + count_poems:
+        elif i < all_stories + count_poems:
             content_type = "poem"
         else:
             content_type = "song"
+
+        # Force LONG for the extra long-story slots
+        force_long = (content_type == "story" and i >= count_stories and i < all_stories)
 
         # Pick random diversity dimensions
         age_group = _rng.choice(age_groups_list)
@@ -1132,7 +1180,7 @@ def build_fresh_plan(count_stories: int = 1, count_poems: int = 1,
         life_aspects = LIFE_ASPECTS_BY_AGE[age_group]
 
         theme = _rng.choice(themes)
-        length = _rng.choice(lengths)
+        length = "LONG" if force_long else _rng.choice(lengths)
         universe = _rng.choice(UNIVERSES)
         geography = _rng.choice(GEOGRAPHIES)
         archetype = _rng.choice(PLOT_ARCHETYPES)
@@ -1198,6 +1246,8 @@ def main():
                         help="Generate N fresh poems (bypasses matrix, for daily pipeline)")
     parser.add_argument("--count-lullabies", type=int, default=0,
                         help="Generate N fresh lullabies (bypasses matrix, for daily pipeline)")
+    parser.add_argument("--count-long-stories", type=int, default=0,
+                        help="Generate N additional LONG stories (bypasses matrix, for daily pipeline)")
     args = parser.parse_args()
 
     # Load existing content
@@ -1208,7 +1258,7 @@ def main():
         return
 
     # Fresh count mode (for daily pipeline) vs. matrix mode
-    use_fresh_mode = args.count_stories > 0 or args.count_poems > 0 or args.count_lullabies > 0
+    use_fresh_mode = args.count_stories > 0 or args.count_poems > 0 or args.count_lullabies > 0 or args.count_long_stories > 0
 
     if use_fresh_mode:
         lang = args.lang or "en"
@@ -1216,12 +1266,13 @@ def main():
             count_stories=args.count_stories,
             count_poems=args.count_poems,
             count_lullabies=args.count_lullabies,
+            count_long_stories=args.count_long_stories,
             lang=lang,
             existing=existing,
         )
         logger.info("=== Fresh Generation Plan ===")
-        logger.info("Stories: %d, Poems: %d, Lullabies: %d, Lang: %s",
-                     args.count_stories, args.count_poems, args.count_lullabies, lang)
+        logger.info("Stories: %d, Long stories: %d, Poems: %d, Lullabies: %d, Lang: %s",
+                     args.count_stories, args.count_long_stories, args.count_poems, args.count_lullabies, lang)
         logger.info("To generate: %d", len(new_plan))
     else:
         # Matrix mode — fill in missing cells
@@ -1293,6 +1344,14 @@ def main():
     # Collect existing titles for dedup
     existing_titles = [c.get("title", "") for c in existing]
 
+    # Load diversity fingerprints for collision checking
+    from scripts.diversity import load_recent_fingerprints, find_catalog_gaps
+    content_json = BASE_DIR / "seed_output" / "content.json"
+    recent_fps = load_recent_fingerprints(content_json, days=14)
+    catalog_gaps = find_catalog_gaps(content_json)
+    logger.info("Diversity: %d recent fingerprints, gaps in %d dimensions",
+                len(recent_fps), len(catalog_gaps))
+
     success = 0
     failed = 0
 
@@ -1305,11 +1364,16 @@ def main():
             item["character_name"],
         )
 
-        result = generate_one(client, item, existing_titles, api=args.api)
+        result = generate_one(client, item, existing_titles, api=args.api,
+                              recent_fingerprints=recent_fps,
+                              catalog_gaps=catalog_gaps)
 
         if result:
             existing.append(result)
             existing_titles.append(result["title"])
+            # Track new fingerprint for within-batch collision checking
+            if result.get("diversityFingerprint"):
+                recent_fps.append(result)
             save_content(existing)
             wc = result.get("word_count", 0)
             logger.info("  OK: '%s' (%d words)", result["title"], wc)
