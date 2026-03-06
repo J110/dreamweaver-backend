@@ -3132,28 +3132,29 @@ def build_flux_prompt(story: dict, axes: dict) -> str:
     return prompt
 
 
-# ── Hugging Face FLUX API ────────────────────────────────────────────────
+# ── FLUX Image Generation ────────────────────────────────────────────────
 
 def generate_flux_image_pollinations(prompt: str) -> bytes:
-    """Call Pollinations.ai FLUX endpoint (free, unlimited for flux model).
+    """Call Pollinations.ai FLUX endpoint (0.001 pollen/image).
 
     Pollinations uses a GET URL with prompt in the path, so we truncate
     long prompts to avoid Cloudflare 400 errors on oversized URLs.
+    Auth required. Pollen balance resets weekly.
     """
     from urllib.parse import quote
     pollinations_token = os.getenv("POLLINATIONS_API_KEY", "")
+    if not pollinations_token:
+        logger.warning("POLLINATIONS_API_KEY not set, skipping Pollinations")
+        return None
 
     # Truncate prompt to ~600 chars to stay within URL limits after encoding
     # (600 chars → ~900 encoded → ~1000 total URL, well under Cloudflare's 2048 limit)
     truncated = prompt[:600].rsplit(",", 1)[0] if len(prompt) > 600 else prompt
     encoded_prompt = quote(truncated, safe="")
-    url = f"https://gen.pollinations.ai/image/{encoded_prompt}?width=512&height=512&model=flux&nologo=true"
-    headers = {}
-    if pollinations_token:
-        headers["Authorization"] = f"Bearer {pollinations_token}"
+    url = f"https://gen.pollinations.ai/image/{encoded_prompt}?width=512&height=512&model=flux"
+    headers = {"Authorization": f"Bearer {pollinations_token}"}
 
     logger.info("Calling FLUX via Pollinations.ai...")
-    logger.info("Prompt: %s", prompt[:200] + "...")
 
     for attempt in range(3):
         try:
@@ -3187,9 +3188,134 @@ def generate_flux_image_pollinations(prompt: str) -> bytes:
     return None
 
 
+def generate_flux_image_fluxapi(prompt: str) -> bytes:
+    """Call FluxAPI.ai Kontext Pro endpoint (async task-based).
+
+    Uses FLUXAPI_KEY env var. Creates a task, polls for result, downloads image.
+    Returns image bytes or None on failure.
+    """
+    api_key = os.getenv("FLUXAPI_KEY", "")
+    if not api_key:
+        logger.warning("FLUXAPI_KEY not set, skipping FluxAPI.ai")
+        return None
+
+    logger.info("Calling FLUX via FluxAPI.ai (Kontext Pro)...")
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json",
+    }
+    payload = {
+        "prompt": prompt[:1500],  # Kontext supports longer prompts
+        "aspectRatio": "1:1",
+        "outputFormat": "png",
+    }
+
+    try:
+        # Step 1: Create task
+        create_url = "https://api.fluxapi.ai/api/v1/flux/kontext/generate"
+        resp = httpx.post(create_url, headers=headers, json=payload, timeout=30)
+
+        if resp.status_code != 200:
+            logger.error("FluxAPI create error %d: %s", resp.status_code, resp.text[:300])
+            return None
+
+        data = resp.json()
+        task_id = data.get("data", {}).get("taskId")
+        if not task_id:
+            logger.error("FluxAPI no taskId in response: %s", resp.text[:300])
+            return None
+
+        logger.info("FluxAPI task created: %s", task_id)
+
+        # Step 2: Poll for result (up to 3 minutes)
+        record_url = "https://api.fluxapi.ai/api/v1/flux/kontext/record-info"
+        for attempt in range(36):  # 36 × 5s = 180s max
+            time.sleep(5)
+            poll = httpx.get(record_url, headers=headers, params={"taskId": task_id}, timeout=30)
+            poll_data = poll.json().get("data", {})
+            flag = poll_data.get("successFlag")
+
+            if flag == 1:  # SUCCESS
+                result_url = poll_data.get("response", {}).get("resultImageUrl")
+                if not result_url:
+                    logger.error("FluxAPI success but no resultImageUrl")
+                    return None
+                img_resp = httpx.get(result_url, timeout=60)
+                if len(img_resp.content) > 1000:
+                    logger.info("FluxAPI image received: %d bytes", len(img_resp.content))
+                    return img_resp.content
+                logger.warning("FluxAPI image too small: %d bytes", len(img_resp.content))
+                return None
+            elif flag in (2, 3):  # FAILED
+                logger.error("FluxAPI task failed: %s", poll_data.get("errorMessage", "unknown"))
+                return None
+
+        logger.warning("FluxAPI task timed out after 3 minutes")
+        return None
+
+    except Exception as e:
+        logger.error("FluxAPI error: %s", e)
+        return None
+
+
+def generate_flux_image_replicate(prompt: str) -> bytes:
+    """Call Replicate FLUX.1-schnell API ($0.003/image).
+
+    Uses the REPLICATE_API_TOKEN env var (also used for MusicGen).
+    Returns image bytes or None on failure.
+    """
+    replicate_token = os.getenv("REPLICATE_API_TOKEN", "")
+    if not replicate_token:
+        logger.warning("REPLICATE_API_TOKEN not set, skipping Replicate")
+        return None
+
+    logger.info("Calling FLUX via Replicate...")
+    try:
+        import replicate
+
+        output = replicate.run(
+            "black-forest-labs/flux-schnell",
+            input={
+                "prompt": prompt,
+                "num_outputs": 1,
+                "aspect_ratio": "1:1",
+                "output_format": "webp",
+                "output_quality": 90,
+                "go_fast": True,
+            },
+        )
+
+        # output is a list of FileOutput objects
+        for item in output:
+            image_bytes = item.read()
+            if len(image_bytes) > 1000:
+                logger.info("Replicate image received: %d bytes", len(image_bytes))
+                return image_bytes
+
+        logger.warning("Replicate returned empty or small output")
+        return None
+
+    except Exception as e:
+        logger.error("Replicate error: %s", e)
+        return None
+
+
 def generate_flux_image(prompt: str, hf_token: str = None) -> bytes:
-    """Generate a FLUX image via Pollinations.ai (free, unlimited for flux model)."""
-    return generate_flux_image_pollinations(prompt)
+    """Generate a FLUX image. Tries FluxAPI.ai → Pollinations → Replicate."""
+    # Primary: FluxAPI.ai (free trial credits)
+    result = generate_flux_image_fluxapi(prompt)
+    if result:
+        return result
+
+    # Fallback 1: Pollinations (requires pollen balance)
+    logger.info("FluxAPI failed, trying Pollinations fallback...")
+    result = generate_flux_image_pollinations(prompt)
+    if result:
+        return result
+
+    # Fallback 2: Replicate ($0.003/image)
+    logger.info("Pollinations failed, trying Replicate fallback...")
+    return generate_flux_image_replicate(prompt)
 
 
 def save_as_webp(image_bytes: bytes, output_path: Path, quality: int = 80) -> int:
