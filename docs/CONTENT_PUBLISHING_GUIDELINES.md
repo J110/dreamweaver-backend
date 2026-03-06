@@ -13,6 +13,7 @@
 5. **Audio files must exist in BOTH backend AND frontend `public/` directories.** nginx serves from frontend `public/`. Backend stores the source copies.
 6. **NEVER remove audio files from `public/audio/pre-gen/` unless the corresponding seedData.js entries are also removed.** Orphan URLs → 404 errors → broken playback.
 7. **Every content item MUST have `lead_character_type` set.** Without it, FLUX cover generation defaults to "human child" — producing a girl/boy for stories about owls, clouds, fireflies, etc. Pipeline-generated stories set this automatically. For manually added stories, set it explicitly or ensure the `_infer_character_type()` fallback in `generate_cover_experimental.py` can detect the correct type from the title/description.
+8. **NEVER replace content that is already live on production unless specifically requested.** Before any `git pull` or file copy on production, verify that existing assets (covers, audio, content data) won't be overwritten. If production has newer files than the git repo (e.g., FLUX covers regenerated after a pipeline fallback), those files MUST be committed to git FIRST before pulling. Always run `git status` on production before pulling to check for local changes.
 
 ---
 
