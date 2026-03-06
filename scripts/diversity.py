@@ -375,8 +375,7 @@ def find_catalog_gaps(content_path) -> dict:
     except (json.JSONDecodeError, Exception):
         return {}
 
-    # Only consider stories and poems (not songs)
-    stories = [s for s in all_stories if s.get("type") in ("story", "long_story", "poem")]
+    stories = [s for s in all_stories if s.get("type") in ("story", "long_story", "poem", "song")]
     if not stories:
         return {}
 

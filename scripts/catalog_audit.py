@@ -47,8 +47,8 @@ def audit(content_path: Path = CONTENT_PATH) -> dict:
     with open(content_path, "r", encoding="utf-8") as f:
         all_stories = json.load(f)
 
-    # Filter to stories/poems (not songs)
-    stories = [s for s in all_stories if s.get("type") in ("story", "long_story", "poem")]
+    # Filter to all narrative content
+    stories = [s for s in all_stories if s.get("type") in ("story", "long_story", "poem", "song")]
     total = len(stories)
 
     if total == 0:
