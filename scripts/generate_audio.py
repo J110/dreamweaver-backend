@@ -94,29 +94,29 @@ PAUSE_MARKERS = {
 }
 
 # ── Per-phase TTS parameters for LONG stories (age-specific) ─────────
-# Approach C revised: same voice Phases 1-2, ASMR for Phase 3.
-# cfg_weight does heavy lifting for pacing; speed stays in safe range (≥0.78).
-# Phase 2 is the real bridge — slow enough that ASMR Phase 3 isn't a cliff.
+# Approach C: same voice throughout all 3 phases. No ASMR substitution.
+# Differentiation comes from params only (exaggeration, cfg_weight, speed)
+# plus post-gen controls (volume, paragraph pause).
 #
 # Phase 1: warm, engaged, bedtime pace (not daytime conversation)
 # Phase 2: settling — noticeably slower, softer, spacious
-# Phase 3: ASMR voice, whispered, barely there
+# Phase 3: barely there — very slow, very soft, like a parent drifting off
 
 PHASE_TTS_PARAMS = {
     "2-5": {
         1: {"exaggeration": 0.5,  "cfg_weight": 0.5,  "speed": 0.90, "use_asmr": False},
         2: {"exaggeration": 0.25, "cfg_weight": 0.25, "speed": 0.82, "use_asmr": False},
-        3: {"exaggeration": 0.25, "cfg_weight": 0.2,  "speed": 0.78, "use_asmr": True},
+        3: {"exaggeration": 0.25, "cfg_weight": 0.2,  "speed": 0.78, "use_asmr": False},
     },
     "6-8": {
         1: {"exaggeration": 0.5,  "cfg_weight": 0.5,  "speed": 0.92, "use_asmr": False},
         2: {"exaggeration": 0.25, "cfg_weight": 0.28, "speed": 0.84, "use_asmr": False},
-        3: {"exaggeration": 0.25, "cfg_weight": 0.2,  "speed": 0.80, "use_asmr": True},
+        3: {"exaggeration": 0.25, "cfg_weight": 0.2,  "speed": 0.80, "use_asmr": False},
     },
     "9-12": {
         1: {"exaggeration": 0.5,  "cfg_weight": 0.5,  "speed": 0.95, "use_asmr": False},
         2: {"exaggeration": 0.25, "cfg_weight": 0.28, "speed": 0.85, "use_asmr": False},
-        3: {"exaggeration": 0.25, "cfg_weight": 0.2,  "speed": 0.82, "use_asmr": True},
+        3: {"exaggeration": 0.25, "cfg_weight": 0.2,  "speed": 0.82, "use_asmr": False},
     },
 }
 
