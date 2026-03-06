@@ -94,50 +94,48 @@ PAUSE_MARKERS = {
 }
 
 # ── Per-phase TTS parameters for LONG stories (age-specific) ─────────
-# Values from long-story-generation-guidelines.md
-# Key differences: 9-12 has higher exaggeration/cfg in P2, softer volume curve
+# Approach C revised: same voice Phases 1-2, ASMR for Phase 3.
+# cfg_weight does heavy lifting for pacing; speed stays in safe range (≥0.78).
+# Phase 2 is the real bridge — slow enough that ASMR Phase 3 isn't a cliff.
 #
-# Phase 1: engaged, natural speed
-# Phase 2: softer, slower (cfg_weight controls pacing natively)
-# Phase 3: ASMR voice, whispered
-#
-# Speed = post-processing stretch. Spec says "minimal or no stretching"
-# and use cfg_weight as primary speed control. Speed is a last resort.
+# Phase 1: warm, engaged, bedtime pace (not daytime conversation)
+# Phase 2: settling — noticeably slower, softer, spacious
+# Phase 3: ASMR voice, whispered, barely there
 
 PHASE_TTS_PARAMS = {
-    # Ages 2-5 and 6-8 share the same TTS params
     "2-5": {
-        1: {"exaggeration": 0.5,  "cfg_weight": 0.5,  "speed": 1.0,  "use_asmr": False},
-        2: {"exaggeration": 0.25, "cfg_weight": 0.3,  "speed": 0.95, "use_asmr": False},
-        3: {"exaggeration": 0.25, "cfg_weight": 0.2,  "speed": 0.88, "use_asmr": True},
+        1: {"exaggeration": 0.5,  "cfg_weight": 0.5,  "speed": 0.90, "use_asmr": False},
+        2: {"exaggeration": 0.25, "cfg_weight": 0.25, "speed": 0.82, "use_asmr": False},
+        3: {"exaggeration": 0.25, "cfg_weight": 0.2,  "speed": 0.78, "use_asmr": True},
     },
     "6-8": {
-        1: {"exaggeration": 0.5,  "cfg_weight": 0.5,  "speed": 1.0,  "use_asmr": False},
-        2: {"exaggeration": 0.25, "cfg_weight": 0.3,  "speed": 0.95, "use_asmr": False},
-        3: {"exaggeration": 0.25, "cfg_weight": 0.2,  "speed": 0.88, "use_asmr": True},
+        1: {"exaggeration": 0.5,  "cfg_weight": 0.5,  "speed": 0.92, "use_asmr": False},
+        2: {"exaggeration": 0.25, "cfg_weight": 0.28, "speed": 0.84, "use_asmr": False},
+        3: {"exaggeration": 0.25, "cfg_weight": 0.2,  "speed": 0.80, "use_asmr": True},
     },
-    # Ages 9-12: slightly higher energy in P2 (exag 0.3, cfg 0.35)
     "9-12": {
-        1: {"exaggeration": 0.5,  "cfg_weight": 0.5,  "speed": 1.0,  "use_asmr": False},
-        2: {"exaggeration": 0.3,  "cfg_weight": 0.35, "speed": 0.95, "use_asmr": False},
-        3: {"exaggeration": 0.25, "cfg_weight": 0.22, "speed": 0.90, "use_asmr": True},
+        1: {"exaggeration": 0.5,  "cfg_weight": 0.5,  "speed": 0.95, "use_asmr": False},
+        2: {"exaggeration": 0.25, "cfg_weight": 0.28, "speed": 0.85, "use_asmr": False},
+        3: {"exaggeration": 0.25, "cfg_weight": 0.2,  "speed": 0.82, "use_asmr": True},
     },
 }
 
 # Per-phase volume reduction (dB) — age-specific
 # Applied before final normalization; normalization preserves RELATIVE differences
+# Phase 3 capped at -5 dB for phone speaker safety
 PHASE_VOLUME_DB = {
-    "2-5":  {1: 0, 2: -3, 3: -6},
-    "6-8":  {1: 0, 2: -3, 3: -6},
-    "9-12": {1: 0, 2: -2, 3: -5},   # Spec: gentler curve for older kids
+    "2-5":  {1: 0, 2: -3, 3: -5},
+    "6-8":  {1: 0, 2: -3, 3: -5},
+    "9-12": {1: 0, 2: -3, 3: -5},
 }
 
 # Per-phase inter-paragraph pause (ms) — age-specific
-# Spec: P3 for 2-5 = 3-5s, P3 for 9-12 = 4-6s
+# Phase 2: modest increase (1800-2000ms) — not so long it feels broken
+# Phase 3: big pauses where the child is already drifting
 PHASE_PARA_PAUSE_MS = {
-    "2-5":  {1: 1000, 2: 1500, 3: 3500},
-    "6-8":  {1: 1000, 2: 1500, 3: 3000},
-    "9-12": {1: 1000, 2: 1500, 3: 4500},
+    "2-5":  {1: 1200, 2: 1800, 3: 3500},
+    "6-8":  {1: 1000, 2: 1800, 3: 3000},
+    "9-12": {1: 1000, 2: 2000, 3: 3500},
 }
 
 # ASMR voice used for Phase 3 (already soft/breathy, no new clips needed)
