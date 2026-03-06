@@ -137,9 +137,10 @@ def update_existing(seed_js: str, stories: list) -> tuple:
         cover = story.get("cover")
         character = story.get("character")
         musical_brief = story.get("musicalBrief")
+        content_type = story.get("type", "story")
         added_at = (story.get("addedAt") or story.get("created_at", ""))[:10] or None
         if variants:
-            title_map[title] = {"variants": variants, "duration": duration, "cover": cover, "character": character, "musicalBrief": musical_brief, "addedAt": added_at}
+            title_map[title] = {"variants": variants, "duration": duration, "cover": cover, "character": character, "musicalBrief": musical_brief, "addedAt": added_at, "type": content_type}
 
     replacements = 0
 
@@ -193,6 +194,22 @@ def update_existing(seed_js: str, stories: list) -> tuple:
                 new_cover_full = cover_prefix + f'cover: "{cover}",'
                 if old_cover_full != new_cover_full:
                     seed_js = seed_js.replace(old_cover_full, new_cover_full)
+
+        # Also update content type (e.g., story → long_story)
+        content_type = info.get("type")
+        if content_type:
+            type_pattern = (
+                r'(id:\s*"[^"]*",\s*\n\s*)'
+                r'type:\s*"[^"]*",'
+            )
+            # Find the entry by title context to avoid replacing wrong entries
+            entry_start_pattern = r'(id:\s*"[^"]*",\s*\n\s*type:\s*")[^"]*(",\s*\n\s*title:\s*"' + re.escape(title) + r'")'
+            type_match = re.search(entry_start_pattern, seed_js, re.DOTALL)
+            if type_match and type_match.group(1):
+                old_type = type_match.group(0)
+                new_type = type_match.group(1) + content_type + type_match.group(2)
+                if old_type != new_type:
+                    seed_js = seed_js.replace(old_type, new_type)
 
         # Also update character card for About tab
         character = info.get("character")

@@ -74,7 +74,7 @@ def build_test_item(age_group: str = "9-12", lang: str = "en"):
         "age_min": ag_info["age_min"],
         "age_max": ag_info["age_max"],
         "target_age": ag_info["target_age"],
-        "type": "story",
+        "type": "long_story",
         "theme": theme,
         "length": "LONG",
         "min_words": min_words,

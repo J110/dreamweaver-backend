@@ -951,14 +951,25 @@ def generate_one(client, item: Dict, existing_titles: List[str],
             content_id = f"gen-{uuid.uuid4().hex[:12]}"
             now = datetime.utcnow().isoformat()
 
+            # LONG stories use type "long_story" for frontend section placement
+            content_type = item["type"]
+            if item["length"] == "LONG" and content_type == "story":
+                content_type = "long_story"
+
+            # Strip phase markers from display text; keep in annotated_text for TTS
+            display_text = text
+            if "[PHASE_1]" in text:
+                display_text = re.sub(r'\[/?PHASE_\d+\]', '', text).strip()
+                display_text = re.sub(r'\n{3,}', '\n\n', display_text)
+
             content_obj = {
                 "id": content_id,
-                "type": item["type"],
+                "type": content_type,
                 "lang": item["lang"],
                 "title": title,
                 "description": description,
-                "text": text,
-                "annotated_text": text,  # Text already has markers from prompt
+                "text": display_text,
+                "annotated_text": text,  # Keeps phase markers for TTS pipeline
                 "target_age": item["target_age"],
                 "age_min": item["age_min"],
                 "age_max": item["age_max"],

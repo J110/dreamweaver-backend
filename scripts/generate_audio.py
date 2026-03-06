@@ -80,9 +80,10 @@ EMOTION_PROFILES: Dict[str, dict] = {
 }
 
 CONTENT_TYPE_PROFILES: Dict[str, dict] = {
-    "story": {"exaggeration": 0.5, "cfg_weight": 0.5},   # default — let Chatterbox shine
-    "poem":  {"exaggeration": 0.5, "cfg_weight": 0.3},   # slightly slower for poems
-    "song":  {"exaggeration": 0.7, "cfg_weight": 0.3},   # more expressive for songs
+    "story":      {"exaggeration": 0.5, "cfg_weight": 0.5},   # default — let Chatterbox shine
+    "long_story": {"exaggeration": 0.5, "cfg_weight": 0.5},   # same as story (phases override)
+    "poem":       {"exaggeration": 0.5, "cfg_weight": 0.3},   # slightly slower for poems
+    "song":       {"exaggeration": 0.7, "cfg_weight": 0.3},   # more expressive for songs
 }
 
 PAUSE_MARKERS = {
