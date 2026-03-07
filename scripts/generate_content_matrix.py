@@ -127,18 +127,12 @@ WORD_COUNTS = {
     ("9-12", "poem", "SHORT"): (80, 130),
     ("9-12", "poem", "MEDIUM"): (130, 220),
     ("9-12", "poem", "LONG"): (220, 400),
-    # Songs (Lullabies) — shorter lyrics with verse/chorus structure
+    # Songs (Lullabies) — only for ages 0-5 (per LULLABY_GENERATION_GUIDELINES.md)
     ("0-1", "song", "SHORT"): (30, 60),
     ("0-1", "song", "MEDIUM"): (50, 100),
     ("2-5", "song", "SHORT"): (50, 100),
     ("2-5", "song", "MEDIUM"): (80, 150),
     ("2-5", "song", "LONG"): (120, 200),
-    ("6-8", "song", "SHORT"): (60, 120),
-    ("6-8", "song", "MEDIUM"): (100, 180),
-    ("6-8", "song", "LONG"): (150, 250),
-    ("9-12", "song", "SHORT"): (80, 140),
-    ("9-12", "song", "MEDIUM"): (120, 200),
-    ("9-12", "song", "LONG"): (180, 300),
 }
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -1191,7 +1185,12 @@ def build_fresh_plan(count_stories: int = 1, count_poems: int = 1,
         force_long = (content_type == "story" and i >= count_stories and i < all_stories)
 
         # Pick random diversity dimensions
-        age_group = _rng.choice(age_groups_list)
+        # Lullabies (songs) are only appropriate for ages 0-1 and 2-5.
+        # Per LULLABY_GENERATION_GUIDELINES.md: "Ages 6+: No Lullabies"
+        if content_type == "song":
+            age_group = _rng.choice(["0-1", "2-5"])
+        else:
+            age_group = _rng.choice(age_groups_list)
         ag_info = AGE_GROUPS[age_group]
         themes = THEMES_BY_AGE[age_group]
         lengths = LENGTHS_BY_AGE[age_group]

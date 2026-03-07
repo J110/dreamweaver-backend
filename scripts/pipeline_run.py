@@ -243,6 +243,23 @@ def step_generate(args, state: dict) -> bool:
         logger.warning("  PARTIAL GENERATION: expected %d items but only got %d", expected, actual)
         state["generation_warning"] = f"Expected {expected}, got {actual}"
 
+    # Validate: songs (lullabies) should never be generated for ages 6+
+    if new_ids and CONTENT_EXPANDED_PATH.exists():
+        try:
+            expanded = json.loads(CONTENT_EXPANDED_PATH.read_text())
+            for item in expanded:
+                if item["id"] in set(new_ids) and item.get("type") == "song":
+                    age_min = item.get("age_min", 0)
+                    if age_min >= 6:
+                        logger.warning("  AUTO-FIX: Song '%s' generated for age %d+, resetting to 2-5",
+                                       item.get("title", item["id"]), age_min)
+                        item["age_min"] = 2
+                        item["age_max"] = 5
+                        item["target_age"] = 3
+            CONTENT_EXPANDED_PATH.write_text(json.dumps(expanded, indent=2, ensure_ascii=False))
+        except Exception as e:
+            logger.warning("  Song age validation failed: %s", e)
+
     # Merge into content.json
     if new_ids and not args.dry_run:
         merge_expanded_to_content(new_ids)

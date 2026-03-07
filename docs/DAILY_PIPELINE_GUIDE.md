@@ -357,6 +357,7 @@ The pipeline enforces 8 diversity dimensions:
 6. **Lead Character Type** (NEW): Human ~30%, Animals ~24%, Plants/Celestial/Weather ~18%, Objects/Aliens/Robots ~18%, Mythical ~6%
 7. **Theme**: 11 themes with balanced coverage
 8. **Anti-duplication**: Title, plot, character, setting uniqueness enforced
+9. **Lullaby age restriction**: Songs/lullabies are only generated for ages 0-1 and 2-5. Ages 6+ get stories and poems only. Enforced in content generation, audio generation, and pipeline post-validation.
 
 ---
 

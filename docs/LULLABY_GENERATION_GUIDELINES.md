@@ -41,6 +41,11 @@ Two age tiers with distinct parameters. No background music for lullabies — AC
 
 Lullabies are not generated for ages 6-8 or 9-12. At this age, stories and poems with ambient background music are more appropriate.
 
+**Enforcement (3 layers):**
+1. `generate_content_matrix.py` — `build_fresh_plan()` restricts songs to age groups 0-1 and 2-5 only
+2. `generate_audio.py` — `get_lullaby_config()` returns None for age_min >= 6, skipping audio generation
+3. `pipeline_run.py` — post-generation validator auto-corrects any song with age_min >= 6 back to 2-5
+
 ## 2. ACE-Step Tag Templates (Ages 2-5)
 
 ### Variant A: Voice + Harp
