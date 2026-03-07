@@ -347,7 +347,7 @@ The Chatterbox TTS endpoint uses **GET** requests:
 
 ```bash
 # URL format (note: GET, not POST)
-curl -o output.mp3 "https://anmol-71634--dreamweaver-chatterbox-tts.modal.run?\
+curl -o output.mp3 "https://j110--dreamweaver-chatterbox-tts.modal.run?\
 text=URL_ENCODED_STORY_TEXT&\
 voice=female_1&\
 exaggeration=0.4&\

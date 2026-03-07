@@ -26,7 +26,7 @@ content.json (annotated text)
 | **Native Sample Rate** | 24 kHz (do NOT upsample — adds interpolation artifacts) |
 | **Output Format** | 256 kbps MP3 at native 24 kHz |
 | **Voice References** | Pre-recorded human WAV files (24 kHz, mono) |
-| **Endpoint** | `https://anmol-71634--dreamweaver-chatterbox-tts.modal.run` |
+| **Endpoint** | `https://j110--dreamweaver-chatterbox-tts.modal.run` |
 
 ---
 

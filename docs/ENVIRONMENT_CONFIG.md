@@ -64,7 +64,7 @@
 | `DEBUG` | `false` | |
 | `GROQ_API_KEY` | `gsk_...` | Set manually |
 | `CORS_ORIGINS` | `*` | |
-| `CHATTERBOX_URL` | `https://anmol-71634--dreamweaver-chatterbox-tts.modal.run` | Set manually |
+| `CHATTERBOX_URL` | `https://j110--dreamweaver-chatterbox-tts.modal.run` | Set manually |
 | `DEFAULT_TTS_PROVIDER` | `edge-tts` | |
 | `SECRET_KEY` | random string | Set manually |
 
@@ -214,7 +214,7 @@ cp -r .next/static .next/standalone/.next/static
 | `SECRET_KEY` | strong random string | JWT signing |
 | `ALGORITHM` | `HS256` | |
 | `ACCESS_TOKEN_EXPIRE_MINUTES` | `1440` | 24 hours |
-| `CHATTERBOX_URL` | `https://anmol-71634--dreamweaver-chatterbox-tts.modal.run` | Modal TTS |
+| `CHATTERBOX_URL` | `https://j110--dreamweaver-chatterbox-tts.modal.run` | Modal TTS |
 | `DEFAULT_TTS_PROVIDER` | `edge-tts` | |
 
 ### 2.6 Nginx Configuration

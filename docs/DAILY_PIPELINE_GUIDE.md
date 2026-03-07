@@ -112,8 +112,8 @@ RESEND_API_KEY=your_resend_api_key_here
 # Voice references are stored in Modal persistent volume (already uploaded)
 
 # Modal — ACE-Step SongGen endpoint (for lullaby audio generation)
-SONGGEN_URL=https://anmol-71634--dreamweaver-songgen-sing.modal.run
-SONGGEN_HEALTH=https://anmol-71634--dreamweaver-songgen-health.modal.run
+SONGGEN_URL=https://j110--dreamweaver-songgen-sing.modal.run
+SONGGEN_HEALTH=https://j110--dreamweaver-songgen-health.modal.run
 
 # Admin API — used by pipeline to hot-reload backend content (no restart needed)
 ADMIN_API_KEY=your_admin_api_key_here
@@ -411,10 +411,10 @@ cat /opt/dreamweaver-backend/seed_output/pipeline_state.json
 
 ```bash
 # Chatterbox TTS (stories/poems)
-curl -s "https://anmol-71634--dreamweaver-chatterbox-health.modal.run" | python3 -m json.tool
+curl -s "https://j110--dreamweaver-chatterbox-health.modal.run" | python3 -m json.tool
 
 # ACE-Step SongGen (lullabies)
-curl -s "https://anmol-71634--dreamweaver-songgen-health.modal.run" | python3 -m json.tool
+curl -s "https://j110--dreamweaver-songgen-health.modal.run" | python3 -m json.tool
 ```
 
 ### Mistral API Check

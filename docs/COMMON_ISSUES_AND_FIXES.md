@@ -274,7 +274,7 @@ pm2 restart all
 **Fix**:
 ```bash
 # Warm up the endpoint before running the pipeline
-curl -s "https://anmol-71634--dreamweaver-chatterbox-health.modal.run" | python3 -m json.tool
+curl -s "https://j110--dreamweaver-chatterbox-health.modal.run" | python3 -m json.tool
 # Wait 5-10 seconds, then run the pipeline
 ```
 
@@ -332,7 +332,7 @@ ls -lt logs/pipeline_*.log | head -3
 ls -la audio/pre-gen/gen-ae9e*
 
 # Check Modal endpoint health
-curl -s "https://anmol-71634--dreamweaver-chatterbox-health.modal.run"
+curl -s "https://j110--dreamweaver-chatterbox-health.modal.run"
 
 # Check Mistral API connectivity
 python3 -c "from mistralai import Mistral; import os; c=Mistral(api_key=os.environ['MISTRAL_API_KEY']); r=c.chat.complete(model='mistral-large-latest', messages=[{'role':'user','content':'ping'}], max_tokens=5); print('OK:', r.choices[0].message.content)"
