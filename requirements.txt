@@ -10,3 +10,4 @@ pyloudnorm>=0.1.0
 numpy>=1.24.0
 scipy>=1.10.0
 faster-whisper>=1.0.0
+Pillow>=10.0.0
