@@ -13,12 +13,14 @@ from .generation import router as generation_router
 from .audio import router as audio_router
 from .feedback import router as feedback_router
 from .admin import router as admin_router
+from .blog import router as blog_router
 
 # Main v1 router
 router = APIRouter(prefix="/api/v1")
 
 # Include all sub-routers with appropriate prefixes
 router.include_router(admin_router, prefix="/admin", tags=["Admin"])
+router.include_router(blog_router, prefix="/blog", tags=["Blog"])
 router.include_router(auth_router, prefix="/auth", tags=["Auth"])
 router.include_router(users_router, prefix="/users", tags=["Users"])
 router.include_router(content_router, prefix="/content", tags=["Content"])
