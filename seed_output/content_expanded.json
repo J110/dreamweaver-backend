@@ -12484,5 +12484,142 @@
     "view_count": 0,
     "like_count": 0,
     "save_count": 0
+  },
+  {
+    "id": "gen-b12dc68672e3",
+    "type": "story",
+    "lang": "en",
+    "title": "Tilly and the Glowing Coral Cradle",
+    "description": "Beneath the shimmering twilight waves, tiny glowing corals begin to hum with soft light. Tilly the little sea turtle feels a gentle pull to build something special with her father—something that will make their ocean home even brighter.",
+    "text": "[GENTLE] Deep, deep in the ocean, where the water turns from blue to purple, lived a little sea turtle named Tilly.\n\n[CALM] Every evening, she loved to float beside her father, watching the glowing corals light up like tiny stars.\n\n[CURIOUS] 'Papa,' Tilly whispered, 'why do the corals glow so softly?'\n\n[WHISPERING] 'They’re singing to the ocean, my dear,' Papa said. 'And tonight, we can help them sing even brighter.'\n\n[ADVENTUROUS] Together, they gathered tiny, glowing pieces of coral and sea glass, weaving them into a cradle of light.\n\n[JOYFUL] As they worked, fish and jellyfish gathered around, their own lights flickering in time with the corals. [laugh] 'It’s a lullaby of light!' Tilly giggled.\n\n[SLEEPY] When the cradle was finished, Tilly curled up inside, her shell warm and safe. The ocean hummed its softest song, and the lights glowed just for her, like a family’s love wrapping her in golden dreams.",
+    "annotated_text": "[GENTLE] Deep, deep in the ocean, where the water turns from blue to purple, lived a little sea turtle named Tilly.\n\n[CALM] Every evening, she loved to float beside her father, watching the glowing corals light up like tiny stars.\n\n[CURIOUS] 'Papa,' Tilly whispered, 'why do the corals glow so softly?'\n\n[WHISPERING] 'They’re singing to the ocean, my dear,' Papa said. 'And tonight, we can help them sing even brighter.'\n\n[ADVENTUROUS] Together, they gathered tiny, glowing pieces of coral and sea glass, weaving them into a cradle of light.\n\n[JOYFUL] As they worked, fish and jellyfish gathered around, their own lights flickering in time with the corals. [laugh] 'It’s a lullaby of light!' Tilly giggled.\n\n[SLEEPY] When the cradle was finished, Tilly curled up inside, her shell warm and safe. The ocean hummed its softest song, and the lights glowed just for her, like a family’s love wrapping her in golden dreams.",
+    "target_age": 3,
+    "age_min": 2,
+    "age_max": 5,
+    "age_group": "2-5",
+    "length": "SHORT",
+    "word_count": 144,
+    "duration_seconds": 0,
+    "categories": [
+      "Family",
+      "Ocean Adventure",
+      "Gentle Magic"
+    ],
+    "theme": "family",
+    "morals": [
+      "Even the smallest hands can help build something beautiful.",
+      "Love and togetherness make the world brighter."
+    ],
+    "cover": "",
+    "musicProfile": "moonlit-meadow",
+    "music_type": "ambient",
+    "audio_variants": [],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "male",
+    "character": {
+      "name": "Tilly",
+      "identity": "A kind little sea turtle who loves to build with light",
+      "special": "She can feel the ocean’s gentle songs and turn them into glowing creations",
+      "personality_tags": [
+        "Kind",
+        "Creative"
+      ]
+    },
+    "cover_context": "A twilight ocean bathed in soft blue and purple hues, with glowing corals and sea glass shimmering like tiny stars. A gentle current carries floating jellyfish and fish, their lights flickering in harmony, while the water sparkles with golden reflections.",
+    "lead_character_type": "human",
+    "universe": "prehistoric",
+    "geography": "Ocean/Islands",
+    "life_aspect": "sleep_comfort",
+    "plot_archetype": "transformation",
+    "diversityFingerprint": {
+      "characterType": "reptile_amphibian",
+      "setting": "ocean_water",
+      "plotShape": "building_growing",
+      "scale": "tiny_intimate",
+      "companion": "duo",
+      "movement": "floating_drifting",
+      "timeOfDay": "twilight_blue_hour",
+      "weather": "magical_atmospheric",
+      "theme": "belonging",
+      "characterTrait": "kind_nurturing",
+      "magicType": "glowing_bioluminescent",
+      "season": "seasonless_timeless",
+      "senseEmphasis": "visual"
+    },
+    "created_at": "2026-03-07T01:24:55.208649",
+    "updated_at": "2026-03-07T01:24:55.208649",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0
+  },
+  {
+    "id": "gen-ee0b961ba5c8",
+    "type": "song",
+    "lang": "en",
+    "title": "Mira and the Whispering Fireflies",
+    "description": "Deep in the autumn woods, the trees hum with secrets, and fireflies glow like tiny lanterns. Mira, a shy nightingale, hears a melody no one else can—until a lost sparrow joins her, and together, they uncover the forest’s hidden song.",
+    "text": "[SINGING]\nSoftly falls the twilight blue,\nFireflies dance in golden hue.\nMira sings a quiet tune,\nUnderneath the harvest moon.\n\n[PAUSE]\n\n[SINGING]\nHush now, listen, can you hear?\nWhispers floating on the air.\nEvery leaf and every breeze,\nSings a song of mysteries.\n\n[PAUSE]\n\n[SINGING]\nSparrow lost but not alone,\nFinds a friend to guide him home.\nWings entwined in gentle flight,\nChasing stars into the night.\n\n[PAUSE]\n\n[SINGING]\nHush now, listen, can you hear?\nWhispers floating on the air.\nEvery leaf and every breeze,\nSings a song of mysteries.\n\n[PAUSE]\n\n[SLEEPY]\nNow the fireflies softly gleam,\nPainting dreams in silver stream.\nMira rests her weary wing,\nDrifting where the nightbirds sing.\n\n[PAUSE]\n\n[HUMMING]\nMmm mmm mmm...\nMmm mmm mmm...\nMmm mmm mmm...",
+    "annotated_text": "[SINGING]\nSoftly falls the twilight blue,\nFireflies dance in golden hue.\nMira sings a quiet tune,\nUnderneath the harvest moon.\n\n[PAUSE]\n\n[SINGING]\nHush now, listen, can you hear?\nWhispers floating on the air.\nEvery leaf and every breeze,\nSings a song of mysteries.\n\n[PAUSE]\n\n[SINGING]\nSparrow lost but not alone,\nFinds a friend to guide him home.\nWings entwined in gentle flight,\nChasing stars into the night.\n\n[PAUSE]\n\n[SINGING]\nHush now, listen, can you hear?\nWhispers floating on the air.\nEvery leaf and every breeze,\nSings a song of mysteries.\n\n[PAUSE]\n\n[SLEEPY]\nNow the fireflies softly gleam,\nPainting dreams in silver stream.\nMira rests her weary wing,\nDrifting where the nightbirds sing.\n\n[PAUSE]\n\n[HUMMING]\nMmm mmm mmm...\nMmm mmm mmm...\nMmm mmm mmm...",
+    "target_age": 10,
+    "age_min": 9,
+    "age_max": 12,
+    "age_group": "9-12",
+    "length": "SHORT",
+    "word_count": 112,
+    "duration_seconds": 0,
+    "categories": [
+      "Nature",
+      "Friendship"
+    ],
+    "theme": "friendship",
+    "morals": [
+      "Friendship turns strangers into family.",
+      "Even the quietest voices can lead the way."
+    ],
+    "cover": "",
+    "musicProfile": "enchanted-garden",
+    "music_type": "ambient",
+    "audio_variants": [],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "female",
+    "character": {
+      "name": "Mira",
+      "identity": "A shy nightingale who hears the forest’s hidden melodies",
+      "special": "She understands the songs the wind carries through the trees",
+      "personality_tags": [
+        "Gentle",
+        "Dreamy"
+      ]
+    },
+    "cover_context": "An autumn forest bathed in twilight blue, fireflies glowing like scattered stars among golden leaves. The air shimmers with soft light, and the trees stand tall, their branches humming with unseen magic.",
+    "lead_character_type": "human",
+    "universe": "prehistoric",
+    "geography": "East Asia",
+    "life_aspect": "health_wellness",
+    "plot_archetype": "transformation",
+    "diversityFingerprint": {
+      "characterType": "bird",
+      "setting": "forest_woodland",
+      "plotShape": "lost_and_found",
+      "scale": "personal",
+      "companion": "group_community",
+      "movement": "flying_swimming",
+      "timeOfDay": "twilight_blue_hour",
+      "weather": "magical_atmospheric",
+      "theme": "friendship",
+      "characterTrait": "shy_quiet",
+      "magicType": "glowing_bioluminescent",
+      "season": "autumn",
+      "senseEmphasis": "auditory"
+    },
+    "created_at": "2026-03-07T01:37:20.728606",
+    "updated_at": "2026-03-07T01:37:20.728606",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0
   }
 ]
