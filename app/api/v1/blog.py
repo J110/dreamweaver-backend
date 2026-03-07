@@ -624,39 +624,39 @@ async def _generate_image_fluxapi(prompt: str) -> Optional[bytes]:
             )
             resp.raise_for_status()
             data = resp.json()
-            task_id = data.get("id") or data.get("task_id")
+            task_id = data.get("data", {}).get("taskId")
 
             if not task_id:
-                # Some responses include the image directly
-                if data.get("output") and data["output"].get("image_url"):
-                    img_resp = await client.get(data["output"]["image_url"])
-                    img_resp.raise_for_status()
-                    return img_resp.content
+                logger.warning("FluxAPI no taskId in response: %s", str(data)[:300])
                 return None
 
-            # Poll for result
+            logger.info("FluxAPI task created: %s", task_id)
+
+            # Poll for result via record-info endpoint
+            record_url = "https://api.fluxapi.ai/api/v1/flux/kontext/record-info"
             for _ in range(36):  # Up to 3 minutes
                 await _async_sleep(5)
                 status_resp = await client.get(
-                    f"https://api.fluxapi.ai/api/v1/flux/tasks/{task_id}",
+                    record_url,
                     headers={"Authorization": f"Bearer {api_key}"},
+                    params={"taskId": task_id},
                 )
-                status_resp.raise_for_status()
-                status_data = status_resp.json()
+                poll_data = status_resp.json().get("data", {})
+                flag = poll_data.get("successFlag")
 
-                if status_data.get("status") == "completed":
-                    image_url = (
-                        status_data.get("output", {}).get("image_url")
-                        or status_data.get("result", {}).get("image_url")
-                    )
-                    if image_url:
-                        img_resp = await client.get(image_url)
-                        img_resp.raise_for_status()
+                if flag == 1:  # SUCCESS
+                    result_url = poll_data.get("response", {}).get("resultImageUrl")
+                    if not result_url:
+                        logger.warning("FluxAPI success but no resultImageUrl")
+                        return None
+                    img_resp = await client.get(result_url, timeout=60.0)
+                    if len(img_resp.content) > 1000:
                         logger.info("FluxAPI image generated (%d bytes)", len(img_resp.content))
                         return img_resp.content
+                    logger.warning("FluxAPI image too small: %d bytes", len(img_resp.content))
                     return None
-                elif status_data.get("status") == "failed":
-                    logger.warning("FluxAPI task failed: %s", status_data.get("error"))
+                elif flag in (2, 3):  # FAILED
+                    logger.warning("FluxAPI task failed: %s", poll_data.get("errorMessage", "unknown"))
                     return None
 
             logger.warning("FluxAPI task timed out")
