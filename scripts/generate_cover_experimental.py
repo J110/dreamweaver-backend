@@ -3301,7 +3301,7 @@ def generate_flux_image_replicate(prompt: str) -> bytes:
 
 
 def generate_flux_image_together(prompt: str) -> bytes:
-    """Call Together AI FLUX endpoint (free tier: FLUX.1-schnell-Free).
+    """Call Together AI FLUX.1-schnell endpoint.
 
     Uses TOGETHER_API_KEY env var. OpenAI-compatible images API.
     Returns image bytes or None on failure.
@@ -3317,7 +3317,7 @@ def generate_flux_image_together(prompt: str) -> bytes:
         "Content-Type": "application/json",
     }
     payload = {
-        "model": "black-forest-labs/FLUX.1-schnell-Free",
+        "model": "black-forest-labs/FLUX.1-schnell",
         "prompt": prompt[:1500],
         "width": 512,
         "height": 512,

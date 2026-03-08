@@ -1,55 +1,29 @@
 {
-  "started_at": "2026-03-07T01:24:33.979283",
+  "started_at": "2026-03-06T14:53:14.654871",
   "args": {
     "count_stories": 1,
-    "count_poems": 1,
-    "count_lullabies": 1,
-    "count_long_stories": 1,
+    "count_poems": 0,
+    "count_lullabies": 0,
     "lang": "en",
-    "dry_run": false,
+    "dry_run": true,
     "skip_publish": false,
     "skip_deploy_prod": false,
     "resume": false,
     "step": null
   },
   "last_step": "deploy_prod",
-  "generated_stories": 1,
-  "generated_poems": 0,
-  "generated_lullabies": 1,
-  "generation_warning": "Expected 4, got 2",
-  "generated_ids": [
-    "gen-b12dc68672e3",
-    "gen-ee0b961ba5c8"
-  ],
-  "fingerprint_count": 2,
+  "generation_warning": "Expected 1, got 0",
+  "generated_ids": [],
   "step_generate": "done",
-  "audio_elapsed_seconds": 391.12341570854187,
-  "step_audio": "done",
-  "qa_passed": [
-    "gen-b12dc68672e3",
-    "gen-ee0b961ba5c8"
-  ],
-  "qa_failed": [],
-  "step_qa": "done",
-  "step_enrich": "done",
-  "covers_flux": [
-    "gen-b12dc68672e3",
-    "gen-ee0b961ba5c8"
-  ],
-  "covers_fallback": [],
-  "covers_generated": [
-    "gen-b12dc68672e3",
-    "gen-ee0b961ba5c8"
-  ],
+  "step_audio": "skipped",
+  "step_qa": "skipped",
+  "step_enrich": "skipped",
+  "step_covers": "skipped",
+  "covers_generated": [],
   "covers_failed": [],
-  "step_covers": "done",
-  "step_sync": "done",
-  "step_publish": "done",
-  "publish_backend": "ok",
-  "publish_frontend": "ok",
-  "step_deploy_prod": "done",
-  "deploy_prod_frontend": "ok",
-  "deploy_prod_backend": "ok",
+  "step_sync": "dry_run",
+  "step_publish": "skipped",
+  "step_deploy_prod": "skipped",
   "status": "completed",
-  "completed_at": "2026-03-07T01:46:46.537935"
+  "completed_at": "2026-03-06T14:53:16.652717"
 }
