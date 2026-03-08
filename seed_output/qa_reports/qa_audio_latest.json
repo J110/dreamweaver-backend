@@ -1,115 +1,20 @@
 {
-  "generated_at": "2026-03-04T19:49:38.272711",
+  "generated_at": "2026-03-07T01:44:59.798162",
   "summary": {
-    "total": 3,
+    "total": 0,
     "passed": 0,
-    "warned": 3,
+    "warned": 0,
     "failed": 0,
-    "avg_fidelity": 0.358,
+    "avg_fidelity": null,
     "avg_quality": null
   },
   "stories": [
     {
-      "story_id": "gen-27e126b38fc4",
-      "title": "Finn’s Moonlit Friendship Song",
-      "median_duration": 119.91,
-      "variants": [
-        {
-          "voice": "female_1",
-          "duration_seconds": 119.91,
-          "verdict": "WARN",
-          "reasons": [
-            "marginal_fidelity (0.31)"
-          ],
-          "text_fidelity_combined": 0.3079,
-          "quality_average": 5.0,
-          "duration_outlier": false,
-          "duration_deviation_pct": 0.0,
-          "text_fidelity": {
-            "fuzzy_word_coverage": 0.2125,
-            "ratio": 0.2039,
-            "word_overlap": 0.4919,
-            "word_order_score": 0.4875,
-            "combined": 0.3079
-          },
-          "transcript_snippet": "Under the moon so soft and bright, so soft and bright. Fence swims slow in silver light. Waves hung low, the stars align. Friends will come, just give them time.Mama sings a Thai time tune People's fins will guide him soon Sister splashes Brother plays Fain just waits for friendships to gaze I'm a g"
-        },
-        {
-          "voice": "female_3",
-          "duration_seconds": 119.91,
-          "verdict": "WARN",
-          "reasons": [
-            "marginal_fidelity (0.41)"
-          ],
-          "text_fidelity_combined": 0.409,
-          "quality_average": 5.0,
-          "duration_outlier": false,
-          "duration_deviation_pct": 0.0,
-          "text_fidelity": {
-            "fuzzy_word_coverage": 0.2938,
-            "ratio": 0.3856,
-            "word_overlap": 0.6048,
-            "word_order_score": 0.575,
-            "combined": 0.409
-          },
-          "transcript_snippet": "Music Under the moon so soft and bright. Fines swim slow in silver light. Waves hum low, the stars align. Friends will come, just give them time. Mama sings a tight time tune.Pay post fames will guide him soon. Sister splashes, brother plays. Fane just waits for friendship ships to gaze. Hum, hum, a"
-        },
-        {
-          "voice": "male_1",
-          "duration_seconds": 119.91,
-          "verdict": "WARN",
-          "reasons": [
-            "marginal_fidelity (0.36)"
-          ],
-          "text_fidelity_combined": 0.357,
-          "quality_average": 5.0,
-          "duration_outlier": false,
-          "duration_deviation_pct": 0.0,
-          "text_fidelity": {
-            "fuzzy_word_coverage": 0.2625,
-            "ratio": 0.0979,
-            "word_overlap": 0.626,
-            "word_order_score": 0.5938,
-            "combined": 0.357
-          },
-          "transcript_snippet": "Under the moon so soft and bright. Fines swim soft and bright Fines swim slow in silver light Waves hung low, the stars align Friends willed melly like, give them timeMama sings a tight time tune. People's things will guide him soon. Sister splashes, brother plays, Fenn just waits for friendship's g"
-        }
-      ]
+      "story_id": "gen-ee0b961ba5c8",
+      "title": "Mira and the Whispering Fireflies",
+      "median_duration": 0,
+      "variants": []
     }
   ],
-  "failures_summary": [
-    {
-      "story": "Finn’s Moonlit Friendship Song",
-      "story_id": "gen-27e126b38fc4",
-      "voice": "female_1",
-      "verdict": "WARN",
-      "reasons": [
-        "marginal_fidelity (0.31)"
-      ],
-      "fidelity": 0.3079,
-      "quality_avg": 5.0
-    },
-    {
-      "story": "Finn’s Moonlit Friendship Song",
-      "story_id": "gen-27e126b38fc4",
-      "voice": "female_3",
-      "verdict": "WARN",
-      "reasons": [
-        "marginal_fidelity (0.41)"
-      ],
-      "fidelity": 0.409,
-      "quality_avg": 5.0
-    },
-    {
-      "story": "Finn’s Moonlit Friendship Song",
-      "story_id": "gen-27e126b38fc4",
-      "voice": "male_1",
-      "verdict": "WARN",
-      "reasons": [
-        "marginal_fidelity (0.36)"
-      ],
-      "fidelity": 0.357,
-      "quality_avg": 5.0
-    }
-  ]
+  "failures_summary": []
 }
