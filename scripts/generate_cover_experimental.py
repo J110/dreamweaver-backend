@@ -3300,20 +3300,88 @@ def generate_flux_image_replicate(prompt: str) -> bytes:
         return None
 
 
+def generate_flux_image_together(prompt: str) -> bytes:
+    """Call Together AI FLUX endpoint (free tier: FLUX.1-schnell-Free).
+
+    Uses TOGETHER_API_KEY env var. OpenAI-compatible images API.
+    Returns image bytes or None on failure.
+    """
+    api_key = os.getenv("TOGETHER_API_KEY", "")
+    if not api_key:
+        logger.warning("TOGETHER_API_KEY not set, skipping Together AI")
+        return None
+
+    logger.info("Calling FLUX via Together AI...")
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json",
+    }
+    payload = {
+        "model": "black-forest-labs/FLUX.1-schnell-Free",
+        "prompt": prompt[:1500],
+        "width": 512,
+        "height": 512,
+        "steps": 4,
+        "n": 1,
+        "response_format": "b64_json",
+    }
+
+    for attempt in range(3):
+        try:
+            resp = httpx.post(
+                "https://api.together.xyz/v1/images/generations",
+                headers=headers, json=payload, timeout=120
+            )
+            if resp.status_code == 200:
+                data = resp.json()
+                b64_data = data["data"][0]["b64_json"]
+                import base64 as _b64
+                image_bytes = _b64.b64decode(b64_data)
+                if len(image_bytes) > 1000:
+                    logger.info("Together AI image received: %d bytes", len(image_bytes))
+                    return image_bytes
+                logger.warning("Together AI image too small: %d bytes", len(image_bytes))
+            elif resp.status_code == 429:
+                logger.warning("Together AI rate limited, waiting 15s...")
+                time.sleep(15)
+                continue
+            else:
+                logger.error("Together AI error %d: %s", resp.status_code, resp.text[:300])
+                if attempt < 2:
+                    time.sleep(5)
+                    continue
+        except httpx.TimeoutException:
+            logger.warning("Together AI timeout on attempt %d", attempt + 1)
+            if attempt < 2:
+                time.sleep(5)
+                continue
+        except Exception as e:
+            logger.error("Together AI error: %s", e)
+            return None
+
+    return None
+
+
 def generate_flux_image(prompt: str, hf_token: str = None) -> bytes:
-    """Generate a FLUX image. Tries FluxAPI.ai → Pollinations → Replicate."""
-    # Primary: FluxAPI.ai (free trial credits)
+    """Generate a FLUX image. Tries Together AI → FluxAPI.ai → Pollinations → Replicate."""
+    # Primary: Together AI (free tier: FLUX.1-schnell-Free)
+    result = generate_flux_image_together(prompt)
+    if result:
+        return result
+
+    # Fallback 1: FluxAPI.ai (free trial credits)
+    logger.info("Together AI failed, trying FluxAPI fallback...")
     result = generate_flux_image_fluxapi(prompt)
     if result:
         return result
 
-    # Fallback 1: Pollinations (requires pollen balance)
+    # Fallback 2: Pollinations (requires pollen balance)
     logger.info("FluxAPI failed, trying Pollinations fallback...")
     result = generate_flux_image_pollinations(prompt)
     if result:
         return result
 
-    # Fallback 2: Replicate ($0.003/image)
+    # Fallback 3: Replicate ($0.003/image)
     logger.info("Pollinations failed, trying Replicate fallback...")
     return generate_flux_image_replicate(prompt)
 

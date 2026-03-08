@@ -256,6 +256,7 @@ def step_generate(args, state: dict) -> bool:
                         item["age_min"] = 2
                         item["age_max"] = 5
                         item["target_age"] = 3
+                        item["age_group"] = "2-5"
             CONTENT_EXPANDED_PATH.write_text(json.dumps(expanded, indent=2, ensure_ascii=False))
         except Exception as e:
             logger.warning("  Song age validation failed: %s", e)
@@ -382,14 +383,21 @@ def step_qa(args, state: dict) -> bool:
 
 
 def step_enrich(args, state: dict) -> bool:
-    """Step 4: Generate Musical Briefs (v3) for QA-passed stories via Mistral AI."""
+    """Step 4: Generate Musical Briefs (v3) for stories with audio via Mistral AI.
+
+    Enriches ALL stories that have audio (not just QA-passed), because QA timeouts
+    don't mean the audio is bad — the story still needs a musical brief.
+    """
     logger.info("\n╔══════════════════════════════════════╗")
     logger.info("║  STEP 4: ENRICH (Musical Briefs)     ║")
     logger.info("╚══════════════════════════════════════╝")
 
-    qa_passed = state.get("qa_passed", [])
-    if not qa_passed:
-        logger.info("  No QA-passed stories to enrich. Skipping.")
+    # Enrich all stories with audio, not just QA-passed
+    new_ids = state.get("generated_ids", [])
+    audio_failures = state.get("audio_failures", [])
+    enrich_ids = [sid for sid in new_ids if sid not in audio_failures]
+    if not enrich_ids:
+        logger.info("  No stories with audio to enrich. Skipping.")
         state["step_enrich"] = "skipped"
         save_state(state)
         return True
@@ -403,7 +411,7 @@ def step_enrich(args, state: dict) -> bool:
             content = _json.load(_f)
     content_by_id = {item["id"]: item for item in content if isinstance(item, dict)}
 
-    for sid in qa_passed:
+    for sid in enrich_ids:
         # Songs (lullabies) don't need Musical Briefs — ACE-Step output has vocals + instrument
         item = content_by_id.get(sid, {})
         if item.get("type", "").lower() == "song":
@@ -440,14 +448,20 @@ def step_covers(args, state: dict) -> bool:
     Each cover uses 7 diversity axes (world, palette, composition, character,
     light, texture, time) auto-selected from story metadata to ensure
     no two covers look similar.
+
+    Generates covers for ALL stories with audio (not just QA-passed), because
+    QA timeouts don't mean audio is bad — the story still needs a cover.
     """
     logger.info("\n╔══════════════════════════════════════╗")
     logger.info("║  STEP 5: GENERATE COVERS (FLUX+SVG)  ║")
     logger.info("╚══════════════════════════════════════╝")
 
-    qa_passed = state.get("qa_passed", [])
-    if not qa_passed:
-        logger.info("  No QA-passed stories to generate covers for. Skipping.")
+    # Generate covers for all stories with audio, not just QA-passed
+    new_ids = state.get("generated_ids", [])
+    audio_failures = state.get("audio_failures", [])
+    cover_ids = [sid for sid in new_ids if sid not in audio_failures]
+    if not cover_ids:
+        logger.info("  No stories with audio to generate covers for. Skipping.")
         state["step_covers"] = "skipped"
         state["covers_generated"] = []
         state["covers_failed"] = []
@@ -467,7 +481,7 @@ def step_covers(args, state: dict) -> bool:
         logger.warning("  ⚠️ HF_API_TOKEN not set — falling back to Mistral SVG covers")
         logger.warning("  Set HF_API_TOKEN in .env to use FLUX AI covers instead.")
         # Fallback to old Mistral-generated SVG covers
-        for sid in qa_passed:
+        for sid in cover_ids:
             cmd = [
                 sys.executable, str(SCRIPTS_DIR / "generate_cover_svg.py"),
                 "--id", sid,
@@ -497,7 +511,7 @@ def step_covers(args, state: dict) -> bool:
             pass
     content_map = {s["id"]: s for s in content}
 
-    for sid in qa_passed:
+    for sid in cover_ids:
         # Try to find the standalone story JSON first (for full metadata)
         story_json_candidates = list(SEED_OUTPUT.glob(f"*_{sid}.json"))
         if story_json_candidates:
@@ -607,14 +621,18 @@ def step_sync(args, state: dict) -> bool:
         save_state(state)
         return False
 
-    # Copy new audio files to web public folder so Next.js can serve them
+    # Copy new audio files to web public folder so nginx can serve them
+    # Copy for ALL stories with audio (not just QA-passed), because QA timeouts
+    # don't mean the audio is bad — files still need to be served.
     web_audio_dir = WEB_DIR / "public" / "audio" / "pre-gen"
     backend_audio_dir = BASE_DIR / "audio" / "pre-gen"
     if web_audio_dir.exists() and backend_audio_dir.exists():
         import shutil
-        qa_passed = state.get("qa_passed", [])
+        new_ids = state.get("generated_ids", [])
+        audio_failures = state.get("audio_failures", [])
+        copy_ids = [sid for sid in new_ids if sid not in audio_failures]
         copied = 0
-        for story_id in qa_passed:
+        for story_id in copy_ids:
             short_id = story_id[:8]
             for mp3 in backend_audio_dir.glob(f"{short_id}*.mp3"):
                 dest = web_audio_dir / mp3.name
@@ -641,15 +659,18 @@ def step_publish(args, state: dict) -> bool:
         save_state(state)
         return True
 
-    qa_passed = state.get("qa_passed", [])
-    if not qa_passed:
-        logger.info("  No QA-passed content to publish. Skipping.")
+    # Publish all stories with audio, not just QA-passed
+    new_ids = state.get("generated_ids", [])
+    audio_failures = state.get("audio_failures", [])
+    publish_ids = [sid for sid in new_ids if sid not in audio_failures]
+    if not publish_ids:
+        logger.info("  No content with audio to publish. Skipping.")
         state["step_publish"] = "skipped"
         save_state(state)
         return True
 
     date_str = datetime.now().strftime("%Y-%m-%d")
-    commit_msg = f"pipeline: add {len(qa_passed)} new content items ({date_str})"
+    commit_msg = f"pipeline: add {len(publish_ids)} new content items ({date_str})"
 
     # Ensure git identity is configured (required for commit on server)
     for repo_dir in [str(BASE_DIR), str(WEB_DIR)]:
@@ -728,9 +749,12 @@ def step_deploy_prod(args, state: dict) -> bool:
         save_state(state)
         return True
 
-    qa_passed = state.get("qa_passed", [])
-    if not qa_passed:
-        logger.info("  No QA-passed content. Skipping prod deploy.")
+    # Deploy all stories with audio, not just QA-passed
+    new_ids = state.get("generated_ids", [])
+    audio_failures = state.get("audio_failures", [])
+    deploy_ids = [sid for sid in new_ids if sid not in audio_failures]
+    if not deploy_ids:
+        logger.info("  No content with audio to deploy. Skipping prod deploy.")
         state["step_deploy_prod"] = "skipped"
         save_state(state)
         return True
