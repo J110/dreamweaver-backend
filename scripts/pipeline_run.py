@@ -196,6 +196,11 @@ def step_generate(args, state: dict) -> bool:
     logger.info("║  STEP 1: GENERATE CONTENT            ║")
     logger.info("╚══════════════════════════════════════╝")
 
+    total_requested = args.count_stories + args.count_long_stories + args.count_poems + args.count_lullabies
+    if total_requested == 0:
+        logger.info("  No new content requested (all counts = 0). Skipping generation.")
+        return True
+
     before_ids = get_existing_ids()
 
     # Build the generation command using --count-stories/--count-poems/--count-lullabies for fresh daily content
