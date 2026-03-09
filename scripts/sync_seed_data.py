@@ -257,29 +257,54 @@ def update_existing(seed_js: str, stories: list) -> tuple:
         musical_brief = info.get("musicalBrief")
         if musical_brief:
             mb_json = json.dumps(musical_brief, ensure_ascii=False)
-            # Check if musicalBrief already exists for this entry
-            mb_existing_pattern = (
-                r'(title:\s*"' + escaped_title + r'".*?)'
-                r'musicalBrief:\s*\{[^}]*(?:\{[^}]*\}[^}]*)*\},'
-            )
-            mb_match = re.search(mb_existing_pattern, seed_js, re.DOTALL)
-            if mb_match:
-                old_mb = mb_match.group(0)
-                mb_prefix = mb_match.group(1)
-                new_mb = mb_prefix + f"musicalBrief: {mb_json},"
-                if old_mb != new_mb:
-                    seed_js = seed_js.replace(old_mb, new_mb)
-            else:
-                # Insert musicalBrief after musicParams line
-                insert_mb_pattern = (
-                    r'(title:\s*"' + escaped_title + r'".*?'
-                    r'musicParams:\s*\{[^}]*(?:\{[^}]*\}[^}]*)*\},)'
-                )
-                insert_mb_match = re.search(insert_mb_pattern, seed_js, re.DOTALL)
-                if insert_mb_match:
-                    old_block = insert_mb_match.group(0)
-                    new_block = old_block + f"\n      musicalBrief: {mb_json},"
-                    seed_js = seed_js.replace(old_block, new_block, 1)
+            # Find musicalBrief using brace-counting (regex can't handle nested JSON)
+            mb_key = "musicalBrief: {"
+            title_pat = re.search(r'title:\s*"' + escaped_title + r'"', seed_js)
+            if title_pat:
+                search_start = title_pat.start()
+                mb_pos = seed_js.find(mb_key, search_start)
+                # Only match if within the same entry (before next entry's "id:")
+                next_id = seed_js.find('\n    {', search_start + 1)
+                if mb_pos != -1 and (next_id == -1 or mb_pos < next_id):
+                    # Found existing musicalBrief — find its end via brace counting
+                    brace_start = mb_pos + len(mb_key) - 1  # position of '{'
+                    depth = 0
+                    end = brace_start
+                    for i in range(brace_start, len(seed_js)):
+                        if seed_js[i] == '{':
+                            depth += 1
+                        elif seed_js[i] == '}':
+                            depth -= 1
+                        if depth == 0:
+                            end = i
+                            break
+                    # Include trailing comma
+                    if end + 1 < len(seed_js) and seed_js[end + 1] == ',':
+                        end += 1
+                    old_mb = seed_js[mb_pos:end + 1]
+                    new_mb = f"musicalBrief: {mb_json},"
+                    if old_mb != new_mb:
+                        seed_js = seed_js[:mb_pos] + new_mb + seed_js[end + 1:]
+                else:
+                    # Insert musicalBrief after musicParams line
+                    mp_key = "musicParams: {"
+                    mp_pos = seed_js.find(mp_key, search_start)
+                    if mp_pos != -1 and (next_id == -1 or mp_pos < next_id):
+                        brace_start = mp_pos + len(mp_key) - 1
+                        depth = 0
+                        end = brace_start
+                        for i in range(brace_start, len(seed_js)):
+                            if seed_js[i] == '{':
+                                depth += 1
+                            elif seed_js[i] == '}':
+                                depth -= 1
+                            if depth == 0:
+                                end = i
+                                break
+                        if end + 1 < len(seed_js) and seed_js[end + 1] == ',':
+                            end += 1
+                        insert_point = end + 1
+                        seed_js = seed_js[:insert_point] + f"\n      musicalBrief: {mb_json}," + seed_js[insert_point:]
 
     return seed_js, replacements
 
