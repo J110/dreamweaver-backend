@@ -1,29 +1,58 @@
 {
-  "started_at": "2026-03-06T14:53:14.654871",
+  "started_at": "2026-03-08T01:30:01.939177",
   "args": {
     "count_stories": 1,
-    "count_poems": 0,
-    "count_lullabies": 0,
+    "count_poems": 1,
+    "count_lullabies": 1,
+    "count_long_stories": 1,
     "lang": "en",
-    "dry_run": true,
+    "dry_run": false,
     "skip_publish": false,
     "skip_deploy_prod": false,
     "resume": false,
     "step": null
   },
   "last_step": "deploy_prod",
-  "generation_warning": "Expected 1, got 0",
-  "generated_ids": [],
+  "generated_stories": 0,
+  "generated_poems": 1,
+  "generated_lullabies": 1,
+  "generation_warning": "Expected 4, got 3",
+  "generated_ids": [
+    "gen-20ac6dcc8899",
+    "gen-ac421eca75dd",
+    "gen-bfea572c7a73"
+  ],
+  "fingerprint_count": 3,
   "step_generate": "done",
-  "step_audio": "skipped",
-  "step_qa": "skipped",
-  "step_enrich": "skipped",
-  "step_covers": "skipped",
-  "covers_generated": [],
+  "audio_failures": [
+    "gen-bfea572c7a73"
+  ],
+  "audio_elapsed_seconds": 2228.350919485092,
+  "step_audio": "done",
+  "qa_passed": [
+    "gen-20ac6dcc8899"
+  ],
+  "qa_failed": [
+    "gen-ac421eca75dd"
+  ],
+  "step_qa": "done",
+  "step_enrich": "done",
+  "covers_flux": [
+    "gen-20ac6dcc8899"
+  ],
+  "covers_fallback": [],
+  "covers_generated": [
+    "gen-20ac6dcc8899"
+  ],
   "covers_failed": [],
-  "step_sync": "dry_run",
-  "step_publish": "skipped",
-  "step_deploy_prod": "skipped",
+  "step_covers": "done",
+  "step_sync": "done",
+  "step_publish": "done",
+  "publish_backend": "ok",
+  "publish_frontend": "ok",
+  "step_deploy_prod": "done",
+  "deploy_prod_frontend": "ok",
+  "deploy_prod_backend": "ok",
   "status": "completed",
-  "completed_at": "2026-03-06T14:53:16.652717"
+  "completed_at": "2026-03-08T02:32:58.008978"
 }
