@@ -227,10 +227,12 @@ def step_generate(args, state: dict) -> bool:
             expanded = json.loads(CONTENT_EXPANDED_PATH.read_text())
             new_items = [s for s in expanded if s["id"] in set(new_ids)]
             story_count = sum(1 for s in new_items if s.get("type") == "story")
+            long_story_count = sum(1 for s in new_items if s.get("type") == "long_story")
             poem_count = sum(1 for s in new_items if s.get("type") == "poem")
             song_count = sum(1 for s in new_items if s.get("type") == "song")
-            logger.info("  Breakdown: %d stories, %d poems, %d lullabies", story_count, poem_count, song_count)
-            state["generated_stories"] = story_count
+            logger.info("  Breakdown: %d stories, %d long stories, %d poems, %d lullabies",
+                        story_count, long_story_count, poem_count, song_count)
+            state["generated_stories"] = story_count + long_story_count
             state["generated_poems"] = poem_count
             state["generated_lullabies"] = song_count
         except Exception:
@@ -284,6 +286,35 @@ def step_generate(args, state: dict) -> bool:
     return True
 
 
+def _find_incomplete_content() -> list:
+    """Find content.json stories that are missing audio or covers.
+
+    These are leftovers from previous failed pipeline runs. Returns their IDs
+    so the current run can complete them alongside new content.
+    """
+    if not CONTENT_PATH.exists():
+        return []
+    try:
+        content = json.loads(CONTENT_PATH.read_text())
+        incomplete = []
+        for item in content:
+            sid = item.get("id", "")
+            if not sid.startswith("gen-"):
+                continue  # Skip seed/manual content
+            has_audio = bool(item.get("audio_variants"))
+            has_cover = bool(item.get("cover") and item["cover"] != "" and "default.svg" not in item.get("cover", ""))
+            if not has_audio or not has_cover:
+                missing = []
+                if not has_audio:
+                    missing.append("audio")
+                if not has_cover:
+                    missing.append("cover")
+                incomplete.append((sid, item.get("title", sid[:12]), missing))
+        return incomplete
+    except Exception:
+        return []
+
+
 def step_audio(args, state: dict) -> bool:
     """Step 2: Generate audio variants for new stories via Chatterbox TTS on Modal."""
     logger.info("\n╔══════════════════════════════════════╗")
@@ -291,6 +322,21 @@ def step_audio(args, state: dict) -> bool:
     logger.info("╚══════════════════════════════════════╝")
 
     new_ids = state.get("generated_ids", [])
+
+    # Auto-recover: find content from previous runs that's missing audio
+    incomplete = _find_incomplete_content()
+    recover_audio_ids = [sid for sid, title, missing in incomplete
+                         if "audio" in missing and sid not in new_ids]
+    if recover_audio_ids:
+        logger.info("  RECOVERY: Found %d stories from previous runs missing audio:", len(recover_audio_ids))
+        for sid, title, _ in incomplete:
+            if sid in recover_audio_ids:
+                logger.info("    - %s (%s)", title, sid[:12])
+        new_ids = new_ids + recover_audio_ids
+        state["generated_ids"] = new_ids  # Include recovered IDs in downstream steps
+        state["recovered_audio_ids"] = recover_audio_ids
+        save_state(state)
+
     if not new_ids:
         logger.info("  No new stories to generate audio for. Skipping.")
         state["step_audio"] = "skipped"
@@ -460,6 +506,21 @@ def step_covers(args, state: dict) -> bool:
     new_ids = state.get("generated_ids", [])
     audio_failures = state.get("audio_failures", [])
     cover_ids = [sid for sid in new_ids if sid not in audio_failures]
+
+    # Auto-recover: find content from previous runs that has audio but no cover
+    incomplete = _find_incomplete_content()
+    recover_cover_ids = [sid for sid, title, missing in incomplete
+                         if "cover" in missing and "audio" not in missing
+                         and sid not in cover_ids]
+    if recover_cover_ids:
+        logger.info("  RECOVERY: Found %d stories from previous runs missing covers:", len(recover_cover_ids))
+        for sid, title, _ in incomplete:
+            if sid in recover_cover_ids:
+                logger.info("    - %s (%s)", title, sid[:12])
+        cover_ids = cover_ids + recover_cover_ids
+        state["recovered_cover_ids"] = recover_cover_ids
+        save_state(state)
+
     if not cover_ids:
         logger.info("  No stories with audio to generate covers for. Skipping.")
         state["step_covers"] = "skipped"
@@ -1067,8 +1128,8 @@ def main():
                         help="Number of poems to generate (default: 1)")
     parser.add_argument("--count-lullabies", type=int, default=1,
                         help="Number of lullabies to generate (default: 1)")
-    parser.add_argument("--count-long-stories", type=int, default=0,
-                        help="Number of additional LONG stories to generate (default: 0)")
+    parser.add_argument("--count-long-stories", type=int, default=1,
+                        help="Number of additional LONG stories to generate (default: 1)")
     parser.add_argument("--lang", default="en",
                         help="Language to generate (default: en)")
     parser.add_argument("--dry-run", action="store_true",

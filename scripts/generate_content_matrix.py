@@ -1185,10 +1185,11 @@ def build_fresh_plan(count_stories: int = 1, count_poems: int = 1,
         force_long = (content_type == "story" and i >= count_stories and i < all_stories)
 
         # Pick random diversity dimensions
-        # Lullabies (songs) are only appropriate for ages 0-1 and 2-5.
-        # Per LULLABY_GENERATION_GUIDELINES.md: "Ages 6+: No Lullabies"
+        # Lullabies (songs) always use 2-5 age group for instrument variety.
+        # Age 0-1 lullabies are a cappella only (no instruments), so using 2-5
+        # ensures each lullaby gets 2 randomly selected instruments from 5 options.
         if content_type == "song":
-            age_group = _rng.choice(["0-1", "2-5"])
+            age_group = "2-5"
         else:
             age_group = _rng.choice(age_groups_list)
         ag_info = AGE_GROUPS[age_group]
@@ -1197,7 +1198,14 @@ def build_fresh_plan(count_stories: int = 1, count_poems: int = 1,
         life_aspects = LIFE_ASPECTS_BY_AGE[age_group]
 
         theme = _rng.choice(themes)
-        length = "LONG" if force_long else _rng.choice(lengths)
+        if force_long:
+            length = "LONG"
+        elif content_type == "story":
+            # Regular story slots must NOT be LONG (that's what count_long_stories is for)
+            non_long = [l for l in lengths if l != "LONG"]
+            length = _rng.choice(non_long) if non_long else lengths[0]
+        else:
+            length = _rng.choice(lengths)
         universe = _rng.choice(UNIVERSES)
         geography = _rng.choice(GEOGRAPHIES)
         archetype = _rng.choice(PLOT_ARCHETYPES)
