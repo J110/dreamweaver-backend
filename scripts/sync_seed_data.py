@@ -266,25 +266,15 @@ def update_existing(seed_js: str, stories: list) -> tuple:
                 # Only match if within the same entry (before next entry's "id:")
                 next_id = seed_js.find('\n    {', search_start + 1)
                 if mb_pos != -1 and (next_id == -1 or mb_pos < next_id):
-                    # Found existing musicalBrief — find its end via brace counting
-                    brace_start = mb_pos + len(mb_key) - 1  # position of '{'
-                    depth = 0
-                    end = brace_start
-                    for i in range(brace_start, len(seed_js)):
-                        if seed_js[i] == '{':
-                            depth += 1
-                        elif seed_js[i] == '}':
-                            depth -= 1
-                        if depth == 0:
-                            end = i
-                            break
-                    # Include trailing comma
-                    if end + 1 < len(seed_js) and seed_js[end + 1] == ',':
-                        end += 1
-                    old_mb = seed_js[mb_pos:end + 1]
+                    # Replace entire line content from musicalBrief: to newline
+                    # This handles corrupted entries with trailing duplicated fragments
+                    line_end = seed_js.find('\n', mb_pos)
+                    if line_end == -1:
+                        line_end = len(seed_js)
+                    old_mb = seed_js[mb_pos:line_end]
                     new_mb = f"musicalBrief: {mb_json},"
                     if old_mb != new_mb:
-                        seed_js = seed_js[:mb_pos] + new_mb + seed_js[end + 1:]
+                        seed_js = seed_js[:mb_pos] + new_mb + seed_js[line_end:]
                 else:
                     # Insert musicalBrief after musicParams line
                     mp_key = "musicParams: {"
