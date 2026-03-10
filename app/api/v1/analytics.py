@@ -53,7 +53,6 @@ def init_analytics_db():
         CREATE INDEX IF NOT EXISTS idx_events_date ON events(date);
         CREATE INDEX IF NOT EXISTS idx_events_user ON events(user_id);
         CREATE INDEX IF NOT EXISTS idx_events_session ON events(session_id);
-        CREATE INDEX IF NOT EXISTS idx_events_username ON events(username);
         CREATE INDEX IF NOT EXISTS idx_events_content ON events(
             json_extract(payload, '$.contentId')
         );
@@ -66,6 +65,17 @@ def init_analytics_db():
             PRIMARY KEY (date, metric, dimension)
         );
     """)
+
+    # Migration: add username column if missing (for existing DBs)
+    cursor = conn.execute("PRAGMA table_info(events)")
+    columns = [row[1] for row in cursor.fetchall()]
+    if "username" not in columns:
+        conn.execute("ALTER TABLE events ADD COLUMN username TEXT")
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_events_username ON events(username)")
+        logger.info("Migrated: added username column to events table")
+    else:
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_events_username ON events(username)")
+
     conn.close()
     logger.info("Analytics SQLite database initialized at %s", DB_PATH)
 
