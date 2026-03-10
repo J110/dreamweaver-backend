@@ -651,6 +651,59 @@ async def dashboard_realtime(authorization: Optional[str] = Header(None)):
     return {"activeUsers": active, "windowMinutes": 5}
 
 
+@router.get("/funnel")
+async def dashboard_funnel(
+    authorization: Optional[str] = Header(None),
+    from_date: Optional[str] = Query(None, alias="from"),
+    to_date: Optional[str] = Query(None, alias="to"),
+):
+    """Conversion funnel: visit → onboarding → play → 1-min listen."""
+    verify_analytics_key(authorization)
+    fr, to = _date_range_params(from_date, to_date)
+
+    conn = get_db()
+    c = conn.cursor()
+
+    # Step 1: Website visits (unique users with app_open)
+    c.execute(
+        "SELECT COUNT(DISTINCT user_id) FROM events WHERE event = 'app_open' AND date >= ? AND date <= ?",
+        (fr, to),
+    )
+    visits = c.fetchone()[0]
+
+    # Step 2: Onboarding complete
+    c.execute(
+        "SELECT COUNT(DISTINCT user_id) FROM events WHERE event = 'onboarding_complete' AND date >= ? AND date <= ?",
+        (fr, to),
+    )
+    onboarded = c.fetchone()[0]
+
+    # Step 3: Audio listen (play_start)
+    c.execute(
+        "SELECT COUNT(DISTINCT user_id) FROM events WHERE event = 'play_start' AND date >= ? AND date <= ?",
+        (fr, to),
+    )
+    listeners = c.fetchone()[0]
+
+    # Step 4: Listened >= 1 min
+    c.execute(
+        "SELECT COUNT(DISTINCT user_id) FROM events WHERE event = 'play_1min' AND date >= ? AND date <= ?",
+        (fr, to),
+    )
+    listened_1min = c.fetchone()[0]
+
+    conn.close()
+
+    steps = [
+        {"label": "Website Visit", "count": visits},
+        {"label": "Onboarding Complete", "count": onboarded},
+        {"label": "Audio Listen", "count": listeners},
+        {"label": "Listened 1+ min", "count": listened_1min},
+    ]
+
+    return {"dateRange": {"from": fr, "to": to}, "steps": steps}
+
+
 @router.get("/users-activity")
 async def dashboard_users_activity(
     authorization: Optional[str] = Header(None),
