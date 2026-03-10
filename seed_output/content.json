@@ -15077,6 +15077,18 @@
         "url": "/audio/pre-gen/gen-9d8e_female_3.mp3",
         "duration_seconds": 377.52,
         "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-9d8e_asmr.mp3",
+        "duration_seconds": 418.85,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-9d8e_male_2.mp3",
+        "duration_seconds": 373.68,
+        "provider": "chatterbox"
       }
     ],
     "author_id": "system",
@@ -15148,7 +15160,8 @@
         "phase2": "gentle_magic",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "duration": 7
   },
   {
     "id": "gen-c5e3d286408c",
