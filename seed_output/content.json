@@ -14812,10 +14812,23 @@
       "Even the smallest light can bring comfort and peace.",
       "Gentleness and quiet moments help the world rest."
     ],
-    "cover": "",
+    "cover": "/covers/gen-411c4e4dde20.svg",
     "musicProfile": "autumn-forest",
     "music_type": "ambient",
-    "audio_variants": [],
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-411c_female_1.mp3",
+        "duration_seconds": 244.91,
+        "provider": "ace-step"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-411c_female_3.mp3",
+        "duration_seconds": 244.91,
+        "provider": "ace-step"
+      }
+    ],
     "author_id": "system",
     "is_generated": true,
     "generation_quality": "pending_review",
@@ -14854,7 +14867,8 @@
     "updated_at": "2026-03-10T01:44:20.252765",
     "view_count": 0,
     "like_count": 0,
-    "save_count": 0
+    "save_count": 0,
+    "duration": 5
   },
   {
     "id": "gen-71986860a0ed",
@@ -15011,10 +15025,29 @@
       "Wonder is everywhere if you take the time to look.",
       "Growth takes patience, but the journey is magical."
     ],
-    "cover": "",
+    "cover": "/covers/gen-9d8e3f91919c.svg",
     "musicProfile": "cosmic-voyage",
     "music_type": "ambient",
-    "audio_variants": [],
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-9d8e_female_1.mp3",
+        "duration_seconds": 472.73,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-9d8e_female_2.mp3",
+        "duration_seconds": 407.18,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-9d8e_female_3.mp3",
+        "duration_seconds": 377.52,
+        "provider": "chatterbox"
+      }
+    ],
     "author_id": "system",
     "is_generated": true,
     "generation_quality": "pending_review",
@@ -15053,7 +15086,38 @@
     "updated_at": "2026-03-10T01:37:38.562713",
     "view_count": 0,
     "like_count": 0,
-    "save_count": 0
+    "save_count": 0,
+    "musicalBrief": {
+      "storyId": "gen-9d8e3f91919c",
+      "ageGroup": "2-5",
+      "musicalIdentity": {
+        "culturalReference": "japanese",
+        "primaryLoop": "koto_plucks",
+        "padCharacter": "starfield"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "Bb"
+      },
+      "melodicCharacter": "cycling_arpeggio",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "wind_gentle",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "chimes",
+          "cricket"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "whimsical_wonder",
+        "phase2": "gentle_magic",
+        "phase3": "deep_stillness"
+      }
+    }
   },
   {
     "id": "gen-c5e3d286408c",
