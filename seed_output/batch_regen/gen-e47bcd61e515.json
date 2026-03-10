@@ -1,0 +1,123 @@
+{
+  "id": "gen-e47bcd61e515",
+  "title": "Stripe and the Whispering Bamboo",
+  "type": "song",
+  "description": "A prehistoric tiger cub discovers his true self beneath the rustling bamboo grove, learning that his stripes are not just marks but the map of his journey.",
+  "language": "en",
+  "theme": "nature",
+  "age_group": "2-5",
+  "cover": "/covers/gen-e47bcd61e515.svg",
+  "lang": "en",
+  "text": "[SINGING] Beneath the golden, setting sun,\nThe bamboo sways—a whispered tune,\nStripe the cub with amber eyes,\nWonders why the wind still sighs.\n\n[GENTLE] Are my stripes too bold, too bright?\nDo they hide me in the night?\nOr are they threads of stories old,\nWoven deep in earth’s embrace so cold?\n\n[HUMMING] Hmm-hmm-hmm, the leaves hum low,\nHmm-hmm-hmm, the river knows.\n\n[JOYFUL] Oh, little cub, don’t fear the light,\nYour stripes are stars that guide the night!\nThey dance with fireflies in flight,\nAnd paint the sky with dreams so bright!\n\n[PAUSE]\n\n[SINGING] One evening, as the crickets play,\nStripe met Owl on moonlit spray.\n\"Why do you hide?\" the wise one said,\n\"Your stripes are roots where courage’s fed.\"\n\n[GENTLE] The river hums a lullaby,\nOf ancient tales beneath the sky.\nOf cubs who learned to stand so tall,\nNot despite their stripes—but all.\n\n[HUMMING] Hmm-hmm-hmm, the earth sings deep,\nHmm-hmm-hmm, the secrets keep.\n\n[JOYFUL] Oh, little cub, don’t fear the dark,\nYour stripes are embers, glowing spark!\nThey light the path where dreams embark,\nAnd lead you home through meadows’ arc!\n\n[PAUSE]\n\n[SLEEPY] Now Stripe curls ‘neath bamboo’s grace,\nHis stripes no longer just a trace.\nBut maps of love, of time, of place,\nA cub who found his truest face.\n\n[GENTLE] So close your eyes, let dreams take flight,\nThe bamboo sings you through the night.\nFor every stripe, for every hue,\nIs proof that you are brave—and true.\n\n[HUMMING] Hmm-hmm-hmm, the stars align,\nHmm-hmm-hmm, the world is kind.",
+  "annotated_text": "[SINGING] Beneath the golden, setting sun,\nThe bamboo sways—a whispered tune,\nStripe the cub with amber eyes,\nWonders why the wind still sighs.\n\n[GENTLE] Are my stripes too bold, too bright?\nDo they hide me in the night?\nOr are they threads of stories old,\nWoven deep in earth’s embrace so cold?\n\n[HUMMING] Hmm-hmm-hmm, the leaves hum low,\nHmm-hmm-hmm, the river knows.\n\n[JOYFUL] Oh, little cub, don’t fear the light,\nYour stripes are stars that guide the night!\nThey dance with fireflies in flight,\nAnd paint the sky with dreams so bright!\n\n[PAUSE]\n\n[SINGING] One evening, as the crickets play,\nStripe met Owl on moonlit spray.\n\"Why do you hide?\" the wise one said,\n\"Your stripes are roots where courage’s fed.\"\n\n[GENTLE] The river hums a lullaby,\nOf ancient tales beneath the sky.\nOf cubs who learned to stand so tall,\nNot despite their stripes—but all.\n\n[HUMMING] Hmm-hmm-hmm, the earth sings deep,\nHmm-hmm-hmm, the secrets keep.\n\n[JOYFUL] Oh, little cub, don’t fear the dark,\nYour stripes are embers, glowing spark!\nThey light the path where dreams embark,\nAnd lead you home through meadows’ arc!\n\n[PAUSE]\n\n[SLEEPY] Now Stripe curls ‘neath bamboo’s grace,\nHis stripes no longer just a trace.\nBut maps of love, of time, of place,\nA cub who found his truest face.\n\n[GENTLE] So close your eyes, let dreams take flight,\nThe bamboo sings you through the night.\nFor every stripe, for every hue,\nIs proof that you are brave—and true.\n\n[HUMMING] Hmm-hmm-hmm, the stars align,\nHmm-hmm-hmm, the world is kind.",
+  "target_age": 10,
+  "age_min": 9,
+  "age_max": 12,
+  "length": "LONG",
+  "word_count": 240,
+  "duration_seconds": 0,
+  "categories": [
+    "Nature",
+    "Self-Discovery",
+    "Prehistoric Fantasy",
+    "Bedtime Lullaby"
+  ],
+  "morals": [
+    "Your differences are not flaws—they are the unique threads that weave your strength and story.",
+    "True belonging begins when you embrace the beauty of who you are, without apology."
+  ],
+  "musicProfile": "moonlit-meadow",
+  "music_type": "ambient",
+  "audio_variants": [
+    {
+      "voice": "female_1",
+      "url": "/audio/pre-gen/gen-e47b_female_1.mp3",
+      "duration_seconds": 119.91,
+      "provider": "ace-step"
+    },
+    {
+      "voice": "male_1",
+      "url": "/audio/pre-gen/gen-e47b_male_1.mp3",
+      "duration_seconds": 119.91,
+      "provider": "ace-step"
+    },
+    {
+      "voice": "female_3",
+      "url": "/audio/pre-gen/gen-e47b_female_3.mp3",
+      "duration_seconds": 119.91,
+      "provider": "ace-step"
+    }
+  ],
+  "author_id": "system",
+  "is_generated": true,
+  "generation_quality": "pending_review",
+  "lead_gender": "male",
+  "lead_character_type": "animal",
+  "universe": "prehistoric",
+  "geography": "Africa",
+  "life_aspect": "self_identity",
+  "plot_archetype": "transformation",
+  "created_at": "2026-02-24T01:34:29.145747",
+  "updated_at": "2026-02-24T01:34:29.145747",
+  "view_count": 0,
+  "like_count": 0,
+  "save_count": 0,
+  "duration": 2,
+  "musicParams": {
+    "key": "A",
+    "chordNotes": [
+      110.0,
+      138.59,
+      164.81,
+      220.0
+    ],
+    "padType": "resonant",
+    "padGain": 0.0406,
+    "padFilter": 852,
+    "padLfo": 0.0824,
+    "noiseType": "pink",
+    "noiseGain": 0.0122,
+    "droneFreq": 55.0,
+    "droneGain": 0.0368,
+    "melodyNotes": [
+      220.0,
+      277.18,
+      329.62,
+      293.66
+    ],
+    "melodyInterval": 3953,
+    "melodyGain": 0.0177,
+    "bassNotes": [
+      55.0,
+      82.41,
+      69.3
+    ],
+    "bassInterval": 6434,
+    "counterNotes": [
+      346.48,
+      412.02,
+      275.0
+    ],
+    "counterInterval": 4778,
+    "events": [
+      {
+        "type": "windGust",
+        "interval": 13329
+      },
+      {
+        "type": "leaves",
+        "interval": 8621
+      },
+      {
+        "type": "birdChirp",
+        "interval": 16162
+      },
+      {
+        "type": "owl",
+        "interval": 24420
+      }
+    ],
+    "soundscapePreset": "garden",
+    "musicLoop": "gentleGuitar"
+  }
+}

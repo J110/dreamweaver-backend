@@ -13046,7 +13046,99 @@
         "duration_seconds": 119.95,
         "provider": "chatterbox"
       }
-    ]
+    ],
+    "text": "[SINGING] Beneath the golden, setting sun,\nThe bamboo sways—a whispered tune,\nStripe the cub with amber eyes,\nWonders why the wind still sighs.\n\n[GENTLE] Are my stripes too bold, too bright?\nDo they hide me in the night?\nOr are they threads of stories old,\nWoven deep in earth’s embrace so cold?\n\n[HUMMING] Hmm-hmm-hmm, the leaves hum low,\nHmm-hmm-hmm, the river knows.\n\n[JOYFUL] Oh, little cub, don’t fear the light,\nYour stripes are stars that guide the night!\nThey dance with fireflies in flight,\nAnd paint the sky with dreams so bright!\n\n[PAUSE]\n\n[SINGING] One evening, as the crickets play,\nStripe met Owl on moonlit spray.\n\"Why do you hide?\" the wise one said,\n\"Your stripes are roots where courage’s fed.\"\n\n[GENTLE] The river hums a lullaby,\nOf ancient tales beneath the sky.\nOf cubs who learned to stand so tall,\nNot despite their stripes—but all.\n\n[HUMMING] Hmm-hmm-hmm, the earth sings deep,\nHmm-hmm-hmm, the secrets keep.\n\n[JOYFUL] Oh, little cub, don’t fear the dark,\nYour stripes are embers, glowing spark!\nThey light the path where dreams embark,\nAnd lead you home through meadows’ arc!\n\n[PAUSE]\n\n[SLEEPY] Now Stripe curls ‘neath bamboo’s grace,\nHis stripes no longer just a trace.\nBut maps of love, of time, of place,\nA cub who found his truest face.\n\n[GENTLE] So close your eyes, let dreams take flight,\nThe bamboo sings you through the night.\nFor every stripe, for every hue,\nIs proof that you are brave—and true.\n\n[HUMMING] Hmm-hmm-hmm, the stars align,\nHmm-hmm-hmm, the world is kind.",
+    "annotated_text": "[SINGING] Beneath the golden, setting sun,\nThe bamboo sways—a whispered tune,\nStripe the cub with amber eyes,\nWonders why the wind still sighs.\n\n[GENTLE] Are my stripes too bold, too bright?\nDo they hide me in the night?\nOr are they threads of stories old,\nWoven deep in earth’s embrace so cold?\n\n[HUMMING] Hmm-hmm-hmm, the leaves hum low,\nHmm-hmm-hmm, the river knows.\n\n[JOYFUL] Oh, little cub, don’t fear the light,\nYour stripes are stars that guide the night!\nThey dance with fireflies in flight,\nAnd paint the sky with dreams so bright!\n\n[PAUSE]\n\n[SINGING] One evening, as the crickets play,\nStripe met Owl on moonlit spray.\n\"Why do you hide?\" the wise one said,\n\"Your stripes are roots where courage’s fed.\"\n\n[GENTLE] The river hums a lullaby,\nOf ancient tales beneath the sky.\nOf cubs who learned to stand so tall,\nNot despite their stripes—but all.\n\n[HUMMING] Hmm-hmm-hmm, the earth sings deep,\nHmm-hmm-hmm, the secrets keep.\n\n[JOYFUL] Oh, little cub, don’t fear the dark,\nYour stripes are embers, glowing spark!\nThey light the path where dreams embark,\nAnd lead you home through meadows’ arc!\n\n[PAUSE]\n\n[SLEEPY] Now Stripe curls ‘neath bamboo’s grace,\nHis stripes no longer just a trace.\nBut maps of love, of time, of place,\nA cub who found his truest face.\n\n[GENTLE] So close your eyes, let dreams take flight,\nThe bamboo sings you through the night.\nFor every stripe, for every hue,\nIs proof that you are brave—and true.\n\n[HUMMING] Hmm-hmm-hmm, the stars align,\nHmm-hmm-hmm, the world is kind.",
+    "lang": "en",
+    "target_age": 10,
+    "age_min": 9,
+    "age_max": 12,
+    "length": "LONG",
+    "word_count": 240,
+    "duration_seconds": 0,
+    "categories": [
+      "Nature",
+      "Self-Discovery",
+      "Prehistoric Fantasy",
+      "Bedtime Lullaby"
+    ],
+    "morals": [
+      "Your differences are not flaws—they are the unique threads that weave your strength and story.",
+      "True belonging begins when you embrace the beauty of who you are, without apology."
+    ],
+    "musicProfile": "moonlit-meadow",
+    "music_type": "ambient",
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "male",
+    "lead_character_type": "animal",
+    "universe": "prehistoric",
+    "geography": "Africa",
+    "life_aspect": "self_identity",
+    "plot_archetype": "transformation",
+    "updated_at": "2026-02-24T01:34:29.145747",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 2,
+    "musicParams": {
+      "key": "A",
+      "chordNotes": [
+        110.0,
+        138.59,
+        164.81,
+        220.0
+      ],
+      "padType": "resonant",
+      "padGain": 0.0406,
+      "padFilter": 852,
+      "padLfo": 0.0824,
+      "noiseType": "pink",
+      "noiseGain": 0.0122,
+      "droneFreq": 55.0,
+      "droneGain": 0.0368,
+      "melodyNotes": [
+        220.0,
+        277.18,
+        329.62,
+        293.66
+      ],
+      "melodyInterval": 3953,
+      "melodyGain": 0.0177,
+      "bassNotes": [
+        55.0,
+        82.41,
+        69.3
+      ],
+      "bassInterval": 6434,
+      "counterNotes": [
+        346.48,
+        412.02,
+        275.0
+      ],
+      "counterInterval": 4778,
+      "events": [
+        {
+          "type": "windGust",
+          "interval": 13329
+        },
+        {
+          "type": "leaves",
+          "interval": 8621
+        },
+        {
+          "type": "birdChirp",
+          "interval": 16162
+        },
+        {
+          "type": "owl",
+          "interval": 24420
+        }
+      ],
+      "soundscapePreset": "garden",
+      "musicLoop": "gentleGuitar"
+    }
   },
   {
     "id": "gen-4ddee3cbe031",
@@ -13141,6 +13233,97 @@
         "phase2": "gentle_warmth",
         "phase3": "deep_stillness"
       }
+    },
+    "text": "[RHYTHMIC]In a greenhouse, old and wide,\nWhere vines in golden light reside,\nThere hums a robot, soft and bright,\nLumi tends the blooms at night.\nHer copper hands, so warm, so wise,\nWake sleepy flowers with gentle sighs.\n\n[PAUSE]\n\n[GENTLE]A firefly flickers, lost, alone,\nHis tiny glow begins to moan.\n\"Oh, Lumi dear, the night feels vast,\nWithout a friend to hold me fast.\"\nShe smiles and lifts a petal’s shade,\n\"Stay here with me,\" the robot said.\n\n[PAUSE]\n\n[CALM]The jasmine hums, the lotus sways,\nAs Lumi sings in silver rays.\nThe firefly dances, light so free,\nA spark of joy for her to see.\nThe greenhouse sighs in moonlit cheer,\n\"Friendship blooms when hearts draw near.\"\n\n[PAUSE]\n\n[WHISPERING]Now side by side, they tend the green,\nA bond unseen, yet bright, serene.\nThe petals close, the stars align,\nTwo tiny lights in twilight shine.\n\n[PAUSE]\n\n[SLEEPY]So rest, little one, let dreams take flight,\nLike Lumi’s glow and firefly’s light.",
+    "annotated_text": "[RHYTHMIC]In a greenhouse, old and wide,\nWhere vines in golden light reside,\nThere hums a robot, soft and bright,\nLumi tends the blooms at night.\nHer copper hands, so warm, so wise,\nWake sleepy flowers with gentle sighs.\n\n[PAUSE]\n\n[GENTLE]A firefly flickers, lost, alone,\nHis tiny glow begins to moan.\n\"Oh, Lumi dear, the night feels vast,\nWithout a friend to hold me fast.\"\nShe smiles and lifts a petal’s shade,\n\"Stay here with me,\" the robot said.\n\n[PAUSE]\n\n[CALM]The jasmine hums, the lotus sways,\nAs Lumi sings in silver rays.\nThe firefly dances, light so free,\nA spark of joy for her to see.\nThe greenhouse sighs in moonlit cheer,\n\"Friendship blooms when hearts draw near.\"\n\n[PAUSE]\n\n[WHISPERING]Now side by side, they tend the green,\nA bond unseen, yet bright, serene.\nThe petals close, the stars align,\nTwo tiny lights in twilight shine.\n\n[PAUSE]\n\n[SLEEPY]So rest, little one, let dreams take flight,\nLike Lumi’s glow and firefly’s light.",
+    "lang": "en",
+    "target_age": 7,
+    "age_min": 6,
+    "age_max": 8,
+    "length": "MEDIUM",
+    "word_count": 155,
+    "duration_seconds": 0,
+    "categories": [
+      "Friendship",
+      "Nature",
+      "Fantasy"
+    ],
+    "morals": [
+      "Friendship grows when we share kindness and care.",
+      "Even the smallest light can brighten the darkest night."
+    ],
+    "musicProfile": "moonlit-meadow",
+    "music_type": "ambient",
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "female",
+    "lead_character_type": "robot",
+    "universe": "fantasy_realm",
+    "geography": "India",
+    "life_aspect": "family_home",
+    "plot_archetype": "friendship_bonding",
+    "updated_at": "2026-02-25T01:31:24.060765",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 2,
+    "musicParams": {
+      "key": "A",
+      "chordNotes": [
+        110.0,
+        138.59,
+        164.81,
+        220.0
+      ],
+      "padType": "resonant",
+      "padGain": 0.0406,
+      "padFilter": 663,
+      "padLfo": 0.0824,
+      "noiseType": "pink",
+      "noiseGain": 0.0122,
+      "droneFreq": 55.0,
+      "droneGain": 0.0316,
+      "melodyNotes": [
+        220.0,
+        277.18,
+        329.62,
+        293.66
+      ],
+      "melodyInterval": 3329,
+      "melodyGain": 0.0177,
+      "bassNotes": [
+        55.0,
+        82.41,
+        69.3
+      ],
+      "bassInterval": 5939,
+      "counterNotes": [
+        346.48,
+        412.02,
+        275.0
+      ],
+      "counterInterval": 4778,
+      "events": [
+        {
+          "type": "windGust",
+          "interval": 13329
+        },
+        {
+          "type": "leaves",
+          "interval": 8621
+        },
+        {
+          "type": "birdChirp",
+          "interval": 13468
+        },
+        {
+          "type": "cricket",
+          "interval": 19536
+        }
+      ],
+      "soundscapePreset": "garden",
+      "musicLoop": "gentleGuitar"
     }
   },
   {
@@ -13236,6 +13419,97 @@
         "phase2": "floating_dreaminess",
         "phase3": "deep_stillness"
       }
+    },
+    "text": "[GENTLE] Hush, hush, little Chai. \nMoon glows soft, night is near. \nMama pours warm, steam swirls high. \nChai sings low, sweet and clear.\n\n[CALM] Shh, shh, steam whispers back. \nPapa’s hands hold, safe and tight. \nMoonlight spills on wooden floor. \nAll is still, all is bright.\n\n[SLEEPY] Hush now, Chai, rest your rim. \nDreams will come on silver beams. \nFamily hums, the night sings too. \nSleep, little cup, in moonlit dreams.",
+    "annotated_text": "[GENTLE] Hush, hush, little Chai. \nMoon glows soft, night is near. \nMama pours warm, steam swirls high. \nChai sings low, sweet and clear.\n\n[CALM] Shh, shh, steam whispers back. \nPapa’s hands hold, safe and tight. \nMoonlight spills on wooden floor. \nAll is still, all is bright.\n\n[SLEEPY] Hush now, Chai, rest your rim. \nDreams will come on silver beams. \nFamily hums, the night sings too. \nSleep, little cup, in moonlit dreams.",
+    "lang": "en",
+    "target_age": 0,
+    "age_min": 0,
+    "age_max": 1,
+    "length": "SHORT",
+    "word_count": 68,
+    "duration_seconds": 0,
+    "categories": [
+      "Historical",
+      "Nature",
+      "Family"
+    ],
+    "morals": [
+      "Even the smallest things hold warmth and beauty.",
+      "Family and love make every moment special."
+    ],
+    "musicProfile": "forest-night",
+    "music_type": "ambient",
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "male",
+    "lead_character_type": "object",
+    "universe": "historical",
+    "geography": "East Asia",
+    "life_aspect": "family_home",
+    "plot_archetype": "discovery",
+    "updated_at": "2026-02-25T01:30:25.662381",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 1,
+    "musicParams": {
+      "key": "A",
+      "chordNotes": [
+        110.0,
+        138.59,
+        164.81,
+        220.0
+      ],
+      "padType": "resonant",
+      "padGain": 0.0316,
+      "padFilter": 473,
+      "padLfo": 0.0412,
+      "noiseType": "pink",
+      "noiseGain": 0.0122,
+      "droneFreq": 55.0,
+      "droneGain": 0.0263,
+      "melodyNotes": [
+        220.0,
+        277.18,
+        329.62,
+        293.66
+      ],
+      "melodyInterval": 5201,
+      "melodyGain": 0.0147,
+      "bassNotes": [
+        55.0,
+        82.41,
+        69.3
+      ],
+      "bassInterval": 6929,
+      "counterNotes": [
+        346.48,
+        412.02,
+        275.0
+      ],
+      "counterInterval": 4778,
+      "events": [
+        {
+          "type": "heartbeat",
+          "interval": 6665
+        },
+        {
+          "type": "windGust",
+          "interval": 12932
+        },
+        {
+          "type": "leaves",
+          "interval": 16162
+        },
+        {
+          "type": "birdChirp",
+          "interval": 23443
+        }
+      ],
+      "soundscapePreset": "heartbeat",
+      "musicLoop": "musicBox"
     }
   },
   {
@@ -13276,7 +13550,94 @@
         "duration_seconds": 119.95,
         "provider": "chatterbox"
       }
-    ]
+    ],
+    "text": "[SINGING] Hush now, little Pebble, close your eyes,\n[SINGING] Moonlight dances, soft and wise.\n[SINGING] Stars are twinkling, one by one,\n[SINGING] Rest your shell ‘neath silver sun.\n\n[HUMMING] Hmm, hmm, hmm, hmm...\n\n[SINGING] River hums a sleepy tune,\n[SINGING] Under stars and golden moon.\n[SINGING] Drift away on dreams so light,\n[SINGING] Pebble sleeps till morning bright.\n\n[PAUSE]\n\n[SLEEPY] Shh, shh, little Pebble, time to rest,\n[SLEEPY] Warmest blanket, softest nest.\n[SLEEPY] Dream of rivers, dream of sky,\n[SLEEPY] Close your eyes and say goodnight.",
+    "annotated_text": "[SINGING] Hush now, little Pebble, close your eyes,\n[SINGING] Moonlight dances, soft and wise.\n[SINGING] Stars are twinkling, one by one,\n[SINGING] Rest your shell ‘neath silver sun.\n\n[HUMMING] Hmm, hmm, hmm, hmm...\n\n[SINGING] River hums a sleepy tune,\n[SINGING] Under stars and golden moon.\n[SINGING] Drift away on dreams so light,\n[SINGING] Pebble sleeps till morning bright.\n\n[PAUSE]\n\n[SLEEPY] Shh, shh, little Pebble, time to rest,\n[SLEEPY] Warmest blanket, softest nest.\n[SLEEPY] Dream of rivers, dream of sky,\n[SLEEPY] Close your eyes and say goodnight.",
+    "lang": "en",
+    "target_age": 0,
+    "age_min": 0,
+    "age_max": 1,
+    "length": "SHORT",
+    "word_count": 72,
+    "duration_seconds": 0,
+    "categories": [
+      "Lullaby",
+      "Fantasy",
+      "Bedtime"
+    ],
+    "morals": [
+      "Rest brings comfort and peace to the heart.",
+      "Even the smallest journeys end with warmth and safety."
+    ],
+    "musicProfile": "starlight-lullaby",
+    "music_type": "ambient",
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "male",
+    "lead_character_type": "animal",
+    "universe": "fantasy_realm",
+    "geography": "India",
+    "life_aspect": "sleep_comfort",
+    "plot_archetype": "quest_journey",
+    "updated_at": "2026-02-25T01:32:18.761611",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 2,
+    "musicParams": {
+      "key": "A",
+      "chordNotes": [
+        110.0,
+        138.59,
+        164.81,
+        220.0
+      ],
+      "padType": "simple",
+      "padGain": 0.0406,
+      "padFilter": 473,
+      "padLfo": 0.0515,
+      "noiseType": "pink",
+      "noiseGain": 0.0122,
+      "droneFreq": 55.0,
+      "droneGain": 0.0368,
+      "melodyNotes": [
+        220.0,
+        277.18,
+        329.62,
+        293.66
+      ],
+      "melodyInterval": 5201,
+      "melodyGain": 0.0177,
+      "bassNotes": [
+        55.0,
+        82.41,
+        69.3
+      ],
+      "bassInterval": 7919,
+      "counterNotes": [
+        346.48,
+        412.02,
+        275.0
+      ],
+      "counterInterval": 5734,
+      "events": [
+        {
+          "type": "heartbeat",
+          "interval": 6665
+        },
+        {
+          "type": "chimes",
+          "interval": 12932
+        },
+        {
+          "type": "starTwinkle",
+          "interval": 17958
+        }
+      ],
+      "soundscapePreset": "heartbeat",
+      "musicLoop": "musicBox"
+    }
   },
   {
     "id": "gen-e3e07799ab05",

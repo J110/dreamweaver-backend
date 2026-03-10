@@ -1,0 +1,118 @@
+{
+  "id": "gen-8440041cfc57",
+  "title": "Pebble's Moonlit Shell Song",
+  "type": "song",
+  "description": "A gentle lullaby about a little tortoise named Pebble, drifting to sleep under the stars in a magical Indian-inspired riverbank, wrapped in the comfort of moonlight and soft breezes.",
+  "language": "en",
+  "theme": "bedtime",
+  "age_group": "2-5",
+  "cover": "/covers/gen-8440041cfc57.svg",
+  "lang": "en",
+  "text": "[SINGING] Hush now, little Pebble, close your eyes,\n[SINGING] Moonlight dances, soft and wise.\n[SINGING] Stars are twinkling, one by one,\n[SINGING] Rest your shell ‘neath silver sun.\n\n[HUMMING] Hmm, hmm, hmm, hmm...\n\n[SINGING] River hums a sleepy tune,\n[SINGING] Under stars and golden moon.\n[SINGING] Drift away on dreams so light,\n[SINGING] Pebble sleeps till morning bright.\n\n[PAUSE]\n\n[SLEEPY] Shh, shh, little Pebble, time to rest,\n[SLEEPY] Warmest blanket, softest nest.\n[SLEEPY] Dream of rivers, dream of sky,\n[SLEEPY] Close your eyes and say goodnight.",
+  "annotated_text": "[SINGING] Hush now, little Pebble, close your eyes,\n[SINGING] Moonlight dances, soft and wise.\n[SINGING] Stars are twinkling, one by one,\n[SINGING] Rest your shell ‘neath silver sun.\n\n[HUMMING] Hmm, hmm, hmm, hmm...\n\n[SINGING] River hums a sleepy tune,\n[SINGING] Under stars and golden moon.\n[SINGING] Drift away on dreams so light,\n[SINGING] Pebble sleeps till morning bright.\n\n[PAUSE]\n\n[SLEEPY] Shh, shh, little Pebble, time to rest,\n[SLEEPY] Warmest blanket, softest nest.\n[SLEEPY] Dream of rivers, dream of sky,\n[SLEEPY] Close your eyes and say goodnight.",
+  "target_age": 0,
+  "age_min": 0,
+  "age_max": 1,
+  "length": "SHORT",
+  "word_count": 72,
+  "duration_seconds": 0,
+  "categories": [
+    "Lullaby",
+    "Fantasy",
+    "Bedtime"
+  ],
+  "morals": [
+    "Rest brings comfort and peace to the heart.",
+    "Even the smallest journeys end with warmth and safety."
+  ],
+  "musicProfile": "starlight-lullaby",
+  "music_type": "ambient",
+  "audio_variants": [
+    {
+      "voice": "female_1",
+      "url": "/audio/pre-gen/gen-8440_female_1.mp3",
+      "duration_seconds": 119.91,
+      "provider": "ace-step"
+    },
+    {
+      "voice": "female_3",
+      "url": "/audio/pre-gen/gen-8440_female_3.mp3",
+      "duration_seconds": 119.91,
+      "provider": "ace-step"
+    },
+    {
+      "voice": "male_1",
+      "url": "/audio/pre-gen/gen-8440_male_1.mp3",
+      "duration_seconds": 119.91,
+      "provider": "ace-step"
+    }
+  ],
+  "author_id": "system",
+  "is_generated": true,
+  "generation_quality": "pending_review",
+  "lead_gender": "male",
+  "lead_character_type": "animal",
+  "universe": "fantasy_realm",
+  "geography": "India",
+  "life_aspect": "sleep_comfort",
+  "plot_archetype": "quest_journey",
+  "created_at": "2026-02-25T01:32:18.761611",
+  "updated_at": "2026-02-25T01:32:18.761611",
+  "view_count": 0,
+  "like_count": 0,
+  "save_count": 0,
+  "duration": 2,
+  "musicParams": {
+    "key": "A",
+    "chordNotes": [
+      110.0,
+      138.59,
+      164.81,
+      220.0
+    ],
+    "padType": "simple",
+    "padGain": 0.0406,
+    "padFilter": 473,
+    "padLfo": 0.0515,
+    "noiseType": "pink",
+    "noiseGain": 0.0122,
+    "droneFreq": 55.0,
+    "droneGain": 0.0368,
+    "melodyNotes": [
+      220.0,
+      277.18,
+      329.62,
+      293.66
+    ],
+    "melodyInterval": 5201,
+    "melodyGain": 0.0177,
+    "bassNotes": [
+      55.0,
+      82.41,
+      69.3
+    ],
+    "bassInterval": 7919,
+    "counterNotes": [
+      346.48,
+      412.02,
+      275.0
+    ],
+    "counterInterval": 5734,
+    "events": [
+      {
+        "type": "heartbeat",
+        "interval": 6665
+      },
+      {
+        "type": "chimes",
+        "interval": 12932
+      },
+      {
+        "type": "starTwinkle",
+        "interval": 17958
+      }
+    ],
+    "soundscapePreset": "heartbeat",
+    "musicLoop": "musicBox"
+  }
+}

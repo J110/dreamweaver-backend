@@ -1,0 +1,146 @@
+{
+  "id": "gen-4ddee3cbe031",
+  "title": "Lumi and the Whispering Petals",
+  "type": "poem",
+  "description": "A gentle garden robot named Lumi tends to an enchanted greenhouse, where she befriends a lonely firefly and learns the magic of friendship and nature's quiet beauty.",
+  "language": "en",
+  "theme": "nature",
+  "age_group": "2-5",
+  "cover": "/covers/gen-4ddee3cbe031.svg",
+  "lang": "en",
+  "text": "[RHYTHMIC]In a greenhouse, old and wide,\nWhere vines in golden light reside,\nThere hums a robot, soft and bright,\nLumi tends the blooms at night.\nHer copper hands, so warm, so wise,\nWake sleepy flowers with gentle sighs.\n\n[PAUSE]\n\n[GENTLE]A firefly flickers, lost, alone,\nHis tiny glow begins to moan.\n\"Oh, Lumi dear, the night feels vast,\nWithout a friend to hold me fast.\"\nShe smiles and lifts a petal’s shade,\n\"Stay here with me,\" the robot said.\n\n[PAUSE]\n\n[CALM]The jasmine hums, the lotus sways,\nAs Lumi sings in silver rays.\nThe firefly dances, light so free,\nA spark of joy for her to see.\nThe greenhouse sighs in moonlit cheer,\n\"Friendship blooms when hearts draw near.\"\n\n[PAUSE]\n\n[WHISPERING]Now side by side, they tend the green,\nA bond unseen, yet bright, serene.\nThe petals close, the stars align,\nTwo tiny lights in twilight shine.\n\n[PAUSE]\n\n[SLEEPY]So rest, little one, let dreams take flight,\nLike Lumi’s glow and firefly’s light.",
+  "annotated_text": "[RHYTHMIC]In a greenhouse, old and wide,\nWhere vines in golden light reside,\nThere hums a robot, soft and bright,\nLumi tends the blooms at night.\nHer copper hands, so warm, so wise,\nWake sleepy flowers with gentle sighs.\n\n[PAUSE]\n\n[GENTLE]A firefly flickers, lost, alone,\nHis tiny glow begins to moan.\n\"Oh, Lumi dear, the night feels vast,\nWithout a friend to hold me fast.\"\nShe smiles and lifts a petal’s shade,\n\"Stay here with me,\" the robot said.\n\n[PAUSE]\n\n[CALM]The jasmine hums, the lotus sways,\nAs Lumi sings in silver rays.\nThe firefly dances, light so free,\nA spark of joy for her to see.\nThe greenhouse sighs in moonlit cheer,\n\"Friendship blooms when hearts draw near.\"\n\n[PAUSE]\n\n[WHISPERING]Now side by side, they tend the green,\nA bond unseen, yet bright, serene.\nThe petals close, the stars align,\nTwo tiny lights in twilight shine.\n\n[PAUSE]\n\n[SLEEPY]So rest, little one, let dreams take flight,\nLike Lumi’s glow and firefly’s light.",
+  "target_age": 7,
+  "age_min": 6,
+  "age_max": 8,
+  "length": "MEDIUM",
+  "word_count": 155,
+  "duration_seconds": 0,
+  "categories": [
+    "Friendship",
+    "Nature",
+    "Fantasy"
+  ],
+  "morals": [
+    "Friendship grows when we share kindness and care.",
+    "Even the smallest light can brighten the darkest night."
+  ],
+  "musicProfile": "moonlit-meadow",
+  "music_type": "ambient",
+  "audio_variants": [
+    {
+      "voice": "female_2",
+      "url": "/audio/pre-gen/gen-4dde_female_2.mp3",
+      "duration_seconds": 98.57,
+      "provider": "chatterbox"
+    },
+    {
+      "voice": "female_1",
+      "url": "/audio/pre-gen/gen-4dde_female_1.mp3",
+      "duration_seconds": 116.39,
+      "provider": "chatterbox"
+    },
+    {
+      "voice": "female_3",
+      "url": "/audio/pre-gen/gen-4dde_female_3.mp3",
+      "duration_seconds": 90.09,
+      "provider": "chatterbox"
+    },
+    {
+      "voice": "male_1",
+      "url": "/audio/pre-gen/gen-4dde_male_1.mp3",
+      "duration_seconds": 82.23,
+      "provider": "chatterbox"
+    },
+    {
+      "voice": "male_2",
+      "url": "/audio/pre-gen/gen-4dde_male_2.mp3",
+      "duration_seconds": 90.46,
+      "provider": "chatterbox"
+    },
+    {
+      "voice": "male_3",
+      "url": "/audio/pre-gen/gen-4dde_male_3.mp3",
+      "duration_seconds": 87.21,
+      "provider": "chatterbox"
+    },
+    {
+      "voice": "asmr",
+      "url": "/audio/pre-gen/gen-4dde_asmr.mp3",
+      "duration_seconds": 97.15,
+      "provider": "chatterbox"
+    }
+  ],
+  "author_id": "system",
+  "is_generated": true,
+  "generation_quality": "pending_review",
+  "lead_gender": "female",
+  "lead_character_type": "robot",
+  "universe": "fantasy_realm",
+  "geography": "India",
+  "life_aspect": "family_home",
+  "plot_archetype": "friendship_bonding",
+  "created_at": "2026-02-25T01:31:24.060765",
+  "updated_at": "2026-02-25T01:31:24.060765",
+  "view_count": 0,
+  "like_count": 0,
+  "save_count": 0,
+  "duration": 2,
+  "musicParams": {
+    "key": "A",
+    "chordNotes": [
+      110.0,
+      138.59,
+      164.81,
+      220.0
+    ],
+    "padType": "resonant",
+    "padGain": 0.0406,
+    "padFilter": 663,
+    "padLfo": 0.0824,
+    "noiseType": "pink",
+    "noiseGain": 0.0122,
+    "droneFreq": 55.0,
+    "droneGain": 0.0316,
+    "melodyNotes": [
+      220.0,
+      277.18,
+      329.62,
+      293.66
+    ],
+    "melodyInterval": 3329,
+    "melodyGain": 0.0177,
+    "bassNotes": [
+      55.0,
+      82.41,
+      69.3
+    ],
+    "bassInterval": 5939,
+    "counterNotes": [
+      346.48,
+      412.02,
+      275.0
+    ],
+    "counterInterval": 4778,
+    "events": [
+      {
+        "type": "windGust",
+        "interval": 13329
+      },
+      {
+        "type": "leaves",
+        "interval": 8621
+      },
+      {
+        "type": "birdChirp",
+        "interval": 13468
+      },
+      {
+        "type": "cricket",
+        "interval": 19536
+      }
+    ],
+    "soundscapePreset": "garden",
+    "musicLoop": "gentleGuitar"
+  }
+}

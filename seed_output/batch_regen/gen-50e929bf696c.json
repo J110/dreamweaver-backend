@@ -1,0 +1,146 @@
+{
+  "id": "gen-50e929bf696c",
+  "title": "Chai's Moonlit Steam Song",
+  "type": "story",
+  "description": "A tiny porcelain teacup named Chai hums a gentle lullaby as moonlight dances through the kitchen, discovering the warmth of family and the quiet magic of night.",
+  "language": "en",
+  "theme": "nature",
+  "age_group": "2-5",
+  "cover": "/covers/gen-50e929bf696c.svg",
+  "lang": "en",
+  "text": "[GENTLE] Hush, hush, little Chai. \nMoon glows soft, night is near. \nMama pours warm, steam swirls high. \nChai sings low, sweet and clear.\n\n[CALM] Shh, shh, steam whispers back. \nPapa’s hands hold, safe and tight. \nMoonlight spills on wooden floor. \nAll is still, all is bright.\n\n[SLEEPY] Hush now, Chai, rest your rim. \nDreams will come on silver beams. \nFamily hums, the night sings too. \nSleep, little cup, in moonlit dreams.",
+  "annotated_text": "[GENTLE] Hush, hush, little Chai. \nMoon glows soft, night is near. \nMama pours warm, steam swirls high. \nChai sings low, sweet and clear.\n\n[CALM] Shh, shh, steam whispers back. \nPapa’s hands hold, safe and tight. \nMoonlight spills on wooden floor. \nAll is still, all is bright.\n\n[SLEEPY] Hush now, Chai, rest your rim. \nDreams will come on silver beams. \nFamily hums, the night sings too. \nSleep, little cup, in moonlit dreams.",
+  "target_age": 0,
+  "age_min": 0,
+  "age_max": 1,
+  "length": "SHORT",
+  "word_count": 68,
+  "duration_seconds": 0,
+  "categories": [
+    "Historical",
+    "Nature",
+    "Family"
+  ],
+  "morals": [
+    "Even the smallest things hold warmth and beauty.",
+    "Family and love make every moment special."
+  ],
+  "musicProfile": "forest-night",
+  "music_type": "ambient",
+  "audio_variants": [
+    {
+      "voice": "female_2",
+      "url": "/audio/pre-gen/gen-50e9_female_2.mp3",
+      "duration_seconds": 43.27,
+      "provider": "chatterbox"
+    },
+    {
+      "voice": "female_3",
+      "url": "/audio/pre-gen/gen-50e9_female_3.mp3",
+      "duration_seconds": 41.43,
+      "provider": "chatterbox"
+    },
+    {
+      "voice": "female_1",
+      "url": "/audio/pre-gen/gen-50e9_female_1.mp3",
+      "duration_seconds": 68.42,
+      "provider": "chatterbox"
+    },
+    {
+      "voice": "male_1",
+      "url": "/audio/pre-gen/gen-50e9_male_1.mp3",
+      "duration_seconds": 40.11,
+      "provider": "chatterbox"
+    },
+    {
+      "voice": "male_2",
+      "url": "/audio/pre-gen/gen-50e9_male_2.mp3",
+      "duration_seconds": 38.73,
+      "provider": "chatterbox"
+    },
+    {
+      "voice": "male_3",
+      "url": "/audio/pre-gen/gen-50e9_male_3.mp3",
+      "duration_seconds": 38.75,
+      "provider": "chatterbox"
+    },
+    {
+      "voice": "asmr",
+      "url": "/audio/pre-gen/gen-50e9_asmr.mp3",
+      "duration_seconds": 46.71,
+      "provider": "chatterbox"
+    }
+  ],
+  "author_id": "system",
+  "is_generated": true,
+  "generation_quality": "pending_review",
+  "lead_gender": "male",
+  "lead_character_type": "object",
+  "universe": "historical",
+  "geography": "East Asia",
+  "life_aspect": "family_home",
+  "plot_archetype": "discovery",
+  "created_at": "2026-02-25T01:30:25.662381",
+  "updated_at": "2026-02-25T01:30:25.662381",
+  "view_count": 0,
+  "like_count": 0,
+  "save_count": 0,
+  "duration": 1,
+  "musicParams": {
+    "key": "A",
+    "chordNotes": [
+      110.0,
+      138.59,
+      164.81,
+      220.0
+    ],
+    "padType": "resonant",
+    "padGain": 0.0316,
+    "padFilter": 473,
+    "padLfo": 0.0412,
+    "noiseType": "pink",
+    "noiseGain": 0.0122,
+    "droneFreq": 55.0,
+    "droneGain": 0.0263,
+    "melodyNotes": [
+      220.0,
+      277.18,
+      329.62,
+      293.66
+    ],
+    "melodyInterval": 5201,
+    "melodyGain": 0.0147,
+    "bassNotes": [
+      55.0,
+      82.41,
+      69.3
+    ],
+    "bassInterval": 6929,
+    "counterNotes": [
+      346.48,
+      412.02,
+      275.0
+    ],
+    "counterInterval": 4778,
+    "events": [
+      {
+        "type": "heartbeat",
+        "interval": 6665
+      },
+      {
+        "type": "windGust",
+        "interval": 12932
+      },
+      {
+        "type": "leaves",
+        "interval": 16162
+      },
+      {
+        "type": "birdChirp",
+        "interval": 23443
+      }
+    ],
+    "soundscapePreset": "heartbeat",
+    "musicLoop": "musicBox"
+  }
+}
