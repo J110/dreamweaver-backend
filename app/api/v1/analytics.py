@@ -790,6 +790,42 @@ def _format_uptime(seconds):
     return f"{minutes}m"
 
 
+def _describe_error(method, path, status):
+    """Return a human-readable description for an API error."""
+    # Specific path + status combos
+    p = path.lower()
+    if "auth/signup" in p and status == 400:
+        return "Signup attempt with invalid or already-registered email"
+    if "auth/signup" in p and status == 422:
+        return "Signup form submitted with missing fields"
+    if "auth" in p and status == 401:
+        return "Login attempt with wrong credentials"
+    if "/content" in p and status == 422:
+        return "Content page loaded without required filters (normal on refresh)"
+    if "/content" in p and status == 404:
+        return "Requested story or content not found"
+    if "/blog" in p and status == 404:
+        return "Blog post not found"
+    if "/analytics" in p and status == 401:
+        return "Dashboard access attempt with invalid key"
+
+    # Generic by status code
+    descriptions = {
+        400: "Bad request — invalid or missing input data",
+        401: "Unauthorized — missing or invalid credentials",
+        403: "Access denied",
+        404: "Page or resource not found",
+        405: "HTTP method not allowed for this endpoint",
+        422: "Validation failed — request had missing or invalid fields",
+        429: "Rate limited — too many requests from one user",
+        500: "Server error — something crashed while processing",
+        502: "Bad gateway — server temporarily unreachable",
+        503: "Server overloaded or restarting",
+        504: "Gateway timeout — request took too long",
+    }
+    return descriptions.get(status, f"HTTP {status} error")
+
+
 @router.get("/server-health")
 async def dashboard_server_health(
     authorization: Optional[str] = Header(None),
@@ -928,6 +964,8 @@ async def dashboard_server_health(
         "path": r[2],
         "status": r[3],
         "durationMs": r[4],
+        "description": _describe_error(r[1], r[2], r[3]),
+        "severity": "error" if r[3] >= 500 else "warning",
     } for r in recent_errors]
 
     conn.close()

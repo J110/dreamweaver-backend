@@ -98,7 +98,7 @@ def compute_request_stats(buffer, lock, since_timestamp):
         }
 
     durations = sorted([r[4] for r in recent])
-    error_count = sum(1 for r in recent if r[3] >= 400)
+    error_count = sum(1 for r in recent if r[3] >= 500)
     n = len(durations)
 
     return {
