@@ -64,6 +64,31 @@ def init_analytics_db():
             value REAL NOT NULL,
             PRIMARY KEY (date, metric, dimension)
         );
+
+        CREATE TABLE IF NOT EXISTS health_snapshots (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            timestamp TEXT NOT NULL,
+            hour TEXT NOT NULL,
+            cpu_load_1m REAL,
+            cpu_load_5m REAL,
+            memory_used_pct REAL,
+            memory_used_mb REAL,
+            memory_total_mb REAL,
+            disk_used_pct REAL,
+            disk_used_gb REAL,
+            disk_total_gb REAL,
+            request_count INTEGER DEFAULT 0,
+            error_count INTEGER DEFAULT 0,
+            latency_p50 REAL,
+            latency_p95 REAL,
+            latency_p99 REAL,
+            latency_avg REAL,
+            health_score INTEGER,
+            health_components TEXT,
+            db_size_mb REAL
+        );
+        CREATE INDEX IF NOT EXISTS idx_health_ts ON health_snapshots(timestamp);
+        CREATE INDEX IF NOT EXISTS idx_health_hour ON health_snapshots(hour);
     """)
 
     # Migration: add username column if missing (for existing DBs)
@@ -751,3 +776,166 @@ async def dashboard_users_activity(
 
     conn.close()
     return {"dateRange": {"from": fr, "to": to}, "users": users}
+
+
+def _format_uptime(seconds):
+    """Format seconds into human-readable uptime string."""
+    days = int(seconds // 86400)
+    hours = int((seconds % 86400) // 3600)
+    minutes = int((seconds % 3600) // 60)
+    if days > 0:
+        return f"{days}d {hours}h {minutes}m"
+    if hours > 0:
+        return f"{hours}h {minutes}m"
+    return f"{minutes}m"
+
+
+@router.get("/server-health")
+async def dashboard_server_health(
+    authorization: Optional[str] = Header(None),
+    hours: int = Query(24, description="Hours of history to return"),
+):
+    """Server health: system stats, latency, errors, health score, trends."""
+    verify_analytics_key(authorization)
+
+    import time as _time
+    from app.services.health_collector import (
+        get_uptime_seconds, read_system_metrics, get_db_size_mb,
+        compute_request_stats, compute_health_score,
+    )
+    from app.middleware.timing import get_request_buffer
+
+    # --- Current snapshot (live) ---
+    sys_metrics = read_system_metrics()
+    uptime_seconds = get_uptime_seconds()
+    db_size = get_db_size_mb()
+
+    # Live latency from ring buffer (last 5 minutes)
+    buffer, lock = get_request_buffer()
+    recent_stats = compute_request_stats(buffer, lock, _time.time() - 300)
+
+    # Live health score
+    live_health = compute_health_score(sys_metrics, recent_stats)
+
+    current = {
+        "uptimeSeconds": int(uptime_seconds),
+        "uptimeHuman": _format_uptime(uptime_seconds),
+        "cpuLoad1m": sys_metrics.get("cpu_load_1m"),
+        "cpuLoad5m": sys_metrics.get("cpu_load_5m"),
+        "memoryUsedPct": sys_metrics.get("memory_used_pct"),
+        "memoryUsedMb": sys_metrics.get("memory_used_mb"),
+        "memoryTotalMb": sys_metrics.get("memory_total_mb"),
+        "diskUsedPct": sys_metrics.get("disk_used_pct"),
+        "diskUsedGb": sys_metrics.get("disk_used_gb"),
+        "diskTotalGb": sys_metrics.get("disk_total_gb"),
+        "dbSizeMb": db_size,
+        "latency": recent_stats,
+        "healthScore": live_health,
+    }
+
+    # --- Peak traffic health (worst score in last 6 hours) ---
+    conn = get_db()
+    six_hours_ago = (datetime.now(timezone.utc) - timedelta(hours=6)).isoformat()
+    peak_row = conn.execute("""
+        SELECT health_score, health_components, timestamp,
+               request_count, latency_p95, cpu_load_1m, memory_used_pct, disk_used_pct
+        FROM health_snapshots
+        WHERE timestamp >= ?
+        ORDER BY health_score ASC
+        LIMIT 1
+    """, (six_hours_ago,)).fetchone()
+
+    if peak_row and peak_row["health_score"] is not None:
+        peak_health = {
+            "score": peak_row["health_score"],
+            "components": json.loads(peak_row["health_components"]) if peak_row["health_components"] else [],
+            "timestamp": peak_row["timestamp"],
+            "requestCount": peak_row["request_count"],
+        }
+        ps = peak_health["score"]
+        peak_health["status"] = "green" if ps >= 80 else "yellow" if ps >= 50 else "red"
+    else:
+        # No snapshots yet — use live score
+        peak_health = {
+            "score": live_health["score"],
+            "status": live_health["status"],
+            "components": live_health["components"],
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "requestCount": recent_stats["request_count"],
+        }
+
+    # --- Historical data (5-min snapshots for charts) ---
+    cutoff = (datetime.now(timezone.utc) - timedelta(hours=hours)).isoformat()
+    rows = conn.execute("""
+        SELECT timestamp, cpu_load_1m, memory_used_pct, disk_used_pct,
+               request_count, error_count,
+               latency_p50, latency_p95, latency_p99, latency_avg,
+               health_score, db_size_mb
+        FROM health_snapshots
+        WHERE timestamp >= ?
+        ORDER BY timestamp
+    """, (cutoff,)).fetchall()
+
+    history = []
+    for row in rows:
+        error_rate = 0
+        if row["request_count"] and row["request_count"] > 0:
+            error_rate = round(row["error_count"] / row["request_count"] * 100, 1)
+        history.append({
+            "timestamp": row["timestamp"],
+            "cpuLoad": row["cpu_load_1m"],
+            "memoryPct": row["memory_used_pct"],
+            "diskPct": row["disk_used_pct"],
+            "requestCount": row["request_count"],
+            "errorCount": row["error_count"],
+            "errorRate": error_rate,
+            "p50": row["latency_p50"],
+            "p95": row["latency_p95"],
+            "p99": row["latency_p99"],
+            "avgLatency": row["latency_avg"],
+            "healthScore": row["health_score"],
+            "dbSizeMb": row["db_size_mb"],
+        })
+
+    # --- Recent slow requests (from ring buffer, last hour, >500ms) ---
+    one_hour_ago = _time.time() - 3600
+    with lock:
+        recent_slow = sorted(
+            [(ts, method, path, status, dur) for ts, method, path, status, dur in buffer
+             if ts >= one_hour_ago and dur > 500],
+            key=lambda x: -x[4],
+        )[:20]
+
+    slow_requests = [{
+        "timestamp": datetime.fromtimestamp(r[0], tz=timezone.utc).isoformat(),
+        "method": r[1],
+        "path": r[2],
+        "status": r[3],
+        "durationMs": r[4],
+    } for r in recent_slow]
+
+    # --- Recent errors (from ring buffer, last hour, 4xx/5xx) ---
+    with lock:
+        recent_errors = sorted(
+            [(ts, method, path, status, dur) for ts, method, path, status, dur in buffer
+             if ts >= one_hour_ago and status >= 400],
+            key=lambda x: -x[0],
+        )[:20]
+
+    error_requests = [{
+        "timestamp": datetime.fromtimestamp(r[0], tz=timezone.utc).isoformat(),
+        "method": r[1],
+        "path": r[2],
+        "status": r[3],
+        "durationMs": r[4],
+    } for r in recent_errors]
+
+    conn.close()
+
+    return {
+        "current": current,
+        "peakHealth": peak_health,
+        "history": history,
+        "slowRequests": slow_requests,
+        "recentErrors": error_requests,
+    }

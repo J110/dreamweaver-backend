@@ -13,6 +13,7 @@ from fastapi.staticfiles import StaticFiles
 
 from app.config import get_settings
 from app.middleware.error_handler import ErrorHandlerMiddleware
+from app.middleware.timing import TimingMiddleware
 from app.utils.logger import configure_logging, get_logger
 
 logger = get_logger(__name__)
@@ -27,6 +28,7 @@ configure_logging(debug=settings.debug)
 # ── Background tasks ──────────────────────────────────────────────────────
 _keep_alive_task = None
 _content_poll_task = None
+_health_collector_task = None
 
 
 async def _keep_alive_loop():
@@ -88,7 +90,7 @@ async def _content_poll_loop():
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Manage application startup and shutdown events."""
-    global _keep_alive_task, _content_poll_task
+    global _keep_alive_task, _content_poll_task, _health_collector_task
 
     # Startup event
     logger.info(f"Starting {settings.app_name} API v{settings.api_version}")
@@ -120,10 +122,15 @@ async def lifespan(app: FastAPI):
     _content_poll_task = asyncio.create_task(_content_poll_loop())
     logger.info("Content polling background task started (60s interval)")
 
+    # Start health metrics collector (5-min snapshots)
+    from app.services.health_collector import health_collection_loop
+    _health_collector_task = asyncio.create_task(health_collection_loop())
+    logger.info("Health collector background task started (5-min interval)")
+
     yield
 
     # Shutdown event
-    for task in [_keep_alive_task, _content_poll_task]:
+    for task in [_keep_alive_task, _content_poll_task, _health_collector_task]:
         if task:
             task.cancel()
             try:
@@ -146,10 +153,13 @@ app = FastAPI(
 
 # ── Middleware (order matters: last-added = outermost = first to run) ──
 
-# 1. Error handler added first → innermost layer
+# 1. Timing middleware added first → innermost layer (measures actual handler time)
+app.add_middleware(TimingMiddleware)
+
+# 2. Error handler
 app.add_middleware(ErrorHandlerMiddleware)
 
-# 2. CORS added last → outermost layer (processes OPTIONS preflight first)
+# 3. CORS added last → outermost layer (processes OPTIONS preflight first)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],           # Allow all origins
