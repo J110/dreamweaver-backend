@@ -292,7 +292,7 @@ def step_generate(args, state: dict) -> bool:
 
 
 def _find_incomplete_content() -> list:
-    """Find content.json stories that are missing audio or covers.
+    """Find content.json stories that are missing audio, covers, or musicalBrief.
 
     These are leftovers from previous failed pipeline runs. Returns their IDs
     so the current run can complete them alongside new content.
@@ -308,12 +308,17 @@ def _find_incomplete_content() -> list:
                 continue  # Skip seed/manual content
             has_audio = bool(item.get("audio_variants"))
             has_cover = bool(item.get("cover") and item["cover"] != "" and "default.svg" not in item.get("cover", ""))
-            if not has_audio or not has_cover:
+            # Songs don't need musicalBrief (they have vocals + instruments from ACE-Step)
+            is_song = item.get("type", "").lower() == "song"
+            has_music = is_song or bool(item.get("musicalBrief") or item.get("musicParams"))
+            if not has_audio or not has_cover or not has_music:
                 missing = []
                 if not has_audio:
                     missing.append("audio")
                 if not has_cover:
                     missing.append("cover")
+                if not has_music:
+                    missing.append("musicalBrief")
                 incomplete.append((sid, item.get("title", sid[:12]), missing))
         return incomplete
     except Exception:
@@ -447,6 +452,21 @@ def step_enrich(args, state: dict) -> bool:
     new_ids = state.get("generated_ids", [])
     audio_failures = state.get("audio_failures", [])
     enrich_ids = [sid for sid in new_ids if sid not in audio_failures]
+
+    # Auto-recover: find content from previous runs that has audio but no musicalBrief
+    incomplete = _find_incomplete_content()
+    recover_enrich_ids = [sid for sid, title, missing in incomplete
+                          if "musicalBrief" in missing and "audio" not in missing
+                          and sid not in enrich_ids]
+    if recover_enrich_ids:
+        logger.info("  RECOVERY: Found %d stories from previous runs missing musicalBrief:", len(recover_enrich_ids))
+        for sid, title, _ in incomplete:
+            if sid in recover_enrich_ids:
+                logger.info("    - %s (%s)", title, sid[:12])
+        enrich_ids = enrich_ids + recover_enrich_ids
+        state["recovered_enrich_ids"] = recover_enrich_ids
+        save_state(state)
+
     if not enrich_ids:
         logger.info("  No stories with audio to enrich. Skipping.")
         state["step_enrich"] = "skipped"
@@ -462,6 +482,7 @@ def step_enrich(args, state: dict) -> bool:
             content = _json.load(_f)
     content_by_id = {item["id"]: item for item in content if isinstance(item, dict)}
 
+    enrich_failures = []
     for sid in enrich_ids:
         # Songs (lullabies) don't need Musical Briefs — ACE-Step output has vocals + instrument
         item = content_by_id.get(sid, {})
@@ -481,7 +502,12 @@ def step_enrich(args, state: dict) -> bool:
         )
         if not ok:
             logger.warning("  Musical Brief generation failed for %s (non-fatal)", sid)
+            enrich_failures.append(sid)
 
+    if enrich_failures:
+        state["enrich_failures"] = enrich_failures
+        logger.warning("  %d Musical Brief generation(s) failed: %s", len(enrich_failures),
+                       ", ".join(s[:8] for s in enrich_failures))
     state["step_enrich"] = "done"
     save_state(state)
     return True
@@ -687,9 +713,8 @@ def step_sync(args, state: dict) -> bool:
         save_state(state)
         return False
 
-    # Copy new audio files to web public folder so nginx can serve them
-    # Copy for ALL stories with audio (not just QA-passed), because QA timeouts
-    # don't mean the audio is bad — files still need to be served.
+    # Copy audio files to web public folder so nginx can serve them.
+    # Includes current run's items AND any recovered items from previous runs.
     web_audio_dir = WEB_DIR / "public" / "audio" / "pre-gen"
     backend_audio_dir = BASE_DIR / "audio" / "pre-gen"
     if web_audio_dir.exists() and backend_audio_dir.exists():
@@ -697,6 +722,17 @@ def step_sync(args, state: dict) -> bool:
         new_ids = state.get("generated_ids", [])
         audio_failures = state.get("audio_failures", [])
         copy_ids = [sid for sid in new_ids if sid not in audio_failures]
+        # Also copy any gen- audio files from backend that are missing in web dir
+        existing_web_files = {f.name for f in web_audio_dir.glob("gen-*.mp3")}
+        for mp3 in backend_audio_dir.glob("gen-*.mp3"):
+            if mp3.name not in existing_web_files:
+                # Extract story ID prefix (first 8 chars) and check it's not a failure
+                short = mp3.name[:8]
+                matching_failure = any(sid[:8] == short for sid in audio_failures)
+                if not matching_failure:
+                    copy_ids_shorts = {sid[:8] for sid in copy_ids}
+                    if short not in copy_ids_shorts:
+                        copy_ids.append(short)  # ensure we copy it
         copied = 0
         for story_id in copy_ids:
             short_id = story_id[:8]
