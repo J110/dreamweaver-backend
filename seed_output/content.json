@@ -14444,7 +14444,38 @@
     "view_count": 0,
     "like_count": 0,
     "save_count": 0,
-    "duration": 11
+    "duration": 11,
+    "musicalBrief": {
+      "storyId": "gen-bfea572c7a73",
+      "ageGroup": "6-8",
+      "musicalIdentity": {
+        "culturalReference": "latin",
+        "primaryLoop": "guitar_fingerpick",
+        "padCharacter": "deep_ocean"
+      },
+      "tonality": {
+        "mode": "minor_pentatonic",
+        "rootNote": "Eb"
+      },
+      "melodicCharacter": "cycling_arpeggio",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 66
+      },
+      "environment": {
+        "natureSoundPrimary": "ocean_waves_close",
+        "natureSoundSecondary": "underwater_bubbling",
+        "ambientEvents": [
+          "waterDrop",
+          "waveCycle"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "curious_wonder",
+        "phase2": "gentle_exploration",
+        "phase3": "deep_stillness"
+      }
+    }
   },
   {
     "id": "gen-59c38722ffc1",
