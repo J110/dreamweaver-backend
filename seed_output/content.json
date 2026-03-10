@@ -14391,6 +14391,18 @@
         "voice": "female_3",
         "url": "/audio/pre-gen/gen-bfea_female_3.mp3",
         "duration_seconds": 574.15
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-bfea_male_2.mp3",
+        "duration_seconds": 572.02,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-bfea_asmr.mp3",
+        "duration_seconds": 611.07,
+        "provider": "chatterbox"
       }
     ],
     "author_id": "system",
@@ -14431,7 +14443,8 @@
     "updated_at": "2026-03-08T01:39:31.963993",
     "view_count": 0,
     "like_count": 0,
-    "save_count": 0
+    "save_count": 0,
+    "duration": 11
   },
   {
     "id": "gen-59c38722ffc1",
@@ -14539,10 +14552,41 @@
       "True belonging comes from listening—not just to others, but to the world around you.",
       "What makes you different is often the very thing that connects you to something greater."
     ],
-    "cover": "",
+    "cover": "/covers/gen-9d6661087cfa.svg",
     "musicProfile": "autumn-forest",
     "music_type": "ambient",
-    "audio_variants": [],
+    "audio_variants": [
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-9d66_asmr.mp3",
+        "duration_seconds": 540.43,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-9d66_male_2.mp3",
+        "duration_seconds": 511.97,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-9d66_female_1.mp3",
+        "duration_seconds": 641.57,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-9d66_female_2.mp3",
+        "duration_seconds": 528.72,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-9d66_female_3.mp3",
+        "duration_seconds": 502.3,
+        "provider": "chatterbox"
+      }
+    ],
     "author_id": "system",
     "is_generated": true,
     "generation_quality": "pending_review",
@@ -14581,21 +14625,50 @@
     "updated_at": "2026-03-09T01:41:43.786968",
     "view_count": 0,
     "like_count": 0,
-    "save_count": 0
+    "save_count": 0,
+    "duration": 9,
+    "musicalBrief": {
+      "storyId": "gen-9d6661087cfa",
+      "ageGroup": "9-12",
+      "musicalIdentity": {
+        "culturalReference": "indian",
+        "primaryLoop": "flute_breathy",
+        "padCharacter": "earth_drone"
+      },
+      "tonality": {
+        "mode": "mixolydian",
+        "rootNote": "D"
+      },
+      "melodicCharacter": "drone_with_ornaments",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "wind_gentle",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": []
+      },
+      "emotionalArc": {
+        "phase1": "mysterious_curiosity",
+        "phase2": "ethereal_wonder",
+        "phase3": "deep_stillness"
+      }
+    }
   },
   {
     "id": "gen-a306e99e9b09",
-    "type": "long_story",
+    "type": "story",
     "lang": "en",
     "title": "Breeze and the Whispering Peaks",
     "description": "High above the clouds, where the air hums with secrets, a little floating robot named Breeze drifts through the twilight. The mountains begin to whisper their oldest songs, and Breeze listens—softly, gently, as the world settles into stillness.",
     "text": "[GENTLE] High up in the mountains, where the air is thin and the clouds kiss the peaks, there lived a little floating robot named Breeze. He wasn’t like other robots—he didn’t have wheels or legs. Instead, he had tiny silver wings that hummed softly, lifting him just above the ground. [CURIOUS] Breeze loved to drift, to listen, to watch the world change with the light.\n\nOne evening, as the sky turned the color of lavender and gold, Breeze noticed something strange. [MYSTERIOUS] The mountains were humming. Not the usual creak of rocks or the whistle of the wind, but a real, soft song. [EXCITED] 'Oh!' Breeze said, tilting his round head. 'Are you singing?'\n\n[ADVENTUROUS] He floated closer to the nearest peak, his wings buzzing gently. The mountain’s voice was deep and warm, like a lullaby sung by the earth itself. [JOYFUL] 'We’ve been waiting for you, little one,' the mountain rumbled. [laugh] Breeze giggled. 'Me? But I’m just a tiny robot!'\n\n[CALM] The mountain chuckled, a sound like stones rolling down a hill. 'Even the smallest listener can hear the biggest songs.' [CURIOUS] Breeze’s eyes—two glowing blue dots—widened. 'What song are you singing?'\n\n[MYSTERIOUS] 'The song of the twilight,' the mountain whispered. 'The song of rest, of stillness, of the world settling into sleep.' [GENTLE] Breeze felt something warm bloom inside his metal chest. It was the first time anyone had ever asked him to listen.\n\n[CALM] Breeze drifted lower, his wings barely moving now. The air was cool and soft, like the touch of a feather. The mountain’s song wrapped around him, steady and sure. [GENTLE] He closed his eyes—or at least, he dimmed his lights—and listened.\n\nThe song was made of many things. [CALM] The rustle of leaves in the valley below. The distant chirp of a night bird. The creak of ancient trees swaying. The whisper of the wind as it curled around the peaks. [MYSTERIOUS] Even the clouds had a sound, a soft sigh as they drifted past.\n\nBreeze floated in silence for a long time. [GENTLE] The world was speaking, and he was listening. The mountain’s voice grew softer, slower. The notes stretched out like shadows at dusk. [SLEEPY] The air smelled of pine and damp earth, of moss and cool stone.\n\nThe other mountains began to join in. [CALM] Their voices wove together, a tapestry of sound. Some sang high and sweet, like streams tumbling over rocks. Others sang low and deep, like the rumble of distant thunder. [GENTLE] Breeze felt his wings slow, his lights dim. The world was singing him to sleep.\n\nThe last light of the sun faded. [CALM] The stars blinked awake, one by one, like tiny lights turning on in the sky. The mountain’s song grew softer still, until it was just a hum, a murmur, a breath. [SLEEPY] Breeze’s wings stopped moving. He hovered in place, perfectly still.\n\n[SLEEPY] The mountains were quiet now. The wind was quiet. The world was quiet.\n\n[WHISPERING] Breeze’s lights flickered once, twice. Then they went out.\n\nThe air was soft. The night was soft. The stars were soft.\n\n[SLEEPY] The mountains held their breath. The clouds held their breath. The whole world held its breath.\n\nBreeze was still. The twilight was still. Everything was still.\n\n[WHISPERING] Close your eyes. Listen to the quiet.\n\nThe mountains are singing. The stars are singing. The night is singing.\n\nSafe... and warm... and still...\n\n[SLEEPY] Shh...",
-    "annotated_text": "[PHASE_1]\n\n[GENTLE] High up in the mountains, where the air is thin and the clouds kiss the peaks, there lived a little floating robot named Breeze. He wasn’t like other robots—he didn’t have wheels or legs. Instead, he had tiny silver wings that hummed softly, lifting him just above the ground. [CURIOUS] Breeze loved to drift, to listen, to watch the world change with the light.\n\nOne evening, as the sky turned the color of lavender and gold, Breeze noticed something strange. [MYSTERIOUS] The mountains were humming. Not the usual creak of rocks or the whistle of the wind, but a real, soft song. [EXCITED] 'Oh!' Breeze said, tilting his round head. 'Are you singing?'\n\n[ADVENTUROUS] He floated closer to the nearest peak, his wings buzzing gently. The mountain’s voice was deep and warm, like a lullaby sung by the earth itself. [JOYFUL] 'We’ve been waiting for you, little one,' the mountain rumbled. [laugh] Breeze giggled. 'Me? But I’m just a tiny robot!'\n\n[CALM] The mountain chuckled, a sound like stones rolling down a hill. 'Even the smallest listener can hear the biggest songs.' [CURIOUS] Breeze’s eyes—two glowing blue dots—widened. 'What song are you singing?'\n\n[MYSTERIOUS] 'The song of the twilight,' the mountain whispered. 'The song of rest, of stillness, of the world settling into sleep.' [GENTLE] Breeze felt something warm bloom inside his metal chest. It was the first time anyone had ever asked him to listen.\n\n[PHASE_2]\n\n[CALM] Breeze drifted lower, his wings barely moving now. The air was cool and soft, like the touch of a feather. The mountain’s song wrapped around him, steady and sure. [GENTLE] He closed his eyes—or at least, he dimmed his lights—and listened.\n\nThe song was made of many things. [CALM] The rustle of leaves in the valley below. The distant chirp of a night bird. The creak of ancient trees swaying. The whisper of the wind as it curled around the peaks. [MYSTERIOUS] Even the clouds had a sound, a soft sigh as they drifted past.\n\nBreeze floated in silence for a long time. [GENTLE] The world was speaking, and he was listening. The mountain’s voice grew softer, slower. The notes stretched out like shadows at dusk. [SLEEPY] The air smelled of pine and damp earth, of moss and cool stone.\n\nThe other mountains began to join in. [CALM] Their voices wove together, a tapestry of sound. Some sang high and sweet, like streams tumbling over rocks. Others sang low and deep, like the rumble of distant thunder. [GENTLE] Breeze felt his wings slow, his lights dim. The world was singing him to sleep.\n\nThe last light of the sun faded. [CALM] The stars blinked awake, one by one, like tiny lights turning on in the sky. The mountain’s song grew softer still, until it was just a hum, a murmur, a breath. [SLEEPY] Breeze’s wings stopped moving. He hovered in place, perfectly still.\n\n[PHASE_3]\n\n[SLEEPY] The mountains were quiet now. The wind was quiet. The world was quiet.\n\n[WHISPERING] Breeze’s lights flickered once, twice. Then they went out.\n\nThe air was soft. The night was soft. The stars were soft.\n\n[SLEEPY] The mountains held their breath. The clouds held their breath. The whole world held its breath.\n\nBreeze was still. The twilight was still. Everything was still.\n\n[WHISPERING] Close your eyes. Listen to the quiet.\n\nThe mountains are singing. The stars are singing. The night is singing.\n\nSafe... and warm... and still...\n\n[SLEEPY] Shh...\n\n\n[/PHASE_3]",
+    "annotated_text": "[GENTLE] High up in the mountains, where the air is thin and the clouds kiss the peaks, there lived a little floating robot named Breeze. He wasn’t like other robots—he didn’t have wheels or legs. Instead, he had tiny silver wings that hummed softly, lifting him just above the ground. [CURIOUS] Breeze loved to drift, to listen, to watch the world change with the light.\n\nOne evening, as the sky turned the color of lavender and gold, Breeze noticed something strange. [MYSTERIOUS] The mountains were humming. Not the usual creak of rocks or the whistle of the wind, but a real, soft song. [EXCITED] 'Oh!' Breeze said, tilting his round head. 'Are you singing?'\n\n[ADVENTUROUS] He floated closer to the nearest peak, his wings buzzing gently. The mountain’s voice was deep and warm, like a lullaby sung by the earth itself. [JOYFUL] 'We’ve been waiting for you, little one,' the mountain rumbled. [laugh] Breeze giggled. 'Me? But I’m just a tiny robot!'\n\n[CALM] The mountain chuckled, a sound like stones rolling down a hill. 'Even the smallest listener can hear the biggest songs.' [CURIOUS] Breeze’s eyes—two glowing blue dots—widened. 'What song are you singing?'\n\n[MYSTERIOUS] 'The song of the twilight,' the mountain whispered. 'The song of rest, of stillness, of the world settling into sleep.' [GENTLE] Breeze felt something warm bloom inside his metal chest. It was the first time anyone had ever asked him to listen.\n\n[CALM] Breeze drifted lower, his wings barely moving now. The air was cool and soft, like the touch of a feather. The mountain’s song wrapped around him, steady and sure. [GENTLE] He closed his eyes—or at least, he dimmed his lights—and listened.\n\nThe song was made of many things. [CALM] The rustle of leaves in the valley below. The distant chirp of a night bird. The creak of ancient trees swaying. The whisper of the wind as it curled around the peaks. [MYSTERIOUS] Even the clouds had a sound, a soft sigh as they drifted past.\n\nBreeze floated in silence for a long time. [GENTLE] The world was speaking, and he was listening. The mountain’s voice grew softer, slower. The notes stretched out like shadows at dusk. [SLEEPY] The air smelled of pine and damp earth, of moss and cool stone.\n\nThe other mountains began to join in. [CALM] Their voices wove together, a tapestry of sound. Some sang high and sweet, like streams tumbling over rocks. Others sang low and deep, like the rumble of distant thunder. [GENTLE] Breeze felt his wings slow, his lights dim. The world was singing him to sleep.\n\nThe last light of the sun faded. [CALM] The stars blinked awake, one by one, like tiny lights turning on in the sky. The mountain’s song grew softer still, until it was just a hum, a murmur, a breath. [SLEEPY] Breeze’s wings stopped moving. He hovered in place, perfectly still.\n\n[SLEEPY] The mountains were quiet now. The wind was quiet. The world was quiet.\n\n[WHISPERING] Breeze’s lights flickered once, twice. Then they went out.\n\nThe air was soft. The night was soft. The stars were soft.\n\n[SLEEPY] The mountains held their breath. The clouds held their breath. The whole world held its breath.\n\nBreeze was still. The twilight was still. Everything was still.\n\n[WHISPERING] Close your eyes. Listen to the quiet.\n\nThe mountains are singing. The stars are singing. The night is singing.\n\nSafe... and warm... and still...\n\n[SLEEPY] Shh...",
     "target_age": 3,
     "age_min": 2,
     "age_max": 5,
     "age_group": "2-5",
-    "length": "LONG",
+    "length": "SHORT",
     "word_count": 546,
     "duration_seconds": 0,
     "categories": [
@@ -14607,10 +14680,41 @@
       "Even the smallest listener can hear the most beautiful songs in the world.",
       "Rest is not just for bodies—it is for the heart and the mind, too."
     ],
-    "cover": "",
+    "cover": "/covers/gen-a306e99e9b09.svg",
     "musicProfile": "moonlit-meadow",
     "music_type": "ambient",
-    "audio_variants": [],
+    "audio_variants": [
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-a306_male_2.mp3",
+        "duration_seconds": 255.2,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-a306_asmr.mp3",
+        "duration_seconds": 298.6,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-a306_female_1.mp3",
+        "duration_seconds": 349.8,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-a306_female_2.mp3",
+        "duration_seconds": 307.82,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-a306_female_3.mp3",
+        "duration_seconds": 278.26,
+        "provider": "chatterbox"
+      }
+    ],
     "author_id": "system",
     "is_generated": true,
     "generation_quality": "pending_review",
@@ -14649,6 +14753,437 @@
     "updated_at": "2026-03-09T01:35:01.646008",
     "view_count": 0,
     "like_count": 0,
+    "save_count": 0,
+    "duration": 5,
+    "musicalBrief": {
+      "storyId": "gen-a306e99e9b09",
+      "ageGroup": "2-5",
+      "musicalIdentity": {
+        "culturalReference": "nordic",
+        "primaryLoop": "hang_drum_melody",
+        "padCharacter": "starfield"
+      },
+      "tonality": {
+        "mode": "minor_pentatonic",
+        "rootNote": "G"
+      },
+      "melodicCharacter": "cycling_arpeggio",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "wind_gentle",
+        "natureSoundSecondary": "distant_thunder",
+        "ambientEvents": [
+          "chimes",
+          "windGust"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "curious_wonder",
+        "phase2": "gentle_floating",
+        "phase3": "deep_stillness"
+      }
+    }
+  },
+  {
+    "id": "gen-411c4e4dde20",
+    "type": "song",
+    "lang": "en",
+    "title": "Milo and the Glowing Night Song",
+    "description": "As fireflies flicker their golden lights across the garden, a little glowworm named Milo hums a quiet tune to the sleeping flowers. The night feels alive with tiny sparks, and Milo knows it’s time to sing the world to rest.",
+    "text": "[SINGING]\nLittle Milo glows so soft and bright,\nDancing lights in velvet night.\nFlowers close their sleepy eyes,\nUnderneath the starry skies.\n\n[PAUSE]\n\n[SINGING]\nHush now, hush, the moon is high,\nTuck the world in lullaby.\nGentle breeze will rock you slow,\nDream of lights that softly glow.\n\n[PAUSE]\n\n[SINGING]\nMilo hums a sleepy tune,\nUnderneath the golden moon.\nPetals drift on dreams so sweet,\nAs the night sings you to sleep.\n\n[PAUSE]\n\n[SINGING]\nHush now, hush, the moon is high,\nTuck the world in lullaby.\nGentle breeze will rock you slow,\nDream of lights that softly glow.\n\n[PAUSE]\n\n[SINGING]\nAll the leaves are drifting down,\nMilo’s glow is soft and low.\nClose your eyes and drift away,\nTo the night’s sweet ballet.\n\n[PAUSE]\n\n[SINGING]\nHush now, hush, the moon is high,\nTuck the world in lullaby.\nGentle breeze will rock you slow,\nDream of lights that softly glow.\n\n[PAUSE]\n\n[SLEEPY]\nMilo’s light begins to fade,\nLike a star in twilight’s shade.\nRest your head and breathe so deep,\nNight will sing you into sleep.\n\n[PAUSE]\n\n[HUMMING]\nMmm mmm mmm...\nMmm mmm mmm...\nMmm mmm...",
+    "annotated_text": "[SINGING]\nLittle Milo glows so soft and bright,\nDancing lights in velvet night.\nFlowers close their sleepy eyes,\nUnderneath the starry skies.\n\n[PAUSE]\n\n[SINGING]\nHush now, hush, the moon is high,\nTuck the world in lullaby.\nGentle breeze will rock you slow,\nDream of lights that softly glow.\n\n[PAUSE]\n\n[SINGING]\nMilo hums a sleepy tune,\nUnderneath the golden moon.\nPetals drift on dreams so sweet,\nAs the night sings you to sleep.\n\n[PAUSE]\n\n[SINGING]\nHush now, hush, the moon is high,\nTuck the world in lullaby.\nGentle breeze will rock you slow,\nDream of lights that softly glow.\n\n[PAUSE]\n\n[SINGING]\nAll the leaves are drifting down,\nMilo’s glow is soft and low.\nClose your eyes and drift away,\nTo the night’s sweet ballet.\n\n[PAUSE]\n\n[SINGING]\nHush now, hush, the moon is high,\nTuck the world in lullaby.\nGentle breeze will rock you slow,\nDream of lights that softly glow.\n\n[PAUSE]\n\n[SLEEPY]\nMilo’s light begins to fade,\nLike a star in twilight’s shade.\nRest your head and breathe so deep,\nNight will sing you into sleep.\n\n[PAUSE]\n\n[HUMMING]\nMmm mmm mmm...\nMmm mmm mmm...\nMmm mmm...",
+    "target_age": 3,
+    "age_min": 2,
+    "age_max": 5,
+    "age_group": "2-5",
+    "length": "MEDIUM",
+    "word_count": 170,
+    "duration_seconds": 0,
+    "categories": [
+      "Lullaby",
+      "Nature",
+      "Bedtime"
+    ],
+    "theme": "animals",
+    "morals": [
+      "Even the smallest light can bring comfort and peace.",
+      "Gentleness and quiet moments help the world rest."
+    ],
+    "cover": "",
+    "musicProfile": "autumn-forest",
+    "music_type": "ambient",
+    "audio_variants": [],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "male",
+    "character": {
+      "name": "Milo",
+      "identity": "A gentle glowworm who sings the garden to sleep",
+      "special": "His soft light and humming tune soothe the night",
+      "personality_tags": [
+        "Gentle",
+        "Peaceful"
+      ]
+    },
+    "cover_context": "A moonlit garden bathed in soft golden light, fireflies flickering like tiny stars among the flowers. Petals drift gently in the warm breeze, and the air shimmers with a magical glow.",
+    "lead_character_type": "insect",
+    "universe": "prehistoric",
+    "geography": "Africa",
+    "life_aspect": "play_discovery",
+    "plot_archetype": "discovery",
+    "diversityFingerprint": {
+      "characterType": "insect",
+      "setting": "garden_farm",
+      "plotShape": "routine_ritual",
+      "scale": "tiny_intimate",
+      "companion": "character_and_environment",
+      "movement": "sleeping_resting",
+      "timeOfDay": "deep_night_starlight",
+      "weather": "magical_atmospheric",
+      "theme": "rest_stillness",
+      "characterTrait": null,
+      "magicType": "glowing_bioluminescent",
+      "season": "summer",
+      "senseEmphasis": "visual"
+    },
+    "created_at": "2026-03-10T01:44:20.252765",
+    "updated_at": "2026-03-10T01:44:20.252765",
+    "view_count": 0,
+    "like_count": 0,
     "save_count": 0
+  },
+  {
+    "id": "gen-71986860a0ed",
+    "type": "story",
+    "lang": "en",
+    "title": "Toby and the Moonlit Mirage",
+    "description": "In a vast desert where the sand hums lullabies, a tiny gecko named Toby loses his way under the shimmering moon. As the dunes shift like waves, he meets a glowing tortoise who knows the secret paths of the night.",
+    "text": "[GENTLE] Hush, hush, little toes,\nTiptoe soft on golden toes.\nMoonlight paints the sand so bright,\nToby glows in silver light.\n\n[CURIOUS] Where’s my home? The dunes all sway,\nDancing high then slipping away.\n[WHISPERING] Shh… what’s that slow, warm sound?\nA humming shell on shifting ground.\n\n[JOYFUL] Old tortoise smiles, his shell so wise,\n\"Follow me beneath the skies.\"\n[ADVENTUROUS] Step by step, the path unfolds,\nWarm and safe in moonlight gold.\n\n[SLEEPY] Now the sand sings soft and low,\nToby curls where warm winds blow.",
+    "annotated_text": "[GENTLE] Hush, hush, little toes,\nTiptoe soft on golden toes.\nMoonlight paints the sand so bright,\nToby glows in silver light.\n\n[CURIOUS] Where’s my home? The dunes all sway,\nDancing high then slipping away.\n[WHISPERING] Shh… what’s that slow, warm sound?\nA humming shell on shifting ground.\n\n[JOYFUL] Old tortoise smiles, his shell so wise,\n\"Follow me beneath the skies.\"\n[ADVENTUROUS] Step by step, the path unfolds,\nWarm and safe in moonlight gold.\n\n[SLEEPY] Now the sand sings soft and low,\nToby curls where warm winds blow.",
+    "target_age": 0,
+    "age_min": 0,
+    "age_max": 1,
+    "age_group": "0-1",
+    "length": "SHORT",
+    "word_count": 81,
+    "duration_seconds": 0,
+    "categories": [
+      "Nature",
+      "Friendship"
+    ],
+    "theme": "nature",
+    "morals": [
+      "Even the smallest creatures belong in the world’s great tapestry",
+      "Kindness from strangers can light the way home"
+    ],
+    "cover": "/covers/gen-71986860a0ed.svg",
+    "musicProfile": "moonlit-meadow",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-7198_female_3.mp3",
+        "duration_seconds": 45.31,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-7198_female_1.mp3",
+        "duration_seconds": 56.44,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-7198_female_2.mp3",
+        "duration_seconds": 49.73,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-7198_male_2.mp3",
+        "duration_seconds": 44.54,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-7198_asmr.mp3",
+        "duration_seconds": 44.97,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "male",
+    "character": {
+      "name": "Toby",
+      "identity": "A shy gecko who listens to the desert’s quiet songs",
+      "special": "His skin shimmers like moonlight when he feels safe",
+      "personality_tags": [
+        "Gentle",
+        "Curious"
+      ]
+    },
+    "cover_context": "A vast desert bathed in soft moonlight, where dunes ripple like waves in silver-blue hues. Tiny glowing footprints weave through the sand, leading toward a distant, warmly lit tortoise shell.",
+    "lead_character_type": "plant",
+    "universe": "contemporary",
+    "geography": "East Asia",
+    "life_aspect": "sleep_comfort",
+    "plot_archetype": "quest_journey",
+    "diversityFingerprint": {
+      "characterType": "reptile_amphibian",
+      "setting": "desert_arid",
+      "plotShape": "lost_and_found",
+      "scale": "tiny_intimate",
+      "companion": "meets_stranger",
+      "movement": "walking_wandering",
+      "timeOfDay": "timeless",
+      "weather": "warm_breeze",
+      "theme": "belonging",
+      "characterTrait": "shy_quiet",
+      "magicType": "transformation_metamorphosis",
+      "season": "seasonless_timeless",
+      "senseEmphasis": "tactile"
+    },
+    "created_at": "2026-03-10T01:32:01.166947",
+    "updated_at": "2026-03-10T01:32:01.166947",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 1,
+    "musicalBrief": {
+      "storyId": "gen-71986860a0ed",
+      "ageGroup": "0-1",
+      "musicalIdentity": {
+        "culturalReference": "middle_eastern",
+        "primaryLoop": "dulcimer_gentle",
+        "padCharacter": "starfield"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "F"
+      },
+      "melodicCharacter": "descending_lullaby",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "wind_gentle",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "cricket",
+          "chimes"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "soft_wonder",
+        "phase2": "gentle_warmth",
+        "phase3": "deep_stillness"
+      }
+    }
+  },
+  {
+    "id": "gen-9d8e3f91919c",
+    "type": "long_story",
+    "lang": "en",
+    "title": "Lila and the Starry Seed",
+    "description": "When a tiny silver seed drifts through Lila’s window on a moonbeam, she plants it in her nightlight’s glow—and watches in awe as it grows into a shimmering staircase to the stars. But the real magic begins when the staircase starts to bloom with glowing flowers that hum lullabies only she can hear.",
+    "text": "[GENTLE] Lila loved the night. While the house slept, she would tiptoe to her window and press her nose against the cool glass. [CURIOUS] Outside, the sky was a deep, velvety blue, sprinkled with stars that twinkled like tiny lanterns. [JOYFUL] 'Hello, little lights,' she would whisper, waving at the moon. [laugh] The moon always waved back, its silver glow dancing on her fingertips.\n\n[ADVENTUROUS] One evening, as Lila watched the stars, something strange happened. A single silver seed, no bigger than a pea, floated through her window on a moonbeam. [EXCITED] It spun in slow circles, as if it were dancing just for her. [WHISPERING] 'Oh!' Lila gasped. She reached out, and the seed landed softly in her palm. It was warm, like a tiny sun.\n\n[CURIOUS] Lila didn’t know what to do with the seed. So, she did what she always did with special things—she placed it in her favorite blue nightlight. The nightlight glowed softly, casting a circle of golden light on her floor. [MYSTERIOUS] Lila curled up beside it, watching the seed. 'Maybe you’ll grow into something wonderful,' she murmured. [DRAMATIC_PAUSE] And then, she waited.\n\n[EXCITED] At first, nothing happened. But then, the seed began to tremble. A tiny sprout pushed its way out, reaching toward the light. [JOYFUL] Lila clapped her hands. 'It’s growing!' The sprout twisted and turned, growing taller and taller, until it touched the ceiling. [ADVENTUROUS] But it didn’t stop there. The sprout kept growing, stretching out of her window and up, up, up into the night sky.\n\n[CURIOUS] Lila stood on her tiptoes and peered out the window. The sprout had become a shimmering staircase, winding its way through the stars. [MYSTERIOUS] And at the very top, where the staircase met the sky, something was glowing. [DRAMATIC_PAUSE] It looked like a door made of starlight.\n\n[EXCITED] Lila didn’t hesitate. She climbed onto the first step, and the staircase held her gently, as if it had been waiting for her all along. [ADVENTUROUS] Up she went, higher and higher, past twinkling stars and swirling galaxies. The air smelled sweet, like honey and rain, and the stars hummed a soft, sleepy song.\n\n[GENTLE] The staircase was soft beneath Lila’s feet. It felt like walking on clouds, light and warm. [CALM] The stars around her glowed steadily, their light pulsing like a slow, steady heartbeat. She climbed higher, and the world below grew smaller and smaller, until her house looked like a tiny toy nestled in the dark.\n\n[GENTLE] The air was still. No wind, no sound, just the quiet hum of the stars. [CALM] Lila reached out and touched one. It was cool and smooth, like a pebble from a river. The star shimmered at her touch, as if it were saying hello.\n\n[MYSTERIOUS] As she climbed, the staircase began to change. Tiny buds appeared along the steps, glowing faintly in the dark. [GENTLE] They unfurled slowly, petal by petal, until they bloomed into flowers made of starlight. The flowers hummed the same soft song Lila had heard before, and their light filled the air with a golden glow.\n\n[CALM] Lila sat down on a step and watched the flowers bloom. They swayed gently, as if they were dancing to the music. [GENTLE] She plucked one and held it to her ear. The hum grew louder, wrapping around her like a cozy blanket. It was the sound of the stars singing, and it made her feel safe and warm.\n\n[CALM] The staircase stretched on, higher and higher, but Lila didn’t feel tired. The air was cool and sweet, and the stars kept her company. [GENTLE] She leaned back against the steps and watched the flowers glow. Their light flickered like fireflies, casting soft shadows on the staircase. The shadows danced and swayed, playing a quiet game of tag.\n\n[CALM] Time seemed to slow. The stars above twinkled lazily, and the flowers hummed their lullaby. [GENTLE] Lila’s eyelids grew heavy. The staircase felt softer now, like a bed made of clouds. She curled up on the steps, and the flowers leaned in close, their petals brushing against her cheek like a gentle kiss.\n\n[CALM] The air was still. The stars were still. The world was still. [GENTLE] Lila closed her eyes and listened to the hum of the flowers. It was the sound of the night singing her to sleep.\n\n[SLEEPY] The stars hummed softly. The flowers glowed warm.\n\n[WHISPERING] Lila’s breathing slowed. The staircase cradled her gently.\n\n[SLEEPY] The air was still. The light was soft. The world was quiet.\n\n[WHISPERING] The stars wrapped her in their glow. The flowers sang her a lullaby.\n\n[SLEEPY] Her eyes closed. Her body relaxed. The night held her close.\n\n[WHISPERING] Safe... and warm... and still...\n\n[SLEEPY] The stars hummed... the flowers glowed... the staircase slept...\n\n[WHISPERING] Shh... shh... shh...",
+    "annotated_text": "[PHASE_1]\n\n[GENTLE] Lila loved the night. While the house slept, she would tiptoe to her window and press her nose against the cool glass. [CURIOUS] Outside, the sky was a deep, velvety blue, sprinkled with stars that twinkled like tiny lanterns. [JOYFUL] 'Hello, little lights,' she would whisper, waving at the moon. [laugh] The moon always waved back, its silver glow dancing on her fingertips.\n\n[ADVENTUROUS] One evening, as Lila watched the stars, something strange happened. A single silver seed, no bigger than a pea, floated through her window on a moonbeam. [EXCITED] It spun in slow circles, as if it were dancing just for her. [WHISPERING] 'Oh!' Lila gasped. She reached out, and the seed landed softly in her palm. It was warm, like a tiny sun.\n\n[CURIOUS] Lila didn’t know what to do with the seed. So, she did what she always did with special things—she placed it in her favorite blue nightlight. The nightlight glowed softly, casting a circle of golden light on her floor. [MYSTERIOUS] Lila curled up beside it, watching the seed. 'Maybe you’ll grow into something wonderful,' she murmured. [DRAMATIC_PAUSE] And then, she waited.\n\n[EXCITED] At first, nothing happened. But then, the seed began to tremble. A tiny sprout pushed its way out, reaching toward the light. [JOYFUL] Lila clapped her hands. 'It’s growing!' The sprout twisted and turned, growing taller and taller, until it touched the ceiling. [ADVENTUROUS] But it didn’t stop there. The sprout kept growing, stretching out of her window and up, up, up into the night sky.\n\n[CURIOUS] Lila stood on her tiptoes and peered out the window. The sprout had become a shimmering staircase, winding its way through the stars. [MYSTERIOUS] And at the very top, where the staircase met the sky, something was glowing. [DRAMATIC_PAUSE] It looked like a door made of starlight.\n\n[EXCITED] Lila didn’t hesitate. She climbed onto the first step, and the staircase held her gently, as if it had been waiting for her all along. [ADVENTUROUS] Up she went, higher and higher, past twinkling stars and swirling galaxies. The air smelled sweet, like honey and rain, and the stars hummed a soft, sleepy song.\n\n[/PHASE_1]\n\n\n[PHASE_2]\n\n[GENTLE] The staircase was soft beneath Lila’s feet. It felt like walking on clouds, light and warm. [CALM] The stars around her glowed steadily, their light pulsing like a slow, steady heartbeat. She climbed higher, and the world below grew smaller and smaller, until her house looked like a tiny toy nestled in the dark.\n\n[GENTLE] The air was still. No wind, no sound, just the quiet hum of the stars. [CALM] Lila reached out and touched one. It was cool and smooth, like a pebble from a river. The star shimmered at her touch, as if it were saying hello.\n\n[MYSTERIOUS] As she climbed, the staircase began to change. Tiny buds appeared along the steps, glowing faintly in the dark. [GENTLE] They unfurled slowly, petal by petal, until they bloomed into flowers made of starlight. The flowers hummed the same soft song Lila had heard before, and their light filled the air with a golden glow.\n\n[CALM] Lila sat down on a step and watched the flowers bloom. They swayed gently, as if they were dancing to the music. [GENTLE] She plucked one and held it to her ear. The hum grew louder, wrapping around her like a cozy blanket. It was the sound of the stars singing, and it made her feel safe and warm.\n\n[CALM] The staircase stretched on, higher and higher, but Lila didn’t feel tired. The air was cool and sweet, and the stars kept her company. [GENTLE] She leaned back against the steps and watched the flowers glow. Their light flickered like fireflies, casting soft shadows on the staircase. The shadows danced and swayed, playing a quiet game of tag.\n\n[CALM] Time seemed to slow. The stars above twinkled lazily, and the flowers hummed their lullaby. [GENTLE] Lila’s eyelids grew heavy. The staircase felt softer now, like a bed made of clouds. She curled up on the steps, and the flowers leaned in close, their petals brushing against her cheek like a gentle kiss.\n\n[CALM] The air was still. The stars were still. The world was still. [GENTLE] Lila closed her eyes and listened to the hum of the flowers. It was the sound of the night singing her to sleep.\n\n[/PHASE_2]\n\n\n[PHASE_3]\n\n[SLEEPY] The stars hummed softly. The flowers glowed warm.\n\n[WHISPERING] Lila’s breathing slowed. The staircase cradled her gently.\n\n[SLEEPY] The air was still. The light was soft. The world was quiet.\n\n[WHISPERING] The stars wrapped her in their glow. The flowers sang her a lullaby.\n\n[SLEEPY] Her eyes closed. Her body relaxed. The night held her close.\n\n[WHISPERING] Safe... and warm... and still...\n\n[SLEEPY] The stars hummed... the flowers glowed... the staircase slept...\n\n[WHISPERING] Shh... shh... shh...\n\n[/PHASE_3]",
+    "target_age": 3,
+    "age_min": 2,
+    "age_max": 5,
+    "age_group": "2-5",
+    "length": "LONG",
+    "word_count": 766,
+    "duration_seconds": 0,
+    "categories": [
+      "Bedtime Story",
+      "Space Adventure"
+    ],
+    "theme": "space",
+    "morals": [
+      "Wonder is everywhere if you take the time to look.",
+      "Growth takes patience, but the journey is magical."
+    ],
+    "cover": "",
+    "musicProfile": "cosmic-voyage",
+    "music_type": "ambient",
+    "audio_variants": [],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "female",
+    "character": {
+      "name": "Lila",
+      "identity": "A dreamy stargazer who believes in magic",
+      "special": "She can hear the secret songs the stars sing at night",
+      "personality_tags": [
+        "Dreamy",
+        "Curious"
+      ]
+    },
+    "cover_context": "A winding staircase of glowing starlight stretches from a cozy bedroom window into the night sky, blooming with golden flowers that hum softly. The stars above twinkle like lanterns, and the moon casts a silver path along the steps, inviting the viewer to climb.",
+    "lead_character_type": "human",
+    "universe": "prehistoric",
+    "geography": "Ocean/Islands",
+    "life_aspect": "school_learning",
+    "plot_archetype": "problem_solving",
+    "diversityFingerprint": {
+      "characterType": "human_child",
+      "setting": "sky_space",
+      "plotShape": "building_growing",
+      "scale": "epic_vast",
+      "companion": "character_and_environment",
+      "movement": "floating_drifting",
+      "timeOfDay": "deep_night_starlight",
+      "weather": "magical_atmospheric",
+      "theme": "curiosity_wonder",
+      "characterTrait": "dreamy_imaginative",
+      "magicType": "transformation_metamorphosis",
+      "season": "seasonless_timeless",
+      "senseEmphasis": "visual"
+    },
+    "created_at": "2026-03-10T01:37:38.562713",
+    "updated_at": "2026-03-10T01:37:38.562713",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0
+  },
+  {
+    "id": "gen-c5e3d286408c",
+    "type": "poem",
+    "lang": "en",
+    "title": "Finn and the Meadow’s Shimmering Secret",
+    "description": "When the golden meadow hums with hidden magic, a little frog named Finn discovers his reflection isn’t what it seems. The tall grasses whisper promises of change—but will he dare to leap into the unknown?",
+    "text": "[RHYTHMIC]The meadow glows in afternoon,\nA golden sea of sway and croon.\nFinn sits still on lily pad,\nWatching ripples, feeling glad.\n[PAUSE]\n\n[GENTLE]Yet something stirs beneath the light,\nA shimmer dances, soft and bright.\nHis reflection winks—it’s not the same!\nA spark, a glow, a whispered name.\n[PAUSE]\n\n[JOYFUL]The grasses hum, the breeze sings low,\n\"Come, little one, and see what grows.\"\nFinn takes a breath, then hops with cheer—\nThe world transforms when magic’s near!\n[PAUSE]\n\n[CALM]Now petals brush his emerald skin,\nA crown of dew, a brand-new grin.\nThe meadow holds him, warm and true,\nFinn leaps—he knows just what to do.\n[PAUSE]\n\n[WHISPERING]The sun dips low, the air turns sweet,\nA thousand wings begin to beat.\nFinn curls up in clover’s keep,\nWhere magic hums and dreams run deep.\n[SLEEPY]",
+    "annotated_text": "[RHYTHMIC]The meadow glows in afternoon,\nA golden sea of sway and croon.\nFinn sits still on lily pad,\nWatching ripples, feeling glad.\n[PAUSE]\n\n[GENTLE]Yet something stirs beneath the light,\nA shimmer dances, soft and bright.\nHis reflection winks—it’s not the same!\nA spark, a glow, a whispered name.\n[PAUSE]\n\n[JOYFUL]The grasses hum, the breeze sings low,\n\"Come, little one, and see what grows.\"\nFinn takes a breath, then hops with cheer—\nThe world transforms when magic’s near!\n[PAUSE]\n\n[CALM]Now petals brush his emerald skin,\nA crown of dew, a brand-new grin.\nThe meadow holds him, warm and true,\nFinn leaps—he knows just what to do.\n[PAUSE]\n\n[WHISPERING]The sun dips low, the air turns sweet,\nA thousand wings begin to beat.\nFinn curls up in clover’s keep,\nWhere magic hums and dreams run deep.\n[SLEEPY]",
+    "target_age": 7,
+    "age_min": 6,
+    "age_max": 8,
+    "age_group": "6-8",
+    "length": "MEDIUM",
+    "word_count": 129,
+    "duration_seconds": 0,
+    "categories": [
+      "Adventure",
+      "Self-Discovery"
+    ],
+    "theme": "adventure",
+    "morals": [
+      "Change can feel scary, but it often brings beautiful surprises.",
+      "You are exactly who you’re meant to be—even if that looks different than you expected."
+    ],
+    "cover": "/covers/gen-c5e3d286408c.svg",
+    "musicProfile": "enchanted-garden",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-c5e3_female_3.mp3",
+        "duration_seconds": 69.86,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-c5e3_female_1.mp3",
+        "duration_seconds": 96.89,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-c5e3_female_2.mp3",
+        "duration_seconds": 73.95,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-c5e3_male_2.mp3",
+        "duration_seconds": 63.79,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-c5e3_asmr.mp3",
+        "duration_seconds": 76.0,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "male",
+    "character": {
+      "name": "Finn",
+      "identity": "A small frog who worries the world is too big for his little leaps",
+      "special": "His reflection shows glimpses of the magic he’s about to become",
+      "personality_tags": [
+        "Brave",
+        "Dreamy"
+      ]
+    },
+    "cover_context": "A sun-drenched meadow at late afternoon, where golden grasses sway in a warm breeze. Tiny fireflies begin to flicker as dappled sunlight filters through wildflowers in hues of violet, buttercup, and soft pink. A shimmering pond reflects the sky, its surface rippling with hidden light.",
+    "lead_character_type": "human",
+    "universe": "futuristic",
+    "geography": "Africa",
+    "life_aspect": "family_home",
+    "plot_archetype": "discovery",
+    "diversityFingerprint": {
+      "characterType": "reptile_amphibian",
+      "setting": "meadow_field",
+      "plotShape": "transformation",
+      "scale": "tiny_intimate",
+      "companion": "character_and_environment",
+      "movement": "walking_wandering",
+      "timeOfDay": "late_afternoon",
+      "weather": "warm_breeze",
+      "theme": "self_acceptance",
+      "characterTrait": "anxious_worried",
+      "magicType": "transformation_metamorphosis",
+      "season": "summer",
+      "senseEmphasis": "tactile"
+    },
+    "created_at": "2026-03-10T01:41:48.252925",
+    "updated_at": "2026-03-10T01:41:48.252925",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 2,
+    "musicalBrief": {
+      "storyId": "gen-c5e3d286408c",
+      "ageGroup": "6-8",
+      "musicalIdentity": {
+        "culturalReference": "celtic",
+        "primaryLoop": "harp_arpeggios",
+        "padCharacter": "forest_hum"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "A"
+      },
+      "melodicCharacter": "cycling_arpeggio",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "forest_night",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "leaves",
+          "waterDrop"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "whispered_wonder",
+        "phase2": "gentle_curiosity",
+        "phase3": "deep_stillness"
+      }
+    }
   }
 ]
