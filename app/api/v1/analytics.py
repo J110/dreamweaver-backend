@@ -42,6 +42,7 @@ def init_analytics_db():
             event TEXT NOT NULL,
             user_id TEXT NOT NULL,
             session_id TEXT,
+            username TEXT,
             timestamp TEXT NOT NULL,
             date TEXT NOT NULL,
             payload TEXT,
@@ -52,6 +53,7 @@ def init_analytics_db():
         CREATE INDEX IF NOT EXISTS idx_events_date ON events(date);
         CREATE INDEX IF NOT EXISTS idx_events_user ON events(user_id);
         CREATE INDEX IF NOT EXISTS idx_events_session ON events(session_id);
+        CREATE INDEX IF NOT EXISTS idx_events_username ON events(username);
         CREATE INDEX IF NOT EXISTS idx_events_content ON events(
             json_extract(payload, '$.contentId')
         );
@@ -106,12 +108,13 @@ async def ingest_events(request: Request):
             date = timestamp[:10]
 
             conn.execute(
-                """INSERT INTO events (event, user_id, session_id, timestamp, date, payload, device, url)
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+                """INSERT INTO events (event, user_id, session_id, username, timestamp, date, payload, device, url)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                 (
                     event.get("event", "unknown"),
                     event.get("userId", "anonymous"),
                     event.get("sessionId"),
+                    event.get("username"),
                     timestamp,
                     date,
                     json.dumps(payload) if isinstance(payload, dict) else str(payload),
@@ -636,3 +639,52 @@ async def dashboard_realtime(authorization: Optional[str] = Header(None)):
     conn.close()
 
     return {"activeUsers": active, "windowMinutes": 5}
+
+
+@router.get("/users-activity")
+async def dashboard_users_activity(
+    authorization: Optional[str] = Header(None),
+    from_date: Optional[str] = Query(None, alias="from"),
+    to_date: Optional[str] = Query(None, alias="to"),
+):
+    """Per-user activity breakdown: sessions, plays, time spent, last seen."""
+    verify_analytics_key(authorization)
+    fr, to = _date_range_params(from_date, to_date)
+
+    conn = get_db()
+    rows = conn.execute(
+        """
+        SELECT
+            user_id,
+            MAX(username) AS username,
+            COUNT(DISTINCT session_id) AS sessions,
+            COUNT(CASE WHEN event = 'play_start' THEN 1 END) AS plays,
+            COUNT(CASE WHEN event = 'play_complete' THEN 1 END) AS completions,
+            COUNT(*) AS total_events,
+            MIN(timestamp) AS first_seen,
+            MAX(timestamp) AS last_seen,
+            MAX(device) AS device
+        FROM events
+        WHERE date >= ? AND date <= ?
+        GROUP BY user_id
+        ORDER BY last_seen DESC
+        """,
+        (fr, to),
+    ).fetchall()
+
+    users = []
+    for r in rows:
+        users.append({
+            "userId": r["user_id"],
+            "username": r["username"],
+            "sessions": r["sessions"],
+            "plays": r["plays"],
+            "completions": r["completions"],
+            "totalEvents": r["total_events"],
+            "firstSeen": r["first_seen"],
+            "lastSeen": r["last_seen"],
+            "device": r["device"],
+        })
+
+    conn.close()
+    return {"dateRange": {"from": fr, "to": to}, "users": users}
