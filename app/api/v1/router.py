@@ -14,6 +14,7 @@ from .audio import router as audio_router
 from .feedback import router as feedback_router
 from .admin import router as admin_router
 from .blog import router as blog_router
+from .analytics import router as analytics_router
 
 # Main v1 router
 router = APIRouter(prefix="/api/v1")
@@ -31,5 +32,6 @@ router.include_router(search_router, prefix="/search", tags=["Search"])
 router.include_router(generation_router, prefix="/generate", tags=["Generation"])
 router.include_router(audio_router, prefix="/audio", tags=["Audio"])
 router.include_router(feedback_router, prefix="/feedback", tags=["Feedback"])
+router.include_router(analytics_router, prefix="/analytics", tags=["Analytics"])
 
 __all__ = ["router"]

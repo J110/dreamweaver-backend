@@ -104,6 +104,10 @@ async def lifespan(app: FastAPI):
         Path(cache_dir).mkdir(parents=True, exist_ok=True)
         logger.info(f"Cache directory ready: {cache_dir}")
 
+    # Initialize analytics database
+    from app.api.v1.analytics import init_analytics_db
+    init_analytics_db()
+
     logger.info(f"Running in {settings.environment} mode")
     logger.info(f"Debug mode: {settings.debug}")
 
