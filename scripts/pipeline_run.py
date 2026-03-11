@@ -353,6 +353,16 @@ def step_audio(args, state: dict) -> bool:
         save_state(state)
         return True
 
+    # Determine story types for adaptive timeout
+    story_types = {}
+    if CONTENT_EXPANDED_PATH.exists():
+        try:
+            expanded = json.loads(CONTENT_EXPANDED_PATH.read_text())
+            for item in expanded:
+                story_types[item.get("id", "")] = item.get("type", "story")
+        except Exception:
+            pass
+
     # Generate audio for each new story
     audio_total_seconds = 0
     for sid in new_ids:
@@ -365,8 +375,11 @@ def step_audio(args, state: dict) -> bool:
         if args.dry_run:
             cmd += ["--dry-run"]
 
+        # Long stories need more time for TTS (2x the normal timeout)
+        audio_timeout = 2400 if story_types.get(sid) == "long_story" else 1200
+
         ok, stdout, stderr, elapsed = run_command(
-            cmd, f"Audio: {sid[:8]}...", timeout=1200
+            cmd, f"Audio: {sid[:8]}...", timeout=audio_timeout
         )
         audio_total_seconds += elapsed
         if not ok:
@@ -533,10 +546,10 @@ def step_covers(args, state: dict) -> bool:
     logger.info("║  STEP 5: GENERATE COVERS (FLUX+SVG)  ║")
     logger.info("╚══════════════════════════════════════╝")
 
-    # Generate covers for all stories with audio, not just QA-passed
+    # Generate covers for ALL new stories — even those whose audio failed,
+    # because the story still needs a cover (audio can be retried later)
     new_ids = state.get("generated_ids", [])
-    audio_failures = state.get("audio_failures", [])
-    cover_ids = [sid for sid in new_ids if sid not in audio_failures]
+    cover_ids = list(new_ids)
 
     # Auto-recover: find content from previous runs that has audio but no cover
     incomplete = _find_incomplete_content()
