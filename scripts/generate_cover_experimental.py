@@ -30,12 +30,92 @@ import hashlib
 import random
 import sys
 import time
+from datetime import datetime
 from pathlib import Path
 
 
 def _stable_seed(s: str) -> int:
     """Deterministic seed from string. Unlike hash(), same across Python processes."""
     return int(hashlib.md5(s.encode()).hexdigest(), 16) % (2**31)
+
+
+AXES_HISTORY_FILE = Path(__file__).parent.parent / "seed_output" / "covers_experimental" / "_axes_history.json"
+_RECENT_PENALTY = 0.25   # Weight multiplier for recently used values
+_THEME_BOOST = 3.0       # Weight multiplier for theme-matched options
+_CONTEXT_BOOST = 4.0     # Weight multiplier for context-matched options
+_RECENT_WINDOW = 20      # Number of recent covers to consider
+
+
+def _weighted_choice(options: list[str], weights: dict[str, float], rng: random.Random) -> str:
+    """Pick from options using weighted random selection."""
+    w = [weights.get(o, 1.0) for o in options]
+    total = sum(w)
+    r = rng.random() * total
+    cumulative = 0.0
+    for i, option in enumerate(options):
+        cumulative += w[i]
+        if r <= cumulative:
+            return option
+    return options[-1]
+
+
+def _load_recent_axes() -> dict[str, list[str]]:
+    """Load recent axis history and return per-axis lists of recently used values."""
+    result = {k: [] for k in ("world_setting", "palette", "composition", "light", "texture", "time")}
+    try:
+        if AXES_HISTORY_FILE.exists():
+            with open(AXES_HISTORY_FILE, "r") as f:
+                history = json.load(f)
+            # Take last N entries
+            for entry in history[-_RECENT_WINDOW:]:
+                axes = entry.get("axes", {})
+                for k in result:
+                    if k in axes:
+                        result[k].append(axes[k])
+    except Exception:
+        pass  # Gracefully degrade — no history is fine
+    return result
+
+
+def _save_axes_history(story_id: str, axes: dict):
+    """Append axes to history file. Keeps last 50 entries."""
+    history = []
+    try:
+        if AXES_HISTORY_FILE.exists():
+            with open(AXES_HISTORY_FILE, "r") as f:
+                history = json.load(f)
+    except Exception:
+        pass
+    history.append({
+        "id": story_id,
+        "axes": axes,
+        "timestamp": datetime.now().isoformat(),
+    })
+    # Keep last 50
+    history = history[-50:]
+    try:
+        AXES_HISTORY_FILE.parent.mkdir(parents=True, exist_ok=True)
+        with open(AXES_HISTORY_FILE, "w") as f:
+            json.dump(history, f, indent=2)
+    except Exception:
+        pass
+
+
+def _apply_recent_penalty(weights: dict[str, float], recent_values: list[str]) -> dict[str, float]:
+    """Reduce weight for values that appear frequently in recent history."""
+    if not recent_values:
+        return weights
+    from collections import Counter
+    counts = Counter(recent_values)
+    total = len(recent_values)
+    result = dict(weights)
+    for val, count in counts.items():
+        if val in result:
+            # More frequent in recent history = stronger penalty
+            freq = count / total
+            penalty = _RECENT_PENALTY ** freq  # e.g., 0.25^0.5 ≈ 0.5 for 50% freq
+            result[val] *= penalty
+    return result
 
 BASE_DIR = Path(__file__).parent.parent
 sys.path.insert(0, str(BASE_DIR))
@@ -1236,7 +1316,9 @@ def generate_v3_combined_svg(bg_b64, axes, story):
   </g>''')
 
     # Assemble final SVG
-    svg = f'''<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" width="512" height="512">
+    axes_comment = json.dumps(axes, separators=(',', ':'))
+    svg = f'''<!-- axes: {axes_comment} -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" width="512" height="512">
   <defs>
     <image id="bg" width="512" height="512" href="data:image/webp;base64,{bg_b64}"/>
 {fm["defs_svg"]}
@@ -2804,7 +2886,9 @@ def _infer_character_type(story: dict) -> str:
 def auto_select_axes(story: dict, overrides: dict = None) -> dict:
     """Select 7 diversity axes from story metadata with optional overrides.
 
-    Uses a per-story seeded RNG so axes are deterministic across batch runs.
+    Uses weighted random selection from the FULL pool of options for each axis.
+    Theme/context provide weight boosts (not exclusive filters).
+    Recently used values are penalized to ensure diversity across stories.
     """
     overrides = overrides or {}
     theme = story.get("theme", "fantasy")
@@ -2812,51 +2896,69 @@ def auto_select_axes(story: dict, overrides: dict = None) -> dict:
     char_type = story.get("lead_character_type", "")
     if not char_type:
         char_type = _infer_character_type(story)
+    ctx = story.get("cover_context", "").lower()
+    title_lower = story.get("title", "").lower()
+    desc_lower = story.get("description", "").lower()
 
     # Per-story seeded RNG for deterministic axis selection
-    _rng = random.Random(_stable_seed(story.get("id", "") + theme + "_axes"))
+    _rng = random.Random(_stable_seed(story.get("id", "") + theme + "_axes_v2"))
 
-    # World setting
-    world_options = THEME_TO_WORLD.get(theme, list(WORLD_SETTINGS.keys()))
-    world = overrides.get("world_setting") or _rng.choice(world_options)
+    # Load recent history for diversity penalty
+    recent = _load_recent_axes()
 
-    # Palette
-    palette_options = THEME_TO_PALETTE.get(theme, list(COLOR_PALETTES.keys()))
-    palette = overrides.get("palette") or _rng.choice(palette_options)
+    # ── World Setting (all 12 options, theme/context boost) ──
+    all_worlds = list(WORLD_SETTINGS.keys())
+    w_weights = {w: 1.0 for w in all_worlds}
+    # Boost theme-matched worlds
+    for w in THEME_TO_WORLD.get(theme, []):
+        w_weights[w] = w_weights.get(w, 1.0) * _THEME_BOOST
+    # Boost context-matched worlds
+    ctx_world_map = {
+        ("festival", "holi", "diwali", "celebration", "meadow", "garden", "field"): "mountain_meadow",
+        ("ocean", "underwater", "coral", "sea"): "deep_ocean",
+        ("forest", "jungle", "woods"): "enchanted_forest",
+        ("snow", "winter", "ice", "frost"): "snow_landscape",
+        ("library", "room", "house", "kitchen", "indoor"): "cozy_interior",
+        ("space", "cosmos", "nebula", "planet"): "space_cosmos",
+        ("desert", "sand", "dune"): "desert_night",
+        ("cave", "crystal", "underground"): "underground_cave",
+        ("cloud", "sky", "float"): "cloud_kingdom",
+    }
+    if ctx:
+        for keywords, target_world in ctx_world_map.items():
+            if any(kw in ctx for kw in keywords):
+                w_weights[target_world] = w_weights.get(target_world, 1.0) * _CONTEXT_BOOST
+    w_weights = _apply_recent_penalty(w_weights, recent.get("world_setting", []))
+    world = overrides.get("world_setting") or _weighted_choice(all_worlds, w_weights, _rng)
 
-    # Override from cover_context — festivals/outdoor scenes need appropriate axes
-    ctx = story.get("cover_context", "").lower()
-    if ctx and "world_setting" not in (overrides or {}):
-        if any(w in ctx for w in ("festival", "holi", "diwali", "celebration", "meadow", "garden", "field")):
-            world = "mountain_meadow"
-        elif any(w in ctx for w in ("ocean", "underwater", "coral", "sea")):
-            world = "deep_ocean"
-        elif any(w in ctx for w in ("forest", "jungle", "woods")):
-            world = "enchanted_forest"
-        elif any(w in ctx for w in ("snow", "winter", "ice", "frost")):
-            world = "mountain_meadow"
-        elif any(w in ctx for w in ("library", "room", "house", "kitchen", "indoor")):
-            world = "cozy_interior"
-    if ctx and "palette" not in (overrides or {}):
+    # ── Palette (all 6 options, theme/context boost) ──
+    all_palettes = list(COLOR_PALETTES.keys())
+    p_weights = {p: 1.0 for p in all_palettes}
+    for p in THEME_TO_PALETTE.get(theme, []):
+        p_weights[p] = p_weights.get(p, 1.0) * _THEME_BOOST
+    # Context palette boosts
+    if ctx:
         if any(w in ctx for w in ("holi", "gulal", "vibrant", "colorful", "festival")):
-            palette = "ember_warm"
-        elif any(w in ctx for w in ("snow", "winter", "frost", "ice")):
-            palette = "twilight_cool"
+            p_weights["ember_warm"] = p_weights.get("ember_warm", 1.0) * _CONTEXT_BOOST
+        if any(w in ctx for w in ("snow", "winter", "frost", "ice")):
+            p_weights["moonstone"] = p_weights.get("moonstone", 1.0) * _CONTEXT_BOOST
+            p_weights["twilight_cool"] = p_weights.get("twilight_cool", 1.0) * _CONTEXT_BOOST
+    p_weights = _apply_recent_penalty(p_weights, recent.get("palette", []))
+    palette = overrides.get("palette") or _weighted_choice(all_palettes, p_weights, _rng)
 
-    # Composition — choose based on story content
-    if "river" in story.get("title", "").lower() or "path" in story.get("title", "").lower():
-        comp = "winding_path"
-    elif "cave" in story.get("title", "").lower() or "nest" in story.get("title", "").lower():
-        comp = "circular_nest"
-    else:
-        comp = _rng.choice(list(COMPOSITIONS.keys()))
-    comp = overrides.get("composition") or comp
+    # ── Composition (all 5 options, title keyword boost) ──
+    all_comps = list(COMPOSITIONS.keys())
+    c_weights = {c: 1.0 for c in all_comps}
+    if any(w in title_lower for w in ("river", "path", "trail", "road", "journey")):
+        c_weights["winding_path"] = c_weights.get("winding_path", 1.0) * _CONTEXT_BOOST
+    if any(w in title_lower for w in ("cave", "nest", "cocoon", "burrow")):
+        c_weights["circular_nest"] = c_weights.get("circular_nest", 1.0) * _CONTEXT_BOOST
+    c_weights = _apply_recent_penalty(c_weights, recent.get("composition", []))
+    comp = overrides.get("composition") or _weighted_choice(all_comps, c_weights, _rng)
 
-    # Character visual — map all 12 lead_character_type values to the correct visual
-    # Handle compound types like "jellyfish (sea creature)" by checking for known keywords
+    # ── Character visual (deterministic from story metadata, unchanged) ──
     char_visual = CHAR_TYPE_TO_VISUAL.get(char_type, None)
     if char_visual is None:
-        # Try fuzzy match for compound types
         ct_lower = char_type.lower()
         for keyword, visual in [
             ("sea", "aquatic_creature"), ("fish", "aquatic_creature"), ("whale", "aquatic_creature"),
@@ -2880,34 +2982,49 @@ def auto_select_axes(story: dict, overrides: dict = None) -> dict:
             char_visual = "human_child"
     char_visual = overrides.get("character") or char_visual
 
-    # Light source
-    if world in ("deep_ocean", "underground_cave"):
-        light = "below"
-    elif world in ("desert_night", "mountain_meadow"):
-        light = "backlit"
-    elif world in ("cozy_interior",):
-        light = "ambient"
-    else:
-        light = "above"
-    light = overrides.get("light") or light
+    # ── Light source (all 4 options, world-appropriate boost) ──
+    all_lights = ["above", "backlit", "below", "ambient"]
+    l_weights = {l: 1.0 for l in all_lights}
+    # World-appropriate light gets a boost (not forced)
+    world_light_pref = {
+        "deep_ocean": "below", "underground_cave": "below",
+        "desert_night": "backlit", "mountain_meadow": "backlit",
+        "cozy_interior": "ambient",
+        "cloud_kingdom": "above", "enchanted_forest": "above",
+        "snow_landscape": "above", "space_cosmos": "above",
+        "tropical_lagoon": "backlit", "ancient_library": "ambient",
+        "floating_islands": "above",
+    }
+    if world in world_light_pref:
+        l_weights[world_light_pref[world]] = l_weights.get(world_light_pref[world], 1.0) * _THEME_BOOST
+    l_weights = _apply_recent_penalty(l_weights, recent.get("light", []))
+    light = overrides.get("light") or _weighted_choice(all_lights, l_weights, _rng)
 
-    # Texture — age group preference
-    if age_group in ("2-5", "0-1"):
-        texture = "watercolor_soft"
+    # ── Texture (all 4 options, age-appropriate boost) ──
+    all_textures = ["watercolor_soft", "soft_pastel", "digital_painterly", "paper_cutout"]
+    t_weights = {t: 1.0 for t in all_textures}
+    if age_group in ("0-1", "2-5"):
+        t_weights["watercolor_soft"] *= 2.0
+        t_weights["soft_pastel"] *= 2.0
     elif age_group == "6-8":
-        texture = _rng.choice(["digital_painterly", "watercolor_soft"])
-    else:
-        texture = "digital_painterly"
-    texture = overrides.get("texture") or texture
+        t_weights["watercolor_soft"] *= 1.5
+        t_weights["digital_painterly"] *= 1.5
+        t_weights["soft_pastel"] *= 1.2
+    else:  # 9-12+
+        t_weights["digital_painterly"] *= 2.0
+        t_weights["paper_cutout"] *= 1.5
+    t_weights = _apply_recent_penalty(t_weights, recent.get("texture", []))
+    texture = overrides.get("texture") or _weighted_choice(all_textures, t_weights, _rng)
 
-    # Time marker
-    if world in ("cozy_interior",):
-        time_marker = "timeless_indoor"
-    elif "sunset" in story.get("description", "").lower() or "dusk" in story.get("description", "").lower():
-        time_marker = "eternal_dusk"
-    else:
-        time_marker = _rng.choice(["early_night", "deep_night"])
-    time_marker = overrides.get("time") or time_marker
+    # ── Time marker (all 4 options, context boost) ──
+    all_times = ["early_night", "deep_night", "eternal_dusk", "timeless_indoor"]
+    tm_weights = {t: 1.0 for t in all_times}
+    if world == "cozy_interior":
+        tm_weights["timeless_indoor"] *= _THEME_BOOST
+    if "sunset" in desc_lower or "dusk" in desc_lower:
+        tm_weights["eternal_dusk"] *= _CONTEXT_BOOST
+    tm_weights = _apply_recent_penalty(tm_weights, recent.get("time", []))
+    time_marker = overrides.get("time") or _weighted_choice(all_times, tm_weights, _rng)
 
     return {
         "world_setting": world,
@@ -2944,7 +3061,7 @@ def _extract_character_phrase(story: dict) -> str:
     for sent in sentences:
         sent = sent.strip()
         named_match = re.search(
-            r'\b(an?\s+\w+(?:\s+\w+)?\s+named\s+\w+)',
+            r'\b(an?\s+\w+(?:\s+\w+){0,3}\s+named\s+\w+)',
             sent, re.IGNORECASE
         )
         if named_match:
@@ -3632,6 +3749,9 @@ def main():
         print(f"\nFLUX Prompt:\n{prompt}")
         print(f"\nAnimations: {WORLD_ELEMENTS.get(axes['world_setting'], {})}")
         return
+
+    # Save axes to history for cross-story diversity tracking
+    _save_axes_history(story_id, axes)
 
     # Create output directory
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
