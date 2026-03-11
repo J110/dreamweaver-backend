@@ -696,7 +696,14 @@ async def dashboard_funnel(
     )
     visits = c.fetchone()[0]
 
-    # Step 2: Onboarding complete
+    # Step 2: App download click
+    c.execute(
+        "SELECT COUNT(DISTINCT user_id) FROM events WHERE event = 'app_download_click' AND date >= ? AND date <= ?",
+        (fr, to),
+    )
+    download_clicks = c.fetchone()[0]
+
+    # Step 3: Onboarding complete
     c.execute(
         "SELECT COUNT(DISTINCT user_id) FROM events WHERE event = 'onboarding_complete' AND date >= ? AND date <= ?",
         (fr, to),
@@ -721,6 +728,7 @@ async def dashboard_funnel(
 
     steps = [
         {"label": "Website Visit", "count": visits},
+        {"label": "App Download Click", "count": download_clicks},
         {"label": "Onboarding Complete", "count": onboarded},
         {"label": "Audio Listen", "count": listeners},
         {"label": "Listened 1+ min", "count": listened_1min},
