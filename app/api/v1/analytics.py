@@ -762,6 +762,10 @@ async def dashboard_users_activity(
             MAX(device) AS device
         FROM events
         WHERE date >= ? AND date <= ?
+          AND user_id IN (
+              SELECT DISTINCT user_id FROM events
+              WHERE username IS NOT NULL AND username != ''
+          )
         GROUP BY user_id
         ORDER BY last_seen DESC
         """,
