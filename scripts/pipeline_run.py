@@ -243,12 +243,60 @@ def step_generate(args, state: dict) -> bool:
         except Exception:
             pass
 
-    # Validate generation count — warn (don't halt) on partial failure
+    # Validate generation count — retry missing content types on partial failure
     expected = args.count_stories + args.count_long_stories + args.count_poems + args.count_lullabies
     actual = len(new_ids)
-    if actual < expected:
+    if actual < expected and not args.dry_run:
         logger.warning("  PARTIAL GENERATION: expected %d items but only got %d", expected, actual)
-        state["generation_warning"] = f"Expected {expected}, got {actual}"
+
+        # Determine which content types are missing
+        generated_types = {"story": 0, "long_story": 0, "poem": 0, "song": 0}
+        if new_ids and CONTENT_EXPANDED_PATH.exists():
+            try:
+                expanded = json.loads(CONTENT_EXPANDED_PATH.read_text())
+                for item in expanded:
+                    if item["id"] in set(new_ids):
+                        t = item.get("type", "story")
+                        generated_types[t] = generated_types.get(t, 0) + 1
+            except Exception:
+                pass
+
+        missing_stories = max(0, args.count_stories - generated_types.get("story", 0))
+        missing_long = max(0, args.count_long_stories - generated_types.get("long_story", 0))
+        missing_poems = max(0, args.count_poems - generated_types.get("poem", 0))
+        missing_lullabies = max(0, args.count_lullabies - generated_types.get("song", 0))
+        total_missing = missing_stories + missing_long + missing_poems + missing_lullabies
+
+        if total_missing > 0:
+            logger.info("  RETRY: Attempting to generate %d missing items "
+                        "(stories=%d, long=%d, poems=%d, lullabies=%d)",
+                        total_missing, missing_stories, missing_long, missing_poems, missing_lullabies)
+
+            retry_before_ids = get_existing_ids()
+            retry_cmd = [
+                sys.executable, str(SCRIPTS_DIR / "generate_content_matrix.py"),
+                "--api", "mistral",
+                "--count-stories", str(missing_stories),
+                "--count-poems", str(missing_poems),
+                "--count-lullabies", str(missing_lullabies),
+                "--count-long-stories", str(missing_long),
+            ]
+            if args.lang:
+                retry_cmd += ["--lang", args.lang]
+
+            retry_ok, _, _, _ = run_command(retry_cmd, "Content Generation (retry)", timeout=1800)
+            if retry_ok:
+                retry_ids = get_new_story_ids(retry_before_ids)
+                if retry_ids:
+                    logger.info("  RETRY SUCCESS: Generated %d additional items", len(retry_ids))
+                    new_ids.extend(retry_ids)
+                    # Re-count
+                    actual = len(new_ids)
+
+        if actual < expected:
+            state["generation_warning"] = f"Expected {expected}, got {actual}"
+        else:
+            logger.info("  All %d items generated successfully (with retry)", expected)
 
     # Validate: songs (lullabies) should never be generated for ages 6+
     if new_ids and CONTENT_EXPANDED_PATH.exists():
@@ -366,17 +414,29 @@ def step_audio(args, state: dict) -> bool:
     # Generate audio for each new story
     audio_total_seconds = 0
     for sid in new_ids:
+        # Songs use ACE-Step which is memory-intensive (~1.7GB per worker).
+        # On low-memory VMs (2GB), use 1 worker to avoid OOM kills.
+        # Regular stories use Chatterbox TTS which is lighter.
+        is_song = story_types.get(sid) == "song"
+        workers = "1" if is_song else "3"
+
         cmd = [
             sys.executable, str(SCRIPTS_DIR / "generate_audio.py"),
             "--story-id", sid,
             "--speed", "0.8",  # Bedtime pace
-            "--workers", "3",  # Conservative parallelism for free credits
+            "--workers", workers,
         ]
         if args.dry_run:
             cmd += ["--dry-run"]
 
-        # Long stories need more time for TTS (2x the normal timeout)
-        audio_timeout = 2400 if story_types.get(sid) == "long_story" else 1200
+        # Timeouts: songs via ACE-Step need ~30 min (2 variants × 2 retakes × ~5 min each)
+        # Long stories need ~40 min for 3-phase TTS. Regular stories ~20 min.
+        if is_song:
+            audio_timeout = 2400
+        elif story_types.get(sid) == "long_story":
+            audio_timeout = 2400
+        else:
+            audio_timeout = 1200
 
         ok, stdout, stderr, elapsed = run_command(
             cmd, f"Audio: {sid[:8]}...", timeout=audio_timeout
