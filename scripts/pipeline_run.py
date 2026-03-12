@@ -11,10 +11,11 @@ Pipeline flow:
   4. ENRICH      → Mistral Large (free tier) → musicParams for new items
   5. MOOD        → Mistral Small (free tier) → mood tag (calm/curious/wired/sad/anxious/angry)
   6. COVERS      → FLUX.1 Schnell (HuggingFace free tier, 3 retries) → 2-layer covers (Mistral SVG fallback)
-  7. SYNC        → sync content.json → seedData.js + copy audio/covers to web
-  8. PUBLISH     → git push → Render/Vercel auto-deploy (test only)
-  9. DEPLOY PROD → rebuild frontend + restart backend on local GCP VM
-  10. NOTIFY     → email via Resend (success or failure)
+  7. CLIPS       → FFmpeg (cairosvg + Ken Burns) → 60s vertical video clips for social media
+  8. SYNC        → sync content.json → seedData.js + copy audio/covers to web
+  9. PUBLISH     → git push → Render/Vercel auto-deploy (test only)
+  10. DEPLOY PROD → rebuild frontend + restart backend on local GCP VM
+  11. NOTIFY      → email via Resend (success or failure)
 
 Usage:
     python3 scripts/pipeline_run.py                           # Full pipeline
@@ -70,7 +71,7 @@ logging.basicConfig(
 logger = logging.getLogger("pipeline")
 
 # ── Pipeline steps ───────────────────────────────────────────────────────
-STEPS = ["generate", "audio", "qa", "enrich", "mood", "covers", "sync", "publish", "deploy_prod"]
+STEPS = ["generate", "audio", "qa", "enrich", "mood", "covers", "clips", "sync", "publish", "deploy_prod"]
 
 CHATTERBOX_HEALTH = "https://j110--dreamweaver-chatterbox-health.modal.run"
 
@@ -811,8 +812,44 @@ def step_covers(args, state: dict) -> bool:
     return True
 
 
+def step_clips(args, state: dict) -> bool:
+    """Step 6b: Generate social media clips for new content."""
+    logger.info("\n╔══════════════════════════════════════╗")
+    logger.info("║  STEP 6b: SOCIAL MEDIA CLIPS         ║")
+    logger.info("╚══════════════════════════════════════╝")
+
+    clips_script = SCRIPTS_DIR / "generate_clips.py"
+    if not clips_script.exists():
+        logger.warning("  generate_clips.py not found — skipping")
+        state["step_clips"] = "skipped"
+        save_state(state)
+        return True
+
+    cmd = [sys.executable, str(clips_script)]
+    if args.dry_run:
+        cmd.append("--dry-run")
+
+    ok, stdout, stderr, elapsed = run_command(cmd, "Clip generation", timeout=1800)
+    if stdout:
+        # Log last few lines of output
+        lines = stdout.strip().split("\n")
+        for line in lines[-5:]:
+            logger.info("  %s", line)
+
+    if not ok:
+        logger.warning("  Clip generation failed (non-fatal): %s",
+                        stderr[:200] if stderr else "unknown error")
+        state["step_clips"] = "failed_nonfatal"
+        save_state(state)
+        return True  # Non-fatal — don't halt the pipeline
+
+    state["step_clips"] = "done"
+    save_state(state)
+    return True
+
+
 def step_sync(args, state: dict) -> bool:
-    """Step 6: Sync content.json → seedData.js for the web frontend."""
+    """Step 7: Sync content.json → seedData.js for the web frontend."""
     logger.info("\n╔══════════════════════════════════════╗")
     logger.info("║  STEP 6: SYNC SEED DATA              ║")
     logger.info("╚══════════════════════════════════════╝")
@@ -1351,6 +1388,7 @@ def main():
         "enrich": step_enrich,
         "mood": step_mood,
         "covers": step_covers,
+        "clips": step_clips,
         "sync": step_sync,
         "publish": step_publish,
         "deploy_prod": step_deploy_prod,

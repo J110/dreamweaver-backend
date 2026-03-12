@@ -17,6 +17,7 @@ services:
       - ./seed_output:/app/seed_output:ro
       - ./data:/app/data
       - ./audio:/app/audio:ro
+      - ./clips:/app/clips
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
