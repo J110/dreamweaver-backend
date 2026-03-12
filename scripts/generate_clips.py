@@ -25,6 +25,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
 from datetime import date, datetime
 from pathlib import Path
 
@@ -610,6 +611,7 @@ def main():
     parser.add_argument("--batch", action="store_true", help="Generate clips for all unclipped stories")
     parser.add_argument("--limit", type=int, help="Max clips to generate in batch mode")
     parser.add_argument("--output-dir", default=str(CLIPS_DIR), help="Output directory")
+    parser.add_argument("--no-email", action="store_true", help="Don't send email notification")
     args = parser.parse_args()
 
     output_dir = Path(args.output_dir)
@@ -626,6 +628,9 @@ def main():
     # Filter to stories with audio variants
     stories = [s for s in stories if isinstance(s, dict) and s.get("audio_variants")]
     logger.info("Loaded %d stories with audio from %s", len(stories), CONTENT_PATH.name)
+
+    generated_clips = []  # Track paths for email notification
+    start_time = time.time()
 
     if args.story_id:
         # Single story mode
@@ -648,6 +653,7 @@ def main():
         result = generate_clip(story, voice, url, output_dir, force=args.force)
         if result:
             logger.info("Done: %s", result)
+            generated_clips.append(result)
         else:
             logger.error("Clip generation failed")
             sys.exit(1)
@@ -682,6 +688,7 @@ def main():
             result = generate_clip(story, voice, url, output_dir, force=args.force)
             if result:
                 generated += 1
+                generated_clips.append(result)
             else:
                 errors += 1
 
@@ -689,7 +696,27 @@ def main():
 
     else:
         # Daily mode: 6 clips
-        generate_daily_clips(stories, output_dir, force=args.force, dry_run=args.dry_run)
+        results = generate_daily_clips(stories, output_dir, force=args.force, dry_run=args.dry_run)
+        generated_clips = results or []
+
+    # ── Send email notification ────────────────────────────────────
+    if generated_clips and not args.dry_run and not args.no_email:
+        elapsed = time.time() - start_time
+        try:
+            # Collect metadata from generated clip JSON files
+            clips_info = []
+            for clip_path in generated_clips:
+                meta_path = str(clip_path).replace(".mp4", ".json")
+                if os.path.exists(meta_path):
+                    with open(meta_path) as f:
+                        clips_info.append(json.load(f))
+
+            if clips_info:
+                sys.path.insert(0, str(Path(__file__).parent))
+                from pipeline_notify import send_clips_notification
+                send_clips_notification(clips_info, elapsed)
+        except Exception as e:
+            logger.warning("Email notification failed: %s", e)
 
 
 if __name__ == "__main__":

@@ -534,6 +534,125 @@ def send_qa_notification(state: dict) -> bool:
         return False
 
 
+# ── Clips notification ────────────────────────────────────────────────
+
+
+def _build_clips_html(clips_info: list, elapsed: float = 0) -> str:
+    """Build HTML email body for clips-ready notification."""
+    date_str = datetime.now().strftime("%Y-%m-%d %H:%M")
+    count = len(clips_info)
+    total_bytes = sum(c.get("fileSize", 0) for c in clips_info)
+    total_mb = total_bytes / (1024 * 1024)
+
+    elapsed_str = _fmt_duration(elapsed) if elapsed else ""
+
+    # Build clip rows
+    type_labels = {"story": "Story", "long_story": "Story", "poem": "Poem", "song": "Lullaby"}
+    voice_labels = {"female_1": "Calm", "asmr": "ASMR", "male_2": "Lullaby", "female_3": "Lullaby"}
+
+    rows_html = ""
+    for c in clips_info:
+        title = c.get("title", "Untitled")
+        ctype = type_labels.get(c.get("contentType", "story"), c.get("contentType", "story"))
+        voice = voice_labels.get(c.get("voice", ""), c.get("voice", ""))
+        size_mb = c.get("fileSize", 0) / (1024 * 1024)
+        rows_html += f"""
+        <tr>
+          <td style="padding:8px 10px;border-bottom:1px solid #e5e7eb;">{title}</td>
+          <td style="padding:8px 10px;border-bottom:1px solid #e5e7eb;text-align:center;">{ctype}</td>
+          <td style="padding:8px 10px;border-bottom:1px solid #e5e7eb;text-align:center;">{voice}</td>
+          <td style="padding:8px 10px;border-bottom:1px solid #e5e7eb;text-align:right;">{size_mb:.1f} MB</td>
+        </tr>"""
+
+    summary_parts = [f"<b>{count} clip{'s' if count != 1 else ''}</b>", f"{total_mb:.1f} MB total"]
+    if elapsed_str:
+        summary_parts.append(f"generated in {elapsed_str}")
+    summary = " &middot; ".join(summary_parts)
+
+    html = f"""
+    <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+                max-width:600px;margin:0 auto;color:#333;">
+      <div style="background:linear-gradient(135deg,#8b5cf6,#6366f1);color:#fff;
+                  padding:16px 20px;border-radius:8px 8px 0 0;">
+        <h2 style="margin:0;font-size:20px;">🎬 Clips Ready to Download</h2>
+        <p style="margin:4px 0 0;opacity:0.9;font-size:14px;">{date_str}</p>
+      </div>
+      <div style="background:#f9fafb;padding:20px;border:1px solid #e5e7eb;
+                  border-top:none;border-radius:0 0 8px 8px;">
+        <p style="font-size:15px;color:#374151;margin:0 0 16px;">{summary}</p>
+        <table style="width:100%;border-collapse:collapse;font-size:13px;">
+          <thead>
+            <tr style="background:#f3f4f6;">
+              <th style="padding:8px 10px;text-align:left;font-weight:600;color:#6b7280;">Title</th>
+              <th style="padding:8px 10px;text-align:center;font-weight:600;color:#6b7280;">Type</th>
+              <th style="padding:8px 10px;text-align:center;font-weight:600;color:#6b7280;">Voice</th>
+              <th style="padding:8px 10px;text-align:right;font-weight:600;color:#6b7280;">Size</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows_html}
+          </tbody>
+        </table>
+        <div style="margin-top:20px;text-align:center;">
+          <a href="https://dreamvalley.app/analytics"
+             style="display:inline-block;padding:12px 28px;background:linear-gradient(135deg,#8b5cf6,#6366f1);
+                    color:#fff;text-decoration:none;border-radius:8px;font-weight:600;font-size:14px;">
+            Open Clips Dashboard &rarr;
+          </a>
+        </div>
+        <hr style="border:none;border-top:1px solid #e5e7eb;margin:20px 0 12px;" />
+        <p style="font-size:12px;color:#9ca3af;">
+          Dream Valley Clips Pipeline &middot;
+          <a href="https://dreamvalley.app" style="color:#6366f1;">dreamvalley.app</a>
+        </p>
+      </div>
+    </div>
+    """
+    return html
+
+
+def send_clips_notification(clips_info: list, elapsed: float = 0) -> bool:
+    """Send clips-ready email notification. Returns True on success."""
+    if not RESEND_API_KEY:
+        print("  WARNING: RESEND_API_KEY not set — skipping clips email")
+        return False
+
+    if not clips_info:
+        print("  No clips to notify about — skipping email")
+        return False
+
+    date_str = datetime.now().strftime("%Y-%m-%d")
+    count = len(clips_info)
+    subject = f"[CLIPS] {count} new clip{'s' if count != 1 else ''} ready — {date_str}"
+
+    html = _build_clips_html(clips_info, elapsed)
+
+    try:
+        resp = httpx.post(
+            RESEND_ENDPOINT,
+            headers={
+                "Authorization": f"Bearer {RESEND_API_KEY}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "from": FROM_EMAIL,
+                "to": [TO_EMAIL],
+                "subject": subject,
+                "html": html,
+            },
+            timeout=30,
+        )
+        if resp.status_code in (200, 201):
+            print(f"  Clips email sent: {subject}")
+            return True
+        else:
+            print(f"  WARNING: Clips email failed ({resp.status_code}): {resp.text[:200]}")
+            return False
+    except Exception as e:
+        print(f"  WARNING: Clips email notification failed: {e}")
+        return False
+
+
 # ── Standalone test ───────────────────────────────────────────────────
 if __name__ == "__main__":
     if "--test" in sys.argv:
@@ -567,5 +686,15 @@ if __name__ == "__main__":
         }
         ok = send_qa_notification(test_state)
         sys.exit(0 if ok else 1)
+    elif "--test-clips" in sys.argv:
+        test_clips = [
+            {"title": "Luna and the Lanterns of Whispering Hollow", "voice": "female_1", "contentType": "story", "fileSize": 3800000, "filename": "gen-1234_female_1_clip.mp4"},
+            {"title": "Twinkle Dream", "voice": "asmr", "contentType": "poem", "fileSize": 2900000, "filename": "gen-5678_asmr_clip.mp4"},
+            {"title": "Bella and the Starlight Window", "voice": "male_2", "contentType": "song", "fileSize": 3500000, "filename": "gen-3683_male_2_clip.mp4"},
+            {"title": "The Sleepy Cloud", "voice": "female_1", "contentType": "story", "fileSize": 4100000, "filename": "gen-9abc_female_1_clip.mp4"},
+            {"title": "Sailing to Dreamland", "voice": "female_1", "contentType": "song", "fileSize": 3200000, "filename": "gen-def0_female_1_clip.mp4"},
+        ]
+        ok = send_clips_notification(test_clips, elapsed=2052.3)
+        sys.exit(0 if ok else 1)
     else:
-        print("Usage: python3 scripts/pipeline_notify.py --test | --test-qa")
+        print("Usage: python3 scripts/pipeline_notify.py --test | --test-qa | --test-clips")
