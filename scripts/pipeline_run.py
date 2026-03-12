@@ -9,11 +9,12 @@ Pipeline flow:
   2. AUDIO GEN   → Modal Chatterbox TTS + ACE-Step ($30 free credits) → 14+3 MP3 files per 3 items
   3. AUDIO QA    → Voxtral transcription + fidelity (free tier) → PASS/FAIL
   4. ENRICH      → Mistral Large (free tier) → musicParams for new items
-  5. COVERS      → FLUX.1 Schnell (HuggingFace free tier, 3 retries) → 2-layer covers (Mistral SVG fallback)
-  6. SYNC        → sync content.json → seedData.js + copy audio/covers to web
-  7. PUBLISH     → git push → Render/Vercel auto-deploy (test only)
-  8. DEPLOY PROD → rebuild frontend + restart backend on local GCP VM
-  9. NOTIFY      → email via Resend (success or failure)
+  5. MOOD        → Mistral Small (free tier) → mood tag (calm/curious/wired/sad/anxious/angry)
+  6. COVERS      → FLUX.1 Schnell (HuggingFace free tier, 3 retries) → 2-layer covers (Mistral SVG fallback)
+  7. SYNC        → sync content.json → seedData.js + copy audio/covers to web
+  8. PUBLISH     → git push → Render/Vercel auto-deploy (test only)
+  9. DEPLOY PROD → rebuild frontend + restart backend on local GCP VM
+  10. NOTIFY     → email via Resend (success or failure)
 
 Usage:
     python3 scripts/pipeline_run.py                           # Full pipeline
@@ -69,7 +70,7 @@ logging.basicConfig(
 logger = logging.getLogger("pipeline")
 
 # ── Pipeline steps ───────────────────────────────────────────────────────
-STEPS = ["generate", "audio", "qa", "enrich", "covers", "sync", "publish", "deploy_prod"]
+STEPS = ["generate", "audio", "qa", "enrich", "mood", "covers", "sync", "publish", "deploy_prod"]
 
 CHATTERBOX_HEALTH = "https://j110--dreamweaver-chatterbox-health.modal.run"
 
@@ -582,6 +583,55 @@ def step_enrich(args, state: dict) -> bool:
         logger.warning("  %d Musical Brief generation(s) failed: %s", len(enrich_failures),
                        ", ".join(s[:8] for s in enrich_failures))
     state["step_enrich"] = "done"
+    save_state(state)
+    return True
+
+
+def step_mood(args, state: dict) -> bool:
+    """Step 4b: Classify mood for newly generated stories via Mistral AI.
+
+    Assigns one of six mood tags (calm, curious, wired, sad, anxious, angry)
+    to each new story. Uses --skip-classified to only process items without
+    a mood field, so re-runs are safe.
+    """
+    logger.info("\n╔══════════════════════════════════════╗")
+    logger.info("║  STEP 4b: MOOD CLASSIFICATION        ║")
+    logger.info("╚══════════════════════════════════════╝")
+
+    new_ids = state.get("generated_ids", [])
+    audio_failures = state.get("audio_failures", [])
+    classify_ids = [sid for sid in new_ids if sid not in audio_failures]
+
+    if not classify_ids:
+        logger.info("  No new stories to classify mood for. Skipping.")
+        state["step_mood"] = "skipped"
+        save_state(state)
+        return True
+
+    cmd = [
+        sys.executable, str(SCRIPTS_DIR / "classify_moods.py"),
+        "--skip-classified",
+        "--delay", "2",  # Pipeline runs sequentially so shorter delay is fine
+    ]
+    if args.dry_run:
+        cmd += ["--dry-run"]
+
+    ok, stdout, stderr, elapsed = run_command(
+        cmd, "Mood classification", timeout=600
+    )
+
+    if stdout:
+        logger.info("  %s", stdout.strip().split("\n")[-1])  # Log the summary line
+
+    if not ok:
+        # Non-fatal — mood is a nice-to-have, not critical for content delivery
+        logger.warning("  Mood classification failed (non-fatal): %s",
+                       stderr[:200] if stderr else "unknown error")
+        state["step_mood"] = "failed_nonfatal"
+        save_state(state)
+        return True  # Don't halt the pipeline
+
+    state["step_mood"] = "done"
     save_state(state)
     return True
 
@@ -1299,6 +1349,7 @@ def main():
         "audio": step_audio,
         "qa": step_qa,
         "enrich": step_enrich,
+        "mood": step_mood,
         "covers": step_covers,
         "sync": step_sync,
         "publish": step_publish,
