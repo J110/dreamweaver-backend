@@ -174,7 +174,8 @@
         "phase2": "soft_floating",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "8e516449-aa48-423e-8b53-db5591ce9bed",
@@ -352,7 +353,8 @@
         "phase2": "warm_guidance",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "sad"
   },
   {
     "id": "30dec3e8-5354-41ff-aadf-90def8a35df4",
@@ -529,7 +531,8 @@
         "phase2": "soothing_flow",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "d73e9530-b77e-4372-9ad1-070f0fa108e3",
@@ -706,7 +709,8 @@
         "phase2": "gentle_excitement",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "wired"
   },
   {
     "id": "9fba7605-7ffa-488d-93bc-9cca2881cf97",
@@ -883,7 +887,8 @@
         "phase2": "gentle_reverie",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "curious"
   },
   {
     "id": "c8796852-6d17-46e0-bcea-7985c4721d1c",
@@ -1055,7 +1060,8 @@
         "phase2": "gentle_embrace",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "e32eaee0-2c7a-4f65-ace6-1d3a2d3ad5b0",
@@ -1231,7 +1237,8 @@
         "phase2": "gentle_embrace",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "a3945b7b-6b20-4a39-a051-b25dfaec1d8e",
@@ -1359,7 +1366,8 @@
         "Gentle",
         "Magical"
       ]
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "hi-neendwala-badal",
@@ -1537,7 +1545,8 @@
         "phase2": "soft_floating",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "hi-bahadur-jugnu",
@@ -1716,7 +1725,8 @@
         "phase2": "warm_guidance",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "hi-chaand-ki-lori",
@@ -1894,7 +1904,8 @@
         "phase2": "dreamy_warmth",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "hi-captain-sitaara",
@@ -2071,7 +2082,8 @@
         "phase2": "gentle_adventure",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "wired"
   },
   {
     "id": "hi-gungunata-baag",
@@ -2249,7 +2261,8 @@
         "phase2": "gentle_enchantment",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "curious"
   },
   {
     "id": "hi-chamakta-sapna",
@@ -2422,7 +2435,8 @@
         "phase2": "gentle_embrace",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "hi-ullu-ki-shubhraatri",
@@ -2599,7 +2613,8 @@
         "phase2": "soothing_embrace",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "hi-sapnon-ki-naav",
@@ -2703,7 +2718,8 @@
         "Dreamy",
         "Gentle"
       ]
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "gen-6e675d15e1f5",
@@ -2881,7 +2897,8 @@
         "phase2": "gentle_embrace",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "wired"
   },
   {
     "id": "gen-3de58fd2aa2d",
@@ -3059,7 +3076,8 @@
         "phase2": "soft_warmth",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "gen-4f3ff03979dc",
@@ -3238,7 +3256,8 @@
         "phase2": "gentle_soaring",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "wired"
   },
   {
     "id": "gen-a67cde9762b6",
@@ -3416,7 +3435,8 @@
         "phase2": "gentle_warmth",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "wired"
   },
   {
     "id": "gen-a8a2146a4f36",
@@ -3597,7 +3617,8 @@
         "phase2": "gentle_discovery",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "curious"
   },
   {
     "id": "gen-9e44d4374d44",
@@ -3773,7 +3794,8 @@
         "phase2": "gentle_revelation",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "curious"
   },
   {
     "id": "gen-b8847383ab32",
@@ -3956,7 +3978,8 @@
         "phase2": "gentle_wonder",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "curious"
   },
   {
     "id": "gen-6b4b4122c529",
@@ -4139,7 +4162,8 @@
         "phase2": "gentle_playfulness",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "curious"
   },
   {
     "id": "gen-2fedd4d6a646",
@@ -4322,7 +4346,8 @@
         "phase2": "gentle_discovery",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "curious"
   },
   {
     "id": "gen-f23316834cfd",
@@ -4505,7 +4530,8 @@
         "phase2": "gentle_collaboration",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "gen-df0dbc9d6b74",
@@ -4681,7 +4707,8 @@
         "phase2": "gentle_revelation",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "curious"
   },
   {
     "id": "gen-e77b10c51e8f",
@@ -4857,7 +4884,8 @@
         "phase2": "gentle_revelation",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "curious"
   },
   {
     "id": "gen-593c43ad1c11",
@@ -5036,7 +5064,8 @@
         "phase2": "soft_embrace",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "gen-b2e7514e8b8f",
@@ -5215,7 +5244,8 @@
         "phase2": "soft_warmth",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "gen-376993c8e295",
@@ -5394,7 +5424,8 @@
         "phase2": "soft_wonder",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "gen-aad0a6e0c0c0",
@@ -5575,7 +5606,8 @@
         "phase2": "warm_discovery",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "gen-ddc437037568",
@@ -5752,7 +5784,8 @@
         "phase2": "gentle_reflection",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "curious"
   },
   {
     "id": "gen-2b9fdf8a1222",
@@ -5931,7 +5964,8 @@
         "phase2": "gentle_wonder",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "gen-60370cf66525",
@@ -6115,7 +6149,8 @@
         "phase2": "playful_discovery",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "curious"
   },
   {
     "id": "gen-032fdef6f753",
@@ -6295,7 +6330,8 @@
         "phase2": "gentle_mystery",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "curious"
   },
   {
     "id": "gen-febbf324eecb",
@@ -6476,7 +6512,8 @@
         "phase2": "gentle_reflection",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "gen-230502b905ba",
@@ -6660,7 +6697,8 @@
         "phase2": "warm_discovery",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "wired"
   },
   {
     "id": "gen-bb82f62942d0",
@@ -6835,7 +6873,8 @@
         "phase2": "mystical_discovery",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "curious"
   },
   {
     "id": "gen-0027e1835f09",
@@ -7011,7 +7050,8 @@
         "phase2": "gentle_journey",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "curious"
   },
   {
     "id": "gen-586908c26fc2",
@@ -7193,7 +7233,8 @@
         "phase2": "gentle_mystery",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "curious"
   },
   {
     "id": "gen-1a5a91def9ae",
@@ -7376,7 +7417,8 @@
         "phase2": "warm_embrace",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "gen-ae9ed8804fa7",
@@ -7559,7 +7601,8 @@
         "phase2": "gentle_wonder",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "curious"
   },
   {
     "id": "gen-be475c98edb5",
@@ -7741,7 +7784,8 @@
         "phase2": "ethereal_wonder",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "curious"
   },
   {
     "id": "gen-f9e33d4db1bd",
@@ -7922,7 +7966,8 @@
         "phase2": "soft_comfort",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "gen-292e9eadf56e",
@@ -8103,7 +8148,8 @@
         "phase2": "gentle_discovery",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "curious"
   },
   {
     "id": "gen-76b0227cc919",
@@ -8284,7 +8330,8 @@
         "phase2": "soft_warmth",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "gen-7cf84ff11c04",
@@ -8467,7 +8514,8 @@
         "phase2": "gentle_playfulness",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "gen-b5438a861ba4",
@@ -8650,7 +8698,8 @@
         "phase2": "gentle_embrace",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "gen-caa3a14bb706",
@@ -8832,7 +8881,8 @@
         "phase2": "gentle_discovery",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "curious"
   },
   {
     "id": "gen-01f0b88dc42d",
@@ -9018,7 +9068,8 @@
         "phase2": "soft_guidance",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "gen-2f87d69ca6a2",
@@ -9196,7 +9247,8 @@
         "phase2": "gentle_revelation",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "curious"
   },
   {
     "id": "gen-d5bc0057ca40",
@@ -9377,7 +9429,8 @@
         "phase2": "playful_wonder",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "curious"
   },
   {
     "id": "gen-308d5f0d1268",
@@ -9563,7 +9616,8 @@
         "phase2": "soft_serenity",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "gen-8ea1861bffab",
@@ -9750,7 +9804,8 @@
         "phase2": "gentle_mystery",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "curious"
   },
   {
     "id": "gen-9e87531b7db6",
@@ -9855,7 +9910,8 @@
         "phase2": "magical_warmth",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "curious"
   },
   {
     "id": "gen-3b66368b6682",
@@ -10043,7 +10099,8 @@
         "phase2": "mystical_revelation",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "curious"
   },
   {
     "id": "gen-7936c7032060",
@@ -10170,7 +10227,8 @@
         "Dreamy",
         "Determined"
       ]
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "gen-a32abc379f3e",
@@ -10351,7 +10409,8 @@
         "phase2": "warm_guidance",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "gen-a4a5bf8ba702",
@@ -10537,7 +10596,8 @@
         "phase2": "gentle_flow",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "gen-69ca3c81363d",
@@ -10667,7 +10727,8 @@
         "Gentle",
         "Dreamy"
       ]
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "gen-8cbe4f84a9ac",
@@ -10859,7 +10920,8 @@
         "phase2": "gentle_wonder",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "curious"
   },
   {
     "id": "gen-31f50f685a68",
@@ -11045,7 +11107,8 @@
         "phase2": "gentle_journey",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "gen-3947965e8c2e",
@@ -11226,7 +11289,8 @@
         "phase2": "soft_embrace",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "gen-6772aca6a7cc",
@@ -11358,7 +11422,8 @@
         "Gentle",
         "Kind"
       ]
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "gen-146a4028274a",
@@ -11484,7 +11549,8 @@
         "Gentle",
         "Dreamy"
       ]
-    }
+    },
+    "mood": "curious"
   },
   {
     "id": "gen-3fc983f95d8b",
@@ -11667,7 +11733,8 @@
         "phase2": "soft_radiance",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "gen-6034c85ea602",
@@ -11847,7 +11914,8 @@
         "phase2": "gentle_mystery",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "curious"
   },
   {
     "id": "gen-0333c2f092c0",
@@ -12026,7 +12094,8 @@
         "phase2": "ethereal_journey",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "curious"
   },
   {
     "id": "gen-638cb2facd22",
@@ -12209,7 +12278,8 @@
         "phase2": "gentle_revelation",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "curious"
   },
   {
     "id": "gen-915a2ee015f8",
@@ -12341,7 +12411,8 @@
         "Gentle",
         "Dreamy"
       ]
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "gen-27e126b38fc4",
@@ -12472,7 +12543,8 @@
         "Gentle",
         "Dreamy"
       ]
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "gen-bbf23f82bfec",
@@ -12744,7 +12816,8 @@
         "phase2": "soft_mystery",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "gen-beb0f3862024",
@@ -13006,7 +13079,8 @@
         "phase2": "gentle_journey",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "sad"
   },
   {
     "id": "gen-e47bcd61e515",
@@ -13138,7 +13212,8 @@
       ],
       "soundscapePreset": "garden",
       "musicLoop": "gentleGuitar"
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "gen-4ddee3cbe031",
@@ -13324,7 +13399,8 @@
       ],
       "soundscapePreset": "garden",
       "musicLoop": "gentleGuitar"
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "gen-50e929bf696c",
@@ -13510,7 +13586,8 @@
       ],
       "soundscapePreset": "heartbeat",
       "musicLoop": "musicBox"
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "gen-8440041cfc57",
@@ -13637,7 +13714,8 @@
       ],
       "soundscapePreset": "heartbeat",
       "musicLoop": "musicBox"
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "gen-e3e07799ab05",
@@ -13906,7 +13984,8 @@
         "phase2": "soft_wonder",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "gen-3e20147f02a1",
@@ -13975,7 +14054,8 @@
     "view_count": 0,
     "like_count": 0,
     "save_count": 0,
-    "duration": 4
+    "duration": 4,
+    "mood": "calm"
   },
   {
     "id": "gen-5232e740399d",
@@ -14061,7 +14141,8 @@
     "view_count": 0,
     "like_count": 0,
     "save_count": 0,
-    "duration": 5
+    "duration": 5,
+    "mood": "calm"
   },
   {
     "id": "gen-699be4247076",
@@ -14190,7 +14271,8 @@
         "phase2": "gentle_warmth",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "gen-6c4170f5b3a4",
@@ -14318,7 +14400,8 @@
         "phase2": "gentle_wonder",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "curious"
   },
   {
     "id": "gen-bf2a73ca2fe3",
@@ -14385,7 +14468,8 @@
     "view_count": 0,
     "like_count": 0,
     "save_count": 0,
-    "duration": 4
+    "duration": 4,
+    "mood": "calm"
   },
   {
     "id": "gen-15501ab0e53c",
@@ -14498,7 +14582,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "duration": 14
+    "duration": 14,
+    "mood": "curious"
   },
   {
     "id": "gen-20ac6dcc8899",
@@ -14626,7 +14711,8 @@
         "phase2": "gentle_guidance",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "curious"
   },
   {
     "id": "gen-ac421eca75dd",
@@ -14708,7 +14794,8 @@
     "view_count": 0,
     "like_count": 0,
     "save_count": 0,
-    "duration": 4
+    "duration": 4,
+    "mood": "calm"
   },
   {
     "id": "gen-bfea572c7a73",
@@ -14836,7 +14923,8 @@
         "phase2": "gentle_exploration",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "curious"
   },
   {
     "id": "gen-59c38722ffc1",
@@ -14918,7 +15006,8 @@
     "view_count": 0,
     "like_count": 0,
     "save_count": 0,
-    "duration": 4
+    "duration": 4,
+    "mood": "calm"
   },
   {
     "id": "gen-9d6661087cfa",
@@ -15046,7 +15135,8 @@
         "phase2": "ethereal_wonder",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "curious"
   },
   {
     "id": "gen-a306e99e9b09",
@@ -15177,7 +15267,8 @@
         "phase2": "gentle_floating",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "gen-411c4e4dde20",
@@ -15260,7 +15351,8 @@
     "view_count": 0,
     "like_count": 0,
     "save_count": 0,
-    "duration": 5
+    "duration": 5,
+    "mood": "calm"
   },
   {
     "id": "gen-71986860a0ed",
@@ -15391,7 +15483,8 @@
         "phase2": "gentle_warmth",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "gen-9d8e3f91919c",
@@ -15522,7 +15615,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "duration": 7
+    "duration": 7,
+    "mood": "curious"
   },
   {
     "id": "gen-c5e3d286408c",
@@ -15653,7 +15747,8 @@
         "phase2": "gentle_curiosity",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "curious"
   },
   {
     "id": "gen-54eea57db057",
@@ -15749,7 +15844,8 @@
         "phase2": "gentle_longing",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "gen-be5fa39c0802",
@@ -15831,7 +15927,8 @@
     "view_count": 0,
     "like_count": 0,
     "save_count": 0,
-    "duration": 5
+    "duration": 5,
+    "mood": "calm"
   },
   {
     "id": "gen-e2a4b6a306b8",
@@ -15962,7 +16059,8 @@
         "phase2": "gentle_journey",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "curious"
   },
   {
     "id": "gen-364d8f8f090f",
@@ -16093,7 +16191,8 @@
         "phase2": "soft_wonder",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "mood": "calm"
   },
   {
     "id": "gen-36832e27d4b5",
@@ -16123,7 +16222,20 @@
     "cover": "/covers/gen-36832e27d4b5.svg",
     "musicProfile": "cosmic-voyage",
     "music_type": "ambient",
-    "audio_variants": [],
+    "audio_variants": [
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-3683_male_2.mp3",
+        "duration_seconds": 244.91,
+        "provider": "ace-step"
+      },
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-3683_female_2.mp3",
+        "duration_seconds": 244.91,
+        "provider": "ace-step"
+      }
+    ],
     "author_id": "system",
     "is_generated": true,
     "generation_quality": "pending_review",
@@ -16162,6 +16274,8 @@
     "updated_at": "2026-03-12T03:59:28.481728",
     "view_count": 0,
     "like_count": 0,
-    "save_count": 0
+    "save_count": 0,
+    "duration": 5,
+    "mood": "calm"
   }
 ]

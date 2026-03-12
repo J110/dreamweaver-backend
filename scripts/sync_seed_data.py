@@ -104,13 +104,17 @@ def _build_new_entry_js(story: dict) -> str:
     # musicalBrief line (v3 music system — preferred over musicParams)
     musical_brief_line = f"\n      musicalBrief: {mb_js}," if mb_js else ""
 
+    # Mood classification
+    mood = story.get("mood", "")
+    mood_line = f'\n      mood: "{mood}",' if mood else ""
+
     entry = f"""    {{
       id: "{_js_escape(sid)}",
       type: "{stype}",
       title: "{_js_escape(title)}",
       description: "{_js_escape(desc)}",
       cover: "{cover}",
-      addedAt: "{added_at}",
+      addedAt: "{added_at}",{mood_line}
       text: "{_js_escape(text)}",{lullaby_line}{character_line}
       target_age: {target_age},
       duration: {duration},
@@ -139,8 +143,9 @@ def update_existing(seed_js: str, stories: list) -> tuple:
         musical_brief = story.get("musicalBrief")
         content_type = story.get("type", "story")
         added_at = (story.get("addedAt") or story.get("created_at", ""))[:10] or None
+        mood = story.get("mood")
         if variants:
-            title_map[title] = {"variants": variants, "duration": duration, "cover": cover, "character": character, "musicalBrief": musical_brief, "addedAt": added_at, "type": content_type}
+            title_map[title] = {"variants": variants, "duration": duration, "cover": cover, "character": character, "musicalBrief": musical_brief, "addedAt": added_at, "type": content_type, "mood": mood}
 
     replacements = 0
 
@@ -252,6 +257,38 @@ def update_existing(seed_js: str, stories: list) -> tuple:
                 new_added = added_prefix + f'addedAt: "{explicit_added}",'
                 if old_added != new_added:
                     seed_js = seed_js.replace(old_added, new_added)
+
+        # Also update mood field (entry-bounded to avoid cross-entry matching)
+        mood = info.get("mood")
+        if mood:
+            # Normalize smart quotes for matching
+            norm_title = title.replace('\u2018', "'").replace('\u2019', "'")
+            # Find title position (try both original and normalized)
+            title_pat = re.search(r'title:\s*"' + re.escape(title) + r'"', seed_js)
+            if not title_pat and norm_title != title:
+                title_pat = re.search(r'title:\s*"' + re.escape(norm_title) + r'"', seed_js)
+            if title_pat:
+                search_start = title_pat.start()
+                # Entry boundary: next entry starts with '\n    {'
+                next_entry = seed_js.find('\n    {', search_start + 1)
+                if next_entry == -1:
+                    next_entry = len(seed_js)
+                entry_slice = seed_js[search_start:next_entry]
+
+                mood_in_entry = re.search(r'mood:\s*"[^"]*",', entry_slice)
+                if mood_in_entry:
+                    # Update existing mood
+                    abs_pos = search_start + mood_in_entry.start()
+                    old_mood = mood_in_entry.group(0)
+                    new_mood = f'mood: "{mood}",'
+                    if old_mood != new_mood:
+                        seed_js = seed_js[:abs_pos] + new_mood + seed_js[abs_pos + len(old_mood):]
+                else:
+                    # Insert after addedAt line
+                    added_in_entry = re.search(r'addedAt:\s*"[^"]*",', entry_slice)
+                    if added_in_entry:
+                        abs_pos = search_start + added_in_entry.end()
+                        seed_js = seed_js[:abs_pos] + f'\n      mood: "{mood}",' + seed_js[abs_pos:]
 
         # Also update musicalBrief (v3 music system)
         musical_brief = info.get("musicalBrief")
