@@ -227,7 +227,17 @@ def main():
     for i, item in enumerate(content):
         title = item.get("title", item.get("id", "?"))[:50]
         item_type = item.get("type", "?")
-        age_group = item.get("age_group", "unknown")
+        # Derive age_group from available fields
+        age_group = item.get("age_group", "")
+        if not age_group:
+            age_min = item.get("age_min", 0)
+            age_max = item.get("age_max", 0)
+            if age_min is not None and age_max is not None and age_max > 0:
+                age_group = f"{age_min}-{age_max}"
+            elif item.get("target_age") is not None:
+                age_group = str(item["target_age"])
+            else:
+                age_group = "unknown"
         print(f"[{i + 1}/{len(content)}] {title} ({item_type})...", end=" ")
 
         # Skip if already classified
