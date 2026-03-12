@@ -1294,5 +1294,43 @@ def main():
         logger.warning("  Email notification failed: %s", e)
 
 
+def _send_crash_email(error: Exception):
+    """Send a crash notification email when pipeline fails before reaching normal notification."""
+    try:
+        import traceback
+        sys.path.insert(0, str(SCRIPTS_DIR))
+        from pipeline_notify import RESEND_API_KEY, RESEND_ENDPOINT, FROM_EMAIL, TO_EMAIL
+        if not RESEND_API_KEY:
+            return
+        import httpx
+        date_str = datetime.now().strftime("%Y-%m-%d %H:%M")
+        tb = traceback.format_exc()
+        html = f"""
+        <div style="font-family:sans-serif;max-width:600px;margin:0 auto;">
+          <div style="background:#ef4444;color:white;padding:16px;border-radius:8px 8px 0 0;">
+            <h2 style="margin:0;">🚨 Pipeline CRASH — {date_str}</h2>
+          </div>
+          <div style="background:#1a1a2e;color:#e0e0e0;padding:16px;border-radius:0 0 8px 8px;">
+            <p>The pipeline crashed before it could complete any steps.</p>
+            <p><b>Error:</b> {type(error).__name__}: {error}</p>
+            <pre style="background:#111;padding:12px;border-radius:4px;overflow-x:auto;font-size:12px;color:#f87171;">{tb}</pre>
+            <p style="color:#888;font-size:12px;margin-top:16px;">Fix the issue and re-run, or wait for the next scheduled run.</p>
+          </div>
+        </div>
+        """
+        httpx.post(
+            RESEND_ENDPOINT,
+            headers={"Authorization": f"Bearer {RESEND_API_KEY}", "Content-Type": "application/json"},
+            json={"from": FROM_EMAIL, "to": [TO_EMAIL], "subject": f"[CRASH] Dream Valley Pipeline — {date_str}", "html": html},
+            timeout=15,
+        )
+    except Exception:
+        pass  # Last resort — don't let the crash email crash
+
+
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        _send_crash_email(e)
+        raise
