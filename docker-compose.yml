@@ -6,6 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: dreamweaver-backend
+    user: "1001:1002"  # Match host user anmolmohan (uid=1001, gid=1002)
     ports:
       - "8000:8000"
     env_file:
