@@ -238,7 +238,8 @@ def escape_ffmpeg_text(text):
 
 # ── Video Compositing ────────────────────────────────────────────────────
 
-def composite_video(cover_video, audio_path, title, mood, output_path):
+def composite_video(cover_video, audio_path, title, mood, output_path,
+                    character_info=None, age_group=None, content_type=None):
     """Combine cover video + audio + text overlays into final 9:16 clip."""
     mood_info = MOOD_DISPLAY.get(mood, MOOD_DISPLAY["calm"])
     mood_text = f"{mood_info['label']}"
@@ -300,8 +301,71 @@ def composite_video(cover_video, audio_path, title, mood, output_path):
         )
         prev = tag
 
+    # ── Character info + age group (fills the empty space below title) ──
+    tag_idx = len(title_lines) + 1
+    title_bottom = y_start + len(title_lines) * 65 + 20  # 20px padding after title
+
+    # Character identity line
+    if character_info:
+        char_name = character_info.get("name", "")
+        char_identity = character_info.get("identity", "")
+        if char_name and char_identity:
+            # Shorten identity to fit: "A dreamy firefly who believes in ..." → "A dreamy firefly"
+            short_identity = char_identity
+            if len(short_identity) > 40:
+                # Cut at last space before 40 chars
+                short_identity = short_identity[:40].rsplit(" ", 1)[0]
+            char_text = f"{char_name} — {short_identity}"
+        elif char_name:
+            char_text = char_name
+        else:
+            char_text = ""
+
+        if char_text:
+            char_tag = f"t{tag_idx}"
+            escaped_char = escape_ffmpeg_text(char_text)
+            filters.append(
+                f"[{prev}]drawtext="
+                f"text='{escaped_char}'"
+                f"{font_arg}:"
+                f"fontsize=32:"
+                f"fontcolor=0xC0B8A8:"
+                f"x=(w-text_w)/2:y={title_bottom + 40}"
+                f"[{char_tag}]"
+            )
+            prev = char_tag
+            tag_idx += 1
+
+    # Age group + content type line
+    info_parts = []
+    if age_group:
+        info_parts.append(f"Ages {age_group}")
+    type_labels = {
+        "song": "Lullaby", "story": "Story",
+        "poem": "Poem", "long_story": "Story",
+    }
+    if content_type and content_type in type_labels:
+        info_parts.append(type_labels[content_type])
+    if info_parts:
+        info_text = " · ".join(info_parts)  # e.g. "Ages 2-5 · Lullaby"
+        # Use middle-dot as separator — escape it for FFmpeg
+        info_text_escaped = escape_ffmpeg_text(info_text)
+        info_tag = f"t{tag_idx}"
+        char_line_offset = 80 if character_info else 40  # extra space if no char line
+        filters.append(
+            f"[{prev}]drawtext="
+            f"text='{info_text_escaped}'"
+            f"{font_arg}:"
+            f"fontsize=28:"
+            f"fontcolor=0x{BRAND_COLOR}:"
+            f"x=(w-text_w)/2:y={title_bottom + char_line_offset + 40}"
+            f"[{info_tag}]"
+        )
+        prev = info_tag
+        tag_idx += 1
+
     # Branding
-    brand_tag = f"t{len(title_lines) + 1}"
+    brand_tag = f"t{tag_idx}"
     escaped_brand = escape_ffmpeg_text(brand_text)
     filters.append(
         f"[{prev}]drawtext="
@@ -327,7 +391,9 @@ def composite_video(cover_video, audio_path, title, mood, output_path):
         "-filter_complex", filter_chain,
         "-map", "[final_v]",
         "-map", "1:a",
-        "-c:v", "libx264", "-preset", "fast", "-crf", "23",
+        "-c:v", "libx264", "-profile:v", "high", "-level:v", "4.0",
+        "-preset", "fast", "-crf", "23", "-pix_fmt", "yuv420p",
+        "-tag:v", "avc1",
         "-c:a", "aac", "-b:a", "192k",
         "-t", str(CLIP_DURATION),
         "-movflags", "+faststart",
@@ -487,6 +553,9 @@ def generate_clip(story, voice, audio_url, output_dir, force=False):
         if not composite_video(
             cover_video, trimmed_audio, title,
             story.get("mood", "calm"), final_clip,
+            character_info=story.get("character"),
+            age_group=story.get("age_group", story.get("ageGroup", "")),
+            content_type=story.get("type", story.get("contentType", "")),
         ):
             return None
 
