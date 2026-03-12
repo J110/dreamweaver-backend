@@ -15679,7 +15679,7 @@
       "Belonging isn’t about being seen—it’s about being felt, in the quiet spaces between the world and the heart.",
       "Even the smallest, most fleeting things can find warmth and meaning in the connections they make."
     ],
-    "cover": "",
+    "cover": "/covers/gen-54eea57db057.svg",
     "musicProfile": "enchanted-garden",
     "music_type": "ambient",
     "audio_variants": [],
@@ -15721,7 +15721,35 @@
     "updated_at": "2026-03-11T04:49:37.577893",
     "view_count": 0,
     "like_count": 0,
-    "save_count": 0
+    "save_count": 0,
+    "musicalBrief": {
+      "storyId": "gen-54eea57db057",
+      "ageGroup": "9-12",
+      "musicalIdentity": {
+        "culturalReference": "nordic",
+        "primaryLoop": "cello_sustains",
+        "padCharacter": "silk_veil"
+      },
+      "tonality": {
+        "mode": "dorian",
+        "rootNote": "G"
+      },
+      "melodicCharacter": "drone_with_ornaments",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "fireplace_crackle",
+        "natureSoundSecondary": "wind_gentle",
+        "ambientEvents": []
+      },
+      "emotionalArc": {
+        "phase1": "curious_wandering",
+        "phase2": "gentle_longing",
+        "phase3": "deep_stillness"
+      }
+    }
   },
   {
     "id": "gen-be5fa39c0802",
@@ -15935,5 +15963,205 @@
         "phase3": "deep_stillness"
       }
     }
+  },
+  {
+    "id": "gen-364d8f8f090f",
+    "type": "long_story",
+    "lang": "en",
+    "title": "Luna and the Lanterns of Whispering Hollow",
+    "description": "When the first autumn chill brushes the rooftops of Whispering Hollow, the village lanterns begin to glow—but tonight, they flicker weakly, as if lost. High above, a gentle moon named Luna notices the dimming lights and drifts down to uncover their secret, weaving her silver touch through the streets to remind the town of its forgotten magic.",
+    "text": "[GENTLE] High above the world, where the sky is soft and the stars hum lullabies, there lived a little moon named Luna. She was round and warm, like a cozy hug in the night sky, and she loved watching over the village of Whispering Hollow. Every evening, as the sun dipped below the hills, Luna would rise, her silver light spilling over the rooftops like melted butter.\n\n[CURIOUS] But tonight, something was different. The lanterns in Whispering Hollow—those little glowing friends that lined the cobblestone streets—were flickering weakly, as if they were tired. Luna tilted her head, her light shimmering with concern. \"Oh dear,\" she whispered to the wind, \"what’s happening down there?\"\n\n[ADVENTUROUS] Without a second thought, Luna began to drift downward, her silver glow stretching like a ribbon toward the village. The closer she came, the more she noticed: the lanterns weren’t just tired—they were lonely. Their flames danced sadly, as if they missed something important. Luna’s heart ached. She had to help.\n\n[JOYFUL] As she floated over the first lantern, she reached out with her light, brushing it gently. \"Hello, little one,\" she murmured. The lantern’s flame flickered brighter, as if waking from a dream. [laugh] \"You remember now, don’t you?\" Luna said softly. The lantern glowed a little stronger, and Luna smiled. She drifted to the next one, and the next, her light weaving through the streets like a silver thread.\n\n[MYSTERIOUS] Then, she heard it—a soft, whispery sound, like leaves rustling secrets. It was coming from the heart of the village, where the oldest lantern of all stood guard over the town square. Luna’s glow pulsed with curiosity. What was that sound? And why did the lanterns seem to lean toward it, as if listening?\n\n[EXCITED] She floated closer, her light dancing over the cobblestones. The oldest lantern’s flame was barely a spark, but it trembled with excitement. \"Luna,\" it seemed to say, \"we’ve been waiting for you.\" And with that, the whispery sound grew louder, swirling around her like a warm breeze. It was the sound of the village’s forgotten magic—the magic of belonging.\n\n[CALM] Luna settled into the rhythm of the village. The air smelled of cinnamon and woodsmoke, and the cobblestones were cool beneath her light. She drifted from lantern to lantern, her silver glow wrapping around each one like a blanket. The flames grew brighter, their light steady and warm. The village sighed, as if remembering something beautiful.\n\n[GENTLE] The oldest lantern in the square glowed the brightest of all. Its flame was no longer a spark but a steady, golden heart. Luna rested her light against it, and the lantern hummed softly, like a lullaby. The sound spread through the streets, carried by the breeze, and the other lanterns joined in. Their flames danced together, weaving a tapestry of light and warmth.\n\n[MYSTERIOUS] The whispery sound swirled around Luna, wrapping her in its warmth. It was the sound of the village’s stories—the laughter of children, the clinking of teacups, the rustle of pages in a well-loved book. The lanterns remembered now. They remembered the magic of being together, of lighting the way for one another.\n\n[CALM] Luna’s light softened, her glow melting into the lanterns’ flames. The village was quiet, but it wasn’t still. It was alive with the hum of belonging, with the steady, sure beat of hearts that knew they were home. The air was soft. The light was soft. The night was soft.\n\n[GENTLE] The cobblestones gleamed under the lanterns’ glow, their edges smoothed by time and care. The breeze carried the scent of autumn—crisp apples, damp leaves, and the faintest hint of woodsmoke. Luna closed her eyes (or at least, she imagined she did) and let the warmth of the village wrap around her. She was part of it now, part of the magic.\n\n[SLEEPY] The lanterns glowed softly. Their flames were steady. The village was still.\n\n[WHISPERING] Luna’s light melted into the night. The stars hummed their lullabies. The wind carried the sound of dreams.\n\n[SLEEPY] The cobblestones were cool. The air was warm. The world was quiet.\n\n[WHISPERING] The lanterns remembered. They glowed together, their light a promise. Safe. Warm. Still.\n\n[SLEEPY] Luna drifted upward, her silver glow fading into the sky. The village slept beneath her, wrapped in light and love.\n\n[WHISPERING] The stars twinkled softly. The moon watched over them all. The night was gentle.\n\n[SLEEPY] Close your eyes. The lanterns are glowing. The village is safe.\n\n[WHISPERING] Safe... and warm... and still...",
+    "annotated_text": "[PHASE_1]\n\n[GENTLE] High above the world, where the sky is soft and the stars hum lullabies, there lived a little moon named Luna. She was round and warm, like a cozy hug in the night sky, and she loved watching over the village of Whispering Hollow. Every evening, as the sun dipped below the hills, Luna would rise, her silver light spilling over the rooftops like melted butter.\n\n[CURIOUS] But tonight, something was different. The lanterns in Whispering Hollow—those little glowing friends that lined the cobblestone streets—were flickering weakly, as if they were tired. Luna tilted her head, her light shimmering with concern. \"Oh dear,\" she whispered to the wind, \"what’s happening down there?\"\n\n[ADVENTUROUS] Without a second thought, Luna began to drift downward, her silver glow stretching like a ribbon toward the village. The closer she came, the more she noticed: the lanterns weren’t just tired—they were lonely. Their flames danced sadly, as if they missed something important. Luna’s heart ached. She had to help.\n\n[JOYFUL] As she floated over the first lantern, she reached out with her light, brushing it gently. \"Hello, little one,\" she murmured. The lantern’s flame flickered brighter, as if waking from a dream. [laugh] \"You remember now, don’t you?\" Luna said softly. The lantern glowed a little stronger, and Luna smiled. She drifted to the next one, and the next, her light weaving through the streets like a silver thread.\n\n[MYSTERIOUS] Then, she heard it—a soft, whispery sound, like leaves rustling secrets. It was coming from the heart of the village, where the oldest lantern of all stood guard over the town square. Luna’s glow pulsed with curiosity. What was that sound? And why did the lanterns seem to lean toward it, as if listening?\n\n[EXCITED] She floated closer, her light dancing over the cobblestones. The oldest lantern’s flame was barely a spark, but it trembled with excitement. \"Luna,\" it seemed to say, \"we’ve been waiting for you.\" And with that, the whispery sound grew louder, swirling around her like a warm breeze. It was the sound of the village’s forgotten magic—the magic of belonging.\n\n[/PHASE_1]\n\n\n[PHASE_2]\n\n[CALM] Luna settled into the rhythm of the village. The air smelled of cinnamon and woodsmoke, and the cobblestones were cool beneath her light. She drifted from lantern to lantern, her silver glow wrapping around each one like a blanket. The flames grew brighter, their light steady and warm. The village sighed, as if remembering something beautiful.\n\n[GENTLE] The oldest lantern in the square glowed the brightest of all. Its flame was no longer a spark but a steady, golden heart. Luna rested her light against it, and the lantern hummed softly, like a lullaby. The sound spread through the streets, carried by the breeze, and the other lanterns joined in. Their flames danced together, weaving a tapestry of light and warmth.\n\n[MYSTERIOUS] The whispery sound swirled around Luna, wrapping her in its warmth. It was the sound of the village’s stories—the laughter of children, the clinking of teacups, the rustle of pages in a well-loved book. The lanterns remembered now. They remembered the magic of being together, of lighting the way for one another.\n\n[CALM] Luna’s light softened, her glow melting into the lanterns’ flames. The village was quiet, but it wasn’t still. It was alive with the hum of belonging, with the steady, sure beat of hearts that knew they were home. The air was soft. The light was soft. The night was soft.\n\n[GENTLE] The cobblestones gleamed under the lanterns’ glow, their edges smoothed by time and care. The breeze carried the scent of autumn—crisp apples, damp leaves, and the faintest hint of woodsmoke. Luna closed her eyes (or at least, she imagined she did) and let the warmth of the village wrap around her. She was part of it now, part of the magic.\n\n[/PHASE_2]\n\n\n[PHASE_3]\n\n[SLEEPY] The lanterns glowed softly. Their flames were steady. The village was still.\n\n[WHISPERING] Luna’s light melted into the night. The stars hummed their lullabies. The wind carried the sound of dreams.\n\n[SLEEPY] The cobblestones were cool. The air was warm. The world was quiet.\n\n[WHISPERING] The lanterns remembered. They glowed together, their light a promise. Safe. Warm. Still.\n\n[SLEEPY] Luna drifted upward, her silver glow fading into the sky. The village slept beneath her, wrapped in light and love.\n\n[WHISPERING] The stars twinkled softly. The moon watched over them all. The night was gentle.\n\n[SLEEPY] Close your eyes. The lanterns are glowing. The village is safe.\n\n[WHISPERING] Safe... and warm... and still...\n\n[/PHASE_3]",
+    "target_age": 3,
+    "age_min": 2,
+    "age_max": 5,
+    "age_group": "2-5",
+    "length": "LONG",
+    "word_count": 734,
+    "duration_seconds": 0,
+    "categories": [
+      "Bedtime Story",
+      "Magical Adventure"
+    ],
+    "theme": "adventure",
+    "morals": [
+      "Everyone belongs, and sometimes all it takes is a little light to remind them.",
+      "Kindness is like a lantern—it glows brighter when shared."
+    ],
+    "cover": "/covers/gen-364d8f8f090f.svg",
+    "musicProfile": "autumn-forest",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-364d_female_2.mp3",
+        "duration_seconds": 389.52,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-364d_female_1.mp3",
+        "duration_seconds": 458.74,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-364d_female_3.mp3",
+        "duration_seconds": 369.07,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-364d_male_2.mp3",
+        "duration_seconds": 358.45,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-364d_asmr.mp3",
+        "duration_seconds": 396.26,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "female",
+    "character": {
+      "name": "Luna",
+      "identity": "A gentle moon who believes every light deserves to shine",
+      "special": "She can weave her silver glow into the world, awakening forgotten magic",
+      "personality_tags": [
+        "Kind",
+        "Gentle"
+      ]
+    },
+    "cover_context": "A quaint village at twilight, cobblestone streets lined with glowing lanterns of all shapes and sizes. Autumn leaves swirl in the air, their edges gilded in silver moonlight. Warm light spills from cottage windows, and the scent of cinnamon lingers in the breeze. The sky above is a deep, dreamy blue, with stars just beginning to wake.",
+    "lead_character_type": "celestial",
+    "universe": "prehistoric",
+    "geography": "East Asia",
+    "life_aspect": "family_home",
+    "plot_archetype": "transformation",
+    "diversityFingerprint": {
+      "characterType": "celestial_weather",
+      "setting": "village_town",
+      "plotShape": "routine_ritual",
+      "scale": "local_adventure",
+      "companion": "character_and_environment",
+      "movement": "floating_drifting",
+      "timeOfDay": "twilight_blue_hour",
+      "weather": "magical_atmospheric",
+      "theme": "belonging",
+      "characterTrait": "kind_nurturing",
+      "magicType": "weather_magic",
+      "season": "autumn",
+      "senseEmphasis": "visual"
+    },
+    "created_at": "2026-03-12T03:52:22.731918",
+    "updated_at": "2026-03-12T03:52:22.731918",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 7,
+    "musicalBrief": {
+      "storyId": "gen-364d8f8f090f",
+      "ageGroup": "2-5",
+      "musicalIdentity": {
+        "culturalReference": "african",
+        "primaryLoop": "kalimba_melody",
+        "padCharacter": "starfield"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "D"
+      },
+      "melodicCharacter": "cycling_arpeggio",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "forest_night",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "cricket",
+          "leaves"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "gentle_curiosity",
+        "phase2": "soft_wonder",
+        "phase3": "deep_stillness"
+      }
+    }
+  },
+  {
+    "id": "gen-36832e27d4b5",
+    "type": "song",
+    "lang": "en",
+    "title": "Bella and the Starlight Window",
+    "description": "In a quiet city where streetlights hum lullabies, a tiny firefly named Bella discovers a secret: one apartment window glows with stardust every night. Drawn to its shimmer, she begins a nightly ritual that weaves magic between the stars and her urban home.",
+    "text": "[SINGING]\nLittle Bella flies so high,\nPast the moon and past the sky.\nEvery night she finds the way,\nTo the glow that softly stays.\n\n[PAUSE]\n\n[SINGING]\nStarlight window, warm and bright,\nTwinkling like a firefly’s light.\nBella hums a sleepy tune,\nDancing with the silver moon.\n\n[PAUSE]\n\n[SINGING]\nCity hums a quiet song,\nBella sings the whole night long.\nStars above all blink and gleam,\nJoining in her gentle dream.\n\n[PAUSE]\n\n[SINGING]\nNow her wings are growing slow,\nDrifting where the soft winds blow.\nClose your eyes, my firefly friend,\nStarlight window’s where dreams end.\n\n[PAUSE]\n\n[HUMMING]\nMmm mmm mmm...\nMmm mmm mmm...\nMmm mmm...",
+    "annotated_text": "[SINGING]\nLittle Bella flies so high,\nPast the moon and past the sky.\nEvery night she finds the way,\nTo the glow that softly stays.\n\n[PAUSE]\n\n[SINGING]\nStarlight window, warm and bright,\nTwinkling like a firefly’s light.\nBella hums a sleepy tune,\nDancing with the silver moon.\n\n[PAUSE]\n\n[SINGING]\nCity hums a quiet song,\nBella sings the whole night long.\nStars above all blink and gleam,\nJoining in her gentle dream.\n\n[PAUSE]\n\n[SINGING]\nNow her wings are growing slow,\nDrifting where the soft winds blow.\nClose your eyes, my firefly friend,\nStarlight window’s where dreams end.\n\n[PAUSE]\n\n[HUMMING]\nMmm mmm mmm...\nMmm mmm mmm...\nMmm mmm...",
+    "target_age": 3,
+    "age_min": 2,
+    "age_max": 5,
+    "age_group": "2-5",
+    "length": "SHORT",
+    "word_count": 97,
+    "duration_seconds": 0,
+    "categories": [
+      "Lullaby",
+      "Space-Themed",
+      "Nature and Urban Blend"
+    ],
+    "theme": "space",
+    "morals": [
+      "Even the smallest light can create a world of wonder.",
+      "Rituals connect us to the magic in everyday moments."
+    ],
+    "cover": "/covers/gen-36832e27d4b5.svg",
+    "musicProfile": "cosmic-voyage",
+    "music_type": "ambient",
+    "audio_variants": [],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "female",
+    "character": {
+      "name": "Bella",
+      "identity": "A dreamy firefly who believes in nighttime magic",
+      "special": "She sees the hidden glow in ordinary places",
+      "personality_tags": [
+        "Dreamy",
+        "Gentle"
+      ]
+    },
+    "cover_context": "A cityscape at night, bathed in deep blue and soft gold light. One apartment window glows with stardust, casting a warm halo onto the street below. Fireflies drift lazily in the air, their lights mingling with the distant stars.",
+    "lead_character_type": "insect",
+    "universe": "futuristic",
+    "geography": "Europe",
+    "life_aspect": "play_discovery",
+    "plot_archetype": "friendship_bonding",
+    "diversityFingerprint": {
+      "characterType": "insect",
+      "setting": "city_urban",
+      "plotShape": "routine_ritual",
+      "scale": "tiny_intimate",
+      "companion": "character_and_environment",
+      "movement": "floating_drifting",
+      "timeOfDay": "deep_night_starlight",
+      "weather": "magical_atmospheric",
+      "theme": "belonging",
+      "characterTrait": "dreamy_imaginative",
+      "magicType": "miniaturization",
+      "season": "seasonless_timeless",
+      "senseEmphasis": "visual"
+    },
+    "created_at": "2026-03-12T03:59:28.481728",
+    "updated_at": "2026-03-12T03:59:28.481728",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0
   }
 ]
