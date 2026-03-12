@@ -548,10 +548,10 @@
     "duration_seconds": 83,
     "author_id": "system",
     "created_at": "2026-02-07T04:14:06.219774",
-    "updated_at": "2026-02-13T04:14:06.219775",
+    "updated_at": "2026-03-12T11:21:30.732102",
     "audio_url": null,
     "album_art_url": null,
-    "view_count": 394,
+    "view_count": 396,
     "like_count": 109,
     "save_count": 84,
     "categories": [
@@ -710,7 +710,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "wired"
+    "mood": "wired",
+    "is_saved": false
   },
   {
     "id": "9fba7605-7ffa-488d-93bc-9cca2881cf97",
@@ -15232,8 +15233,8 @@
       "senseEmphasis": "auditory"
     },
     "created_at": "2026-03-09T01:35:01.646008",
-    "updated_at": "2026-03-09T01:35:01.646008",
-    "view_count": 0,
+    "updated_at": "2026-03-12T05:47:31.892381",
+    "view_count": 1,
     "like_count": 0,
     "save_count": 0,
     "duration": 5,
@@ -15448,8 +15449,8 @@
       "senseEmphasis": "tactile"
     },
     "created_at": "2026-03-10T01:32:01.166947",
-    "updated_at": "2026-03-10T01:32:01.166947",
-    "view_count": 0,
+    "updated_at": "2026-03-12T05:41:30.891113",
+    "view_count": 1,
     "like_count": 0,
     "save_count": 0,
     "duration": 1,
@@ -15484,6 +15485,7 @@
         "phase3": "deep_stillness"
       }
     },
+    "is_saved": false,
     "mood": "calm"
   },
   {
@@ -15777,7 +15779,28 @@
     "cover": "/covers/gen-54eea57db057.svg",
     "musicProfile": "enchanted-garden",
     "music_type": "ambient",
-    "audio_variants": [],
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-54ee_female_1.mp3"
+      },
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-54ee_female_2.mp3"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-54ee_female_3.mp3"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-54ee_male_2.mp3"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-54ee_asmr.mp3"
+      }
+    ],
     "author_id": "system",
     "is_generated": true,
     "generation_quality": "pending_review",
@@ -15813,21 +15836,21 @@
       "senseEmphasis": "auditory"
     },
     "created_at": "2026-03-11T04:49:37.577893",
-    "updated_at": "2026-03-11T04:49:37.577893",
-    "view_count": 0,
+    "updated_at": "2026-03-12T05:02:01.861477",
+    "view_count": 1,
     "like_count": 0,
     "save_count": 0,
     "musicalBrief": {
       "storyId": "gen-54eea57db057",
       "ageGroup": "9-12",
       "musicalIdentity": {
-        "culturalReference": "nordic",
-        "primaryLoop": "cello_sustains",
+        "culturalReference": "indian",
+        "primaryLoop": "flute_breathy",
         "padCharacter": "silk_veil"
       },
       "tonality": {
         "mode": "dorian",
-        "rootNote": "G"
+        "rootNote": "C"
       },
       "melodicCharacter": "drone_with_ornaments",
       "rhythm": {
@@ -15840,11 +15863,13 @@
         "ambientEvents": []
       },
       "emotionalArc": {
-        "phase1": "curious_wandering",
+        "phase1": "mysterious_wonder",
         "phase2": "gentle_longing",
         "phase3": "deep_stillness"
       }
     },
+    "duration": 10,
+    "is_saved": false,
     "mood": "calm"
   },
   {
@@ -16024,8 +16049,8 @@
       "senseEmphasis": "auditory"
     },
     "created_at": "2026-03-11T04:43:09.039355",
-    "updated_at": "2026-03-11T04:43:09.039355",
-    "view_count": 0,
+    "updated_at": "2026-03-12T05:47:20.540771",
+    "view_count": 1,
     "like_count": 0,
     "save_count": 0,
     "duration": 2,
@@ -16060,6 +16085,7 @@
         "phase3": "deep_stillness"
       }
     },
+    "is_saved": false,
     "mood": "curious"
   },
   {
@@ -16156,8 +16182,8 @@
       "senseEmphasis": "visual"
     },
     "created_at": "2026-03-12T03:52:22.731918",
-    "updated_at": "2026-03-12T03:52:22.731918",
-    "view_count": 0,
+    "updated_at": "2026-03-12T08:47:09.558876",
+    "view_count": 5,
     "like_count": 0,
     "save_count": 0,
     "duration": 7,
@@ -16192,6 +16218,7 @@
         "phase3": "deep_stillness"
       }
     },
+    "is_saved": false,
     "mood": "calm"
   },
   {
@@ -16271,10 +16298,11 @@
       "senseEmphasis": "visual"
     },
     "created_at": "2026-03-12T03:59:28.481728",
-    "updated_at": "2026-03-12T03:59:28.481728",
-    "view_count": 0,
+    "updated_at": "2026-03-12T10:34:37.014345",
+    "view_count": 8,
     "like_count": 0,
     "save_count": 0,
+    "is_saved": false,
     "duration": 5,
     "mood": "calm"
   }
