@@ -994,6 +994,187 @@ async def dashboard_server_health(
 # ── Diversity Dashboard ──────────────────────────────────────────────
 
 DIVERSITY_SNAPSHOT_PATH = Path("data/diversity_snapshot.json")
+CONTENT_JSON_PATH = Path("data/content.json")
+AXES_HISTORY_PATH = Path("seed_output/covers_experimental/_axes_history.json")
+
+# Inline dimension configs (mirrored from scripts/diversity.py)
+_DIVERSITY_DIMS = {
+    "characterType": {"weight": 10, "tier": 1, "hard_rule": True, "values": [
+        "land_mammal","bird","sea_creature","insect","reptile_amphibian","human_child",
+        "mythical_creature","object_alive","plant_tree","celestial_weather","robot_mechanical"]},
+    "setting": {"weight": 10, "tier": 1, "hard_rule": True, "values": [
+        "forest_woodland","ocean_water","sky_space","mountain_highland","meadow_field",
+        "desert_arid","arctic_polar","cozy_indoor","village_town","city_urban",
+        "underground_cave","garden_farm","island_tropical","imaginary_surreal","miniature_world"]},
+    "plotShape": {"weight": 3, "tier": 1, "hard_rule": True, "values": [
+        "journey_destination","discovery_reveal","lost_and_found","helping_someone",
+        "building_growing","transformation","gathering_reunion","pure_observation",
+        "routine_ritual","cyclical_seasonal"]},
+    "scale": {"weight": 5, "tier": 2, "values": ["tiny_intimate","personal","local_adventure","journey","epic_vast"]},
+    "companion": {"weight": 4, "tier": 2, "values": ["solo","duo","group_community","meets_stranger","character_and_environment"]},
+    "movement": {"weight": 4, "tier": 2, "values": ["sleeping_resting","sitting_watching","floating_drifting","walking_wandering","flying_swimming","building_making"]},
+    "timeOfDay": {"weight": 4, "tier": 2, "values": ["sunset_golden_hour","twilight_blue_hour","deep_night_starlight","late_afternoon","timeless"]},
+    "weather": {"weight": 4, "tier": 2, "values": ["clear_calm","gentle_rain","misty_foggy","snowy","warm_breeze","overcast_grey","stormy_distant","magical_atmospheric"]},
+    "theme": {"weight": 3, "tier": 3, "values": ["curiosity_wonder","courage","kindness","friendship","patience","creativity","belonging","gratitude","letting_go","self_acceptance","gentleness","rest_stillness"]},
+    "characterTrait": {"weight": 3, "tier": 3, "values": ["shy_quiet","bold_adventurous","dreamy_imaginative","kind_nurturing","clumsy_silly","wise_old_soul","anxious_worried","stubborn_determined","lonely_seeking","playful_mischievous"]},
+    "magicType": {"weight": 3, "tier": 3, "values": ["glowing_bioluminescent","talking_sentient_world","transformation_metamorphosis","miniaturization","music_sound_magic","weather_magic","dream_imagination_bleed","time_magic","color_magic","no_magic_realistic"]},
+    "season": {"weight": 2, "tier": 3, "values": ["spring","summer","autumn","winter","seasonal_transition","seasonless_timeless"]},
+    "senseEmphasis": {"weight": 2, "tier": 3, "values": ["visual","auditory","tactile","olfactory","kinesthetic"]},
+}
+
+_CHAR_TYPE_MAP = {
+    "human": "human_child", "animal": "land_mammal", "bird": "bird",
+    "sea_creature": "sea_creature", "insect": "insect", "plant": "plant_tree",
+    "celestial": "celestial_weather", "atmospheric": "celestial_weather",
+    "mythical": "mythical_creature", "object": "object_alive",
+    "alien": "mythical_creature", "robot": "robot_mechanical",
+}
+_PLOT_MAP = {
+    "quest_journey": "journey_destination", "discovery": "discovery_reveal",
+    "friendship_bonding": "helping_someone", "transformation": "transformation",
+    "problem_solving": "discovery_reveal", "celebration": "gathering_reunion",
+}
+_THEME_MAP = {
+    "dreamy": "rest_stillness", "adventure": "courage", "nature": "curiosity_wonder",
+    "ocean": "curiosity_wonder", "animals": "friendship", "fantasy": "curiosity_wonder",
+    "space": "curiosity_wonder", "bedtime": "rest_stillness", "friendship": "friendship",
+    "mystery": "curiosity_wonder", "science": "curiosity_wonder", "family": "kindness",
+    "fairy_tale": "curiosity_wonder",
+}
+
+_COVER_AXES = {
+    "world_setting": ["deep_ocean","cloud_kingdom","enchanted_forest","snow_landscape","desert_night","cozy_interior","mountain_meadow","space_cosmos","tropical_lagoon","underground_cave","ancient_library","floating_islands"],
+    "palette": ["ember_warm","twilight_cool","forest_deep","golden_hour","moonstone","berry_dusk"],
+    "composition": ["vast_landscape","intimate_closeup","overhead_canopy","winding_path","circular_nest"],
+    "character": ["human_child","small_mammal","aquatic_creature","bird","insect","plant","celestial","atmospheric","mythical_gentle","object","robot_mech","nature_spirit","no_character"],
+    "light": ["above","backlit","below","ambient"],
+    "texture": ["watercolor_soft","soft_pastel","digital_painterly","paper_cutout"],
+    "time": ["early_night","deep_night","eternal_dusk","timeless_indoor"],
+}
+
+_ALL_MOODS = ["wired","curious","calm","sad","anxious","angry"]
+_MOOD_LABELS = {"wired":"Silly","curious":"Adventure","calm":"Gentle","sad":"Comfort","anxious":"Brave","angry":"Let It Out"}
+_AGE_GROUPS = ["0-1","2-5","6-8","9-12"]
+
+
+def _age_to_group(target_age) -> str:
+    if target_age is None: return "unknown"
+    try: age = int(target_age)
+    except (ValueError, TypeError): return str(target_age)
+    if age <= 1: return "0-1"
+    elif age <= 5: return "2-5"
+    elif age <= 8: return "6-8"
+    return "9-12"
+
+
+def _compute_diversity_report() -> dict:
+    """Compute live diversity report from data files."""
+    from collections import Counter
+
+    items = []
+    if CONTENT_JSON_PATH.exists():
+        try: items = json.loads(CONTENT_JSON_PATH.read_text())
+        except Exception: pass
+
+    axes_history = []
+    if AXES_HISTORY_PATH.exists():
+        try: axes_history = json.loads(AXES_HISTORY_PATH.read_text())
+        except Exception: pass
+
+    total = len(items) or 1
+    type_ctr = Counter(i.get("type", "story") for i in items)
+    age_ctr = Counter(_age_to_group(i.get("target_age")) for i in items)
+
+    # Mood
+    mood_ctr = Counter()
+    mood_by_type, mood_by_age = {}, {}
+    for item in items:
+        m = item.get("mood") or "none"
+        mood_ctr[m] += 1
+        ct = item.get("type", "story")
+        mood_by_type.setdefault(ct, Counter())[m] += 1
+        ag = _age_to_group(item.get("target_age"))
+        mood_by_age.setdefault(ag, Counter())[m] += 1
+
+    mood_dist = {}
+    for m in _ALL_MOODS + ["none"]:
+        c = mood_ctr.get(m, 0)
+        mood_dist[m] = {"count": c, "pct": round(c * 100 / total, 1)}
+
+    # Content fingerprints
+    fingerprints = []
+    for item in items:
+        fp = item.get("diversityFingerprint")
+        if fp:
+            fingerprints.append(fp)
+        else:
+            legacy = {}
+            ct = item.get("lead_character_type")
+            if ct and ct in _CHAR_TYPE_MAP: legacy["characterType"] = _CHAR_TYPE_MAP[ct]
+            pa = item.get("plot_archetype")
+            if pa and pa in _PLOT_MAP: legacy["plotShape"] = _PLOT_MAP[pa]
+            th = item.get("theme")
+            if th and th in _THEME_MAP: legacy["theme"] = _THEME_MAP[th]
+            if legacy: fingerprints.append(legacy)
+
+    dimensions = {}
+    for dname, dcfg in _DIVERSITY_DIMS.items():
+        vals = dcfg["values"]
+        vctr = Counter()
+        tagged = 0
+        for fp in fingerprints:
+            v = fp.get(dname)
+            if v: vctr[v] += 1; tagged += 1
+        dist = {v: vctr.get(v, 0) for v in vals}
+        used = sum(1 for v in vals if vctr.get(v, 0) > 0)
+        dimensions[dname] = {
+            "weight": dcfg["weight"], "tier": dcfg.get("tier", 3),
+            "hardRule": dcfg.get("hard_rule", False), "values": vals,
+            "distribution": dist, "coverage": round(used / len(vals), 2) if vals else 0,
+            "tagged": tagged,
+        }
+
+    gaps = {}
+    for dname, dd in dimensions.items():
+        missing = [v for v in dd["values"] if dd["distribution"].get(v, 0) == 0]
+        if missing: gaps[dname] = missing
+
+    # Covers
+    cover_axes = {}
+    for axis, vals in _COVER_AXES.items():
+        vctr = Counter()
+        for entry in axes_history:
+            ax = entry.get("axes", {})
+            v = ax.get(axis)
+            if v: vctr[v] += 1
+        dist = {v: vctr.get(v, 0) for v in vals}
+        used = sum(1 for v in vals if vctr.get(v, 0) > 0)
+        cover_axes[axis] = {"values": vals, "distribution": dist, "coverage": round(used / len(vals), 2) if vals else 0}
+
+    char_ctr = Counter()
+    for i in items:
+        ct = i.get("lead_character_type")
+        if ct: char_ctr[ct] += 1
+
+    return {
+        "generatedAt": datetime.now(timezone.utc).isoformat(),
+        "catalog": {
+            "total": len(items), "byType": dict(sorted(type_ctr.items())),
+            "byAge": {ag: age_ctr.get(ag, 0) for ag in _AGE_GROUPS},
+            "withFingerprint": sum(1 for i in items if i.get("diversityFingerprint")),
+            "withMood": sum(1 for i in items if i.get("mood")),
+            "withCover": sum(1 for i in items if i.get("cover") and i["cover"] != "/covers/default.svg"),
+            "withAudio": sum(1 for i in items if i.get("audio_url")),
+        },
+        "mood": {
+            "config": {"moods": _ALL_MOODS, "labels": _MOOD_LABELS},
+            "distribution": mood_dist,
+            "byType": {t: dict(c) for t, c in sorted(mood_by_type.items())},
+            "byAge": {ag: dict(mood_by_age.get(ag, {})) for ag in _AGE_GROUPS},
+        },
+        "content": {"totalFingerprinted": len(fingerprints), "dimensions": dimensions, "gaps": gaps},
+        "covers": {"historyCount": len(axes_history), "axes": cover_axes, "leadCharacterType": dict(char_ctr.most_common())},
+    }
 
 
 @router.get("/diversity")
@@ -1012,10 +1193,8 @@ async def dashboard_diversity(
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Failed to read snapshot: {e}")
 
-    # Live report
-    from scripts.generate_diversity_report import generate_report
     try:
-        return generate_report()
+        return _compute_diversity_report()
     except Exception as e:
         logger.error("Diversity report error: %s", e)
         raise HTTPException(status_code=500, detail=f"Report generation failed: {e}")
