@@ -965,6 +965,16 @@ def step_sync(args, state: dict) -> bool:
         if copied:
             logger.info("  Copied %d audio files to web public folder", copied)
 
+    # Save diversity snapshot for current/previous comparison on dashboard
+    try:
+        from scripts.generate_diversity_report import generate_report
+        report = generate_report()
+        snapshot_path = BASE_DIR / "data" / "diversity_snapshot.json"
+        snapshot_path.write_text(json.dumps(report, indent=2))
+        logger.info("  Saved diversity snapshot (%d items)", report["catalog"]["total"])
+    except Exception as e:
+        logger.warning("  Failed to save diversity snapshot: %s", e)
+
     state["step_sync"] = "done"
     save_state(state)
     return True

@@ -989,3 +989,33 @@ async def dashboard_server_health(
         "slowRequests": slow_requests,
         "recentErrors": error_requests,
     }
+
+
+# ── Diversity Dashboard ──────────────────────────────────────────────
+
+DIVERSITY_SNAPSHOT_PATH = Path("data/diversity_snapshot.json")
+
+
+@router.get("/diversity")
+async def dashboard_diversity(
+    authorization: Optional[str] = Header(None),
+    view: str = Query("current", description="'current' for live stats, 'previous' for last pipeline snapshot"),
+):
+    """Content, cover, and mood diversity distributions."""
+    verify_analytics_key(authorization)
+
+    if view == "previous":
+        if not DIVERSITY_SNAPSHOT_PATH.exists():
+            return {"error": "No previous snapshot available", "generatedAt": None}
+        try:
+            return json.loads(DIVERSITY_SNAPSHOT_PATH.read_text())
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Failed to read snapshot: {e}")
+
+    # Live report
+    from scripts.generate_diversity_report import generate_report
+    try:
+        return generate_report()
+    except Exception as e:
+        logger.error("Diversity report error: %s", e)
+        raise HTTPException(status_code=500, detail=f"Report generation failed: {e}")
