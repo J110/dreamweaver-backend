@@ -14119,5 +14119,143 @@
     "view_count": 0,
     "like_count": 0,
     "save_count": 0
+  },
+  {
+    "id": "gen-3ae85c812ea0",
+    "type": "story",
+    "lang": "en",
+    "title": "Mira and the Paintbrush Cloud",
+    "description": "In a sky where clouds are afraid of heights, a little girl with a paintbrush discovers a rainbow that’s lost its colors. To fix it, she’ll need help from the most unlikely friend—a cloud who refuses to float. Together, they embark on a wobbly, wobbly adventure to bring back the magic of color.",
+    "text": "[GENTLE] Mira had a paintbrush that never ran out of paint, but she was terrible at staying on the ground. \n\n[JOYFUL] Every afternoon, she’d leap onto the back of a wobbly cloud named Puff, who was *very* afraid of heights. [laugh] 'Hold on tight!' Mira would giggle as Puff trembled like a bowl of jelly. \n\n[CURIOUS] One day, they spotted a rainbow lying flat on the horizon, its colors faded to gray. 'Oh no!' Mira gasped. 'It’s lost its sparkle!' Puff gulped. 'We’ll have to fly *up* to fix it?' \n\n[ADVENTUROUS] Mira dipped her brush into a puddle of golden light and swirled it across the sky. [DRAMATIC_PAUSE] The rainbow shimmered—then sneezed! [laugh] 'Who tickled my stripes?' it giggled. \n\n[GENTLE] Puff, still wobbling, floated closer. 'I think we need *all* the colors,' he whispered. Together, they painted the sky with swirls of red, blue, and green until the rainbow glowed brighter than ever. \n\n[WHISPERING] 'You did it,' Mira said, hugging Puff’s fluffy side. The cloud sighed happily. 'Maybe heights aren’t so scary when you’re not alone.' \n\n[SLEEPY] As the sun dipped low, the sky turned soft and pink. Mira curled up on Puff’s warmest spot, her paintbrush tucked under her arm. The rainbow hummed a quiet tune, and the clouds drifted gently home.",
+    "annotated_text": "[GENTLE] Mira had a paintbrush that never ran out of paint, but she was terrible at staying on the ground. \n\n[JOYFUL] Every afternoon, she’d leap onto the back of a wobbly cloud named Puff, who was *very* afraid of heights. [laugh] 'Hold on tight!' Mira would giggle as Puff trembled like a bowl of jelly. \n\n[CURIOUS] One day, they spotted a rainbow lying flat on the horizon, its colors faded to gray. 'Oh no!' Mira gasped. 'It’s lost its sparkle!' Puff gulped. 'We’ll have to fly *up* to fix it?' \n\n[ADVENTUROUS] Mira dipped her brush into a puddle of golden light and swirled it across the sky. [DRAMATIC_PAUSE] The rainbow shimmered—then sneezed! [laugh] 'Who tickled my stripes?' it giggled. \n\n[GENTLE] Puff, still wobbling, floated closer. 'I think we need *all* the colors,' he whispered. Together, they painted the sky with swirls of red, blue, and green until the rainbow glowed brighter than ever. \n\n[WHISPERING] 'You did it,' Mira said, hugging Puff’s fluffy side. The cloud sighed happily. 'Maybe heights aren’t so scary when you’re not alone.' \n\n[SLEEPY] As the sun dipped low, the sky turned soft and pink. Mira curled up on Puff’s warmest spot, her paintbrush tucked under her arm. The rainbow hummed a quiet tune, and the clouds drifted gently home.",
+    "target_age": 7,
+    "age_min": 6,
+    "age_max": 8,
+    "age_group": "6-8",
+    "length": "SHORT",
+    "word_count": 203,
+    "duration_seconds": 0,
+    "categories": [
+      "Friendship",
+      "Adventure"
+    ],
+    "theme": "friendship",
+    "morals": [
+      "Friendship makes even the scariest things feel safe.",
+      "Everyone has something special to offer—even if it’s just a wobbly hug."
+    ],
+    "cover": "",
+    "musicProfile": "enchanted-garden",
+    "music_type": "ambient",
+    "audio_variants": [],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "female",
+    "character": {
+      "name": "Mira",
+      "identity": "A fearless little artist who paints the sky with joy",
+      "special": "Her paintbrush brings color to anything—even a cloud’s worries",
+      "personality_tags": [
+        "Creative",
+        "Playful"
+      ]
+    },
+    "cover_context": "A wobbly, cotton-candy cloud floating low in a pastel sky, its edges tinged with golden light. A half-painted rainbow arches near the horizon, its colors dripping like wet paint, while tiny stars peek out from behind fluffy shapes.",
+    "lead_character_type": "human",
+    "universe": "mythological",
+    "geography": "Americas",
+    "life_aspect": "school_learning",
+    "plot_archetype": "problem_solving",
+    "diversityFingerprint": {
+      "characterType": "bird",
+      "setting": "imaginary_surreal",
+      "plotShape": "gathering_reunion",
+      "scale": "tiny_intimate",
+      "companion": "duo",
+      "movement": "flying_swimming",
+      "timeOfDay": "late_afternoon",
+      "weather": "magical_atmospheric",
+      "theme": "friendship",
+      "characterTrait": "playful_mischievous",
+      "magicType": "color_magic",
+      "season": "seasonless_timeless",
+      "senseEmphasis": "visual"
+    },
+    "mood": "wired",
+    "created_at": "2026-03-13T06:32:42.800197",
+    "updated_at": "2026-03-13T06:32:42.800197",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0
+  },
+  {
+    "id": "gen-1be31ba6fc0d",
+    "type": "poem",
+    "lang": "en",
+    "title": "Bumble and the Rainbow Dust Storm",
+    "description": "In a meadow where flowers hum and blades of grass tower like trees, a bumblebee named Bumble discovers a swirling storm of rainbow dust. It tickles her wings and makes her giggle—but when her best friend, a ladybug named Lulu, gets swept up in the colors, Bumble must chase the storm to bring her back!",
+    "text": "[RHYTHMIC] Oh, Bumble buzzed with a wobbly flight,\nHer stripes all askew, her wings not quite right.\nShe zigged where she zagged, she looped upside-down,\nAnd bonked her poor nose on a daisy’s bright crown!\n\n[PAUSE]\n\n[JOYFUL] The meadow exploded in giggles so loud,\nA storm made of colors came whooshing through cloud.\nIt painted the air in pink, blue, and gold,\nAnd tickled her tummy—oh, wasn’t it bold?\n\n[PAUSE]\n\n[GENTLE] But Lulu got lifted, oh dear, oh my!\nShe spun like a leaf in a rainbow sky.\nBumble zoomed fast with a determined hum,\n“Hold on tight, Lulu—I’m coming!”\n\n[PAUSE]\n\n[CALM] The storm slowed its swirl, the colors grew soft,\nThey landed together on clover so loft.\nThe meadow sighed sweet as the sun dipped low,\nAnd Bumble curled up with a sleepy glow.\n\n[PAUSE]\n\n[SLEEPY] Now fireflies wink in the twilight’s embrace,\nAnd dreams drift like petals all over the place.",
+    "annotated_text": "[RHYTHMIC] Oh, Bumble buzzed with a wobbly flight,\nHer stripes all askew, her wings not quite right.\nShe zigged where she zagged, she looped upside-down,\nAnd bonked her poor nose on a daisy’s bright crown!\n\n[PAUSE]\n\n[JOYFUL] The meadow exploded in giggles so loud,\nA storm made of colors came whooshing through cloud.\nIt painted the air in pink, blue, and gold,\nAnd tickled her tummy—oh, wasn’t it bold?\n\n[PAUSE]\n\n[GENTLE] But Lulu got lifted, oh dear, oh my!\nShe spun like a leaf in a rainbow sky.\nBumble zoomed fast with a determined hum,\n“Hold on tight, Lulu—I’m coming!”\n\n[PAUSE]\n\n[CALM] The storm slowed its swirl, the colors grew soft,\nThey landed together on clover so loft.\nThe meadow sighed sweet as the sun dipped low,\nAnd Bumble curled up with a sleepy glow.\n\n[PAUSE]\n\n[SLEEPY] Now fireflies wink in the twilight’s embrace,\nAnd dreams drift like petals all over the place.",
+    "target_age": 7,
+    "age_min": 6,
+    "age_max": 8,
+    "age_group": "6-8",
+    "length": "SHORT",
+    "word_count": 144,
+    "duration_seconds": 0,
+    "categories": [
+      "Adventure",
+      "Friendship"
+    ],
+    "theme": "adventure",
+    "morals": [
+      "Creativity can turn chaos into something beautiful.",
+      "Even the silliest adventures can lead to the coziest endings."
+    ],
+    "cover": "",
+    "musicProfile": "enchanted-garden",
+    "music_type": "ambient",
+    "audio_variants": [],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "female",
+    "character": {
+      "name": "Bumble",
+      "identity": "A bouncy little bee who turns tumbles into dances",
+      "special": "She can make colors swirl just by laughing too loud",
+      "personality_tags": [
+        "Playful",
+        "Adventurous"
+      ]
+    },
+    "cover_context": "A miniature meadow at golden hour, where blades of grass tower like skyscrapers and flowers glow with soft light. A swirling storm of rainbow dust dances between petals, casting prismatic reflections on dew-covered leaves.",
+    "lead_character_type": "animal",
+    "universe": "prehistoric",
+    "geography": "Arctic/Polar",
+    "life_aspect": "sleep_comfort",
+    "plot_archetype": "transformation",
+    "diversityFingerprint": {
+      "characterType": "insect",
+      "setting": "miniature_world",
+      "plotShape": "transformation",
+      "scale": "tiny_intimate",
+      "companion": "duo",
+      "movement": "flying_swimming",
+      "timeOfDay": "late_afternoon",
+      "weather": "warm_breeze",
+      "theme": "creativity",
+      "characterTrait": "playful_mischievous",
+      "magicType": "color_magic",
+      "season": "summer",
+      "senseEmphasis": "visual"
+    },
+    "mood": "wired",
+    "created_at": "2026-03-13T06:36:54.878535",
+    "updated_at": "2026-03-13T06:36:54.878535",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0
   }
 ]
