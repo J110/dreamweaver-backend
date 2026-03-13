@@ -40,10 +40,10 @@ def _stable_seed(s: str) -> int:
 
 
 AXES_HISTORY_FILE = Path(__file__).parent.parent / "seed_output" / "covers_experimental" / "_axes_history.json"
-_RECENT_PENALTY = 0.25   # Weight multiplier for recently used values
-_THEME_BOOST = 3.0       # Weight multiplier for theme-matched options
-_CONTEXT_BOOST = 4.0     # Weight multiplier for context-matched options
-_RECENT_WINDOW = 20      # Number of recent covers to consider
+_RECENT_PENALTY = 0.15   # Weight multiplier for recently used values (lower = stronger diversity)
+_THEME_BOOST = 2.0       # Weight multiplier for theme-matched options
+_CONTEXT_BOOST = 3.0     # Weight multiplier for context-matched options
+_RECENT_WINDOW = 30      # Number of recent covers to consider
 
 
 def _weighted_choice(options: list[str], weights: dict[str, float], rng: random.Random) -> str:
@@ -2986,14 +2986,12 @@ def auto_select_axes(story: dict, overrides: dict = None) -> dict:
     all_lights = ["above", "backlit", "below", "ambient"]
     l_weights = {l: 1.0 for l in all_lights}
     # World-appropriate light gets a boost (not forced)
+    # Spread light preferences across all 4 values (3 worlds each)
     world_light_pref = {
-        "deep_ocean": "below", "underground_cave": "below",
-        "desert_night": "backlit", "mountain_meadow": "backlit",
-        "cozy_interior": "ambient",
-        "cloud_kingdom": "above", "enchanted_forest": "above",
-        "snow_landscape": "above", "space_cosmos": "above",
-        "tropical_lagoon": "backlit", "ancient_library": "ambient",
-        "floating_islands": "above",
+        "deep_ocean": "below", "underground_cave": "below", "ancient_library": "below",
+        "desert_night": "backlit", "mountain_meadow": "backlit", "tropical_lagoon": "backlit",
+        "cozy_interior": "ambient", "enchanted_forest": "ambient", "space_cosmos": "ambient",
+        "cloud_kingdom": "above", "snow_landscape": "above", "floating_islands": "above",
     }
     if world in world_light_pref:
         l_weights[world_light_pref[world]] = l_weights.get(world_light_pref[world], 1.0) * _THEME_BOOST
@@ -3013,6 +3011,14 @@ def auto_select_axes(story: dict, overrides: dict = None) -> dict:
     else:  # 9-12+
         t_weights["digital_painterly"] *= 2.0
         t_weights["paper_cutout"] *= 1.5
+    # TEMPORARY (March 2026): Boost underrepresented textures to rebalance
+    # historical digital_painterly dominance. Remove after March 31.
+    now = datetime.now()
+    if now.year == 2026 and now.month == 3:
+        t_weights["paper_cutout"] *= 2.5
+        t_weights["watercolor_soft"] *= 2.0
+        t_weights["soft_pastel"] *= 2.0
+        t_weights["digital_painterly"] *= 0.5  # Dampen the overrepresented one
     t_weights = _apply_recent_penalty(t_weights, recent.get("texture", []))
     texture = overrides.get("texture") or _weighted_choice(all_textures, t_weights, _rng)
 
