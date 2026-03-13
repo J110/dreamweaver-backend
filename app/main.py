@@ -29,6 +29,7 @@ configure_logging(debug=settings.debug)
 _keep_alive_task = None
 _content_poll_task = None
 _health_collector_task = None
+_analytics_aggregation_task = None
 
 
 async def _keep_alive_loop():
@@ -87,10 +88,41 @@ async def _content_poll_loop():
             logger.warning("Content poll error: %s", e)
 
 
+async def _analytics_aggregation_loop():
+    """Aggregate daily analytics metrics every 30 minutes.
+
+    Re-aggregates today (in-progress) and yesterday (catch-up) so the
+    dashboard overview always has fresh numbers.
+    """
+    from datetime import datetime, timedelta, timezone
+    from app.api.v1.analytics import aggregate_daily_metrics
+
+    # On startup, backfill the last 7 days
+    now = datetime.now(timezone.utc)
+    for days_ago in range(7, -1, -1):
+        d = (now - timedelta(days=days_ago)).strftime("%Y-%m-%d")
+        try:
+            aggregate_daily_metrics(d)
+        except Exception as e:
+            logger.warning("Aggregation backfill error for %s: %s", d, e)
+    logger.info("Analytics aggregation backfill complete (last 7 days)")
+
+    while True:
+        await asyncio.sleep(1800)  # 30 minutes
+        try:
+            now = datetime.now(timezone.utc)
+            today = now.strftime("%Y-%m-%d")
+            yesterday = (now - timedelta(days=1)).strftime("%Y-%m-%d")
+            aggregate_daily_metrics(yesterday)
+            aggregate_daily_metrics(today)
+        except Exception as e:
+            logger.warning("Analytics aggregation error: %s", e)
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Manage application startup and shutdown events."""
-    global _keep_alive_task, _content_poll_task, _health_collector_task
+    global _keep_alive_task, _content_poll_task, _health_collector_task, _analytics_aggregation_task
 
     # Startup event
     logger.info(f"Starting {settings.app_name} API v{settings.api_version}")
@@ -127,10 +159,14 @@ async def lifespan(app: FastAPI):
     _health_collector_task = asyncio.create_task(health_collection_loop())
     logger.info("Health collector background task started (5-min interval)")
 
+    # Start analytics aggregation (backfills + 30-min refresh)
+    _analytics_aggregation_task = asyncio.create_task(_analytics_aggregation_loop())
+    logger.info("Analytics aggregation background task started (30-min interval)")
+
     yield
 
     # Shutdown event
-    for task in [_keep_alive_task, _content_poll_task, _health_collector_task]:
+    for task in [_keep_alive_task, _content_poll_task, _health_collector_task, _analytics_aggregation_task]:
         if task:
             task.cancel()
             try:
