@@ -15822,8 +15822,8 @@
       "ageGroup": "9-12",
       "musicalIdentity": {
         "culturalReference": "nordic",
-        "primaryLoop": "cello_sustains",
-        "padCharacter": "silk_veil"
+        "primaryLoop": "harp_arpeggios",
+        "padCharacter": "crystal_air"
       },
       "tonality": {
         "mode": "dorian",
@@ -15835,12 +15835,12 @@
         "baseTempo": 62
       },
       "environment": {
-        "natureSoundPrimary": "fireplace_crackle",
-        "natureSoundSecondary": "wind_gentle",
+        "natureSoundPrimary": "wind_gentle",
+        "natureSoundSecondary": "fireplace_crackle",
         "ambientEvents": []
       },
       "emotionalArc": {
-        "phase1": "curious_wandering",
+        "phase1": "curious_wonder",
         "phase2": "gentle_longing",
         "phase3": "deep_stillness"
       }
@@ -16276,6 +16276,485 @@
     "like_count": 0,
     "save_count": 0,
     "duration": 5,
+    "mood": "calm"
+  },
+  {
+    "id": "gen-910ff4401b32",
+    "type": "song",
+    "lang": "en",
+    "title": "Pip and the Whispering Echoes",
+    "description": "Deep beneath the earth, a forgotten lantern named Pip flickers to life, hearing soft echoes no one else can. When a tiny bat hums a tune only Pip understands, they set off to find where the whispers lead—through glowing tunnels and dreamlike caverns.",
+    "text": "[SINGING]\nLittle Pip with golden light,\nFloats so soft into the night.\nHears the echoes, sweet and low,\nCalling him where dreams will go.\n\n[PAUSE]\n\n[SINGING]\nMmm, mmm, the cave sings back,\nMmm, mmm, no need to slack.\nFollow sounds so soft and true,\nPip will find what’s bright and new.\n\n[PAUSE]\n\n[SINGING]\nBat named Bree with wings so wide,\nFlies beside him, side by side.\n\"Listen close,\" she hums so sweet,\n\"Echoes guide to dreams so neat.\"\n\n[PAUSE]\n\n[SINGING]\nMmm, mmm, the cave sings back,\nMmm, mmm, no need to slack.\nFollow sounds so soft and true,\nPip will find what’s bright and new.\n\n[PAUSE]\n\n[SLEEPY]\nNow the echoes fade away,\nPip drifts soft in gentle sway.\nGolden light begins to dim,\nDreaming where the echoes swim.\n\n[PAUSE]\n\n[HUMMING]\nMmm mmm mmm...\nMmm mmm mmm...\nMmm mmm mmm...",
+    "annotated_text": "[SINGING]\nLittle Pip with golden light,\nFloats so soft into the night.\nHears the echoes, sweet and low,\nCalling him where dreams will go.\n\n[PAUSE]\n\n[SINGING]\nMmm, mmm, the cave sings back,\nMmm, mmm, no need to slack.\nFollow sounds so soft and true,\nPip will find what’s bright and new.\n\n[PAUSE]\n\n[SINGING]\nBat named Bree with wings so wide,\nFlies beside him, side by side.\n\"Listen close,\" she hums so sweet,\n\"Echoes guide to dreams so neat.\"\n\n[PAUSE]\n\n[SINGING]\nMmm, mmm, the cave sings back,\nMmm, mmm, no need to slack.\nFollow sounds so soft and true,\nPip will find what’s bright and new.\n\n[PAUSE]\n\n[SLEEPY]\nNow the echoes fade away,\nPip drifts soft in gentle sway.\nGolden light begins to dim,\nDreaming where the echoes swim.\n\n[PAUSE]\n\n[HUMMING]\nMmm mmm mmm...\nMmm mmm mmm...\nMmm mmm mmm...",
+    "target_age": 3,
+    "age_min": 2,
+    "age_max": 5,
+    "age_group": "2-5",
+    "length": "MEDIUM",
+    "word_count": 128,
+    "duration_seconds": 0,
+    "categories": [
+      "Adventure",
+      "Friendship"
+    ],
+    "theme": "adventure",
+    "morals": [
+      "Even the smallest light can lead you home",
+      "Listening closely brings the sweetest surprises"
+    ],
+    "cover": "/covers/gen-910ff4401b32.svg",
+    "musicProfile": "enchanted-garden",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-910f_female_1.mp3",
+        "duration_seconds": 244.91,
+        "provider": "ace-step"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-910f_male_2.mp3",
+        "duration_seconds": 244.91,
+        "provider": "ace-step"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "male",
+    "character": {
+      "name": "Pip",
+      "identity": "A gentle lantern who glows with quiet curiosity",
+      "special": "He hears whispers and echoes no one else can understand",
+      "personality_tags": [
+        "Dreamy",
+        "Gentle"
+      ]
+    },
+    "cover_context": "A vast underground cavern bathed in soft golden light, stalactites glowing faintly blue and pink, tiny fireflies flickering like stars, and a winding path of glowing pebbles leading deeper into the misty shadows.",
+    "lead_character_type": "object",
+    "universe": "futuristic",
+    "geography": "Africa",
+    "life_aspect": "sleep_comfort",
+    "plot_archetype": "celebration",
+    "diversityFingerprint": {
+      "characterType": "object_alive",
+      "setting": "underground_cave",
+      "plotShape": "discovery_reveal",
+      "scale": "tiny_intimate",
+      "companion": "meets_stranger",
+      "movement": "floating_drifting",
+      "timeOfDay": "timeless",
+      "weather": "magical_atmospheric",
+      "theme": "curiosity_wonder",
+      "characterTrait": "dreamy_imaginative",
+      "magicType": "dream_imagination_bleed",
+      "season": "seasonless_timeless",
+      "senseEmphasis": "auditory"
+    },
+    "created_at": "2026-03-13T01:47:10.204090",
+    "updated_at": "2026-03-13T01:47:10.204090",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 5,
+    "mood": "calm"
+  },
+  {
+    "id": "gen-a534b5798c28",
+    "type": "poem",
+    "lang": "en",
+    "title": "Tia and the Whispering Mango Tree",
+    "description": "On a sunlit island where the air hums with salt and sweetness, a young girl named Tia sits beneath a towering mango tree. The tree’s leaves shimmer with secrets, and today, they seem to whisper her name—inviting her into a world where roots dance and fruit sings.",
+    "text": "[RHYTHMIC] Beneath the mango, golden bright,\nTia sits in afternoon light.\nThe breeze hums soft, the branches sway,\nA whispered song to end the day.\n\n[GENTLE] The leaves all rustle, sweet and low,\n\"Come closer, dear, and you will know.\"\nShe leans in close, her heart so light,\nThe tree sings back—oh, what a sight!\n\n[CALM] The roots all dance in earth so deep,\nThe fruits all giggle, round and sweet.\nTia laughs too, her joy so true,\nThe tree loves her—she loves it too.\n\n[WHISPERING] Now shadows stretch, the air turns mild,\nThe tree still hums, so soft, so wild.\nTia closes her eyes so tight,\nAnd dreams of dancing in the light.\n\n[SLEEPY] The mango sways, the stars appear,\nGoodnight, dear tree, my friend so dear.",
+    "annotated_text": "[RHYTHMIC] Beneath the mango, golden bright,\nTia sits in afternoon light.\nThe breeze hums soft, the branches sway,\nA whispered song to end the day.\n\n[GENTLE] The leaves all rustle, sweet and low,\n\"Come closer, dear, and you will know.\"\nShe leans in close, her heart so light,\nThe tree sings back—oh, what a sight!\n\n[CALM] The roots all dance in earth so deep,\nThe fruits all giggle, round and sweet.\nTia laughs too, her joy so true,\nThe tree loves her—she loves it too.\n\n[WHISPERING] Now shadows stretch, the air turns mild,\nThe tree still hums, so soft, so wild.\nTia closes her eyes so tight,\nAnd dreams of dancing in the light.\n\n[SLEEPY] The mango sways, the stars appear,\nGoodnight, dear tree, my friend so dear.",
+    "target_age": 3,
+    "age_min": 2,
+    "age_max": 5,
+    "age_group": "2-5",
+    "length": "SHORT",
+    "word_count": 123,
+    "duration_seconds": 0,
+    "categories": [
+      "Nature",
+      "Family"
+    ],
+    "theme": "family",
+    "morals": [
+      "Love grows where kindness is planted.",
+      "Belonging begins with listening to the world around you."
+    ],
+    "cover": "/covers/gen-a534b5798c28.svg",
+    "musicProfile": "moonlit-meadow",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-a534_female_3.mp3",
+        "duration_seconds": 62.93,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-a534_female_2.mp3",
+        "duration_seconds": 69.04,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-a534_female_1.mp3",
+        "duration_seconds": 86.58,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-a534_male_2.mp3",
+        "duration_seconds": 64.44,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-a534_asmr.mp3",
+        "duration_seconds": 71.2,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "female",
+    "character": {
+      "name": "Tia",
+      "identity": "A gentle girl who tends to the whispers of the earth",
+      "special": "She understands the quiet language of trees and blooms",
+      "personality_tags": [
+        "Kind",
+        "Dreamy"
+      ]
+    },
+    "cover_context": "A sun-drenched tropical island at late afternoon, where a towering mango tree stands with lush green leaves and golden fruit. The air shimmers with warmth, and the sea glows turquoise in the distance, while soft pink clouds drift lazily across the sky.",
+    "lead_character_type": "human",
+    "universe": "historical",
+    "geography": "East Asia",
+    "life_aspect": "play_discovery",
+    "plot_archetype": "friendship_bonding",
+    "diversityFingerprint": {
+      "characterType": "plant_tree",
+      "setting": "island_tropical",
+      "plotShape": "cyclical_seasonal",
+      "scale": "tiny_intimate",
+      "companion": "group_community",
+      "movement": "sitting_watching",
+      "timeOfDay": "late_afternoon",
+      "weather": "warm_breeze",
+      "theme": "belonging",
+      "characterTrait": "kind_nurturing",
+      "magicType": "dream_imagination_bleed",
+      "season": "summer",
+      "senseEmphasis": "olfactory"
+    },
+    "created_at": "2026-03-13T01:44:39.181020",
+    "updated_at": "2026-03-13T01:44:39.181020",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 2,
+    "musicalBrief": {
+      "storyId": "gen-a534b5798c28",
+      "ageGroup": "2-5",
+      "musicalIdentity": {
+        "culturalReference": "latin",
+        "primaryLoop": "guitar_fingerpick",
+        "padCharacter": "warm_strings"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "F"
+      },
+      "melodicCharacter": "cycling_arpeggio",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "ocean_waves_distant",
+        "natureSoundSecondary": "wind_gentle",
+        "ambientEvents": [
+          "leaves",
+          "waterDrop"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "playful_curiosity",
+        "phase2": "gentle_wonder",
+        "phase3": "deep_stillness"
+      }
+    },
+    "mood": "calm"
+  },
+  {
+    "id": "gen-7f24c66d3921",
+    "type": "story",
+    "lang": "en",
+    "title": "Marino and the Lullaby of the Tides",
+    "description": "Beneath the endless blue, the ocean hums a melody only the moon can hear. Marino, the gentle silver moon, drifts above a tiny tropical island, whispering secrets to the waves—and tonight, the tides are listening.",
+    "text": "[GENTLE] Hush, little waves, hush now, soft and low.\nMarino hums where the warm winds blow.\n\n[CALM] The sea sways slow, the sea sways bright,\nUnder the moon’s soft silver light.\n\n[WHISPERING] 'Tell me your song,' the tides reply,\n'Sing to the fish and the coral high.'\n\n[JOYFUL] Marino laughs, a glow so sweet,\nDancing on waves with gentle feet.\n\n[SLEEPY] The little fish drift, the stars align,\nAs the moon sings the world to shine.",
+    "annotated_text": "[GENTLE] Hush, little waves, hush now, soft and low.\nMarino hums where the warm winds blow.\n\n[CALM] The sea sways slow, the sea sways bright,\nUnder the moon’s soft silver light.\n\n[WHISPERING] 'Tell me your song,' the tides reply,\n'Sing to the fish and the coral high.'\n\n[JOYFUL] Marino laughs, a glow so sweet,\nDancing on waves with gentle feet.\n\n[SLEEPY] The little fish drift, the stars align,\nAs the moon sings the world to shine.",
+    "target_age": 0,
+    "age_min": 0,
+    "age_max": 1,
+    "age_group": "0-1",
+    "length": "MEDIUM",
+    "word_count": 71,
+    "duration_seconds": 0,
+    "categories": [
+      "Ocean Adventure",
+      "Celestial Friends"
+    ],
+    "theme": "ocean",
+    "morals": [
+      "Everyone has a special song to share with the world.",
+      "Gentle kindness can calm even the wildest waves."
+    ],
+    "cover": "/covers/gen-7f24c66d3921.svg",
+    "musicProfile": "ocean-drift",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-7f24_female_3.mp3",
+        "duration_seconds": 39.5,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-7f24_female_2.mp3",
+        "duration_seconds": 41.8,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-7f24_female_1.mp3",
+        "duration_seconds": 48.24,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-7f24_male_2.mp3",
+        "duration_seconds": 37.1,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-7f24_asmr.mp3",
+        "duration_seconds": 42.96,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "male",
+    "character": {
+      "name": "Marino",
+      "identity": "A wise old moon who sings the tides to sleep",
+      "special": "His voice carries the dreams of the ocean to the shore",
+      "personality_tags": [
+        "Wise",
+        "Gentle"
+      ]
+    },
+    "cover_context": "A tiny tropical island at twilight, surrounded by turquoise waves gently lapping at golden sand. Palm trees sway in a warm breeze, their fronds silhouetted against a sky painted in soft pinks and blues. Fireflies flicker near the water’s edge, and the first stars begin to twinkle above.",
+    "lead_character_type": "celestial",
+    "universe": "prehistoric",
+    "geography": "Americas",
+    "life_aspect": "family_home",
+    "plot_archetype": "problem_solving",
+    "diversityFingerprint": {
+      "characterType": "celestial_weather",
+      "setting": "island_tropical",
+      "plotShape": "cyclical_seasonal",
+      "scale": "local_adventure",
+      "companion": "character_and_environment",
+      "movement": "floating_drifting",
+      "timeOfDay": "timeless",
+      "weather": "warm_breeze",
+      "theme": "belonging",
+      "characterTrait": "wise_old_soul",
+      "magicType": "dream_imagination_bleed",
+      "season": "seasonless_timeless",
+      "senseEmphasis": "auditory"
+    },
+    "created_at": "2026-03-13T01:49:39.265751",
+    "updated_at": "2026-03-13T01:49:39.265751",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 1,
+    "musicalBrief": {
+      "storyId": "gen-7f24c66d3921",
+      "ageGroup": "0-1",
+      "musicalIdentity": {
+        "culturalReference": "ambient_electronic",
+        "primaryLoop": "singing_bowl_rings",
+        "padCharacter": "deep_ocean"
+      },
+      "tonality": {
+        "mode": "minor_pentatonic",
+        "rootNote": "C"
+      },
+      "melodicCharacter": "descending_lullaby",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "ocean_waves_distant",
+        "natureSoundSecondary": "underwater_bubbling",
+        "ambientEvents": [
+          "waveCycle",
+          "chimes"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "gentle_sway",
+        "phase2": "dreamy_drift",
+        "phase3": "deep_stillness"
+      }
+    },
+    "mood": "calm"
+  },
+  {
+    "id": "gen-d1d9090e87f5",
+    "type": "long_story",
+    "lang": "en",
+    "title": "Sola and the Whispering Tides",
+    "description": "Beneath a sky alive with shimmering stars, a gentle summer moon named Sola drifts over a tropical island where the ocean hums secrets to the shore. When the tides begin to whisper lullabies only she can hear, Sola must follow the sound to its source—before the night fades into dawn.",
+    "text": "[GENTLE] High above the sleeping island, Sola the summer moon glowed softly. [CURIOUS] She loved watching the waves dance below, but tonight, something was different. [MYSTERIOUS] The ocean was humming—a quiet, rhythmic song that tickled her silver edges. [EXCITED] 'What is that sound?' she wondered, tilting her round face closer. [JOYFUL] The waves giggled and splashed, as if sharing a secret. [ADVENTUROUS] Sola knew she had to follow the music before the night ended.\n\n[DRAMATIC_PAUSE] Down she drifted, closer to the shore, where the sand sparkled like tiny stars. [WHISPERING] The hum grew louder, sweeter—a lullaby just for her. [laugh] 'It’s coming from the tide pools!' she realized. [CURIOUS] The little pools of water shimmered, inviting her to listen.\n\n[CALM] Sola settled above the tide pools, her light spilling over the water. [GENTLE] The hum was soft now, like a mother’s song. [MYSTERIOUS] The waves lapped gently, carrying the melody to her ears. [CALM] She closed her eyes and let the sound wrap around her like a warm breeze. [GENTLE] The air smelled of salt and sweet flowers. The sand was cool beneath the water’s touch.\n\n[CALM] The night grew still. The stars twinkled in quiet agreement. [GENTLE] Sola’s glow softened, matching the rhythm of the tides. [CALM] The song was no longer just in the water—it was in the wind, in the rustling palm leaves, in the very heart of the island. [GENTLE] She had found the place where the world sang to itself.\n\n[SLEEPY] The waves rocked gently. The tide pools shimmered. [WHISPERING] Sola’s light grew dimmer, softer. [SLEEPY] The island sighed in its sleep. The stars blinked slowly. [WHISPERING] The lullaby faded into the night, sweet and low.\n\n[SLEEPY] The sand was warm. The air was still. The world was quiet. [SLEEPY] Sola’s glow melted into the horizon, safe and soft. [WHISPERING] The tides whispered... goodnight... goodnight...\n\n[SLEEPY] Close your eyes... listen... the night is singing...",
+    "annotated_text": "[PHASE_1]\n\n[GENTLE] High above the sleeping island, Sola the summer moon glowed softly. [CURIOUS] She loved watching the waves dance below, but tonight, something was different. [MYSTERIOUS] The ocean was humming—a quiet, rhythmic song that tickled her silver edges. [EXCITED] 'What is that sound?' she wondered, tilting her round face closer. [JOYFUL] The waves giggled and splashed, as if sharing a secret. [ADVENTUROUS] Sola knew she had to follow the music before the night ended.\n\n[DRAMATIC_PAUSE] Down she drifted, closer to the shore, where the sand sparkled like tiny stars. [WHISPERING] The hum grew louder, sweeter—a lullaby just for her. [laugh] 'It’s coming from the tide pools!' she realized. [CURIOUS] The little pools of water shimmered, inviting her to listen.\n\n[/PHASE_1]\n\n\n[PHASE_2]\n\n[CALM] Sola settled above the tide pools, her light spilling over the water. [GENTLE] The hum was soft now, like a mother’s song. [MYSTERIOUS] The waves lapped gently, carrying the melody to her ears. [CALM] She closed her eyes and let the sound wrap around her like a warm breeze. [GENTLE] The air smelled of salt and sweet flowers. The sand was cool beneath the water’s touch.\n\n[CALM] The night grew still. The stars twinkled in quiet agreement. [GENTLE] Sola’s glow softened, matching the rhythm of the tides. [CALM] The song was no longer just in the water—it was in the wind, in the rustling palm leaves, in the very heart of the island. [GENTLE] She had found the place where the world sang to itself.\n\n[/PHASE_2]\n\n\n[PHASE_3]\n\n[SLEEPY] The waves rocked gently. The tide pools shimmered. [WHISPERING] Sola’s light grew dimmer, softer. [SLEEPY] The island sighed in its sleep. The stars blinked slowly. [WHISPERING] The lullaby faded into the night, sweet and low.\n\n[SLEEPY] The sand was warm. The air was still. The world was quiet. [SLEEPY] Sola’s glow melted into the horizon, safe and soft. [WHISPERING] The tides whispered... goodnight... goodnight...\n\n[SLEEPY] Close your eyes... listen... the night is singing...\n\n[/PHASE_3]",
+    "target_age": 0,
+    "age_min": 0,
+    "age_max": 1,
+    "age_group": "0-1",
+    "length": "LONG",
+    "word_count": 295,
+    "duration_seconds": 0,
+    "categories": [
+      "Nature and Environment",
+      "Imagination and Wonder"
+    ],
+    "theme": "nature",
+    "morals": [
+      "Even the smallest sounds can lead you to the most beautiful places.",
+      "The world sings to those who listen with their hearts."
+    ],
+    "cover": "/covers/gen-d1d9090e87f5.svg",
+    "musicProfile": "moonlit-meadow",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-d1d9_female_2.mp3",
+        "duration_seconds": 159.52,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-d1d9_female_3.mp3",
+        "duration_seconds": 146.28,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-d1d9_female_1.mp3",
+        "duration_seconds": 194.63,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-d1d9_male_2.mp3",
+        "duration_seconds": 141.72,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-d1d9_asmr.mp3",
+        "duration_seconds": 166.64,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "neutral",
+    "character": {
+      "name": "Sola",
+      "identity": "A dreamy summer moon who hears the songs of the sea",
+      "special": "She can drift closer to the earth to listen to the whispers of the tides",
+      "personality_tags": [
+        "Dreamy",
+        "Gentle"
+      ]
+    },
+    "cover_context": "A tropical island at night, bathed in soft silver moonlight. Tide pools glimmer like scattered stars, palm trees sway gently, and the ocean hums with a faint, golden glow beneath the surface. The air is warm, the breeze light, and the sky alive with twinkling constellations.",
+    "lead_character_type": "celestial",
+    "universe": "prehistoric",
+    "geography": "Ocean/Islands",
+    "life_aspect": "family_home",
+    "plot_archetype": "transformation",
+    "diversityFingerprint": {
+      "characterType": "celestial_weather",
+      "setting": "island_tropical",
+      "plotShape": "cyclical_seasonal",
+      "scale": "local_adventure",
+      "companion": "character_and_environment",
+      "movement": "floating_drifting",
+      "timeOfDay": "deep_night_starlight",
+      "weather": "magical_atmospheric",
+      "theme": "belonging",
+      "characterTrait": "dreamy_imaginative",
+      "magicType": "dream_imagination_bleed",
+      "season": "summer",
+      "senseEmphasis": "auditory"
+    },
+    "created_at": "2026-03-13T01:54:15.781821",
+    "updated_at": "2026-03-13T01:54:15.781821",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 3,
+    "musicalBrief": {
+      "storyId": "gen-d1d9090e87f5",
+      "ageGroup": "0-1",
+      "musicalIdentity": {
+        "culturalReference": "japanese",
+        "primaryLoop": "koto_plucks",
+        "padCharacter": "starfield"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "C"
+      },
+      "melodicCharacter": "descending_lullaby",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "ocean_waves_distant",
+        "natureSoundSecondary": "underwater_bubbling",
+        "ambientEvents": [
+          "waveCycle",
+          "chimes"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "gentle_curiosity",
+        "phase2": "soothing_flow",
+        "phase3": "deep_stillness"
+      }
+    },
     "mood": "calm"
   }
 ]
