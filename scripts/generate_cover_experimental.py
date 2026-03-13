@@ -3508,26 +3508,26 @@ def generate_flux_image_together(prompt: str) -> bytes:
 
 
 def generate_flux_image(prompt: str, hf_token: str = None) -> bytes:
-    """Generate a FLUX image. Tries Together AI → FluxAPI.ai → Pollinations → Replicate."""
-    # Primary: Together AI (free tier: FLUX.1-schnell-Free)
+    """Generate a FLUX image. Tries Pollinations → Together AI → FluxAPI.ai → Replicate."""
+    # Primary: Pollinations (pollen balance resets weekly)
+    result = generate_flux_image_pollinations(prompt)
+    if result:
+        return result
+
+    # Fallback 1: Together AI (free tier: FLUX.1-schnell-Free)
+    logger.info("Pollinations failed, trying Together AI fallback...")
     result = generate_flux_image_together(prompt)
     if result:
         return result
 
-    # Fallback 1: FluxAPI.ai (free trial credits)
+    # Fallback 2: FluxAPI.ai (free trial credits)
     logger.info("Together AI failed, trying FluxAPI fallback...")
     result = generate_flux_image_fluxapi(prompt)
     if result:
         return result
 
-    # Fallback 2: Pollinations (requires pollen balance)
-    logger.info("FluxAPI failed, trying Pollinations fallback...")
-    result = generate_flux_image_pollinations(prompt)
-    if result:
-        return result
-
     # Fallback 3: Replicate ($0.003/image)
-    logger.info("Pollinations failed, trying Replicate fallback...")
+    logger.info("FluxAPI failed, trying Replicate fallback...")
     return generate_flux_image_replicate(prompt)
 
 
