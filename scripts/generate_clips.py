@@ -62,6 +62,13 @@ BG_COLOR = "0D0B2E"  # hex without #
 TITLE_COLOR = "F5E6D3"
 BRAND_COLOR = "888888"
 
+# ── Resource / safety limits ─────────────────────────────────────────────
+FFMPEG_TIMEOUT = 300          # Max seconds per ffmpeg call (5 min)
+FFMPEG_COMPOSITE_TIMEOUT = 420  # Composite is heavier (7 min)
+MAX_CLIPS_PER_RUN = 6         # Hard cap: 3 new + 3 back-catalog
+FFMPEG_THREADS = 1             # Limit CPU threads on small VMs
+FFMPEG_NICE = 10               # Lower priority to avoid starving other services
+
 MOOD_DISPLAY = {
     "wired":   {"label": "Silly",      "emoji": "😄", "color": "FFB946"},
     "curious": {"label": "Adventure",  "emoji": "🔮", "color": "7B68EE"},
@@ -156,11 +163,28 @@ def svg_to_png(svg_path, png_path, size=COVER_SIZE):
 
 # ── Ken Burns Video ──────────────────────────────────────────────────────
 
+def _run_ffmpeg(cmd, label, timeout=FFMPEG_TIMEOUT):
+    """Run an ffmpeg command with timeout, thread limits, and nice priority."""
+    # Add thread limit to ffmpeg for small VMs
+    if "-threads" not in cmd:
+        cmd = cmd[:1] + ["-threads", str(FFMPEG_THREADS)] + cmd[1:]
+    try:
+        result = subprocess.run(
+            cmd, capture_output=True, text=True,
+            timeout=timeout,
+            preexec_fn=lambda: os.nice(FFMPEG_NICE),
+        )
+        if result.returncode != 0:
+            logger.error("  %s failed: %s", label, result.stderr[-500:])
+            return False
+        return True
+    except subprocess.TimeoutExpired:
+        logger.error("  %s TIMEOUT after %ds — killing", label, timeout)
+        return False
+
+
 def create_ken_burns_video(png_path, video_path, duration=CLIP_DURATION):
     """Create a slow-zoom (Ken Burns) video from a static image via FFmpeg."""
-    # Slow zoom from 1.0x to 1.05x over the duration, centered
-    # d=1 means each frame uses one input frame (since we loop the image)
-    # on = output frame number
     total_frames = duration * FPS
     cmd = [
         "ffmpeg", "-y",
@@ -180,11 +204,7 @@ def create_ken_burns_video(png_path, video_path, duration=CLIP_DURATION):
         "-preset", "fast",
         str(video_path),
     ]
-    result = subprocess.run(cmd, capture_output=True, text=True)
-    if result.returncode != 0:
-        logger.error("  Ken Burns FFmpeg failed: %s", result.stderr[-500:])
-        return False
-    return True
+    return _run_ffmpeg(cmd, "Ken Burns")
 
 
 # ── Audio Processing ─────────────────────────────────────────────────────
@@ -201,11 +221,7 @@ def trim_audio(input_path, output_path, duration=CLIP_DURATION):
         "-ac", "2",
         str(output_path),
     ]
-    result = subprocess.run(cmd, capture_output=True, text=True)
-    if result.returncode != 0:
-        logger.error("  Audio trim failed: %s", result.stderr[-500:])
-        return False
-    return True
+    return _run_ffmpeg(cmd, "Audio trim", timeout=120)
 
 
 # ── Title Wrapping ───────────────────────────────────────────────────────
@@ -401,11 +417,7 @@ def composite_video(cover_video, audio_path, title, mood, output_path,
         str(output_path),
     ]
 
-    result = subprocess.run(cmd, capture_output=True, text=True)
-    if result.returncode != 0:
-        logger.error("  Composite failed: %s", result.stderr[-500:])
-        return False
-    return True
+    return _run_ffmpeg(cmd, "Composite", timeout=FFMPEG_COMPOSITE_TIMEOUT)
 
 
 # ── Captions ─────────────────────────────────────────────────────────────
@@ -462,8 +474,10 @@ def write_clip_metadata(story, voice, clip_path):
         else:
             age_group = "9-12"
 
+    short_id = story["id"][:8]
     meta = {
-        "storyId": story["id"],
+        "storyId": short_id,
+        "fullStoryId": story["id"],
         "voice": voice,
         "title": story.get("title", "Untitled"),
         "mood": story.get("mood", "calm"),
@@ -646,6 +660,11 @@ def generate_daily_clips(stories, output_dir, force=False, dry_run=False):
         voice, url = get_voice_for_story(old_lullaby, voices)
         if voice:
             clips_plan.append(("CATALOG lullaby", old_lullaby, voice, url))
+
+    # Cap to MAX_CLIPS_PER_RUN
+    if len(clips_plan) > MAX_CLIPS_PER_RUN:
+        logger.warning("  Capping from %d to %d clips", len(clips_plan), MAX_CLIPS_PER_RUN)
+        clips_plan = clips_plan[:MAX_CLIPS_PER_RUN]
 
     # Show plan
     logger.info("\n=== Clip Generation Plan ===")

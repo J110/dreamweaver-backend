@@ -11,8 +11,8 @@ Pipeline flow:
   4. ENRICH      → Mistral Large (free tier) → musicParams for new items
   5. MOOD        → Mistral Small (free tier) → mood tag (calm/curious/wired/sad/anxious/angry)
   6. COVERS      → FLUX.1 Schnell (HuggingFace free tier, 3 retries) → 2-layer covers (Mistral SVG fallback)
-  7. CLIPS       → FFmpeg (cairosvg + Ken Burns) → 60s vertical video clips for social media
-  8. SYNC        → sync content.json → seedData.js + copy audio/covers to web
+  7. SYNC        → sync content.json → seedData.js + copy audio/covers to web (BEFORE clips)
+  8. CLIPS       → FFmpeg (cairosvg + Ken Burns) → 60s vertical video clips for social media
   9. PUBLISH     → git push → Render/Vercel auto-deploy (test only)
   10. DEPLOY PROD → rebuild frontend + restart backend on local GCP VM
   11. NOTIFY      → email via Resend (success or failure)
@@ -71,7 +71,7 @@ logging.basicConfig(
 logger = logging.getLogger("pipeline")
 
 # ── Pipeline steps ───────────────────────────────────────────────────────
-STEPS = ["generate", "audio", "qa", "enrich", "mood", "covers", "clips", "sync", "publish", "deploy_prod"]
+STEPS = ["generate", "audio", "qa", "enrich", "mood", "covers", "sync", "clips", "publish", "deploy_prod"]
 
 CHATTERBOX_HEALTH = "https://j110--dreamweaver-chatterbox-health.modal.run"
 
@@ -1388,8 +1388,8 @@ def main():
         "enrich": step_enrich,
         "mood": step_mood,
         "covers": step_covers,
+        "sync": step_sync,         # sync BEFORE clips so new audio/covers are available
         "clips": step_clips,
-        "sync": step_sync,
         "publish": step_publish,
         "deploy_prod": step_deploy_prod,
     }
