@@ -113,6 +113,14 @@ def _build_html(state: dict, log_file: str = "", elapsed: float = 0) -> str:
         rows += f'<tr><td>&nbsp;&nbsp;Monthly proj.</td><td>{cost_monthly}</td></tr>'
     if disk_info:
         rows += f'<tr><td><b>Disk</b></td><td>{disk_info}</td></tr>'
+    mood_skip = state.get("mood_skip")
+    if mood_skip and any(v > 0 for v in mood_skip.values()):
+        skip_parts = []
+        if mood_skip.get("story"): skip_parts.append(f"{mood_skip['story']} story")
+        if mood_skip.get("long_story"): skip_parts.append(f"{mood_skip['long_story']} long story")
+        if mood_skip.get("poem"): skip_parts.append(f"{mood_skip['poem']} poem")
+        if mood_skip.get("song"): skip_parts.append(f"{mood_skip['song']} lullaby")
+        rows += f'<tr><td><b>🧪 Mood skip</b></td><td>{", ".join(skip_parts)} (experimental run earlier today)</td></tr>'
     if generation_warning:
         rows += f'<tr><td><b>⚠️ Warning</b></td><td style="color:#f59e0b"><b>{generation_warning}</b></td></tr>'
     if failed_step:
