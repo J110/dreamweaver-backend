@@ -1408,8 +1408,27 @@ def main():
                         default=None, help="Target mood for experimental content generation")
     parser.add_argument("--age", default=None,
                         help="Force specific age group (e.g. 6-8) for --mood runs")
+    parser.add_argument("--type", dest="content_type",
+                        choices=["story", "long_story", "poem", "song", "all"],
+                        default=None,
+                        help="Content type to generate (shorthand, used with --mood)")
 
     args = parser.parse_args()
+
+    # --type flag sets count flags (convenience for mood runs)
+    if args.content_type:
+        if args.content_type == "story":
+            args.count_stories = max(args.count_stories, 1)
+        elif args.content_type == "long_story":
+            args.count_long_stories = max(args.count_long_stories, 1)
+        elif args.content_type == "poem":
+            args.count_poems = max(args.count_poems, 1)
+        elif args.content_type == "song":
+            args.count_lullabies = max(args.count_lullabies, 1)
+        elif args.content_type == "all":
+            args.count_stories = max(args.count_stories, 1)
+            args.count_poems = max(args.count_poems, 1)
+            args.count_lullabies = max(args.count_lullabies, 1)
 
     logger.info("╔══════════════════════════════════════════════╗")
     logger.info("║  Dream Valley — Content Pipeline             ║")

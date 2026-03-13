@@ -486,85 +486,12 @@ Emotion markers like [GENTLE], [SLEEPY] etc. stay in English square brackets in 
 """
 
 
-MOOD_PROMPTS = {
-    "wired": {
-        "2-5": """
-MOOD: WIRED (Silly)
-This story is for a child who is hyper, bouncing, full of unfocused energy.
-Your job: capture their attention through humor and absurdity, then land softly.
-
-Phase 1 / Opening 60%: The premise is absurd. Characters do funny things. Physical comedy
-translated to audio — things fall over, plans backfire, sounds are silly. The narrator has
-comic timing. Repetition with variation (the penguin slips AGAIN). The child laughs.
-
-Phase 2 / Final 40%: The silliness softens into coziness. The funny character is tired,
-finds a warm spot, settles down. Humor shifts from "laugh out loud" to "warm smile."
-Descriptions become tactile — soft, warm, snug.
-
-Final sentences: No reference to earlier silliness. Pure stillness and warmth.
-
-AGE-SPECIFIC HUMOR (2-5): Broad physical comedy. Things fall. Characters slip, trip, bonk.
-A bear who thinks he's a butterfly. Repetition with variation is the key tool (the penguin
-slips three times, each time landing in something softer). Use animals or objects-come-to-life,
-not human children. Short sentences. Funny sounds. Onomatopoeia. "SPLAT. BONK. PLOP."
-Capital-letter emphasis for comic timing.
-Emotion markers: Start [EXCITED] or [JOYFUL], transition through [GENTLE] to [SLEEPY].
-""",
-        "6-8": """
-MOOD: WIRED (Silly)
-This story is for a child who is hyper, bouncing, full of unfocused energy.
-Your job: capture their attention through humor and absurdity, then land softly.
-
-Phase 1 / Opening 60%: The premise is absurd. Characters do funny things. The narrator has
-comic timing. The child laughs.
-
-Phase 2 / Final 40%: The silliness softens into coziness. The funny character is tired,
-finds a warm spot, settles down. Humor shifts from "laugh out loud" to "warm smile."
-Descriptions become tactile — soft, warm, snug.
-
-Final sentences: No reference to earlier silliness. Pure stillness and warmth.
-
-AGE-SPECIFIC HUMOR (6-8): Conceptual absurdity played with commitment. A cloud afraid of
-heights. A lighthouse afraid of the dark. The premise is the joke — the narrator tells it
-straight. Use animals, mythical creatures, or objects with personality. Longer sentences with
-comic rhythm — build-up, pause, payoff. The narrator is bemused, not silly.
-Emotion markers: Start [CURIOUS] or [JOYFUL], transition through [GENTLE] to [SLEEPY].
-""",
-        "9-12": """
-MOOD: WIRED (Silly)
-This story is for a child who is hyper, full of unfocused energy.
-Your job: capture their attention through humor, then land softly.
-
-Phase 1 / Opening 60%: The premise has quiet absurdity. The narrator treats ridiculous
-situations with complete seriousness.
-
-Phase 2 / Final 40%: The humor softens into warmth. Descriptions become sensory and still.
-
-Final sentences: Pure stillness and warmth.
-
-AGE-SPECIFIC HUMOR (9-12): Dry, deadpan, smart. The narrator treats ridiculous situations
-with complete seriousness. "The raccoon had been staring at the moon for forty-five minutes.
-She wasn't sure what she was expecting." The child feels smart for getting the humor. Use
-animals with internal monologues, or human characters with wry self-awareness. Conversational,
-precise, unexpected word choices. No exclamation marks. No spectacle.
-Emotion markers: Start [CURIOUS], transition through [CALM] to [SLEEPY].
-""",
-    },
-}
-
-# Wired poem prompt (age-independent structure, age handled by existing poem rules)
-MOOD_POEM_PROMPTS = {
-    "wired": """
-MOOD: WIRED (Silly)
-This poem is for a child who is hyper and bouncing. Capture attention through humor, then land softly.
-
-Opening stanzas (60%): Funny rhymes, silly images, absurd characters. Physical comedy in verse.
-"The fish put on his finest hat / and told the sea, 'I'm done with that.'"
-
-Closing stanzas (40%): Shift to warm, sleepy rhymes. The silly character rests.
-The humor dissolves into gentleness. Final stanza is pure sleep imagery.
-""",
-}
+# ── Mood configuration (imported from mood_config.py) ─────────────────
+from scripts.mood_config import (
+    MOOD_PROMPTS, MOOD_POEM_PROMPTS, MOOD_POEM_AGE_NOTES,
+    MOOD_LULLABY_PROMPTS, MOOD_SAFETY, get_mood_safety,
+    VALID_MOOD_AGES, VALID_MOOD_TYPES, validate_mood_combo,
+)
 
 
 def build_generation_prompt(item: Dict, existing_titles: List[str],
@@ -695,11 +622,25 @@ Do NOT abbreviate, summarize, or write a short version. Each phase must be subst
     # Mood instruction (experimental)
     mood_block = ""
     if mood:
-        if content_type == "poem":
+        if content_type == "song":
+            # Lullaby mood prompts
+            lullaby_moods = MOOD_LULLABY_PROMPTS.get(mood, {})
+            mood_block = lullaby_moods.get(age_group, "")
+        elif content_type == "poem":
             mood_block = MOOD_POEM_PROMPTS.get(mood, "")
+            # Add age-specific poem note
+            poem_age_note = MOOD_POEM_AGE_NOTES.get(age_group, "")
+            if poem_age_note:
+                mood_block += f"\nAGE-SPECIFIC POEM RULE: {poem_age_note}\n"
         else:
+            # Story / long_story
             age_moods = MOOD_PROMPTS.get(mood, {})
             mood_block = age_moods.get(age_group, age_moods.get("6-8", ""))
+
+        # Append mood-specific safety guidelines for sad/anxious/angry
+        safety_text = get_mood_safety(mood, age_group)
+        if safety_text:
+            mood_block += f"\n{safety_text}\n"
 
     prompt = f"""{base_prompt}
 
@@ -1371,7 +1312,47 @@ def main():
     parser.add_argument("--mood", choices=["wired", "curious", "calm", "sad", "anxious", "angry"],
                         default=None, help="Target mood for content generation (experimental)")
     parser.add_argument("--age", help="Force specific age group (e.g. 6-8) for --mood runs")
+    parser.add_argument("--type", dest="content_type",
+                        choices=["story", "long_story", "poem", "song", "all"],
+                        default=None,
+                        help="Content type to generate (shorthand for --count-* flags, used with --mood)")
     args = parser.parse_args()
+
+    # --type flag sets count flags (convenience for mood runs)
+    if args.content_type:
+        if args.content_type == "story":
+            args.count_stories = max(args.count_stories, 1)
+        elif args.content_type == "long_story":
+            args.count_long_stories = max(args.count_long_stories, 1)
+        elif args.content_type == "poem":
+            args.count_poems = max(args.count_poems, 1)
+        elif args.content_type == "song":
+            args.count_lullabies = max(args.count_lullabies, 1)
+        elif args.content_type == "all":
+            args.count_stories = max(args.count_stories, 1)
+            args.count_poems = max(args.count_poems, 1)
+            # Only add lullaby if mood allows it
+            if args.mood and "song" in VALID_MOOD_TYPES.get(args.mood, []):
+                args.count_lullabies = max(args.count_lullabies, 1)
+
+    # Validate mood × age × type combinations
+    if args.mood and args.age:
+        # Check each requested type against mood validation
+        type_checks = []
+        if args.count_stories > 0:
+            type_checks.append("story")
+        if args.count_long_stories > 0:
+            type_checks.append("long_story")
+        if args.count_poems > 0:
+            type_checks.append("poem")
+        if args.count_lullabies > 0:
+            type_checks.append("song")
+
+        for ct in type_checks:
+            valid, reason = validate_mood_combo(args.mood, args.age, ct)
+            if not valid:
+                logger.error("Invalid mood combination: %s", reason)
+                sys.exit(1)
 
     # Load existing content
     existing = load_existing()

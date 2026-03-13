@@ -2883,12 +2883,13 @@ def _infer_character_type(story: dict) -> str:
     return "human"
 
 
-def auto_select_axes(story: dict, overrides: dict = None) -> dict:
+def auto_select_axes(story: dict, overrides: dict = None, mood: str = None) -> dict:
     """Select 7 diversity axes from story metadata with optional overrides.
 
     Uses weighted random selection from the FULL pool of options for each axis.
     Theme/context provide weight boosts (not exclusive filters).
     Recently used values are penalized to ensure diversity across stories.
+    Mood provides palette/composition preference boosts when specified.
     """
     overrides = overrides or {}
     theme = story.get("theme", "fantasy")
@@ -2943,6 +2944,11 @@ def auto_select_axes(story: dict, overrides: dict = None) -> dict:
         if any(w in ctx for w in ("snow", "winter", "frost", "ice")):
             p_weights["moonstone"] = p_weights.get("moonstone", 1.0) * _CONTEXT_BOOST
             p_weights["twilight_cool"] = p_weights.get("twilight_cool", 1.0) * _CONTEXT_BOOST
+    # Mood palette boosts
+    if mood and mood in MOOD_PALETTE_BOOSTS:
+        for pal, mult in MOOD_PALETTE_BOOSTS[mood].items():
+            if pal in p_weights:
+                p_weights[pal] *= mult
     p_weights = _apply_recent_penalty(p_weights, recent.get("palette", []))
     palette = overrides.get("palette") or _weighted_choice(all_palettes, p_weights, _rng)
 
@@ -2953,6 +2959,11 @@ def auto_select_axes(story: dict, overrides: dict = None) -> dict:
         c_weights["winding_path"] = c_weights.get("winding_path", 1.0) * _CONTEXT_BOOST
     if any(w in title_lower for w in ("cave", "nest", "cocoon", "burrow")):
         c_weights["circular_nest"] = c_weights.get("circular_nest", 1.0) * _CONTEXT_BOOST
+    # Mood composition boosts
+    if mood and mood in MOOD_COMPOSITION_BOOSTS:
+        for cp, mult in MOOD_COMPOSITION_BOOSTS[mood].items():
+            if cp in c_weights:
+                c_weights[cp] *= mult
     c_weights = _apply_recent_penalty(c_weights, recent.get("composition", []))
     comp = overrides.get("composition") or _weighted_choice(all_comps, c_weights, _rng)
 
@@ -3157,16 +3168,10 @@ def _build_human_appearance(story: dict) -> str:
     return f"{skin}, {hair}, {clothing}"
 
 
-# ── Mood-specific cover prompt modifiers ────────────────────────────────
-
-MOOD_COVER_PROMPTS = {
-    "wired": "playful and whimsical atmosphere, bright eyes, sense of fun and gentle mischief, warm humor",
-    "curious": "sense of wonder and discovery, wide curious eyes, mysterious inviting atmosphere",
-    "calm": "serene peaceful atmosphere, soft gentle light, quiet contemplative mood",
-    "sad": "tender gentle melancholy, soft rain or mist, comforting warm tones despite sadness",
-    "anxious": "cozy protective shelter, warm safe interior, reassuring gentle glow",
-    "angry": "dramatic sky clearing to warmth, strong bold character, energy transforming to calm",
-}
+# ── Mood-specific cover prompt modifiers (imported from mood_config) ────
+from scripts.mood_config import (
+    MOOD_COVER_PROMPTS, MOOD_PALETTE_BOOSTS, MOOD_COMPOSITION_BOOSTS,
+)
 
 # ── FLUX prompt builder ─────────────────────────────────────────────────
 
@@ -3760,7 +3765,7 @@ def main():
         overrides["texture"] = args.texture
 
     # Auto-select axes
-    axes = auto_select_axes(story, overrides)
+    axes = auto_select_axes(story, overrides, mood=args.mood)
     logger.info("Axes: %s", json.dumps(axes, indent=2))
 
     # Build FLUX prompt
