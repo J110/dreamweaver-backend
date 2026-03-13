@@ -198,7 +198,9 @@ def send_pipeline_notification(
         tag = "[FAIL]"
 
     n_items = len(state.get("generated_ids", []))
-    subject = f"{tag} Dream Valley Pipeline — {date_str}"
+    mood = state.get("mood")
+    mood_label = f" [MOOD:{mood.upper()}]" if mood else ""
+    subject = f"{tag} Dream Valley Pipeline{mood_label} — {date_str}"
     if is_success and n_items:
         # Per-type breakdown in subject
         stories_n = state.get("generated_stories", 0)

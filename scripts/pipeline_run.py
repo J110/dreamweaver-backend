@@ -216,6 +216,10 @@ def step_generate(args, state: dict) -> bool:
     ]
     if args.lang:
         cmd += ["--lang", args.lang]
+    if args.mood:
+        cmd += ["--mood", args.mood]
+    if args.age:
+        cmd += ["--age", args.age]
     if args.dry_run:
         cmd += ["--dry-run"]
 
@@ -746,6 +750,8 @@ def step_covers(args, state: dict) -> bool:
             sys.executable, str(SCRIPTS_DIR / "generate_cover_experimental.py"),
             "--story-json", str(story_json_path),
         ]
+        if args.mood:
+            cmd += ["--mood", args.mood]
         if args.dry_run:
             cmd += ["--dry-run"]
 
@@ -1343,6 +1349,10 @@ def main():
                         help="Resume from last checkpoint")
     parser.add_argument("--step", choices=STEPS,
                         help="Run only a specific step")
+    parser.add_argument("--mood", choices=["wired", "curious", "calm", "sad", "anxious", "angry"],
+                        default=None, help="Target mood for experimental content generation")
+    parser.add_argument("--age", default=None,
+                        help="Force specific age group (e.g. 6-8) for --mood runs")
 
     args = parser.parse_args()
 
@@ -1353,6 +1363,8 @@ def main():
     logger.info("")
     logger.info("  Stories: %d | Long stories: %d | Poems: %d | Lullabies: %d | Lang: %s",
                 args.count_stories, args.count_long_stories, args.count_poems, args.count_lullabies, args.lang)
+    if args.mood:
+        logger.info("  Mood: %s | Age: %s (experimental)", args.mood, args.age or "random")
     logger.info("  Dry run: %s | Skip publish: %s", args.dry_run, args.skip_publish)
     logger.info("")
 
@@ -1373,6 +1385,8 @@ def main():
         logger.info("  Resuming from checkpoint: %s", state.get("last_step", "start"))
     else:
         state = {"started_at": datetime.now().isoformat(), "args": vars(args)}
+        if args.mood:
+            state["mood"] = args.mood
         save_state(state)
 
     total_start = time.time()
