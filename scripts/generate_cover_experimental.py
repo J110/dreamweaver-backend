@@ -3157,9 +3157,20 @@ def _build_human_appearance(story: dict) -> str:
     return f"{skin}, {hair}, {clothing}"
 
 
+# ── Mood-specific cover prompt modifiers ────────────────────────────────
+
+MOOD_COVER_PROMPTS = {
+    "wired": "playful and whimsical atmosphere, bright eyes, sense of fun and gentle mischief, warm humor",
+    "curious": "sense of wonder and discovery, wide curious eyes, mysterious inviting atmosphere",
+    "calm": "serene peaceful atmosphere, soft gentle light, quiet contemplative mood",
+    "sad": "tender gentle melancholy, soft rain or mist, comforting warm tones despite sadness",
+    "anxious": "cozy protective shelter, warm safe interior, reassuring gentle glow",
+    "angry": "dramatic sky clearing to warmth, strong bold character, energy transforming to calm",
+}
+
 # ── FLUX prompt builder ─────────────────────────────────────────────────
 
-def build_flux_prompt(story: dict, axes: dict) -> str:
+def build_flux_prompt(story: dict, axes: dict, mood: str = None) -> str:
     """Build FLUX AI prompt from story metadata and axis selections.
 
     Character description is context-aware:
@@ -3238,10 +3249,16 @@ def build_flux_prompt(story: dict, axes: dict) -> str:
     texture_name = texture_desc.split(",")[0].strip()
     comp_name = comp_desc.split(",")[0].strip().lower()
 
+    # Mood-specific atmosphere clause
+    mood_clause = ""
+    if mood and mood in MOOD_COVER_PROMPTS:
+        mood_clause = MOOD_COVER_PROMPTS[mood] + ", "
+
     # Character goes FIRST — FLUX weighs early tokens more, and truncation cuts from the end
     prompt = (
         f"{char_section}, "
         f"children's book illustration, {texture_name} style, "
+        f"{mood_clause}"
         f"{context_section}"
         f"atmospheric {world_info.get('signature', 'magical scene').lower()}, "
         f"{comp_name}, "
@@ -3714,6 +3731,8 @@ def main():
     parser.add_argument("--composition", help="Override composition (e.g., winding_path)")
     parser.add_argument("--texture", help="Override texture (e.g., digital_painterly)")
     parser.add_argument("--dry-run", action="store_true", help="Show prompt without calling API")
+    parser.add_argument("--mood", choices=["wired", "curious", "calm", "sad", "anxious", "angry"],
+                        default=None, help="Target mood for cover atmosphere (experimental)")
     args = parser.parse_args()
 
     # Load story
@@ -3745,7 +3764,7 @@ def main():
     logger.info("Axes: %s", json.dumps(axes, indent=2))
 
     # Build FLUX prompt
-    prompt = build_flux_prompt(story, axes)
+    prompt = build_flux_prompt(story, axes, mood=args.mood)
     logger.info("FLUX prompt (%d chars): %s", len(prompt), prompt[:300])
 
     if args.dry_run:

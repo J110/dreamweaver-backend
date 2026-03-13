@@ -486,9 +486,91 @@ Emotion markers like [GENTLE], [SLEEPY] etc. stay in English square brackets in 
 """
 
 
+MOOD_PROMPTS = {
+    "wired": {
+        "2-5": """
+MOOD: WIRED (Silly)
+This story is for a child who is hyper, bouncing, full of unfocused energy.
+Your job: capture their attention through humor and absurdity, then land softly.
+
+Phase 1 / Opening 60%: The premise is absurd. Characters do funny things. Physical comedy
+translated to audio — things fall over, plans backfire, sounds are silly. The narrator has
+comic timing. Repetition with variation (the penguin slips AGAIN). The child laughs.
+
+Phase 2 / Final 40%: The silliness softens into coziness. The funny character is tired,
+finds a warm spot, settles down. Humor shifts from "laugh out loud" to "warm smile."
+Descriptions become tactile — soft, warm, snug.
+
+Final sentences: No reference to earlier silliness. Pure stillness and warmth.
+
+AGE-SPECIFIC HUMOR (2-5): Broad physical comedy. Things fall. Characters slip, trip, bonk.
+A bear who thinks he's a butterfly. Repetition with variation is the key tool (the penguin
+slips three times, each time landing in something softer). Use animals or objects-come-to-life,
+not human children. Short sentences. Funny sounds. Onomatopoeia. "SPLAT. BONK. PLOP."
+Capital-letter emphasis for comic timing.
+Emotion markers: Start [EXCITED] or [JOYFUL], transition through [GENTLE] to [SLEEPY].
+""",
+        "6-8": """
+MOOD: WIRED (Silly)
+This story is for a child who is hyper, bouncing, full of unfocused energy.
+Your job: capture their attention through humor and absurdity, then land softly.
+
+Phase 1 / Opening 60%: The premise is absurd. Characters do funny things. The narrator has
+comic timing. The child laughs.
+
+Phase 2 / Final 40%: The silliness softens into coziness. The funny character is tired,
+finds a warm spot, settles down. Humor shifts from "laugh out loud" to "warm smile."
+Descriptions become tactile — soft, warm, snug.
+
+Final sentences: No reference to earlier silliness. Pure stillness and warmth.
+
+AGE-SPECIFIC HUMOR (6-8): Conceptual absurdity played with commitment. A cloud afraid of
+heights. A lighthouse afraid of the dark. The premise is the joke — the narrator tells it
+straight. Use animals, mythical creatures, or objects with personality. Longer sentences with
+comic rhythm — build-up, pause, payoff. The narrator is bemused, not silly.
+Emotion markers: Start [CURIOUS] or [JOYFUL], transition through [GENTLE] to [SLEEPY].
+""",
+        "9-12": """
+MOOD: WIRED (Silly)
+This story is for a child who is hyper, full of unfocused energy.
+Your job: capture their attention through humor, then land softly.
+
+Phase 1 / Opening 60%: The premise has quiet absurdity. The narrator treats ridiculous
+situations with complete seriousness.
+
+Phase 2 / Final 40%: The humor softens into warmth. Descriptions become sensory and still.
+
+Final sentences: Pure stillness and warmth.
+
+AGE-SPECIFIC HUMOR (9-12): Dry, deadpan, smart. The narrator treats ridiculous situations
+with complete seriousness. "The raccoon had been staring at the moon for forty-five minutes.
+She wasn't sure what she was expecting." The child feels smart for getting the humor. Use
+animals with internal monologues, or human characters with wry self-awareness. Conversational,
+precise, unexpected word choices. No exclamation marks. No spectacle.
+Emotion markers: Start [CURIOUS], transition through [CALM] to [SLEEPY].
+""",
+    },
+}
+
+# Wired poem prompt (age-independent structure, age handled by existing poem rules)
+MOOD_POEM_PROMPTS = {
+    "wired": """
+MOOD: WIRED (Silly)
+This poem is for a child who is hyper and bouncing. Capture attention through humor, then land softly.
+
+Opening stanzas (60%): Funny rhymes, silly images, absurd characters. Physical comedy in verse.
+"The fish put on his finest hat / and told the sea, 'I'm done with that.'"
+
+Closing stanzas (40%): Shift to warm, sleepy rhymes. The silly character rests.
+The humor dissolves into gentleness. Final stanza is pure sleep imagery.
+""",
+}
+
+
 def build_generation_prompt(item: Dict, existing_titles: List[str],
                             recent_fingerprints: List[Dict] = None,
-                            catalog_gaps: Dict = None) -> str:
+                            catalog_gaps: Dict = None,
+                            mood: str = None) -> str:
     """Build a complete prompt for generating one content piece."""
 
     content_type = item["type"]
@@ -610,6 +692,15 @@ This is a LONG bedtime story. Write a FULL, LENGTHY, richly detailed narrative.
 Do NOT abbreviate, summarize, or write a short version. Each phase must be substantial.
 """
 
+    # Mood instruction (experimental)
+    mood_block = ""
+    if mood:
+        if content_type == "poem":
+            mood_block = MOOD_POEM_PROMPTS.get(mood, "")
+        else:
+            age_moods = MOOD_PROMPTS.get(mood, {})
+            mood_block = age_moods.get(age_group, age_moods.get("6-8", ""))
+
     prompt = f"""{base_prompt}
 
 {age_inst}
@@ -620,6 +711,7 @@ LENGTH: {length_desc}
 {phase_instructions}
 {phase_word_budget}
 {diversity}
+{mood_block}
 {avoid}
 {SAFETY_GUIDELINES}
 
@@ -877,7 +969,8 @@ def _call_mistral(client, prompt: str, max_tokens: int,
 def generate_one(client, item: Dict, existing_titles: List[str],
                  max_retries: int = 3, api: str = "claude",
                  recent_fingerprints: List[Dict] = None,
-                 catalog_gaps: Dict = None) -> Optional[Dict]:
+                 catalog_gaps: Dict = None,
+                 mood: str = None) -> Optional[Dict]:
     """Generate a single content piece via Claude or Groq API."""
 
     # Poems are trickier (stanza structure, word count variability) — more attempts
@@ -889,7 +982,8 @@ def generate_one(client, item: Dict, existing_titles: List[str],
 
     prompt = build_generation_prompt(item, existing_titles,
                                      recent_fingerprints=recent_fingerprints,
-                                     catalog_gaps=catalog_gaps)
+                                     catalog_gaps=catalog_gaps,
+                                     mood=mood)
 
     # Determine max_tokens based on word count range
     # LONG stories (up to 3000 words) need ~12K+ tokens — raise cap to 16384
@@ -1049,6 +1143,7 @@ def generate_one(client, item: Dict, existing_titles: List[str],
                 "life_aspect": item["life_aspect"],
                 "plot_archetype": item["plot_archetype"],
                 "diversityFingerprint": fingerprint,
+                "mood": mood if mood else None,
                 "created_at": now,
                 "updated_at": now,
                 "view_count": 0,
@@ -1273,6 +1368,9 @@ def main():
                         help="Generate N fresh lullabies (bypasses matrix, for daily pipeline)")
     parser.add_argument("--count-long-stories", type=int, default=0,
                         help="Generate N additional LONG stories (bypasses matrix, for daily pipeline)")
+    parser.add_argument("--mood", choices=["wired", "curious", "calm", "sad", "anxious", "angry"],
+                        default=None, help="Target mood for content generation (experimental)")
+    parser.add_argument("--age", help="Force specific age group (e.g. 6-8) for --mood runs")
     args = parser.parse_args()
 
     # Load existing content
@@ -1295,9 +1393,31 @@ def main():
             lang=lang,
             existing=existing,
         )
+        # Force age group when --age is specified (used with --mood)
+        if args.age:
+            forced_age = args.age
+            if forced_age not in AGE_GROUPS:
+                logger.error("Invalid age group: %s. Valid: %s", forced_age, list(AGE_GROUPS.keys()))
+                sys.exit(1)
+            for item in new_plan:
+                ag_info = AGE_GROUPS[forced_age]
+                item["age_group"] = forced_age
+                item["age_min"] = ag_info["age_min"]
+                item["age_max"] = ag_info["age_max"]
+                item["target_age"] = ag_info["target_age"]
+                # Update theme if current one isn't valid for forced age group
+                if item["theme"] not in THEMES_BY_AGE[forced_age]:
+                    item["theme"] = random.choice(THEMES_BY_AGE[forced_age])
+                # Update word counts for forced age group
+                wc_key = (forced_age, item["type"], item["length"])
+                item["min_words"], item["max_words"] = WORD_COUNTS.get(wc_key, (100, 300))
+            logger.info("Forced all items to age group: %s", forced_age)
+
         logger.info("=== Fresh Generation Plan ===")
         logger.info("Stories: %d, Long stories: %d, Poems: %d, Lullabies: %d, Lang: %s",
                      args.count_stories, args.count_long_stories, args.count_poems, args.count_lullabies, lang)
+        if args.mood:
+            logger.info("Mood: %s (experimental)", args.mood)
         logger.info("To generate: %d", len(new_plan))
     else:
         # Matrix mode — fill in missing cells
@@ -1391,7 +1511,8 @@ def main():
 
         result = generate_one(client, item, existing_titles, api=args.api,
                               recent_fingerprints=recent_fps,
-                              catalog_gaps=catalog_gaps)
+                              catalog_gaps=catalog_gaps,
+                              mood=args.mood)
 
         if result:
             existing.append(result)
