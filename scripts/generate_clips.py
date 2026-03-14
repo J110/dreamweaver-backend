@@ -516,16 +516,16 @@ def generate_clip(story, voice, audio_url, output_dir, force=False):
     # Skip if exists
     if final_clip.exists() and not force:
         logger.info("  %s already exists, skipping", output_filename)
-        return str(final_clip)
+        return None  # Don't count pre-existing clips as newly generated
 
     logger.info("  Generating: %s (%s voice)", title, voice)
 
     # Resolve file paths
     cover_path = story.get("cover", "")
     if cover_path.startswith("/covers/"):
-        svg_path = COVERS_DIR / cover_path.lstrip("/covers/")
+        svg_path = COVERS_DIR / cover_path.removeprefix("/covers/")
     elif cover_path.startswith("/"):
-        svg_path = WEB_DIR / "public" / cover_path.lstrip("/")
+        svg_path = WEB_DIR / "public" / cover_path.removeprefix("/")
     else:
         svg_path = COVERS_DIR / f"{story_id}.svg"
 
