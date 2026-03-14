@@ -77,6 +77,7 @@ EMOTION_PROFILES: Dict[str, dict] = {
     "rhythmic":    {"exaggeration": 0.5,  "cfg_weight": 0.3},    # musical cadence
     "singing":     {"exaggeration": 0.7,  "cfg_weight": 0.3},    # expressive
     "humming":     {"exaggeration": 0.4,  "cfg_weight": 0.3},    # soft, melodic
+    "emphasis":    {"exaggeration": 0.7,  "cfg_weight": 0.5},    # stressed/emphasized text
 }
 
 CONTENT_TYPE_PROFILES: Dict[str, dict] = {
@@ -146,7 +147,7 @@ _MARKER_RE = re.compile(
     r"(SLEEPY|GENTLE|CALM|EXCITED|CURIOUS|ADVENTUROUS|MYSTERIOUS|"
     r"JOYFUL|DRAMATIC|WHISPERING|DRAMATIC_PAUSE|RHYTHMIC|SINGING|"
     r"HUMMING|PAUSE|CHAR_START|CHAR_END|PHASE_1|PHASE_2|PHASE_3|LONG_PAUSE|"
-    r"BREATH_CUE|laugh|chuckle)"
+    r"BREATH_CUE|EMPHASIS|laugh|chuckle)"
     r"\]",
     re.IGNORECASE,
 )

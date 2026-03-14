@@ -813,7 +813,7 @@ Return ONLY the Phase 3 text (starting with [PHASE_3]). No JSON wrapper — just
         "lang": "en",
         "title": title,
         "description": description,
-        "text": text,
+        "text": re.sub(r"\[/?[A-Z_]+\]", "", text).replace("  ", " ").strip(),
         "annotated_text": text,
         "lullaby_lyrics": "",                          # No lullaby for 9-12
         "ambient_music_description": ambient_music_description,  # New field
