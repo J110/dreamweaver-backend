@@ -15777,7 +15777,28 @@
     "cover": "/covers/gen-54eea57db057.svg",
     "musicProfile": "enchanted-garden",
     "music_type": "ambient",
-    "audio_variants": [],
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-54ee_female_1.mp3"
+      },
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-54ee_female_2.mp3"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-54ee_female_3.mp3"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-54ee_male_2.mp3"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-54ee_asmr.mp3"
+      }
+    ],
     "author_id": "system",
     "is_generated": true,
     "generation_quality": "pending_review",
@@ -15821,12 +15842,12 @@
       "storyId": "gen-54eea57db057",
       "ageGroup": "9-12",
       "musicalIdentity": {
-        "culturalReference": "indian",
-        "primaryLoop": "dulcimer_gentle",
+        "culturalReference": "japanese",
+        "primaryLoop": "koto_plucks",
         "padCharacter": "silk_veil"
       },
       "tonality": {
-        "mode": "mixolydian",
+        "mode": "dorian",
         "rootNote": "D"
       },
       "melodicCharacter": "drone_with_ornaments",
@@ -15835,17 +15856,18 @@
         "baseTempo": 62
       },
       "environment": {
-        "natureSoundPrimary": "fireplace_crackle",
-        "natureSoundSecondary": "wind_gentle",
+        "natureSoundPrimary": "wind_gentle",
+        "natureSoundSecondary": "fireplace_crackle",
         "ambientEvents": []
       },
       "emotionalArc": {
-        "phase1": "mysterious_wonder",
+        "phase1": "curious_wonder",
         "phase2": "gentle_longing",
         "phase3": "deep_stillness"
       }
     },
-    "mood": "calm"
+    "mood": "calm",
+    "audio_url": ""
   },
   {
     "id": "gen-be5fa39c0802",
@@ -17017,6 +17039,483 @@
       "emotionalArc": {
         "phase1": "whimsical_curiosity",
         "phase2": "gentle_adventure",
+        "phase3": "deep_stillness"
+      }
+    }
+  },
+  {
+    "id": "gen-00422943830e",
+    "type": "story",
+    "lang": "en",
+    "title": "Finn and the Tiny Tide Pool",
+    "description": "When the ocean shrinks to the size of a bathtub, Finn discovers a hidden world where tiny waves whisper secrets and miniature sea creatures need his help. With a seashell that fits in his palm, he must find his way back before the tide returns.",
+    "text": "[GENTLE] Hush, little waves, so soft and low.\n\n[CALM] Finn sits where the sand meets the sea.\n\n[CURIOUS] The water pulls back—oh, so small!\n\n[WHISPERING] A tide pool glows where the ocean used to be.\n\n[ADVENTUROUS] Finn steps in—splash! The world grows bright.\n\n[EXCITED] Tiny fish dart, and coral sways just right.\n\n[DRAMATIC_PAUSE] A crab waves, 'Help us, friend!'—oh, what a sight!\n\n[JOYFUL] Together they float on a leaf so light.\n\n[SLEEPY] The tide returns, and Finn drifts home tonight.",
+    "annotated_text": "[GENTLE] Hush, little waves, so soft and low.\n\n[CALM] Finn sits where the sand meets the sea.\n\n[CURIOUS] The water pulls back—oh, so small!\n\n[WHISPERING] A tide pool glows where the ocean used to be.\n\n[ADVENTUROUS] Finn steps in—splash! The world grows bright.\n\n[EXCITED] Tiny fish dart, and coral sways just right.\n\n[DRAMATIC_PAUSE] A crab waves, 'Help us, friend!'—oh, what a sight!\n\n[JOYFUL] Together they float on a leaf so light.\n\n[SLEEPY] The tide returns, and Finn drifts home tonight.",
+    "target_age": 0,
+    "age_min": 0,
+    "age_max": 1,
+    "age_group": "0-1",
+    "length": "MEDIUM",
+    "word_count": 71,
+    "duration_seconds": 0,
+    "categories": [
+      "Ocean Adventure",
+      "Miniature Worlds"
+    ],
+    "theme": "ocean",
+    "morals": [
+      "Even the smallest hands can help others feel found",
+      "Wonder hides in the quietest, tiniest places"
+    ],
+    "cover": "/covers/gen-00422943830e.svg",
+    "musicProfile": "ocean-drift",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-0042_female_1.mp3",
+        "duration_seconds": 53.46,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-0042_female_3.mp3",
+        "duration_seconds": 47.97,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-0042_female_2.mp3",
+        "duration_seconds": 49.19,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-0042_male_2.mp3",
+        "duration_seconds": 41.65,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-0042_asmr.mp3",
+        "duration_seconds": 51.88,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "male",
+    "character": {
+      "name": "Finn",
+      "identity": "A dreamy child who believes the sea tells stories",
+      "special": "He can shrink just enough to fit inside a tide pool’s magic",
+      "personality_tags": [
+        "Dreamy",
+        "Kind"
+      ]
+    },
+    "cover_context": "A twilight-blue tide pool glows under a lavender sky, tiny bioluminescent waves lapping at miniature coral castles, with a single seashell resting on wet sand like a hidden door to another world.",
+    "lead_character_type": "human",
+    "universe": "historical",
+    "geography": "Arctic/Polar",
+    "life_aspect": "sleep_comfort",
+    "plot_archetype": "problem_solving",
+    "diversityFingerprint": {
+      "characterType": "human_child",
+      "setting": "ocean_water",
+      "plotShape": "lost_and_found",
+      "scale": "tiny_intimate",
+      "companion": "duo",
+      "movement": "floating_drifting",
+      "timeOfDay": "twilight_blue_hour",
+      "weather": "clear_calm",
+      "theme": "belonging",
+      "characterTrait": "dreamy_imaginative",
+      "magicType": "miniaturization",
+      "season": "summer",
+      "senseEmphasis": "kinesthetic"
+    },
+    "mood": "calm",
+    "created_at": "2026-03-14T01:32:09.435874",
+    "updated_at": "2026-03-14T01:32:09.435874",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 1,
+    "musicalBrief": {
+      "storyId": "gen-00422943830e",
+      "ageGroup": "0-1",
+      "musicalIdentity": {
+        "culturalReference": "chinese",
+        "primaryLoop": "dulcimer_gentle",
+        "padCharacter": "silk_veil"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "A"
+      },
+      "melodicCharacter": "descending_lullaby",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "ocean_waves_distant",
+        "natureSoundSecondary": "underwater_bubbling",
+        "ambientEvents": [
+          "waterDrop",
+          "chimes"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "gentle_curiosity",
+        "phase2": "soft_wonder",
+        "phase3": "deep_stillness"
+      }
+    }
+  },
+  {
+    "id": "gen-025b3e47eec6",
+    "type": "song",
+    "lang": "en",
+    "title": "Lila and the Tiny Perfume Cloud",
+    "description": "A whisper of sweetness drifts through the golden garden, carrying scents no bird has ever known. Lila, a little sparrow with a nose for secrets, follows the trail—only to shrink into a world where flowers hum and petals hold entire skies.",
+    "text": "[SINGING]\nLittle Lila flies so light,\nThrough the garden, soft and bright.\nSweetest scents begin to rise,\nCalling her with lullabies.\n\n[PAUSE]\n\n[SINGING]\nMmm, the air is warm and sweet,\nLike a hug for tiny feet.\nFollow where the breezes play,\nDreaming all the day away.\n\n[PAUSE]\n\n[SINGING]\nLila lands on petals wide,\nShrinks so small to step inside.\nFlowers hum a gentle tune,\nUnderneath the golden moon.\n\n[PAUSE]\n\n[SINGING]\nMmm, the air is warm and sweet,\nLike a hug for tiny feet.\nFollow where the breezes play,\nDreaming all the day away.\n\n[PAUSE]\n\n[SLEEPY]\nNow she curls in blossom deep,\nWhere the world is soft to keep.\nBreezes sing her to her rest,\nSafe and snug and gently blessed.\n\n[PAUSE]\n\n[HUMMING]\nMmm mmm mmm...\nMmm mmm mmm...\nMmm mmm...\nMmm...",
+    "annotated_text": "[SINGING]\nLittle Lila flies so light,\nThrough the garden, soft and bright.\nSweetest scents begin to rise,\nCalling her with lullabies.\n\n[PAUSE]\n\n[SINGING]\nMmm, the air is warm and sweet,\nLike a hug for tiny feet.\nFollow where the breezes play,\nDreaming all the day away.\n\n[PAUSE]\n\n[SINGING]\nLila lands on petals wide,\nShrinks so small to step inside.\nFlowers hum a gentle tune,\nUnderneath the golden moon.\n\n[PAUSE]\n\n[SINGING]\nMmm, the air is warm and sweet,\nLike a hug for tiny feet.\nFollow where the breezes play,\nDreaming all the day away.\n\n[PAUSE]\n\n[SLEEPY]\nNow she curls in blossom deep,\nWhere the world is soft to keep.\nBreezes sing her to her rest,\nSafe and snug and gently blessed.\n\n[PAUSE]\n\n[HUMMING]\nMmm mmm mmm...\nMmm mmm mmm...\nMmm mmm...\nMmm...",
+    "target_age": 3,
+    "age_min": 2,
+    "age_max": 5,
+    "age_group": "2-5",
+    "length": "SHORT",
+    "word_count": 120,
+    "duration_seconds": 0,
+    "categories": [
+      "Nature",
+      "Friendship"
+    ],
+    "theme": "nature",
+    "morals": [
+      "Even the smallest creatures belong in the big, beautiful world.",
+      "Kindness can be found in the gentlest places, if you listen with your heart."
+    ],
+    "cover": "/covers/gen-025b3e47eec6.svg",
+    "musicProfile": "forest-night",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-025b_male_2.mp3",
+        "duration_seconds": 244.91,
+        "provider": "ace-step"
+      },
+      {
+        "voice": "male_1",
+        "url": "/audio/pre-gen/gen-025b_male_1.mp3",
+        "duration_seconds": 244.91,
+        "provider": "ace-step"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "female",
+    "character": {
+      "name": "Lila",
+      "identity": "A shy sparrow who notices the quiet magic in the air",
+      "special": "She can shrink small enough to walk inside a flower’s scent",
+      "personality_tags": [
+        "Gentle",
+        "Curious"
+      ]
+    },
+    "cover_context": "A sunlit garden at late afternoon, golden light filtering through oversized lavender and daisies, petals glowing with soft pink and yellow hues. A warm breeze stirs the air, carrying invisible trails of sweet perfume between the blooms.",
+    "lead_character_type": "bird",
+    "universe": "fantasy_realm",
+    "geography": "India",
+    "life_aspect": "school_learning",
+    "plot_archetype": "friendship_bonding",
+    "diversityFingerprint": {
+      "characterType": "bird",
+      "setting": "garden_farm",
+      "plotShape": "lost_and_found",
+      "scale": "tiny_intimate",
+      "companion": "solo",
+      "movement": "flying_swimming",
+      "timeOfDay": "late_afternoon",
+      "weather": "warm_breeze",
+      "theme": "belonging",
+      "characterTrait": "shy_quiet",
+      "magicType": "miniaturization",
+      "season": "summer",
+      "senseEmphasis": "olfactory"
+    },
+    "mood": "calm",
+    "created_at": "2026-03-14T01:46:53.959264",
+    "updated_at": "2026-03-14T01:46:53.959264",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 5
+  },
+  {
+    "id": "gen-bcbc176b01d9",
+    "type": "long_story",
+    "lang": "en",
+    "title": "Kestrel and the Storm That Listened",
+    "description": "When the cosmic winds begin to hum a forgotten melody, young Kestrel—a swift with wings built for speed—discovers she can shape the very storms that dance between the planets. But can she learn to listen before the sky loses its voice forever?",
+    "text": "[GENTLE] The night Kestrel first heard the storm sing, she was chasing the edge of the aurora, her wings slicing through the cold breath of the upper atmosphere.\n\n[CURIOUS] The lights above her shimmered like scattered diamonds, but it wasn’t their glow that made her pause—it was the sound. A low, resonant hum, not unlike the purr of a distant engine, vibrating through the thin air between the stars.\n\n[ADVENTUROUS] Kestrel had always been the fastest among her flock, the one who dared to ride the thermals higher than any other swift. But this? This was new. She tilted her wings, spiraling upward, her heart pounding in time with the strange melody.\n\n[MYSTERIOUS] The hum grew louder, pulsing like a heartbeat. Then, without warning, the wind shifted. Not a gust, not a breeze—it *answered*. A ribbon of air curled around her, lifting her higher, as if the sky itself had reached out to touch her.\n\n[EXCITED] \"Who’s there?\" she called, her voice lost in the vastness. The only reply was the wind’s whisper, swirling around her like a promise. She had always known the sky was alive, but this—this was different. This was *conversation*.\n\n[CALM] Below her, the other swifts slept in their cliffside nests, oblivious. But Kestrel couldn’t rest. Not now. Not when the storm was calling her name.\n\n[DRAMATIC_PAUSE] And then she saw it—a swirl of silver clouds gathering in the distance, not dark with rain, but luminous, as if woven from starlight. The hum grew louder, more insistent, and Kestrel knew, with a certainty that burned in her chest, that she was meant to find it.\n\n[JOYFUL] She spread her wings and flew.\n\n[GENTLE] The silver storm was closer than she’d thought. As Kestrel approached, the air around her grew warmer, thick with the scent of ozone and something older—something like the first breath of a newborn world.\n\n[CURIOUS] She hesitated at the storm’s edge, her wings trembling. The clouds weren’t just moving; they were *listening*. Every shift of the wind, every ripple of light, seemed to respond to her presence. It was as if the storm had been waiting for her.\n\n[WHISPERING] \"Hello?\" she ventured, her voice small against the vastness. The storm stilled. Then, slowly, a tendril of cloud reached out, brushing against her wing like a feather’s touch.\n\n[DRAMATIC] Kestrel gasped. The cloud wasn’t just air and water—it was *alive*. It coiled around her, not threatening, but curious, as if it, too, was trying to understand. And then she felt it: a pulse of energy, like a thought forming in her mind.\n\n[CALM] *You hear us.*\n\nThe words weren’t spoken aloud, but Kestrel understood them all the same. She wasn’t just hearing the storm—she was *part* of it. The realization settled over her like a warm current, and she let herself drift deeper into the silver clouds.\n\n[GENTLE] The storm showed her things—memories of the sky, of winds that had carried the first birds across uncharted seas, of storms that had shaped mountains and carved rivers. It showed her the loneliness of the cosmos, the way the stars whispered to each other across impossible distances, and the quiet ache of being misunderstood.\n\n[MYSTERIOUS] *We have been waiting for someone who could listen,* the storm murmured. *The winds grow tired, little one. The songs are fading.*\n\nKestrel’s heart ached. She had always thought of storms as wild, untamed things, but this storm was different. It was *sad*. And for the first time, she understood that the sky wasn’t just a place to fly—it was a place to *belong*.\n\n[ADVENTUROUS] \"I’ll help,\" she said, her voice steady. \"Tell me what to do.\"\n\nThe storm swirled around her, lifting her higher, until she was at the very heart of the silver clouds. There, the air was thick with possibility, and Kestrel realized she didn’t need to be the fastest, the bravest, or the loudest. She just needed to *listen*.\n\n[CALM] And so she did. She listened to the hum of the aurora, the whisper of the stars, the sigh of the wind as it carried stories from one end of the galaxy to the other. She listened, and as she did, the storm’s song grew stronger, brighter, until it filled the sky like a chorus of a thousand voices.\n\n[JOYFUL] The other swifts would never believe her. But that didn’t matter. Kestrel had found her place—not above the world, but *within* it. She had helped the storm remember its song, and in return, the storm had given her a home.\n\n[SLEEPY] The silver clouds settled around her like a blanket, their glow softening to a gentle shimmer.\n\n[WHISPERING] Kestrel closed her eyes, her wings still humming with the memory of the storm’s touch. The wind carried her now, not toward any destination, but simply because it could. Because she was part of it.\n\n[SLEEPY] Below, the world spun on, oblivious to the quiet miracle unfolding in the sky. But Kestrel knew. She had heard the storm’s secret, and it had heard hers.\n\n[WHISPERING] The stars blinked lazily above her, their light steady and sure. She didn’t need to chase them anymore. They were already with her, in the rhythm of her breath, in the beat of her heart.\n\n[SLEEPY] The storm’s song faded into the background, a lullaby woven from the fabric of the universe. Kestrel let it carry her, her body light, her mind at peace.\n\n[WHISPERING] And when the first light of dawn touched the horizon, she was still there, floating in the space between dreaming and waking, where the sky held her close and the world waited below.\n\n[SLEEPY] The wind sighed, content. The storm had found its voice again. And so had she.",
+    "annotated_text": "[PHASE_1]\n\n[GENTLE] The night Kestrel first heard the storm sing, she was chasing the edge of the aurora, her wings slicing through the cold breath of the upper atmosphere.\n\n[CURIOUS] The lights above her shimmered like scattered diamonds, but it wasn’t their glow that made her pause—it was the sound. A low, resonant hum, not unlike the purr of a distant engine, vibrating through the thin air between the stars.\n\n[ADVENTUROUS] Kestrel had always been the fastest among her flock, the one who dared to ride the thermals higher than any other swift. But this? This was new. She tilted her wings, spiraling upward, her heart pounding in time with the strange melody.\n\n[MYSTERIOUS] The hum grew louder, pulsing like a heartbeat. Then, without warning, the wind shifted. Not a gust, not a breeze—it *answered*. A ribbon of air curled around her, lifting her higher, as if the sky itself had reached out to touch her.\n\n[EXCITED] \"Who’s there?\" she called, her voice lost in the vastness. The only reply was the wind’s whisper, swirling around her like a promise. She had always known the sky was alive, but this—this was different. This was *conversation*.\n\n[CALM] Below her, the other swifts slept in their cliffside nests, oblivious. But Kestrel couldn’t rest. Not now. Not when the storm was calling her name.\n\n[DRAMATIC_PAUSE] And then she saw it—a swirl of silver clouds gathering in the distance, not dark with rain, but luminous, as if woven from starlight. The hum grew louder, more insistent, and Kestrel knew, with a certainty that burned in her chest, that she was meant to find it.\n\n[JOYFUL] She spread her wings and flew.\n\n\n[PHASE_2]\n\n[GENTLE] The silver storm was closer than she’d thought. As Kestrel approached, the air around her grew warmer, thick with the scent of ozone and something older—something like the first breath of a newborn world.\n\n[CURIOUS] She hesitated at the storm’s edge, her wings trembling. The clouds weren’t just moving; they were *listening*. Every shift of the wind, every ripple of light, seemed to respond to her presence. It was as if the storm had been waiting for her.\n\n[WHISPERING] \"Hello?\" she ventured, her voice small against the vastness. The storm stilled. Then, slowly, a tendril of cloud reached out, brushing against her wing like a feather’s touch.\n\n[DRAMATIC] Kestrel gasped. The cloud wasn’t just air and water—it was *alive*. It coiled around her, not threatening, but curious, as if it, too, was trying to understand. And then she felt it: a pulse of energy, like a thought forming in her mind.\n\n[CALM] *You hear us.*\n\nThe words weren’t spoken aloud, but Kestrel understood them all the same. She wasn’t just hearing the storm—she was *part* of it. The realization settled over her like a warm current, and she let herself drift deeper into the silver clouds.\n\n[GENTLE] The storm showed her things—memories of the sky, of winds that had carried the first birds across uncharted seas, of storms that had shaped mountains and carved rivers. It showed her the loneliness of the cosmos, the way the stars whispered to each other across impossible distances, and the quiet ache of being misunderstood.\n\n[MYSTERIOUS] *We have been waiting for someone who could listen,* the storm murmured. *The winds grow tired, little one. The songs are fading.*\n\nKestrel’s heart ached. She had always thought of storms as wild, untamed things, but this storm was different. It was *sad*. And for the first time, she understood that the sky wasn’t just a place to fly—it was a place to *belong*.\n\n[ADVENTUROUS] \"I’ll help,\" she said, her voice steady. \"Tell me what to do.\"\n\nThe storm swirled around her, lifting her higher, until she was at the very heart of the silver clouds. There, the air was thick with possibility, and Kestrel realized she didn’t need to be the fastest, the bravest, or the loudest. She just needed to *listen*.\n\n[CALM] And so she did. She listened to the hum of the aurora, the whisper of the stars, the sigh of the wind as it carried stories from one end of the galaxy to the other. She listened, and as she did, the storm’s song grew stronger, brighter, until it filled the sky like a chorus of a thousand voices.\n\n[JOYFUL] The other swifts would never believe her. But that didn’t matter. Kestrel had found her place—not above the world, but *within* it. She had helped the storm remember its song, and in return, the storm had given her a home.\n\n\n[PHASE_3]\n\n[SLEEPY] The silver clouds settled around her like a blanket, their glow softening to a gentle shimmer.\n\n[WHISPERING] Kestrel closed her eyes, her wings still humming with the memory of the storm’s touch. The wind carried her now, not toward any destination, but simply because it could. Because she was part of it.\n\n[SLEEPY] Below, the world spun on, oblivious to the quiet miracle unfolding in the sky. But Kestrel knew. She had heard the storm’s secret, and it had heard hers.\n\n[WHISPERING] The stars blinked lazily above her, their light steady and sure. She didn’t need to chase them anymore. They were already with her, in the rhythm of her breath, in the beat of her heart.\n\n[SLEEPY] The storm’s song faded into the background, a lullaby woven from the fabric of the universe. Kestrel let it carry her, her body light, her mind at peace.\n\n[WHISPERING] And when the first light of dawn touched the horizon, she was still there, floating in the space between dreaming and waking, where the sky held her close and the world waited below.\n\n[SLEEPY] The wind sighed, content. The storm had found its voice again. And so had she.",
+    "target_age": 10,
+    "age_min": 9,
+    "age_max": 12,
+    "age_group": "9-12",
+    "length": "LONG",
+    "word_count": 925,
+    "duration_seconds": 0,
+    "categories": [
+      "Adventure",
+      "Fantasy"
+    ],
+    "theme": "space",
+    "morals": [
+      "True belonging comes from listening, not just being heard.",
+      "Even the wildest storms need someone to understand them."
+    ],
+    "cover": "/covers/gen-bcbc176b01d9.svg",
+    "musicProfile": "cosmic-voyage",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-bcbc_female_2.mp3",
+        "duration_seconds": 460.67,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-bcbc_female_3.mp3",
+        "duration_seconds": 438.23,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-bcbc_female_1.mp3",
+        "duration_seconds": 547.89,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-bcbc_male_2.mp3",
+        "duration_seconds": 427.84,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-bcbc_asmr.mp3",
+        "duration_seconds": 471.19,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "female",
+    "character": {
+      "name": "Kestrel",
+      "identity": "A swift who discovers she can shape the storms between the stars",
+      "special": "She hears the hidden songs of the cosmos and can weave them into the wind",
+      "personality_tags": [
+        "Brave",
+        "Curious"
+      ]
+    },
+    "cover_context": "A vast, star-strewn sky at deep night, where silver clouds swirl like liquid starlight, their edges glowing with auroras in hues of violet and blue. The horizon is a distant, curved line of darkness, and the air shimmers with an otherworldly energy, as if the very atmosphere is alive.",
+    "lead_character_type": "bird",
+    "universe": "contemporary",
+    "geography": "East Asia",
+    "life_aspect": "dreams_ambitions",
+    "plot_archetype": "transformation",
+    "diversityFingerprint": {
+      "characterType": "bird",
+      "setting": "sky_space",
+      "plotShape": "building_growing",
+      "scale": "epic_vast",
+      "companion": "duo",
+      "movement": "flying_swimming",
+      "timeOfDay": "deep_night_starlight",
+      "weather": "magical_atmospheric",
+      "theme": "belonging",
+      "characterTrait": "bold_adventurous",
+      "magicType": "weather_magic",
+      "season": "seasonless_timeless",
+      "senseEmphasis": "kinesthetic"
+    },
+    "mood": "curious",
+    "created_at": "2026-03-14T01:39:37.704131",
+    "updated_at": "2026-03-14T01:39:37.704131",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 8,
+    "musicalBrief": {
+      "storyId": "gen-bcbc176b01d9",
+      "ageGroup": "9-12",
+      "musicalIdentity": {
+        "culturalReference": "indian",
+        "primaryLoop": "marimba_soft",
+        "padCharacter": "starfield"
+      },
+      "tonality": {
+        "mode": "mixolydian",
+        "rootNote": "F"
+      },
+      "melodicCharacter": "drone_with_ornaments",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "wind_high",
+        "natureSoundSecondary": "distant_thunder",
+        "ambientEvents": []
+      },
+      "emotionalArc": {
+        "phase1": "mysterious_wonder",
+        "phase2": "gentle_movement",
+        "phase3": "deep_stillness"
+      }
+    }
+  },
+  {
+    "id": "gen-ced87d262b99",
+    "type": "poem",
+    "lang": "en",
+    "title": "Zephyr and the Lost Snowflake Lullaby",
+    "description": "A tiny snowflake, born from winter’s breath, drifts through a moonlit window into a quiet room. There, he meets a whispering breeze who helps him find his way home—before the night grows too old and the stars tuck themselves in.",
+    "text": "[RHYTHMIC]Little Zephyr, soft and light,\nFloats on silver threads of night.\nThrough the pane so cold and bright,\nInto warmth—a world so white.\n\n[GENTLE]Lace of frost on windowpane,\nDances where the moonbeams reign.\nZephyr hums a tune so low,\nA lullaby of ice and snow.\n\n[PAUSE]\n\n[CALM]Breeze comes whispering, warm and sweet,\nTaps his crystal toes so neat.\n\"Oh dear flake, don’t drift alone,\nLet me guide you safely home.\"\n\n[PAUSE]\n\n[JOYFUL]Hand in hand (or drift and sway),\nThey twirl the dark night away.\nPast the lamp’s soft golden glow,\nPast the dreams the children know.\n\n[PAUSE]\n\n[WHISPERING]Up they rise on tiptoe air,\nThrough the keyhole, light as prayer.\nStars lean close to hear them sing,\nOf the magic winter brings.\n\n[PAUSE]\n\n[SLEEPY]Now the snowflake finds his place,\nIn the sky’s vast, starry grace.\nBreeze gives one last gentle sigh,\nAs the world drifts into night.",
+    "annotated_text": "[RHYTHMIC]Little Zephyr, soft and light,\nFloats on silver threads of night.\nThrough the pane so cold and bright,\nInto warmth—a world so white.\n\n[GENTLE]Lace of frost on windowpane,\nDances where the moonbeams reign.\nZephyr hums a tune so low,\nA lullaby of ice and snow.\n\n[PAUSE]\n\n[CALM]Breeze comes whispering, warm and sweet,\nTaps his crystal toes so neat.\n\"Oh dear flake, don’t drift alone,\nLet me guide you safely home.\"\n\n[PAUSE]\n\n[JOYFUL]Hand in hand (or drift and sway),\nThey twirl the dark night away.\nPast the lamp’s soft golden glow,\nPast the dreams the children know.\n\n[PAUSE]\n\n[WHISPERING]Up they rise on tiptoe air,\nThrough the keyhole, light as prayer.\nStars lean close to hear them sing,\nOf the magic winter brings.\n\n[PAUSE]\n\n[SLEEPY]Now the snowflake finds his place,\nIn the sky’s vast, starry grace.\nBreeze gives one last gentle sigh,\nAs the world drifts into night.",
+    "target_age": 3,
+    "age_min": 2,
+    "age_max": 5,
+    "age_group": "2-5",
+    "length": "LONG",
+    "word_count": 142,
+    "duration_seconds": 0,
+    "categories": [
+      "Bedtime",
+      "Winter",
+      "Friendship"
+    ],
+    "theme": "bedtime",
+    "morals": [
+      "Even the smallest among us belong somewhere beautiful.",
+      "Kindness can guide lost things home."
+    ],
+    "cover": "/covers/gen-ced87d262b99.svg",
+    "musicProfile": "starlight-lullaby",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-ced8_female_1.mp3",
+        "duration_seconds": 103.97,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-ced8_female_2.mp3",
+        "duration_seconds": 89.03,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-ced8_female_3.mp3",
+        "duration_seconds": 82.43,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-ced8_male_2.mp3",
+        "duration_seconds": 84.74,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-ced8_asmr.mp3",
+        "duration_seconds": 88.68,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "male",
+    "character": {
+      "name": "Zephyr",
+      "identity": "A dreamy snowflake who hums lullabies to the moon",
+      "special": "He carries winter’s magic in his delicate, dancing form",
+      "personality_tags": [
+        "Gentle",
+        "Dreamy"
+      ]
+    },
+    "cover_context": "A cozy bedroom bathed in moonlight, frost painting delicate patterns on the window. A single candle flickers on a wooden nightstand, casting warm golden pools on a quilt stitched with stars. Outside, snowflakes drift lazily past a sky thick with twinkling constellations.",
+    "lead_character_type": "atmospheric",
+    "universe": "futuristic",
+    "geography": "Africa",
+    "life_aspect": "school_learning",
+    "plot_archetype": "quest_journey",
+    "diversityFingerprint": {
+      "characterType": "celestial_weather",
+      "setting": "cozy_indoor",
+      "plotShape": "lost_and_found",
+      "scale": "tiny_intimate",
+      "companion": "duo",
+      "movement": "floating_drifting",
+      "timeOfDay": "deep_night_starlight",
+      "weather": "magical_atmospheric",
+      "theme": "belonging",
+      "characterTrait": "dreamy_imaginative",
+      "magicType": "weather_magic",
+      "season": "winter",
+      "senseEmphasis": "kinesthetic"
+    },
+    "mood": "calm",
+    "created_at": "2026-03-14T01:51:12.413548",
+    "updated_at": "2026-03-14T01:51:12.413548",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 2,
+    "musicalBrief": {
+      "storyId": "gen-ced87d262b99",
+      "ageGroup": "2-5",
+      "musicalIdentity": {
+        "culturalReference": "middle_eastern",
+        "primaryLoop": "singing_bowl_rings",
+        "padCharacter": "silk_veil"
+      },
+      "tonality": {
+        "mode": "minor_pentatonic",
+        "rootNote": "Bb"
+      },
+      "melodicCharacter": "descending_lullaby",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "wind_gentle",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "chimes",
+          "leaves"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "gentle_cradle",
+        "phase2": "floating_wonder",
         "phase3": "deep_stillness"
       }
     }
