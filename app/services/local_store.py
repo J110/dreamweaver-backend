@@ -68,7 +68,7 @@ class LocalStore:
                         changed = False
                         # Fields that should always be updated from seed
                         # (frontend-owned fields that may improve over time)
-                        SEED_PREFERRED_FIELDS = {"cover", "musicParams", "audio_variants"}
+                        SEED_PREFERRED_FIELDS = {"cover", "musicParams", "audio_variants", "mood", "musicalBrief"}
                         for item in seed_items:
                             item_id = item[key_field]
                             if item_id not in self.collections[coll_name]:
@@ -79,9 +79,10 @@ class LocalStore:
                                 # Backfill missing fields from seed
                                 existing = self.collections[coll_name][item_id]
                                 for k, v in item.items():
-                                    if k not in existing:
-                                        existing[k] = v
-                                        changed = True
+                                    if k not in existing or existing[k] is None:
+                                        if v is not None:
+                                            existing[k] = v
+                                            changed = True
                                     elif k in SEED_PREFERRED_FIELDS and v and existing.get(k) != v:
                                         # Overwrite stale values for seed-preferred fields
                                         existing[k] = v
@@ -157,7 +158,7 @@ class LocalStore:
                         with open(seed_path) as f:
                             seed_items = json.load(f)
                             changed = False
-                            SEED_PREFERRED_FIELDS = {"cover", "musicParams", "audio_variants"}
+                            SEED_PREFERRED_FIELDS = {"cover", "musicParams", "audio_variants", "mood", "musicalBrief"}
                             for item in seed_items:
                                 item_id = item[key_field]
                                 if item_id not in self.collections[coll_name]:
@@ -166,9 +167,10 @@ class LocalStore:
                                 else:
                                     existing = self.collections[coll_name][item_id]
                                     for k, v in item.items():
-                                        if k not in existing:
-                                            existing[k] = v
-                                            changed = True
+                                        if k not in existing or existing[k] is None:
+                                            if v is not None:
+                                                existing[k] = v
+                                                changed = True
                                         elif k in SEED_PREFERRED_FIELDS and v and existing.get(k) != v:
                                             existing[k] = v
                                             changed = True
