@@ -28,12 +28,23 @@ import json
 import logging
 import os
 import re
+import resource
 import statistics
+import subprocess as _sp
 import sys
 import time
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
+
+# ── Memory safety: cap virtual memory at 1 GB to avoid starving the server ──
+_ONE_GB = 1024 * 1024 * 1024
+try:
+    _soft, _hard = resource.getrlimit(resource.RLIMIT_AS)
+    if _hard == resource.RLIM_INFINITY or _hard > _ONE_GB:
+        resource.setrlimit(resource.RLIMIT_AS, (_ONE_GB, _ONE_GB))
+except (ValueError, OSError):
+    pass  # Some environments don't support RLIMIT_AS
 
 from dotenv import load_dotenv
 from mistralai import Mistral
@@ -141,12 +152,21 @@ def normalize_devanagari(text: str) -> str:
 
 
 def get_mp3_duration(path: Path) -> float:
-    """Get MP3 duration in seconds."""
+    """Get MP3 duration in seconds using ffprobe (no memory-heavy decode)."""
     try:
-        audio = AudioSegment.from_mp3(str(path))
-        return len(audio) / 1000.0
+        out = _sp.run(
+            ["ffprobe", "-v", "error", "-show_entries", "format=duration",
+             "-of", "default=noprint_wrappers=1:nokey=1", str(path)],
+            capture_output=True, text=True, timeout=10,
+        )
+        return float(out.stdout.strip())
     except Exception:
-        return 0.0
+        # Fallback: pydub (heavy but reliable)
+        try:
+            audio = AudioSegment.from_mp3(str(path))
+            return len(audio) / 1000.0
+        except Exception:
+            return 0.0
 
 
 def resolve_audio_path(url: str) -> Optional[Path]:

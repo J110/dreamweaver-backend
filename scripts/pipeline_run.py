@@ -32,6 +32,7 @@ import argparse
 import json
 import logging
 import os
+import resource
 import shutil
 import subprocess
 import sys
@@ -92,8 +93,22 @@ def save_state(state: dict):
     STATE_PATH.write_text(json.dumps(state, indent=2, default=str) + "\n")
 
 
-def run_command(cmd: list, label: str, timeout: int = 3600, cwd: str = None) -> tuple:
-    """Run a subprocess command, return (success, stdout, stderr, elapsed)."""
+def _limit_memory():
+    """preexec_fn: cap child-process virtual memory at 1 GB."""
+    try:
+        resource.setrlimit(resource.RLIMIT_AS, (1024**3, 1024**3))
+    except (ValueError, OSError):
+        pass
+
+
+def run_command(cmd: list, label: str, timeout: int = 3600, cwd: str = None,
+                memory_limit: bool = False) -> tuple:
+    """Run a subprocess command, return (success, stdout, stderr, elapsed).
+
+    Args:
+        memory_limit: if True, cap child virtual memory at 1 GB to prevent
+            memory-hungry subprocesses from starving the app server.
+    """
     logger.info("━━━ %s ━━━", label)
     logger.info("Command: %s", " ".join(cmd))
     start = time.time()
@@ -105,6 +120,7 @@ def run_command(cmd: list, label: str, timeout: int = 3600, cwd: str = None) -> 
             text=True,
             timeout=timeout,
             cwd=cwd or str(BASE_DIR),
+            preexec_fn=_limit_memory if memory_limit else None,
         )
         elapsed = time.time() - start
 
@@ -549,7 +565,7 @@ def step_qa(args, state: dict) -> bool:
             cmd += ["--dry-run"]
 
         ok, stdout, stderr, elapsed = run_command(
-            cmd, f"QA: {sid[:8]}...", timeout=600
+            cmd, f"QA: {sid[:8]}...", timeout=600, memory_limit=True
         )
 
         if ok:
