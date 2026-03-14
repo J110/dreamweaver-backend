@@ -188,7 +188,107 @@ CRITICAL FORMATTING RULES:
 - Return ONLY valid JSON. No markdown fences, no extra text."""
 
 
-def build_prompt(existing_titles, existing_archetypes):
+MOOD_PROMPTS = {
+    "wired": """
+MOOD: WIRED (Silly/High-Energy)
+This story is for a pre-teen who is hyper, restless, full of unfocused energy.
+Your job: capture their attention through humor, absurdity, and high-energy scenarios, then land softly.
+
+Phase 1 (CAPTURE): The premise is absurd or high-energy. Characters encounter bizarre situations.
+Physical comedy translated to audio — things go wrong in funny ways, plans backfire spectacularly.
+The character's archetype skill is applied to a ridiculous problem. Include [EMPHASIS] tags on
+key funny moments (onomatopoeia, silly names, drawn-out words). Use 4-8 emphasis words.
+Example: "The entire console went [EMPHASIS]BZZZZZT[/EMPHASIS] and every screen started showing cat videos."
+
+Phase 2 (DESCENT): The silliness softens into fascination. The funny situation reveals something
+genuinely beautiful or awe-inspiring underneath. The character stops laughing and starts observing.
+Humor shifts from "laugh out loud" to "warm smile" to pure wonder.
+
+Phase 3 (SLEEP): No reference to earlier silliness. Pure stillness and warmth, as per normal Phase 3.
+""",
+    "curious": """
+MOOD: CURIOUS (Mystery/Discovery)
+This story is for a pre-teen who is alert, engaged, mind racing with questions.
+Your job: redirect their mental energy into a world worth following, then still it.
+
+Phase 1 (CAPTURE): Something appears that demands investigation — an anomaly, a hidden pattern,
+a signal that shouldn't exist. The character's archetype skill makes them uniquely qualified to
+investigate. The mystery is genuinely compelling — think podcast-quality hooks.
+
+Phase 2 (DESCENT): The investigation leads to a place of overwhelming beauty. Discovery resolves
+into wonder, not more questions. The character stops searching and starts absorbing.
+
+Phase 3 (SLEEP): The mystery doesn't need solving. Everything is already complete. Pure quiet observation.
+""",
+    "calm": """
+MOOD: CALM (Gentle/Sensory)
+This story is for a pre-teen who is already winding down but needs immersion.
+Your job: gentle sensory immersion from the first sentence. Rich, warm, slow.
+
+Phase 1 (CAPTURE): The hook is beauty, not conflict. The character discovers something
+serene and extraordinary — a hidden garden, an untouched cave, a perfectly still lake.
+World-building through texture, temperature, light, and sound.
+
+Phase 2 (DESCENT): Even more sensory richness. Descriptions become almost tactile.
+The character barely moves — they observe, touch, listen, breathe.
+
+Phase 3 (SLEEP): Seamless continuation of the sensory immersion into dissolution.
+""",
+    "sad": """
+MOOD: SAD (Comfort/Validation)
+This story is for a pre-teen who had a bad day — felt excluded, failed at something,
+lost something important.
+Your job: validate the feeling through the character's experience, then show comfort arriving
+naturally. NEVER fix the problem — just show that sadness passes and warmth remains.
+
+Phase 1 (CAPTURE): The character is dealing with a loss or disappointment that feels real
+for a 10-12 year old (not trivial, not catastrophic). They retreat to their special place
+(tied to their archetype). The world reflects their mood — grey, quiet, smaller than usual.
+
+Phase 2 (DESCENT): Something small and unexpected offers comfort — not a solution, but
+presence. A sound, a warmth, a gentle surprise. The world softens around the edges.
+The character doesn't cheer up — they feel held.
+
+Phase 3 (SLEEP): The sadness is still there but it's warm now, not sharp. Pure gentleness.
+""",
+    "anxious": """
+MOOD: ANXIOUS (Safety/Grounding)
+This story is for a pre-teen who can't stop worrying — school, social dynamics, the future.
+Your job: give their racing mind something concrete and absorbing to do, then slow it down.
+
+Phase 1 (CAPTURE): The character faces a challenge that requires focused, methodical problem-solving
+using their archetype skill. The problem is engaging but NOT high-stakes — the consequence of
+failure is "not knowing" rather than danger. The methodical focus crowds out worry.
+
+Phase 2 (DESCENT): The problem-solving leads to a place of unexpected peace. The character
+discovers that the solution was already there — they just needed to slow down to see it.
+Descriptions emphasize groundedness — weight, warmth, solidity, contact with surfaces.
+
+Phase 3 (SLEEP): Everything is solid, warm, held. Grounding language: weight of blankets,
+warmth of floor, steady rhythms. The character is safe and anchored.
+""",
+    "angry": """
+MOOD: ANGRY (Release/Resolution)
+This story is for a pre-teen who is frustrated — felt unfairly treated, powerless, dismissed.
+Your job: channel the energy into something constructive, then release it into calm.
+
+Phase 1 (CAPTURE): The character encounters an obstacle that genuinely IS unfair or frustrating
+(validate the anger). They use their archetype skill to push back — not with violence, but with
+competence and determination. There's a sense of "I'll show them" or "I can figure this out."
+Physical energy in the descriptions — running, building, climbing, solving under pressure.
+
+Phase 2 (DESCENT): The obstacle is overcome or transcended. The character reaches a vantage point
+where the frustration looks small — literally (a mountain peak, orbit, a vast cavern).
+The energy transforms from anger into awe. The character breathes deeply — not as a cue, but
+because the view demands it.
+
+Phase 3 (SLEEP): All tension has been released. The character is spent in the best way — like
+after a long swim. Pure relaxation, heaviness, warmth.
+""",
+}
+
+
+def build_prompt(existing_titles, existing_archetypes, mood=None):
     """Build the generation prompt for the 3-phase immersive story (ages 9-12)."""
 
     # Determine which archetypes are underrepresented
@@ -323,6 +423,8 @@ Available markers (place at start of paragraph or sentence):
 - [PHASE_2] — Marks descent phase transition
 - [PHASE_3] — Marks sleep phase transition
 
+{f"## MOOD INSTRUCTION{chr(10)}{MOOD_PROMPTS[mood]}" if mood else ""}
+
 ## EXISTING TITLES (do NOT duplicate):
 {anti_dup}
 
@@ -453,10 +555,19 @@ def generate_story():
 
     client = Mistral(api_key=api_key)
 
+    # Parse CLI arguments
+    mood = None
+    for i, arg in enumerate(sys.argv[1:], 1):
+        if arg == "--mood" and i < len(sys.argv) - 1:
+            mood = sys.argv[i + 1]
+            if mood not in MOOD_PROMPTS:
+                logger.error("Invalid mood '%s'. Valid: %s", mood, ", ".join(MOOD_PROMPTS.keys()))
+                sys.exit(1)
+
     existing_titles = get_existing_titles()
     existing_archetypes = get_existing_archetypes()
 
-    prompt = build_prompt(existing_titles, existing_archetypes)
+    prompt = build_prompt(existing_titles, existing_archetypes, mood=mood)
 
     # Check for --dry-run
     if "--dry-run" in sys.argv:
@@ -467,9 +578,13 @@ def generate_story():
         print(f"\nSystem prompt length: {len(SYSTEM_PROMPT)} chars")
         print(f"User prompt length: {len(prompt)} chars")
         print(f"Total prompt: {len(SYSTEM_PROMPT) + len(prompt)} chars")
+        if mood:
+            print(f"\nMood: {mood}")
         return
 
     logger.info("Generating 3-phase immersive audio adventure via Mistral...")
+    if mood:
+        logger.info("Mood: %s", mood)
     logger.info("Target: 2400-3200 words, ages 9-12, 25-30 minutes")
     logger.info("Using multi-call approach (3 API calls for proper length)")
 
@@ -735,6 +850,7 @@ Return ONLY the Phase 3 text (starting with [PHASE_3]). No JSON wrapper — just
         "view_count": 0,
         "like_count": 0,
         "save_count": 0,
+        "mood": mood or "",
     }
 
     # Save standalone JSON for review
