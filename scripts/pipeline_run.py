@@ -421,33 +421,105 @@ def _find_incomplete_content() -> list:
 
     These are leftovers from previous failed pipeline runs. Returns their IDs
     so the current run can complete them alongside new content.
+
+    IMPORTANT: Before flagging an item for recovery, cross-checks against:
+      1. The API's data/content.json (Docker LocalStore) — may have variants
+         that seed_output fell out of sync with.
+      2. Actual audio files on disk (web public folder) — the ground truth.
+    If variants exist elsewhere, backfills them into seed_output/content.json
+    and skips the item instead of wasting Modal credits re-generating.
     """
     if not CONTENT_PATH.exists():
         return []
     try:
         content = json.loads(CONTENT_PATH.read_text())
-        incomplete = []
-        for item in content:
-            sid = item.get("id", "")
-            if not sid.startswith("gen-"):
-                continue  # Skip seed/manual content
-            has_audio = bool(item.get("audio_variants"))
-            has_cover = bool(item.get("cover") and item["cover"] != "" and "default.svg" not in item.get("cover", ""))
-            # Songs don't need musicalBrief (they have vocals + instruments from ACE-Step)
-            is_song = item.get("type", "").lower() == "song"
-            has_music = is_song or bool(item.get("musicalBrief") or item.get("musicParams"))
-            if not has_audio or not has_cover or not has_music:
-                missing = []
-                if not has_audio:
-                    missing.append("audio")
-                if not has_cover:
-                    missing.append("cover")
-                if not has_music:
-                    missing.append("musicalBrief")
-                incomplete.append((sid, item.get("title", sid[:12]), missing))
-        return incomplete
     except Exception:
         return []
+
+    # Load API content for cross-check
+    api_content_path = BASE_DIR / "data" / "content.json"
+    api_by_id = {}
+    if api_content_path.exists():
+        try:
+            api_by_id = {item["id"]: item for item in json.loads(api_content_path.read_text())}
+        except Exception:
+            pass
+
+    # Scan actual audio files on disk
+    web_audio_dir = WEB_DIR / "public" / "audio" / "pre-gen"
+    disk_audio_files = set()
+    if web_audio_dir.exists():
+        disk_audio_files = {f.name for f in web_audio_dir.glob("*.mp3")}
+
+    seed_modified = False
+    incomplete = []
+
+    for item in content:
+        sid = item.get("id", "")
+        if not sid.startswith("gen-"):
+            continue  # Skip seed/manual content
+
+        has_audio = bool(item.get("audio_variants"))
+        has_cover = bool(item.get("cover") and item["cover"] != "" and "default.svg" not in item.get("cover", ""))
+        is_song = item.get("type", "").lower() == "song"
+        has_music = is_song or bool(item.get("musicalBrief") or item.get("musicParams"))
+
+        # ── Cross-check: recover variants from API or disk before flagging ──
+        if not has_audio:
+            api_item = api_by_id.get(sid, {})
+            api_variants = api_item.get("audio_variants", [])
+
+            if api_variants:
+                # Verify files actually exist on disk
+                valid = [v for v in api_variants
+                         if v.get("url", "").split("/")[-1] in disk_audio_files]
+                if valid:
+                    item["audio_variants"] = valid
+                    has_audio = True
+                    seed_modified = True
+                    logger.info("  AUTO-FIX: Recovered %d audio variants for %s from API data",
+                                len(valid), item.get("title", sid[:12]))
+            else:
+                # No API variants — check if files exist on disk by prefix
+                prefix = sid[:8]  # e.g. "gen-54ee"
+                disk_matches = sorted(f for f in disk_audio_files if f.startswith(prefix))
+                if disk_matches:
+                    # Reconstruct variants from filenames
+                    reconstructed = []
+                    for fname in disk_matches:
+                        # gen-54ee_female_1.mp3 → voice=female_1
+                        parts = fname.replace(".mp3", "").split("_", 1)
+                        voice = parts[1] if len(parts) > 1 else "default"
+                        reconstructed.append({
+                            "voice": voice,
+                            "url": f"/audio/pre-gen/{fname}",
+                        })
+                    if reconstructed:
+                        item["audio_variants"] = reconstructed
+                        has_audio = True
+                        seed_modified = True
+                        logger.info("  AUTO-FIX: Recovered %d audio variants for %s from disk files",
+                                    len(reconstructed), item.get("title", sid[:12]))
+
+        if not has_audio or not has_cover or not has_music:
+            missing = []
+            if not has_audio:
+                missing.append("audio")
+            if not has_cover:
+                missing.append("cover")
+            if not has_music:
+                missing.append("musicalBrief")
+            incomplete.append((sid, item.get("title", sid[:12]), missing))
+
+    # Persist any auto-fixes back to seed content.json
+    if seed_modified:
+        try:
+            CONTENT_PATH.write_text(json.dumps(content, indent=2, ensure_ascii=False))
+            logger.info("  AUTO-FIX: Updated seed_output/content.json with recovered data")
+        except Exception as e:
+            logger.warning("  AUTO-FIX: Failed to save content.json: %s", e)
+
+    return incomplete
 
 
 def step_audio(args, state: dict) -> bool:
