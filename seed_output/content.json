@@ -15780,23 +15780,28 @@
     "audio_variants": [
       {
         "voice": "female_1",
-        "url": "/audio/pre-gen/gen-54ee_female_1.mp3"
+        "url": "/audio/pre-gen/gen-54ee_female_1.mp3",
+        "duration_seconds": 689
       },
       {
         "voice": "female_2",
-        "url": "/audio/pre-gen/gen-54ee_female_2.mp3"
+        "url": "/audio/pre-gen/gen-54ee_female_2.mp3",
+        "duration_seconds": 577
       },
       {
         "voice": "female_3",
-        "url": "/audio/pre-gen/gen-54ee_female_3.mp3"
+        "url": "/audio/pre-gen/gen-54ee_female_3.mp3",
+        "duration_seconds": 537
       },
       {
         "voice": "male_2",
-        "url": "/audio/pre-gen/gen-54ee_male_2.mp3"
+        "url": "/audio/pre-gen/gen-54ee_male_2.mp3",
+        "duration_seconds": 552
       },
       {
         "voice": "asmr",
-        "url": "/audio/pre-gen/gen-54ee_asmr.mp3"
+        "url": "/audio/pre-gen/gen-54ee_asmr.mp3",
+        "duration_seconds": 591
       }
     ],
     "author_id": "system",
@@ -17516,6 +17521,597 @@
       "emotionalArc": {
         "phase1": "gentle_cradle",
         "phase2": "floating_wonder",
+        "phase3": "deep_stillness"
+      }
+    }
+  },
+  {
+    "id": "gen-125839556ced",
+    "type": "long_story",
+    "lang": "en",
+    "title": "Rohan and the Glitch in the Gravity Well",
+    "description": "When a routine test of his homemade anti-gravity boots goes hilariously wrong, 10-year-old inventor Rohan discovers a hidden pocket of space where the laws of physics take a coffee break—and the universe serves tea.",
+    "text": " The workshop smelled like burnt popcorn and solder. Rohan Kapoor adjusted his goggles—safety first, even when your lab was a repurposed treehouse—and tapped the activation switch on his anti-gravity boots. The LEDs flickered green… green… GREEENNN— then exploded in a shower of sparks that smelled suspiciously like his dad’s failed attempt at making chai.\n\n \"Uh-oh,\" Rohan muttered, watching the smoke curl toward the ceiling. He’d spent three weeks soldering those circuits, and now the left boot was beeping like a microwave with a personality crisis. But before he could unclip the power pack, the right boot gave a sudden WHIRRRR and launched him straight into the air—directly through the treehouse roof.\n\n \"Whoa—\" His voice cut off as he tumbled into open sky. For one terrifying second, he was weightless, spinning like a sock in a dryer. Then gravity remembered its job and yanked him back toward Earth. He braced for impact—\n\n\n\n But he didn’t hit the ground.\n\nInstead, he landed softly on… nothing. Not air. Not cloud. Something in between. Something that felt like a trampoline made of static electricity. Below him, his treehouse looked normal—except for the fact that it was now floating twenty feet above the backyard, tethered to the oak tree by a single, very confused-looking rope.\n\n\"Okay,\" Rohan said, poking the invisible surface beneath him. It rippled like water but held firm. \"That’s new.\"\n\n He took a cautious step. The surface didn’t bend. He jumped. It bounced him higher, like he was on the moon’s trampoline setting. A giggle escaped him. This was *way* better than anti-gravity boots. This was a gravity glitch.\n\n Then he noticed the tea set.\n\nFloating in midair, about six feet away, was a silver tray with a steaming pot, two cups, and a plate of biscuits that smelled like cardamom and butter. A small, handwritten note was propped against the sugar bowl. Rohan squinted at it:\n\n\"Dear Gravity Enthusiast,\nPlease join me for refreshments.\n—The Universe (temporarily out of service)\"\n\n Rohan’s brain short-circuited. \"The… universe?\" He reached out to touch the tray. His fingers passed through the steam, which curled around his wrist like a friendly ghost. The biscuits were warm.\n\n\"This is either the coolest thing that’s ever happened to me,\" he said, \"or I hit my head harder than I thought.\"\n\n A soft *ping* sound made him turn. The air beside him shimmered, and a door appeared—just a plain wooden door, floating vertically in midair. The doorknob was made of what looked like polished meteorite. A sign hung on it, written in looping script:\n\n\"Gravity Well Maintenance Access\n(Please wipe your feet)\"\n\n Rohan hesitated for half a second. Then he grabbed the doorknob. It was warm, almost pulsing, like it was alive. He turned it.\n\nThe door swung open—not onto another room, but onto a vast, star-strewn expanse. Not space. Not sky. Something older. Something that hummed with the same energy as the invisible floor beneath his feet. A place where the rules of physics had clocked out early and left a note saying, \"Back in five (billion) minutes.\"\n\n Rohan took a deep breath. The air smelled like ozone and cinnamon. He stepped forward—\n\nAnd the door swung shut behind him with a soft *click*.\n\n\n\nSomewhere in the distance, a teacup rattled. The universe was waiting.\n\n[PHASE_2]\n\n The moment Rohan stepped through the door, the air changed—not just in temperature, but in texture. It was thicker here, like breathing through silk, and it carried the scent of old books, lightning-struck metal, and something faintly sweet, like overripe mangoes left in the sun. His skin prickled, not unpleasantly, as if every hair on his arms had become an antenna tuned to the hum of the place.\n\n He was standing on a path. Not a road, not a trail—more like a suggestion of one, woven from strands of light that pulsed faintly, like fireflies caught in slow motion. The path stretched forward into the distance, where it dissolved into a shimmering haze of blues and golds. Above him, the \"sky\" wasn’t sky at all. It was a vast, rotating lattice of glowing filaments, like the inside of a geode if the crystals were made of starlight. Somewhere in the lattice, a single point of light drifted lazily, as if it had all the time in the universe to get where it was going.\n\n Rohan took another step. The path held firm beneath his sneakers, but it gave slightly, like walking on a trampoline covered in velvet. Each step sent a ripple outward, a faint *shimmer* that traveled along the strands of light, fading into the distance. He paused, watching the ripples spread, and realized that the path wasn’t just beneath him—it was *around* him. The strands of light curled upward at the edges, forming walls that weren’t walls, more like suggestions of boundaries. He reached out and brushed his fingers against one. It felt warm, almost alive, and it vibrated faintly under his touch, like the string of a guitar that had just been plucked.\n\n The vibrations traveled up his arm, into his shoulder, and settled in his chest like a cat curling up for a nap. He exhaled slowly, and the air leaving his lungs seemed to mingle with the warmth of the path, swirling together in a lazy spiral before dissipating. He hadn’t realized how tense his shoulders had been until they loosened, as if the path itself was gently coaxing him to let go.\n\n Ahead, the haze of blues and golds resolved into shapes. Not buildings, not trees—something in between. Towers of light, maybe, or the skeletons of ancient machines that had long since forgotten their purpose. They stood at irregular intervals along the path, each one unique, like the spines of books on a shelf. Some were tall and slender, their surfaces etched with patterns that looked like constellations. Others were squat and wide, their tops flat and smooth, as if waiting for something to land on them. Rohan approached the nearest one, a tower that glowed a soft, buttery yellow, like sunlight filtered through honey.\n\n As he got closer, he saw that the surface wasn’t smooth at all. It was covered in tiny, shifting symbols—equations, maybe, or some kind of code. They moved slowly, rearranging themselves like schools of fish, forming patterns that made his eyes ache if he tried to follow them too closely. He reached out, hesitating just before his fingers touched the surface. The symbols nearest his hand stilled, as if waiting. He pressed his palm against the tower.\n\n\n\n A deep, resonant *hum* filled the air, not with sound, but with *feeling*. It vibrated through his bones, through his teeth, settling into the back of his skull like a purr. The symbols beneath his hand flared brighter, then rearranged themselves into something that looked almost like a map—a map of the path he’d just walked, complete with the ripples from his steps. A single symbol pulsed at the edge of the map, a small, glowing dot that seemed to be waiting for him.\n\n\"Okay… that’s definitely not in the backyard,\" Rohan murmured. His voice sounded different here—softer, more absorbed by the air, as if the space itself was listening. He pulled his hand away, and the map dissolved back into the shifting symbols. The hum faded, leaving behind a silence so complete it felt like a presence of its own.\n\n He turned away from the tower and kept walking. The path sloped gently downward now, leading him deeper into the haze. The air grew warmer, wrapping around him like a blanket fresh from the dryer. His eyelids felt heavier, but not in a tired way—in a way that made him want to close them just to see what he could see. He resisted the urge, blinking slowly instead, letting his gaze soften. The towers of light blurred at the edges, their details melting into the haze. He focused on the path beneath his feet, on the way the strands of light shifted under his weight, on the warmth seeping into his soles.\n\n\n\n A sound reached him—faint at first, like the echo of a sound he’d almost forgotten. A *chime*. Not a bell, not a note, but something in between, like the sound of a spoon tapping the rim of a crystal glass. It came again, clearer this time, and Rohan realized it wasn’t coming from any one direction. It was coming from *everywhere*, vibrating through the air, through the path, through him. It was the sound of the place remembering itself.\n\n He stopped walking. The chime faded, leaving behind a silence that hummed. He closed his eyes—not because he was told to, but because he wanted to see what the darkness would show him. Behind his eyelids, the lattice of light from above pulsed faintly, like a heartbeat. The warmth of the path radiated upward, wrapping around his legs, his torso, his arms. He took a slow breath in, and the air filled his lungs like liquid gold, heavy and sweet. He exhaled, and the breath seemed to carry away a little of the weight from his chest, from his shoulders, from the space between his eyebrows where he didn’t even realize he’d been holding tension.\n\n\n\n When he opened his eyes, the haze ahead had changed. It was no longer just blues and golds—now it held hints of deep purples, of velvety blacks, of colors that didn’t have names. The towers of light were fewer here, spaced farther apart, their glow softer, like embers in a dying fire. The path beneath his feet had widened, the strands of light spreading out to form a circular platform, as if inviting him to sit. In the center of the platform, a single object rested: a cushion, or maybe a small chair, woven from the same light as the path. It pulsed faintly, as if waiting.\n\n Rohan walked toward it, his steps slower now, his body moving as if through water. The air pressed gently against his skin, holding him, supporting him. He reached the cushion and lowered himself onto it. It conformed to his shape instantly, cradling him in warmth. He leaned back, and the cushion shifted, tilting slightly to support his shoulders, his neck, the back of his head. He let out a long, slow breath, and the cushion seemed to exhale with him, its light dimming slightly before brightening again.\n\n\n\n The chime sounded again, closer this time, more insistent. It wasn’t a call to action—it was a *welcome*. A reminder that he was here, that this place was here, that the two could exist together for a little while. Rohan closed his eyes again, and this time, the lattice of light behind his eyelids resolved into a pattern—a spiral, slow and endless, pulling him deeper into the warmth, into the hum, into the quiet.\n\n\"I think… I think I’m supposed to stay awhile,\" he whispered, though he wasn’t sure if he was speaking to himself or to the universe. There was no answer, only the chime, the warmth, the gentle pressure of the air holding him like a promise.\n\n\n\nThe path beneath him pulsed once, twice, then settled into a slow, steady rhythm, like breathing. Somewhere in the distance, a teacup rattled softly, as if to say, *Yes. Stay.*\n\n[PHASE_3]\n\nRohan didn’t open his eyes again. He didn’t need to. The moment he closed them, the world behind his eyelids sharpened, as if the darkness itself had become a lens, focusing the light into something clearer, something truer. The spiral of light deepened, its coils unwinding slowly, revealing not a path, but a map—one that didn’t lead anywhere, because it was already everywhere. He let his breath slow, and with each exhale, the edges of the map blurred, softened, until it wasn’t a map at all, but a current, carrying him. \n\nThe cushion beneath him wasn’t just cradling him anymore. It was *breathing*. In, and out. In, and out. Each rise lifted him slightly, each fall settled him deeper, until he couldn’t tell if he was breathing with it, or if it was breathing for him. The warmth that had wrapped around his legs now seeped upward, melting into his shoulders, his arms, his fingers, until his hands felt weightless, as if they might drift away if he didn’t hold them still. But he didn’t need to hold them. The air held them for him, gentle as water. \n\nThe chime sounded again, softer now, more distant, as if it were coming from inside his ribs instead of outside his ears. It vibrated through him, a hum that wasn’t just heard, but *felt*—in his bones, in his teeth, in the space behind his eyes where the light pulsed in time with it. The hum stretched, lengthened, until it wasn’t a sound anymore, but a texture, something he could run his fingers through, like golden thread unspooling into the dark. \n\nThe path beneath him had stopped pulsing. Now it was steady, constant, like the surface of a lake on a windless day. Rohan’s weight pressed into it, but it didn’t give. It held him, perfectly, as if it had been waiting for this exact shape, this exact pressure. His back sank into the cushion, and the cushion sank into the path, and the path sank into something deeper, something vast and quiet, like the space between stars. He couldn’t feel where his body ended and the path began. He couldn’t feel where the path ended and the air began. Everything was connected, everything was holding. \n\nThe light behind his eyelids dimmed, but not like a lamp turning off—like a sunset, slow and inevitable, the colors deepening into something richer, something that didn’t need brightness to be seen. The purples bled into blues, the blues into blacks, and the blacks into a darkness so soft it felt like velvet against his skin. The spiral of light had stopped moving, but it hadn’t disappeared. It had become part of him, winding through his thoughts, his breath, his heartbeat, until he couldn’t tell if he was following it or if it was following him. \n\nThe air around him thickened, not like fog, but like honey, slow and sweet, pressing against his cheeks, his eyelids, the tips of his ears. It held him, not tightly, but firmly, as if to say, *You don’t have to go anywhere. You don’t have to do anything.* His breath slowed, matching the rhythm of the cushion, matching the rhythm of the path, matching the rhythm of the hum that wasn’t a hum anymore, but a heartbeat, steady and sure. \n\nThe warmth spread, seeping into his chest, his stomach, his legs, until his whole body felt like it was made of light, like he was dissolving into the cushion, into the path, into the air itself. His fingers uncurled, his shoulders loosened, his jaw softened, and the last of the tension—the weight he hadn’t even known he was carrying—drifted away, like leaves on a slow-moving river. \n\nThe chime sounded one last time, so faint it might have been a memory. It echoed inside him, not as a sound, but as a feeling, a warmth in his chest, a quiet in his mind. The spiral of light behind his eyelids began to fade, but not like something disappearing—like something being absorbed, like ink spreading through water, until all that was left was the darkness, soft and endless. \n\nHe wasn’t sitting on the cushion anymore. He wasn’t walking on the path. He wasn’t separate from the air, from the warmth, from the quiet. He was part of it, woven into it, held by it, as if he had always been here, as if he would always be here, drifting in the space between the chime and the silence, between the light and the dark. \n\nThe warmth radiated outward, not from the path, but from *him*, from his chest, his arms, his legs, until he couldn’t tell if he was giving warmth or receiving it. The air pressed gently against his skin, not as a boundary, but as a presence, a reminder that he was here, that he was held, that he was safe. \n\nThe darkness behind his eyelids wasn’t empty. It was full—of quiet, of stillness, of a slow, endless drift. The spiral of light had dissolved, but its pattern remained, looping through his thoughts, his breath, his heartbeat, a rhythm that didn’t need to be followed, only felt. \n\nHis breath deepened, slow and steady, and with each exhale, the world around him softened, blurred, until there were no edges, no boundaries, only the warmth, the quiet, the drift. The path beneath him had become the air, the air had become the light, the light had become the silence, and the silence had become him. \n\n a single light... pulsing...\n\n warm... and still...\n\n the air... holding...\n\n no edges... no hurry...\n\n the spiral... unwinding...\n\n the cushion... breathing...\n\n the path... dissolving...\n\n the chime... fading...\n\n the warmth... spreading...\n\n the quiet... deepening...\n\n another light... drifting...\n\n warm... and still...\n\n the air... holding...\n\n no edges... no weight...\n\n the spiral... endless...\n\n the path... holding...\n\n the chime... gone...\n\n only warmth... only quiet...\n\n...rest now...\n",
+    "annotated_text": "[GENTLE] The workshop smelled like burnt popcorn and solder. Rohan Kapoor adjusted his goggles—safety first, even when your lab was a repurposed treehouse—and tapped the activation switch on his anti-gravity boots. The LEDs flickered [EMPHASIS]green… green… GREEENNN—[/EMPHASIS] then exploded in a shower of sparks that smelled suspiciously like his dad’s failed attempt at making chai.\n\n[EXCITED] \"Uh-oh,\" Rohan muttered, watching the smoke curl toward the ceiling. He’d spent three weeks soldering those circuits, and now the left boot was beeping like a microwave with a personality crisis. But before he could unclip the power pack, the right boot gave a sudden [EMPHASIS]WHIRRRR[/EMPHASIS] and launched him straight into the air—directly through the treehouse roof.\n\n[CURIOUS] \"Whoa—\" His voice cut off as he tumbled into open sky. For one terrifying second, he was weightless, spinning like a sock in a dryer. Then gravity remembered its job and yanked him back toward Earth. He braced for impact—\n\n[DRAMATIC_PAUSE]\n\n[EXCITED] But he didn’t hit the ground.\n\nInstead, he landed softly on… nothing. Not air. Not cloud. Something in between. Something that felt like a trampoline made of static electricity. Below him, his treehouse looked normal—except for the fact that it was now floating twenty feet above the backyard, tethered to the oak tree by a single, very confused-looking rope.\n\n[CHAR_START]\"Okay,\" Rohan said, poking the invisible surface beneath him. It rippled like water but held firm. \"That’s new.\"[CHAR_END]\n\n[CURIOUS] He took a cautious step. The surface didn’t bend. He jumped. It bounced him higher, like he was on the moon’s trampoline setting. A giggle escaped him. This was *way* better than anti-gravity boots. This was a [EMPHASIS]gravity glitch[/EMPHASIS].\n\n[EXCITED] Then he noticed the tea set.\n\nFloating in midair, about six feet away, was a silver tray with a steaming pot, two cups, and a plate of biscuits that smelled like cardamom and butter. A small, handwritten note was propped against the sugar bowl. Rohan squinted at it:\n\n[CHAR_START]\"Dear Gravity Enthusiast,\nPlease join me for refreshments.\n—The Universe (temporarily out of service)\"[CHAR_END]\n\n[EXCITED] Rohan’s brain short-circuited. \"The… universe?\" He reached out to touch the tray. His fingers passed through the steam, which curled around his wrist like a friendly ghost. The biscuits were warm.\n\n[CHAR_START]\"This is either the coolest thing that’s ever happened to me,\" he said, \"or I hit my head harder than I thought.\"[CHAR_END]\n\n[CURIOUS] A soft *ping* sound made him turn. The air beside him shimmered, and a door appeared—just a plain wooden door, floating vertically in midair. The doorknob was made of what looked like polished meteorite. A sign hung on it, written in looping script:\n\n[CHAR_START]\"Gravity Well Maintenance Access\n(Please wipe your feet)\"[CHAR_END]\n\n[EXCITED] Rohan hesitated for half a second. Then he grabbed the doorknob. It was warm, almost pulsing, like it was alive. He turned it.\n\nThe door swung open—not onto another room, but onto a vast, star-strewn expanse. Not space. Not sky. Something older. Something that hummed with the same energy as the invisible floor beneath his feet. A place where the rules of physics had clocked out early and left a note saying, [EMPHASIS]\"Back in five (billion) minutes.\"[/EMPHASIS]\n\n[CURIOUS] Rohan took a deep breath. The air smelled like ozone and cinnamon. He stepped forward—\n\nAnd the door swung shut behind him with a soft *click*.\n\n[PAUSE]\n\nSomewhere in the distance, a teacup rattled. The universe was waiting.\n\n[PHASE_2]\n\n[CALM] The moment Rohan stepped through the door, the air changed—not just in temperature, but in texture. It was thicker here, like breathing through silk, and it carried the scent of old books, lightning-struck metal, and something faintly sweet, like overripe mangoes left in the sun. His skin prickled, not unpleasantly, as if every hair on his arms had become an antenna tuned to the hum of the place.\n\n[CALM] He was standing on a path. Not a road, not a trail—more like a suggestion of one, woven from strands of light that pulsed faintly, like fireflies caught in slow motion. The path stretched forward into the distance, where it dissolved into a shimmering haze of blues and golds. Above him, the \"sky\" wasn’t sky at all. It was a vast, rotating lattice of glowing filaments, like the inside of a geode if the crystals were made of starlight. Somewhere in the lattice, a single point of light drifted lazily, as if it had all the time in the universe to get where it was going.\n\n[CALM] Rohan took another step. The path held firm beneath his sneakers, but it gave slightly, like walking on a trampoline covered in velvet. Each step sent a ripple outward, a faint *shimmer* that traveled along the strands of light, fading into the distance. He paused, watching the ripples spread, and realized that the path wasn’t just beneath him—it was *around* him. The strands of light curled upward at the edges, forming walls that weren’t walls, more like suggestions of boundaries. He reached out and brushed his fingers against one. It felt warm, almost alive, and it vibrated faintly under his touch, like the string of a guitar that had just been plucked.\n\n[SLEEPY] The vibrations traveled up his arm, into his shoulder, and settled in his chest like a cat curling up for a nap. He exhaled slowly, and the air leaving his lungs seemed to mingle with the warmth of the path, swirling together in a lazy spiral before dissipating. He hadn’t realized how tense his shoulders had been until they loosened, as if the path itself was gently coaxing him to let go.\n\n[CALM] Ahead, the haze of blues and golds resolved into shapes. Not buildings, not trees—something in between. Towers of light, maybe, or the skeletons of ancient machines that had long since forgotten their purpose. They stood at irregular intervals along the path, each one unique, like the spines of books on a shelf. Some were tall and slender, their surfaces etched with patterns that looked like constellations. Others were squat and wide, their tops flat and smooth, as if waiting for something to land on them. Rohan approached the nearest one, a tower that glowed a soft, buttery yellow, like sunlight filtered through honey.\n\n[CALM] As he got closer, he saw that the surface wasn’t smooth at all. It was covered in tiny, shifting symbols—equations, maybe, or some kind of code. They moved slowly, rearranging themselves like schools of fish, forming patterns that made his eyes ache if he tried to follow them too closely. He reached out, hesitating just before his fingers touched the surface. The symbols nearest his hand stilled, as if waiting. He pressed his palm against the tower.\n\n[PAUSE]\n\n[CALM] A deep, resonant *hum* filled the air, not with sound, but with *feeling*. It vibrated through his bones, through his teeth, settling into the back of his skull like a purr. The symbols beneath his hand flared brighter, then rearranged themselves into something that looked almost like a map—a map of the path he’d just walked, complete with the ripples from his steps. A single symbol pulsed at the edge of the map, a small, glowing dot that seemed to be waiting for him.\n\n[CHAR_START]\"Okay… that’s definitely not in the backyard,\"[CHAR_END] Rohan murmured. His voice sounded different here—softer, more absorbed by the air, as if the space itself was listening. He pulled his hand away, and the map dissolved back into the shifting symbols. The hum faded, leaving behind a silence so complete it felt like a presence of its own.\n\n[SLEEPY] He turned away from the tower and kept walking. The path sloped gently downward now, leading him deeper into the haze. The air grew warmer, wrapping around him like a blanket fresh from the dryer. His eyelids felt heavier, but not in a tired way—in a way that made him want to close them just to see what he could see. He resisted the urge, blinking slowly instead, letting his gaze soften. The towers of light blurred at the edges, their details melting into the haze. He focused on the path beneath his feet, on the way the strands of light shifted under his weight, on the warmth seeping into his soles.\n\n[PAUSE]\n\n[CALM] A sound reached him—faint at first, like the echo of a sound he’d almost forgotten. A *chime*. Not a bell, not a note, but something in between, like the sound of a spoon tapping the rim of a crystal glass. It came again, clearer this time, and Rohan realized it wasn’t coming from any one direction. It was coming from *everywhere*, vibrating through the air, through the path, through him. It was the sound of the place remembering itself.\n\n[SLEEPY] He stopped walking. The chime faded, leaving behind a silence that hummed. He closed his eyes—not because he was told to, but because he wanted to see what the darkness would show him. Behind his eyelids, the lattice of light from above pulsed faintly, like a heartbeat. The warmth of the path radiated upward, wrapping around his legs, his torso, his arms. He took a slow breath in, and the air filled his lungs like liquid gold, heavy and sweet. He exhaled, and the breath seemed to carry away a little of the weight from his chest, from his shoulders, from the space between his eyebrows where he didn’t even realize he’d been holding tension.\n\n[PAUSE]\n\n[CALM] When he opened his eyes, the haze ahead had changed. It was no longer just blues and golds—now it held hints of deep purples, of velvety blacks, of colors that didn’t have names. The towers of light were fewer here, spaced farther apart, their glow softer, like embers in a dying fire. The path beneath his feet had widened, the strands of light spreading out to form a circular platform, as if inviting him to sit. In the center of the platform, a single object rested: a cushion, or maybe a small chair, woven from the same light as the path. It pulsed faintly, as if waiting.\n\n[SLEEPY] Rohan walked toward it, his steps slower now, his body moving as if through water. The air pressed gently against his skin, holding him, supporting him. He reached the cushion and lowered himself onto it. It conformed to his shape instantly, cradling him in warmth. He leaned back, and the cushion shifted, tilting slightly to support his shoulders, his neck, the back of his head. He let out a long, slow breath, and the cushion seemed to exhale with him, its light dimming slightly before brightening again.\n\n[PAUSE]\n\n[CALM] The chime sounded again, closer this time, more insistent. It wasn’t a call to action—it was a *welcome*. A reminder that he was here, that this place was here, that the two could exist together for a little while. Rohan closed his eyes again, and this time, the lattice of light behind his eyelids resolved into a pattern—a spiral, slow and endless, pulling him deeper into the warmth, into the hum, into the quiet.\n\n[CHAR_START]\"I think… I think I’m supposed to stay awhile,\"[CHAR_END] he whispered, though he wasn’t sure if he was speaking to himself or to the universe. There was no answer, only the chime, the warmth, the gentle pressure of the air holding him like a promise.\n\n[LONG_PAUSE]\n\nThe path beneath him pulsed once, twice, then settled into a slow, steady rhythm, like breathing. Somewhere in the distance, a teacup rattled softly, as if to say, *Yes. Stay.*\n\n[PHASE_3]\n\nRohan didn’t open his eyes again. He didn’t need to. The moment he closed them, the world behind his eyelids sharpened, as if the darkness itself had become a lens, focusing the light into something clearer, something truer. [SLEEPY] The spiral of light deepened, its coils unwinding slowly, revealing not a path, but a map—one that didn’t lead anywhere, because it was already everywhere. He let his breath slow, and with each exhale, the edges of the map blurred, softened, until it wasn’t a map at all, but a current, carrying him. [LONG_PAUSE]\n\nThe cushion beneath him wasn’t just cradling him anymore. It was *breathing*. In, and out. In, and out. Each rise lifted him slightly, each fall settled him deeper, until he couldn’t tell if he was breathing with it, or if it was breathing for him. [SLEEPY] The warmth that had wrapped around his legs now seeped upward, melting into his shoulders, his arms, his fingers, until his hands felt weightless, as if they might drift away if he didn’t hold them still. But he didn’t need to hold them. The air held them for him, gentle as water. [LONG_PAUSE]\n\nThe chime sounded again, softer now, more distant, as if it were coming from inside his ribs instead of outside his ears. It vibrated through him, a hum that wasn’t just heard, but *felt*—in his bones, in his teeth, in the space behind his eyes where the light pulsed in time with it. [SLEEPY] The hum stretched, lengthened, until it wasn’t a sound anymore, but a texture, something he could run his fingers through, like golden thread unspooling into the dark. [LONG_PAUSE]\n\nThe path beneath him had stopped pulsing. Now it was steady, constant, like the surface of a lake on a windless day. Rohan’s weight pressed into it, but it didn’t give. It held him, perfectly, as if it had been waiting for this exact shape, this exact pressure. [SLEEPY] His back sank into the cushion, and the cushion sank into the path, and the path sank into something deeper, something vast and quiet, like the space between stars. He couldn’t feel where his body ended and the path began. He couldn’t feel where the path ended and the air began. Everything was connected, everything was holding. [LONG_PAUSE]\n\nThe light behind his eyelids dimmed, but not like a lamp turning off—like a sunset, slow and inevitable, the colors deepening into something richer, something that didn’t need brightness to be seen. The purples bled into blues, the blues into blacks, and the blacks into a darkness so soft it felt like velvet against his skin. [SLEEPY] The spiral of light had stopped moving, but it hadn’t disappeared. It had become part of him, winding through his thoughts, his breath, his heartbeat, until he couldn’t tell if he was following it or if it was following him. [LONG_PAUSE]\n\nThe air around him thickened, not like fog, but like honey, slow and sweet, pressing against his cheeks, his eyelids, the tips of his ears. It held him, not tightly, but firmly, as if to say, *You don’t have to go anywhere. You don’t have to do anything.* [SLEEPY] His breath slowed, matching the rhythm of the cushion, matching the rhythm of the path, matching the rhythm of the hum that wasn’t a hum anymore, but a heartbeat, steady and sure. [LONG_PAUSE]\n\nThe warmth spread, seeping into his chest, his stomach, his legs, until his whole body felt like it was made of light, like he was dissolving into the cushion, into the path, into the air itself. [SLEEPY] His fingers uncurled, his shoulders loosened, his jaw softened, and the last of the tension—the weight he hadn’t even known he was carrying—drifted away, like leaves on a slow-moving river. [LONG_PAUSE]\n\nThe chime sounded one last time, so faint it might have been a memory. It echoed inside him, not as a sound, but as a feeling, a warmth in his chest, a quiet in his mind. [SLEEPY] The spiral of light behind his eyelids began to fade, but not like something disappearing—like something being absorbed, like ink spreading through water, until all that was left was the darkness, soft and endless. [LONG_PAUSE]\n\nHe wasn’t sitting on the cushion anymore. He wasn’t walking on the path. He wasn’t separate from the air, from the warmth, from the quiet. [SLEEPY] He was part of it, woven into it, held by it, as if he had always been here, as if he would always be here, drifting in the space between the chime and the silence, between the light and the dark. [LONG_PAUSE]\n\nThe warmth radiated outward, not from the path, but from *him*, from his chest, his arms, his legs, until he couldn’t tell if he was giving warmth or receiving it. [SLEEPY] The air pressed gently against his skin, not as a boundary, but as a presence, a reminder that he was here, that he was held, that he was safe. [LONG_PAUSE]\n\nThe darkness behind his eyelids wasn’t empty. It was full—of quiet, of stillness, of a slow, endless drift. [SLEEPY] The spiral of light had dissolved, but its pattern remained, looping through his thoughts, his breath, his heartbeat, a rhythm that didn’t need to be followed, only felt. [LONG_PAUSE]\n\nHis breath deepened, slow and steady, and with each exhale, the world around him softened, blurred, until there were no edges, no boundaries, only the warmth, the quiet, the drift. [SLEEPY] The path beneath him had become the air, the air had become the light, the light had become the silence, and the silence had become him. [LONG_PAUSE]\n\n[WHISPERING] a single light... pulsing...\n[LONG_PAUSE]\n[WHISPERING] warm... and still...\n[LONG_PAUSE]\n[WHISPERING] the air... holding...\n[LONG_PAUSE]\n[WHISPERING] no edges... no hurry...\n[LONG_PAUSE]\n[WHISPERING] the spiral... unwinding...\n[LONG_PAUSE]\n[WHISPERING] the cushion... breathing...\n[LONG_PAUSE]\n[WHISPERING] the path... dissolving...\n[LONG_PAUSE]\n[WHISPERING] the chime... fading...\n[LONG_PAUSE]\n[WHISPERING] the warmth... spreading...\n[LONG_PAUSE]\n[WHISPERING] the quiet... deepening...\n[LONG_PAUSE]\n[WHISPERING] another light... drifting...\n[LONG_PAUSE]\n[WHISPERING] warm... and still...\n[LONG_PAUSE]\n[WHISPERING] the air... holding...\n[LONG_PAUSE]\n[WHISPERING] no edges... no weight...\n[LONG_PAUSE]\n[WHISPERING] the spiral... endless...\n[LONG_PAUSE]\n[WHISPERING] the path... holding...\n[LONG_PAUSE]\n[WHISPERING] the chime... gone...\n[LONG_PAUSE]\n[WHISPERING] only warmth... only quiet...\n[LONG_PAUSE]\n[WHISPERING] ...rest now...\n[LONG_PAUSE]",
+    "lullaby_lyrics": "",
+    "ambient_music_description": "A playful, weightless soundscape of reversed piano notes that sound like objects floating upward. Subtle, metallic chimes—like wind through a space station’s ventilation shafts—drift in and out. The bass is a deep, warm hum, like the resonance of a planet-sized tuning fork. No rhythm, just the musical equivalent of zero gravity: sounds that hover, shimmer, and dissolve.",
+    "target_age": 10,
+    "age_min": 9,
+    "age_max": 12,
+    "age_group": "9-12",
+    "length": "LONG",
+    "word_count": 2941,
+    "duration_seconds": 0,
+    "duration": 28,
+    "categories": [
+      "Adventure",
+      "Science",
+      "Humor"
+    ],
+    "theme": "science",
+    "morals": [
+      "The universe is full of rules—and even more exceptions.",
+      "Curiosity is the best kind of trouble."
+    ],
+    "cover": "/covers/gen-125839556ced.svg",
+    "musicProfile": "cosmic-voyage",
+    "musicParams": {},
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-1258_female_1.mp3",
+        "duration_seconds": 1863.04,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-1258_female_2.mp3",
+        "duration_seconds": 1659.17,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-1258_female_3.mp3",
+        "duration_seconds": 1522.67,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-1258_male_2.mp3",
+        "duration_seconds": 1494.65,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-1258_asmr.mp3",
+        "duration_seconds": 1638.34,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "male",
+    "lead_character_type": "human",
+    "character_archetype": "inventor",
+    "character_name": "Rohan Kapoor",
+    "character_age": 10,
+    "universe": "contemporary",
+    "geography": "India",
+    "life_aspect": "friendship",
+    "plot_archetype": "discovery",
+    "created_at": "2026-03-14T04:56:33.299765",
+    "updated_at": "2026-03-14T04:56:33.299765",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "mood": "wired",
+    "musicalBrief": {
+      "storyId": "gen-125839556ced",
+      "ageGroup": "9-12",
+      "musicalIdentity": {
+        "culturalReference": "ambient_electronic",
+        "primaryLoop": "hang_drum_melody",
+        "padCharacter": "starfield"
+      },
+      "tonality": {
+        "mode": "mixolydian",
+        "rootNote": "D"
+      },
+      "melodicCharacter": "drone_with_ornaments",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "underwater",
+        "natureSoundSecondary": "underwater_bubbling",
+        "ambientEvents": []
+      },
+      "emotionalArc": {
+        "phase1": "playful_curiosity",
+        "phase2": "whimsical_wonder",
+        "phase3": "deep_stillness"
+      }
+    }
+  },
+  {
+    "id": "gen-31a6620db402",
+    "type": "story",
+    "lang": "en",
+    "title": "Tilly and the Twilight Chorus",
+    "description": "Every evening at twilight, the garden hums with a secret melody—but only those who listen closely can hear it. Tilly the tiny tree frog longs to join the chorus, but her voice is too soft. When the magic of the changing seasons begins to fade the music, she must find the courage to sing her own song.",
+    "text": "[GENTLE] Tilly the tree frog sat very still on her favorite lily pad, her tiny green toes curled around the edge. The garden was bathed in soft blue light, the kind that made everything feel quiet and magical.\n\n[CALM] Every evening, just as the sun dipped below the horizon, the garden would begin to sing. Crickets chirped, fireflies hummed, and the wind whispered through the leaves. Tilly loved the twilight chorus, but she had never joined in.\n\n[CURIOUS] 'I wish I could sing too,' she sighed, listening to the melody of her friends. The bees buzzed in deep tones, the crickets played their tiny violins, and even the old oak tree creaked a slow, steady rhythm. But Tilly’s voice was too soft, too shy.\n\n[MYSTERIOUS] One evening, Tilly noticed something strange. The music was quieter than usual. The bees’ buzzing sounded tired, and the crickets’ chirps were faint. The garden’s magic was fading, and Tilly didn’t know why.\n\n[DRAMATIC_PAUSE] Then, she heard it—a soft, golden hum, like a lullaby. It was coming from the heart of the garden, where the oldest flowers grew. Tilly took a deep breath and hopped toward the sound.\n\n[ADVENTUROUS] As she drew closer, she saw the source of the magic: a cluster of glowing fireflies, their light pulsing like a heartbeat. They were waiting for her. 'We need your song, Tilly,' they seemed to say. 'The chorus isn’t complete without you.'\n\n[JOYFUL] Tilly closed her eyes and let her voice join the music. At first, it was just a whisper, but soon it grew stronger. The garden filled with her soft, sweet notes, and the magic returned. The bees buzzed louder, the crickets played faster, and the old oak tree swayed happily.\n\n[SLEEPY] As the stars blinked awake, Tilly curled up on her lily pad, her heart full. She had found her place in the twilight chorus, and the garden had never sounded so beautiful. The music wrapped around her like a cozy blanket, and she drifted off to sleep, dreaming of melodies yet to come.",
+    "annotated_text": "[GENTLE] Tilly the tree frog sat very still on her favorite lily pad, her tiny green toes curled around the edge. The garden was bathed in soft blue light, the kind that made everything feel quiet and magical.\n\n[CALM] Every evening, just as the sun dipped below the horizon, the garden would begin to sing. Crickets chirped, fireflies hummed, and the wind whispered through the leaves. Tilly loved the twilight chorus, but she had never joined in.\n\n[CURIOUS] 'I wish I could sing too,' she sighed, listening to the melody of her friends. The bees buzzed in deep tones, the crickets played their tiny violins, and even the old oak tree creaked a slow, steady rhythm. But Tilly’s voice was too soft, too shy.\n\n[MYSTERIOUS] One evening, Tilly noticed something strange. The music was quieter than usual. The bees’ buzzing sounded tired, and the crickets’ chirps were faint. The garden’s magic was fading, and Tilly didn’t know why.\n\n[DRAMATIC_PAUSE] Then, she heard it—a soft, golden hum, like a lullaby. It was coming from the heart of the garden, where the oldest flowers grew. Tilly took a deep breath and hopped toward the sound.\n\n[ADVENTUROUS] As she drew closer, she saw the source of the magic: a cluster of glowing fireflies, their light pulsing like a heartbeat. They were waiting for her. 'We need your song, Tilly,' they seemed to say. 'The chorus isn’t complete without you.'\n\n[JOYFUL] Tilly closed her eyes and let her voice join the music. At first, it was just a whisper, but soon it grew stronger. The garden filled with her soft, sweet notes, and the magic returned. The bees buzzed louder, the crickets played faster, and the old oak tree swayed happily.\n\n[SLEEPY] As the stars blinked awake, Tilly curled up on her lily pad, her heart full. She had found her place in the twilight chorus, and the garden had never sounded so beautiful. The music wrapped around her like a cozy blanket, and she drifted off to sleep, dreaming of melodies yet to come.",
+    "target_age": 3,
+    "age_min": 2,
+    "age_max": 5,
+    "age_group": "2-5",
+    "length": "MEDIUM",
+    "word_count": 333,
+    "duration_seconds": 0,
+    "categories": [
+      "Friendship",
+      "Self-Confidence"
+    ],
+    "theme": "fantasy",
+    "morals": [
+      "Even the smallest voice can make the world more beautiful.",
+      "Belonging isn’t about being the loudest—it’s about being yourself."
+    ],
+    "cover": "/covers/gen-31a6620db402.svg",
+    "musicProfile": "moonlit-meadow",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-31a6_female_2.mp3",
+        "duration_seconds": 159.91,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-31a6_female_1.mp3",
+        "duration_seconds": 190.75,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-31a6_female_3.mp3",
+        "duration_seconds": 152.97,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-31a6_male_2.mp3",
+        "duration_seconds": 146.12,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-31a6_asmr.mp3",
+        "duration_seconds": 172.12,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "neutral",
+    "character": {
+      "name": "Tilly",
+      "identity": "A quiet little dreamer who listens to the world’s hidden music",
+      "special": "She hears the unspoken melodies that make the garden sing",
+      "personality_tags": [
+        "Gentle",
+        "Dreamy"
+      ]
+    },
+    "cover_context": "A lush garden at twilight, bathed in soft blue and golden light, with fireflies glowing like tiny lanterns among the flowers. The air shimmers with magic as the first stars appear, and the leaves rustle gently in the evening breeze.",
+    "lead_character_type": "animal",
+    "universe": "contemporary",
+    "geography": "Ocean/Islands",
+    "life_aspect": "family_home",
+    "plot_archetype": "problem_solving",
+    "diversityFingerprint": {
+      "characterType": "reptile_amphibian",
+      "setting": "garden_farm",
+      "plotShape": "routine_ritual",
+      "scale": "tiny_intimate",
+      "companion": "group_community",
+      "movement": "walking_wandering",
+      "timeOfDay": "twilight_blue_hour",
+      "weather": "magical_atmospheric",
+      "theme": "belonging",
+      "characterTrait": "shy_quiet",
+      "magicType": "time_magic",
+      "season": "seasonal_transition",
+      "senseEmphasis": "auditory"
+    },
+    "mood": "calm",
+    "created_at": "2026-03-15T01:32:15.197785",
+    "updated_at": "2026-03-15T01:32:15.197785",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 3,
+    "musicalBrief": {
+      "storyId": "gen-31a6620db402",
+      "ageGroup": "2-5",
+      "musicalIdentity": {
+        "culturalReference": "celtic",
+        "primaryLoop": "harp_arpeggios",
+        "padCharacter": "forest_hum"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "C"
+      },
+      "melodicCharacter": "cycling_arpeggio",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "forest_night",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "cricket",
+          "leaves"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "whimsical_curiosity",
+        "phase2": "gentle_longing",
+        "phase3": "deep_stillness"
+      }
+    }
+  },
+  {
+    "id": "gen-f3a6cec89977",
+    "type": "long_story",
+    "lang": "en",
+    "title": "Orion and the Song of the Moonlit Tide",
+    "description": "Beneath the endless ocean, where the water hums with ancient melodies, a young jellyfish named Orion discovers a forgotten ritual—one that calls the moonlit tide to dance. But when the song fades too soon, he must find the courage to listen deeper, to the whispers of the sea itself.",
+    "text": "[GENTLE] Orion drifted in the quiet dark, his translucent bell pulsing softly with the rhythm of the deep. The ocean around him was alive with tiny glowing creatures, their light flickering like stars fallen into the water. He loved these nights, when the world above slept and the sea whispered its oldest secrets.\n\n[CURIOUS] Tonight, though, something felt different. The usual hum of the currents was softer, as if the water itself was holding its breath. Orion tilted his head, his long, delicate tentacles trailing behind him like silken threads. He had heard the elders speak of the Moonlit Tide—a rare moment when the sea and sky danced together—but he had never seen it himself.\n\n[MYSTERIOUS] Then, a sound. A low, resonant note, like a conch shell being blown far, far away. It vibrated through the water, making Orion’s bell shimmer with silver light. His heart quickened. Could this be the call of the Moonlit Tide? Without thinking, he began to drift toward the sound, his tentacles tingling with anticipation.\n\n[ADVENTUROUS] The deeper he went, the brighter the water became. Schools of fish darted past him, their scales flashing like scattered coins. A family of seahorses clung to swaying seaweed, their eyes wide with wonder. Orion realized he wasn’t the only one drawn to the sound. The whole ocean was stirring, waking from its usual stillness.\n\n[EXCITED] At last, he reached a vast, open space where the water met the sky. Above him, the moon hung like a pearl, its light spilling down in shimmering ribbons. And there, in the center of it all, was the source of the sound—a great, ancient whale, her voice rising and falling in a song older than the tides. Orion’s bell glowed brighter, echoing her melody.\n\n[JOYFUL] The sea answered. Waves curled and danced, lifting Orion higher until he could almost touch the moon’s reflection. The fish swirled around him, the seahorses twirled, and even the coral below swayed in time. For the first time, Orion felt like he was part of something vast and beautiful, a tiny note in the ocean’s endless song.\n\n[DRAMATIC_PAUSE] Then, just as suddenly as it had begun, the whale’s song faded. The light dimmed, the water stilled, and the fish scattered. Orion’s glow flickered, then went out. The Moonlit Tide was over.\n\n[CURIOUS] But why had it ended so soon? Orion drifted closer to the whale, his tentacles trembling. \"Was that it?\" he asked, his voice barely louder than a ripple. The whale turned her great, wise eye toward him. \"The song is only as strong as the voices that carry it,\" she said. \"And tonight, the sea was quiet.\" Orion frowned. He had heard the song. He had *felt* it. So why hadn’t it lasted?\n\n[CALM] The whale’s words settled over Orion like the gentle weight of the deep. He drifted downward, his tentacles brushing against the soft sand below. The ocean around him was still, but no longer silent. Now, he could hear the small sounds he had always ignored—the click of shrimp, the whisper of seaweed against stone, the distant hum of a ship’s engine far above.\n\n[GENTLE] He closed his eyes—or at least, he imagined closing them, for jellyfish do not have eyelids—and listened. The water carried so many voices. The coral sighed as the current shifted. A crab scuttled across a rock, its claws tapping a rhythm like raindrops. Even the sand seemed to murmur as it settled, grain by grain.\n\n[MYSTERIOUS] Orion realized then that the Moonlit Tide wasn’t just one song. It was a chorus, a thousand tiny melodies woven together. The whale’s voice had been the thread that held them all, but the sea itself was always singing. He had just never known how to listen.\n\n[CALM] He let himself sink deeper, until he was nestled among the swaying fronds of a kelp forest. The plants cradled him, their leaves brushing against his bell like the fingers of a parent tucking a child into bed. The water here was warmer, heated by the earth below, and it wrapped around him like a blanket. He could hear the distant pulse of the ocean’s heart, a slow, steady beat that had been there long before he was born and would remain long after.\n\n[GENTLE] The whale’s song had been beautiful, but it was not the only beauty in the sea. Orion’s own voice, small as it was, was part of the music too. He had just been too afraid to sing. What if he was wrong? What if the others laughed? But now, as he lay in the quiet dark, he understood. The sea didn’t care if he was perfect. It only cared that he was there.\n\n[CALM] Above him, the moon’s light filtered down in shifting patterns, painting the water with silver and blue. The fish had returned, their movements slow and deliberate, as if they, too, were savoring the stillness. Orion let his tentacles drift outward, touching the water as if to say, *I’m here. I’m listening.* And for the first time, he felt the sea answer back—not with words, but with warmth, with belonging.\n\n[SLEEPY] The ocean breathed around him, in and out, in and out. Orion’s bell rose and fell with its rhythm, his glow now a soft, steady pulse. The kelp forest swayed gently, its leaves rustling like pages in a book being closed for the night.\n\n[WHISPERING] The sounds of the deep grew softer. The shrimp’s clicking faded into the background. The crab’s tapping slowed, then stopped. Even the distant hum of the ship’s engine grew fainter, as if the world above was drifting away.\n\n[SLEEPY] Orion’s tentacles curled inward, pulling the water close. The sand beneath him was cool and smooth, cradling him as the current rocked him side to side. The moon’s light dimmed, its silver ribbons dissolving into the dark like sugar in tea.\n\n[WHISPERING] The sea was still singing, but its song was quieter now, a lullaby meant only for those who were listening. Orion’s bell glowed one last time, a faint shimmer, before fading into the dark. The ocean held him, warm and safe, as the night wrapped its arms around them both.\n\n[SLEEPY] And the sea kept its song.",
+    "annotated_text": "[PHASE_1]\n[GENTLE] Orion drifted in the quiet dark, his translucent bell pulsing softly with the rhythm of the deep. The ocean around him was alive with tiny glowing creatures, their light flickering like stars fallen into the water. He loved these nights, when the world above slept and the sea whispered its oldest secrets.\n\n[CURIOUS] Tonight, though, something felt different. The usual hum of the currents was softer, as if the water itself was holding its breath. Orion tilted his head, his long, delicate tentacles trailing behind him like silken threads. He had heard the elders speak of the Moonlit Tide—a rare moment when the sea and sky danced together—but he had never seen it himself.\n\n[MYSTERIOUS] Then, a sound. A low, resonant note, like a conch shell being blown far, far away. It vibrated through the water, making Orion’s bell shimmer with silver light. His heart quickened. Could this be the call of the Moonlit Tide? Without thinking, he began to drift toward the sound, his tentacles tingling with anticipation.\n\n[ADVENTUROUS] The deeper he went, the brighter the water became. Schools of fish darted past him, their scales flashing like scattered coins. A family of seahorses clung to swaying seaweed, their eyes wide with wonder. Orion realized he wasn’t the only one drawn to the sound. The whole ocean was stirring, waking from its usual stillness.\n\n[EXCITED] At last, he reached a vast, open space where the water met the sky. Above him, the moon hung like a pearl, its light spilling down in shimmering ribbons. And there, in the center of it all, was the source of the sound—a great, ancient whale, her voice rising and falling in a song older than the tides. Orion’s bell glowed brighter, echoing her melody.\n\n[JOYFUL] The sea answered. Waves curled and danced, lifting Orion higher until he could almost touch the moon’s reflection. The fish swirled around him, the seahorses twirled, and even the coral below swayed in time. For the first time, Orion felt like he was part of something vast and beautiful, a tiny note in the ocean’s endless song.\n\n[DRAMATIC_PAUSE] Then, just as suddenly as it had begun, the whale’s song faded. The light dimmed, the water stilled, and the fish scattered. Orion’s glow flickered, then went out. The Moonlit Tide was over.\n\n[CURIOUS] But why had it ended so soon? Orion drifted closer to the whale, his tentacles trembling. \"Was that it?\" he asked, his voice barely louder than a ripple. The whale turned her great, wise eye toward him. \"The song is only as strong as the voices that carry it,\" she said. \"And tonight, the sea was quiet.\" Orion frowned. He had heard the song. He had *felt* it. So why hadn’t it lasted?\n[/PHASE_1]\n\n[PHASE_2]\n[CALM] The whale’s words settled over Orion like the gentle weight of the deep. He drifted downward, his tentacles brushing against the soft sand below. The ocean around him was still, but no longer silent. Now, he could hear the small sounds he had always ignored—the click of shrimp, the whisper of seaweed against stone, the distant hum of a ship’s engine far above.\n\n[GENTLE] He closed his eyes—or at least, he imagined closing them, for jellyfish do not have eyelids—and listened. The water carried so many voices. The coral sighed as the current shifted. A crab scuttled across a rock, its claws tapping a rhythm like raindrops. Even the sand seemed to murmur as it settled, grain by grain.\n\n[MYSTERIOUS] Orion realized then that the Moonlit Tide wasn’t just one song. It was a chorus, a thousand tiny melodies woven together. The whale’s voice had been the thread that held them all, but the sea itself was always singing. He had just never known how to listen.\n\n[CALM] He let himself sink deeper, until he was nestled among the swaying fronds of a kelp forest. The plants cradled him, their leaves brushing against his bell like the fingers of a parent tucking a child into bed. The water here was warmer, heated by the earth below, and it wrapped around him like a blanket. He could hear the distant pulse of the ocean’s heart, a slow, steady beat that had been there long before he was born and would remain long after.\n\n[GENTLE] The whale’s song had been beautiful, but it was not the only beauty in the sea. Orion’s own voice, small as it was, was part of the music too. He had just been too afraid to sing. What if he was wrong? What if the others laughed? But now, as he lay in the quiet dark, he understood. The sea didn’t care if he was perfect. It only cared that he was there.\n\n[CALM] Above him, the moon’s light filtered down in shifting patterns, painting the water with silver and blue. The fish had returned, their movements slow and deliberate, as if they, too, were savoring the stillness. Orion let his tentacles drift outward, touching the water as if to say, *I’m here. I’m listening.* And for the first time, he felt the sea answer back—not with words, but with warmth, with belonging.\n[/PHASE_2]\n\n[PHASE_3]\n[SLEEPY] The ocean breathed around him, in and out, in and out. Orion’s bell rose and fell with its rhythm, his glow now a soft, steady pulse. The kelp forest swayed gently, its leaves rustling like pages in a book being closed for the night.\n\n[WHISPERING] The sounds of the deep grew softer. The shrimp’s clicking faded into the background. The crab’s tapping slowed, then stopped. Even the distant hum of the ship’s engine grew fainter, as if the world above was drifting away.\n\n[SLEEPY] Orion’s tentacles curled inward, pulling the water close. The sand beneath him was cool and smooth, cradling him as the current rocked him side to side. The moon’s light dimmed, its silver ribbons dissolving into the dark like sugar in tea.\n\n[WHISPERING] The sea was still singing, but its song was quieter now, a lullaby meant only for those who were listening. Orion’s bell glowed one last time, a faint shimmer, before fading into the dark. The ocean held him, warm and safe, as the night wrapped its arms around them both.\n\n[SLEEPY] And the sea kept its song.\n[/PHASE_3]",
+    "target_age": 7,
+    "age_min": 6,
+    "age_max": 8,
+    "age_group": "6-8",
+    "length": "LONG",
+    "word_count": 1023,
+    "duration_seconds": 0,
+    "categories": [
+      "Adventure",
+      "Friendship"
+    ],
+    "theme": "adventure",
+    "morals": [
+      "Even the smallest voice can be part of something greater when it finds the courage to sing.",
+      "Belonging isn’t about being the loudest—it’s about listening, and knowing you are heard in return."
+    ],
+    "cover": "/covers/gen-f3a6cec89977.svg",
+    "musicProfile": "enchanted-garden",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-f3a6_female_3.mp3",
+        "duration_seconds": 457.81,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-f3a6_female_2.mp3",
+        "duration_seconds": 488.06,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-f3a6_female_1.mp3",
+        "duration_seconds": 580.37,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-f3a6_male_2.mp3",
+        "duration_seconds": 463.97,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-f3a6_asmr.mp3",
+        "duration_seconds": 487.18,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "male",
+    "character": {
+      "name": "Orion",
+      "identity": "A quiet young jellyfish who discovers the music of the deep",
+      "special": "His bell glows in time with the ocean’s ancient songs",
+      "personality_tags": [
+        "Gentle",
+        "Curious"
+      ]
+    },
+    "cover_context": "A vast underwater scene at night, where moonlight filters through the water in shimmering silver ribbons. A kelp forest sways gently in the current, its fronds glowing with bioluminescent light. Tiny fish dart between the plants, and the distant shape of a great whale lingers in the deep blue, her presence felt more than seen. The water is alive with soft, dreamy hues of blue and violet, and the sand below sparkles like scattered stars.",
+    "lead_character_type": "alien",
+    "universe": "futuristic",
+    "geography": "Europe",
+    "life_aspect": "friendship",
+    "plot_archetype": "celebration",
+    "diversityFingerprint": {
+      "characterType": "sea_creature",
+      "setting": "ocean_water",
+      "plotShape": "routine_ritual",
+      "scale": "local_adventure",
+      "companion": "group_community",
+      "movement": "floating_drifting",
+      "timeOfDay": "deep_night_starlight",
+      "weather": "magical_atmospheric",
+      "theme": "belonging",
+      "characterTrait": "shy_quiet",
+      "magicType": "time_magic",
+      "season": "seasonless_timeless",
+      "senseEmphasis": "auditory"
+    },
+    "mood": "curious",
+    "created_at": "2026-03-15T01:38:30.249369",
+    "updated_at": "2026-03-15T01:38:30.249369",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 9,
+    "musicalBrief": {
+      "storyId": "gen-f3a6cec89977",
+      "ageGroup": "6-8",
+      "musicalIdentity": {
+        "culturalReference": "japanese",
+        "primaryLoop": "koto_plucks",
+        "padCharacter": "deep_ocean"
+      },
+      "tonality": {
+        "mode": "dorian",
+        "rootNote": "E"
+      },
+      "melodicCharacter": "descending_lullaby",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "ocean_waves_distant",
+        "natureSoundSecondary": "underwater_bubbling",
+        "ambientEvents": [
+          "waterDrop",
+          "waveCycle"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "curious_wonder",
+        "phase2": "gentle_mystery",
+        "phase3": "deep_stillness"
+      }
+    }
+  },
+  {
+    "id": "gen-f5a086b33ef3",
+    "type": "song",
+    "lang": "en",
+    "title": "Luna and the Nighttime Stargazers",
+    "description": "Every night, the stars gather closer to Earth, twinkling like tiny lanterns. Luna and her family float in their backyard sky-pod, counting the planets and whispering goodnight to the moon. But tonight, the stars seem to hum a lullaby only Luna can almost hear.",
+    "text": "[SINGING]\nClose your eyes, little one so bright,\nStars are blinking in the night.\nMoon is watching, soft and round,\nSafe and warm where dreams are found.\n\n[PAUSE]\n\n[SINGING]\nChorus:\nTwinkle, twinkle, gentle light,\nGuide us through the quiet night.\nYou’re the friend we know so well,\nSinging secrets no one can tell.\n\n[PAUSE]\n\n[SINGING]\nPlanets dance in circles wide,\nJupiter hums a sleepy tide.\nMars is red, but don’t you fear,\nWe are all together here.\n\n[PAUSE]\n\n[SINGING]\nChorus:\nTwinkle, twinkle, gentle light,\nGuide us through the quiet night.\nYou’re the friend we know so well,\nSinging secrets no one can tell.\n\n[PAUSE]\n\n[SLEEPY]\nNow the stars are drifting slow,\nMoonlight hums a soft hello.\nClose your eyes and float away,\nDreaming till the break of day.\n\n[PAUSE]\n\n[HUMMING]\nMmm mmm mmm...\nMmm mmm mmm...\nMmm mmm...",
+    "annotated_text": "[SINGING]\nClose your eyes, little one so bright,\nStars are blinking in the night.\nMoon is watching, soft and round,\nSafe and warm where dreams are found.\n\n[PAUSE]\n\n[SINGING]\nChorus:\nTwinkle, twinkle, gentle light,\nGuide us through the quiet night.\nYou’re the friend we know so well,\nSinging secrets no one can tell.\n\n[PAUSE]\n\n[SINGING]\nPlanets dance in circles wide,\nJupiter hums a sleepy tide.\nMars is red, but don’t you fear,\nWe are all together here.\n\n[PAUSE]\n\n[SINGING]\nChorus:\nTwinkle, twinkle, gentle light,\nGuide us through the quiet night.\nYou’re the friend we know so well,\nSinging secrets no one can tell.\n\n[PAUSE]\n\n[SLEEPY]\nNow the stars are drifting slow,\nMoonlight hums a soft hello.\nClose your eyes and float away,\nDreaming till the break of day.\n\n[PAUSE]\n\n[HUMMING]\nMmm mmm mmm...\nMmm mmm mmm...\nMmm mmm...",
+    "target_age": 3,
+    "age_min": 2,
+    "age_max": 5,
+    "age_group": "2-5",
+    "length": "LONG",
+    "word_count": 127,
+    "duration_seconds": 0,
+    "categories": [
+      "Lullaby",
+      "Space Adventure",
+      "Family Bonding"
+    ],
+    "theme": "space",
+    "morals": [
+      "Even the smallest light can guide us home.",
+      "Belonging is found in the quiet moments we share."
+    ],
+    "cover": "/covers/gen-f5a086b33ef3.svg",
+    "musicProfile": "cosmic-voyage",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-f5a0_female_3.mp3",
+        "duration_seconds": 244.91,
+        "provider": "ace-step"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-f5a0_male_2.mp3",
+        "duration_seconds": 244.91,
+        "provider": "ace-step"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "neutral",
+    "character": {
+      "name": "Luna",
+      "identity": "A dreamy child who believes the stars sing to her at night",
+      "special": "She feels the quiet magic of the night sky like a lullaby",
+      "personality_tags": [
+        "Dreamy",
+        "Gentle"
+      ]
+    },
+    "cover_context": "A deep indigo night sky filled with softly glowing stars, a crescent moon casting silver light over a cozy backyard sky-pod. Distant planets hover like lanterns, their colors muted in the gentle dark, while fireflies flicker below like tiny earthbound stars.",
+    "lead_character_type": "human",
+    "universe": "fantasy_realm",
+    "geography": "Americas",
+    "life_aspect": "friendship",
+    "plot_archetype": "friendship_bonding",
+    "diversityFingerprint": {
+      "characterType": "human_child",
+      "setting": "sky_space",
+      "plotShape": "routine_ritual",
+      "scale": "local_adventure",
+      "companion": "group_community",
+      "movement": "floating_drifting",
+      "timeOfDay": "deep_night_starlight",
+      "weather": "magical_atmospheric",
+      "theme": "belonging",
+      "characterTrait": "dreamy_imaginative",
+      "magicType": "no_magic_realistic",
+      "season": "seasonless_timeless",
+      "senseEmphasis": "visual"
+    },
+    "mood": "calm",
+    "created_at": "2026-03-15T01:45:52.684576",
+    "updated_at": "2026-03-15T01:45:52.684576",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 5
+  },
+  {
+    "id": "gen-f74b95ae583c",
+    "type": "poem",
+    "lang": "en",
+    "title": "Pip and the Evening Dew Dance",
+    "description": "Every summer evening, the garden holds its breath as tiny dewdrops gather on leaves. Pip, a little tree frog, notices one special drop that lingers—daring him to join its quiet, shimmering world before the sun says goodnight.",
+    "text": "[RHYTHMIC]The sun dips low, so soft, so gold,\nA garden still, a tale untold.\n\n[GENTLE]Pip sits small on a leaf so wide,\nWatching drops where the shadows glide.\n\n[CALM]One little drop, so round, so bright,\nSparkles like a star in twilight.\n\n[WHISPERING]\"Come,\" it seems to softly say,\n\"Dance with me before the day.\"\n\n[JOYFUL]Pip hops light—oh, what a sight!\nDew and frog in golden light.\n\n[SLEEPY]The breeze hums low, the air grows sweet,\nAs day and night in dreams meet.",
+    "annotated_text": "[RHYTHMIC]The sun dips low, so soft, so gold,\nA garden still, a tale untold.\n\n[GENTLE]Pip sits small on a leaf so wide,\nWatching drops where the shadows glide.\n\n[CALM]One little drop, so round, so bright,\nSparkles like a star in twilight.\n\n[WHISPERING]\"Come,\" it seems to softly say,\n\"Dance with me before the day.\"\n\n[JOYFUL]Pip hops light—oh, what a sight!\nDew and frog in golden light.\n\n[SLEEPY]The breeze hums low, the air grows sweet,\nAs day and night in dreams meet.",
+    "target_age": 3,
+    "age_min": 2,
+    "age_max": 5,
+    "age_group": "2-5",
+    "length": "SHORT",
+    "word_count": 80,
+    "duration_seconds": 0,
+    "categories": [
+      "Nature",
+      "Friendship"
+    ],
+    "theme": "adventure",
+    "morals": [
+      "Even the quietest moments can hold the greatest magic.",
+      "Belonging can be found in the smallest, gentlest places."
+    ],
+    "cover": "/covers/gen-f74b95ae583c.svg",
+    "musicProfile": "enchanted-garden",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-f74b_female_3.mp3",
+        "duration_seconds": 48.47,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-f74b_female_1.mp3",
+        "duration_seconds": 54.59,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-f74b_female_2.mp3",
+        "duration_seconds": 49.25,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-f74b_male_2.mp3",
+        "duration_seconds": 43.32,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-f74b_asmr.mp3",
+        "duration_seconds": 53.63,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "neutral",
+    "character": {
+      "name": "Pip",
+      "identity": "A shy little frog who listens to the garden’s whispers",
+      "special": "Notices the tiny, fleeting beauty others might miss",
+      "personality_tags": [
+        "Gentle",
+        "Quiet"
+      ]
+    },
+    "cover_context": "A lush summer garden at late afternoon, bathed in golden light. Dewdrops glisten on broad green leaves, while fireflies begin to flicker in the warm, hazy air. A small pond reflects the fading sky, and wildflowers sway gently in the breeze.",
+    "lead_character_type": "atmospheric",
+    "universe": "futuristic",
+    "geography": "East Asia",
+    "life_aspect": "play_discovery",
+    "plot_archetype": "quest_journey",
+    "diversityFingerprint": {
+      "characterType": "reptile_amphibian",
+      "setting": "garden_farm",
+      "plotShape": "routine_ritual",
+      "scale": "tiny_intimate",
+      "companion": "solo",
+      "movement": "floating_drifting",
+      "timeOfDay": "late_afternoon",
+      "weather": "warm_breeze",
+      "theme": "belonging",
+      "characterTrait": "shy_quiet",
+      "magicType": "no_magic_realistic",
+      "season": "summer",
+      "senseEmphasis": "tactile"
+    },
+    "mood": "calm",
+    "created_at": "2026-03-15T01:49:52.768691",
+    "updated_at": "2026-03-15T01:49:52.768691",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 1,
+    "musicalBrief": {
+      "storyId": "gen-f74b95ae583c",
+      "ageGroup": "2-5",
+      "musicalIdentity": {
+        "culturalReference": "chinese",
+        "primaryLoop": "dulcimer_gentle",
+        "padCharacter": "silk_veil"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "C"
+      },
+      "melodicCharacter": "cycling_arpeggio",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "forest_night",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "leaves",
+          "waterDrop"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "curious_whisper",
+        "phase2": "gentle_sway",
         "phase3": "deep_stillness"
       }
     }
