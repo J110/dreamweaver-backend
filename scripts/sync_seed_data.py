@@ -40,7 +40,7 @@ def _build_audio_variants_js(variants: list) -> str:
         lines.append(
             f'        {{ voice: "{v["voice"]}", '
             f'url: "{v["url"]}", '
-            f'duration_seconds: {v["duration_seconds"]} }},'
+            f'duration_seconds: {v.get("duration_seconds", 0)} }},'
         )
     return "[\n" + "\n".join(lines) + "\n      ]"
 
