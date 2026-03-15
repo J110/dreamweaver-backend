@@ -3199,8 +3199,13 @@ def build_flux_prompt(story: dict, axes: dict, mood: str = None) -> str:
     char_age = story.get("character_age", 7)
     is_human = char_visual_key == "human_child"
 
-    # Extract character phrase from description (e.g., "a tiny raindrop named Drizzle")
-    char_phrase = _extract_character_phrase(story)
+    # Prefer structured character.identity from Mistral (available on 99%+ of stories)
+    # Fall back to regex extraction from description only when missing
+    char_obj = story.get("character", {})
+    if isinstance(char_obj, dict) and char_obj.get("identity"):
+        char_phrase = char_obj["identity"]
+    else:
+        char_phrase = _extract_character_phrase(story)
 
     # Build the character description for the prompt
     if is_human:
