@@ -729,7 +729,33 @@ def step_qa(args, state: dict) -> bool:
         save_state(state)
         return True
 
-    qa_passed = []
+    # Skip QA for songs/lullabies — ACE-Step already measures fidelity and quality
+    # during generation with retakes, and the server lacks RAM for Whisper on long audio.
+    content_types = {}
+    try:
+        content = json.loads(CONTENT_PATH.read_text())
+        for item in content:
+            content_types[item.get("id", "")] = item.get("type", "story")
+    except Exception:
+        pass
+
+    song_ids = [sid for sid in qa_ids if content_types.get(sid) == "song"]
+    qa_ids = [sid for sid in qa_ids if content_types.get(sid) != "song"]
+
+    if song_ids:
+        logger.info("  Skipping QA for %d lullaby/song (fidelity checked during generation): %s",
+                     len(song_ids), ", ".join(s[:8] for s in song_ids))
+
+    if not qa_ids:
+        logger.info("  No non-song stories to QA. Skipping.")
+        state["qa_passed"] = song_ids  # Songs auto-pass
+        state["qa_failed"] = []
+        state["qa_failed_variants"] = []
+        state["step_qa"] = "done"
+        save_state(state)
+        return True
+
+    qa_passed = list(song_ids)  # Songs auto-pass
     qa_failed = []
     qa_failed_variants = []  # Per-variant failures: [{story_id, voice}, ...]
 

@@ -26,6 +26,7 @@ import sys
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
 from urllib.parse import urlencode
@@ -1107,6 +1108,99 @@ def _score_lullaby_quality(audio: AudioSegment, style: Optional[dict] = None) ->
     return results
 
 
+def _save_song_qa_report(
+    story: dict,
+    voice: str,
+    duration: float,
+    qa_result: dict,
+    fidelity_result: Optional[dict],
+) -> None:
+    """Save ACE-Step generation-time QA scores as a report file.
+
+    Writes to seed_output/qa_reports/ in the same format as qa_audio.py reports
+    so that _merge_qa_reports() in pipeline_notify.py picks them up for the email.
+    """
+    story_id = story["id"]
+    title = story.get("title", "untitled")
+    qa_dir = BASE_DIR / "seed_output" / "qa_reports"
+    qa_dir.mkdir(parents=True, exist_ok=True)
+
+    # Build lullaby_qa block matching qa_audio.py format
+    lullaby_qa = {
+        "dimensions": qa_result.get("dimensions", {}),
+        "quality_avg": qa_result.get("quality_avg", 0),
+        "warnings": qa_result.get("warnings", []),
+    }
+    if fidelity_result:
+        lullaby_qa["fidelity"] = {
+            "fidelity_score": fidelity_result.get("fidelity_score", 0),
+            "verdict": fidelity_result.get("verdict", "SKIP"),
+            "content_type": fidelity_result.get("content_type", "unknown"),
+        }
+
+    verdict = qa_result.get("verdict", "PASS")
+    reasons = qa_result.get("warnings", [])
+
+    variant_report = {
+        "voice": voice,
+        "duration_seconds": round(duration, 2),
+        "verdict": verdict,
+        "reasons": reasons,
+        "text_fidelity_combined": 0,
+        "quality_average": qa_result.get("quality_avg", 0),
+        "duration_outlier": False,
+        "lullaby_qa": lullaby_qa,
+    }
+
+    # Check if a report for this story already exists today (multiple voices)
+    today_str = datetime.now().strftime("%Y%m%d")
+    song_report_path = qa_dir / f"qa_audio_{today_str}_song_{story_id[:8]}.json"
+
+    if song_report_path.exists():
+        try:
+            existing = json.loads(song_report_path.read_text())
+            for s in existing.get("stories", []):
+                if s.get("story_id") == story_id:
+                    # Append variant to existing story entry
+                    s["variants"].append(variant_report)
+                    break
+            else:
+                existing["stories"].append({
+                    "story_id": story_id,
+                    "title": title,
+                    "median_duration": round(duration, 1),
+                    "variants": [variant_report],
+                })
+            # Update summary
+            total = sum(len(s["variants"]) for s in existing["stories"])
+            passed = sum(1 for s in existing["stories"] for v in s["variants"] if v["verdict"] == "PASS")
+            warned = sum(1 for s in existing["stories"] for v in s["variants"] if v["verdict"] == "WARN")
+            failed = total - passed - warned
+            existing["summary"] = {"total": total, "passed": passed, "warned": warned, "failed": failed}
+            song_report_path.write_text(json.dumps(existing, indent=2, ensure_ascii=False))
+            logger.info("  Updated song QA report: %s", song_report_path.name)
+            return
+        except (json.JSONDecodeError, KeyError):
+            pass  # Fall through to create new
+
+    report = {
+        "summary": {
+            "total": 1,
+            "passed": 1 if verdict == "PASS" else 0,
+            "warned": 1 if verdict == "WARN" else 0,
+            "failed": 1 if verdict == "FAIL" else 0,
+        },
+        "stories": [{
+            "story_id": story_id,
+            "title": title,
+            "median_duration": round(duration, 1),
+            "variants": [variant_report],
+        }],
+    }
+    song_report_path.write_text(json.dumps(report, indent=2, ensure_ascii=False))
+    logger.info("  Saved song QA report: %s", song_report_path.name)
+
+
 def generate_song_variant(
     client: httpx.Client,
     story: dict,
@@ -1280,6 +1374,9 @@ def generate_song_variant(
     size_kb = output_path.stat().st_size / 1024
 
     logger.info("  Saved %s (%.0f KB, %.1f sec)", output_path.name, size_kb, duration)
+
+    # Save QA report so the pipeline email can include generation-time QA scores
+    _save_song_qa_report(story, voice, duration, best_qa, best_fidelity)
 
     return {
         "voice": voice,
