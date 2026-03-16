@@ -252,7 +252,8 @@ def send_pipeline_notification(
 # QA DETAIL NOTIFICATION
 # ═══════════════════════════════════════════════════════════════════════
 
-QA_REPORT_PATH = BASE_DIR / "seed_output" / "qa_reports" / "qa_audio_latest.json"
+QA_REPORTS_DIR = BASE_DIR / "seed_output" / "qa_reports"
+QA_REPORT_PATH = QA_REPORTS_DIR / "qa_audio_latest.json"  # Legacy single-report path
 CONTENT_PATH = BASE_DIR / "seed_output" / "content.json"
 
 
@@ -397,7 +398,7 @@ def _build_qa_html(qa_report: dict, state: dict) -> str:
 
                     reasons_html = ""
                     if reasons:
-                        reasons_html = '<br><span style="color:#9ca3af;font-size:11px;">' + ", ".join(reasons) + '</span>'
+                        reasons_html = '<span style="color:#9ca3af;font-size:11px;">' + ", ".join(reasons) + '</span>'
 
                     fid_color = _score_color(fidelity) if fidelity > 0 else "#9ca3af"
                     fid_text = f"{fidelity:.2f}" if fidelity > 0 else "—"
@@ -408,7 +409,7 @@ def _build_qa_html(qa_report: dict, state: dict) -> str:
                       <td style="padding:6px 8px;text-align:center;">{_verdict_badge(verdict)}</td>
                       <td style="padding:6px 8px;text-align:center;font-size:13px;">{dur:.0f}s{'*' if is_outlier else ''}</td>
                       <td style="padding:6px 8px;text-align:center;font-size:13px;color:{fid_color};">{fid_text}</td>
-                      <td style="padding:6px 8px;font-size:11px;">{reasons_html.lstrip('<br>')}</td>
+                      <td style="padding:6px 8px;font-size:11px;">{reasons_html}</td>
                     </tr>
                     """
 
@@ -477,22 +478,77 @@ def _build_qa_html(qa_report: dict, state: dict) -> str:
     return html
 
 
+def _merge_qa_reports(state: dict) -> dict | None:
+    """Merge all QA reports from the current pipeline run into one combined report.
+
+    The pipeline runs QA per-story, producing a separate report file each time.
+    qa_audio_latest.json only contains the LAST story. This function collects
+    all reports for stories in this run and merges them.
+    """
+    qa_ids = set(state.get("qa_passed", []) + state.get("qa_failed", []))
+    if not qa_ids or not QA_REPORTS_DIR.exists():
+        return None
+
+    # Collect all report files from today, sorted chronologically
+    today_str = datetime.now().strftime("%Y%m%d")
+    report_files = sorted(QA_REPORTS_DIR.glob(f"qa_audio_{today_str}_*.json"))
+
+    merged_stories = []
+    seen_story_ids = set()
+    total_pass = total_warn = total_fail = total_count = 0
+
+    for rpath in report_files:
+        try:
+            report = json.loads(rpath.read_text())
+        except (json.JSONDecodeError, OSError):
+            continue
+        for story in report.get("stories", []):
+            sid = story.get("story_id", "")
+            if sid in qa_ids and sid not in seen_story_ids:
+                seen_story_ids.add(sid)
+                merged_stories.append(story)
+                for v in story.get("variants", []):
+                    total_count += 1
+                    verdict = v.get("verdict", "")
+                    if verdict == "PASS":
+                        total_pass += 1
+                    elif verdict == "WARN":
+                        total_warn += 1
+                    elif verdict == "FAIL":
+                        total_fail += 1
+
+    if not merged_stories:
+        return None
+
+    return {
+        "summary": {
+            "total": total_count,
+            "passed": total_pass,
+            "warned": total_warn,
+            "failed": total_fail,
+        },
+        "stories": merged_stories,
+    }
+
+
 def send_qa_notification(state: dict) -> bool:
     """Send detailed QA report email. Returns True on success."""
     if not RESEND_API_KEY:
         print("  WARNING: RESEND_API_KEY not set — skipping QA email")
         return False
 
-    # Load QA report
-    if not QA_REPORT_PATH.exists():
-        print("  No QA report found — skipping QA email")
-        return False
-
-    try:
-        qa_report = json.loads(QA_REPORT_PATH.read_text())
-    except Exception as e:
-        print(f"  Failed to load QA report: {e}")
-        return False
+    # Merge all QA reports from this run (not just the last one)
+    qa_report = _merge_qa_reports(state)
+    if qa_report is None:
+        # Fallback to legacy single-report path
+        if not QA_REPORT_PATH.exists():
+            print("  No QA report found — skipping QA email")
+            return False
+        try:
+            qa_report = json.loads(QA_REPORT_PATH.read_text())
+        except Exception as e:
+            print(f"  Failed to load QA report: {e}")
+            return False
 
     summary = qa_report.get("summary", {})
     total = summary.get("total", 0)

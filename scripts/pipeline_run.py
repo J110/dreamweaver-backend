@@ -617,6 +617,98 @@ def step_audio(args, state: dict) -> bool:
     return True
 
 
+def _parse_qa_failed_variants(story_id: str) -> list:
+    """Parse the most recent QA report for a story and return failed variants.
+
+    Returns list of dicts: [{"story_id": ..., "voice": ...}, ...]
+    """
+    qa_dir = SEED_OUTPUT / "qa_reports"
+    if not qa_dir.exists():
+        return []
+
+    # Find the most recent QA report that contains this story_id
+    # Reports are named qa_audio_YYYYMMDD_HHMMSS.json, sorted by name = sorted by time
+    reports = sorted(qa_dir.glob("qa_audio_*.json"), reverse=True)
+    for report_path in reports:
+        try:
+            report = json.loads(report_path.read_text())
+            for story in report.get("stories", []):
+                if story.get("story_id") == story_id:
+                    failed = []
+                    for variant in story.get("variants", []):
+                        if variant.get("verdict") == "FAIL":
+                            failed.append({
+                                "story_id": story_id,
+                                "voice": variant["voice"],
+                                "reasons": variant.get("reasons", []),
+                            })
+                    return failed
+        except (json.JSONDecodeError, KeyError):
+            continue
+    return []
+
+
+def _strip_qa_failed_variants(failed_variants: list):
+    """Remove QA-failed audio variants from content.json and delete their audio files.
+
+    This ensures bad audio never ships to production. The story itself still gets
+    published (with covers, musical briefs, etc.) — only the bad variant is removed.
+    """
+    if not failed_variants:
+        return
+
+    # Build lookup: story_id → set of failed voices
+    failed_lookup = {}
+    for fv in failed_variants:
+        failed_lookup.setdefault(fv["story_id"], set()).add(fv["voice"])
+
+    # --- 1. Strip from content.json ---
+    content_path = SEED_OUTPUT / "content.json"
+    if content_path.exists():
+        content = json.loads(content_path.read_text())
+        stripped_count = 0
+        for item in content:
+            sid = item.get("id", "")
+            if sid in failed_lookup:
+                avs = item.get("audio_variants", [])
+                original_len = len(avs)
+                item["audio_variants"] = [
+                    v for v in avs if v.get("voice") not in failed_lookup[sid]
+                ]
+                stripped_count += original_len - len(item["audio_variants"])
+        if stripped_count:
+            content_path.write_text(json.dumps(content, indent=2, ensure_ascii=False))
+            logger.info("  Stripped %d QA-failed variants from content.json", stripped_count)
+
+    # --- 2. Also strip from data/content.json (API serving copy) ---
+    api_content_path = BASE_DIR / "data" / "content.json"
+    if api_content_path.exists():
+        api_content = json.loads(api_content_path.read_text())
+        for item in api_content:
+            sid = item.get("id", "")
+            if sid in failed_lookup:
+                avs = item.get("audio_variants", [])
+                item["audio_variants"] = [
+                    v for v in avs if v.get("voice") not in failed_lookup[sid]
+                ]
+        api_content_path.write_text(json.dumps(api_content, indent=2, ensure_ascii=False))
+
+    # --- 3. Delete bad audio files from backend ---
+    backend_audio_dir = BASE_DIR / "audio" / "pre-gen"
+    web_audio_dir = WEB_DIR / "public" / "audio" / "pre-gen" if WEB_DIR.exists() else None
+    deleted = 0
+    for fv in failed_variants:
+        short_id = fv["story_id"][:8]
+        filename = f"{short_id}_{fv['voice']}.mp3"
+        for audio_dir in [backend_audio_dir, web_audio_dir]:
+            if audio_dir and (audio_dir / filename).exists():
+                (audio_dir / filename).unlink()
+                deleted += 1
+                logger.info("  Deleted QA-failed audio: %s", audio_dir / filename)
+    if deleted:
+        logger.info("  Deleted %d QA-failed audio files total", deleted)
+
+
 def step_qa(args, state: dict) -> bool:
     """Step 3: QA audio.
 
@@ -639,6 +731,7 @@ def step_qa(args, state: dict) -> bool:
 
     qa_passed = []
     qa_failed = []
+    qa_failed_variants = []  # Per-variant failures: [{story_id, voice}, ...]
 
     for sid in qa_ids:
         cmd = [
@@ -666,12 +759,24 @@ def step_qa(args, state: dict) -> bool:
             logger.error("  QA process error for %s", sid)
             qa_failed.append(sid)
 
+        # Parse QA report to collect per-variant failures
+        qa_failed_variants.extend(_parse_qa_failed_variants(sid))
+
     state["qa_passed"] = qa_passed
     state["qa_failed"] = qa_failed
+    state["qa_failed_variants"] = qa_failed_variants
     state["step_qa"] = "done"
     save_state(state)
 
     logger.info("  QA Results: %d passed, %d failed", len(qa_passed), len(qa_failed))
+    if qa_failed_variants:
+        logger.info("  Failed variants: %s",
+                     ", ".join(f"{v['story_id'][:8]}/{v['voice']}" for v in qa_failed_variants))
+
+    # Strip failed variants from content.json and remove bad audio files
+    if qa_failed_variants:
+        _strip_qa_failed_variants(qa_failed_variants)
+
     return True
 
 
