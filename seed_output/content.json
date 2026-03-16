@@ -18057,7 +18057,7 @@
       ]
     },
     "cover_context": "A lush summer garden at late afternoon, bathed in golden light. Dewdrops glisten on broad green leaves, while fireflies begin to flicker in the warm, hazy air. A small pond reflects the fading sky, and wildflowers sway gently in the breeze.",
-    "lead_character_type": "atmospheric",
+    "lead_character_type": "animal",
     "universe": "futuristic",
     "geography": "East Asia",
     "life_aspect": "play_discovery",
@@ -18112,6 +18112,482 @@
       "emotionalArc": {
         "phase1": "curious_whisper",
         "phase2": "gentle_sway",
+        "phase3": "deep_stillness"
+      }
+    }
+  },
+  {
+    "id": "gen-37aca7d2ae35",
+    "type": "poem",
+    "lang": "en",
+    "title": "Alder and the Whispering Comet",
+    "description": "High above the mist-laced peaks, a comet streaks across the sky, leaving trails of stardust that shimmer like forgotten dreams. Alder, the ancient mountain sentinel, breathes in the night’s secrets, his roots humming with the promise of change.",
+    "text": "[RHYTHMIC] High on the peak where the cold winds play,\nAlder stands tall in the silver-gray.\nHis leaves like hands catch the comet’s glow,\nA fleeting touch from the heavens below.\n\n[GENTLE] The stardust falls in whispers light,\nA scent of time, of day and night.\nHe breathes it deep, this magic rare,\nA fragrance sweet on the midnight air.\n\n[CALM] The mountains hum, the valleys sigh,\nAs seasons dance beneath the sky.\nAlder knows what the stars impart—\nA cycle old, a quiet art.\n\n[WHISPERING] The comet fades, the night grows still,\nYet something lingers, soft and chill.\nA promise kept in roots so deep,\nWhere ancient dreams lie safe in sleep.\n\n[SLEEPY] And Alder waits, so wise, so true,\nFor dawn to wake the world anew.",
+    "annotated_text": "[RHYTHMIC] High on the peak where the cold winds play,\nAlder stands tall in the silver-gray.\nHis leaves like hands catch the comet’s glow,\nA fleeting touch from the heavens below.\n\n[GENTLE] The stardust falls in whispers light,\nA scent of time, of day and night.\nHe breathes it deep, this magic rare,\nA fragrance sweet on the midnight air.\n\n[CALM] The mountains hum, the valleys sigh,\nAs seasons dance beneath the sky.\nAlder knows what the stars impart—\nA cycle old, a quiet art.\n\n[WHISPERING] The comet fades, the night grows still,\nYet something lingers, soft and chill.\nA promise kept in roots so deep,\nWhere ancient dreams lie safe in sleep.\n\n[SLEEPY] And Alder waits, so wise, so true,\nFor dawn to wake the world anew.",
+    "target_age": 10,
+    "age_min": 9,
+    "age_max": 12,
+    "age_group": "9-12",
+    "length": "SHORT",
+    "word_count": 123,
+    "duration_seconds": 0,
+    "categories": [
+      "Fantasy",
+      "Nature"
+    ],
+    "theme": "fantasy",
+    "morals": [
+      "Even the oldest among us hold the wisdom of change.",
+      "Belonging is found in the quiet rhythms of the world."
+    ],
+    "cover": "/covers/gen-37aca7d2ae35.svg",
+    "musicProfile": "moonlit-meadow",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-37ac_female_2.mp3",
+        "duration_seconds": 70.94,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-37ac_female_1.mp3",
+        "duration_seconds": 83.15,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-37ac_female_3.mp3",
+        "duration_seconds": 61.69,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-37ac_asmr.mp3",
+        "duration_seconds": 67.56,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-37ac_male_2.mp3",
+        "duration_seconds": 66.15,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "male",
+    "character": {
+      "name": "Alder",
+      "identity": "A wise old tree who guards the mountain’s secrets",
+      "special": "He can sense the shifting seasons in the scent of the wind",
+      "personality_tags": [
+        "Wise",
+        "Patient"
+      ]
+    },
+    "cover_context": "A towering, gnarled tree silhouetted against a deep indigo night sky, its leaves dusted with glowing stardust. Below, mist swirls around jagged mountain peaks, while a comet’s tail streaks across the heavens, leaving trails of shimmering light.",
+    "lead_character_type": "celestial",
+    "universe": "futuristic",
+    "geography": "Africa",
+    "life_aspect": "dreams_ambitions",
+    "plot_archetype": "problem_solving",
+    "diversityFingerprint": {
+      "characterType": "plant_tree",
+      "setting": "mountain_highland",
+      "plotShape": "cyclical_seasonal",
+      "scale": "local_adventure",
+      "companion": "solo",
+      "movement": "sitting_watching",
+      "timeOfDay": "deep_night_starlight",
+      "weather": "magical_atmospheric",
+      "theme": "belonging",
+      "characterTrait": "wise_old_soul",
+      "magicType": "glowing_bioluminescent",
+      "season": "seasonal_transition",
+      "senseEmphasis": "olfactory"
+    },
+    "mood": "calm",
+    "created_at": "2026-03-16T01:44:01.031128",
+    "updated_at": "2026-03-16T01:44:01.031128",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 2,
+    "musicalBrief": {
+      "storyId": "gen-37aca7d2ae35",
+      "ageGroup": "9-12",
+      "musicalIdentity": {
+        "culturalReference": "nordic",
+        "primaryLoop": "cello_sustains",
+        "padCharacter": "starfield"
+      },
+      "tonality": {
+        "mode": "aeolian",
+        "rootNote": "F"
+      },
+      "melodicCharacter": "drone_with_ornaments",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "wind_high",
+        "natureSoundSecondary": "distant_thunder",
+        "ambientEvents": []
+      },
+      "emotionalArc": {
+        "phase1": "mysterious_anticipation",
+        "phase2": "ethereal_wonder",
+        "phase3": "deep_stillness"
+      }
+    }
+  },
+  {
+    "id": "gen-a0cbd0c0da52",
+    "type": "song",
+    "lang": "en",
+    "title": "Milo and the Nighttime Nest Song",
+    "description": "As twilight paints the windows soft blue, a little sparrow named Milo fluffs his feathers in the family nest. The house hums with quiet footsteps and whispered goodnights, but one sound calls him—his mother’s gentle lullaby drifting through the warm air.",
+    "text": "[SINGING]\nClose your eyes, little one so sweet,\nMama’s here with love so neat.\nStars are blinking, soft and low,\nDrifting slow where night winds go.\n\n[PAUSE]\n\n[SINGING]\nMmm, mmm, time to rest your head,\nSnuggle deep in your cozy bed.\nMoon is watching, safe and bright,\nGuarding you through all the night.\n\n[PAUSE]\n\n[SINGING]\nPapa hums a quiet tune,\nUnderneath the silver moon.\nSisters whisper, soft and light,\nDreaming sweet of morning’s light.\n\n[PAUSE]\n\n[SINGING]\nMmm, mmm, time to rest your head,\nSnuggle deep in your cozy bed.\nMoon is watching, safe and bright,\nGuarding you through all the night.\n\n[PAUSE]\n\n[SINGING]\nMilo tucks his beak so small,\nListens to the nighttime call.\nFeathers warm and heart so full,\nLove is here—it wraps him whole.\n\n[PAUSE]\n\n[SINGING]\nMmm, mmm, time to rest your head,\nSnuggle deep in your cozy bed.\nMoon is watching, safe and bright,\nGuarding you through all the night.\n\n[PAUSE]\n\n[SLEEPY]\nNow the house is still and deep,\nMilo’s dreams begin to creep.\nSoftest wings and gentle breeze,\nSleeping safe with family.\n\n[HUMMING]\nMmm mmm mmm...\nMmm mmm mmm...\nMmm mmm...",
+    "annotated_text": "[SINGING]\nClose your eyes, little one so sweet,\nMama’s here with love so neat.\nStars are blinking, soft and low,\nDrifting slow where night winds go.\n\n[PAUSE]\n\n[SINGING]\nMmm, mmm, time to rest your head,\nSnuggle deep in your cozy bed.\nMoon is watching, safe and bright,\nGuarding you through all the night.\n\n[PAUSE]\n\n[SINGING]\nPapa hums a quiet tune,\nUnderneath the silver moon.\nSisters whisper, soft and light,\nDreaming sweet of morning’s light.\n\n[PAUSE]\n\n[SINGING]\nMmm, mmm, time to rest your head,\nSnuggle deep in your cozy bed.\nMoon is watching, safe and bright,\nGuarding you through all the night.\n\n[PAUSE]\n\n[SINGING]\nMilo tucks his beak so small,\nListens to the nighttime call.\nFeathers warm and heart so full,\nLove is here—it wraps him whole.\n\n[PAUSE]\n\n[SINGING]\nMmm, mmm, time to rest your head,\nSnuggle deep in your cozy bed.\nMoon is watching, safe and bright,\nGuarding you through all the night.\n\n[PAUSE]\n\n[SLEEPY]\nNow the house is still and deep,\nMilo’s dreams begin to creep.\nSoftest wings and gentle breeze,\nSleeping safe with family.\n\n[HUMMING]\nMmm mmm mmm...\nMmm mmm mmm...\nMmm mmm...",
+    "target_age": 3,
+    "age_min": 2,
+    "age_max": 5,
+    "age_group": "2-5",
+    "length": "MEDIUM",
+    "word_count": 171,
+    "duration_seconds": 0,
+    "categories": [
+      "Family",
+      "Bedtime"
+    ],
+    "theme": "family",
+    "morals": [
+      "Family love keeps us safe and warm, no matter the time of day.",
+      "Small moments of togetherness make the biggest comfort."
+    ],
+    "cover": "/covers/gen-a0cbd0c0da52.svg",
+    "musicProfile": "dreamy-clouds",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-a0cb_female_3.mp3",
+        "duration_seconds": 244.91,
+        "provider": "ace-step"
+      },
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-a0cb_female_2.mp3",
+        "duration_seconds": 244.91,
+        "provider": "ace-step"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "male",
+    "character": {
+      "name": "Milo",
+      "identity": "A gentle sparrow who loves his family’s nighttime songs",
+      "special": "He feels the warmth of every note his family sings to him",
+      "personality_tags": [
+        "Kind",
+        "Gentle"
+      ]
+    },
+    "cover_context": "A cozy wooden home at twilight, windows glowing warm yellow, curtains fluttering in a soft breeze. A nest rests on a shelf near a flickering oil lamp, surrounded by tiny woven blankets and a scattering of feathers.",
+    "lead_character_type": "bird",
+    "universe": "historical",
+    "geography": "East Asia",
+    "life_aspect": "friendship",
+    "plot_archetype": "celebration",
+    "diversityFingerprint": {
+      "characterType": "bird",
+      "setting": "cozy_indoor",
+      "plotShape": "routine_ritual",
+      "scale": "tiny_intimate",
+      "companion": "group_community",
+      "movement": "sleeping_resting",
+      "timeOfDay": "twilight_blue_hour",
+      "weather": "warm_breeze",
+      "theme": "belonging",
+      "characterTrait": "kind_nurturing",
+      "magicType": "no_magic_realistic",
+      "season": "seasonless_timeless",
+      "senseEmphasis": "auditory"
+    },
+    "mood": "calm",
+    "created_at": "2026-03-16T01:46:48.095632",
+    "updated_at": "2026-03-16T01:46:48.095632",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 5
+  },
+  {
+    "id": "gen-dfaac825420d",
+    "type": "long_story",
+    "lang": "en",
+    "title": "Zylo and the Scent of the Sleeping Stars",
+    "description": "Deep in the Whispering Glades, where the air hums with invisible melodies, the stars above begin to glow with a soft, golden scent. Zylo, a tiny star-whisperer with wings like dandelion fluff, senses something magical stirring—and he must follow the fragrance before it fades into the night.",
+    "text": "[GENTLE] High above the world, where the clouds are made of cotton candy and the wind sings lullabies, there lived a little creature named Zylo. He was no bigger than a teacup, with wings that shimmered like soap bubbles and a nose that could sniff out magic from miles away. [CURIOUS] Zylo loved nothing more than floating through the Whispering Glades, where the trees hummed secrets and the flowers bloomed in colors no one had names for.\n\nOne evening, as Zylo drifted between the branches of a giant moonflower, he noticed something strange. [MYSTERIOUS] The air smelled different—sweeter, softer, like honey and stardust mixed together. [EXCITED] He gasped and fluttered his wings. \"That’s the scent of the Sleeping Stars!\" he whispered to himself. [ADVENTUROUS] The Sleeping Stars were rare and magical, and they only appeared when the world was ready for a little extra wonder. Zylo knew he had to find them before their glow faded away.\n\n[JOYFUL] With a giggle, Zylo spread his wings and let the wind carry him higher. The sky was painted in shades of lavender and peach, and the first fireflies of the evening began to twinkle like tiny lanterns. [CURIOUS] \"Where are you, Sleeping Stars?\" he called, sniffing the air. The scent grew stronger, leading him toward a cluster of clouds that sparkled like sugar crystals. [DRAMATIC_PAUSE] And then—he saw them. [EXCITED] Dozens of tiny stars, no bigger than pebbles, glowing softly in the twilight. They smelled like warm milk and freshly baked bread, and they pulsed with a gentle, golden light.\n\n[GENTLE] Zylo hovered above them, his heart full of wonder. \"You’re even more beautiful than I imagined,\" he sighed. The Sleeping Stars didn’t speak, but they seemed to hum a quiet, happy tune. [ADVENTUROUS] Zylo knew he had to do something special for them. After all, the Sleeping Stars only visited when the world needed a little magic. And tonight, the world needed Zylo’s kindness.\n\n[CALM] Zylo landed softly on a cloud that felt like a fluffy pillow. The Sleeping Stars glowed around him, their light warm and steady. [GENTLE] He closed his eyes and took a deep breath. The scent of the stars filled his chest, making him feel safe and happy. [MYSTERIOUS] He wondered where the stars had come from. Maybe they were pieces of the moon, or perhaps they were dreams that had fallen from the sky.\n\n[CALM] The air was still. The clouds were still. Even the fireflies had stopped blinking for a moment, as if they, too, were listening to the quiet hum of the stars. [GENTLE] Zylo reached out a tiny hand and brushed one of the stars. It felt like touching a soap bubble—soft and warm, with just a little bit of tickle. [CALM] The star didn’t move, but its glow pulsed brighter for a second, as if it were saying thank you.\n\n[GENTLE] Zylo smiled. He knew what he had to do. The Sleeping Stars needed a place to rest, somewhere cozy and safe. [CALM] He looked around the Whispering Glades and spotted a hollow in the trunk of the oldest tree. It was lined with moss as soft as a kitten’s fur, and it smelled like earth and rain. [MYSTERIOUS] Perfect.\n\n[CALM] One by one, Zylo gently picked up the Sleeping Stars and carried them to their new home. They were light as feathers, and their glow made his hands tingle. [GENTLE] He tucked them into the moss, arranging them in a circle like a tiny constellation. The stars hummed softly, their light flickering like candle flames. [CALM] The hollow in the tree was warm. The air was warm. Even Zylo’s heart felt warm.\n\n[GENTLE] He sat beside the Sleeping Stars and watched them glow. The scent of honey and stardust filled the air, and the world around him grew quieter. [CALM] The fireflies blinked slowly, their light matching the rhythm of the stars. The wind sighed through the trees, and the clouds above drifted like lazy sheep. [GENTLE] Everything was soft. Everything was still.\n\n[SLEEPY] The stars glowed softly. The tree hummed softly. The night wrapped around Zylo like a blanket.\n\n[WHISPERING] His wings slowed. His breath slowed. His eyelids grew heavy.\n\n[SLEEPY] The moss was soft. The air was soft. The light was soft.\n\n[WHISPERING] Zylo curled up beside the Sleeping Stars. Their glow pulsed like a heartbeat.\n\n[SLEEPY] Safe. Warm. Still.\n\n[WHISPERING] The world was quiet. The world was kind. The world was home.\n\n[SLEEPY] The stars hummed... the wind sighed... the clouds drifted...\n\n[WHISPERING] Close your eyes...\n\n[SLEEPY] Safe... and warm... and still...",
+    "annotated_text": "[PHASE_1]\n\n[GENTLE] High above the world, where the clouds are made of cotton candy and the wind sings lullabies, there lived a little creature named Zylo. He was no bigger than a teacup, with wings that shimmered like soap bubbles and a nose that could sniff out magic from miles away. [CURIOUS] Zylo loved nothing more than floating through the Whispering Glades, where the trees hummed secrets and the flowers bloomed in colors no one had names for.\n\nOne evening, as Zylo drifted between the branches of a giant moonflower, he noticed something strange. [MYSTERIOUS] The air smelled different—sweeter, softer, like honey and stardust mixed together. [EXCITED] He gasped and fluttered his wings. \"That’s the scent of the Sleeping Stars!\" he whispered to himself. [ADVENTUROUS] The Sleeping Stars were rare and magical, and they only appeared when the world was ready for a little extra wonder. Zylo knew he had to find them before their glow faded away.\n\n[JOYFUL] With a giggle, Zylo spread his wings and let the wind carry him higher. The sky was painted in shades of lavender and peach, and the first fireflies of the evening began to twinkle like tiny lanterns. [CURIOUS] \"Where are you, Sleeping Stars?\" he called, sniffing the air. The scent grew stronger, leading him toward a cluster of clouds that sparkled like sugar crystals. [DRAMATIC_PAUSE] And then—he saw them. [EXCITED] Dozens of tiny stars, no bigger than pebbles, glowing softly in the twilight. They smelled like warm milk and freshly baked bread, and they pulsed with a gentle, golden light.\n\n[GENTLE] Zylo hovered above them, his heart full of wonder. \"You’re even more beautiful than I imagined,\" he sighed. The Sleeping Stars didn’t speak, but they seemed to hum a quiet, happy tune. [ADVENTUROUS] Zylo knew he had to do something special for them. After all, the Sleeping Stars only visited when the world needed a little magic. And tonight, the world needed Zylo’s kindness.\n\n[/PHASE_1]\n\n\n[PHASE_2]\n\n[CALM] Zylo landed softly on a cloud that felt like a fluffy pillow. The Sleeping Stars glowed around him, their light warm and steady. [GENTLE] He closed his eyes and took a deep breath. The scent of the stars filled his chest, making him feel safe and happy. [MYSTERIOUS] He wondered where the stars had come from. Maybe they were pieces of the moon, or perhaps they were dreams that had fallen from the sky.\n\n[CALM] The air was still. The clouds were still. Even the fireflies had stopped blinking for a moment, as if they, too, were listening to the quiet hum of the stars. [GENTLE] Zylo reached out a tiny hand and brushed one of the stars. It felt like touching a soap bubble—soft and warm, with just a little bit of tickle. [CALM] The star didn’t move, but its glow pulsed brighter for a second, as if it were saying thank you.\n\n[GENTLE] Zylo smiled. He knew what he had to do. The Sleeping Stars needed a place to rest, somewhere cozy and safe. [CALM] He looked around the Whispering Glades and spotted a hollow in the trunk of the oldest tree. It was lined with moss as soft as a kitten’s fur, and it smelled like earth and rain. [MYSTERIOUS] Perfect.\n\n[CALM] One by one, Zylo gently picked up the Sleeping Stars and carried them to their new home. They were light as feathers, and their glow made his hands tingle. [GENTLE] He tucked them into the moss, arranging them in a circle like a tiny constellation. The stars hummed softly, their light flickering like candle flames. [CALM] The hollow in the tree was warm. The air was warm. Even Zylo’s heart felt warm.\n\n[GENTLE] He sat beside the Sleeping Stars and watched them glow. The scent of honey and stardust filled the air, and the world around him grew quieter. [CALM] The fireflies blinked slowly, their light matching the rhythm of the stars. The wind sighed through the trees, and the clouds above drifted like lazy sheep. [GENTLE] Everything was soft. Everything was still.\n\n[/PHASE_2]\n\n\n[PHASE_3]\n\n[SLEEPY] The stars glowed softly. The tree hummed softly. The night wrapped around Zylo like a blanket.\n\n[WHISPERING] His wings slowed. His breath slowed. His eyelids grew heavy.\n\n[SLEEPY] The moss was soft. The air was soft. The light was soft.\n\n[WHISPERING] Zylo curled up beside the Sleeping Stars. Their glow pulsed like a heartbeat.\n\n[SLEEPY] Safe. Warm. Still.\n\n[WHISPERING] The world was quiet. The world was kind. The world was home.\n\n[SLEEPY] The stars hummed... the wind sighed... the clouds drifted...\n\n[WHISPERING] Close your eyes...\n\n[SLEEPY] Safe... and warm... and still...\n\n[/PHASE_3]",
+    "target_age": 3,
+    "age_min": 2,
+    "age_max": 5,
+    "age_group": "2-5",
+    "length": "LONG",
+    "word_count": 732,
+    "duration_seconds": 0,
+    "categories": [
+      "Adventure",
+      "Kindness"
+    ],
+    "theme": "adventure",
+    "morals": [
+      "Kindness makes the world feel like home.",
+      "Even the smallest creatures can bring the greatest magic."
+    ],
+    "cover": "/covers/gen-dfaac825420d.svg",
+    "musicProfile": "enchanted-garden",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-dfaa_female_1.mp3",
+        "duration_seconds": 433.04,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-dfaa_female_3.mp3",
+        "duration_seconds": 349.44,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-dfaa_female_2.mp3",
+        "duration_seconds": 384.04,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-dfaa_male_2.mp3",
+        "duration_seconds": 354.46,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-dfaa_asmr.mp3",
+        "duration_seconds": 376.72,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "male",
+    "character": {
+      "name": "Zylo",
+      "identity": "A dreamy little star-whisperer with a heart full of wonder",
+      "special": "He can smell magic in the air and carry the glow of the stars",
+      "personality_tags": [
+        "Dreamy",
+        "Kind"
+      ]
+    },
+    "cover_context": "A surreal twilight sky where clouds drift like cotton candy, glowing softly with golden stardust. Fireflies flicker like tiny lanterns, and the branches of a giant, ancient tree cradle a hollow lined with velvety moss, pulsing with warm, bioluminescent light. The air shimmers with the scent of honey and magic.",
+    "lead_character_type": "alien",
+    "universe": "historical",
+    "geography": "East Asia",
+    "life_aspect": "school_learning",
+    "plot_archetype": "quest_journey",
+    "diversityFingerprint": {
+      "characterType": "mythical_creature",
+      "setting": "imaginary_surreal",
+      "plotShape": "cyclical_seasonal",
+      "scale": "local_adventure",
+      "companion": "solo",
+      "movement": "floating_drifting",
+      "timeOfDay": "timeless",
+      "weather": "magical_atmospheric",
+      "theme": "belonging",
+      "characterTrait": "dreamy_imaginative",
+      "magicType": "glowing_bioluminescent",
+      "season": "seasonless_timeless",
+      "senseEmphasis": "olfactory"
+    },
+    "mood": "curious",
+    "created_at": "2026-03-16T01:39:45.816994",
+    "updated_at": "2026-03-16T01:39:45.816994",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 7,
+    "musicalBrief": {
+      "storyId": "gen-dfaac825420d",
+      "ageGroup": "2-5",
+      "musicalIdentity": {
+        "culturalReference": "indian",
+        "primaryLoop": "flute_breathy",
+        "padCharacter": "starfield"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "G"
+      },
+      "melodicCharacter": "cycling_arpeggio",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "forest_night",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "cricket",
+          "leaves"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "curious_wonder",
+        "phase2": "gentle_journey",
+        "phase3": "deep_stillness"
+      }
+    }
+  },
+  {
+    "id": "gen-39dc657abb17",
+    "type": "story",
+    "lang": "en",
+    "title": "Rosie and the Scent of Home",
+    "description": "In a sunlit garden where the air hums with the sweetness of blooming flowers, a little rosemary bush named Rosie notices the world changing around her. The breeze carries whispers of seasons shifting, and she wonders what it means to belong to a place that never stays the same.",
+    "text": "[GENTLE] Hush, hush, little Rosie,\nsoft in the golden light.\nLeaves so green, so still, so sweet,\nwarm breeze sings just right.\n\n[CALM] Shh, shh, the garden hums,\na tune so soft and low.\nRosie breathes the scent so deep,\nwhere the summer roses grow.\n\n[CURIOUS] Oh, what’s that in the air so sweet?\nA whisper, soft and new.\nThe wind brings smells of earth and rain,\na change is coming through.\n\n[WHISPERING] 'Stay, stay,' the old oak tree sighs,\n'but seasons turn, my dear.'\nRosie nods, her leaves so small,\n'Then I’ll grow right here.'\n\n[JOYFUL] And so she waits, and so she grows,\nthrough sun and rain and breeze.\nHer scent stays soft, her roots stay strong,\na home in every season’s ease.\n\n[SLEEPY] Hush now, Rosie, close your leaves,\ndream of golden light.\nThe garden hums a lullaby,\nand all is calm and bright.",
+    "annotated_text": "[GENTLE] Hush, hush, little Rosie,\nsoft in the golden light.\nLeaves so green, so still, so sweet,\nwarm breeze sings just right.\n\n[CALM] Shh, shh, the garden hums,\na tune so soft and low.\nRosie breathes the scent so deep,\nwhere the summer roses grow.\n\n[CURIOUS] Oh, what’s that in the air so sweet?\nA whisper, soft and new.\nThe wind brings smells of earth and rain,\na change is coming through.\n\n[WHISPERING] 'Stay, stay,' the old oak tree sighs,\n'but seasons turn, my dear.'\nRosie nods, her leaves so small,\n'Then I’ll grow right here.'\n\n[JOYFUL] And so she waits, and so she grows,\nthrough sun and rain and breeze.\nHer scent stays soft, her roots stay strong,\na home in every season’s ease.\n\n[SLEEPY] Hush now, Rosie, close your leaves,\ndream of golden light.\nThe garden hums a lullaby,\nand all is calm and bright.",
+    "target_age": 0,
+    "age_min": 0,
+    "age_max": 1,
+    "age_group": "0-1",
+    "length": "MEDIUM",
+    "word_count": 141,
+    "duration_seconds": 0,
+    "categories": [
+      "Nature",
+      "Family"
+    ],
+    "theme": "family",
+    "morals": [
+      "Home is not just a place, but the love and care you grow with.",
+      "Change can be beautiful when you embrace it with an open heart."
+    ],
+    "cover": "/covers/gen-39dc657abb17.svg",
+    "musicProfile": "dreamy-clouds",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-39dc_female_3.mp3",
+        "duration_seconds": 69.53,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-39dc_female_1.mp3",
+        "duration_seconds": 91.76,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-39dc_female_2.mp3",
+        "duration_seconds": 69.63,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-39dc_male_2.mp3",
+        "duration_seconds": 69.33,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-39dc_asmr.mp3",
+        "duration_seconds": 79.54,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "female",
+    "character": {
+      "name": "Rosie",
+      "identity": "A dreamy little rosemary bush who listens to the whispers of the wind",
+      "special": "She understands the language of scents and the stories they tell",
+      "personality_tags": [
+        "Gentle",
+        "Dreamy"
+      ]
+    },
+    "cover_context": "A sunlit garden at late afternoon, bathed in golden light. Delicate rosemary and roses bloom side by side, their petals and leaves glowing softly. A warm breeze stirs the air, carrying the scent of earth and flowers, while the sky transitions from blue to a gentle orange.",
+    "lead_character_type": "human",
+    "universe": "historical",
+    "geography": "India",
+    "life_aspect": "sleep_comfort",
+    "plot_archetype": "discovery",
+    "diversityFingerprint": {
+      "characterType": "plant_tree",
+      "setting": "garden_farm",
+      "plotShape": "cyclical_seasonal",
+      "scale": "tiny_intimate",
+      "companion": "character_and_environment",
+      "movement": "sitting_watching",
+      "timeOfDay": "late_afternoon",
+      "weather": "warm_breeze",
+      "theme": "belonging",
+      "characterTrait": "dreamy_imaginative",
+      "magicType": "music_sound_magic",
+      "season": "seasonal_transition",
+      "senseEmphasis": "olfactory"
+    },
+    "mood": "calm",
+    "created_at": "2026-03-16T01:49:31.666551",
+    "updated_at": "2026-03-16T01:49:31.666551",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 2,
+    "musicalBrief": {
+      "storyId": "gen-39dc657abb17",
+      "ageGroup": "0-1",
+      "musicalIdentity": {
+        "culturalReference": "middle_eastern",
+        "primaryLoop": "hang_drum_melody",
+        "padCharacter": "silk_veil"
+      },
+      "tonality": {
+        "mode": "minor_pentatonic",
+        "rootNote": "D"
+      },
+      "melodicCharacter": "descending_lullaby",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "wind_gentle",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "leaves",
+          "waterDrop"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "soft_wonder",
+        "phase2": "gentle_warmth",
         "phase3": "deep_stillness"
       }
     }
