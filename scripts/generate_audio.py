@@ -48,8 +48,8 @@ CONTENT_PATH = BASE_DIR / "seed_output" / "content.json"
 OUTPUT_DIR = BASE_DIR / "audio" / "pre-gen"
 
 # ── Chatterbox Modal endpoint ────────────────────────────────────────────
-CHATTERBOX_URL = "https://j110--dreamweaver-chatterbox-tts.modal.run"
-CHATTERBOX_HEALTH = "https://j110--dreamweaver-chatterbox-health.modal.run"
+CHATTERBOX_URL = "https://mohan-32314--dreamweaver-chatterbox-tts.modal.run"
+CHATTERBOX_HEALTH = "https://mohan-32314--dreamweaver-chatterbox-health.modal.run"
 
 # ── SongGen Modal endpoint (for singing voice generation) ────────────────
 SONGGEN_URL = os.getenv("SONGGEN_URL", "")

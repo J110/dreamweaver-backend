@@ -14,8 +14,8 @@ from pathlib import Path
 
 import httpx
 
-CHATTERBOX_URL = "https://j110--dreamweaver-chatterbox-tts.modal.run"
-HEALTH_URL = "https://j110--dreamweaver-chatterbox-health.modal.run"
+CHATTERBOX_URL = "https://mohan-32314--dreamweaver-chatterbox-tts.modal.run"
+HEALTH_URL = "https://mohan-32314--dreamweaver-chatterbox-health.modal.run"
 
 # Output directory
 OUTPUT_DIR = Path(__file__).parent.parent.parent / "dreamweaver-web" / "public" / "audio" / "samples"

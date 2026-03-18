@@ -74,7 +74,7 @@ logger = logging.getLogger("pipeline")
 # ── Pipeline steps ───────────────────────────────────────────────────────
 STEPS = ["generate", "audio", "qa", "enrich", "mood", "covers", "sync", "clips", "publish", "deploy_prod"]
 
-CHATTERBOX_HEALTH = "https://j110--dreamweaver-chatterbox-health.modal.run"
+CHATTERBOX_HEALTH = "https://mohan-32314--dreamweaver-chatterbox-health.modal.run"
 
 
 def load_state() -> dict:
