@@ -1,5 +1,6 @@
 """Trending content endpoints."""
 
+from datetime import datetime, timezone
 from typing import Optional
 
 from fastapi import APIRouter, HTTPException, Depends, status, Query
@@ -21,20 +22,39 @@ class TrendingResponse(BaseModel):
 
 
 def _calculate_trending_score(content: dict) -> float:
-    """Calculate trending score based on likes and views."""
+    """Calculate trending score with recency boost.
+
+    New content (< 7 days) gets a bonus so it always appears in results.
+    The bonus decays linearly from 1000 (brand new) to 0 (7+ days old).
+    """
     likes = content.get("like_count", 0)
     views = content.get("view_count", 0)
-    return (likes * 5) + views
+    engagement = (likes * 5) + views
+
+    # Recency boost: new stories surface immediately
+    created = content.get("created_at", "")
+    if created:
+        try:
+            created_dt = datetime.fromisoformat(created.replace("Z", "+00:00"))
+            if created_dt.tzinfo is None:
+                created_dt = created_dt.replace(tzinfo=timezone.utc)
+            age_days = (datetime.now(timezone.utc) - created_dt).total_seconds() / 86400
+            if age_days < 7:
+                engagement += 1000 * (1 - age_days / 7)
+        except (ValueError, TypeError):
+            pass
+
+    return engagement
 
 
 @router.get("", response_model=TrendingResponse)
 async def get_trending(
-    limit: int = Query(20, ge=1, le=100),
+    limit: int = Query(20, ge=1, le=200),
     lang: Optional[str] = Query(None, description="Filter by language: 'en' or 'hi'"),
     db_client=Depends(get_db_client),
 ) -> TrendingResponse:
     """
-    Get trending content sorted by engagement (likes * 5 + views).
+    Get trending content sorted by engagement + recency boost.
 
     Args:
         limit: Maximum number of items to return
@@ -53,7 +73,7 @@ async def get_trending(
         if lang:
             items = [item for item in items if item.get("lang", "en") == lang]
 
-        # Sort by trending score
+        # Sort by trending score (includes recency boost)
         items.sort(key=_calculate_trending_score, reverse=True)
 
         # Limit results
@@ -79,7 +99,7 @@ async def get_trending(
 
 @router.get("/weekly", response_model=TrendingResponse)
 async def get_weekly_trending(
-    limit: int = Query(20, ge=1, le=100),
+    limit: int = Query(20, ge=1, le=200),
     db_client=Depends(get_db_client),
 ) -> TrendingResponse:
     """
@@ -125,7 +145,7 @@ async def get_weekly_trending(
 @router.get("/by-category/{category}", response_model=TrendingResponse)
 async def get_trending_by_category(
     category: str,
-    limit: int = Query(20, ge=1, le=100),
+    limit: int = Query(20, ge=1, le=200),
     db_client=Depends(get_db_client),
 ) -> TrendingResponse:
     """
