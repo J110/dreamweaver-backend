@@ -1272,7 +1272,7 @@ def step_publish(args, state: dict) -> bool:
         web_cwd = str(WEB_DIR)
         frontend_cmds = [
             (["git", "add", "src/utils/seedData.js",
-              "public/audio/pre-gen/", "public/covers/"], "Frontend: git add"),
+              "public/covers/"], "Frontend: git add"),
             (["git", "commit", "-m", commit_msg, "--allow-empty"], "Frontend: git commit"),
             (["git", "push", "origin", "main"], "Frontend: git push"),
         ]
