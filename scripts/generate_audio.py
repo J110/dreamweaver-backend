@@ -155,13 +155,49 @@ _MARKER_RE = re.compile(
 )
 
 # ── Voice mapping per language ───────────────────────────────────────────
-# Using user-provided real voice recordings (female_1/2/3, male_1/2/3)
+# Using user-provided real voice recordings (female_1/2/3/4, male_1/2/3)
 # These are high-quality human voice samples converted to 24kHz WAV
 # Hindi voices have _hi suffix (separate Hindi voice recordings)
+#
+# LEGACY: VOICE_MAP is only used as fallback when mood-based selection
+# is not available (e.g., --voice flag, or stories without mood field).
+# New pipeline uses get_voices_for_content() from voice_service.py.
 VOICE_MAP = {
     "en": ["female_1", "female_2", "female_3", "male_2", "asmr"],
     "hi": ["female_1_hi", "female_2_hi", "female_3_hi", "male_2_hi", "asmr_hi"],
 }
+
+# ── Mood-based voice selection ──────────────────────────────────────────
+# Import from voice_service for mood × age × content-type voice selection.
+# Falls back to VOICE_MAP if import fails (backward compat).
+try:
+    sys.path.insert(0, str(BASE_DIR / "app" / "services" / "tts"))
+    from voice_service import get_voices_for_content, resolve_voice_id
+    _HAS_MOOD_VOICES = True
+except ImportError:
+    _HAS_MOOD_VOICES = False
+
+def get_mood_voices(story: dict, lang: str = "en") -> list:
+    """Get 2 mood-appropriate voice IDs for a story.
+
+    Returns actual Chatterbox voice file IDs (e.g., female_1, male_2).
+    Falls back to VOICE_MAP if mood-based selection is unavailable.
+    """
+    if not _HAS_MOOD_VOICES:
+        return VOICE_MAP.get(lang, VOICE_MAP["en"])
+
+    content_type = story.get("type", "story")
+    mood = story.get("mood", "calm")
+    age_group = story.get("age_group", "6-8")
+
+    # Songs use SongGen, not Chatterbox — skip mood selection
+    if content_type == "song":
+        return VOICE_MAP.get(lang, VOICE_MAP["en"])
+
+    # Get 2 descriptive voice names and resolve to file IDs
+    desc_voices = get_voices_for_content(mood, age_group, content_type)
+    voice_ids = [resolve_voice_id(v, lang) for v in desc_voices]
+    return voice_ids
 
 # Song variants: 5 instrument-specific lullaby styles (Harp, Guitar, Piano, Cello, Flute)
 SONG_VOICE_MAP = {
@@ -1911,7 +1947,8 @@ def main():
                 continue
             voices = voice_map.get(lang, voice_map["en"])
         else:
-            voices = VOICE_MAP.get(lang, VOICE_MAP["en"])
+            # Use mood-based 2-voice selection (falls back to VOICE_MAP if unavailable)
+            voices = get_mood_voices(story, lang)
         if args.voice:
             voices = [v for v in voices if v == args.voice]
             if not voices:

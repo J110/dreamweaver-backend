@@ -93,40 +93,42 @@ VOICE_TAGS = {
 
 
 # ── Voice Assignment ─────────────────────────────────────────────────────
+# Uses mood-based voice selection from voice_service.py.
+# Falls back to legacy random assignment if import fails.
 
-def get_daily_voice_assignment():
-    """Deterministic daily coin flip — same date = same assignment."""
-    today = date.today().isoformat()
-    flip = int(hashlib.md5(today.encode()).hexdigest(), 16) % 2
-    if flip == 0:
-        return {"story": "female_1", "poem": "asmr", "lullaby": "default"}
-    else:
-        return {"story": "asmr", "poem": "female_1", "lullaby": "default"}
+try:
+    sys.path.insert(0, str(BASE_DIR / "app" / "services" / "tts"))
+    from voice_service import get_clip_voice, resolve_voice_id
+    _HAS_MOOD_VOICES = True
+except ImportError:
+    _HAS_MOOD_VOICES = False
 
 
-def get_voice_for_story(story, voice_assignment):
-    """Get the voice variant to use for a given story based on today's assignment."""
-    content_type = story.get("type", "story").lower()
-    if content_type == "song":
-        assigned = voice_assignment.get("lullaby", "default")
-    elif content_type == "poem":
-        assigned = voice_assignment.get("poem", "female_1")
-    else:
-        assigned = voice_assignment.get("story", "female_1")
+def get_voice_for_story(story, voice_assignment=None):
+    """Get the voice variant to use for a given story's clip.
 
-    # For "default" (lullabies), pick the first available variant
+    Uses mood-based selection: picks one of the 2 mood voices,
+    alternating daily via deterministic hash.
+    """
     variants = story.get("audio_variants", [])
     if not variants:
         return None, None
 
-    if assigned == "default":
+    content_type = story.get("type", "story").lower()
+
+    # Songs (lullabies): just use first available variant
+    if content_type == "song":
         v = variants[0]
         return v["voice"], v["url"]
 
-    # Try to find the assigned voice
-    for v in variants:
-        if v["voice"] == assigned:
-            return v["voice"], v["url"]
+    # Mood-based selection for stories/poems
+    if _HAS_MOOD_VOICES:
+        desc_voice = get_clip_voice(story)
+        voice_id = resolve_voice_id(desc_voice, story.get("lang", "en"))
+        # Find this voice in the available variants
+        for v in variants:
+            if v["voice"] == voice_id:
+                return v["voice"], v["url"]
 
     # Fallback: use first available
     v = variants[0]
@@ -601,9 +603,7 @@ def pick_unclipped(stories, voice, output_dir):
 
 def generate_daily_clips(stories, output_dir, force=False, dry_run=False):
     """Generate 6 clips per day: 3 new + 3 back-catalog."""
-    voices = get_daily_voice_assignment()
-    logger.info("Voice assignment: story=%s, poem=%s, lullaby=%s",
-                voices["story"], voices["poem"], voices["lullaby"])
+    logger.info("Using mood-based voice selection for clips")
 
     today = date.today().isoformat()
 
@@ -626,40 +626,50 @@ def generate_daily_clips(stories, output_dir, force=False, dry_run=False):
     # --- 3 NEW CLIPS ---
     if new_stories:
         story = new_stories[0]
-        voice, url = get_voice_for_story(story, voices)
+        voice, url = get_voice_for_story(story)
         if voice:
             clips_plan.append(("NEW story", story, voice, url))
 
     if new_poems:
         poem = new_poems[0]
-        voice, url = get_voice_for_story(poem, voices)
+        voice, url = get_voice_for_story(poem)
         if voice:
             clips_plan.append(("NEW poem", poem, voice, url))
 
     if new_lullabies:
         lullaby = new_lullabies[0]
-        voice, url = get_voice_for_story(lullaby, voices)
+        voice, url = get_voice_for_story(lullaby)
         if voice:
             clips_plan.append(("NEW lullaby", lullaby, voice, url))
 
     # --- 3 BACK-CATALOG CLIPS ---
-    old_story = pick_unclipped(all_stories, voices["story"], output_dir)
-    if old_story:
-        voice, url = get_voice_for_story(old_story, voices)
+    # For back-catalog, pick stories that don't have clips yet
+    for old_story in all_stories:
+        voice, url = get_voice_for_story(old_story)
         if voice:
-            clips_plan.append(("CATALOG story", old_story, voice, url))
+            short_id = old_story["id"][:8]
+            clip_path = output_dir / f"{short_id}_{voice}_clip.mp4"
+            if not clip_path.exists():
+                clips_plan.append(("CATALOG story", old_story, voice, url))
+                break
 
-    old_poem = pick_unclipped(all_poems, voices["poem"], output_dir)
-    if old_poem:
-        voice, url = get_voice_for_story(old_poem, voices)
+    for old_poem in all_poems:
+        voice, url = get_voice_for_story(old_poem)
         if voice:
-            clips_plan.append(("CATALOG poem", old_poem, voice, url))
+            short_id = old_poem["id"][:8]
+            clip_path = output_dir / f"{short_id}_{voice}_clip.mp4"
+            if not clip_path.exists():
+                clips_plan.append(("CATALOG poem", old_poem, voice, url))
+                break
 
-    old_lullaby = pick_unclipped(all_lullabies, voices["lullaby"], output_dir)
-    if old_lullaby:
-        voice, url = get_voice_for_story(old_lullaby, voices)
+    for old_lullaby in all_lullabies:
+        voice, url = get_voice_for_story(old_lullaby)
         if voice:
-            clips_plan.append(("CATALOG lullaby", old_lullaby, voice, url))
+            short_id = old_lullaby["id"][:8]
+            clip_path = output_dir / f"{short_id}_{voice}_clip.mp4"
+            if not clip_path.exists():
+                clips_plan.append(("CATALOG lullaby", old_lullaby, voice, url))
+                break
 
     # Cap to MAX_CLIPS_PER_RUN
     if len(clips_plan) > MAX_CLIPS_PER_RUN:
@@ -727,8 +737,7 @@ def main():
             logger.error("Story not found: %s", args.story_id)
             sys.exit(1)
 
-        voices = get_daily_voice_assignment()
-        voice, url = get_voice_for_story(story, voices)
+        voice, url = get_voice_for_story(story)
         if not voice:
             logger.error("No audio variant available for %s", args.story_id)
             sys.exit(1)
@@ -748,10 +757,9 @@ def main():
 
     elif args.batch:
         # Batch: generate for all unclipped stories
-        voices = get_daily_voice_assignment()
         plan = []
         for story in stories:
-            voice, url = get_voice_for_story(story, voices)
+            voice, url = get_voice_for_story(story)
             if voice:
                 short_id = story["id"][:8]
                 clip_path = output_dir / f"{short_id}_{voice}_clip.mp4"

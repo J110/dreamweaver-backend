@@ -1221,11 +1221,10 @@ def build_fresh_plan(count_stories: int = 1, count_poems: int = 1,
         force_long = (content_type == "story" and i >= count_stories and i < all_stories)
 
         # Pick random diversity dimensions
-        # Lullabies (songs) always use 2-5 age group for instrument variety.
-        # Age 0-1 lullabies are a cappella only (no instruments), so using 2-5
-        # ensures each lullaby gets 2 randomly selected instruments from 5 options.
+        # Lullabies (songs) are only for ages 0-1 and 2-5.
+        # Alternate roughly 40% 0-1 / 60% 2-5 to maintain healthy ratio.
         if content_type == "song":
-            age_group = "2-5"
+            age_group = _rng.choices(["0-1", "2-5"], weights=[40, 60], k=1)[0]
         else:
             age_group = _rng.choice(age_groups_list)
         ag_info = AGE_GROUPS[age_group]
