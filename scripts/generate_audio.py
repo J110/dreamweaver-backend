@@ -215,6 +215,21 @@ def get_mp3_duration(filepath: Path) -> float:
 # Text parsing
 # ═════════════════════════════════════════════════════════════════════════
 
+def _strip_inline_markers(text: str) -> str:
+    """Strip inline markers that wrap 1-2 words (e.g. [EMPHASIS]dark[/EMPHASIS]).
+
+    These markers wrap short words within a sentence. Isolating them into
+    separate TTS calls produces garbage (Chatterbox needs sentence context).
+    Instead, strip the markers and let the word flow naturally in context.
+    """
+    # Match [MARKER]word(s)[/MARKER] where the content is short (1-5 words)
+    inline_re = re.compile(
+        r"\[(EMPHASIS|SAFETY)\](.{1,40}?)\[/\1\]",
+        re.IGNORECASE,
+    )
+    return inline_re.sub(r"\2", text)
+
+
 def parse_annotated_text(text: str, content_type: str = "story") -> List[dict]:
     """Parse annotated text into segments with emotion parameters.
 
@@ -223,6 +238,10 @@ def parse_annotated_text(text: str, content_type: str = "story") -> List[dict]:
     These are backward-compatible — existing stories without these markers
     parse identically to before.
     """
+    # Pre-process: strip inline markers that wrap short words within sentences.
+    # These must NOT be split into separate TTS calls (single words produce garbage).
+    text = _strip_inline_markers(text)
+
     segments = []
     base_profile = CONTENT_TYPE_PROFILES.get(content_type, CONTENT_TYPE_PROFILES["story"])
     current_profile = dict(base_profile)
