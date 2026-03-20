@@ -20021,5 +20021,306 @@
         "phase3": "deep_stillness"
       }
     }
+  },
+  {
+    "id": "gen-a59c2de7e523",
+    "type": "story",
+    "lang": "en",
+    "title": "Riley and the Storm of Stars",
+    "description": "When Riley’s prized star map is torn apart by their older sibling, the night sky itself seems to tremble with their anger. But among the glowing nebulae and swirling comets, something unexpected waits—something soft, bright, and impossible to ignore.",
+    "text": "[GENTLE] Riley’s fingers clenched around the crumpled edges of their star map. [DRAMATIC] The [EMPHASIS]perfect[/EMPHASIS] constellations were ruined—smeared, torn, just like that. [EXCITED] 'It wasn’t FAIR!' they shouted, voice echoing into the quiet night.\n\n[ADVENTUROUS] Without thinking, Riley stomped toward the backyard, boots kicking up dust. The grass prickled against their ankles, but they didn’t care. [DRAMATIC] They needed to [EMPHASIS]move[/EMPHASIS], to [EMPHASIS]feel[/EMPHASIS] something besides the hot, tight feeling in their chest. [WHISPERING] So they ran—past the fence, past the old oak tree, until the world blurred into streaks of silver and black.\n\n[CURIOUS] Then, Riley stopped. [DRAMATIC_PAUSE] The sky above them was alive. Not just stars—whole rivers of light, swirling like paint in water. A comet streaked past, its tail brushing Riley’s cheek like a cool, glowing finger. [GENTLE] They didn’t want it to be beautiful. Not now. But it was.\n\n[JOYFUL] Riley reached out, letting the stardust cling to their skin. It tingled, warm and soft, like holding sunlight. [laugh] The anger still hummed inside them, but quieter now, like a storm that had spent itself. [SLEEPY] The stars pulsed gently, as if whispering, *It’s okay to be tired.* And Riley was. So, so tired.",
+    "annotated_text": "[GENTLE] Riley’s fingers clenched around the crumpled edges of their star map. [DRAMATIC] The [EMPHASIS]perfect[/EMPHASIS] constellations were ruined—smeared, torn, just like that. [EXCITED] 'It wasn’t FAIR!' they shouted, voice echoing into the quiet night.\n\n[ADVENTUROUS] Without thinking, Riley stomped toward the backyard, boots kicking up dust. The grass prickled against their ankles, but they didn’t care. [DRAMATIC] They needed to [EMPHASIS]move[/EMPHASIS], to [EMPHASIS]feel[/EMPHASIS] something besides the hot, tight feeling in their chest. [WHISPERING] So they ran—past the fence, past the old oak tree, until the world blurred into streaks of silver and black.\n\n[CURIOUS] Then, Riley stopped. [DRAMATIC_PAUSE] The sky above them was alive. Not just stars—whole rivers of light, swirling like paint in water. A comet streaked past, its tail brushing Riley’s cheek like a cool, glowing finger. [GENTLE] They didn’t want it to be beautiful. Not now. But it was.\n\n[JOYFUL] Riley reached out, letting the stardust cling to their skin. It tingled, warm and soft, like holding sunlight. [laugh] The anger still hummed inside them, but quieter now, like a storm that had spent itself. [SLEEPY] The stars pulsed gently, as if whispering, *It’s okay to be tired.* And Riley was. So, so tired.",
+    "target_age": 7,
+    "age_min": 6,
+    "age_max": 8,
+    "age_group": "6-8",
+    "length": "SHORT",
+    "word_count": 185,
+    "duration_seconds": 0,
+    "categories": [
+      "Emotional Growth",
+      "Space Adventure"
+    ],
+    "theme": "space",
+    "morals": [
+      "Anger is a storm—it doesn’t last forever, even when it feels like it will.",
+      "Sometimes the universe reminds us that beauty exists, even when we’re too upset to see it."
+    ],
+    "cover": "/covers/gen-a59c2de7e523.svg",
+    "musicProfile": "cosmic-voyage",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-a59c_female_2.mp3",
+        "duration_seconds": 108.22,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-a59c_male_2.mp3",
+        "duration_seconds": 97.1,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "neutral",
+    "character": {
+      "name": "Riley",
+      "identity": "A fierce little stargazer who believes the sky holds all the answers",
+      "special": "Their hands can catch stardust and hold its glow for a little while",
+      "personality_tags": [
+        "Determined",
+        "Dreamy"
+      ]
+    },
+    "cover_context": "A vast, swirling night sky ablaze with bioluminescent nebulae—deep purples, blues, and golds—with comets streaking like brushstrokes across the darkness. The horizon glows faintly, as if the universe itself is breathing.",
+    "lead_character_type": "human",
+    "universe": "prehistoric",
+    "geography": "India",
+    "life_aspect": "friendship",
+    "plot_archetype": "discovery",
+    "diversityFingerprint": {
+      "characterType": "human_child",
+      "setting": "sky_space",
+      "plotShape": "lost_and_found",
+      "mood": null,
+      "scale": "personal",
+      "companion": "character_and_environment",
+      "movement": "flying_swimming",
+      "timeOfDay": "deep_night_starlight",
+      "weather": "magical_atmospheric",
+      "theme": "letting_go",
+      "characterTrait": "stubborn_determined",
+      "magicType": "glowing_bioluminescent",
+      "season": "seasonless_timeless",
+      "senseEmphasis": "tactile"
+    },
+    "mood": "angry",
+    "created_at": "2026-03-20T01:32:14.816524",
+    "updated_at": "2026-03-20T01:32:14.816524",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 2,
+    "musicalBrief": {
+      "storyId": "gen-a59c2de7e523",
+      "ageGroup": "6-8",
+      "musicalIdentity": {
+        "culturalReference": "nordic",
+        "primaryLoop": "cello_sustains",
+        "padCharacter": "starfield"
+      },
+      "tonality": {
+        "mode": "dorian",
+        "rootNote": "A"
+      },
+      "melodicCharacter": "cycling_arpeggio",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 64
+      },
+      "environment": {
+        "natureSoundPrimary": "river_stream",
+        "natureSoundSecondary": "distant_thunder",
+        "ambientEvents": [
+          "chimes",
+          "waterDrop"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "soft_wonder",
+        "phase2": "gentle_tension",
+        "phase3": "deep_stillness"
+      }
+    }
+  },
+  {
+    "id": "gen-c05399108488",
+    "type": "song",
+    "lang": "en",
+    "title": "Orion and the Velvet Night",
+    "description": "High above a sleeping garden, a gentle star named Orion hums to the earth below, weaving warmth into the soil and leaves. Tonight, the world feels extra still—and Orion wonders if the garden is whispering back.",
+    "text": "[SINGING]\nOrion glows so soft and bright,\nWatching over fields at night.\nWarm his light on every leaf,\nGentle touch to soothe their grief.\n\n[PAUSE]\n\n[SINGING]\nHush now, little ones below,\nDream of petals, soft and slow.\nI’ll be here till morning light,\nGuarding every velvet night.\n\n[PAUSE]\n\n[SINGING]\nBreezes dance on silver beams,\nCarry whispers, soft as dreams.\nTouch the earth with golden thread,\nTuck each blossom into bed.\n\n[PAUSE]\n\n[SINGING]\nHush now, little ones below,\nDream of petals, soft and slow.\nI’ll be here till morning light,\nGuarding every velvet night.\n\n[PAUSE]\n\n[SLEEPY]\nNow the stars begin to sigh,\nClose their eyes up in the sky.\nOrion hums a sleepy tune,\nUnderneath the silver moon.\n\n[PAUSE]\n\n[SINGING]\nHush now, little ones below,\nDream of petals, soft and slow.\nI’ll be here till morning light,\nGuarding every velvet night.\n\n[HUMMING]\nMmm mmm mmm...\nMmm mmm mmm...\nMmm...",
+    "annotated_text": "[SINGING]\nOrion glows so soft and bright,\nWatching over fields at night.\nWarm his light on every leaf,\nGentle touch to soothe their grief.\n\n[PAUSE]\n\n[SINGING]\nHush now, little ones below,\nDream of petals, soft and slow.\nI’ll be here till morning light,\nGuarding every velvet night.\n\n[PAUSE]\n\n[SINGING]\nBreezes dance on silver beams,\nCarry whispers, soft as dreams.\nTouch the earth with golden thread,\nTuck each blossom into bed.\n\n[PAUSE]\n\n[SINGING]\nHush now, little ones below,\nDream of petals, soft and slow.\nI’ll be here till morning light,\nGuarding every velvet night.\n\n[PAUSE]\n\n[SLEEPY]\nNow the stars begin to sigh,\nClose their eyes up in the sky.\nOrion hums a sleepy tune,\nUnderneath the silver moon.\n\n[PAUSE]\n\n[SINGING]\nHush now, little ones below,\nDream of petals, soft and slow.\nI’ll be here till morning light,\nGuarding every velvet night.\n\n[HUMMING]\nMmm mmm mmm...\nMmm mmm mmm...\nMmm...",
+    "target_age": 3,
+    "age_min": 2,
+    "age_max": 5,
+    "age_group": "2-5",
+    "length": "SHORT",
+    "word_count": 136,
+    "duration_seconds": 0,
+    "categories": [
+      "Lullaby",
+      "Celestial Story",
+      "Nature Tale"
+    ],
+    "theme": "bedtime",
+    "morals": [
+      "Even the smallest light can bring warmth and comfort.",
+      "Rest is a gentle gift we give to ourselves and others."
+    ],
+    "cover": "/covers/gen-c05399108488.svg",
+    "musicProfile": "starlight-lullaby",
+    "music_type": "ambient",
+    "audio_variants": [],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "male",
+    "character": {
+      "name": "Orion",
+      "identity": "A kind star who cradles the earth with his glow",
+      "special": "His light touches the world like a lullaby, soothing all it meets",
+      "personality_tags": [
+        "Gentle",
+        "Kind"
+      ]
+    },
+    "cover_context": "A moonlit garden at night, bathed in soft silver light, with dew-kissed petals and leaves glowing faintly. Fireflies drift lazily between the flowers, and the air shimmers with quiet magic.",
+    "lead_character_type": "celestial",
+    "universe": "mythological",
+    "geography": "Arctic/Polar",
+    "life_aspect": "play_discovery",
+    "plot_archetype": "discovery",
+    "diversityFingerprint": {
+      "characterType": "celestial_weather",
+      "setting": "garden_farm",
+      "plotShape": "routine_ritual",
+      "mood": null,
+      "scale": "tiny_intimate",
+      "companion": "character_and_environment",
+      "movement": "floating_drifting",
+      "timeOfDay": "deep_night_starlight",
+      "weather": "magical_atmospheric",
+      "theme": "rest_stillness",
+      "characterTrait": "kind_nurturing",
+      "magicType": "glowing_bioluminescent",
+      "season": "seasonless_timeless",
+      "senseEmphasis": "tactile"
+    },
+    "mood": "angry",
+    "created_at": "2026-03-20T01:46:14.337054",
+    "updated_at": "2026-03-20T01:46:14.337054",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0
+  },
+  {
+    "id": "gen-1bef176313bd",
+    "type": "long_story",
+    "lang": "en",
+    "title": "Lulla and the Whispering Wheat Fields",
+    "description": "As the sun dips low, the wheat fields begin to hum with a secret song—one only the smallest sparrow can hear. Lulla, a gentle bird with feathers like golden thread, sets off to gather her family before the music fades into the twilight.",
+    "text": "[GENTLE] The sun was slipping behind the hills, painting the sky in soft pinks and oranges. [CURIOUS] Lulla, a little sparrow with feathers the color of warm honey, perched on the lowest branch of the old apple tree. She tilted her head, listening. [EXCITED] There it was again—the whispering song of the wheat fields! A soft, rustling melody that only she could hear.\n\n[ADVENTUROUS] 'Mama! Papa! The wheat is singing!' Lulla chirped, fluttering her wings. [JOYFUL] Her family was scattered across the garden—Mama was gathering seeds near the sunflowers, Papa was teaching her little brothers how to fly, and Grandma was dozing in the shade. [CURIOUS] 'It’s the most beautiful sound,' Lulla said, hopping from foot to foot. 'We have to listen together!'\n\n[MYSTERIOUS] The wind carried the song closer, wrapping around Lulla like a cozy blanket. [EXCITED] 'Hurry!' she called to her family. 'The wheat is waiting!' [laugh] Her little brothers giggled as they tumbled through the air, their tiny wings still wobbly. [GENTLE] Mama smiled and ruffled Lulla’s feathers. 'Lead the way, little one,' she said.\n\n[ADVENTUROUS] Lulla took off, darting between the tall stalks of wheat. The song grew louder, sweeter, filling the air with warmth. [CURIOUS] The wheat swayed gently, as if dancing to the music. [DRAMATIC_PAUSE] ...And then, Lulla saw something magical. [EXCITED] Tiny fireflies were flickering in the wheat, their lights blinking in time with the song!\n\n[JOYFUL] 'Look!' Lulla chirped. 'The fireflies are singing too!' [chuckle] Her family gathered around, their eyes wide with wonder. [GENTLE] The golden fields stretched out before them, alive with music and light. [WHISPERING] 'This is our song,' Lulla whispered. 'A song for all of us.'\n\n[CALM] The wheat swayed softly, brushing against Lulla’s feathers like a gentle hug. [GENTLE] The air was warm, filled with the scent of earth and summer. The fireflies glowed brighter, their light dancing on the tips of the wheat stalks. [CALM] Lulla closed her eyes and listened. The song was everywhere—inside her, around her, part of her.\n\n[GENTLE] Mama perched beside her, her wings wrapped around Lulla’s shoulders. [CALM] 'Do you feel it?' Mama whispered. 'The song is in the wind, in the wheat, in us.' [GENTLE] Lulla nodded, her heart full. The music was like a soft blanket, wrapping them all together.\n\n[CALM] Papa and the little ones settled into the wheat, their feathers rustling softly. [GENTLE] Grandma hummed along, her voice low and sweet. The fireflies flickered above them, their lights like tiny stars. [CALM] The world was quiet, except for the song. The song was everything.\n\n[GENTLE] The wheat was soft beneath Lulla’s feet. The air was soft against her face. The light was soft, golden, and warm. [CALM] The song wrapped around them like a lullaby, slow and steady. [GENTLE] Lulla’s wings grew heavy. Her eyelids fluttered. The music carried her, safe and warm.\n\n[CALM] The fireflies dimmed, their light fading into the twilight. The wheat stopped swaying, still and quiet. [GENTLE] The song softened, becoming a whisper, then a sigh. [CALM] The world was still. The world was soft. The world was home.\n\n[SLEEPY] The wheat was still. The wind was still. The song was still.\n\n[WHISPERING] Lulla’s feathers were warm. Her family was close. The night was soft.\n\n[SLEEPY] The fireflies slept. The stars blinked. The moon smiled.\n\n[WHISPERING] Close your eyes. Feel the song. Safe and warm.\n\n[SLEEPY] The wheat hums. The night sighs. The world sleeps.\n\n[WHISPERING] Safe... warm... still...\n\n[SLEEPY] mmm...",
+    "annotated_text": "[PHASE_1]\n[GENTLE] The sun was slipping behind the hills, painting the sky in soft pinks and oranges. [CURIOUS] Lulla, a little sparrow with feathers the color of warm honey, perched on the lowest branch of the old apple tree. She tilted her head, listening. [EXCITED] There it was again—the whispering song of the wheat fields! A soft, rustling melody that only she could hear.\n\n[ADVENTUROUS] 'Mama! Papa! The wheat is singing!' Lulla chirped, fluttering her wings. [JOYFUL] Her family was scattered across the garden—Mama was gathering seeds near the sunflowers, Papa was teaching her little brothers how to fly, and Grandma was dozing in the shade. [CURIOUS] 'It’s the most beautiful sound,' Lulla said, hopping from foot to foot. 'We have to listen together!'\n\n[MYSTERIOUS] The wind carried the song closer, wrapping around Lulla like a cozy blanket. [EXCITED] 'Hurry!' she called to her family. 'The wheat is waiting!' [laugh] Her little brothers giggled as they tumbled through the air, their tiny wings still wobbly. [GENTLE] Mama smiled and ruffled Lulla’s feathers. 'Lead the way, little one,' she said.\n\n[ADVENTUROUS] Lulla took off, darting between the tall stalks of wheat. The song grew louder, sweeter, filling the air with warmth. [CURIOUS] The wheat swayed gently, as if dancing to the music. [DRAMATIC_PAUSE] ...And then, Lulla saw something magical. [EXCITED] Tiny fireflies were flickering in the wheat, their lights blinking in time with the song!\n\n[JOYFUL] 'Look!' Lulla chirped. 'The fireflies are singing too!' [chuckle] Her family gathered around, their eyes wide with wonder. [GENTLE] The golden fields stretched out before them, alive with music and light. [WHISPERING] 'This is our song,' Lulla whispered. 'A song for all of us.'\n\n[/PHASE_1]\n\n[PHASE_2]\n[CALM] The wheat swayed softly, brushing against Lulla’s feathers like a gentle hug. [GENTLE] The air was warm, filled with the scent of earth and summer. The fireflies glowed brighter, their light dancing on the tips of the wheat stalks. [CALM] Lulla closed her eyes and listened. The song was everywhere—inside her, around her, part of her.\n\n[GENTLE] Mama perched beside her, her wings wrapped around Lulla’s shoulders. [CALM] 'Do you feel it?' Mama whispered. 'The song is in the wind, in the wheat, in us.' [GENTLE] Lulla nodded, her heart full. The music was like a soft blanket, wrapping them all together.\n\n[CALM] Papa and the little ones settled into the wheat, their feathers rustling softly. [GENTLE] Grandma hummed along, her voice low and sweet. The fireflies flickered above them, their lights like tiny stars. [CALM] The world was quiet, except for the song. The song was everything.\n\n[GENTLE] The wheat was soft beneath Lulla’s feet. The air was soft against her face. The light was soft, golden, and warm. [CALM] The song wrapped around them like a lullaby, slow and steady. [GENTLE] Lulla’s wings grew heavy. Her eyelids fluttered. The music carried her, safe and warm.\n\n[CALM] The fireflies dimmed, their light fading into the twilight. The wheat stopped swaying, still and quiet. [GENTLE] The song softened, becoming a whisper, then a sigh. [CALM] The world was still. The world was soft. The world was home.\n\n[/PHASE_2]\n\n[PHASE_3]\n[SLEEPY] The wheat was still. The wind was still. The song was still.\n\n[WHISPERING] Lulla’s feathers were warm. Her family was close. The night was soft.\n\n[SLEEPY] The fireflies slept. The stars blinked. The moon smiled.\n\n[WHISPERING] Close your eyes. Feel the song. Safe and warm.\n\n[SLEEPY] The wheat hums. The night sighs. The world sleeps.\n\n[WHISPERING] Safe... warm... still...\n\n[SLEEPY] mmm...\n\n[/PHASE_3]",
+    "target_age": 3,
+    "age_min": 2,
+    "age_max": 5,
+    "age_group": "2-5",
+    "length": "LONG",
+    "word_count": 541,
+    "duration_seconds": 0,
+    "categories": [
+      "Family",
+      "Nature"
+    ],
+    "theme": "family",
+    "morals": [
+      "Family is a song that holds us together, even when the world is quiet.",
+      "The smallest voices can carry the most beautiful music."
+    ],
+    "cover": "/covers/gen-1bef176313bd.svg",
+    "musicProfile": "dreamy-clouds",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-1bef_female_1.mp3",
+        "duration_seconds": 281.67,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-1bef_male_2.mp3",
+        "duration_seconds": 282.53,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "female",
+    "character": {
+      "name": "Lulla",
+      "identity": "A gentle sparrow who hears the secret songs of the earth",
+      "special": "She can hear the whispering music hidden in the wheat fields at sunset",
+      "personality_tags": [
+        "Kind",
+        "Gentle"
+      ]
+    },
+    "cover_context": "A golden wheat field at sunset, bathed in warm pink and orange light. Tiny fireflies flicker between the stalks, their soft glow blending with the twilight. The air shimmers with the faintest hint of magic, as if the wind itself is singing.",
+    "lead_character_type": "bird",
+    "universe": "mythological",
+    "geography": "Arctic/Polar",
+    "life_aspect": "school_learning",
+    "plot_archetype": "discovery",
+    "diversityFingerprint": {
+      "characterType": "bird",
+      "setting": "garden_farm",
+      "plotShape": "gathering_reunion",
+      "mood": null,
+      "scale": "tiny_intimate",
+      "companion": "group_community",
+      "movement": "flying_swimming",
+      "timeOfDay": "sunset_golden_hour",
+      "weather": "warm_breeze",
+      "theme": "belonging",
+      "characterTrait": "kind_nurturing",
+      "magicType": "music_sound_magic",
+      "season": "summer",
+      "senseEmphasis": "tactile"
+    },
+    "mood": "calm",
+    "created_at": "2026-03-20T01:51:53.795147",
+    "updated_at": "2026-03-20T01:51:53.795147",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 5,
+    "musicalBrief": {
+      "storyId": "gen-1bef176313bd",
+      "ageGroup": "2-5",
+      "musicalIdentity": {
+        "culturalReference": "japanese",
+        "primaryLoop": "koto_plucks",
+        "padCharacter": "silk_veil"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "G"
+      },
+      "melodicCharacter": "descending_lullaby",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "wind_gentle",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "cricket",
+          "leaves"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "curious_wonder",
+        "phase2": "gentle_journey",
+        "phase3": "deep_stillness"
+      }
+    }
   }
 ]
