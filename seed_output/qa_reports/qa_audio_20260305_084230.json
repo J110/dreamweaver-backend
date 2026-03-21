@@ -1,0 +1,95 @@
+{
+  "generated_at": "2026-03-05T08:42:29.995695",
+  "summary": {
+    "total": 2,
+    "passed": 2,
+    "warned": 0,
+    "failed": 0,
+    "avg_fidelity": null,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-3e20147f02a1",
+      "title": "Kai’s Whispering Tide and the Dragon’s Pearl",
+      "median_duration": 184.91,
+      "variants": [
+        {
+          "voice": "female_1",
+          "duration_seconds": 184.91,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0,
+          "quality_average": 0.771,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "lullaby_qa": {
+            "dimensions": {
+              "volume_consistency": {
+                "score": 0.675,
+                "variance": 9.8,
+                "range_db": 11.3
+              },
+              "loudness": {
+                "score": 0.895,
+                "avg_dbfs": -20.4
+              },
+              "sparsity": {
+                "score": 0.333,
+                "quiet_ratio": 0.05
+              },
+              "spectral_softness": {
+                "score": 0.953,
+                "high_freq_ratio": 0.0094
+              },
+              "no_peaks": {
+                "score": 1.0,
+                "spike_count": 0
+              }
+            },
+            "quality_avg": 0.771,
+            "warnings": []
+          }
+        },
+        {
+          "voice": "male_1",
+          "duration_seconds": 184.91,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0,
+          "quality_average": 0.788,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "lullaby_qa": {
+            "dimensions": {
+              "volume_consistency": {
+                "score": 0.808,
+                "variance": 5.8,
+                "range_db": 8.5
+              },
+              "loudness": {
+                "score": 0.906,
+                "avg_dbfs": -20.6
+              },
+              "sparsity": {
+                "score": 0.333,
+                "quiet_ratio": 0.05
+              },
+              "spectral_softness": {
+                "score": 0.892,
+                "high_freq_ratio": 0.0217
+              },
+              "no_peaks": {
+                "score": 1.0,
+                "spike_count": 0
+              }
+            },
+            "quality_avg": 0.788,
+            "warnings": []
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": []
+}

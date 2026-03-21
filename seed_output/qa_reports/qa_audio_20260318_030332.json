@@ -1,0 +1,137 @@
+{
+  "generated_at": "2026-03-18T03:03:32.659148",
+  "summary": {
+    "total": 5,
+    "passed": 3,
+    "warned": 2,
+    "failed": 0,
+    "avg_fidelity": 0.8864,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-589682b9e89c",
+      "title": "Lullaby of the Moonlit Rooftops",
+      "median_duration": 32.41,
+      "variants": [
+        {
+          "voice": "female_2",
+          "duration_seconds": 32.41,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9568,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.8971,
+            "word_overlap": 0.9111,
+            "word_order_score": 0.9245,
+            "combined": 0.9568
+          }
+        },
+        {
+          "voice": "female_3",
+          "duration_seconds": 30.25,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9568,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 6.7,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.8971,
+            "word_overlap": 0.9111,
+            "word_order_score": 0.9245,
+            "combined": 0.9568
+          }
+        },
+        {
+          "voice": "female_1",
+          "duration_seconds": 40.46,
+          "verdict": "WARN",
+          "reasons": [
+            "duration_outlier (24.8% off)",
+            "marginal_fidelity (0.60)"
+          ],
+          "text_fidelity_combined": 0.6048,
+          "quality_average": 5.0,
+          "duration_outlier": true,
+          "duration_deviation_pct": 24.8,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.2885,
+            "ratio": 0.8926,
+            "word_overlap": 0.9111,
+            "word_order_score": 0.9423,
+            "combined": 0.6048
+          },
+          "transcript_snippet": "Little one, shh. The moonbeam hums so soft and low. She drifts past windows, warm and bright, where sleepy heads rest in the night. A glow, a touch, a fleeting kiss. She paints the dark with silver bliss. Now, close your eyes, my darling dear. The moonbeam sings, she's always near."
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 26.34,
+          "verdict": "WARN",
+          "reasons": [
+            "duration_outlier (18.7% off)"
+          ],
+          "text_fidelity_combined": 0.9568,
+          "quality_average": 5.0,
+          "duration_outlier": true,
+          "duration_deviation_pct": 18.7,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.8971,
+            "word_overlap": 0.9111,
+            "word_order_score": 0.9245,
+            "combined": 0.9568
+          },
+          "transcript_snippet": "Shh, little one, shh, the moonbeam hums so soft and low. She drifts past windows warm and bright, where sleepy heads rest in the night. A glow, a touch, a fleeting kiss, she paints the dark with silver bliss. Now close your eyes, my darling dear, the moonbeam sings, she's always near."
+        },
+        {
+          "voice": "asmr",
+          "duration_seconds": 32.75,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9568,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 1.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.8971,
+            "word_overlap": 0.9111,
+            "word_order_score": 0.9245,
+            "combined": 0.9568
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Lullaby of the Moonlit Rooftops",
+      "story_id": "gen-589682b9e89c",
+      "voice": "female_1",
+      "verdict": "WARN",
+      "reasons": [
+        "duration_outlier (24.8% off)",
+        "marginal_fidelity (0.60)"
+      ],
+      "fidelity": 0.6048,
+      "quality_avg": 5.0
+    },
+    {
+      "story": "Lullaby of the Moonlit Rooftops",
+      "story_id": "gen-589682b9e89c",
+      "voice": "male_2",
+      "verdict": "WARN",
+      "reasons": [
+        "duration_outlier (18.7% off)"
+      ],
+      "fidelity": 0.9568,
+      "quality_avg": 5.0
+    }
+  ]
+}

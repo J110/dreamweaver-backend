@@ -1,0 +1,155 @@
+{
+  "generated_at": "2026-03-06T02:13:57.669533",
+  "summary": {
+    "total": 7,
+    "passed": 6,
+    "warned": 1,
+    "failed": 0,
+    "avg_fidelity": 0.8941,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-6c4170f5b3a4",
+      "title": "Leilani and the Festival of Whispering Shells",
+      "median_duration": 219.42,
+      "variants": [
+        {
+          "voice": "female_3",
+          "duration_seconds": 219.42,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9903,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.9978,
+            "word_overlap": 0.966,
+            "word_order_score": 0.9761,
+            "combined": 0.9903
+          }
+        },
+        {
+          "voice": "female_2",
+          "duration_seconds": 236.07,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9878,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 7.6,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.998,
+            "ratio": 0.9969,
+            "word_overlap": 0.9624,
+            "word_order_score": 0.9721,
+            "combined": 0.9878
+          }
+        },
+        {
+          "voice": "female_1",
+          "duration_seconds": 274.91,
+          "verdict": "WARN",
+          "reasons": [
+            "duration_outlier (25.3% off)"
+          ],
+          "text_fidelity_combined": 0.9875,
+          "quality_average": 5.0,
+          "duration_outlier": true,
+          "duration_deviation_pct": 25.3,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.998,
+            "ratio": 0.9975,
+            "word_overlap": 0.9588,
+            "word_order_score": 0.9721,
+            "combined": 0.9875
+          },
+          "transcript_snippet": "The village of Hokulani nestled between golden sands and whispering palms, where the sea breeze carried the scent of salt and frangipani. Leilani loved sitting on the shore after school, tracing patterns in the wet sand with her toes. The waves lapped gently, as if telling her stories only she could"
+        },
+        {
+          "voice": "male_1",
+          "duration_seconds": 200.22,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9887,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 8.8,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.9953,
+            "word_overlap": 0.9588,
+            "word_order_score": 0.9741,
+            "combined": 0.9887
+          }
+        },
+        {
+          "voice": "male_3",
+          "duration_seconds": 214.68,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.7628,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 2.2,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.5565,
+            "ratio": 0.9915,
+            "word_overlap": 0.944,
+            "word_order_score": 0.966,
+            "combined": 0.7628
+          }
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 209.92,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.7663,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 4.3,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.5544,
+            "ratio": 0.9964,
+            "word_overlap": 0.966,
+            "word_order_score": 0.9721,
+            "combined": 0.7663
+          }
+        },
+        {
+          "voice": "asmr",
+          "duration_seconds": 238.59,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.7754,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 8.7,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.5746,
+            "ratio": 0.994,
+            "word_overlap": 0.9551,
+            "word_order_score": 0.9741,
+            "combined": 0.7754
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Leilani and the Festival of Whispering Shells",
+      "story_id": "gen-6c4170f5b3a4",
+      "voice": "female_1",
+      "verdict": "WARN",
+      "reasons": [
+        "duration_outlier (25.3% off)"
+      ],
+      "fidelity": 0.9875,
+      "quality_avg": 5.0
+    }
+  ]
+}

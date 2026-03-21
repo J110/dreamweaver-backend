@@ -1,0 +1,155 @@
+{
+  "generated_at": "2026-02-25T01:49:45.505204",
+  "summary": {
+    "total": 7,
+    "passed": 6,
+    "warned": 1,
+    "failed": 0,
+    "avg_fidelity": 0.9436,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-4ddee3cbe031",
+      "title": "Lumi and the Whispering Petals",
+      "median_duration": 90.46,
+      "variants": [
+        {
+          "voice": "female_2",
+          "duration_seconds": 98.57,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9746,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 9.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9935,
+            "ratio": 0.9613,
+            "word_overlap": 0.9469,
+            "word_order_score": 0.9557,
+            "combined": 0.9746
+          }
+        },
+        {
+          "voice": "female_1",
+          "duration_seconds": 116.39,
+          "verdict": "WARN",
+          "reasons": [
+            "duration_outlier (28.7% off)"
+          ],
+          "text_fidelity_combined": 0.8551,
+          "quality_average": 5.0,
+          "duration_outlier": true,
+          "duration_deviation_pct": 28.7,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9484,
+            "ratio": 0.3646,
+            "word_overlap": 0.9043,
+            "word_order_score": 0.943,
+            "combined": 0.8551
+          },
+          "transcript_snippet": "In a greenhouse, old and wide, where vines in golden light reside, there hums a robot, soft and bright. Lumi tends the blooms at night. Her copper hands, so warm, so wise, wake sleepy flowers with gentle sighs. A firefly flickers, lost, alone. His tiny glow begins to moan. Oh, Lumi dear, the night f"
+        },
+        {
+          "voice": "female_3",
+          "duration_seconds": 90.09,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9762,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.4,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9935,
+            "ratio": 0.9613,
+            "word_overlap": 0.9469,
+            "word_order_score": 0.962,
+            "combined": 0.9762
+          }
+        },
+        {
+          "voice": "male_1",
+          "duration_seconds": 82.23,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9746,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 9.1,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9935,
+            "ratio": 0.9613,
+            "word_overlap": 0.9469,
+            "word_order_score": 0.9557,
+            "combined": 0.9746
+          }
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 90.46,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9761,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9935,
+            "ratio": 0.9613,
+            "word_overlap": 0.9469,
+            "word_order_score": 0.9618,
+            "combined": 0.9761
+          }
+        },
+        {
+          "voice": "male_3",
+          "duration_seconds": 87.21,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.8768,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 3.6,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9871,
+            "ratio": 0.3317,
+            "word_overlap": 0.9469,
+            "word_order_score": 0.9554,
+            "combined": 0.8768
+          }
+        },
+        {
+          "voice": "asmr",
+          "duration_seconds": 97.15,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9717,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 7.4,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9935,
+            "ratio": 0.9539,
+            "word_overlap": 0.9298,
+            "word_order_score": 0.9554,
+            "combined": 0.9717
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Lumi and the Whispering Petals",
+      "story_id": "gen-4ddee3cbe031",
+      "voice": "female_1",
+      "verdict": "WARN",
+      "reasons": [
+        "duration_outlier (28.7% off)"
+      ],
+      "fidelity": 0.8551,
+      "quality_avg": 5.0
+    }
+  ]
+}

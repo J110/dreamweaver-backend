@@ -1,0 +1,155 @@
+{
+  "generated_at": "2026-02-19T01:55:40.813320",
+  "summary": {
+    "total": 7,
+    "passed": 6,
+    "warned": 1,
+    "failed": 0,
+    "avg_fidelity": 0.9304,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-be475c98edb5",
+      "title": "Aria and the Starlight Cipher",
+      "median_duration": 128.83,
+      "variants": [
+        {
+          "voice": "female_2",
+          "duration_seconds": 136.24,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9645,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 5.8,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.8911,
+            "word_overlap": 0.9241,
+            "word_order_score": 0.9536,
+            "combined": 0.9645
+          }
+        },
+        {
+          "voice": "female_3",
+          "duration_seconds": 126.95,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9622,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 1.5,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9957,
+            "ratio": 0.8907,
+            "word_overlap": 0.9245,
+            "word_order_score": 0.9534,
+            "combined": 0.9622
+          }
+        },
+        {
+          "voice": "female_1",
+          "duration_seconds": 160.8,
+          "verdict": "WARN",
+          "reasons": [
+            "duration_outlier (24.8% off)"
+          ],
+          "text_fidelity_combined": 0.9668,
+          "quality_average": 5.0,
+          "duration_outlier": true,
+          "duration_deviation_pct": 24.8,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.8915,
+            "word_overlap": 0.9363,
+            "word_order_score": 0.9578,
+            "combined": 0.9668
+          },
+          "transcript_snippet": "The city hums with neon light, a playground drifts in silver flight. Aria walks where dreams unfold, beneath the stars a tale untold. The swings still sway though none are near. The carousel hums soft and clear. A whisper rides the evening breeze, a riddle spun in twilight's ease.Find the glow that "
+        },
+        {
+          "voice": "male_1",
+          "duration_seconds": 119.08,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9668,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 7.6,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.8915,
+            "word_overlap": 0.9363,
+            "word_order_score": 0.9578,
+            "combined": 0.9668
+          }
+        },
+        {
+          "voice": "male_3",
+          "duration_seconds": 124.86,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.8246,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 3.1,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.7328,
+            "ratio": 0.8846,
+            "word_overlap": 0.8938,
+            "word_order_score": 0.9447,
+            "combined": 0.8246
+          }
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 128.83,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.964,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9957,
+            "ratio": 0.8915,
+            "word_overlap": 0.9304,
+            "word_order_score": 0.9576,
+            "combined": 0.964
+          }
+        },
+        {
+          "voice": "asmr",
+          "duration_seconds": 134.22,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.8637,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 4.2,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9871,
+            "ratio": 0.2954,
+            "word_overlap": 0.9068,
+            "word_order_score": 0.9407,
+            "combined": 0.8637
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Aria and the Starlight Cipher",
+      "story_id": "gen-be475c98edb5",
+      "voice": "female_1",
+      "verdict": "WARN",
+      "reasons": [
+        "duration_outlier (24.8% off)"
+      ],
+      "fidelity": 0.9668,
+      "quality_avg": 5.0
+    }
+  ]
+}

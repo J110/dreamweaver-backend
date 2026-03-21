@@ -1,0 +1,155 @@
+{
+  "generated_at": "2026-03-01T01:57:39.289763",
+  "summary": {
+    "total": 7,
+    "passed": 6,
+    "warned": 1,
+    "failed": 0,
+    "avg_fidelity": 0.9425,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-3947965e8c2e",
+      "title": "Lila’s Treehouse Tide Song",
+      "median_duration": 35.89,
+      "variants": [
+        {
+          "voice": "female_3",
+          "duration_seconds": 35.89,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9464,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9828,
+            "ratio": 0.9653,
+            "word_overlap": 0.8519,
+            "word_order_score": 0.9,
+            "combined": 0.9464
+          }
+        },
+        {
+          "voice": "female_2",
+          "duration_seconds": 39.17,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.961,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 9.1,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.9905,
+            "word_overlap": 0.8704,
+            "word_order_score": 0.9016,
+            "combined": 0.961
+          }
+        },
+        {
+          "voice": "female_1",
+          "duration_seconds": 48.38,
+          "verdict": "WARN",
+          "reasons": [
+            "duration_outlier (34.8% off)"
+          ],
+          "text_fidelity_combined": 0.9546,
+          "quality_average": 5.0,
+          "duration_outlier": true,
+          "duration_deviation_pct": 34.8,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.9858,
+            "word_overlap": 0.8545,
+            "word_order_score": 0.8852,
+            "combined": 0.9546
+          },
+          "transcript_snippet": "Hush now, Leela, soft and low. Moonlight dances on the tide's slow flow. Stars above like shells so bright. Twinkle, twinkle, lullaby light. Treehouse sways in ocean's hum. Rock, a-bye little one, come. Mama's voice on salty air. Hush now, Lila. Rest right there. Close your eyes. The waves will sing"
+        },
+        {
+          "voice": "male_1",
+          "duration_seconds": 32.22,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9217,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 10.2,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9828,
+            "ratio": 0.9005,
+            "word_overlap": 0.7857,
+            "word_order_score": 0.8667,
+            "combined": 0.9217
+          }
+        },
+        {
+          "voice": "male_3",
+          "duration_seconds": 34.78,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9464,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 3.1,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9828,
+            "ratio": 0.9653,
+            "word_overlap": 0.8519,
+            "word_order_score": 0.9,
+            "combined": 0.9464
+          }
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 33.36,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9424,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 7.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9828,
+            "ratio": 0.9889,
+            "word_overlap": 0.8182,
+            "word_order_score": 0.8833,
+            "combined": 0.9424
+          }
+        },
+        {
+          "voice": "asmr",
+          "duration_seconds": 35.95,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9248,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.2,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9655,
+            "ratio": 0.9445,
+            "word_overlap": 0.8,
+            "word_order_score": 0.8814,
+            "combined": 0.9248
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Lila’s Treehouse Tide Song",
+      "story_id": "gen-3947965e8c2e",
+      "voice": "female_1",
+      "verdict": "WARN",
+      "reasons": [
+        "duration_outlier (34.8% off)"
+      ],
+      "fidelity": 0.9546,
+      "quality_avg": 5.0
+    }
+  ]
+}

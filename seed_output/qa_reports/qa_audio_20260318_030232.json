@@ -1,0 +1,151 @@
+{
+  "generated_at": "2026-03-18T03:02:32.228184",
+  "summary": {
+    "total": 5,
+    "passed": 2,
+    "warned": 3,
+    "failed": 0,
+    "avg_fidelity": 0.6807,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-861d647d73bb",
+      "title": "Elias and the Song of the Streetlamps",
+      "median_duration": 602.46,
+      "variants": [
+        {
+          "voice": "female_2",
+          "duration_seconds": 602.46,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9742,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9932,
+            "ratio": 0.9651,
+            "word_overlap": 0.931,
+            "word_order_score": 0.9589,
+            "combined": 0.9742
+          }
+        },
+        {
+          "voice": "female_3",
+          "duration_seconds": 568.6,
+          "verdict": "WARN",
+          "reasons": [
+            "marginal_fidelity (0.64)"
+          ],
+          "text_fidelity_combined": 0.6449,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 5.6,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.5178,
+            "ratio": 0.3561,
+            "word_overlap": 0.9287,
+            "word_order_score": 0.9587,
+            "combined": 0.6449
+          },
+          "transcript_snippet": "The city was never quiet, but tonight it felt different. Elias stood on the fire escape of his apartment building, the metal grating cold beneath his bare feet. Below, the streets glowed with the warm golden light of street lamps, their halos soft against the deepening blue of twilight. The air smel"
+        },
+        {
+          "voice": "female_1",
+          "duration_seconds": 739.68,
+          "verdict": "WARN",
+          "reasons": [
+            "duration_outlier (22.8% off)",
+            "marginal_fidelity (0.64)"
+          ],
+          "text_fidelity_combined": 0.638,
+          "quality_average": 5.0,
+          "duration_outlier": true,
+          "duration_deviation_pct": 22.8,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.5019,
+            "ratio": 0.3573,
+            "word_overlap": 0.9308,
+            "word_order_score": 0.9616,
+            "combined": 0.638
+          },
+          "transcript_snippet": "The city was never quiet, but tonight it felt different. Elias stood on the fire escape of his apartment building, the metal grating cold beneath his bare feet. Below, the streets glowed with the warm, golden light of street lamps, their halos soft against the deepening blue of twilight. The air sme"
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 581.03,
+          "verdict": "WARN",
+          "reasons": [
+            "marginal_fidelity (0.58)"
+          ],
+          "text_fidelity_combined": 0.5782,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 3.6,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.3942,
+            "ratio": 0.3356,
+            "word_overlap": 0.9248,
+            "word_order_score": 0.9528,
+            "combined": 0.5782
+          },
+          "transcript_snippet": "The city was never quiet, but tonight it felt different. Elias stood on the fire escape of his apartment building, the metal grating cold beneath his bare feet. Below, the streets glowed with the warm golden light of street lamps, their halos soft against the deepening blue of twilight. The air smel"
+        },
+        {
+          "voice": "asmr",
+          "duration_seconds": 606.74,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.5684,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.7,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.3783,
+            "ratio": 0.3331,
+            "word_overlap": 0.913,
+            "word_order_score": 0.9517,
+            "combined": 0.5684
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Elias and the Song of the Streetlamps",
+      "story_id": "gen-861d647d73bb",
+      "voice": "female_3",
+      "verdict": "WARN",
+      "reasons": [
+        "marginal_fidelity (0.64)"
+      ],
+      "fidelity": 0.6449,
+      "quality_avg": 5.0
+    },
+    {
+      "story": "Elias and the Song of the Streetlamps",
+      "story_id": "gen-861d647d73bb",
+      "voice": "female_1",
+      "verdict": "WARN",
+      "reasons": [
+        "duration_outlier (22.8% off)",
+        "marginal_fidelity (0.64)"
+      ],
+      "fidelity": 0.638,
+      "quality_avg": 5.0
+    },
+    {
+      "story": "Elias and the Song of the Streetlamps",
+      "story_id": "gen-861d647d73bb",
+      "voice": "male_2",
+      "verdict": "WARN",
+      "reasons": [
+        "marginal_fidelity (0.58)"
+      ],
+      "fidelity": 0.5782,
+      "quality_avg": 5.0
+    }
+  ]
+}

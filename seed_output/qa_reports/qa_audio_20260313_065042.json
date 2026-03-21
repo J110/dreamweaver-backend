@@ -1,0 +1,121 @@
+{
+  "generated_at": "2026-03-13T06:50:42.678923",
+  "summary": {
+    "total": 5,
+    "passed": 4,
+    "warned": 1,
+    "failed": 0,
+    "avg_fidelity": 0.927,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-1be31ba6fc0d",
+      "title": "Bumble and the Rainbow Dust Storm",
+      "median_duration": 81.09,
+      "variants": [
+        {
+          "voice": "female_2",
+          "duration_seconds": 81.09,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9472,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9932,
+            "ratio": 0.9072,
+            "word_overlap": 0.8435,
+            "word_order_score": 0.9205,
+            "combined": 0.9472
+          }
+        },
+        {
+          "voice": "female_3",
+          "duration_seconds": 77.84,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9592,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 4.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9932,
+            "ratio": 0.9544,
+            "word_overlap": 0.8596,
+            "word_order_score": 0.9338,
+            "combined": 0.9592
+          }
+        },
+        {
+          "voice": "female_1",
+          "duration_seconds": 87.55,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9628,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 8.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9932,
+            "ratio": 0.9565,
+            "word_overlap": 0.8761,
+            "word_order_score": 0.9404,
+            "combined": 0.9628
+          }
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 67.91,
+          "verdict": "WARN",
+          "reasons": [
+            "duration_outlier (16.3% off)"
+          ],
+          "text_fidelity_combined": 0.9628,
+          "quality_average": 5.0,
+          "duration_outlier": true,
+          "duration_deviation_pct": 16.3,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9932,
+            "ratio": 0.9565,
+            "word_overlap": 0.8761,
+            "word_order_score": 0.9404,
+            "combined": 0.9628
+          },
+          "transcript_snippet": "Oh, Bumble buzzed with a wobbly flight, her stripes all askew, her wings not quite right. She zigged where she zagged, she looped upside down, and bonked her poor nose on a daisy's bright crown. The meadow exploded in giggles so loud, a storm made of colors came whooshing through cloud. It painted t"
+        },
+        {
+          "voice": "asmr",
+          "duration_seconds": 94.31,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.803,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 16.3,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.8176,
+            "ratio": 0.5215,
+            "word_overlap": 0.8435,
+            "word_order_score": 0.9267,
+            "combined": 0.803
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Bumble and the Rainbow Dust Storm",
+      "story_id": "gen-1be31ba6fc0d",
+      "voice": "male_2",
+      "verdict": "WARN",
+      "reasons": [
+        "duration_outlier (16.3% off)"
+      ],
+      "fidelity": 0.9628,
+      "quality_avg": 5.0
+    }
+  ]
+}

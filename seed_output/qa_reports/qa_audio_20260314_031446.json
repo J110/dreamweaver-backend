@@ -1,0 +1,151 @@
+{
+  "generated_at": "2026-03-14T03:14:46.890413",
+  "summary": {
+    "total": 5,
+    "passed": 2,
+    "warned": 3,
+    "failed": 0,
+    "avg_fidelity": 0.7216,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-bcbc176b01d9",
+      "title": "Kestrel and the Storm That Listened",
+      "median_duration": 460.67,
+      "variants": [
+        {
+          "voice": "female_2",
+          "duration_seconds": 460.67,
+          "verdict": "WARN",
+          "reasons": [
+            "marginal_fidelity (0.52)"
+          ],
+          "text_fidelity_combined": 0.5201,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.3454,
+            "ratio": 0.1695,
+            "word_overlap": 0.8788,
+            "word_order_score": 0.9362,
+            "combined": 0.5201
+          },
+          "transcript_snippet": "The night Kestrel first heard the storm sing, she was chasing the edge of the aurora, her wings slicing through the cold breath of the upper atmosphere. The lights above her shimmered like scattered diamonds, but it wasn't their glow that made her pause. It was the sound, a low, resonant hum, not un"
+        },
+        {
+          "voice": "female_3",
+          "duration_seconds": 438.23,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9445,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 4.9,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9787,
+            "ratio": 0.8889,
+            "word_overlap": 0.875,
+            "word_order_score": 0.9372,
+            "combined": 0.9445
+          }
+        },
+        {
+          "voice": "female_1",
+          "duration_seconds": 547.89,
+          "verdict": "WARN",
+          "reasons": [
+            "duration_outlier (18.9% off)",
+            "marginal_fidelity (0.59)"
+          ],
+          "text_fidelity_combined": 0.5931,
+          "quality_average": 5.0,
+          "duration_outlier": true,
+          "duration_deviation_pct": 18.9,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.2795,
+            "ratio": 0.8838,
+            "word_overlap": 0.8728,
+            "word_order_score": 0.9342,
+            "combined": 0.5931
+          },
+          "transcript_snippet": "The night Kestrel first heard the storm sing, she was chasing the edge of the aurora, her wings slicing through the cold breath of the upper atmosphere. The lights above her shimmered like scattered diamonds, but it wasn't that glow that made her pause. It was the sound. A low, resonant hum, not unl"
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 427.84,
+          "verdict": "WARN",
+          "reasons": [
+            "marginal_fidelity (0.63)"
+          ],
+          "text_fidelity_combined": 0.6255,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 7.1,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.3433,
+            "ratio": 0.8822,
+            "word_overlap": 0.8794,
+            "word_order_score": 0.9344,
+            "combined": 0.6255
+          },
+          "transcript_snippet": "The night Kestrel first heard the storm sing, she was chasing the edge of the aurora, her wings slicing through the cold breath of the upper atmosphere. The lights above her shimmered like scattered diamonds, but it wasn't their glow that made her pause. It was the sound. A low, resonant hum, not un"
+        },
+        {
+          "voice": "asmr",
+          "duration_seconds": 471.19,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9246,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 2.3,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9426,
+            "ratio": 0.8863,
+            "word_overlap": 0.8635,
+            "word_order_score": 0.9362,
+            "combined": 0.9246
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Kestrel and the Storm That Listened",
+      "story_id": "gen-bcbc176b01d9",
+      "voice": "female_2",
+      "verdict": "WARN",
+      "reasons": [
+        "marginal_fidelity (0.52)"
+      ],
+      "fidelity": 0.5201,
+      "quality_avg": 5.0
+    },
+    {
+      "story": "Kestrel and the Storm That Listened",
+      "story_id": "gen-bcbc176b01d9",
+      "voice": "female_1",
+      "verdict": "WARN",
+      "reasons": [
+        "duration_outlier (18.9% off)",
+        "marginal_fidelity (0.59)"
+      ],
+      "fidelity": 0.5931,
+      "quality_avg": 5.0
+    },
+    {
+      "story": "Kestrel and the Storm That Listened",
+      "story_id": "gen-bcbc176b01d9",
+      "voice": "male_2",
+      "verdict": "WARN",
+      "reasons": [
+        "marginal_fidelity (0.63)"
+      ],
+      "fidelity": 0.6255,
+      "quality_avg": 5.0
+    }
+  ]
+}

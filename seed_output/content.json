@@ -19574,33 +19574,15 @@
     "music_type": "ambient",
     "audio_variants": [
       {
-        "voice": "female_1",
-        "url": "/audio/pre-gen/gen-486b_female_1.mp3",
-        "duration_seconds": 338.12,
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-486b_male_2.mp3",
+        "duration_seconds": 255.9,
         "provider": "chatterbox"
       },
       {
         "voice": "female_2",
         "url": "/audio/pre-gen/gen-486b_female_2.mp3",
-        "duration_seconds": 368.69,
-        "provider": "chatterbox"
-      },
-      {
-        "voice": "female_3",
-        "url": "/audio/pre-gen/gen-486b_female_3.mp3",
-        "duration_seconds": 354.41,
-        "provider": "chatterbox"
-      },
-      {
-        "voice": "male_2",
-        "url": "/audio/pre-gen/gen-486b_male_2.mp3",
-        "duration_seconds": 328.34,
-        "provider": "chatterbox"
-      },
-      {
-        "voice": "asmr",
-        "url": "/audio/pre-gen/gen-486b_asmr.mp3",
-        "duration_seconds": 311.57,
+        "duration_seconds": 281.06,
         "provider": "chatterbox"
       }
     ],
@@ -19645,7 +19627,7 @@
     "view_count": 0,
     "like_count": 0,
     "save_count": 0,
-    "duration": 6,
+    "duration": 5,
     "musicalBrief": {
       "storyId": "gen-486be5b2fef9",
       "ageGroup": "6-8",
@@ -19791,27 +19773,15 @@
     "music_type": "ambient",
     "audio_variants": [
       {
-        "voice": "female_2",
-        "url": "/audio/pre-gen/gen-ee66_female_2.mp3",
-        "duration_seconds": 200.91,
-        "provider": "chatterbox"
-      },
-      {
-        "voice": "female_1",
-        "url": "/audio/pre-gen/gen-ee66_female_1.mp3",
-        "duration_seconds": 180.17,
-        "provider": "chatterbox"
-      },
-      {
         "voice": "male_2",
         "url": "/audio/pre-gen/gen-ee66_male_2.mp3",
-        "duration_seconds": 179.13,
+        "duration_seconds": 141.54,
         "provider": "chatterbox"
       },
       {
-        "voice": "asmr",
-        "url": "/audio/pre-gen/gen-ee66_asmr.mp3",
-        "duration_seconds": 174.99,
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-ee66_female_2.mp3",
+        "duration_seconds": 149.22,
         "provider": "chatterbox"
       }
     ],
@@ -19856,7 +19826,7 @@
     "view_count": 0,
     "like_count": 0,
     "save_count": 0,
-    "duration": 4,
+    "duration": 3,
     "musicalBrief": {
       "storyId": "gen-ee66b4718ed1",
       "ageGroup": "6-8",
@@ -19918,33 +19888,15 @@
     "music_type": "ambient",
     "audio_variants": [
       {
+        "voice": "female_4",
+        "url": "/audio/pre-gen/gen-a543_female_4.mp3",
+        "duration_seconds": 39.88,
+        "provider": "chatterbox"
+      },
+      {
         "voice": "female_1",
         "url": "/audio/pre-gen/gen-a543_female_1.mp3",
-        "duration_seconds": 40.85,
-        "provider": "chatterbox"
-      },
-      {
-        "voice": "female_2",
-        "url": "/audio/pre-gen/gen-a543_female_2.mp3",
-        "duration_seconds": 42.84,
-        "provider": "chatterbox"
-      },
-      {
-        "voice": "female_3",
-        "url": "/audio/pre-gen/gen-a543_female_3.mp3",
-        "duration_seconds": 42.85,
-        "provider": "chatterbox"
-      },
-      {
-        "voice": "male_2",
-        "url": "/audio/pre-gen/gen-a543_male_2.mp3",
-        "duration_seconds": 37.39,
-        "provider": "chatterbox"
-      },
-      {
-        "voice": "asmr",
-        "url": "/audio/pre-gen/gen-a543_asmr.mp3",
-        "duration_seconds": 37.03,
+        "duration_seconds": 40.72,
         "provider": "chatterbox"
       }
     ],
@@ -20053,13 +20005,13 @@
       {
         "voice": "female_2",
         "url": "/audio/pre-gen/gen-a59c_female_2.mp3",
-        "duration_seconds": 108.22,
+        "duration_seconds": 81.9,
         "provider": "chatterbox"
       },
       {
         "voice": "male_2",
         "url": "/audio/pre-gen/gen-a59c_male_2.mp3",
-        "duration_seconds": 97.1,
+        "duration_seconds": 77.1,
         "provider": "chatterbox"
       }
     ],
@@ -20165,7 +20117,20 @@
     "cover": "/covers/gen-c05399108488.svg",
     "musicProfile": "starlight-lullaby",
     "music_type": "ambient",
-    "audio_variants": [],
+    "audio_variants": [
+      {
+        "voice": "male_1",
+        "url": "/audio/pre-gen/gen-c053_male_1.mp3",
+        "duration_seconds": 244.91,
+        "provider": "ace-step"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-c053_female_3.mp3",
+        "duration_seconds": 244.91,
+        "provider": "ace-step"
+      }
+    ],
     "author_id": "system",
     "is_generated": true,
     "generation_quality": "pending_review",
@@ -20206,7 +20171,8 @@
     "updated_at": "2026-03-20T01:46:14.337054",
     "view_count": 0,
     "like_count": 0,
-    "save_count": 0
+    "save_count": 0,
+    "duration": 5
   },
   {
     "id": "gen-1bef176313bd",
@@ -20322,5 +20288,488 @@
         "phase3": "deep_stillness"
       }
     }
+  },
+  {
+    "id": "gen-1e7e0300efd5",
+    "type": "poem",
+    "lang": "en",
+    "title": "Finnley and the Glowing Tide",
+    "description": "Beneath the waves where moonlight dances, a tiny seahorse named Finnley watches the glowing tide roll in—but tonight, the light feels dimmer, and his heart feels heavy. As the ocean hums its quiet song, Finnley searches for the warmth he’s lost.",
+    "text": "[RHYTHMIC] Some nights are heavy, some nights are long,\nwhen the world feels quiet, and nothing feels strong.\nThe waves still whisper, the stars still gleam,\nbut Finnley’s heart holds a shadowed dream.\n\n[GENTLE] The glowing tide rolls soft and slow,\nits light once bright, now faint with woe.\nHe curls his tail in the swaying sea,\nwishing the glow would come back to me.\n\n[PAUSE]\n\n[CALM] The coral hums a lullaby low,\nthe jellyfish drift in a silver glow.\n\"Why does the dark feel deeper tonight?\"\nFinnley sighs, lost in the quiet light.\n\n[PAUSE]\n\n[WHISPERING] Then something stirs in the ocean’s keep,\na tiny spark, a whisper deep.\nA plankton’s glow, so soft, so small,\nbut it lights the dark like a gentle call.\n\n[PAUSE]\n\n[JOYFUL] The tide still glows, though not as bright,\nbut Finnley’s heart feels warm tonight.\nThe ocean holds him, safe and near,\nand whispers, \"Child, I’m always here.\"\n\n[PAUSE]\n\n[SLEEPY] So close your eyes, let the waves sing,\nthe night will wrap you in its gentle wing.\nFor even when the world feels gray,\nthe moon still rises anyway.",
+    "annotated_text": "[RHYTHMIC] Some nights are heavy, some nights are long,\nwhen the world feels quiet, and nothing feels strong.\nThe waves still whisper, the stars still gleam,\nbut Finnley’s heart holds a shadowed dream.\n\n[GENTLE] The glowing tide rolls soft and slow,\nits light once bright, now faint with woe.\nHe curls his tail in the swaying sea,\nwishing the glow would come back to me.\n\n[PAUSE]\n\n[CALM] The coral hums a lullaby low,\nthe jellyfish drift in a silver glow.\n\"Why does the dark feel deeper tonight?\"\nFinnley sighs, lost in the quiet light.\n\n[PAUSE]\n\n[WHISPERING] Then something stirs in the ocean’s keep,\na tiny spark, a whisper deep.\nA plankton’s glow, so soft, so small,\nbut it lights the dark like a gentle call.\n\n[PAUSE]\n\n[JOYFUL] The tide still glows, though not as bright,\nbut Finnley’s heart feels warm tonight.\nThe ocean holds him, safe and near,\nand whispers, \"Child, I’m always here.\"\n\n[PAUSE]\n\n[SLEEPY] So close your eyes, let the waves sing,\nthe night will wrap you in its gentle wing.\nFor even when the world feels gray,\nthe moon still rises anyway.",
+    "target_age": 7,
+    "age_min": 6,
+    "age_max": 8,
+    "age_group": "6-8",
+    "length": "LONG",
+    "word_count": 175,
+    "duration_seconds": 0,
+    "categories": [
+      "Nature and Environment",
+      "Emotional Comfort"
+    ],
+    "theme": "nature",
+    "morals": [
+      "Even the smallest light can chase away the darkest shadows.",
+      "You are never alone—the world holds warmth for you, always."
+    ],
+    "cover": "/covers/gen-1e7e0300efd5.svg",
+    "musicProfile": "forest-night",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-1e7e_female_1.mp3",
+        "duration_seconds": 114.37,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-1e7e_female_3.mp3",
+        "duration_seconds": 100.0,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-1e7e_female_2.mp3",
+        "duration_seconds": 103.74,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-1e7e_male_2.mp3",
+        "duration_seconds": 85.64,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-1e7e_asmr.mp3",
+        "duration_seconds": 85.31,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "male",
+    "character": {
+      "name": "Finnley",
+      "identity": "A gentle seahorse who finds courage in the ocean’s quiet glow",
+      "special": "He sees the hidden light in even the dimmest corners of the sea",
+      "personality_tags": [
+        "Gentle",
+        "Wise"
+      ]
+    },
+    "cover_context": "A deep ocean at midnight, where bioluminescent waves ripple with soft blue and silver light, coral towers glow faintly, and the surface shimmers with distant starlight, creating a dreamy, underwater world.",
+    "lead_character_type": "insect",
+    "universe": "contemporary",
+    "geography": "Europe",
+    "life_aspect": "school_learning",
+    "plot_archetype": "celebration",
+    "diversityFingerprint": {
+      "characterType": "sea_creature",
+      "setting": "ocean_water",
+      "plotShape": "routine_ritual",
+      "mood": null,
+      "scale": "tiny_intimate",
+      "companion": "character_and_environment",
+      "movement": "floating_drifting",
+      "timeOfDay": "deep_night_starlight",
+      "weather": "magical_atmospheric",
+      "theme": "gentleness",
+      "characterTrait": "anxious_worried",
+      "magicType": "glowing_bioluminescent",
+      "season": "seasonless_timeless",
+      "senseEmphasis": "visual"
+    },
+    "mood": "sad",
+    "created_at": "2026-03-21T01:41:41.941601",
+    "updated_at": "2026-03-21T01:41:41.941601",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 2,
+    "musicalBrief": {
+      "storyId": "gen-1e7e0300efd5",
+      "ageGroup": "6-8",
+      "musicalIdentity": {
+        "culturalReference": "indian",
+        "primaryLoop": "dulcimer_gentle",
+        "padCharacter": "silk_veil"
+      },
+      "tonality": {
+        "mode": "minor_pentatonic",
+        "rootNote": "D"
+      },
+      "melodicCharacter": "descending_lullaby",
+      "rhythm": {
+        "feel": "free_rubato",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "rain_steady",
+        "natureSoundSecondary": "underwater_bubbling",
+        "ambientEvents": [
+          "waterDrop",
+          "chimes"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "soft_melancholy",
+        "phase2": "gentle_searching",
+        "phase3": "deep_stillness"
+      }
+    }
+  },
+  {
+    "id": "gen-473198145b30",
+    "type": "story",
+    "lang": "en",
+    "title": "Bubble and the Lonely Comet",
+    "description": "High above the clouds, where stars hum lullabies, a tiny jellyfish drifts through the cosmos, missing the friend who once swam beside her. Then, one night, a comet with a broken tail glows softly nearby—but it’s not the same, and that’s okay.",
+    "text": "[GENTLE] Bubble the jellyfish had always floated through the starry sky with her best friend, Splash. They would dance between the planets, their glowing tendrils weaving through the dark like silver threads. But now Splash was [EMPHASIS]gone[/EMPHASIS], and the sky felt wider, colder, and so [EMPHASIS]empty[/EMPHASIS].\n\n[CALM] Tonight, Bubble drifted near Saturn’s rings, watching the ice crystals sparkle. She traced the same path they’d taken together, her light flickering weakly. The silence was louder than the hum of the stars. [WHISPERING] 'I miss you,' she whispered, though no one was there to hear.\n\n[MYSTERIOUS] Then, a soft glow caught her eye. A small comet, its tail fractured and dim, hovered nearby. It didn’t speak, but its light pulsed gently, like a heartbeat. [CURIOUS] Bubble tilted her head. The comet wasn’t Splash. It wasn’t her friend at all. But it was there.\n\n[JOYFUL] Slowly, Bubble reached out a tendril. The comet’s glow warmed her, just a little. They floated together, not saying anything, just sharing the quiet. The sky still felt big, but it wasn’t [EMPHASIS]alone[/EMPHASIS] anymore.\n\n[SLEEPY] And that was enough. Bubble closed her eyes, letting the comet’s light wrap around her like a blanket. The stars hummed on, and for now, she was drifting—safe, and softly held.",
+    "annotated_text": "[GENTLE] Bubble the jellyfish had always floated through the starry sky with her best friend, Splash. They would dance between the planets, their glowing tendrils weaving through the dark like silver threads. But now Splash was [EMPHASIS]gone[/EMPHASIS], and the sky felt wider, colder, and so [EMPHASIS]empty[/EMPHASIS].\n\n[CALM] Tonight, Bubble drifted near Saturn’s rings, watching the ice crystals sparkle. She traced the same path they’d taken together, her light flickering weakly. The silence was louder than the hum of the stars. [WHISPERING] 'I miss you,' she whispered, though no one was there to hear.\n\n[MYSTERIOUS] Then, a soft glow caught her eye. A small comet, its tail fractured and dim, hovered nearby. It didn’t speak, but its light pulsed gently, like a heartbeat. [CURIOUS] Bubble tilted her head. The comet wasn’t Splash. It wasn’t her friend at all. But it was there.\n\n[JOYFUL] Slowly, Bubble reached out a tendril. The comet’s glow warmed her, just a little. They floated together, not saying anything, just sharing the quiet. The sky still felt big, but it wasn’t [EMPHASIS]alone[/EMPHASIS] anymore.\n\n[SLEEPY] And that was enough. Bubble closed her eyes, letting the comet’s light wrap around her like a blanket. The stars hummed on, and for now, she was drifting—safe, and softly held.",
+    "target_age": 7,
+    "age_min": 6,
+    "age_max": 8,
+    "age_group": "6-8",
+    "length": "SHORT",
+    "word_count": 201,
+    "duration_seconds": 0,
+    "categories": [
+      "Friendship",
+      "Space Adventure"
+    ],
+    "theme": "space",
+    "morals": [
+      "Even when things change, kindness can find you in unexpected places.",
+      "You don’t have to be alone to feel less lonely."
+    ],
+    "cover": "/covers/gen-473198145b30.svg",
+    "musicProfile": "cosmic-voyage",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-4731_female_3.mp3",
+        "duration_seconds": 100.87,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-4731_female_2.mp3",
+        "duration_seconds": 108.47,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-4731_female_1.mp3",
+        "duration_seconds": 115.33,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-4731_male_2.mp3",
+        "duration_seconds": 86.82,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-4731_asmr.mp3",
+        "duration_seconds": 90.72,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "neutral",
+    "character": {
+      "name": "Bubble",
+      "identity": "A gentle jellyfish who glows with the memories of her friend",
+      "special": "Her tendrils shimmer with stardust when she’s happy or sad",
+      "personality_tags": [
+        "Gentle",
+        "Dreamy"
+      ]
+    },
+    "cover_context": "A vast cosmic sky at deep night, filled with swirling nebulae of purple and blue. Saturn’s rings glow softly in the distance, while tiny ice crystals drift like floating diamonds. The atmosphere is quiet, magical, and bathed in starlight.",
+    "lead_character_type": "alien",
+    "universe": "fantasy_realm",
+    "geography": "Africa",
+    "life_aspect": "friendship",
+    "plot_archetype": "transformation",
+    "diversityFingerprint": {
+      "characterType": "sea_creature",
+      "setting": "sky_space",
+      "plotShape": "cyclical_seasonal",
+      "mood": null,
+      "scale": "personal",
+      "companion": "meets_stranger",
+      "movement": "floating_drifting",
+      "timeOfDay": "deep_night_starlight",
+      "weather": "magical_atmospheric",
+      "theme": "gentleness",
+      "characterTrait": "lonely_seeking",
+      "magicType": "glowing_bioluminescent",
+      "season": "seasonless_timeless",
+      "senseEmphasis": "visual"
+    },
+    "mood": "sad",
+    "created_at": "2026-03-21T01:32:08.837474",
+    "updated_at": "2026-03-21T01:32:08.837474",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 2,
+    "musicalBrief": {
+      "storyId": "gen-473198145b30",
+      "ageGroup": "6-8",
+      "musicalIdentity": {
+        "culturalReference": "chinese",
+        "primaryLoop": "flute_breathy",
+        "padCharacter": "starfield"
+      },
+      "tonality": {
+        "mode": "aeolian",
+        "rootNote": "F"
+      },
+      "melodicCharacter": "descending_lullaby",
+      "rhythm": {
+        "feel": "free_rubato",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "rain_steady",
+        "natureSoundSecondary": "underwater_bubbling",
+        "ambientEvents": [
+          "chimes",
+          "waterDrop"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "gentle_wonder",
+        "phase2": "soft_melancholy",
+        "phase3": "deep_stillness"
+      }
+    }
+  },
+  {
+    "id": "gen-47739ce0f283",
+    "type": "long_story",
+    "lang": "en",
+    "title": "Pebble and the River's Whisper",
+    "description": "Beneath the misty twilight, a little river otter drifts alone, missing the splash of her friend. The water hums a quiet song, and something small and glowing begins to follow her—just close enough to feel, but never to hold.",
+    "text": "[GENTLE] The river was wide and slow, its surface shimmering like silver paper under the fading sky. Pebble the otter floated on her back, her tiny paws curled against her chest. The water held her gently, rocking her like a cradle, but it couldn’t fill the empty space where her friend used to be.\n\n[CALM] She remembered the way Moss used to dart ahead, his sleek brown body twisting through the reeds. They would chase minnows together, their laughter bubbling up like the river’s own breath. But Moss had gone to the big lake now, and Pebble was left with only the quiet.\n\n[CURIOUS] Tonight, the river felt different. The mist curled around her whiskers, cool and damp, and the air smelled of wet leaves and distant rain. Pebble sighed, her breath rippling the water. She kicked her feet softly, sending tiny waves toward the shore. The pebbles there glowed faintly, like fireflies trapped under the surface.\n\n[MYSTERIOUS] One of the glowing pebbles wobbled. Then another. Pebble tilted her head. Were they… moving? She paddled closer, her heart beating fast. The pebbles weren’t pebbles at all. They were little bubbles of light, drifting just above the riverbed, pulsing like slow heartbeats.\n\n[ADVENTUROUS] Pebble dove down, her fur slick with water. The bubbles scattered at first, then regrouped, swirling around her like a school of fish. One brushed against her nose, warm and ticklish. She giggled, and the sound made the bubbles shimmer brighter. Maybe the river wasn’t so empty after all.\n\n[JOYFUL] She chased them in circles, her sadness lifting like mist in the morning sun. But then, just as quickly as they appeared, the bubbles began to fade. Pebble’s paws stilled. The river was quiet again. The [EMPHASIS]empty[/EMPHASIS] space returned, heavier than before.\n\n[GENTLE] She floated back to the surface, her ears drooping. The twilight had deepened, painting the world in shades of blue and gray. Pebble sighed, resting her chin on a smooth rock. The water lapped at her sides, steady and sure. It didn’t ask her to be happy. It just held her.\n\n[CALM] The river kept moving. It carried fallen leaves on its back, spinning them in slow circles. Pebble watched them drift by—red, gold, brown. Each one had once been part of something bigger, something alive. Now they were just… leaves. Alone.\n\n[MYSTERIOUS] A soft sound hummed beneath the water. Not a fish. Not the wind. Something smaller. Pebble turned her head. A single bubble of light hovered near her paw. It didn’t dart away this time. It just… waited.\n\n[GENTLE] Pebble reached out. The bubble touched her fingertip, warm as sunlight. It didn’t speak. It didn’t need to. It was just there, pulsing softly, like a tiny heart. Pebble’s breath hitched. She curled her paw around it, careful not to crush it.\n\n[CALM] The bubble stayed. It didn’t fix the [EMPHASIS]missing[/EMPHASIS]. It didn’t bring Moss back. But it was warm. And it was kind. And for now, that was enough.\n\n[GENTLE] The mist thickened, wrapping around Pebble like a blanket. The river’s song grew softer, slower. The last of the daylight faded, leaving only the glow of the bubble and the quiet dark. Pebble closed her eyes. The water rocked her. The bubble pulsed against her paw.\n\n[CALM] The reeds whispered secrets to each other. The minnows slept in their hidden places. The world was still. Pebble was still. The bubble was still.\n\n[SLEEPY] The river hummed a lullaby.\n\n[WHISPERING] Soft. Warm. Gentle.\n\n[SLEEPY] Pebble’s paws floated. The bubble glowed.\n\n[WHISPERING] The mist held her. The dark held her.\n\n[SLEEPY] No one asked her to be brave. No one asked her to be happy.\n\n[WHISPERING] The river knew. The bubble knew.\n\n[SLEEPY] She was not [EMPHASIS]alone[/EMPHASIS].\n\n[WHISPERING] Not tonight.\n\n[SLEEPY] The water rocked her. The bubble pulsed.\n\n[WHISPERING] Safe… and warm… and still…\n\n[SLEEPY] The river sang her to sleep.",
+    "annotated_text": "[PHASE_1]\n\n[GENTLE] The river was wide and slow, its surface shimmering like silver paper under the fading sky. Pebble the otter floated on her back, her tiny paws curled against her chest. The water held her gently, rocking her like a cradle, but it couldn’t fill the empty space where her friend used to be.\n\n[CALM] She remembered the way Moss used to dart ahead, his sleek brown body twisting through the reeds. They would chase minnows together, their laughter bubbling up like the river’s own breath. But Moss had gone to the big lake now, and Pebble was left with only the quiet.\n\n[CURIOUS] Tonight, the river felt different. The mist curled around her whiskers, cool and damp, and the air smelled of wet leaves and distant rain. Pebble sighed, her breath rippling the water. She kicked her feet softly, sending tiny waves toward the shore. The pebbles there glowed faintly, like fireflies trapped under the surface.\n\n[MYSTERIOUS] One of the glowing pebbles wobbled. Then another. Pebble tilted her head. Were they… moving? She paddled closer, her heart beating fast. The pebbles weren’t pebbles at all. They were little bubbles of light, drifting just above the riverbed, pulsing like slow heartbeats.\n\n[ADVENTUROUS] Pebble dove down, her fur slick with water. The bubbles scattered at first, then regrouped, swirling around her like a school of fish. One brushed against her nose, warm and ticklish. She giggled, and the sound made the bubbles shimmer brighter. Maybe the river wasn’t so empty after all.\n\n[JOYFUL] She chased them in circles, her sadness lifting like mist in the morning sun. But then, just as quickly as they appeared, the bubbles began to fade. Pebble’s paws stilled. The river was quiet again. The [EMPHASIS]empty[/EMPHASIS] space returned, heavier than before.\n\n[GENTLE] She floated back to the surface, her ears drooping. The twilight had deepened, painting the world in shades of blue and gray. Pebble sighed, resting her chin on a smooth rock. The water lapped at her sides, steady and sure. It didn’t ask her to be happy. It just held her.\n\n[/PHASE_1]\n\n\n[PHASE_2]\n\n[CALM] The river kept moving. It carried fallen leaves on its back, spinning them in slow circles. Pebble watched them drift by—red, gold, brown. Each one had once been part of something bigger, something alive. Now they were just… leaves. Alone.\n\n[MYSTERIOUS] A soft sound hummed beneath the water. Not a fish. Not the wind. Something smaller. Pebble turned her head. A single bubble of light hovered near her paw. It didn’t dart away this time. It just… waited.\n\n[GENTLE] Pebble reached out. The bubble touched her fingertip, warm as sunlight. It didn’t speak. It didn’t need to. It was just there, pulsing softly, like a tiny heart. Pebble’s breath hitched. She curled her paw around it, careful not to crush it.\n\n[CALM] The bubble stayed. It didn’t fix the [EMPHASIS]missing[/EMPHASIS]. It didn’t bring Moss back. But it was warm. And it was kind. And for now, that was enough.\n\n[GENTLE] The mist thickened, wrapping around Pebble like a blanket. The river’s song grew softer, slower. The last of the daylight faded, leaving only the glow of the bubble and the quiet dark. Pebble closed her eyes. The water rocked her. The bubble pulsed against her paw.\n\n[CALM] The reeds whispered secrets to each other. The minnows slept in their hidden places. The world was still. Pebble was still. The bubble was still.\n\n[/PHASE_2]\n\n\n[PHASE_3]\n\n[SLEEPY] The river hummed a lullaby.\n\n[WHISPERING] Soft. Warm. Gentle.\n\n[SLEEPY] Pebble’s paws floated. The bubble glowed.\n\n[WHISPERING] The mist held her. The dark held her.\n\n[SLEEPY] No one asked her to be brave. No one asked her to be happy.\n\n[WHISPERING] The river knew. The bubble knew.\n\n[SLEEPY] She was not [EMPHASIS]alone[/EMPHASIS].\n\n[WHISPERING] Not tonight.\n\n[SLEEPY] The water rocked her. The bubble pulsed.\n\n[WHISPERING] Safe… and warm… and still…\n\n[SLEEPY] The river sang her to sleep.\n\n[/PHASE_3]",
+    "target_age": 3,
+    "age_min": 2,
+    "age_max": 5,
+    "age_group": "2-5",
+    "length": "LONG",
+    "word_count": 625,
+    "duration_seconds": 0,
+    "categories": [
+      "EmotionalComfort",
+      "NatureAdventure"
+    ],
+    "theme": "adventure",
+    "morals": [
+      "Even when we miss someone, kindness can find us in small, quiet ways.",
+      "Being held by something gentle is enough for tonight."
+    ],
+    "cover": "/covers/gen-47739ce0f283.svg",
+    "musicProfile": "autumn-forest",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-4773_female_3.mp3",
+        "duration_seconds": 338.57,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-4773_female_2.mp3",
+        "duration_seconds": 343.73,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-4773_female_1.mp3",
+        "duration_seconds": 404.32,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-4773_asmr.mp3",
+        "duration_seconds": 307.22,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-4773_male_2.mp3",
+        "duration_seconds": 333.02,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "female",
+    "character": {
+      "name": "Pebble",
+      "identity": "A quiet little otter who listens to the river’s secrets",
+      "special": "She can feel the warmth of tiny glowing bubbles that no one else sees",
+      "personality_tags": [
+        "Gentle",
+        "Quiet"
+      ]
+    },
+    "cover_context": "A misty autumn river at twilight, its surface rippling with soft blue light. Fallen leaves in red and gold float on the water, and faint glowing bubbles drift just beneath the surface, like stars reflected in the current.",
+    "lead_character_type": "sea_creature",
+    "universe": "fantasy_realm",
+    "geography": "Ocean/Islands",
+    "life_aspect": "school_learning",
+    "plot_archetype": "problem_solving",
+    "diversityFingerprint": {
+      "characterType": "sea_creature",
+      "setting": null,
+      "plotShape": "pure_observation",
+      "mood": null,
+      "scale": "tiny_intimate",
+      "companion": "character_and_environment",
+      "movement": "floating_drifting",
+      "timeOfDay": "twilight_blue_hour",
+      "weather": "misty_foggy",
+      "theme": "gentleness",
+      "characterTrait": "lonely_seeking",
+      "magicType": "glowing_bioluminescent",
+      "season": "autumn",
+      "senseEmphasis": "tactile"
+    },
+    "mood": "sad",
+    "created_at": "2026-03-21T01:37:31.261005",
+    "updated_at": "2026-03-21T01:37:31.261005",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 6,
+    "musicalBrief": {
+      "storyId": "gen-47739ce0f283",
+      "ageGroup": "2-5",
+      "musicalIdentity": {
+        "culturalReference": "celtic",
+        "primaryLoop": "harp_arpeggios",
+        "padCharacter": "warm_strings"
+      },
+      "tonality": {
+        "mode": "aeolian",
+        "rootNote": "E"
+      },
+      "melodicCharacter": "descending_lullaby",
+      "rhythm": {
+        "feel": "free_rubato",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "rain_steady",
+        "natureSoundSecondary": "underwater_bubbling",
+        "ambientEvents": [
+          "waterDrop",
+          "chimes"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "gentle_mystery",
+        "phase2": "soft_warmth",
+        "phase3": "deep_stillness"
+      }
+    }
+  },
+  {
+    "id": "gen-e1203c22da5f",
+    "type": "song",
+    "lang": "en",
+    "title": "Coral and the Glowing Shell",
+    "description": "Beneath the shimmering twilight waves, a tiny seahorse named Coral drifts alone, watching glowing jellyfish dance. When a mysterious shell pulses with soft light, he follows—only to discover something far more magical than he imagined.",
+    "text": "[SINGING]\nClose your eyes, little Coral,\nDrift along the ocean floor,\nStars above are softly gleaming,\nPeaceful waves will sing once more.\n\n[PAUSE]\n\n[SINGING]\nMoonlight paints the water silver,\nGentle currents rock and sway,\nYou are safe here, soft and snuggly,\nDream the nighttime hours away.\n\n[PAUSE]\n\n[SINGING]\nFind a shell that glows so brightly,\nWarm and golden, soft and round,\nHold it close now, dearest Coral,\nMagic hums its sleepy sound.\n\n[PAUSE]\n\n[SINGING]\nMoonlight paints the water silver,\nGentle currents rock and sway,\nYou are safe here, soft and snuggly,\nDream the nighttime hours away.\n\n[PAUSE]\n\n[SLEEPY]\nNow the waves are growing quieter,\nStars are blinking, soft and low,\nClose your eyes, my little seahorse,\nLet the ocean sing you slow.\n\n[PAUSE]\n\n[HUMMING]\nMmm mmm mmm...\nMmm mmm mmm...\nMmm mmm...",
+    "annotated_text": "[SINGING]\nClose your eyes, little Coral,\nDrift along the ocean floor,\nStars above are softly gleaming,\nPeaceful waves will sing once more.\n\n[PAUSE]\n\n[SINGING]\nMoonlight paints the water silver,\nGentle currents rock and sway,\nYou are safe here, soft and snuggly,\nDream the nighttime hours away.\n\n[PAUSE]\n\n[SINGING]\nFind a shell that glows so brightly,\nWarm and golden, soft and round,\nHold it close now, dearest Coral,\nMagic hums its sleepy sound.\n\n[PAUSE]\n\n[SINGING]\nMoonlight paints the water silver,\nGentle currents rock and sway,\nYou are safe here, soft and snuggly,\nDream the nighttime hours away.\n\n[PAUSE]\n\n[SLEEPY]\nNow the waves are growing quieter,\nStars are blinking, soft and low,\nClose your eyes, my little seahorse,\nLet the ocean sing you slow.\n\n[PAUSE]\n\n[HUMMING]\nMmm mmm mmm...\nMmm mmm mmm...\nMmm mmm...",
+    "target_age": 3,
+    "age_min": 2,
+    "age_max": 5,
+    "age_group": "2-5",
+    "length": "LONG",
+    "word_count": 121,
+    "duration_seconds": 0,
+    "categories": [
+      "Nature",
+      "Friendship"
+    ],
+    "theme": "nature",
+    "morals": [
+      "Even the smallest light can guide you home",
+      "Belonging is found in the quietest places"
+    ],
+    "cover": "/covers/gen-e1203c22da5f.svg",
+    "musicProfile": "forest-night",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "male_1",
+        "url": "/audio/pre-gen/gen-e120_male_1.mp3",
+        "duration_seconds": 244.91,
+        "provider": "ace-step"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-e120_male_2.mp3",
+        "duration_seconds": 244.91,
+        "provider": "ace-step"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "male",
+    "character": {
+      "name": "Coral",
+      "identity": "A gentle seahorse who glows when he feels safe",
+      "special": "His tail shimmers with tiny lights when he’s happy or calm",
+      "personality_tags": [
+        "Gentle",
+        "Dreamy"
+      ]
+    },
+    "cover_context": "A twilight ocean scene where indigo waves ripple under a lavender sky, glowing jellyfish drift like lanterns, and soft bioluminescent light illuminates coral towers and swaying seaweed forests.",
+    "lead_character_type": "mythical",
+    "universe": "fantasy_realm",
+    "geography": "East Asia",
+    "life_aspect": "sleep_comfort",
+    "plot_archetype": "quest_journey",
+    "diversityFingerprint": {
+      "characterType": "sea_creature",
+      "setting": "ocean_water",
+      "plotShape": "lost_and_found",
+      "mood": null,
+      "scale": "personal",
+      "companion": "meets_stranger",
+      "movement": "floating_drifting",
+      "timeOfDay": "twilight_blue_hour",
+      "weather": "magical_atmospheric",
+      "theme": "belonging",
+      "characterTrait": "lonely_seeking",
+      "magicType": "glowing_bioluminescent",
+      "season": "seasonless_timeless",
+      "senseEmphasis": "visual"
+    },
+    "mood": "sad",
+    "created_at": "2026-03-21T01:44:11.474093",
+    "updated_at": "2026-03-21T01:44:11.474093",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 5
   }
 ]

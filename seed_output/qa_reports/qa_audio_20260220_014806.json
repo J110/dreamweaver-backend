@@ -1,0 +1,155 @@
+{
+  "generated_at": "2026-02-20T01:48:06.691215",
+  "summary": {
+    "total": 7,
+    "passed": 6,
+    "warned": 1,
+    "failed": 0,
+    "avg_fidelity": 0.9595,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-76b0227cc919",
+      "title": "Priya and the Glowing Snowflakes",
+      "median_duration": 56.44,
+      "variants": [
+        {
+          "voice": "female_1",
+          "duration_seconds": 69.41,
+          "verdict": "WARN",
+          "reasons": [
+            "duration_outlier (23.0% off)"
+          ],
+          "text_fidelity_combined": 0.9863,
+          "quality_average": 5.0,
+          "duration_outlier": true,
+          "duration_deviation_pct": 23.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9912,
+            "ratio": 0.9918,
+            "word_overlap": 0.9639,
+            "word_order_score": 0.9823,
+            "combined": 0.9863
+          },
+          "transcript_snippet": "In a snowy village where the houses glow like little stars, lived Priya with her mama and papa. Every night the sky danced with green and pink lights, and the snowflakes sparkled like tiny diamonds. But tonight the snowflakes were not glowing. Oh, no, said Mama. The lights are sleepy too. Priya put "
+        },
+        {
+          "voice": "female_2",
+          "duration_seconds": 63.95,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.7649,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 13.3,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.5575,
+            "ratio": 0.9918,
+            "word_overlap": 0.9405,
+            "word_order_score": 0.9735,
+            "combined": 0.7649
+          }
+        },
+        {
+          "voice": "female_3",
+          "duration_seconds": 56.44,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9921,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.9927,
+            "word_overlap": 0.9759,
+            "word_order_score": 0.9825,
+            "combined": 0.9921
+          }
+        },
+        {
+          "voice": "male_1",
+          "duration_seconds": 56.27,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9957,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.3,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.9943,
+            "word_overlap": 0.9878,
+            "word_order_score": 0.9912,
+            "combined": 0.9957
+          }
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 52.96,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9961,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 6.2,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.9967,
+            "word_overlap": 0.9878,
+            "word_order_score": 0.9912,
+            "combined": 0.9961
+          }
+        },
+        {
+          "voice": "male_3",
+          "duration_seconds": 54.74,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9902,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 3.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9912,
+            "ratio": 0.9951,
+            "word_overlap": 0.9756,
+            "word_order_score": 0.9912,
+            "combined": 0.9902
+          }
+        },
+        {
+          "voice": "asmr",
+          "duration_seconds": 61.59,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9913,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 9.1,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9912,
+            "ratio": 0.9943,
+            "word_overlap": 0.9878,
+            "word_order_score": 0.9912,
+            "combined": 0.9913
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Priya and the Glowing Snowflakes",
+      "story_id": "gen-76b0227cc919",
+      "voice": "female_1",
+      "verdict": "WARN",
+      "reasons": [
+        "duration_outlier (23.0% off)"
+      ],
+      "fidelity": 0.9863,
+      "quality_avg": 5.0
+    }
+  ]
+}

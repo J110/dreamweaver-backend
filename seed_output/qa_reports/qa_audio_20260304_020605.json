@@ -1,0 +1,155 @@
+{
+  "generated_at": "2026-03-04T02:06:05.604083",
+  "summary": {
+    "total": 7,
+    "passed": 6,
+    "warned": 1,
+    "failed": 0,
+    "avg_fidelity": 0.9136,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-bbf23f82bfec",
+      "title": "Jai’s Golden Spark in the Mango Grove",
+      "median_duration": 85.16,
+      "variants": [
+        {
+          "voice": "female_2",
+          "duration_seconds": 90.52,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9333,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 6.3,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9877,
+            "ratio": 0.8067,
+            "word_overlap": 0.8672,
+            "word_order_score": 0.9268,
+            "combined": 0.9333
+          }
+        },
+        {
+          "voice": "female_3",
+          "duration_seconds": 84.03,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9492,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 1.3,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9938,
+            "ratio": 0.877,
+            "word_overlap": 0.874,
+            "word_order_score": 0.9333,
+            "combined": 0.9492
+          }
+        },
+        {
+          "voice": "female_1",
+          "duration_seconds": 105.09,
+          "verdict": "WARN",
+          "reasons": [
+            "duration_outlier (23.4% off)"
+          ],
+          "text_fidelity_combined": 0.9226,
+          "quality_average": 5.0,
+          "duration_outlier": true,
+          "duration_deviation_pct": 23.4,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9815,
+            "ratio": 0.7722,
+            "word_overlap": 0.8594,
+            "word_order_score": 0.9202,
+            "combined": 0.9226
+          },
+          "transcript_snippet": "Beneath the moon's soft silver lace, a firefly named Jai took his place. His tiny light, so bright, so bold, danced through the grove where mangoes rolled. The crickets hummed a lullaby as fireflies twinkled across the sky. But Jai felt small, his glow too dim, compared to stars so bright and prim.A"
+        },
+        {
+          "voice": "male_1",
+          "duration_seconds": 81.11,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.919,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 4.8,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9815,
+            "ratio": 0.7683,
+            "word_overlap": 0.845,
+            "word_order_score": 0.9141,
+            "combined": 0.919
+          }
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 82.28,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.8782,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 3.4,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9321,
+            "ratio": 0.6613,
+            "word_overlap": 0.8594,
+            "word_order_score": 0.908,
+            "combined": 0.8782
+          }
+        },
+        {
+          "voice": "male_3",
+          "duration_seconds": 85.16,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9492,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9938,
+            "ratio": 0.877,
+            "word_overlap": 0.874,
+            "word_order_score": 0.9333,
+            "combined": 0.9492
+          }
+        },
+        {
+          "voice": "asmr",
+          "duration_seconds": 95.85,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.8435,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 12.6,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9815,
+            "ratio": 0.2701,
+            "word_overlap": 0.8527,
+            "word_order_score": 0.908,
+            "combined": 0.8435
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Jai’s Golden Spark in the Mango Grove",
+      "story_id": "gen-bbf23f82bfec",
+      "voice": "female_1",
+      "verdict": "WARN",
+      "reasons": [
+        "duration_outlier (23.4% off)"
+      ],
+      "fidelity": 0.9226,
+      "quality_avg": 5.0
+    }
+  ]
+}

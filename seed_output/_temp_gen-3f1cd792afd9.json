@@ -1,0 +1,154 @@
+{
+  "id": "gen-3f1cd792afd9",
+  "type": "poem",
+  "lang": "en",
+  "title": "The Wandering Star\u2019s Silk Road Lullaby",
+  "description": "High above the ancient Silk Road, a lonely comet hums a forgotten tune. As lanterns flicker in village homes below, he glides past paper windows, weaving his glow into the dreams of sleeping children. But tonight, something pulls him closer\u2014a melody only the earth can sing.",
+  "text": "[RHYTHMIC] Hush, little star, so far, so bright,\nGold tail trails through the velvet night.\n[PAUSE]\n\n[GENTLE] Over mountains, soft and wide,\nPast the rivers, slow with pride,\nHe hums low, a lullaby,\nFor the earth that drifts below.\n[PAUSE]\n\n[CALM] Lanterns glow in wooden frames,\nMama sings, Papa calls by name,\nComet pauses, listens deep,\nTo the songs the families keep.\n[PAUSE]\n\n[WHISPERING] Silk threads shimmer in the breeze,\nWeaving dreams through ancient trees,\nHe leaves his light\u2014a silver thread,\nTo tuck the world in bed.\n[PAUSE]\n\n[SLEEPY] Now the star grows soft and slow,\nDrifting where the warm winds go,\nSleep, little one, the night is long,\nDream the comet\u2019s gentle song.",
+  "annotated_text": "[RHYTHMIC] Hush, little star, so far, so bright,\nGold tail trails through the velvet night.\n[PAUSE]\n\n[GENTLE] Over mountains, soft and wide,\nPast the rivers, slow with pride,\nHe hums low, a lullaby,\nFor the earth that drifts below.\n[PAUSE]\n\n[CALM] Lanterns glow in wooden frames,\nMama sings, Papa calls by name,\nComet pauses, listens deep,\nTo the songs the families keep.\n[PAUSE]\n\n[WHISPERING] Silk threads shimmer in the breeze,\nWeaving dreams through ancient trees,\nHe leaves his light\u2014a silver thread,\nTo tuck the world in bed.\n[PAUSE]\n\n[SLEEPY] Now the star grows soft and slow,\nDrifting where the warm winds go,\nSleep, little one, the night is long,\nDream the comet\u2019s gentle song.",
+  "target_age": 0,
+  "age_min": 0,
+  "age_max": 1,
+  "age_group": "0-1",
+  "length": "MEDIUM",
+  "word_count": 105,
+  "duration_seconds": 0,
+  "categories": [
+    "Nature",
+    "Historical",
+    "Celestial"
+  ],
+  "theme": "nature",
+  "morals": [
+    "Even the smallest light can bring warmth to those below.",
+    "Home is where the heart finds its melody."
+  ],
+  "cover": "",
+  "musicProfile": "moonlit-meadow",
+  "music_type": "ambient",
+  "audio_variants": [
+    {
+      "voice": "female_3",
+      "url": "/audio/pre-gen/gen-3f1c_female_3.mp3",
+      "duration_seconds": 64.68,
+      "provider": "chatterbox"
+    },
+    {
+      "voice": "female_1",
+      "url": "/audio/pre-gen/gen-3f1c_female_1.mp3",
+      "duration_seconds": 75.43,
+      "provider": "chatterbox"
+    },
+    {
+      "voice": "female_2",
+      "url": "/audio/pre-gen/gen-3f1c_female_2.mp3",
+      "duration_seconds": 66.75,
+      "provider": "chatterbox"
+    },
+    {
+      "voice": "male_1",
+      "url": "/audio/pre-gen/gen-3f1c_male_1.mp3",
+      "duration_seconds": 58.4,
+      "provider": "chatterbox"
+    },
+    {
+      "voice": "male_2",
+      "url": "/audio/pre-gen/gen-3f1c_male_2.mp3",
+      "duration_seconds": 61.83,
+      "provider": "chatterbox"
+    },
+    {
+      "voice": "male_3",
+      "url": "/audio/pre-gen/gen-3f1c_male_3.mp3",
+      "duration_seconds": 57.48,
+      "provider": "chatterbox"
+    },
+    {
+      "voice": "asmr",
+      "url": "/audio/pre-gen/gen-3f1c_asmr.mp3",
+      "duration_seconds": 69.31,
+      "provider": "chatterbox"
+    }
+  ],
+  "author_id": "system",
+  "is_generated": true,
+  "generation_quality": "pending_review",
+  "lead_gender": "male",
+  "character": {
+    "name": "Lian",
+    "identity": "A wandering storyteller who carries the night\u2019s secrets in his glow",
+    "special": "He weaves starlight into the dreams of children along the Silk Road",
+    "personality_tags": [
+      "Gentle",
+      "Dreamy"
+    ]
+  },
+  "lead_character_type": "celestial",
+  "universe": "historical",
+  "geography": "East Asia",
+  "life_aspect": "family_home",
+  "plot_archetype": "transformation",
+  "created_at": "2026-03-05T02:54:29.443465",
+  "updated_at": "2026-03-05T02:54:29.443465",
+  "view_count": 0,
+  "like_count": 0,
+  "save_count": 0,
+  "duration": 2,
+  "musicParams": {
+    "key": "A",
+    "chordNotes": [
+      110.0,
+      138.59,
+      164.81,
+      220.0
+    ],
+    "padType": "resonant",
+    "padGain": 0.0316,
+    "padFilter": 473,
+    "padLfo": 0.0515,
+    "noiseType": "pink",
+    "noiseGain": 0.0122,
+    "droneFreq": 55.0,
+    "droneGain": 0.0263,
+    "melodyNotes": [
+      220.0,
+      277.18,
+      329.62,
+      293.66
+    ],
+    "melodyInterval": 5201,
+    "melodyGain": 0.0118,
+    "bassNotes": [
+      55.0,
+      82.41,
+      69.3
+    ],
+    "bassInterval": 7919,
+    "counterNotes": [
+      346.48,
+      412.02,
+      275.0
+    ],
+    "counterInterval": 5734,
+    "events": [
+      {
+        "type": "heartbeat",
+        "interval": 8886
+      },
+      {
+        "type": "windGust",
+        "interval": 12932
+      },
+      {
+        "type": "leaves",
+        "interval": 16162
+      },
+      {
+        "type": "chimes",
+        "interval": 23443
+      }
+    ],
+    "soundscapePreset": "heartbeat",
+    "musicLoop": "musicBox"
+  }
+}

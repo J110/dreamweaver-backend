@@ -1,0 +1,111 @@
+{
+  "summary": {
+    "total": 2,
+    "passed": 0,
+    "warned": 2,
+    "failed": 0
+  },
+  "stories": [
+    {
+      "story_id": "gen-10683c7e9e25",
+      "title": "Lumi and the Lantern Night",
+      "median_duration": 244.9,
+      "variants": [
+        {
+          "voice": "female_3",
+          "duration_seconds": 244.91,
+          "verdict": "WARN",
+          "reasons": [
+            "no gaps between phrases (continuous audio)"
+          ],
+          "text_fidelity_combined": 0,
+          "quality_average": 0.765,
+          "duration_outlier": false,
+          "lullaby_qa": {
+            "dimensions": {
+              "duration_accuracy": {
+                "score": 1.0,
+                "actual": 239.9,
+                "target": 240,
+                "deviation_pct": 0.0
+              },
+              "volume_consistency": {
+                "score": 0.952,
+                "variance": 1.4,
+                "range_db": 3.9
+              },
+              "loudness": {
+                "score": 0.484,
+                "avg_dbfs": -14.3
+              },
+              "sparsity": {
+                "score": 0.3,
+                "quiet_ratio": 0.0
+              },
+              "spectral_softness": {
+                "score": 0.854,
+                "high_freq_ratio": 0.0292
+              },
+              "no_peaks": {
+                "score": 1.0,
+                "spike_count": 0
+              }
+            },
+            "quality_avg": 0.765,
+            "warnings": [
+              "no gaps between phrases (continuous audio)"
+            ]
+          }
+        },
+        {
+          "voice": "female_1",
+          "duration_seconds": 244.91,
+          "verdict": "WARN",
+          "reasons": [
+            "too loud: avg -14 dBFS (target ~-22)",
+            "no gaps between phrases (continuous audio)"
+          ],
+          "text_fidelity_combined": 0,
+          "quality_average": 0.782,
+          "duration_outlier": false,
+          "lullaby_qa": {
+            "dimensions": {
+              "duration_accuracy": {
+                "score": 1.0,
+                "actual": 239.9,
+                "target": 240,
+                "deviation_pct": 0.0
+              },
+              "volume_consistency": {
+                "score": 0.959,
+                "variance": 1.2,
+                "range_db": 3.7
+              },
+              "loudness": {
+                "score": 0.455,
+                "avg_dbfs": -13.8
+              },
+              "sparsity": {
+                "score": 0.3,
+                "quiet_ratio": 0.0
+              },
+              "spectral_softness": {
+                "score": 0.976,
+                "high_freq_ratio": 0.0048
+              },
+              "no_peaks": {
+                "score": 1.0,
+                "spike_count": 0
+              }
+            },
+            "quality_avg": 0.782,
+            "warnings": [
+              "too loud: avg -14 dBFS (target ~-22)",
+              "no gaps between phrases (continuous audio)"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,102 @@
+Defaulting to user installation because normal site-packages is not writeable
+Collecting faster-whisper
+  Downloading faster_whisper-1.2.1-py3-none-any.whl (1.1 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.1/1.1 MB 5.5 MB/s eta 0:00:00
+Collecting onnxruntime<2,>=1.14
+  Downloading onnxruntime-1.23.2-cp310-cp310-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (17.4 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 17.4/17.4 MB 15.0 MB/s eta 0:00:00
+Collecting huggingface-hub>=0.21
+  Downloading huggingface_hub-1.5.0-py3-none-any.whl (596 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 596.3/596.3 KB 39.7 MB/s eta 0:00:00
+Collecting av>=11
+  Downloading av-16.1.0-cp310-cp310-manylinux_2_28_x86_64.whl (40.3 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.3/40.3 MB 12.0 MB/s eta 0:00:00
+Collecting ctranslate2<5,>=4.0
+  Downloading ctranslate2-4.7.1-cp310-cp310-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (38.6 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 38.6/38.6 MB 7.9 MB/s eta 0:00:00
+Collecting tokenizers<1,>=0.13
+  Downloading tokenizers-0.22.2-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (3.3 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.3/3.3 MB 77.5 MB/s eta 0:00:00
+Collecting tqdm
+  Downloading tqdm-4.67.3-py3-none-any.whl (78 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 78.4/78.4 KB 11.7 MB/s eta 0:00:00
+Requirement already satisfied: pyyaml<7,>=5.3 in /home/anmolmohan/.local/lib/python3.10/site-packages (from ctranslate2<5,>=4.0->faster-whisper) (6.0.3)
+Requirement already satisfied: setuptools in /usr/lib/python3/dist-packages (from ctranslate2<5,>=4.0->faster-whisper) (59.6.0)
+Requirement already satisfied: numpy in /home/anmolmohan/.local/lib/python3.10/site-packages (from ctranslate2<5,>=4.0->faster-whisper) (2.2.6)
+Requirement already satisfied: httpx<1,>=0.23.0 in /home/anmolmohan/.local/lib/python3.10/site-packages (from huggingface-hub>=0.21->faster-whisper) (0.28.1)
+Requirement already satisfied: packaging>=20.9 in /usr/lib/python3/dist-packages (from huggingface-hub>=0.21->faster-whisper) (21.3)
+Collecting fsspec>=2023.5.0
+  Downloading fsspec-2026.2.0-py3-none-any.whl (202 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 202.5/202.5 KB 30.7 MB/s eta 0:00:00
+Collecting typer
+  Downloading typer-0.24.1-py3-none-any.whl (56 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 56.1/56.1 KB 10.2 MB/s eta 0:00:00
+Collecting hf-xet<2.0.0,>=1.2.0
+  Downloading hf_xet-1.3.2-cp37-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (4.2 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.2/4.2 MB 60.7 MB/s eta 0:00:00
+Requirement already satisfied: typing-extensions>=4.1.0 in /home/anmolmohan/.local/lib/python3.10/site-packages (from huggingface-hub>=0.21->faster-whisper) (4.15.0)
+Collecting filelock>=3.10.0
+  Downloading filelock-3.25.0-py3-none-any.whl (26 kB)
+Collecting flatbuffers
+  Downloading flatbuffers-25.12.19-py2.py3-none-any.whl (26 kB)
+Collecting coloredlogs
+  Downloading coloredlogs-15.0.1-py2.py3-none-any.whl (46 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 46.0/46.0 KB 6.9 MB/s eta 0:00:00
+Collecting sympy
+  Downloading sympy-1.14.0-py3-none-any.whl (6.3 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.3/6.3 MB 40.6 MB/s eta 0:00:00
+Requirement already satisfied: protobuf in /home/anmolmohan/.local/lib/python3.10/site-packages (from onnxruntime<2,>=1.14->faster-whisper) (6.33.5)
+Requirement already satisfied: anyio in /home/anmolmohan/.local/lib/python3.10/site-packages (from httpx<1,>=0.23.0->huggingface-hub>=0.21->faster-whisper) (4.12.1)
+Requirement already satisfied: certifi in /usr/lib/python3/dist-packages (from httpx<1,>=0.23.0->huggingface-hub>=0.21->faster-whisper) (2020.6.20)
+Requirement already satisfied: idna in /usr/lib/python3/dist-packages (from httpx<1,>=0.23.0->huggingface-hub>=0.21->faster-whisper) (3.3)
+Requirement already satisfied: httpcore==1.* in /home/anmolmohan/.local/lib/python3.10/site-packages (from httpx<1,>=0.23.0->huggingface-hub>=0.21->faster-whisper) (1.0.9)
+Requirement already satisfied: h11>=0.16 in /home/anmolmohan/.local/lib/python3.10/site-packages (from httpcore==1.*->httpx<1,>=0.23.0->huggingface-hub>=0.21->faster-whisper) (0.16.0)
+Collecting humanfriendly>=9.1
+  Downloading humanfriendly-10.0-py2.py3-none-any.whl (86 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 86.8/86.8 KB 14.2 MB/s eta 0:00:00
+Collecting mpmath<1.4,>=1.1.0
+  Downloading mpmath-1.3.0-py3-none-any.whl (536 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 536.2/536.2 KB 50.2 MB/s eta 0:00:00
+Collecting rich>=12.3.0
+  Downloading rich-14.3.3-py3-none-any.whl (310 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 310.5/310.5 KB 40.7 MB/s eta 0:00:00
+Collecting click>=8.2.1
+  Downloading click-8.3.1-py3-none-any.whl (108 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 108.3/108.3 KB 17.6 MB/s eta 0:00:00
+Collecting annotated-doc>=0.0.2
+  Downloading annotated_doc-0.0.4-py3-none-any.whl (5.3 kB)
+Collecting shellingham>=1.3.0
+  Downloading shellingham-1.5.4-py2.py3-none-any.whl (9.8 kB)
+Collecting pygments<3.0.0,>=2.13.0
+  Downloading pygments-2.19.2-py3-none-any.whl (1.2 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 74.1 MB/s eta 0:00:00
+Collecting markdown-it-py>=2.2.0
+  Downloading markdown_it_py-4.0.0-py3-none-any.whl (87 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 87.3/87.3 KB 14.0 MB/s eta 0:00:00
+Requirement already satisfied: exceptiongroup>=1.0.2 in /home/anmolmohan/.local/lib/python3.10/site-packages (from anyio->httpx<1,>=0.23.0->huggingface-hub>=0.21->faster-whisper) (1.3.1)
+Collecting mdurl~=0.1
+  Downloading mdurl-0.1.2-py3-none-any.whl (10.0 kB)
+Installing collected packages: mpmath, flatbuffers, tqdm, sympy, shellingham, pygments, mdurl, humanfriendly, hf-xet, fsspec, filelock, ctranslate2, click, av, annotated-doc, markdown-it-py, coloredlogs, rich, onnxruntime, typer, huggingface-hub, tokenizers, faster-whisper
+  WARNING: The script tqdm is installed in '/home/anmolmohan/.local/bin' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+  WARNING: The script isympy is installed in '/home/anmolmohan/.local/bin' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+  WARNING: The script pygmentize is installed in '/home/anmolmohan/.local/bin' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+  WARNING: The script humanfriendly is installed in '/home/anmolmohan/.local/bin' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+  WARNING: The scripts ct2-fairseq-converter, ct2-marian-converter, ct2-openai-gpt2-converter, ct2-opennmt-py-converter, ct2-opennmt-tf-converter, ct2-opus-mt-converter and ct2-transformers-converter are installed in '/home/anmolmohan/.local/bin' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+  WARNING: The script pyav is installed in '/home/anmolmohan/.local/bin' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+  WARNING: The script markdown-it is installed in '/home/anmolmohan/.local/bin' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+  WARNING: The script coloredlogs is installed in '/home/anmolmohan/.local/bin' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+  WARNING: The script onnxruntime_test is installed in '/home/anmolmohan/.local/bin' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+  WARNING: The script typer is installed in '/home/anmolmohan/.local/bin' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+  WARNING: The scripts hf and tiny-agents are installed in '/home/anmolmohan/.local/bin' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+Successfully installed annotated-doc-0.0.4 av-16.1.0 click-8.3.1 coloredlogs-15.0.1 ctranslate2-4.7.1 faster-whisper-1.2.1 filelock-3.25.0 flatbuffers-25.12.19 fsspec-2026.2.0 hf-xet-1.3.2 huggingface-hub-1.5.0 humanfriendly-10.0 markdown-it-py-4.0.0 mdurl-0.1.2 mpmath-1.3.0 onnxruntime-1.23.2 pygments-2.19.2 rich-14.3.3 shellingham-1.5.4 sympy-1.14.0 tokenizers-0.22.2 tqdm-4.67.3 typer-0.24.1

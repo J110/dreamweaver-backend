@@ -1,0 +1,106 @@
+{
+  "generated_at": "2026-03-13T06:51:08.900351",
+  "summary": {
+    "total": 5,
+    "passed": 5,
+    "warned": 0,
+    "failed": 0,
+    "avg_fidelity": 0.9433,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-3ae85c812ea0",
+      "title": "Mira and the Paintbrush Cloud",
+      "median_duration": 106.05,
+      "variants": [
+        {
+          "voice": "female_2",
+          "duration_seconds": 108.64,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9388,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 2.4,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9902,
+            "ratio": 0.9034,
+            "word_overlap": 0.8535,
+            "word_order_score": 0.8915,
+            "combined": 0.9388
+          }
+        },
+        {
+          "voice": "female_1",
+          "duration_seconds": 118.54,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9441,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 11.8,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9853,
+            "ratio": 0.9119,
+            "word_overlap": 0.8824,
+            "word_order_score": 0.9057,
+            "combined": 0.9441
+          }
+        },
+        {
+          "voice": "female_3",
+          "duration_seconds": 99.4,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9501,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 6.3,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9902,
+            "ratio": 0.916,
+            "word_overlap": 0.8889,
+            "word_order_score": 0.9147,
+            "combined": 0.9501
+          }
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 93.04,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9423,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 12.3,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9902,
+            "ratio": 0.8753,
+            "word_overlap": 0.8831,
+            "word_order_score": 0.9104,
+            "combined": 0.9423
+          }
+        },
+        {
+          "voice": "asmr",
+          "duration_seconds": 106.05,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9412,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9755,
+            "ratio": 0.9103,
+            "word_overlap": 0.8831,
+            "word_order_score": 0.9143,
+            "combined": 0.9412
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": []
+}

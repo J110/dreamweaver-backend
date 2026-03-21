@@ -1,0 +1,185 @@
+{
+  "generated_at": "2026-02-19T01:56:05.678895",
+  "summary": {
+    "total": 7,
+    "passed": 4,
+    "warned": 3,
+    "failed": 0,
+    "avg_fidelity": 0.8956,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-f9e33d4db1bd",
+      "title": "Tiko's Arctic Lullaby",
+      "median_duration": 45.43,
+      "variants": [
+        {
+          "voice": "female_3",
+          "duration_seconds": 45.43,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.941,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.974,
+            "ratio": 0.8856,
+            "word_overlap": 0.9062,
+            "word_order_score": 0.9221,
+            "combined": 0.941
+          }
+        },
+        {
+          "voice": "female_1",
+          "duration_seconds": 59.97,
+          "verdict": "WARN",
+          "reasons": [
+            "duration_outlier (32.0% off)"
+          ],
+          "text_fidelity_combined": 0.9115,
+          "quality_average": 5.0,
+          "duration_outlier": true,
+          "duration_deviation_pct": 32.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.961,
+            "ratio": 0.8228,
+            "word_overlap": 0.8358,
+            "word_order_score": 0.8961,
+            "combined": 0.9115
+          },
+          "transcript_snippet": "Hush, little Tico, hush now, hush. Moon glows soft on snowy brush. Mama homes, a gentle tune. Papa's breath like warm lagoon. The wind sings low, whispering secrets in the snow. Stars above begin to blink, twinkle, twinkle, soft and pink. Tico yawns, so big, so wide. Blanket wraps him, safe inside. "
+        },
+        {
+          "voice": "female_2",
+          "duration_seconds": 54.15,
+          "verdict": "WARN",
+          "reasons": [
+            "duration_outlier (19.2% off)",
+            "marginal_fidelity (0.66)"
+          ],
+          "text_fidelity_combined": 0.6595,
+          "quality_average": 5.0,
+          "duration_outlier": true,
+          "duration_deviation_pct": 19.2,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.4545,
+            "ratio": 0.8586,
+            "word_overlap": 0.8594,
+            "word_order_score": 0.8701,
+            "combined": 0.6595
+          },
+          "transcript_snippet": "Hush, little Tico, hush now, hush. Moon glows soft on snowy brush. Mama hums a gentle tune. Papa's breath like warm lagoon. Whispering secrets in the snow. Stars above begin to blink. Twinkle, twinkle, soft and pink. Tico yawns. So big, so wide. Blanket wraps him, safe inside. Dream now, little one,"
+        },
+        {
+          "voice": "male_1",
+          "duration_seconds": 43.07,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.941,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 5.2,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.974,
+            "ratio": 0.8856,
+            "word_overlap": 0.9062,
+            "word_order_score": 0.9221,
+            "combined": 0.941
+          }
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 45.0,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9187,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.9,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.7057,
+            "word_overlap": 0.8788,
+            "word_order_score": 0.9,
+            "combined": 0.9187
+          }
+        },
+        {
+          "voice": "male_3",
+          "duration_seconds": 42.43,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.957,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 6.6,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.8922,
+            "word_overlap": 0.9219,
+            "word_order_score": 0.9241,
+            "combined": 0.957
+          }
+        },
+        {
+          "voice": "asmr",
+          "duration_seconds": 53.97,
+          "verdict": "WARN",
+          "reasons": [
+            "duration_outlier (18.8% off)"
+          ],
+          "text_fidelity_combined": 0.9402,
+          "quality_average": 5.0,
+          "duration_outlier": true,
+          "duration_deviation_pct": 18.8,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.987,
+            "ratio": 0.8465,
+            "word_overlap": 0.8923,
+            "word_order_score": 0.9221,
+            "combined": 0.9402
+          },
+          "transcript_snippet": "Hush, little Tico, hush now, hush. Moon glows soft on snowy brush. Mama hums a gentle tune. Papa's breath like warm lagoon. Shh, the wind sinks low, whispering secrets in the snow. Stars above begin to blink. Twinkle, twinkle, soft and pink. Tico yawns. So big, so wide. Blanket wraps him. Safe insid"
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Tiko's Arctic Lullaby",
+      "story_id": "gen-f9e33d4db1bd",
+      "voice": "female_1",
+      "verdict": "WARN",
+      "reasons": [
+        "duration_outlier (32.0% off)"
+      ],
+      "fidelity": 0.9115,
+      "quality_avg": 5.0
+    },
+    {
+      "story": "Tiko's Arctic Lullaby",
+      "story_id": "gen-f9e33d4db1bd",
+      "voice": "female_2",
+      "verdict": "WARN",
+      "reasons": [
+        "duration_outlier (19.2% off)",
+        "marginal_fidelity (0.66)"
+      ],
+      "fidelity": 0.6595,
+      "quality_avg": 5.0
+    },
+    {
+      "story": "Tiko's Arctic Lullaby",
+      "story_id": "gen-f9e33d4db1bd",
+      "voice": "asmr",
+      "verdict": "WARN",
+      "reasons": [
+        "duration_outlier (18.8% off)"
+      ],
+      "fidelity": 0.9402,
+      "quality_avg": 5.0
+    }
+  ]
+}

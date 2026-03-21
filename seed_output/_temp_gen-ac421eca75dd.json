@@ -1,0 +1,82 @@
+{
+  "id": "gen-ac421eca75dd",
+  "type": "song",
+  "lang": "en",
+  "title": "Tiko and the Glowing Moss Cradle",
+  "description": "In a forest where fireflies hum lullabies, a tiny tree frog discovers patches of moss that glow like moonlight. As twilight deepens, he weaves them into a cradle, not for himself—but for the forest’s smallest creatures to rest.",
+  "text": "[HUMMING]\n\nLu mi mi, lu mi mi,\nBa doo na, ba doo na,\nHoo wa ni, hoo wa ni,\n\nLu mi mi, lu mi mi,\nGlow so warm, glow so soft,\nBa doo na, ba doo na,\n\n[GENTLE]\n\nMm wa ni, mm wa ni,\nRest now, little one,\nHoo la lu, hoo la lu,\n\nMm wa ni, mm wa ni,\nDream with the moss,\nLu mi mi, lu mi mi,\n\n[SLEEPY]\n\nShh la lu, shh la lu,\nMoonlight holds you,\nMm...",
+  "annotated_text": "[HUMMING]\n\nLu mi mi, lu mi mi,\nBa doo na, ba doo na,\nHoo wa ni, hoo wa ni,\n\nLu mi mi, lu mi mi,\nGlow so warm, glow so soft,\nBa doo na, ba doo na,\n\n[GENTLE]\n\nMm wa ni, mm wa ni,\nRest now, little one,\nHoo la lu, hoo la lu,\n\nMm wa ni, mm wa ni,\nDream with the moss,\nLu mi mi, lu mi mi,\n\n[SLEEPY]\n\nShh la lu, shh la lu,\nMoonlight holds you,\nMm...",
+  "target_age": 0,
+  "age_min": 0,
+  "age_max": 1,
+  "age_group": "0-1",
+  "length": "SHORT",
+  "word_count": 78,
+  "duration_seconds": 0,
+  "categories": [
+    "Nature",
+    "Kindness"
+  ],
+  "theme": "nature",
+  "morals": [
+    "Kindness grows when we create space for others.",
+    "Even the smallest hands can build something beautiful."
+  ],
+  "cover": "",
+  "musicProfile": "forest-night",
+  "music_type": "ambient",
+  "audio_variants": [
+    {
+      "voice": "female_1",
+      "url": "/audio/pre-gen/gen-ac42_female_1.mp3",
+      "duration_seconds": 184.91,
+      "provider": "ace-step"
+    },
+    {
+      "voice": "male_1",
+      "url": "/audio/pre-gen/gen-ac42_male_1.mp3",
+      "duration_seconds": 184.91,
+      "provider": "ace-step"
+    }
+  ],
+  "author_id": "system",
+  "is_generated": true,
+  "generation_quality": "pending_review",
+  "lead_gender": "male",
+  "character": {
+    "name": "Tiko",
+    "identity": "A gentle tree frog who tends to the forest’s quiet needs",
+    "special": "He can coax moss to glow brighter with his touch",
+    "personality_tags": [
+      "Kind",
+      "Gentle"
+    ]
+  },
+  "cover_context": "A twilight forest floor dappled in soft blue-green bioluminescent moss, fireflies drifting like tiny lanterns, dew-kissed ferns curling around a woven cradle of glowing vines.",
+  "lead_character_type": "human",
+  "universe": "mythological",
+  "geography": "Ocean/Islands",
+  "life_aspect": "sleep_comfort",
+  "plot_archetype": "problem_solving",
+  "diversityFingerprint": {
+    "characterType": "reptile_amphibian",
+    "setting": "forest_woodland",
+    "plotShape": "building_growing",
+    "scale": "tiny_intimate",
+    "companion": "character_and_environment",
+    "movement": "building_making",
+    "timeOfDay": "twilight_blue_hour",
+    "weather": "magical_atmospheric",
+    "theme": "belonging",
+    "characterTrait": "kind_nurturing",
+    "magicType": "glowing_bioluminescent",
+    "season": "spring",
+    "senseEmphasis": "tactile"
+  },
+  "created_at": "2026-03-08T01:43:40.684798",
+  "updated_at": "2026-03-08T01:43:40.684798",
+  "view_count": 0,
+  "like_count": 0,
+  "save_count": 0,
+  "duration": 4
+}

@@ -1,0 +1,174 @@
+{
+  "generated_at": "2026-03-05T09:15:53.996991",
+  "summary": {
+    "total": 2,
+    "passed": 0,
+    "warned": 2,
+    "failed": 0,
+    "avg_fidelity": null,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-3e20147f02a1",
+      "title": "Kai’s Whispering Tide and the Dragon’s Pearl",
+      "median_duration": 184.91,
+      "variants": [
+        {
+          "voice": "female_1",
+          "duration_seconds": 184.91,
+          "verdict": "WARN",
+          "reasons": [
+            "no gaps between phrases"
+          ],
+          "text_fidelity_combined": 0,
+          "quality_average": 0.814,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "lullaby_qa": {
+            "dimensions": {
+              "volume_consistency": {
+                "score": 0.859,
+                "variance": 4.2,
+                "range_db": 7.6
+              },
+              "loudness": {
+                "score": 0.923,
+                "avg_dbfs": -20.8
+              },
+              "sparsity": {
+                "score": 0.3,
+                "quiet_ratio": 0.025
+              },
+              "spectral_softness": {
+                "score": 0.989,
+                "high_freq_ratio": 0.0022
+              },
+              "no_peaks": {
+                "score": 1.0,
+                "spike_count": 0
+              }
+            },
+            "quality_avg": 0.814,
+            "warnings": [
+              "no gaps between phrases"
+            ]
+          }
+        },
+        {
+          "voice": "male_1",
+          "duration_seconds": 184.91,
+          "verdict": "WARN",
+          "reasons": [
+            "dynamic range 14dB (max 8dB recommended)"
+          ],
+          "text_fidelity_combined": 0,
+          "quality_average": 0.75,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "lullaby_qa": {
+            "dimensions": {
+              "volume_consistency": {
+                "score": 0.54,
+                "variance": 13.8,
+                "range_db": 13.8
+              },
+              "loudness": {
+                "score": 0.899,
+                "avg_dbfs": -20.5
+              },
+              "sparsity": {
+                "score": 0.333,
+                "quiet_ratio": 0.05
+              },
+              "spectral_softness": {
+                "score": 0.979,
+                "high_freq_ratio": 0.0041
+              },
+              "no_peaks": {
+                "score": 1.0,
+                "spike_count": 0
+              }
+            },
+            "quality_avg": 0.75,
+            "warnings": [
+              "dynamic range 14dB (max 8dB recommended)"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Kai’s Whispering Tide and the Dragon’s Pearl",
+      "story_id": "gen-3e20147f02a1",
+      "voice": "female_1",
+      "verdict": "WARN",
+      "reasons": [
+        "no gaps between phrases"
+      ],
+      "fidelity": 0,
+      "quality_avg": 0.814,
+      "lullaby_dimensions": {
+        "volume_consistency": {
+          "score": 0.859,
+          "variance": 4.2,
+          "range_db": 7.6
+        },
+        "loudness": {
+          "score": 0.923,
+          "avg_dbfs": -20.8
+        },
+        "sparsity": {
+          "score": 0.3,
+          "quiet_ratio": 0.025
+        },
+        "spectral_softness": {
+          "score": 0.989,
+          "high_freq_ratio": 0.0022
+        },
+        "no_peaks": {
+          "score": 1.0,
+          "spike_count": 0
+        }
+      },
+      "lullaby_quality_avg": 0.814
+    },
+    {
+      "story": "Kai’s Whispering Tide and the Dragon’s Pearl",
+      "story_id": "gen-3e20147f02a1",
+      "voice": "male_1",
+      "verdict": "WARN",
+      "reasons": [
+        "dynamic range 14dB (max 8dB recommended)"
+      ],
+      "fidelity": 0,
+      "quality_avg": 0.75,
+      "lullaby_dimensions": {
+        "volume_consistency": {
+          "score": 0.54,
+          "variance": 13.8,
+          "range_db": 13.8
+        },
+        "loudness": {
+          "score": 0.899,
+          "avg_dbfs": -20.5
+        },
+        "sparsity": {
+          "score": 0.333,
+          "quiet_ratio": 0.05
+        },
+        "spectral_softness": {
+          "score": 0.979,
+          "high_freq_ratio": 0.0041
+        },
+        "no_peaks": {
+          "score": 1.0,
+          "spike_count": 0
+        }
+      },
+      "lullaby_quality_avg": 0.75
+    }
+  ]
+}

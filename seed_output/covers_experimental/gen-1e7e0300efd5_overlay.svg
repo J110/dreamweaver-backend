@@ -1,0 +1,438 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="vignetteGrad">
+      <stop offset="40%" stop-color="transparent"/>
+      <stop offset="100%" stop-color="#1a0f00" stop-opacity="0.75"/>
+    </radialGradient>
+    <filter id="softBlur">
+      <feGaussianBlur stdDeviation="2"/>
+    </filter>
+  </defs>
+<!-- F3: Breathing Pacer (Ocean) -->
+<g id="breath-pacer">
+  <radialGradient id="breathG325">
+    <stop offset="0%" stop-color="#FF8F00" stop-opacity="0.65"/>
+    <stop offset="35%" stop-color="#FF8F00" stop-opacity="0.35"/>
+    <stop offset="70%" stop-color="#FF8F00" stop-opacity="0.10"/>
+    <stop offset="100%" stop-color="#FF8F00" stop-opacity="0"/>
+  </radialGradient>
+  <ellipse cx="50%" cy="60%" rx="40" ry="50" fill="url(#breathG325)">
+    <animate attributeName="ry" values="45;55;45" dur="5s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+    <animate attributeName="rx" values="36;44;36" dur="5s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+    <animate attributeName="opacity" values="0.45;0.75;0.45" dur="5s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+  </ellipse>
+</g>
+<!-- B5: Underwater Caustics -->
+<g id="caustics" opacity="0.18">
+  <ellipse cx="41%" cy="58%" rx="46" ry="34" fill="#FF8F00" opacity="0.21">
+    <animate attributeName="rx" values="41;51;44;54;41" dur="13s" repeatCount="indefinite"/>
+    <animate attributeName="ry" values="31;39;29;37;31" dur="19s" repeatCount="indefinite"/>
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; 10,3; -5,6; 7,-2; 0,0" dur="29s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.21;0.25;0.23;0.25;0.21"
+      dur="17s" repeatCount="indefinite"/>
+  </ellipse>
+  <ellipse cx="63%" cy="51%" rx="33" ry="34" fill="#FF8F00" opacity="0.21">
+    <animate attributeName="rx" values="28;38;31;41;28" dur="19s" repeatCount="indefinite"/>
+    <animate attributeName="ry" values="31;39;29;37;31" dur="23s" repeatCount="indefinite"/>
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; 15,5; -8,8; 12,-3; 0,0" dur="19s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.21;0.25;0.23;0.25;0.21"
+      dur="23s" repeatCount="indefinite"/>
+  </ellipse>
+</g>
+<!-- A3: Moon Glow -->
+<g id="moon-glow">
+  <radialGradient id="moonH515">
+    <stop offset="0%" stop-color="#FFF5E0" stop-opacity="0.35"/>
+    <stop offset="40%" stop-color="#FF8F00" stop-opacity="0.15"/>
+    <stop offset="100%" stop-color="#FF8F00" stop-opacity="0"/>
+  </radialGradient>
+  <circle cx="65%" cy="17%" r="49" fill="url(#moonH515)">
+    <animate attributeName="r" values="44;59;44" dur="11s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+    <animate attributeName="opacity" values="0.30;0.60;0.30" dur="11s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+  </circle>
+  <circle cx="65%" cy="17%" r="17" fill="#FFF5E0" opacity="0.20">
+    <animate attributeName="opacity" values="0.15;0.25;0.15" dur="11s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+  </circle>
+</g>
+<!-- A4: Aurora -->
+<g id="aurora-688">
+  <defs>  <radialGradient id="aur-g688-0"><stop offset="0%" stop-color="#E0C8A0" stop-opacity="0.6"/><stop offset="50%" stop-color="#E0C8A0" stop-opacity="0.3"/><stop offset="100%" stop-color="#E0C8A0" stop-opacity="0"/></radialGradient>  <radialGradient id="aur-g688-1"><stop offset="0%" stop-color="#D4B8A0" stop-opacity="0.6"/><stop offset="50%" stop-color="#D4B8A0" stop-opacity="0.3"/><stop offset="100%" stop-color="#D4B8A0" stop-opacity="0"/></radialGradient>  <radialGradient id="aur-g688-2"><stop offset="0%" stop-color="#D4B8A0" stop-opacity="0.6"/><stop offset="50%" stop-color="#D4B8A0" stop-opacity="0.3"/><stop offset="100%" stop-color="#D4B8A0" stop-opacity="0"/></radialGradient></defs>
+  <ellipse cx="39%" cy="13%" rx="155" ry="18" fill="url(#aur-g688-0)" opacity="0.14">
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; 19,5; -12,2; 7,-2; 0,0" dur="31s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+    <animate attributeName="opacity" values="0.14;0.20;0.16;0.22;0.14"
+      dur="31s" repeatCount="indefinite"/>
+    <animate attributeName="ry" values="15;23;14;21;15"
+      dur="31s" repeatCount="indefinite"/>
+  </ellipse>
+  <ellipse cx="43%" cy="24%" rx="151" ry="21" fill="url(#aur-g688-1)" opacity="0.14">
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; 20,6; -11,4; 6,-2; 0,0" dur="19s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+    <animate attributeName="opacity" values="0.14;0.20;0.16;0.22;0.14"
+      dur="31s" repeatCount="indefinite"/>
+    <animate attributeName="ry" values="18;26;17;24;18"
+      dur="29s" repeatCount="indefinite"/>
+  </ellipse>
+  <ellipse cx="54%" cy="23%" rx="150" ry="30" fill="url(#aur-g688-2)" opacity="0.11">
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; 19,5; -8,2; 6,-1; 0,0" dur="29s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+    <animate attributeName="opacity" values="0.11;0.17;0.13;0.19;0.11"
+      dur="23s" repeatCount="indefinite"/>
+    <animate attributeName="ry" values="27;35;26;33;27"
+      dur="29s" repeatCount="indefinite"/>
+  </ellipse>
+</g>
+<!-- E1: Water Ripples -->
+<g id="ripple-0" transform="translate(33%, 60%)">
+  <circle cx="0" cy="0" r="5" fill="none" stroke="#FFB74D" stroke-width="0.5" opacity="0">
+    <animate attributeName="r" values="3;25;51" dur="9.7s" begin="0.0s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+    <animate attributeName="opacity" values="0;0.35;0" dur="9.7s" begin="0.0s"
+      repeatCount="indefinite" calcMode="spline" keySplines="0.3 0 0.7 1;0.4 0 0.6 1"/>
+    <animate attributeName="stroke-width" values="0.8;0.4;0.1" dur="9.7s" begin="0.0s"
+      repeatCount="indefinite"/>
+  </circle>
+  <circle cx="0" cy="0" r="5" fill="none" stroke="#FFB74D" stroke-width="0.5" opacity="0">
+    <animate attributeName="r" values="3;25;51" dur="9.7s" begin="3.2s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+    <animate attributeName="opacity" values="0;0.3;0" dur="9.7s" begin="3.2s"
+      repeatCount="indefinite" calcMode="spline" keySplines="0.3 0 0.7 1;0.4 0 0.6 1"/>
+    <animate attributeName="stroke-width" values="0.8;0.4;0.1" dur="9.7s" begin="3.2s"
+      repeatCount="indefinite"/>
+  </circle>
+  <circle cx="0" cy="0" r="5" fill="none" stroke="#FFB74D" stroke-width="0.5" opacity="0">
+    <animate attributeName="r" values="3;25;51" dur="9.7s" begin="6.4s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+    <animate attributeName="opacity" values="0;0.25;0" dur="9.7s" begin="6.4s"
+      repeatCount="indefinite" calcMode="spline" keySplines="0.3 0 0.7 1;0.4 0 0.6 1"/>
+    <animate attributeName="stroke-width" values="0.8;0.4;0.1" dur="9.7s" begin="6.4s"
+      repeatCount="indefinite"/>
+  </circle>
+</g>
+<g id="ripple-1" transform="translate(26%, 71%)">
+  <circle cx="0" cy="0" r="5" fill="none" stroke="#FFB74D" stroke-width="0.5" opacity="0">
+    <animate attributeName="r" values="3;24;49" dur="8.0s" begin="0.0s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+    <animate attributeName="opacity" values="0;0.35;0" dur="8.0s" begin="0.0s"
+      repeatCount="indefinite" calcMode="spline" keySplines="0.3 0 0.7 1;0.4 0 0.6 1"/>
+    <animate attributeName="stroke-width" values="0.8;0.4;0.1" dur="8.0s" begin="0.0s"
+      repeatCount="indefinite"/>
+  </circle>
+  <circle cx="0" cy="0" r="5" fill="none" stroke="#FFB74D" stroke-width="0.5" opacity="0">
+    <animate attributeName="r" values="3;24;49" dur="8.0s" begin="2.0s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+    <animate attributeName="opacity" values="0;0.3;0" dur="8.0s" begin="2.0s"
+      repeatCount="indefinite" calcMode="spline" keySplines="0.3 0 0.7 1;0.4 0 0.6 1"/>
+    <animate attributeName="stroke-width" values="0.8;0.4;0.1" dur="8.0s" begin="2.0s"
+      repeatCount="indefinite"/>
+  </circle>
+  <circle cx="0" cy="0" r="5" fill="none" stroke="#FFB74D" stroke-width="0.5" opacity="0">
+    <animate attributeName="r" values="3;24;49" dur="8.0s" begin="4.0s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+    <animate attributeName="opacity" values="0;0.25;0" dur="8.0s" begin="4.0s"
+      repeatCount="indefinite" calcMode="spline" keySplines="0.3 0 0.7 1;0.4 0 0.6 1"/>
+    <animate attributeName="stroke-width" values="0.8;0.4;0.1" dur="8.0s" begin="4.0s"
+      repeatCount="indefinite"/>
+  </circle>
+  <circle cx="0" cy="0" r="5" fill="none" stroke="#FFB74D" stroke-width="0.5" opacity="0">
+    <animate attributeName="r" values="3;24;49" dur="8.0s" begin="6.0s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+    <animate attributeName="opacity" values="0;0.2;0" dur="8.0s" begin="6.0s"
+      repeatCount="indefinite" calcMode="spline" keySplines="0.3 0 0.7 1;0.4 0 0.6 1"/>
+    <animate attributeName="stroke-width" values="0.8;0.4;0.1" dur="8.0s" begin="6.0s"
+      repeatCount="indefinite"/>
+  </circle>
+</g>
+<g id="ripple-2" transform="translate(35%, 78%)">
+  <circle cx="0" cy="0" r="5" fill="none" stroke="#FFB74D" stroke-width="0.5" opacity="0">
+    <animate attributeName="r" values="3;20;40" dur="8.9s" begin="0.0s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+    <animate attributeName="opacity" values="0;0.35;0" dur="8.9s" begin="0.0s"
+      repeatCount="indefinite" calcMode="spline" keySplines="0.3 0 0.7 1;0.4 0 0.6 1"/>
+    <animate attributeName="stroke-width" values="0.8;0.4;0.1" dur="8.9s" begin="0.0s"
+      repeatCount="indefinite"/>
+  </circle>
+  <circle cx="0" cy="0" r="5" fill="none" stroke="#FFB74D" stroke-width="0.5" opacity="0">
+    <animate attributeName="r" values="3;20;40" dur="8.9s" begin="3.0s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+    <animate attributeName="opacity" values="0;0.3;0" dur="8.9s" begin="3.0s"
+      repeatCount="indefinite" calcMode="spline" keySplines="0.3 0 0.7 1;0.4 0 0.6 1"/>
+    <animate attributeName="stroke-width" values="0.8;0.4;0.1" dur="8.9s" begin="3.0s"
+      repeatCount="indefinite"/>
+  </circle>
+  <circle cx="0" cy="0" r="5" fill="none" stroke="#FFB74D" stroke-width="0.5" opacity="0">
+    <animate attributeName="r" values="3;20;40" dur="8.9s" begin="6.0s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+    <animate attributeName="opacity" values="0;0.25;0" dur="8.9s" begin="6.0s"
+      repeatCount="indefinite" calcMode="spline" keySplines="0.3 0 0.7 1;0.4 0 0.6 1"/>
+    <animate attributeName="stroke-width" values="0.8;0.4;0.1" dur="8.9s" begin="6.0s"
+      repeatCount="indefinite"/>
+  </circle>
+</g>
+<!-- B4: Dust Motes -->
+<g id="dust-motes-551">
+  <circle cx="0" cy="0" r="1.7" fill="#FFB74D" opacity="0">
+    <animateMotion dur="19s" repeatCount="indefinite" begin="2.1s"
+      path="M238,177 C232,171 253,173 223,169 S228,176 249,171"/>
+    <animate attributeName="opacity" values="0;0.53;0.27;0.53;0.21;0"
+      dur="19s" repeatCount="indefinite" begin="2.1s"/>
+  </circle>
+  <circle cx="0" cy="0" r="1.3" fill="#FFB74D" opacity="0">
+    <animateMotion dur="17s" repeatCount="indefinite" begin="1.2s"
+      path="M253,192 C263,188 240,202 256,181 S254,202 243,183"/>
+    <animate attributeName="opacity" values="0;0.36;0.18;0.36;0.14;0"
+      dur="17s" repeatCount="indefinite" begin="1.2s"/>
+  </circle>
+  <circle cx="0" cy="0" r="1.9" fill="#FFB74D" opacity="0">
+    <animateMotion dur="13s" repeatCount="indefinite" begin="3.8s"
+      path="M379,123 C373,134 382,130 382,125 S378,126 390,116"/>
+    <animate attributeName="opacity" values="0;0.35;0.17;0.35;0.14;0"
+      dur="13s" repeatCount="indefinite" begin="3.8s"/>
+  </circle>
+  <circle cx="0" cy="0" r="1.5" fill="#FFB74D" opacity="0">
+    <animateMotion dur="17s" repeatCount="indefinite" begin="0.5s"
+      path="M314,189 C314,186 312,180 322,186 S312,183 309,187"/>
+    <animate attributeName="opacity" values="0;0.54;0.27;0.54;0.22;0"
+      dur="17s" repeatCount="indefinite" begin="0.5s"/>
+  </circle>
+  <circle cx="0" cy="0" r="1.7" fill="#FFB74D" opacity="0">
+    <animateMotion dur="17s" repeatCount="indefinite" begin="2.7s"
+      path="M244,303 C245,303 237,300 256,298 S249,292 231,293"/>
+    <animate attributeName="opacity" values="0;0.50;0.25;0.50;0.20;0"
+      dur="17s" repeatCount="indefinite" begin="2.7s"/>
+  </circle>
+  <circle cx="0" cy="0" r="1.0" fill="#FFB74D" opacity="0">
+    <animateMotion dur="19s" repeatCount="indefinite" begin="2.5s"
+      path="M122,261 C133,265 118,255 116,270 S123,258 119,251"/>
+    <animate attributeName="opacity" values="0;0.38;0.19;0.38;0.15;0"
+      dur="19s" repeatCount="indefinite" begin="2.5s"/>
+  </circle>
+  <circle cx="0" cy="0" r="1.5" fill="#FFB74D" opacity="0">
+    <animateMotion dur="11s" repeatCount="indefinite" begin="5.7s"
+      path="M119,126 C125,118 106,136 112,116 S122,136 120,126"/>
+    <animate attributeName="opacity" values="0;0.30;0.15;0.30;0.12;0"
+      dur="11s" repeatCount="indefinite" begin="5.7s"/>
+  </circle>
+</g>
+<!-- E2: Slow Bubbles -->
+<g id="bubbles" opacity="0.35">
+  <circle cx="0" cy="0" r="4.6" fill="none" stroke="#FFB74D" stroke-width="0.5" opacity="0.29">
+    <animateMotion dur="16.9s" repeatCount="indefinite" begin="6.8s"
+      path="M418,435 C427,362 429,298 424,229 S433,173 416,98"/>
+    <animate attributeName="opacity" values="0;0.29;0.33;0.29;0.14;0"
+      dur="16.9s" repeatCount="indefinite"/>
+    <animate attributeName="r" values="4.6;5.1;5.5;6.0;6.5"
+      dur="16.9s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="0" cy="0" r="2.7" fill="none" stroke="#FFB74D" stroke-width="0.5" opacity="0.45">
+    <animateMotion dur="17.0s" repeatCount="indefinite" begin="2.4s"
+      path="M202,386 C206,325 216,246 198,195 S216,140 195,64"/>
+    <animate attributeName="opacity" values="0;0.45;0.33;0.45;0.23;0"
+      dur="17.0s" repeatCount="indefinite"/>
+    <animate attributeName="r" values="2.7;3.0;3.2;3.5;3.8"
+      dur="17.0s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="0" cy="0" r="2.5" fill="none" stroke="#FFB74D" stroke-width="0.5" opacity="0.46">
+    <animateMotion dur="19.7s" repeatCount="indefinite" begin="3.3s"
+      path="M226,440 C237,370 227,302 220,225 S234,156 215,100"/>
+    <animate attributeName="opacity" values="0;0.46;0.33;0.46;0.23;0"
+      dur="19.7s" repeatCount="indefinite"/>
+    <animate attributeName="r" values="2.5;3.0;3.6;4.2;4.7"
+      dur="19.7s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="0" cy="0" r="4.5" fill="none" stroke="#FFB74D" stroke-width="0.5" opacity="0.36">
+    <animateMotion dur="17.5s" repeatCount="indefinite" begin="1.3s"
+      path="M245,388 C255,326 244,259 248,184 S252,114 247,51"/>
+    <animate attributeName="opacity" values="0;0.36;0.33;0.36;0.18;0"
+      dur="17.5s" repeatCount="indefinite"/>
+    <animate attributeName="r" values="4.5;4.8;5.0;5.2;5.5"
+      dur="17.5s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="0" cy="0" r="3.6" fill="none" stroke="#FFB74D" stroke-width="0.5" opacity="0.46">
+    <animateMotion dur="18.1s" repeatCount="indefinite" begin="3.5s"
+      path="M161,431 C151,373 161,293 163,228 S168,171 175,102"/>
+    <animate attributeName="opacity" values="0;0.46;0.33;0.46;0.23;0"
+      dur="18.1s" repeatCount="indefinite"/>
+    <animate attributeName="r" values="3.6;3.9;4.1;4.3;4.6"
+      dur="18.1s" repeatCount="indefinite"/>
+  </circle>
+</g>
+<!-- B5: Underwater Caustics -->
+<g id="caustics" opacity="0.18">
+  <ellipse cx="69%" cy="73%" rx="35" ry="24" fill="#FF8F00" opacity="0.1">
+    <animate attributeName="rx" values="30;40;33;43;30" dur="17s" repeatCount="indefinite"/>
+    <animate attributeName="ry" values="21;29;19;27;21" dur="17s" repeatCount="indefinite"/>
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; 11,8; -6,11; 8,-4; 0,0" dur="23s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.10;0.16;0.12;0.18;0.10"
+      dur="17s" repeatCount="indefinite"/>
+  </ellipse>
+  <ellipse cx="45%" cy="55%" rx="57" ry="30" fill="#FF8F00" opacity="0.16">
+    <animate attributeName="rx" values="52;62;55;65;52" dur="13s" repeatCount="indefinite"/>
+    <animate attributeName="ry" values="27;35;25;33;27" dur="23s" repeatCount="indefinite"/>
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; 7,8; -4,11; 4,-4; 0,0" dur="29s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.16;0.22;0.18;0.24;0.16"
+      dur="17s" repeatCount="indefinite"/>
+  </ellipse>
+  <ellipse cx="28%" cy="50%" rx="49" ry="31" fill="#FF8F00" opacity="0.12">
+    <animate attributeName="rx" values="44;54;47;57;44" dur="17s" repeatCount="indefinite"/>
+    <animate attributeName="ry" values="28;36;26;34;28" dur="23s" repeatCount="indefinite"/>
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; 14,5; -7,8; 11,-3; 0,0" dur="31s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.12;0.18;0.14;0.20;0.12"
+      dur="19s" repeatCount="indefinite"/>
+  </ellipse>
+</g>
+<!-- F2: Shadow Play -->
+<g id="window-shadows" opacity="0.10">
+  <path d="M149,125 Q178,116 191,136 Q172,110 202,132"
+    fill="none" stroke="#4A3828" stroke-width="15" stroke-linecap="round" opacity="0.12">
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; 6,1; -4,1; 4,0; 0,0"
+      dur="10.1s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+  </path>
+  <path d="M110,95 Q123,86 151,103 Q132,78 155,114"
+    fill="none" stroke="#4A3828" stroke-width="15" stroke-linecap="round" opacity="0.13">
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; 3,2; -4,1; 6,-1; 0,0"
+      dur="11.7s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+  </path>
+  <ellipse cx="143" cy="188" rx="35" ry="27" fill="#4A3828" opacity="0.06">
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; 2,3; -2,2; 4,0; 0,0"
+      dur="16.8s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.05;0.07;0.04;0.06;0.05"
+      dur="23s" repeatCount="indefinite"/>
+  </ellipse>
+</g>
+<!-- B1: Drifting Fog -->
+<g id="fog-858">
+  <defs>  <radialGradient id="fog-g858-0"><stop offset="0%" stop-color="#E8D8C4" stop-opacity="0.5"/><stop offset="40%" stop-color="#E8D8C4" stop-opacity="0.25"/><stop offset="100%" stop-color="#E8D8C4" stop-opacity="0"/></radialGradient>  <radialGradient id="fog-g858-1"><stop offset="0%" stop-color="#E8D8C4" stop-opacity="0.5"/><stop offset="40%" stop-color="#E8D8C4" stop-opacity="0.25"/><stop offset="100%" stop-color="#E8D8C4" stop-opacity="0"/></radialGradient></defs>
+  <ellipse cx="46%" cy="84%" rx="235" ry="43" fill="url(#fog-g858-0)" opacity="0.10">
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; 62,3; 124,0; 62,-3; 0,0"
+      dur="37s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+    <animate attributeName="opacity" values="0.10;0.13;0.11;0.15;0.10"
+      dur="37s" repeatCount="indefinite"/>
+  </ellipse>
+  <ellipse cx="71%" cy="60%" rx="208" ry="42" fill="url(#fog-g858-1)" opacity="0.08">
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; -54,3; -108,0; -54,-3; 0,0"
+      dur="29s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+    <animate attributeName="opacity" values="0.08;0.11;0.09;0.13;0.08"
+      dur="43s" repeatCount="indefinite"/>
+  </ellipse>
+</g>
+<!-- C1: Swaying Branches -->
+<g id="branch-left" transform-origin="0% 30%">
+  <path d="M0,110 Q13,80 12,50 Q20,30 17,10" stroke="#3D2B1F" stroke-width="2" fill="none" opacity="0.31"/>
+  <ellipse cx="20" cy="23" rx="12" ry="6" fill="#3D2B1F" opacity="0.22"
+    transform="rotate(2,20,23)"/>
+  <animateTransform attributeName="transform" type="rotate"
+    values="0,0,110; 3,0,110; 0,0,110; -2,0,110; 0,0,110"
+    dur="6.3s" repeatCount="indefinite"
+    calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+</g>
+<!-- B4: Dust Motes -->
+<g id="dust-motes-808">
+  <circle cx="0" cy="0" r="1.2" fill="#FFB74D" opacity="0">
+    <animateMotion dur="13s" repeatCount="indefinite" begin="0.6s"
+      path="M215,207 C201,208 204,205 220,203 S214,211 221,196"/>
+    <animate attributeName="opacity" values="0;0.29;0.14;0.29;0.12;0"
+      dur="13s" repeatCount="indefinite" begin="0.6s"/>
+  </circle>
+  <circle cx="0" cy="0" r="1.2" fill="#FFB74D" opacity="0">
+    <animateMotion dur="13s" repeatCount="indefinite" begin="1.3s"
+      path="M214,262 C199,261 223,267 219,272 S203,269 223,264"/>
+    <animate attributeName="opacity" values="0;0.45;0.23;0.45;0.18;0"
+      dur="13s" repeatCount="indefinite" begin="1.3s"/>
+  </circle>
+  <circle cx="0" cy="0" r="1.9" fill="#FFB74D" opacity="0">
+    <animateMotion dur="19s" repeatCount="indefinite" begin="1.3s"
+      path="M178,202 C169,203 192,207 163,206 S183,201 192,212"/>
+    <animate attributeName="opacity" values="0;0.28;0.14;0.28;0.11;0"
+      dur="19s" repeatCount="indefinite" begin="1.3s"/>
+  </circle>
+  <circle cx="0" cy="0" r="1.0" fill="#FFB74D" opacity="0">
+    <animateMotion dur="19s" repeatCount="indefinite" begin="1.3s"
+      path="M317,259 C327,270 315,265 322,248 S316,262 315,267"/>
+    <animate attributeName="opacity" values="0;0.54;0.27;0.54;0.22;0"
+      dur="19s" repeatCount="indefinite" begin="1.3s"/>
+  </circle>
+</g>
+<!-- D2: Sleeping Butterfly -->
+<g id="butterfly-0" transform="translate(23%, 81%)">
+  <ellipse cx="-5" cy="0" rx="7" ry="4" fill="#B8946A" opacity="0.32"
+    transform="rotate(-8,-5,0)">
+    <animateTransform attributeName="transform" type="rotate"
+      values="-8,-5,0; -19,-5,0; -8,-5,0"
+      dur="7s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+  </ellipse>
+  <ellipse cx="5" cy="0" rx="7" ry="4" fill="#B8946A" opacity="0.32"
+    transform="rotate(8,5,0)">
+    <animateTransform attributeName="transform" type="rotate"
+      values="8,5,0; 19,5,0; 8,5,0"
+      dur="7s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+  </ellipse>
+  <ellipse cx="0" cy="0" rx="1.5" ry="4" fill="#8B7355" opacity="0.35"/>
+</g>
+<g id="butterfly-1" transform="translate(75%, 75%)">
+  <ellipse cx="-5" cy="0" rx="5" ry="3" fill="#A08060" opacity="0.39"
+    transform="rotate(-9,-5,0)">
+    <animateTransform attributeName="transform" type="rotate"
+      values="-9,-5,0; -29,-5,0; -9,-5,0"
+      dur="13s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+  </ellipse>
+  <ellipse cx="5" cy="0" rx="5" ry="3" fill="#A08060" opacity="0.39"
+    transform="rotate(9,5,0)">
+    <animateTransform attributeName="transform" type="rotate"
+      values="9,5,0; 29,5,0; 9,5,0"
+      dur="13s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+  </ellipse>
+  <ellipse cx="0" cy="0" rx="1.5" ry="4" fill="#8B7355" opacity="0.42"/>
+</g>
+<!-- A2: Shooting Star -->
+<g id="shooting-star" opacity="0">
+  <line x1="0" y1="0" x2="-20" y2="-8" stroke="#FFE4B5" stroke-width="1.5"
+    stroke-linecap="round" opacity="0.5"/>
+  <circle cx="0" cy="0" r="2" fill="#FFE4B5" opacity="0.6"/>
+  <circle cx="0" cy="0" r="5" fill="#FFE4B5" opacity="0.15"/>
+  <animateMotion dur="5.3s" begin="41s" repeatCount="indefinite"
+    path="M3,-8 Q150,18 304,51"
+    calcMode="spline" keySplines="0.2 0 0.8 1"/>
+  <animate attributeName="opacity" values="0;0;0.56;0.56;0;0;0;0;0;0;0;0;0"
+    dur="41s" begin="0s" repeatCount="indefinite"
+    calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+</g>
+<!-- Vignette: top_heavy -->
+<linearGradient id="vigLG184" x1="0" y1="0" x2="0" y2="1">
+  <stop offset="0%" stop-color="#1a0f00" stop-opacity="0.15"/>
+  <stop offset="50%" stop-color="#1a0f00" stop-opacity="0.15"/>
+  <stop offset="100%" stop-color="#1a0f00" stop-opacity="0"/>
+</linearGradient>
+<rect width="512" height="512" fill="url(#vigLG184)" opacity="0.8">
+  <animate attributeName="opacity" values="0.8;0.8500000000000001;0.8" dur="10s" repeatCount="indefinite"
+    calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+</rect>
+
+</svg>

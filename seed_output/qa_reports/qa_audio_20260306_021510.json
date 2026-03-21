@@ -1,0 +1,254 @@
+{
+  "generated_at": "2026-03-06T02:15:10.448671",
+  "summary": {
+    "total": 2,
+    "passed": 0,
+    "warned": 2,
+    "failed": 0,
+    "avg_fidelity": null,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-bf2a73ca2fe3",
+      "title": "Shimmer’s Frosted Lullaby of the Aurora",
+      "median_duration": 184.91,
+      "variants": [
+        {
+          "voice": "male_1",
+          "duration_seconds": 184.91,
+          "verdict": "WARN",
+          "reasons": [
+            "dynamic range 13dB (max 8dB recommended)"
+          ],
+          "text_fidelity_combined": 0,
+          "quality_average": 0.748,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "lullaby_qa": {
+            "dimensions": {
+              "volume_consistency": {
+                "score": 0.611,
+                "variance": 11.7,
+                "range_db": 13.0
+              },
+              "loudness": {
+                "score": 0.809,
+                "avg_dbfs": -24.9
+              },
+              "sparsity": {
+                "score": 0.333,
+                "quiet_ratio": 0.05
+              },
+              "spectral_softness": {
+                "score": 0.989,
+                "high_freq_ratio": 0.0022
+              },
+              "no_peaks": {
+                "score": 1.0,
+                "spike_count": 0
+              }
+            },
+            "quality_avg": 0.748,
+            "warnings": [
+              "dynamic range 13dB (max 8dB recommended)"
+            ],
+            "fidelity": {
+              "verdict": "PASS",
+              "content_type": "N",
+              "fidelity_score": 1.0,
+              "gate1": {
+                "pass": true,
+                "real_word_ratio": 0.0,
+                "detected_real_words": []
+              },
+              "gate2": {
+                "pass": true,
+                "high_severity": [],
+                "medium_severity": [],
+                "flag_for_review": false
+              },
+              "gate3": {
+                "pass": true,
+                "hits": []
+              }
+            }
+          }
+        },
+        {
+          "voice": "female_1",
+          "duration_seconds": 184.91,
+          "verdict": "WARN",
+          "reasons": [
+            "no gaps between phrases"
+          ],
+          "text_fidelity_combined": 0,
+          "quality_average": 0.729,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "lullaby_qa": {
+            "dimensions": {
+              "volume_consistency": {
+                "score": 0.718,
+                "variance": 8.5,
+                "range_db": 11.0
+              },
+              "loudness": {
+                "score": 0.702,
+                "avg_dbfs": -26.5
+              },
+              "sparsity": {
+                "score": 0.3,
+                "quiet_ratio": 0.025
+              },
+              "spectral_softness": {
+                "score": 0.926,
+                "high_freq_ratio": 0.0148
+              },
+              "no_peaks": {
+                "score": 1.0,
+                "spike_count": 0
+              }
+            },
+            "quality_avg": 0.729,
+            "warnings": [
+              "no gaps between phrases"
+            ],
+            "fidelity": {
+              "verdict": "PASS",
+              "content_type": "N",
+              "fidelity_score": 1.0,
+              "gate1": {
+                "pass": true,
+                "real_word_ratio": 0.0,
+                "detected_real_words": []
+              },
+              "gate2": {
+                "pass": true,
+                "high_severity": [],
+                "medium_severity": [],
+                "flag_for_review": false
+              },
+              "gate3": {
+                "pass": true,
+                "hits": []
+              }
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Shimmer’s Frosted Lullaby of the Aurora",
+      "story_id": "gen-bf2a73ca2fe3",
+      "voice": "male_1",
+      "verdict": "WARN",
+      "reasons": [
+        "dynamic range 13dB (max 8dB recommended)"
+      ],
+      "fidelity": 0,
+      "quality_avg": 0.748,
+      "lullaby_dimensions": {
+        "volume_consistency": {
+          "score": 0.611,
+          "variance": 11.7,
+          "range_db": 13.0
+        },
+        "loudness": {
+          "score": 0.809,
+          "avg_dbfs": -24.9
+        },
+        "sparsity": {
+          "score": 0.333,
+          "quiet_ratio": 0.05
+        },
+        "spectral_softness": {
+          "score": 0.989,
+          "high_freq_ratio": 0.0022
+        },
+        "no_peaks": {
+          "score": 1.0,
+          "spike_count": 0
+        }
+      },
+      "lullaby_quality_avg": 0.748,
+      "lullaby_fidelity": {
+        "verdict": "PASS",
+        "content_type": "N",
+        "fidelity_score": 1.0,
+        "gate1": {
+          "pass": true,
+          "real_word_ratio": 0.0,
+          "detected_real_words": []
+        },
+        "gate2": {
+          "pass": true,
+          "high_severity": [],
+          "medium_severity": [],
+          "flag_for_review": false
+        },
+        "gate3": {
+          "pass": true,
+          "hits": []
+        }
+      }
+    },
+    {
+      "story": "Shimmer’s Frosted Lullaby of the Aurora",
+      "story_id": "gen-bf2a73ca2fe3",
+      "voice": "female_1",
+      "verdict": "WARN",
+      "reasons": [
+        "no gaps between phrases"
+      ],
+      "fidelity": 0,
+      "quality_avg": 0.729,
+      "lullaby_dimensions": {
+        "volume_consistency": {
+          "score": 0.718,
+          "variance": 8.5,
+          "range_db": 11.0
+        },
+        "loudness": {
+          "score": 0.702,
+          "avg_dbfs": -26.5
+        },
+        "sparsity": {
+          "score": 0.3,
+          "quiet_ratio": 0.025
+        },
+        "spectral_softness": {
+          "score": 0.926,
+          "high_freq_ratio": 0.0148
+        },
+        "no_peaks": {
+          "score": 1.0,
+          "spike_count": 0
+        }
+      },
+      "lullaby_quality_avg": 0.729,
+      "lullaby_fidelity": {
+        "verdict": "PASS",
+        "content_type": "N",
+        "fidelity_score": 1.0,
+        "gate1": {
+          "pass": true,
+          "real_word_ratio": 0.0,
+          "detected_real_words": []
+        },
+        "gate2": {
+          "pass": true,
+          "high_severity": [],
+          "medium_severity": [],
+          "flag_for_review": false
+        },
+        "gate3": {
+          "pass": true,
+          "hits": []
+        }
+      }
+    }
+  ]
+}

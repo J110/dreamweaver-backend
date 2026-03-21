@@ -1,0 +1,155 @@
+{
+  "generated_at": "2026-03-02T02:07:09.063650",
+  "summary": {
+    "total": 7,
+    "passed": 6,
+    "warned": 1,
+    "failed": 0,
+    "avg_fidelity": 0.9116,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-3fc983f95d8b",
+      "title": "Sylvie’s Frost-Spun Secret",
+      "median_duration": 115.53,
+      "variants": [
+        {
+          "voice": "female_1",
+          "duration_seconds": 166.33,
+          "verdict": "WARN",
+          "reasons": [
+            "duration_outlier (44.0% off)"
+          ],
+          "text_fidelity_combined": 0.9809,
+          "quality_average": 5.0,
+          "duration_outlier": true,
+          "duration_deviation_pct": 44.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.973,
+            "word_overlap": 0.9286,
+            "word_order_score": 0.9682,
+            "combined": 0.9809
+          },
+          "transcript_snippet": "Beneath the polar glow so bright, a mulberry tree stands wrapped in white. Its leaves like lace on frozen air, Sylvie spins her dreams with care. She hums a tune so soft and low, a lullaby for ice and snow. Her tiny feet, so light, so wise, dance patterns neath the northern skies.The woolly mammoths"
+        },
+        {
+          "voice": "female_2",
+          "duration_seconds": 122.91,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9809,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 6.4,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.973,
+            "word_overlap": 0.9286,
+            "word_order_score": 0.9682,
+            "combined": 0.9809
+          }
+        },
+        {
+          "voice": "female_3",
+          "duration_seconds": 115.53,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9815,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.977,
+            "word_overlap": 0.9286,
+            "word_order_score": 0.9682,
+            "combined": 0.9815
+          }
+        },
+        {
+          "voice": "male_1",
+          "duration_seconds": 102.41,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.8442,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 11.4,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9954,
+            "ratio": 0.1116,
+            "word_overlap": 0.9103,
+            "word_order_score": 0.9548,
+            "combined": 0.8442
+          }
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 114.15,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9842,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 1.2,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.9796,
+            "word_overlap": 0.9412,
+            "word_order_score": 0.9727,
+            "combined": 0.9842
+          }
+        },
+        {
+          "voice": "male_3",
+          "duration_seconds": 112.32,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.7242,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 2.8,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.6651,
+            "ratio": 0.3853,
+            "word_overlap": 0.929,
+            "word_order_score": 0.9636,
+            "combined": 0.7242
+          }
+        },
+        {
+          "voice": "asmr",
+          "duration_seconds": 118.56,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.885,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 2.6,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9358,
+            "ratio": 0.5991,
+            "word_overlap": 0.8974,
+            "word_order_score": 0.95,
+            "combined": 0.885
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Sylvie’s Frost-Spun Secret",
+      "story_id": "gen-3fc983f95d8b",
+      "voice": "female_1",
+      "verdict": "WARN",
+      "reasons": [
+        "duration_outlier (44.0% off)"
+      ],
+      "fidelity": 0.9809,
+      "quality_avg": 5.0
+    }
+  ]
+}

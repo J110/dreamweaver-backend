@@ -1,0 +1,83 @@
+{
+  "id": "gen-411c4e4dde20",
+  "type": "song",
+  "lang": "en",
+  "title": "Milo and the Glowing Night Song",
+  "description": "As fireflies flicker their golden lights across the garden, a little glowworm named Milo hums a quiet tune to the sleeping flowers. The night feels alive with tiny sparks, and Milo knows it’s time to sing the world to rest.",
+  "text": "[SINGING]\nLittle Milo glows so soft and bright,\nDancing lights in velvet night.\nFlowers close their sleepy eyes,\nUnderneath the starry skies.\n\n[PAUSE]\n\n[SINGING]\nHush now, hush, the moon is high,\nTuck the world in lullaby.\nGentle breeze will rock you slow,\nDream of lights that softly glow.\n\n[PAUSE]\n\n[SINGING]\nMilo hums a sleepy tune,\nUnderneath the golden moon.\nPetals drift on dreams so sweet,\nAs the night sings you to sleep.\n\n[PAUSE]\n\n[SINGING]\nHush now, hush, the moon is high,\nTuck the world in lullaby.\nGentle breeze will rock you slow,\nDream of lights that softly glow.\n\n[PAUSE]\n\n[SINGING]\nAll the leaves are drifting down,\nMilo’s glow is soft and low.\nClose your eyes and drift away,\nTo the night’s sweet ballet.\n\n[PAUSE]\n\n[SINGING]\nHush now, hush, the moon is high,\nTuck the world in lullaby.\nGentle breeze will rock you slow,\nDream of lights that softly glow.\n\n[PAUSE]\n\n[SLEEPY]\nMilo’s light begins to fade,\nLike a star in twilight’s shade.\nRest your head and breathe so deep,\nNight will sing you into sleep.\n\n[PAUSE]\n\n[HUMMING]\nMmm mmm mmm...\nMmm mmm mmm...\nMmm mmm...",
+  "annotated_text": "[SINGING]\nLittle Milo glows so soft and bright,\nDancing lights in velvet night.\nFlowers close their sleepy eyes,\nUnderneath the starry skies.\n\n[PAUSE]\n\n[SINGING]\nHush now, hush, the moon is high,\nTuck the world in lullaby.\nGentle breeze will rock you slow,\nDream of lights that softly glow.\n\n[PAUSE]\n\n[SINGING]\nMilo hums a sleepy tune,\nUnderneath the golden moon.\nPetals drift on dreams so sweet,\nAs the night sings you to sleep.\n\n[PAUSE]\n\n[SINGING]\nHush now, hush, the moon is high,\nTuck the world in lullaby.\nGentle breeze will rock you slow,\nDream of lights that softly glow.\n\n[PAUSE]\n\n[SINGING]\nAll the leaves are drifting down,\nMilo’s glow is soft and low.\nClose your eyes and drift away,\nTo the night’s sweet ballet.\n\n[PAUSE]\n\n[SINGING]\nHush now, hush, the moon is high,\nTuck the world in lullaby.\nGentle breeze will rock you slow,\nDream of lights that softly glow.\n\n[PAUSE]\n\n[SLEEPY]\nMilo’s light begins to fade,\nLike a star in twilight’s shade.\nRest your head and breathe so deep,\nNight will sing you into sleep.\n\n[PAUSE]\n\n[HUMMING]\nMmm mmm mmm...\nMmm mmm mmm...\nMmm mmm...",
+  "target_age": 3,
+  "age_min": 2,
+  "age_max": 5,
+  "age_group": "2-5",
+  "length": "MEDIUM",
+  "word_count": 170,
+  "duration_seconds": 0,
+  "categories": [
+    "Lullaby",
+    "Nature",
+    "Bedtime"
+  ],
+  "theme": "animals",
+  "morals": [
+    "Even the smallest light can bring comfort and peace.",
+    "Gentleness and quiet moments help the world rest."
+  ],
+  "cover": "",
+  "musicProfile": "autumn-forest",
+  "music_type": "ambient",
+  "audio_variants": [
+    {
+      "voice": "female_1",
+      "url": "/audio/pre-gen/gen-411c_female_1.mp3",
+      "duration_seconds": 244.91,
+      "provider": "ace-step"
+    },
+    {
+      "voice": "female_3",
+      "url": "/audio/pre-gen/gen-411c_female_3.mp3",
+      "duration_seconds": 244.91,
+      "provider": "ace-step"
+    }
+  ],
+  "author_id": "system",
+  "is_generated": true,
+  "generation_quality": "pending_review",
+  "lead_gender": "male",
+  "character": {
+    "name": "Milo",
+    "identity": "A gentle glowworm who sings the garden to sleep",
+    "special": "His soft light and humming tune soothe the night",
+    "personality_tags": [
+      "Gentle",
+      "Peaceful"
+    ]
+  },
+  "cover_context": "A moonlit garden bathed in soft golden light, fireflies flickering like tiny stars among the flowers. Petals drift gently in the warm breeze, and the air shimmers with a magical glow.",
+  "lead_character_type": "insect",
+  "universe": "prehistoric",
+  "geography": "Africa",
+  "life_aspect": "play_discovery",
+  "plot_archetype": "discovery",
+  "diversityFingerprint": {
+    "characterType": "insect",
+    "setting": "garden_farm",
+    "plotShape": "routine_ritual",
+    "scale": "tiny_intimate",
+    "companion": "character_and_environment",
+    "movement": "sleeping_resting",
+    "timeOfDay": "deep_night_starlight",
+    "weather": "magical_atmospheric",
+    "theme": "rest_stillness",
+    "characterTrait": null,
+    "magicType": "glowing_bioluminescent",
+    "season": "summer",
+    "senseEmphasis": "visual"
+  },
+  "created_at": "2026-03-10T01:44:20.252765",
+  "updated_at": "2026-03-10T01:44:20.252765",
+  "view_count": 0,
+  "like_count": 0,
+  "save_count": 0,
+  "duration": 5
+}

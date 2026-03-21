@@ -1,0 +1,98 @@
+[
+  {
+    "id": "luna_gentle",
+    "name": "Luna",
+    "gender": "female",
+    "description": "A warm, gentle voice perfect for soothing bedtime stories.",
+    "emotions": [
+      "neutral",
+      "sleepy",
+      "gentle",
+      "happy"
+    ],
+    "sample_url": null,
+    "provider": "chatterbox",
+    "age_group": "all",
+    "is_active": true
+  },
+  {
+    "id": "atlas_warm",
+    "name": "Atlas",
+    "gender": "male",
+    "description": "A deep, warm voice great for adventure stories and legends.",
+    "emotions": [
+      "neutral",
+      "excited",
+      "mysterious",
+      "calm"
+    ],
+    "sample_url": null,
+    "provider": "chatterbox",
+    "age_group": "all",
+    "is_active": true
+  },
+  {
+    "id": "aria_playful",
+    "name": "Aria",
+    "gender": "female",
+    "description": "A bright, playful voice ideal for funny stories and songs.",
+    "emotions": [
+      "neutral",
+      "happy",
+      "playful",
+      "surprised"
+    ],
+    "sample_url": null,
+    "provider": "chatterbox",
+    "age_group": "young",
+    "is_active": true
+  },
+  {
+    "id": "cosmo_adventure",
+    "name": "Cosmo",
+    "gender": "male",
+    "description": "An energetic voice perfect for space adventures and exciting tales.",
+    "emotions": [
+      "neutral",
+      "excited",
+      "brave",
+      "mysterious"
+    ],
+    "sample_url": null,
+    "provider": "chatterbox",
+    "age_group": "older",
+    "is_active": true
+  },
+  {
+    "id": "whisper_soothing",
+    "name": "Whisper",
+    "gender": "neutral",
+    "description": "An ethereal, soothing voice that makes every story feel like a dream.",
+    "emotions": [
+      "neutral",
+      "sleepy",
+      "peaceful",
+      "gentle"
+    ],
+    "sample_url": null,
+    "provider": "chatterbox",
+    "age_group": "all",
+    "is_active": true
+  },
+  {
+    "id": "melody_musical",
+    "name": "Melody",
+    "gender": "female",
+    "description": "A melodic voice with a natural singing quality, perfect for songs and poems.",
+    "emotions": [
+      "neutral",
+      "happy",
+      "lyrical",
+      "dreamy"
+    ],
+    "sample_url": null,
+    "provider": "chatterbox",
+    "age_group": "all",
+    "is_active": true
+  }
+]

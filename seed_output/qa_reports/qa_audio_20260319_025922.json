@@ -1,0 +1,121 @@
+{
+  "generated_at": "2026-03-19T02:59:22.337451",
+  "summary": {
+    "total": 5,
+    "passed": 4,
+    "warned": 0,
+    "failed": 1,
+    "avg_fidelity": 0.8247,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-ee66b4718ed1",
+      "title": "Mira and the Colors of the Dark",
+      "median_duration": 180.17,
+      "variants": [
+        {
+          "voice": "female_2",
+          "duration_seconds": 200.91,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.939,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 11.5,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9827,
+            "ratio": 0.8537,
+            "word_overlap": 0.8857,
+            "word_order_score": 0.924,
+            "combined": 0.939
+          }
+        },
+        {
+          "voice": "female_1",
+          "duration_seconds": 180.17,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.8144,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.7358,
+            "ratio": 0.8551,
+            "word_overlap": 0.8958,
+            "word_order_score": 0.9147,
+            "combined": 0.8144
+          }
+        },
+        {
+          "voice": "female_3",
+          "duration_seconds": 200.16,
+          "verdict": "FAIL",
+          "reasons": [
+            "low_fidelity (0.48)"
+          ],
+          "text_fidelity_combined": 0.4832,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 11.1,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.284,
+            "ratio": 0.1463,
+            "word_overlap": 0.8889,
+            "word_order_score": 0.9214,
+            "combined": 0.4832
+          },
+          "transcript_snippet": "Mira's fingers trembled as she curled them into the hem of her nightgown. Thuh! Only that. Pressed against her skin like a cold whisper, and her heart beat so loudly she was sure it would wake the whole house. She had counted every crack in the ceiling, every creak of the floorboards, but sleep stil"
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 179.13,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9452,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.6,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9827,
+            "ratio": 0.8551,
+            "word_overlap": 0.9118,
+            "word_order_score": 0.9375,
+            "combined": 0.9452
+          }
+        },
+        {
+          "voice": "asmr",
+          "duration_seconds": 174.99,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9419,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 2.9,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9827,
+            "ratio": 0.8518,
+            "word_overlap": 0.9004,
+            "word_order_score": 0.9308,
+            "combined": 0.9419
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Mira and the Colors of the Dark",
+      "story_id": "gen-ee66b4718ed1",
+      "voice": "female_3",
+      "verdict": "FAIL",
+      "reasons": [
+        "low_fidelity (0.48)"
+      ],
+      "fidelity": 0.4832,
+      "quality_avg": 5.0
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "generated_at": "2026-03-07T01:44:59.798162",
+  "summary": {
+    "total": 0,
+    "passed": 0,
+    "warned": 0,
+    "failed": 0,
+    "avg_fidelity": null,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-ee0b961ba5c8",
+      "title": "Mira and the Whispering Fireflies",
+      "median_duration": 0,
+      "variants": []
+    }
+  ],
+  "failures_summary": []
+}

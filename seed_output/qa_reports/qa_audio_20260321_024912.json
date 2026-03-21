@@ -1,0 +1,123 @@
+{
+  "generated_at": "2026-03-21T02:49:12.544384",
+  "summary": {
+    "total": 5,
+    "passed": 4,
+    "warned": 1,
+    "failed": 0,
+    "avg_fidelity": 0.836,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-47739ce0f283",
+      "title": "Pebble and the River's Whisper",
+      "median_duration": 338.57,
+      "variants": [
+        {
+          "voice": "female_3",
+          "duration_seconds": 338.57,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9671,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9857,
+            "ratio": 0.964,
+            "word_overlap": 0.9223,
+            "word_order_score": 0.9496,
+            "combined": 0.9671
+          }
+        },
+        {
+          "voice": "female_2",
+          "duration_seconds": 343.73,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.8755,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 1.5,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9285,
+            "ratio": 0.5562,
+            "word_overlap": 0.9094,
+            "word_order_score": 0.9477,
+            "combined": 0.8755
+          }
+        },
+        {
+          "voice": "female_1",
+          "duration_seconds": 404.32,
+          "verdict": "WARN",
+          "reasons": [
+            "duration_outlier (19.4% off)",
+            "marginal_fidelity (0.60)"
+          ],
+          "text_fidelity_combined": 0.6005,
+          "quality_average": 5.0,
+          "duration_outlier": true,
+          "duration_deviation_pct": 19.4,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.3768,
+            "ratio": 0.5575,
+            "word_overlap": 0.9155,
+            "word_order_score": 0.9475,
+            "combined": 0.6005
+          },
+          "transcript_snippet": "The river was wide and slow, its surface shimmering like silver paper under the fading sky. Pebble the otter floated on her back, her tiny paws curled against her chest. The water held her gently, rocking her like a cradle, but it couldn't fill the empty space where her friend used to be. She rememb"
+        },
+        {
+          "voice": "asmr",
+          "duration_seconds": 307.22,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.8753,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 9.3,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9269,
+            "ratio": 0.5579,
+            "word_overlap": 0.9125,
+            "word_order_score": 0.9476,
+            "combined": 0.8753
+          }
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 333.02,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.8618,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 1.6,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9491,
+            "ratio": 0.4065,
+            "word_overlap": 0.9091,
+            "word_order_score": 0.9414,
+            "combined": 0.8618
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Pebble and the River's Whisper",
+      "story_id": "gen-47739ce0f283",
+      "voice": "female_1",
+      "verdict": "WARN",
+      "reasons": [
+        "duration_outlier (19.4% off)",
+        "marginal_fidelity (0.60)"
+      ],
+      "fidelity": 0.6005,
+      "quality_avg": 5.0
+    }
+  ]
+}

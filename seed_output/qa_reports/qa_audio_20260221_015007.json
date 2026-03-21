@@ -1,0 +1,155 @@
+{
+  "generated_at": "2026-02-21T01:50:07.975907",
+  "summary": {
+    "total": 7,
+    "passed": 6,
+    "warned": 1,
+    "failed": 0,
+    "avg_fidelity": 0.9291,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-caa3a14bb706",
+      "title": "Ember’s Neon Dawn",
+      "median_duration": 82.01,
+      "variants": [
+        {
+          "voice": "female_3",
+          "duration_seconds": 82.01,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9699,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.9773,
+            "word_overlap": 0.9024,
+            "word_order_score": 0.9321,
+            "combined": 0.9699
+          }
+        },
+        {
+          "voice": "female_2",
+          "duration_seconds": 88.74,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9667,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 8.2,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.9767,
+            "word_overlap": 0.8871,
+            "word_order_score": 0.9259,
+            "combined": 0.9667
+          }
+        },
+        {
+          "voice": "female_1",
+          "duration_seconds": 107.57,
+          "verdict": "WARN",
+          "reasons": [
+            "duration_outlier (31.2% off)"
+          ],
+          "text_fidelity_combined": 0.9667,
+          "quality_average": 5.0,
+          "duration_outlier": true,
+          "duration_deviation_pct": 31.2,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.9767,
+            "word_overlap": 0.8871,
+            "word_order_score": 0.9259,
+            "combined": 0.9667
+          },
+          "transcript_snippet": "Beneath the sky of liquid gold, where neon rivers softly roll, Ember stirs on lava stone, his scales like embers, warm alone. The island hums a lullaby, a song of gears and wind so high he tilts his head. What's that soft sound? A humming friend on shifting ground. A silver fox with circuits bright,"
+        },
+        {
+          "voice": "male_1",
+          "duration_seconds": 72.48,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.8509,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 11.6,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.7834,
+            "ratio": 0.9367,
+            "word_overlap": 0.8871,
+            "word_order_score": 0.9198,
+            "combined": 0.8509
+          }
+        },
+        {
+          "voice": "male_3",
+          "duration_seconds": 78.12,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.962,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 4.7,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.9749,
+            "word_overlap": 0.872,
+            "word_order_score": 0.9141,
+            "combined": 0.962
+          }
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 76.37,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9377,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 6.9,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9873,
+            "ratio": 0.872,
+            "word_overlap": 0.864,
+            "word_order_score": 0.9074,
+            "combined": 0.9377
+          }
+        },
+        {
+          "voice": "asmr",
+          "duration_seconds": 87.51,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.8498,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 6.7,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.7834,
+            "ratio": 0.936,
+            "word_overlap": 0.879,
+            "word_order_score": 0.9193,
+            "combined": 0.8498
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Ember’s Neon Dawn",
+      "story_id": "gen-caa3a14bb706",
+      "voice": "female_1",
+      "verdict": "WARN",
+      "reasons": [
+        "duration_outlier (31.2% off)"
+      ],
+      "fidelity": 0.9667,
+      "quality_avg": 5.0
+    }
+  ]
+}

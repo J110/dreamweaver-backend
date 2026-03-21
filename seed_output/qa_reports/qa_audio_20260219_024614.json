@@ -1,0 +1,169 @@
+{
+  "generated_at": "2026-02-19T02:46:14.101862",
+  "summary": {
+    "total": 7,
+    "passed": 5,
+    "warned": 2,
+    "failed": 0,
+    "avg_fidelity": 0.9429,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-292e9eadf56e",
+      "title": "Pebble and the Whispering Willow",
+      "median_duration": 142.8,
+      "variants": [
+        {
+          "voice": "female_3",
+          "duration_seconds": 142.8,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9641,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.9492,
+            "word_overlap": 0.896,
+            "word_order_score": 0.9283,
+            "combined": 0.9641
+          }
+        },
+        {
+          "voice": "female_2",
+          "duration_seconds": 157.94,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9638,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 10.6,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9968,
+            "ratio": 0.9495,
+            "word_overlap": 0.901,
+            "word_order_score": 0.9315,
+            "combined": 0.9638
+          }
+        },
+        {
+          "voice": "female_1",
+          "duration_seconds": 180.72,
+          "verdict": "WARN",
+          "reasons": [
+            "duration_outlier (26.6% off)"
+          ],
+          "text_fidelity_combined": 0.9641,
+          "quality_average": 5.0,
+          "duration_outlier": true,
+          "duration_deviation_pct": 26.6,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.9494,
+            "word_overlap": 0.896,
+            "word_order_score": 0.9283,
+            "combined": 0.9641
+          },
+          "transcript_snippet": "Under the golden sun of the riverbank kingdom, a little tortoise named Pebble stretched his neck and sighed. The warm breeze carried the scent of wildflowers and the soft murmur of the river. But something felt missing. What's beyond the reeds? He wondered aloud. Just then, an old heron named Horace"
+        },
+        {
+          "voice": "male_1",
+          "duration_seconds": 138.7,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.8422,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 2.9,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.7774,
+            "ratio": 0.8824,
+            "word_overlap": 0.8911,
+            "word_order_score": 0.9281,
+            "combined": 0.8422
+          }
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 137.22,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9565,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 3.9,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.9068,
+            "word_overlap": 0.8916,
+            "word_order_score": 0.9252,
+            "combined": 0.9565
+          }
+        },
+        {
+          "voice": "male_3",
+          "duration_seconds": 141.96,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9563,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.6,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.9287,
+            "word_overlap": 0.878,
+            "word_order_score": 0.9167,
+            "combined": 0.9563
+          }
+        },
+        {
+          "voice": "asmr",
+          "duration_seconds": 167.26,
+          "verdict": "WARN",
+          "reasons": [
+            "duration_outlier (17.1% off)"
+          ],
+          "text_fidelity_combined": 0.953,
+          "quality_average": 5.0,
+          "duration_outlier": true,
+          "duration_deviation_pct": 17.1,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9935,
+            "ratio": 0.933,
+            "word_overlap": 0.8732,
+            "word_order_score": 0.9159,
+            "combined": 0.953
+          },
+          "transcript_snippet": "Under the golden sun of the riverbank kingdom, a little tortoise named Pebble stretched his neck inside. The warm breeze carried the scent of wild flowers and the soft murmur of the river. But something felt missing. What's beyond the reeds? He wondered aloud. Just then, an old heron named Horace la"
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Pebble and the Whispering Willow",
+      "story_id": "gen-292e9eadf56e",
+      "voice": "female_1",
+      "verdict": "WARN",
+      "reasons": [
+        "duration_outlier (26.6% off)"
+      ],
+      "fidelity": 0.9641,
+      "quality_avg": 5.0
+    },
+    {
+      "story": "Pebble and the Whispering Willow",
+      "story_id": "gen-292e9eadf56e",
+      "voice": "asmr",
+      "verdict": "WARN",
+      "reasons": [
+        "duration_outlier (17.1% off)"
+      ],
+      "fidelity": 0.953,
+      "quality_avg": 5.0
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "summary": {
+    "total": 2,
+    "passed": 0,
+    "warned": 2,
+    "failed": 0
+  },
+  "stories": [
+    {
+      "story_id": "gen-dc32ba401ae2",
+      "title": "Casper and the Meadow’s Gentle Glow",
+      "median_duration": 244.9,
+      "variants": [
+        {
+          "voice": "female_1",
+          "duration_seconds": 244.91,
+          "verdict": "WARN",
+          "reasons": [
+            "too loud: avg -13 dBFS (target ~-22)",
+            "no gaps between phrases (continuous audio)"
+          ],
+          "text_fidelity_combined": 0,
+          "quality_average": 0.757,
+          "duration_outlier": false,
+          "lullaby_qa": {
+            "dimensions": {
+              "duration_accuracy": {
+                "score": 1.0,
+                "actual": 239.9,
+                "target": 240,
+                "deviation_pct": 0.0
+              },
+              "volume_consistency": {
+                "score": 0.891,
+                "variance": 3.3,
+                "range_db": 5.4
+              },
+              "loudness": {
+                "score": 0.419,
+                "avg_dbfs": -13.3
+              },
+              "sparsity": {
+                "score": 0.3,
+                "quiet_ratio": 0.0
+              },
+              "spectral_softness": {
+                "score": 0.93,
+                "high_freq_ratio": 0.0141
+              },
+              "no_peaks": {
+                "score": 1.0,
+                "spike_count": 0
+              }
+            },
+            "quality_avg": 0.757,
+            "warnings": [
+              "too loud: avg -13 dBFS (target ~-22)",
+              "no gaps between phrases (continuous audio)"
+            ]
+          }
+        },
+        {
+          "voice": "female_3",
+          "duration_seconds": 244.91,
+          "verdict": "WARN",
+          "reasons": [
+            "too loud: avg -12 dBFS (target ~-22)",
+            "no gaps between phrases (continuous audio)"
+          ],
+          "text_fidelity_combined": 0,
+          "quality_average": 0.766,
+          "duration_outlier": false,
+          "lullaby_qa": {
+            "dimensions": {
+              "duration_accuracy": {
+                "score": 1.0,
+                "actual": 239.9,
+                "target": 240,
+                "deviation_pct": 0.0
+              },
+              "volume_consistency": {
+                "score": 0.975,
+                "variance": 0.7,
+                "range_db": 2.5
+              },
+              "loudness": {
+                "score": 0.362,
+                "avg_dbfs": -12.4
+              },
+              "sparsity": {
+                "score": 0.3,
+                "quiet_ratio": 0.0
+              },
+              "spectral_softness": {
+                "score": 0.96,
+                "high_freq_ratio": 0.0081
+              },
+              "no_peaks": {
+                "score": 1.0,
+                "spike_count": 0
+              }
+            },
+            "quality_avg": 0.766,
+            "warnings": [
+              "too loud: avg -12 dBFS (target ~-22)",
+              "no gaps between phrases (continuous audio)"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,121 @@
+{
+  "generated_at": "2026-03-14T03:15:06.855025",
+  "summary": {
+    "total": 5,
+    "passed": 4,
+    "warned": 1,
+    "failed": 0,
+    "avg_fidelity": 0.9717,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-ced87d262b99",
+      "title": "Zephyr and the Lost Snowflake Lullaby",
+      "median_duration": 88.68,
+      "variants": [
+        {
+          "voice": "female_1",
+          "duration_seconds": 103.97,
+          "verdict": "WARN",
+          "reasons": [
+            "duration_outlier (17.2% off)"
+          ],
+          "text_fidelity_combined": 0.9739,
+          "quality_average": 5.0,
+          "duration_outlier": true,
+          "duration_deviation_pct": 17.2,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.99,
+            "word_overlap": 0.8909,
+            "word_order_score": 0.9452,
+            "combined": 0.9739
+          },
+          "transcript_snippet": "Little Zephyr, soft and light, floats on silver threads of night, through the pain so cold and bright, into warmth, a world so white. Lace of frost on windowpane, dances where the moonbeams rain. Zephyr hums a tune so low, a lullaby of ice and snow. Breeze comes whispering, warm and sweet, taps his "
+        },
+        {
+          "voice": "female_2",
+          "duration_seconds": 89.03,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9713,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.4,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.9728,
+            "word_overlap": 0.8909,
+            "word_order_score": 0.9452,
+            "combined": 0.9713
+          }
+        },
+        {
+          "voice": "female_3",
+          "duration_seconds": 82.43,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9739,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 7.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.99,
+            "word_overlap": 0.8909,
+            "word_order_score": 0.9452,
+            "combined": 0.9739
+          }
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 84.74,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9739,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 4.4,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.99,
+            "word_overlap": 0.8909,
+            "word_order_score": 0.9452,
+            "combined": 0.9739
+          }
+        },
+        {
+          "voice": "asmr",
+          "duration_seconds": 88.68,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9655,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.9841,
+            "word_overlap": 0.8661,
+            "word_order_score": 0.9252,
+            "combined": 0.9655
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Zephyr and the Lost Snowflake Lullaby",
+      "story_id": "gen-ced87d262b99",
+      "voice": "female_1",
+      "verdict": "WARN",
+      "reasons": [
+        "duration_outlier (17.2% off)"
+      ],
+      "fidelity": 0.9739,
+      "quality_avg": 5.0
+    }
+  ]
+}

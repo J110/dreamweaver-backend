@@ -1,0 +1,121 @@
+{
+  "generated_at": "2026-03-14T03:06:37.435296",
+  "summary": {
+    "total": 5,
+    "passed": 4,
+    "warned": 1,
+    "failed": 0,
+    "avg_fidelity": 0.9687,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-00422943830e",
+      "title": "Finn and the Tiny Tide Pool",
+      "median_duration": 49.19,
+      "variants": [
+        {
+          "voice": "female_1",
+          "duration_seconds": 53.46,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 1.0,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 8.7,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 1.0,
+            "word_overlap": 1.0,
+            "word_order_score": 1.0,
+            "combined": 1.0
+          }
+        },
+        {
+          "voice": "female_3",
+          "duration_seconds": 47.97,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 1.0,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 2.5,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 1.0,
+            "word_overlap": 1.0,
+            "word_order_score": 1.0,
+            "combined": 1.0
+          }
+        },
+        {
+          "voice": "female_2",
+          "duration_seconds": 49.19,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 1.0,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 1.0,
+            "word_overlap": 1.0,
+            "word_order_score": 1.0,
+            "combined": 1.0
+          }
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 41.65,
+          "verdict": "WARN",
+          "reasons": [
+            "duration_outlier (15.3% off)"
+          ],
+          "text_fidelity_combined": 0.989,
+          "quality_average": 5.0,
+          "duration_outlier": true,
+          "duration_deviation_pct": 15.3,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9865,
+            "ratio": 0.9945,
+            "word_overlap": 1.0,
+            "word_order_score": 0.9865,
+            "combined": 0.989
+          },
+          "transcript_snippet": "Hush, little waves, so soft and low. Finn sits where the sand meets the sea. The water pulls back, oh, so small. A tide pool glows where the ocean used to be. Finn steps in, splash! The world grows bright. Tiny fish dart and coral sways just right. The crab waves, help us friend, oh what a sight. To"
+        },
+        {
+          "voice": "asmr",
+          "duration_seconds": 51.88,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.8543,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 5.5,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.7162,
+            "ratio": 0.9973,
+            "word_overlap": 1.0,
+            "word_order_score": 0.9865,
+            "combined": 0.8543
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Finn and the Tiny Tide Pool",
+      "story_id": "gen-00422943830e",
+      "voice": "male_2",
+      "verdict": "WARN",
+      "reasons": [
+        "duration_outlier (15.3% off)"
+      ],
+      "fidelity": 0.989,
+      "quality_avg": 5.0
+    }
+  ]
+}

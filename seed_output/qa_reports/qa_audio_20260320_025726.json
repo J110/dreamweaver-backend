@@ -1,0 +1,55 @@
+{
+  "generated_at": "2026-03-20T02:57:26.429171",
+  "summary": {
+    "total": 2,
+    "passed": 2,
+    "warned": 0,
+    "failed": 0,
+    "avg_fidelity": 0.8214,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-a59c2de7e523",
+      "title": "Riley and the Storm of Stars",
+      "median_duration": 102.66,
+      "variants": [
+        {
+          "voice": "female_2",
+          "duration_seconds": 108.22,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.7212,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 5.4,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.5873,
+            "ratio": 0.7678,
+            "word_overlap": 0.8571,
+            "word_order_score": 0.9067,
+            "combined": 0.7212
+          }
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 97.1,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9215,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 5.4,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9735,
+            "ratio": 0.7836,
+            "word_overlap": 0.8905,
+            "word_order_score": 0.9124,
+            "combined": 0.9215
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": []
+}

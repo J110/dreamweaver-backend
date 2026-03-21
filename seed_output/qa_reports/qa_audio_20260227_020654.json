@@ -1,0 +1,171 @@
+{
+  "generated_at": "2026-02-27T02:06:54.151286",
+  "summary": {
+    "total": 7,
+    "passed": 5,
+    "warned": 2,
+    "failed": 0,
+    "avg_fidelity": 0.8116,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-a32abc379f3e",
+      "title": "Lumi’s Lantern and the School of Tides",
+      "median_duration": 102.15,
+      "variants": [
+        {
+          "voice": "female_2",
+          "duration_seconds": 107.88,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9045,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 5.6,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.6507,
+            "word_overlap": 0.8571,
+            "word_order_score": 0.8846,
+            "combined": 0.9045
+          }
+        },
+        {
+          "voice": "female_3",
+          "duration_seconds": 102.15,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9345,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9949,
+            "ratio": 0.8761,
+            "word_overlap": 0.8571,
+            "word_order_score": 0.8798,
+            "combined": 0.9345
+          }
+        },
+        {
+          "voice": "female_1",
+          "duration_seconds": 126.11,
+          "verdict": "WARN",
+          "reasons": [
+            "duration_outlier (23.5% off)",
+            "marginal_fidelity (0.66)"
+          ],
+          "text_fidelity_combined": 0.6649,
+          "quality_average": 5.0,
+          "duration_outlier": true,
+          "duration_deviation_pct": 23.5,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.6193,
+            "ratio": 0.3606,
+            "word_overlap": 0.8378,
+            "word_order_score": 0.8696,
+            "combined": 0.6649
+          },
+          "transcript_snippet": "Aye, on a shelf so dusty and old, Lumi the lantern dreamed stories untold. Her glass was warm, her glow soft and bright, like moonlight dancing on waves in the night. One morning she heard a small sigh, a girl named Mira with eyes wide and shy. First day of school, she whispered low, but the path is"
+        },
+        {
+          "voice": "male_1",
+          "duration_seconds": 91.93,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.7067,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 10.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.5482,
+            "ratio": 0.8749,
+            "word_overlap": 0.8503,
+            "word_order_score": 0.8654,
+            "combined": 0.7067
+          }
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 93.09,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9396,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 8.9,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.8917,
+            "word_overlap": 0.8571,
+            "word_order_score": 0.8804,
+            "combined": 0.9396
+          }
+        },
+        {
+          "voice": "male_3",
+          "duration_seconds": 95.51,
+          "verdict": "WARN",
+          "reasons": [
+            "marginal_fidelity (0.60)"
+          ],
+          "text_fidelity_combined": 0.6023,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 6.5,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.533,
+            "ratio": 0.2629,
+            "word_overlap": 0.8255,
+            "word_order_score": 0.8551,
+            "combined": 0.6023
+          },
+          "transcript_snippet": "High on a shelf, so dusty and old, Lumi the lantern dreamed stories untold. Her glass was warm, her glow soft and bright, Like moonlight dancing on waves in the night. One morning she heard a small sigh, a girl named Mirror, with eyes wide and shy. First half school, she whispered low, but the path "
+        },
+        {
+          "voice": "asmr",
+          "duration_seconds": 108.47,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.929,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 6.2,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9949,
+            "ratio": 0.8513,
+            "word_overlap": 0.8514,
+            "word_order_score": 0.875,
+            "combined": 0.929
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Lumi’s Lantern and the School of Tides",
+      "story_id": "gen-a32abc379f3e",
+      "voice": "female_1",
+      "verdict": "WARN",
+      "reasons": [
+        "duration_outlier (23.5% off)",
+        "marginal_fidelity (0.66)"
+      ],
+      "fidelity": 0.6649,
+      "quality_avg": 5.0
+    },
+    {
+      "story": "Lumi’s Lantern and the School of Tides",
+      "story_id": "gen-a32abc379f3e",
+      "voice": "male_3",
+      "verdict": "WARN",
+      "reasons": [
+        "marginal_fidelity (0.60)"
+      ],
+      "fidelity": 0.6023,
+      "quality_avg": 5.0
+    }
+  ]
+}

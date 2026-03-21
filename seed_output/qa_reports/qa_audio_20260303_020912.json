@@ -1,0 +1,155 @@
+{
+  "generated_at": "2026-03-03T02:09:12.491154",
+  "summary": {
+    "total": 7,
+    "passed": 6,
+    "warned": 1,
+    "failed": 0,
+    "avg_fidelity": 0.785,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-638cb2facd22",
+      "title": "Stripe of the Silver Bamboo",
+      "median_duration": 123.16,
+      "variants": [
+        {
+          "voice": "female_1",
+          "duration_seconds": 151.87,
+          "verdict": "WARN",
+          "reasons": [
+            "duration_outlier (23.3% off)"
+          ],
+          "text_fidelity_combined": 0.7927,
+          "quality_average": 5.0,
+          "duration_outlier": true,
+          "duration_deviation_pct": 23.3,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.6478,
+            "ratio": 0.917,
+            "word_overlap": 0.9226,
+            "word_order_score": 0.956,
+            "combined": 0.7927
+          },
+          "transcript_snippet": "Beneath the moon's soft silver glow, where bamboo sways in hushed repose, a striped dreamer starts to grow. Stripe, the cub with eyes that know. Not just the rustle, not just the breeze, but secrets hidden neath the trees. The grove hums lullabies at night, of fireflies that dance in light. And rive"
+        },
+        {
+          "voice": "female_3",
+          "duration_seconds": 123.16,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.7696,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.6518,
+            "ratio": 0.7872,
+            "word_overlap": 0.9064,
+            "word_order_score": 0.94,
+            "combined": 0.7696
+          }
+        },
+        {
+          "voice": "female_2",
+          "duration_seconds": 128.59,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.7927,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 4.4,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.6478,
+            "ratio": 0.917,
+            "word_overlap": 0.9226,
+            "word_order_score": 0.956,
+            "combined": 0.7927
+          }
+        },
+        {
+          "voice": "male_1",
+          "duration_seconds": 113.54,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.7927,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 7.8,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.6478,
+            "ratio": 0.917,
+            "word_overlap": 0.9226,
+            "word_order_score": 0.956,
+            "combined": 0.7927
+          }
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 117.61,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.7777,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 4.5,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.6518,
+            "ratio": 0.8331,
+            "word_overlap": 0.9172,
+            "word_order_score": 0.9405,
+            "combined": 0.7777
+          }
+        },
+        {
+          "voice": "male_3",
+          "duration_seconds": 120.77,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.7947,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 1.9,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.6559,
+            "ratio": 0.9137,
+            "word_overlap": 0.9167,
+            "word_order_score": 0.952,
+            "combined": 0.7947
+          }
+        },
+        {
+          "voice": "asmr",
+          "duration_seconds": 129.29,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.7749,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 5.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.6397,
+            "ratio": 0.8632,
+            "word_overlap": 0.9053,
+            "word_order_score": 0.9402,
+            "combined": 0.7749
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Stripe of the Silver Bamboo",
+      "story_id": "gen-638cb2facd22",
+      "voice": "female_1",
+      "verdict": "WARN",
+      "reasons": [
+        "duration_outlier (23.3% off)"
+      ],
+      "fidelity": 0.7927,
+      "quality_avg": 5.0
+    }
+  ]
+}

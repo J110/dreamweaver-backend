@@ -1,0 +1,402 @@
+{
+  "generated_at": "2026-03-05T09:13:13.541058",
+  "summary": {
+    "total": 5,
+    "passed": 0,
+    "warned": 5,
+    "failed": 0,
+    "avg_fidelity": null,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-5232e740399d",
+      "title": "Chai’s Frosted Window Lullaby",
+      "median_duration": 244.91,
+      "variants": [
+        {
+          "voice": "male_2",
+          "duration_seconds": 244.91,
+          "verdict": "WARN",
+          "reasons": [
+            "no gaps between phrases"
+          ],
+          "text_fidelity_combined": 0,
+          "quality_average": 0.76,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "lullaby_qa": {
+            "dimensions": {
+              "volume_consistency": {
+                "score": 0.769,
+                "variance": 6.9,
+                "range_db": 9.0
+              },
+              "loudness": {
+                "score": 0.911,
+                "avg_dbfs": -20.7
+              },
+              "sparsity": {
+                "score": 0.3,
+                "quiet_ratio": 0.025
+              },
+              "spectral_softness": {
+                "score": 0.821,
+                "high_freq_ratio": 0.0359
+              },
+              "no_peaks": {
+                "score": 1.0,
+                "spike_count": 0
+              }
+            },
+            "quality_avg": 0.76,
+            "warnings": [
+              "no gaps between phrases"
+            ]
+          }
+        },
+        {
+          "voice": "female_1",
+          "duration_seconds": 244.91,
+          "verdict": "WARN",
+          "reasons": [
+            "no gaps between phrases"
+          ],
+          "text_fidelity_combined": 0,
+          "quality_average": 0.767,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "lullaby_qa": {
+            "dimensions": {
+              "volume_consistency": {
+                "score": 0.741,
+                "variance": 7.8,
+                "range_db": 10.0
+              },
+              "loudness": {
+                "score": 0.904,
+                "avg_dbfs": -20.6
+              },
+              "sparsity": {
+                "score": 0.3,
+                "quiet_ratio": 0.025
+              },
+              "spectral_softness": {
+                "score": 0.891,
+                "high_freq_ratio": 0.0219
+              },
+              "no_peaks": {
+                "score": 1.0,
+                "spike_count": 0
+              }
+            },
+            "quality_avg": 0.767,
+            "warnings": [
+              "no gaps between phrases"
+            ]
+          }
+        },
+        {
+          "voice": "female_2",
+          "duration_seconds": 244.91,
+          "verdict": "WARN",
+          "reasons": [
+            "no gaps between phrases"
+          ],
+          "text_fidelity_combined": 0,
+          "quality_average": 0.739,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "lullaby_qa": {
+            "dimensions": {
+              "volume_consistency": {
+                "score": 0.688,
+                "variance": 9.4,
+                "range_db": 9.5
+              },
+              "loudness": {
+                "score": 0.903,
+                "avg_dbfs": -20.5
+              },
+              "sparsity": {
+                "score": 0.3,
+                "quiet_ratio": 0.025
+              },
+              "spectral_softness": {
+                "score": 0.804,
+                "high_freq_ratio": 0.0392
+              },
+              "no_peaks": {
+                "score": 1.0,
+                "spike_count": 0
+              }
+            },
+            "quality_avg": 0.739,
+            "warnings": [
+              "no gaps between phrases"
+            ]
+          }
+        },
+        {
+          "voice": "female_3",
+          "duration_seconds": 244.91,
+          "verdict": "WARN",
+          "reasons": [
+            "no gaps between phrases"
+          ],
+          "text_fidelity_combined": 0,
+          "quality_average": 0.757,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "lullaby_qa": {
+            "dimensions": {
+              "volume_consistency": {
+                "score": 0.645,
+                "variance": 10.7,
+                "range_db": 10.0
+              },
+              "loudness": {
+                "score": 0.9,
+                "avg_dbfs": -20.5
+              },
+              "sparsity": {
+                "score": 0.3,
+                "quiet_ratio": 0.025
+              },
+              "spectral_softness": {
+                "score": 0.941,
+                "high_freq_ratio": 0.0118
+              },
+              "no_peaks": {
+                "score": 1.0,
+                "spike_count": 0
+              }
+            },
+            "quality_avg": 0.757,
+            "warnings": [
+              "no gaps between phrases"
+            ]
+          }
+        },
+        {
+          "voice": "male_1",
+          "duration_seconds": 244.91,
+          "verdict": "WARN",
+          "reasons": [
+            "no gaps between phrases"
+          ],
+          "text_fidelity_combined": 0,
+          "quality_average": 0.771,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "lullaby_qa": {
+            "dimensions": {
+              "volume_consistency": {
+                "score": 0.716,
+                "variance": 8.5,
+                "range_db": 10.2
+              },
+              "loudness": {
+                "score": 0.901,
+                "avg_dbfs": -20.5
+              },
+              "sparsity": {
+                "score": 0.3,
+                "quiet_ratio": 0.025
+              },
+              "spectral_softness": {
+                "score": 0.939,
+                "high_freq_ratio": 0.0121
+              },
+              "no_peaks": {
+                "score": 1.0,
+                "spike_count": 0
+              }
+            },
+            "quality_avg": 0.771,
+            "warnings": [
+              "no gaps between phrases"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Chai’s Frosted Window Lullaby",
+      "story_id": "gen-5232e740399d",
+      "voice": "male_2",
+      "verdict": "WARN",
+      "reasons": [
+        "no gaps between phrases"
+      ],
+      "fidelity": 0,
+      "quality_avg": 0.76,
+      "lullaby_dimensions": {
+        "volume_consistency": {
+          "score": 0.769,
+          "variance": 6.9,
+          "range_db": 9.0
+        },
+        "loudness": {
+          "score": 0.911,
+          "avg_dbfs": -20.7
+        },
+        "sparsity": {
+          "score": 0.3,
+          "quiet_ratio": 0.025
+        },
+        "spectral_softness": {
+          "score": 0.821,
+          "high_freq_ratio": 0.0359
+        },
+        "no_peaks": {
+          "score": 1.0,
+          "spike_count": 0
+        }
+      },
+      "lullaby_quality_avg": 0.76
+    },
+    {
+      "story": "Chai’s Frosted Window Lullaby",
+      "story_id": "gen-5232e740399d",
+      "voice": "female_1",
+      "verdict": "WARN",
+      "reasons": [
+        "no gaps between phrases"
+      ],
+      "fidelity": 0,
+      "quality_avg": 0.767,
+      "lullaby_dimensions": {
+        "volume_consistency": {
+          "score": 0.741,
+          "variance": 7.8,
+          "range_db": 10.0
+        },
+        "loudness": {
+          "score": 0.904,
+          "avg_dbfs": -20.6
+        },
+        "sparsity": {
+          "score": 0.3,
+          "quiet_ratio": 0.025
+        },
+        "spectral_softness": {
+          "score": 0.891,
+          "high_freq_ratio": 0.0219
+        },
+        "no_peaks": {
+          "score": 1.0,
+          "spike_count": 0
+        }
+      },
+      "lullaby_quality_avg": 0.767
+    },
+    {
+      "story": "Chai’s Frosted Window Lullaby",
+      "story_id": "gen-5232e740399d",
+      "voice": "female_2",
+      "verdict": "WARN",
+      "reasons": [
+        "no gaps between phrases"
+      ],
+      "fidelity": 0,
+      "quality_avg": 0.739,
+      "lullaby_dimensions": {
+        "volume_consistency": {
+          "score": 0.688,
+          "variance": 9.4,
+          "range_db": 9.5
+        },
+        "loudness": {
+          "score": 0.903,
+          "avg_dbfs": -20.5
+        },
+        "sparsity": {
+          "score": 0.3,
+          "quiet_ratio": 0.025
+        },
+        "spectral_softness": {
+          "score": 0.804,
+          "high_freq_ratio": 0.0392
+        },
+        "no_peaks": {
+          "score": 1.0,
+          "spike_count": 0
+        }
+      },
+      "lullaby_quality_avg": 0.739
+    },
+    {
+      "story": "Chai’s Frosted Window Lullaby",
+      "story_id": "gen-5232e740399d",
+      "voice": "female_3",
+      "verdict": "WARN",
+      "reasons": [
+        "no gaps between phrases"
+      ],
+      "fidelity": 0,
+      "quality_avg": 0.757,
+      "lullaby_dimensions": {
+        "volume_consistency": {
+          "score": 0.645,
+          "variance": 10.7,
+          "range_db": 10.0
+        },
+        "loudness": {
+          "score": 0.9,
+          "avg_dbfs": -20.5
+        },
+        "sparsity": {
+          "score": 0.3,
+          "quiet_ratio": 0.025
+        },
+        "spectral_softness": {
+          "score": 0.941,
+          "high_freq_ratio": 0.0118
+        },
+        "no_peaks": {
+          "score": 1.0,
+          "spike_count": 0
+        }
+      },
+      "lullaby_quality_avg": 0.757
+    },
+    {
+      "story": "Chai’s Frosted Window Lullaby",
+      "story_id": "gen-5232e740399d",
+      "voice": "male_1",
+      "verdict": "WARN",
+      "reasons": [
+        "no gaps between phrases"
+      ],
+      "fidelity": 0,
+      "quality_avg": 0.771,
+      "lullaby_dimensions": {
+        "volume_consistency": {
+          "score": 0.716,
+          "variance": 8.5,
+          "range_db": 10.2
+        },
+        "loudness": {
+          "score": 0.901,
+          "avg_dbfs": -20.5
+        },
+        "sparsity": {
+          "score": 0.3,
+          "quiet_ratio": 0.025
+        },
+        "spectral_softness": {
+          "score": 0.939,
+          "high_freq_ratio": 0.0121
+        },
+        "no_peaks": {
+          "score": 1.0,
+          "spike_count": 0
+        }
+      },
+      "lullaby_quality_avg": 0.771
+    }
+  ]
+}

@@ -62,6 +62,106 @@ PAD_CHARACTERS = [
     "starfield", "earth_drone", "silk_veil", "cave_resonance",
 ]
 
+# ── Mood-specific music rules ────────────────────────────────────────────
+MOOD_MUSIC_RULES = {
+    "wired": {
+        "tempo_range": [66, 75],
+        "melodic_character": ["cycling_arpeggio", "descending_lullaby"],
+        "feel": "gentle_pulse",
+        "pad_character_exclude": ["deep_ocean", "cave_resonance"],
+        "ambient_events": ["cricket", "chimes", "leaves"],
+    },
+    "curious": {
+        "tempo_range": [62, 72],
+        "melodic_character": ["cycling_arpeggio", "drone_with_ornaments"],
+        "feel": "gentle_pulse",
+        "pad_character_exclude": [],
+        "ambient_events": ["owl", "leaves", "waterDrop", "chimes"],
+    },
+    "calm": {
+        "tempo_range": [58, 66],
+        "melodic_character": ["descending_lullaby", "stillness"],
+        "feel": "free_rubato",
+        "pad_character_exclude": [],
+        "ambient_events": ["cricket", "waterDrop"],
+    },
+    "sad": {
+        "tempo_range": [58, 64],
+        "melodic_character": ["descending_lullaby", "drone_with_ornaments"],
+        "feel": "free_rubato",
+        "mode_prefer": ["aeolian", "minor_pentatonic"],
+        "pad_character_prefer": ["warm_strings", "deep_ocean", "earth_drone"],
+        "nature_sound_prefer": ["rain_steady", "rain_light"],
+        "ambient_events": ["rain_steady", "rain_light"],
+    },
+    "anxious": {
+        "tempo_range": [60, 68],
+        "melodic_character": ["drone_with_ornaments", "stillness"],
+        "feel": "free_rubato",
+        "pad_character_prefer": ["warm_strings", "forest_hum"],
+        "nature_sound_prefer": ["forest_night", "rain_light"],
+        "ambient_events": ["cricket", "owl"],
+    },
+    "angry": {
+        "tempo_range": [64, 72],
+        "melodic_character": ["cycling_arpeggio", "descending_lullaby"],
+        "feel": "gentle_pulse",
+        "mode_prefer": ["dorian", "aeolian"],
+        "pad_character_prefer": ["earth_drone", "deep_ocean"],
+        "nature_sound_prefer": ["river_stream", "ocean_waves_close"],
+        "ambient_events": ["waveCycle", "windGust"],
+    },
+}
+
+
+def apply_mood_to_brief(brief, mood):
+    """Post-process a musical brief with mood-specific rules."""
+    import random as _rng
+    rules = MOOD_MUSIC_RULES.get(mood, MOOD_MUSIC_RULES.get("calm", {}))
+    if not rules:
+        return brief
+
+    # Enforce tempo range
+    if "tempo_range" in rules:
+        tempo = brief.get("rhythm", {}).get("baseTempo", 66)
+        brief.setdefault("rhythm", {})["baseTempo"] = max(
+            rules["tempo_range"][0],
+            min(rules["tempo_range"][1], tempo)
+        )
+
+    # Enforce feel
+    if "feel" in rules:
+        brief.setdefault("rhythm", {})["feel"] = rules["feel"]
+
+    # Apply mode preferences (70% chance of switching)
+    if "mode_prefer" in rules:
+        current_mode = brief.get("tonality", {}).get("mode", "")
+        if current_mode not in rules["mode_prefer"] and _rng.random() < 0.7:
+            brief.setdefault("tonality", {})["mode"] = _rng.choice(rules["mode_prefer"])
+
+    # Apply melodic character
+    if "melodic_character" in rules:
+        if brief.get("melodicCharacter") not in rules["melodic_character"]:
+            brief["melodicCharacter"] = _rng.choice(rules["melodic_character"])
+
+    # Exclude inappropriate pad characters
+    if "pad_character_exclude" in rules:
+        current_pad = brief.get("musicalIdentity", {}).get("padCharacter", "")
+        if current_pad in rules["pad_character_exclude"]:
+            available = [p for p in PAD_CHARACTERS if p not in rules["pad_character_exclude"]]
+            if available:
+                brief.setdefault("musicalIdentity", {})["padCharacter"] = _rng.choice(available)
+
+    # Apply nature sound preferences (60% chance)
+    if "nature_sound_prefer" in rules and _rng.random() < 0.6:
+        brief.setdefault("environment", {})["natureSoundPrimary"] = _rng.choice(
+            rules["nature_sound_prefer"]
+        )
+
+    return brief
+
+
+
 MODES = [
     "major_pentatonic", "minor_pentatonic", "dorian",
     "aeolian", "mixolydian",
@@ -670,6 +770,11 @@ Respond with ONLY the JSON brief. No explanation.
 
         # Auto-fix common issues
         brief = fix_brief(brief, age_group)
+
+        # Apply mood-specific music rules
+        story_mood = story.get("mood")
+        if story_mood:
+            brief = apply_mood_to_brief(brief, story_mood)
 
         # Validate schema
         schema_errors = validate_brief_schema(brief)

@@ -1,0 +1,113 @@
+{
+  "summary": {
+    "total": 2,
+    "passed": 0,
+    "warned": 2,
+    "failed": 0
+  },
+  "stories": [
+    {
+      "story_id": "gen-7bb84380c7d3",
+      "title": "Finn and the Glowing Cave Whispers",
+      "median_duration": 244.9,
+      "variants": [
+        {
+          "voice": "male_2",
+          "duration_seconds": 244.91,
+          "verdict": "WARN",
+          "reasons": [
+            "too loud: avg -13 dBFS (target ~-22)",
+            "no gaps between phrases (continuous audio)"
+          ],
+          "text_fidelity_combined": 0,
+          "quality_average": 0.745,
+          "duration_outlier": false,
+          "lullaby_qa": {
+            "dimensions": {
+              "duration_accuracy": {
+                "score": 1.0,
+                "actual": 239.9,
+                "target": 240,
+                "deviation_pct": 0.0
+              },
+              "volume_consistency": {
+                "score": 0.886,
+                "variance": 3.4,
+                "range_db": 5.8
+              },
+              "loudness": {
+                "score": 0.429,
+                "avg_dbfs": -13.4
+              },
+              "sparsity": {
+                "score": 0.3,
+                "quiet_ratio": 0.0
+              },
+              "spectral_softness": {
+                "score": 0.854,
+                "high_freq_ratio": 0.0291
+              },
+              "no_peaks": {
+                "score": 1.0,
+                "spike_count": 0
+              }
+            },
+            "quality_avg": 0.745,
+            "warnings": [
+              "too loud: avg -13 dBFS (target ~-22)",
+              "no gaps between phrases (continuous audio)"
+            ]
+          }
+        },
+        {
+          "voice": "female_2",
+          "duration_seconds": 244.91,
+          "verdict": "WARN",
+          "reasons": [
+            "too loud: avg -13 dBFS (target ~-22)",
+            "no gaps between phrases (continuous audio)"
+          ],
+          "text_fidelity_combined": 0,
+          "quality_average": 0.751,
+          "duration_outlier": false,
+          "lullaby_qa": {
+            "dimensions": {
+              "duration_accuracy": {
+                "score": 1.0,
+                "actual": 239.9,
+                "target": 240,
+                "deviation_pct": 0.0
+              },
+              "volume_consistency": {
+                "score": 0.893,
+                "variance": 3.2,
+                "range_db": 6.1
+              },
+              "loudness": {
+                "score": 0.395,
+                "avg_dbfs": -12.9
+              },
+              "sparsity": {
+                "score": 0.3,
+                "quiet_ratio": 0.0
+              },
+              "spectral_softness": {
+                "score": 0.917,
+                "high_freq_ratio": 0.0165
+              },
+              "no_peaks": {
+                "score": 1.0,
+                "spike_count": 0
+              }
+            },
+            "quality_avg": 0.751,
+            "warnings": [
+              "too loud: avg -13 dBFS (target ~-22)",
+              "no gaps between phrases (continuous audio)"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

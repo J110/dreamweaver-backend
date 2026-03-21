@@ -1,0 +1,51 @@
+{
+  "generated_at": "2026-02-24T02:00:19.217313",
+  "summary": {
+    "total": 3,
+    "passed": 3,
+    "warned": 0,
+    "failed": 0,
+    "avg_fidelity": null,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-e47bcd61e515",
+      "title": "Stripe and the Whispering Bamboo",
+      "median_duration": 119.91,
+      "variants": [
+        {
+          "voice": "female_1",
+          "duration_seconds": 119.91,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 1.0,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0
+        },
+        {
+          "voice": "male_1",
+          "duration_seconds": 119.91,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 1.0,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0
+        },
+        {
+          "voice": "female_3",
+          "duration_seconds": 119.91,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 1.0,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0
+        }
+      ]
+    }
+  ],
+  "failures_summary": []
+}

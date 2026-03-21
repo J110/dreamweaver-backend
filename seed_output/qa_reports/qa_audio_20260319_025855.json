@@ -1,0 +1,121 @@
+{
+  "generated_at": "2026-03-19T02:58:55.276777",
+  "summary": {
+    "total": 5,
+    "passed": 4,
+    "warned": 1,
+    "failed": 0,
+    "avg_fidelity": 0.8288,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-486be5b2fef9",
+      "title": "Pip and the Clockwork Stars",
+      "median_duration": 338.12,
+      "variants": [
+        {
+          "voice": "female_1",
+          "duration_seconds": 338.12,
+          "verdict": "WARN",
+          "reasons": [
+            "marginal_fidelity (0.60)"
+          ],
+          "text_fidelity_combined": 0.6046,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.3308,
+            "ratio": 0.7872,
+            "word_overlap": 0.8873,
+            "word_order_score": 0.9294,
+            "combined": 0.6046
+          },
+          "transcript_snippet": "Pip curled tighter into his nest of thistledown, his whiskers trembling. The hollow oak felt too big tonight, the walls too far away. His chest squeezed. I, with every breath like a tiny paw pressing against his ribs. Outside, the meadow clockwork had stopped. Pip peeked through a knothole. The usua"
+        },
+        {
+          "voice": "female_2",
+          "duration_seconds": 368.69,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.8113,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 9.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9755,
+            "ratio": 0.0465,
+            "word_overlap": 0.8714,
+            "word_order_score": 0.9177,
+            "combined": 0.8113
+          }
+        },
+        {
+          "voice": "female_3",
+          "duration_seconds": 354.41,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9216,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 4.8,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9862,
+            "ratio": 0.7309,
+            "word_overlap": 0.8895,
+            "word_order_score": 0.9195,
+            "combined": 0.9216
+          }
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 328.34,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9094,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 2.9,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9862,
+            "ratio": 0.6775,
+            "word_overlap": 0.8693,
+            "word_order_score": 0.9108,
+            "combined": 0.9094
+          }
+        },
+        {
+          "voice": "asmr",
+          "duration_seconds": 311.57,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.8971,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 7.9,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9847,
+            "ratio": 0.5991,
+            "word_overlap": 0.8718,
+            "word_order_score": 0.9107,
+            "combined": 0.8971
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Pip and the Clockwork Stars",
+      "story_id": "gen-486be5b2fef9",
+      "voice": "female_1",
+      "verdict": "WARN",
+      "reasons": [
+        "marginal_fidelity (0.60)"
+      ],
+      "fidelity": 0.6046,
+      "quality_avg": 5.0
+    }
+  ]
+}

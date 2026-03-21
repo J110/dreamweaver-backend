@@ -249,6 +249,74 @@ def _count_todays_pregenerated_content() -> dict:
     return counts
 
 
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# MOOD AUTO-SELECTION (Catch-Up + Steady-State)
+# ═══════════════════════════════════════════════════════════════════════
+
+TARGET_MOODS = ["wired", "curious", "calm", "sad", "anxious", "angry"]
+CATCH_UP_THRESHOLD = 0.80  # switch to steady-state when min/max ratio > 0.80
+# During catch-up, freeze calm and curious (already overrepresented)
+CATCH_UP_CANDIDATES = ["wired", "sad", "anxious", "angry"]
+
+
+def get_mood_distribution(content_path=None):
+    """Count content items per mood in the library."""
+    from collections import Counter
+    path = content_path or CONTENT_PATH
+    counts = Counter()
+    try:
+        data = json.loads(Path(path).read_text())
+        for item in data:
+            mood = item.get("mood", "calm")  # legacy items default to calm
+            counts[mood] += 1
+    except (FileNotFoundError, json.JSONDecodeError):
+        pass
+    return counts
+
+
+def is_catch_up_complete(counts):
+    """Check if distribution is balanced enough for steady-state."""
+    values = [counts.get(m, 0) for m in TARGET_MOODS]
+    if max(values) == 0:
+        return False
+    return min(values) / max(values) >= CATCH_UP_THRESHOLD
+
+
+def get_next_mood(counts):
+    """Return the mood with the fewest stories (catch-up mode).
+    Only considers wired/sad/anxious/angry - calm and curious are frozen."""
+    candidate_counts = {m: counts.get(m, 0) for m in CATCH_UP_CANDIDATES}
+    return min(candidate_counts, key=candidate_counts.get)
+
+
+def select_mood(content_path=None):
+    """Main entry point: returns a mood for today's generation.
+    Catch-up mode: picks the most underrepresented mood from wired/sad/anxious/angry.
+    Steady-state: equal probability across all 6 moods."""
+    import random
+    counts = get_mood_distribution(content_path)
+
+    if is_catch_up_complete(counts):
+        # Steady-state: equal probability
+        mood = random.choice(TARGET_MOODS)
+        logger.info("  Mood selection: STEADY-STATE -> %s (distribution balanced)", mood)
+    else:
+        # Catch-up: generate the most underrepresented mood
+        mood = get_next_mood(counts)
+        logger.info("  Mood selection: CATCH-UP -> %s (least represented)", mood)
+
+    # Log distribution
+    for m in TARGET_MOODS:
+        c = counts.get(m, 0)
+        bar = "#" * (c // 2)
+        logger.info("    %-8s %3d  %s", m, c, bar)
+    logger.info("    Catch-up complete: %s", is_catch_up_complete(counts))
+
+    return mood
+
+
 # ═══════════════════════════════════════════════════════════════════════
 # MOOD CATCH-UP SCHEDULER (weighted distribution targets)
 # ═══════════════════════════════════════════════════════════════════════
@@ -1745,8 +1813,12 @@ def main():
     logger.info("")
     logger.info("  Stories: %d | Long stories: %d | Poems: %d | Lullabies: %d | Lang: %s",
                 args.count_stories, args.count_long_stories, args.count_poems, args.count_lullabies, args.lang)
-    if args.mood:
-        logger.info("  Mood: %s | Age: %s (experimental)", args.mood, args.age or "random")
+    # Auto-select mood if not explicitly provided
+    if not args.mood:
+        args.mood = select_mood(CONTENT_PATH)
+        logger.info("  Mood (auto): %s | Age: %s", args.mood, args.age or "random")
+    else:
+        logger.info("  Mood (manual): %s | Age: %s", args.mood, args.age or "random")
     logger.info("  Dry run: %s | Skip publish: %s", args.dry_run, args.skip_publish)
     logger.info("")
 

@@ -1,0 +1,121 @@
+{
+  "generated_at": "2026-03-16T05:15:31.488022",
+  "summary": {
+    "total": 5,
+    "passed": 4,
+    "warned": 1,
+    "failed": 0,
+    "avg_fidelity": 0.9253,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-39dc657abb17",
+      "title": "Rosie and the Scent of Home",
+      "median_duration": 69.53,
+      "variants": [
+        {
+          "voice": "female_3",
+          "duration_seconds": 69.53,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9132,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9787,
+            "ratio": 0.6676,
+            "word_overlap": 0.8778,
+            "word_order_score": 0.9437,
+            "combined": 0.9132
+          }
+        },
+        {
+          "voice": "female_1",
+          "duration_seconds": 91.76,
+          "verdict": "WARN",
+          "reasons": [
+            "duration_outlier (32.0% off)"
+          ],
+          "text_fidelity_combined": 0.9531,
+          "quality_average": 5.0,
+          "duration_outlier": true,
+          "duration_deviation_pct": 32.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9716,
+            "ratio": 0.958,
+            "word_overlap": 0.8764,
+            "word_order_score": 0.9437,
+            "combined": 0.9531
+          },
+          "transcript_snippet": "Hush, hush, little Rosie, soft in the golden light. Leaves so green, so still, so sweet. Warm breeze sings just right. The garden hums, a tune so soft and low. Rosie breathes the scent so deep where the summer roses grow. Oh, what's that in the air so sweet? A whisper, soft and new. The wind brings "
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 69.33,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.971,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.3,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.9858,
+            "word_overlap": 0.8876,
+            "word_order_score": 0.9375,
+            "combined": 0.971
+          }
+        },
+        {
+          "voice": "asmr",
+          "duration_seconds": 79.54,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.974,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 14.4,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.9943,
+            "word_overlap": 0.8876,
+            "word_order_score": 0.9444,
+            "combined": 0.974
+          }
+        },
+        {
+          "voice": "female_2",
+          "duration_seconds": 64.16,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.8154,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 7.7,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.6879,
+            "ratio": 0.9695,
+            "word_overlap": 0.8989,
+            "word_order_score": 0.9444,
+            "combined": 0.8154
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Rosie and the Scent of Home",
+      "story_id": "gen-39dc657abb17",
+      "voice": "female_1",
+      "verdict": "WARN",
+      "reasons": [
+        "duration_outlier (32.0% off)"
+      ],
+      "fidelity": 0.9531,
+      "quality_avg": 5.0
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "generated_at": "2026-03-09T04:25:01.685428",
+  "summary": {
+    "total": 2,
+    "passed": 2,
+    "warned": 0,
+    "failed": 0,
+    "avg_fidelity": 0.9724,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-a306e99e9b09",
+      "title": "Breeze and the Whispering Peaks",
+      "median_duration": 276.9,
+      "variants": [
+        {
+          "voice": "male_2",
+          "duration_seconds": 255.2,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9615,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 7.8,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9982,
+            "ratio": 0.8603,
+            "word_overlap": 0.9321,
+            "word_order_score": 0.9606,
+            "combined": 0.9615
+          }
+        },
+        {
+          "voice": "asmr",
+          "duration_seconds": 298.6,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9833,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 7.8,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9982,
+            "ratio": 0.9951,
+            "word_overlap": 0.9392,
+            "word_order_score": 0.9642,
+            "combined": 0.9833
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": []
+}

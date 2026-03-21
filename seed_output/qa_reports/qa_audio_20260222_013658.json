@@ -1,0 +1,169 @@
+{
+  "generated_at": "2026-02-22T01:36:58.055648",
+  "summary": {
+    "total": 7,
+    "passed": 5,
+    "warned": 2,
+    "failed": 0,
+    "avg_fidelity": 0.9725,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-01f0b88dc42d",
+      "title": "Rusty’s Starlight Path Home",
+      "median_duration": 40.72,
+      "variants": [
+        {
+          "voice": "female_1",
+          "duration_seconds": 52.41,
+          "verdict": "WARN",
+          "reasons": [
+            "duration_outlier (28.7% off)"
+          ],
+          "text_fidelity_combined": 0.9468,
+          "quality_average": 5.0,
+          "duration_outlier": true,
+          "duration_deviation_pct": 28.7,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9545,
+            "ratio": 0.9736,
+            "word_overlap": 0.9245,
+            "word_order_score": 0.9242,
+            "combined": 0.9468
+          },
+          "transcript_snippet": "A shush, little fox. Rusty's paws go tip-tap, tip-tap. Moonlight shines so soft and bright. Stars hum a sleepy night-night song. Twinkle, twinkle, glowing guide. Rusty follows side to side. Leaves go shh. Gentle breeze. Snuggle close, just doze with ease. Rusty curls and silver light. Dreamy stars s"
+        },
+        {
+          "voice": "female_2",
+          "duration_seconds": 45.65,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9798,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 12.1,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9848,
+            "ratio": 0.9917,
+            "word_overlap": 0.9615,
+            "word_order_score": 0.9697,
+            "combined": 0.9798
+          }
+        },
+        {
+          "voice": "female_3",
+          "duration_seconds": 40.72,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9798,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9848,
+            "ratio": 0.9917,
+            "word_overlap": 0.9615,
+            "word_order_score": 0.9697,
+            "combined": 0.9798
+          }
+        },
+        {
+          "voice": "male_1",
+          "duration_seconds": 39.12,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9883,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 3.9,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.9972,
+            "word_overlap": 0.9615,
+            "word_order_score": 0.9701,
+            "combined": 0.9883
+          }
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 38.5,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9806,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 5.5,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.9959,
+            "word_overlap": 0.9245,
+            "word_order_score": 0.9552,
+            "combined": 0.9806
+          }
+        },
+        {
+          "voice": "male_3",
+          "duration_seconds": 37.53,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9598,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 7.8,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9848,
+            "ratio": 0.9335,
+            "word_overlap": 0.9245,
+            "word_order_score": 0.9394,
+            "combined": 0.9598
+          }
+        },
+        {
+          "voice": "asmr",
+          "duration_seconds": 46.87,
+          "verdict": "WARN",
+          "reasons": [
+            "duration_outlier (15.1% off)"
+          ],
+          "text_fidelity_combined": 0.9725,
+          "quality_average": 5.0,
+          "duration_outlier": true,
+          "duration_deviation_pct": 15.1,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9848,
+            "ratio": 0.9931,
+            "word_overlap": 0.9245,
+            "word_order_score": 0.9545,
+            "combined": 0.9725
+          },
+          "transcript_snippet": "Hush, hush, little fox. Rusty's paws go tip-tap, tip-tap. Moonlight shines so soft and bright. Stars hum a sleepy night-night song. Twinkle, twinkle, glowing guide. Rusty follows side to side. Leaves go shhh, gentle breeze. Snuggle close, just doze with ease. Rusty curls in silver light. Dreamy star"
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Rusty’s Starlight Path Home",
+      "story_id": "gen-01f0b88dc42d",
+      "voice": "female_1",
+      "verdict": "WARN",
+      "reasons": [
+        "duration_outlier (28.7% off)"
+      ],
+      "fidelity": 0.9468,
+      "quality_avg": 5.0
+    },
+    {
+      "story": "Rusty’s Starlight Path Home",
+      "story_id": "gen-01f0b88dc42d",
+      "voice": "asmr",
+      "verdict": "WARN",
+      "reasons": [
+        "duration_outlier (15.1% off)"
+      ],
+      "fidelity": 0.9725,
+      "quality_avg": 5.0
+    }
+  ]
+}

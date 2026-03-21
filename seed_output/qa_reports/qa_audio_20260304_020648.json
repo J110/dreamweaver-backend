@@ -1,0 +1,185 @@
+{
+  "generated_at": "2026-03-04T02:06:48.935595",
+  "summary": {
+    "total": 7,
+    "passed": 4,
+    "warned": 3,
+    "failed": 0,
+    "avg_fidelity": 0.7995,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-beb0f3862024",
+      "title": "The Jade Lantern’s Journey Through the Starry Dawn",
+      "median_duration": 211.95,
+      "variants": [
+        {
+          "voice": "female_1",
+          "duration_seconds": 266.16,
+          "verdict": "WARN",
+          "reasons": [
+            "duration_outlier (25.6% off)",
+            "marginal_fidelity (0.65)"
+          ],
+          "text_fidelity_combined": 0.6477,
+          "quality_average": 5.0,
+          "duration_outlier": true,
+          "duration_deviation_pct": 25.6,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.3171,
+            "ratio": 0.996,
+            "word_overlap": 0.97,
+            "word_order_score": 0.9708,
+            "combined": 0.6477
+          },
+          "transcript_snippet": "In the quiet heart of a misty valley, where the mountains hummed ancient songs and the rivers whispered secrets, there lived a small jade lantern. It had once belonged to a kind old storyteller who would light its flame and share tales of the stars with the children of the village. But one evening, "
+        },
+        {
+          "voice": "female_2",
+          "duration_seconds": 231.85,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9884,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 9.4,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9979,
+            "ratio": 0.9975,
+            "word_overlap": 0.9658,
+            "word_order_score": 0.9728,
+            "combined": 0.9884
+          }
+        },
+        {
+          "voice": "female_3",
+          "duration_seconds": 201.57,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.7931,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 4.9,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.611,
+            "ratio": 0.9973,
+            "word_overlap": 0.9532,
+            "word_order_score": 0.9706,
+            "combined": 0.7931
+          }
+        },
+        {
+          "voice": "male_1",
+          "duration_seconds": 195.91,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9909,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 7.6,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.9977,
+            "word_overlap": 0.97,
+            "word_order_score": 0.977,
+            "combined": 0.9909
+          }
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 211.95,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9881,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9979,
+            "ratio": 0.9956,
+            "word_overlap": 0.9658,
+            "word_order_score": 0.9729,
+            "combined": 0.9881
+          }
+        },
+        {
+          "voice": "male_3",
+          "duration_seconds": 204.36,
+          "verdict": "WARN",
+          "reasons": [
+            "marginal_fidelity (0.56)"
+          ],
+          "text_fidelity_combined": 0.5591,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 3.6,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.3171,
+            "ratio": 0.4304,
+            "word_overlap": 0.9534,
+            "word_order_score": 0.9625,
+            "combined": 0.5591
+          },
+          "transcript_snippet": "In the quiet heart of a misty valley, where the mountains hummed ancient songs and the rivers whispered secrets, there lived a small jade lantern. It had once belonged to a kind old storyteller who would light its flame and share tales of the stars with the children of the village. But one evening, "
+        },
+        {
+          "voice": "asmr",
+          "duration_seconds": 231.9,
+          "verdict": "WARN",
+          "reasons": [
+            "marginal_fidelity (0.63)"
+          ],
+          "text_fidelity_combined": 0.6289,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 9.4,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.4609,
+            "ratio": 0.4166,
+            "word_overlap": 0.9492,
+            "word_order_score": 0.9642,
+            "combined": 0.6289
+          },
+          "transcript_snippet": "In the quiet heart of a misty valley, where the mountains hummed ancient songs and the rivers whispered secrets, there lived a small jade lantern. It had once belonged to a kind old storyteller, who would light its flame and share tales of the stars with the children of the village. But one evening,"
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "The Jade Lantern’s Journey Through the Starry Dawn",
+      "story_id": "gen-beb0f3862024",
+      "voice": "female_1",
+      "verdict": "WARN",
+      "reasons": [
+        "duration_outlier (25.6% off)",
+        "marginal_fidelity (0.65)"
+      ],
+      "fidelity": 0.6477,
+      "quality_avg": 5.0
+    },
+    {
+      "story": "The Jade Lantern’s Journey Through the Starry Dawn",
+      "story_id": "gen-beb0f3862024",
+      "voice": "male_3",
+      "verdict": "WARN",
+      "reasons": [
+        "marginal_fidelity (0.56)"
+      ],
+      "fidelity": 0.5591,
+      "quality_avg": 5.0
+    },
+    {
+      "story": "The Jade Lantern’s Journey Through the Starry Dawn",
+      "story_id": "gen-beb0f3862024",
+      "voice": "asmr",
+      "verdict": "WARN",
+      "reasons": [
+        "marginal_fidelity (0.63)"
+      ],
+      "fidelity": 0.6289,
+      "quality_avg": 5.0
+    }
+  ]
+}

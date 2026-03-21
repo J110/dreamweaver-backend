@@ -1,0 +1,155 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="vignetteGrad">
+      <stop offset="40%" stop-color="transparent"/>
+      <stop offset="100%" stop-color="#1a0f00" stop-opacity="0.75"/>
+    </radialGradient>
+    <filter id="softBlur">
+      <feGaussianBlur stdDeviation="2"/>
+    </filter>
+    <filter id="heavyBlur">
+      <feGaussianBlur stdDeviation="8"/>
+    </filter>
+  </defs>
+
+  <!-- Vignette (subtle bottom) -->
+  <defs><linearGradient id="vigLG" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#1a0f00" stop-opacity="0"/>
+    <stop offset="70%" stop-color="#1a0f00" stop-opacity="0"/>
+    <stop offset="100%" stop-color="#1a0f00" stop-opacity="0.4"/>
+  </linearGradient></defs>
+  <rect width="512" height="512" fill="url(#vigLG)">
+    <animate attributeName="opacity" values="0.5;0.7;0.5" dur="8s" repeatCount="indefinite"/>
+  </rect>
+
+  <!-- Floating Pollen -->
+  <circle r="4.5" fill="#B2FF59" opacity="0" filter="url(#softBlur)">
+    <animateMotion dur="27s" begin="11.0s" repeatCount="indefinite" path="M444,267 C438,250 426,251 450,284 C462,283 438,250 444,267" />
+    <animate attributeName="opacity"
+      values="0;0.53;0.53;0.21;0" dur="27s"
+      begin="11.0s" repeatCount="indefinite" />
+  </circle>
+  <circle r="4.2" fill="#B2FF59" opacity="0" filter="url(#softBlur)">
+    <animateMotion dur="27s" begin="11.4s" repeatCount="indefinite" path="M70,420 C88,435 51,429 52,405 C89,411 88,435 70,420" />
+    <animate attributeName="opacity"
+      values="0;0.38;0.38;0.15;0" dur="27s"
+      begin="11.4s" repeatCount="indefinite" />
+  </circle>
+  <circle r="3.6" fill="#B2FF59" opacity="0" filter="url(#softBlur)">
+    <animateMotion dur="34s" begin="15.4s" repeatCount="indefinite" path="M124,201 C112,183 126,189 136,219 C122,213 112,183 124,201" />
+    <animate attributeName="opacity"
+      values="0;0.49;0.49;0.20;0" dur="34s"
+      begin="15.4s" repeatCount="indefinite" />
+  </circle>
+  <circle r="2.8" fill="#B2FF59" opacity="0" filter="url(#softBlur)">
+    <animateMotion dur="26s" begin="7.3s" repeatCount="indefinite" path="M217,376 C236,358 201,363 198,394 C233,389 236,358 217,376" />
+    <animate attributeName="opacity"
+      values="0;0.40;0.40;0.16;0" dur="26s"
+      begin="7.3s" repeatCount="indefinite" />
+  </circle>
+  <circle r="1.6" fill="#B2FF59" opacity="0" filter="url(#softBlur)">
+    <animateMotion dur="22s" begin="10.9s" repeatCount="indefinite" path="M374,337 C352,319 365,338 396,355 C383,336 352,319 374,337" />
+    <animate attributeName="opacity"
+      values="0;0.31;0.31;0.13;0" dur="22s"
+      begin="10.9s" repeatCount="indefinite" />
+  </circle>
+  <circle r="1.6" fill="#B2FF59" opacity="0" filter="url(#softBlur)">
+    <animateMotion dur="20s" begin="7.2s" repeatCount="indefinite" path="M243,189 C252,199 236,169 234,179 C250,209 252,199 243,189" />
+    <animate attributeName="opacity"
+      values="0;0.25;0.25;0.10;0" dur="20s"
+      begin="7.2s" repeatCount="indefinite" />
+  </circle>
+  <circle r="1.6" fill="#B2FF59" opacity="0" filter="url(#softBlur)">
+    <animateMotion dur="35s" begin="20.4s" repeatCount="indefinite" path="M167,338 C190,324 164,350 144,352 C170,326 190,324 167,338" />
+    <animate attributeName="opacity"
+      values="0;0.44;0.44;0.17;0" dur="35s"
+      begin="20.4s" repeatCount="indefinite" />
+  </circle>
+  <circle r="2.3" fill="#B2FF59" opacity="0" filter="url(#softBlur)">
+    <animateMotion dur="25s" begin="2.1s" repeatCount="indefinite" path="M351,313 C326,304 326,321 376,322 C376,305 326,304 351,313" />
+    <animate attributeName="opacity"
+      values="0;0.37;0.37;0.15;0" dur="25s"
+      begin="2.1s" repeatCount="indefinite" />
+  </circle>
+  <circle r="1.4" fill="#B2FF59" opacity="0" filter="url(#softBlur)">
+    <animateMotion dur="25s" begin="12.8s" repeatCount="indefinite" path="M259,110 C257,109 234,105 261,111 C284,115 257,109 259,110" />
+    <animate attributeName="opacity"
+      values="0;0.29;0.29;0.11;0" dur="25s"
+      begin="12.8s" repeatCount="indefinite" />
+  </circle>
+  <circle r="1.0" fill="#B2FF59" opacity="0" filter="url(#softBlur)">
+    <animateMotion dur="28s" begin="8.8s" repeatCount="indefinite" path="M199,234 C180,224 215,242 218,244 C183,226 180,224 199,234" />
+    <animate attributeName="opacity"
+      values="0;0.25;0.25;0.10;0" dur="28s"
+      begin="8.8s" repeatCount="indefinite" />
+  </circle>
+  <circle r="0.9" fill="#B2FF59" opacity="0" filter="url(#softBlur)">
+    <animateMotion dur="29s" begin="15.0s" repeatCount="indefinite" path="M331,326 C313,314 337,319 349,338 C325,333 313,314 331,326" />
+    <animate attributeName="opacity"
+      values="0;0.22;0.22;0.09;0" dur="29s"
+      begin="15.0s" repeatCount="indefinite" />
+  </circle>
+  <circle r="1.4" fill="#B2FF59" opacity="0" filter="url(#softBlur)">
+    <animateMotion dur="32s" begin="14.0s" repeatCount="indefinite" path="M185,407 C181,398 201,400 189,416 C169,414 181,398 185,407" />
+    <animate attributeName="opacity"
+      values="0;0.19;0.19;0.08;0" dur="32s"
+      begin="14.0s" repeatCount="indefinite" />
+  </circle>
+  <circle r="1.4" fill="#B2FF59" opacity="0" filter="url(#softBlur)">
+    <animateMotion dur="25s" begin="5.5s" repeatCount="indefinite" path="M320,216 C318,210 333,197 322,222 C307,235 318,210 320,216" />
+    <animate attributeName="opacity"
+      values="0;0.23;0.23;0.09;0" dur="25s"
+      begin="5.5s" repeatCount="indefinite" />
+  </circle>
+
+  <!-- Drifting Clouds -->
+  <ellipse cx="180" cy="65" rx="220" ry="55" fill="#B2FF59" opacity="0.18" filter="url(#softBlur)">
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; 35,3; 0,0; -35,-2; 0,0"
+      dur="41s" repeatCount="indefinite" />
+    <animate attributeName="opacity"
+      values="0.12;0.28;0.12" dur="41s" repeatCount="indefinite" />
+  </ellipse>
+  <ellipse cx="380" cy="150" rx="180" ry="45" fill="#A5D6A7" opacity="0.14" filter="url(#softBlur)">
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; -25,2; 0,0; 25,-3; 0,0"
+      dur="43s" repeatCount="indefinite" />
+    <animate attributeName="opacity"
+      values="0.10;0.22;0.10" dur="43s" repeatCount="indefinite" />
+  </ellipse>
+  <ellipse cx="100" cy="115" rx="140" ry="30" fill="#69F0AE" opacity="0.10" filter="url(#softBlur)">
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; 45,1; 0,0; -25,0; 0,0"
+      dur="49s" repeatCount="indefinite" />
+  </ellipse>
+
+  <!-- Valley Wind Bands -->
+  <rect x="-100" y="82" width="700" height="45" fill="#A5D6A7"
+    opacity="0" transform="rotate(-22,256,256)">
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; 39,-3; 19,0; 0,0"
+      dur="32s" begin="0.0s" repeatCount="indefinite" additive="sum" />
+    <animate attributeName="opacity"
+      values="0;0.24;0.17;0.24;0" dur="32s"
+      begin="0.0s" repeatCount="indefinite" />
+  </rect>
+  <rect x="-100" y="232" width="700" height="50" fill="#69F0AE"
+    opacity="0" transform="rotate(-19,256,256)">
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; 52,1; 26,0; 0,0"
+      dur="38s" begin="3.8s" repeatCount="indefinite" additive="sum" />
+    <animate attributeName="opacity"
+      values="0;0.16;0.11;0.16;0" dur="38s"
+      begin="3.8s" repeatCount="indefinite" />
+  </rect>
+  <rect x="-100" y="348" width="700" height="37" fill="#B2FF59"
+    opacity="0" transform="rotate(-32,256,256)">
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; 35,0; 17,0; 0,0"
+      dur="37s" begin="5.5s" repeatCount="indefinite" additive="sum" />
+    <animate attributeName="opacity"
+      values="0;0.21;0.15;0.21;0" dur="37s"
+      begin="5.5s" repeatCount="indefinite" />
+  </rect>
+
+</svg>

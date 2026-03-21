@@ -1,0 +1,72 @@
+{
+  "generated_at": "2026-03-05T02:00:08.749018",
+  "summary": {
+    "total": 3,
+    "passed": 3,
+    "warned": 0,
+    "failed": 0,
+    "avg_fidelity": 0.6832,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-c8ac4b389df1",
+      "title": "Pebble’s Floating School of Starlight",
+      "median_duration": 239.91,
+      "variants": [
+        {
+          "voice": "female_1",
+          "duration_seconds": 239.91,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.6419,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.7143,
+            "ratio": 0.3623,
+            "word_overlap": 0.6912,
+            "word_order_score": 0.6452,
+            "combined": 0.6419
+          }
+        },
+        {
+          "voice": "male_1",
+          "duration_seconds": 239.91,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.6932,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.75,
+            "ratio": 0.5456,
+            "word_overlap": 0.7313,
+            "word_order_score": 0.6531,
+            "combined": 0.6932
+          }
+        },
+        {
+          "voice": "female_3",
+          "duration_seconds": 239.91,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.7144,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.7857,
+            "ratio": 0.5239,
+            "word_overlap": 0.7164,
+            "word_order_score": 0.6854,
+            "combined": 0.7144
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": []
+}

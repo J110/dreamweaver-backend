@@ -1,0 +1,121 @@
+{
+  "generated_at": "2026-03-18T03:03:05.103998",
+  "summary": {
+    "total": 5,
+    "passed": 4,
+    "warned": 1,
+    "failed": 0,
+    "avg_fidelity": 0.982,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-b2e191e24194",
+      "title": "Luna and the Starlight Skyline",
+      "median_duration": 90.44,
+      "variants": [
+        {
+          "voice": "female_2",
+          "duration_seconds": 90.44,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9734,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.9677,
+            "word_overlap": 0.9223,
+            "word_order_score": 0.9441,
+            "combined": 0.9734
+          }
+        },
+        {
+          "voice": "female_1",
+          "duration_seconds": 108.09,
+          "verdict": "WARN",
+          "reasons": [
+            "duration_outlier (19.5% off)"
+          ],
+          "text_fidelity_combined": 0.9841,
+          "quality_average": 5.0,
+          "duration_outlier": true,
+          "duration_deviation_pct": 19.5,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.989,
+            "word_overlap": 0.9505,
+            "word_order_score": 0.9627,
+            "combined": 0.9841
+          },
+          "transcript_snippet": "The city hums a quiet tune beneath the silver starry moon. Luna tiptoes, soft and bright, through streets that shimmer in the night. She gathers starlight, soft and blue, a thread of gold, a sparkle too. With gentle hands and glowing eyes, she dreams the dark into surprise.A bridge of light, a tower"
+        },
+        {
+          "voice": "female_3",
+          "duration_seconds": 84.49,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9841,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 6.6,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.989,
+            "word_overlap": 0.9505,
+            "word_order_score": 0.9627,
+            "combined": 0.9841
+          }
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 85.09,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9841,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 5.9,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.989,
+            "word_overlap": 0.9505,
+            "word_order_score": 0.9627,
+            "combined": 0.9841
+          }
+        },
+        {
+          "voice": "asmr",
+          "duration_seconds": 96.84,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9841,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 7.1,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.989,
+            "word_overlap": 0.9505,
+            "word_order_score": 0.9627,
+            "combined": 0.9841
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Luna and the Starlight Skyline",
+      "story_id": "gen-b2e191e24194",
+      "voice": "female_1",
+      "verdict": "WARN",
+      "reasons": [
+        "duration_outlier (19.5% off)"
+      ],
+      "fidelity": 0.9841,
+      "quality_avg": 5.0
+    }
+  ]
+}

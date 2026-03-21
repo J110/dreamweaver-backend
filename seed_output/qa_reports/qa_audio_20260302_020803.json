@@ -1,0 +1,183 @@
+{
+  "generated_at": "2026-03-02T02:08:03.712499",
+  "summary": {
+    "total": 7,
+    "passed": 4,
+    "warned": 3,
+    "failed": 0,
+    "avg_fidelity": 0.8165,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-6034c85ea602",
+      "title": "Priya and the Whispering Wellness Stones",
+      "median_duration": 288.66,
+      "variants": [
+        {
+          "voice": "female_2",
+          "duration_seconds": 302.15,
+          "verdict": "WARN",
+          "reasons": [
+            "marginal_fidelity (0.69)"
+          ],
+          "text_fidelity_combined": 0.6884,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 4.7,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.659,
+            "ratio": 0.2376,
+            "word_overlap": 0.9062,
+            "word_order_score": 0.9305,
+            "combined": 0.6884
+          },
+          "transcript_snippet": "The sun dipped low over the rolling hills of Priya's village in India, painting the sky in soft hues of pink and gold. Priya sat on the edge of the old stone well, her bare feet dangling above the cool water below. Beside her, her best friends, Arav and Meera, chatted excitedly about the village fes"
+        },
+        {
+          "voice": "female_1",
+          "duration_seconds": 346.88,
+          "verdict": "WARN",
+          "reasons": [
+            "duration_outlier (20.2% off)"
+          ],
+          "text_fidelity_combined": 0.8321,
+          "quality_average": 5.0,
+          "duration_outlier": true,
+          "duration_deviation_pct": 20.2,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9832,
+            "ratio": 0.1227,
+            "word_overlap": 0.9145,
+            "word_order_score": 0.9225,
+            "combined": 0.8321
+          },
+          "transcript_snippet": "The sun dipped low over the rolling hills of Priya's village in India, painting the sky in soft hues of pink and gold. Priya sat on the edge of the old stone well, her bare feet dangling above the cool water below. Beside her, her best friends, Arif and Mira, chatted excitedly about the village fest"
+        },
+        {
+          "voice": "female_3",
+          "duration_seconds": 288.66,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9604,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9878,
+            "ratio": 0.939,
+            "word_overlap": 0.926,
+            "word_order_score": 0.9323,
+            "combined": 0.9604
+          }
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 285.05,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9008,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 1.3,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9786,
+            "ratio": 0.5712,
+            "word_overlap": 0.9235,
+            "word_order_score": 0.9337,
+            "combined": 0.9008
+          }
+        },
+        {
+          "voice": "male_1",
+          "duration_seconds": 264.66,
+          "verdict": "WARN",
+          "reasons": [
+            "marginal_fidelity (0.60)"
+          ],
+          "text_fidelity_combined": 0.6027,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 8.3,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.4847,
+            "ratio": 0.2359,
+            "word_overlap": 0.912,
+            "word_order_score": 0.9351,
+            "combined": 0.6027
+          },
+          "transcript_snippet": "The sun dipped low over the rolling hills of Priya's village in India, painting the sky in soft hues of pink and gold. Priya sat on the edge of the old stone well, her bare feet dangling above the cool water below. Beside her, her best friends, Arv and Meera, chatted excitedly about the village fest"
+        },
+        {
+          "voice": "male_3",
+          "duration_seconds": 282.26,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.8537,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 2.2,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9862,
+            "ratio": 0.2366,
+            "word_overlap": 0.9204,
+            "word_order_score": 0.9324,
+            "combined": 0.8537
+          }
+        },
+        {
+          "voice": "asmr",
+          "duration_seconds": 297.66,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.8772,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 3.1,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.974,
+            "ratio": 0.4251,
+            "word_overlap": 0.9199,
+            "word_order_score": 0.9379,
+            "combined": 0.8772
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Priya and the Whispering Wellness Stones",
+      "story_id": "gen-6034c85ea602",
+      "voice": "female_2",
+      "verdict": "WARN",
+      "reasons": [
+        "marginal_fidelity (0.69)"
+      ],
+      "fidelity": 0.6884,
+      "quality_avg": 5.0
+    },
+    {
+      "story": "Priya and the Whispering Wellness Stones",
+      "story_id": "gen-6034c85ea602",
+      "voice": "female_1",
+      "verdict": "WARN",
+      "reasons": [
+        "duration_outlier (20.2% off)"
+      ],
+      "fidelity": 0.8321,
+      "quality_avg": 5.0
+    },
+    {
+      "story": "Priya and the Whispering Wellness Stones",
+      "story_id": "gen-6034c85ea602",
+      "voice": "male_1",
+      "verdict": "WARN",
+      "reasons": [
+        "marginal_fidelity (0.60)"
+      ],
+      "fidelity": 0.6027,
+      "quality_avg": 5.0
+    }
+  ]
+}

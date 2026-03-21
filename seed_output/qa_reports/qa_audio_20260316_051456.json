@@ -1,0 +1,102 @@
+{
+  "generated_at": "2026-03-16T05:14:56.815494",
+  "summary": {
+    "total": 2,
+    "passed": 1,
+    "warned": 0,
+    "failed": 1,
+    "avg_fidelity": null,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-a0cbd0c0da52",
+      "title": "Milo and the Nighttime Nest Song",
+      "median_duration": 244.91,
+      "variants": [
+        {
+          "voice": "female_3",
+          "duration_seconds": 244.91,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0,
+          "quality_average": 0.778,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "lullaby_qa": {
+            "dimensions": {
+              "volume_consistency": {
+                "score": 0.863,
+                "variance": 4.1,
+                "range_db": 7.5
+              },
+              "loudness": {
+                "score": 0.738,
+                "avg_dbfs": -25.9
+              },
+              "sparsity": {
+                "score": 0.333,
+                "quiet_ratio": 0.05
+              },
+              "spectral_softness": {
+                "score": 0.957,
+                "high_freq_ratio": 0.0087
+              },
+              "no_peaks": {
+                "score": 1.0,
+                "spike_count": 0
+              }
+            },
+            "quality_avg": 0.778,
+            "warnings": [],
+            "fidelity": {
+              "verdict": "WARN",
+              "content_type": "L",
+              "fidelity_score": 0.5,
+              "gate1": {
+                "pass": true,
+                "error": "can't start new thread"
+              },
+              "gate2": {
+                "pass": true,
+                "error": "can't start new thread"
+              },
+              "gate3": {
+                "pass": true,
+                "error": "can't start new thread"
+              }
+            }
+          }
+        },
+        {
+          "voice": "female_2",
+          "duration_seconds": 244.91,
+          "verdict": "FAIL",
+          "reasons": [],
+          "text_fidelity_combined": 0,
+          "quality_average": 0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "lullaby_qa": {
+            "dimensions": {},
+            "quality_avg": 0,
+            "warnings": []
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Milo and the Nighttime Nest Song",
+      "story_id": "gen-a0cbd0c0da52",
+      "voice": "female_2",
+      "verdict": "FAIL",
+      "reasons": [],
+      "fidelity": 0,
+      "quality_avg": 0,
+      "lullaby_dimensions": {},
+      "lullaby_quality_avg": 0
+    }
+  ]
+}

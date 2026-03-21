@@ -55,6 +55,13 @@ DIMENSIONS = {
             "cyclical_seasonal",
         ],
     },
+    "mood": {
+        "weight": 8,
+        "hard_rule": True,
+        "values": [
+            "calm", "curious", "wired", "sad", "anxious", "angry",
+        ],
+    },
     # Tier 2 — medium weight — soft (collision score only)
     "scale": {
         "weight": 5,
@@ -204,6 +211,11 @@ def _map_legacy_to_fingerprint(story: dict) -> dict:
     theme = story.get("theme")
     if theme and theme in _THEME_MAP:
         fp["theme"] = _THEME_MAP[theme]
+
+        # Mood dimension
+    mood = story.get("mood")
+    if mood and mood in ["calm", "curious", "wired", "sad", "anxious", "angry"]:
+        fp["mood"] = mood
 
     return fp
 

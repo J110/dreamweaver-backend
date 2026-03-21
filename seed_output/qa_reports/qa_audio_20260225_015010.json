@@ -1,0 +1,157 @@
+{
+  "generated_at": "2026-02-25T01:50:10.694884",
+  "summary": {
+    "total": 7,
+    "passed": 6,
+    "warned": 1,
+    "failed": 0,
+    "avg_fidelity": 0.8837,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-50e929bf696c",
+      "title": "Chai’s Moonlit Steam Song",
+      "median_duration": 41.43,
+      "variants": [
+        {
+          "voice": "female_2",
+          "duration_seconds": 43.27,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9826,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 4.4,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.9918,
+            "word_overlap": 0.9455,
+            "word_order_score": 0.9571,
+            "combined": 0.9826
+          }
+        },
+        {
+          "voice": "female_3",
+          "duration_seconds": 41.43,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9869,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.9973,
+            "word_overlap": 0.9455,
+            "word_order_score": 0.971,
+            "combined": 0.9869
+          }
+        },
+        {
+          "voice": "female_1",
+          "duration_seconds": 68.42,
+          "verdict": "WARN",
+          "reasons": [
+            "duration_outlier (65.1% off)",
+            "marginal_fidelity (0.50)"
+          ],
+          "text_fidelity_combined": 0.4985,
+          "quality_average": 5.0,
+          "duration_outlier": true,
+          "duration_deviation_pct": 65.1,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.3971,
+            "ratio": 0.3941,
+            "word_overlap": 0.717,
+            "word_order_score": 0.6765,
+            "combined": 0.4985
+          },
+          "transcript_snippet": "Hush, hush, little chai. Moon glows soft, night is near. Mama pours warm, steam swirls high. Chai sings low, sweet and clear. Hush now, chai. Rest your rim. Dreams will come on silver beams. Family hums, the night sings too. Sleep, little cup, in moonlit dreams."
+        },
+        {
+          "voice": "male_1",
+          "duration_seconds": 40.11,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9429,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 3.2,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9265,
+            "ratio": 0.9861,
+            "word_overlap": 0.9273,
+            "word_order_score": 0.9559,
+            "combined": 0.9429
+          }
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 38.73,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9869,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 6.5,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.9973,
+            "word_overlap": 0.9455,
+            "word_order_score": 0.971,
+            "combined": 0.9869
+          }
+        },
+        {
+          "voice": "male_3",
+          "duration_seconds": 38.75,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9429,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 6.5,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9265,
+            "ratio": 0.9861,
+            "word_overlap": 0.9273,
+            "word_order_score": 0.9559,
+            "combined": 0.9429
+          }
+        },
+        {
+          "voice": "asmr",
+          "duration_seconds": 46.71,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.8455,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 12.7,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9265,
+            "ratio": 0.3845,
+            "word_overlap": 0.8929,
+            "word_order_score": 0.9412,
+            "combined": 0.8455
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Chai’s Moonlit Steam Song",
+      "story_id": "gen-50e929bf696c",
+      "voice": "female_1",
+      "verdict": "WARN",
+      "reasons": [
+        "duration_outlier (65.1% off)",
+        "marginal_fidelity (0.50)"
+      ],
+      "fidelity": 0.4985,
+      "quality_avg": 5.0
+    }
+  ]
+}

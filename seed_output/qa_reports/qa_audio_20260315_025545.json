@@ -1,0 +1,102 @@
+{
+  "generated_at": "2026-03-15T02:55:45.653375",
+  "summary": {
+    "total": 2,
+    "passed": 1,
+    "warned": 0,
+    "failed": 1,
+    "avg_fidelity": null,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-f5a086b33ef3",
+      "title": "Luna and the Nighttime Stargazers",
+      "median_duration": 244.91,
+      "variants": [
+        {
+          "voice": "female_3",
+          "duration_seconds": 244.91,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0,
+          "quality_average": 0.759,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "lullaby_qa": {
+            "dimensions": {
+              "volume_consistency": {
+                "score": 0.818,
+                "variance": 5.4,
+                "range_db": 8.7
+              },
+              "loudness": {
+                "score": 0.745,
+                "avg_dbfs": -25.8
+              },
+              "sparsity": {
+                "score": 0.333,
+                "quiet_ratio": 0.05
+              },
+              "spectral_softness": {
+                "score": 0.898,
+                "high_freq_ratio": 0.0204
+              },
+              "no_peaks": {
+                "score": 1.0,
+                "spike_count": 0
+              }
+            },
+            "quality_avg": 0.759,
+            "warnings": [],
+            "fidelity": {
+              "verdict": "WARN",
+              "content_type": "L",
+              "fidelity_score": 0.5,
+              "gate1": {
+                "pass": true,
+                "error": "mkl_malloc: failed to allocate memory"
+              },
+              "gate2": {
+                "pass": true,
+                "error": "mkl_malloc: failed to allocate memory"
+              },
+              "gate3": {
+                "pass": true,
+                "error": "mkl_malloc: failed to allocate memory"
+              }
+            }
+          }
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 244.91,
+          "verdict": "FAIL",
+          "reasons": [],
+          "text_fidelity_combined": 0,
+          "quality_average": 0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "lullaby_qa": {
+            "dimensions": {},
+            "quality_avg": 0,
+            "warnings": []
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Luna and the Nighttime Stargazers",
+      "story_id": "gen-f5a086b33ef3",
+      "voice": "male_2",
+      "verdict": "FAIL",
+      "reasons": [],
+      "fidelity": 0,
+      "quality_avg": 0,
+      "lullaby_dimensions": {},
+      "lullaby_quality_avg": 0
+    }
+  ]
+}

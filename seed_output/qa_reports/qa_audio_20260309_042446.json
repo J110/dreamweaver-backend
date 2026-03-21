@@ -1,0 +1,70 @@
+{
+  "generated_at": "2026-03-09T04:24:46.272606",
+  "summary": {
+    "total": 2,
+    "passed": 1,
+    "warned": 1,
+    "failed": 0,
+    "avg_fidelity": 0.6972,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-9d6661087cfa",
+      "title": "Eli and the Whispering Pass",
+      "median_duration": 526.2,
+      "variants": [
+        {
+          "voice": "asmr",
+          "duration_seconds": 540.43,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.7072,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 2.7,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.5027,
+            "ratio": 0.9269,
+            "word_overlap": 0.8552,
+            "word_order_score": 0.9251,
+            "combined": 0.7072
+          }
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 511.97,
+          "verdict": "WARN",
+          "reasons": [
+            "marginal_fidelity (0.69)"
+          ],
+          "text_fidelity_combined": 0.6872,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 2.7,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.5287,
+            "ratio": 0.7025,
+            "word_overlap": 0.858,
+            "word_order_score": 0.9267,
+            "combined": 0.6872
+          },
+          "transcript_snippet": "The first time Eli heard the voices, he thought it was the wind playing tricks. The mountain pass behind his grandmother's cottage had always been quiet, too quiet, some said, with only the rustle of dry leaves and the distant call of a hawk. But that evening, as the sky bled from gold to violet, th"
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Eli and the Whispering Pass",
+      "story_id": "gen-9d6661087cfa",
+      "voice": "male_2",
+      "verdict": "WARN",
+      "reasons": [
+        "marginal_fidelity (0.69)"
+      ],
+      "fidelity": 0.6872,
+      "quality_avg": 5.0
+    }
+  ]
+}

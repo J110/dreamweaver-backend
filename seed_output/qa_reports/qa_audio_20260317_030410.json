@@ -1,0 +1,121 @@
+{
+  "generated_at": "2026-03-17T03:04:10.257476",
+  "summary": {
+    "total": 5,
+    "passed": 4,
+    "warned": 1,
+    "failed": 0,
+    "avg_fidelity": 0.9775,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-3255a91b20c2",
+      "title": "Nix and the Starlight Circuit",
+      "median_duration": 243.76,
+      "variants": [
+        {
+          "voice": "female_2",
+          "duration_seconds": 251.85,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9782,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 3.3,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.996,
+            "ratio": 0.9931,
+            "word_overlap": 0.9257,
+            "word_order_score": 0.9547,
+            "combined": 0.9782
+          }
+        },
+        {
+          "voice": "female_3",
+          "duration_seconds": 237.0,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9774,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 2.8,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.994,
+            "ratio": 0.986,
+            "word_overlap": 0.9294,
+            "word_order_score": 0.9584,
+            "combined": 0.9774
+          }
+        },
+        {
+          "voice": "female_1",
+          "duration_seconds": 303.62,
+          "verdict": "WARN",
+          "reasons": [
+            "duration_outlier (24.6% off)"
+          ],
+          "text_fidelity_combined": 0.9764,
+          "quality_average": 5.0,
+          "duration_outlier": true,
+          "duration_deviation_pct": 24.6,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.994,
+            "ratio": 0.9898,
+            "word_overlap": 0.9225,
+            "word_order_score": 0.9546,
+            "combined": 0.9764
+          },
+          "transcript_snippet": "The desert stretched endlessly under the velvet night, its dunes glowing faintly with the light of a thousand distant stars. Nix, a small robotic creature no bigger than a fox, whirred softly as she drifted over the warm sand. Her metallic fins catching the breeze like a kite. She had been designed "
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 227.88,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9777,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 6.5,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.998,
+            "ratio": 0.9868,
+            "word_overlap": 0.9294,
+            "word_order_score": 0.9508,
+            "combined": 0.9777
+          }
+        },
+        {
+          "voice": "asmr",
+          "duration_seconds": 243.76,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.978,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.998,
+            "ratio": 0.9866,
+            "word_overlap": 0.9328,
+            "word_order_score": 0.9508,
+            "combined": 0.978
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Nix and the Starlight Circuit",
+      "story_id": "gen-3255a91b20c2",
+      "voice": "female_1",
+      "verdict": "WARN",
+      "reasons": [
+        "duration_outlier (24.6% off)"
+      ],
+      "fidelity": 0.9764,
+      "quality_avg": 5.0
+    }
+  ]
+}

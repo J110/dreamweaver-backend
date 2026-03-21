@@ -1,0 +1,111 @@
+{
+  "summary": {
+    "total": 2,
+    "passed": 0,
+    "warned": 2,
+    "failed": 0
+  },
+  "stories": [
+    {
+      "story_id": "gen-e1203c22da5f",
+      "title": "Coral and the Glowing Shell",
+      "median_duration": 244.9,
+      "variants": [
+        {
+          "voice": "male_1",
+          "duration_seconds": 244.91,
+          "verdict": "WARN",
+          "reasons": [
+            "too loud: avg -10 dBFS (target ~-22)",
+            "no gaps between phrases (continuous audio)"
+          ],
+          "text_fidelity_combined": 0,
+          "quality_average": 0.726,
+          "duration_outlier": false,
+          "lullaby_qa": {
+            "dimensions": {
+              "duration_accuracy": {
+                "score": 1.0,
+                "actual": 239.9,
+                "target": 240,
+                "deviation_pct": 0.0
+              },
+              "volume_consistency": {
+                "score": 0.888,
+                "variance": 3.4,
+                "range_db": 5.3
+              },
+              "loudness": {
+                "score": 0.214,
+                "avg_dbfs": -10.2
+              },
+              "sparsity": {
+                "score": 0.3,
+                "quiet_ratio": 0.0
+              },
+              "spectral_softness": {
+                "score": 0.955,
+                "high_freq_ratio": 0.0089
+              },
+              "no_peaks": {
+                "score": 1.0,
+                "spike_count": 0
+              }
+            },
+            "quality_avg": 0.726,
+            "warnings": [
+              "too loud: avg -10 dBFS (target ~-22)",
+              "no gaps between phrases (continuous audio)"
+            ]
+          }
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 244.91,
+          "verdict": "WARN",
+          "reasons": [
+            "no gaps between phrases (continuous audio)"
+          ],
+          "text_fidelity_combined": 0,
+          "quality_average": 0.762,
+          "duration_outlier": false,
+          "lullaby_qa": {
+            "dimensions": {
+              "duration_accuracy": {
+                "score": 1.0,
+                "actual": 239.9,
+                "target": 240,
+                "deviation_pct": 0.0
+              },
+              "volume_consistency": {
+                "score": 0.937,
+                "variance": 1.9,
+                "range_db": 5.2
+              },
+              "loudness": {
+                "score": 0.512,
+                "avg_dbfs": -14.7
+              },
+              "sparsity": {
+                "score": 0.3,
+                "quiet_ratio": 0.0
+              },
+              "spectral_softness": {
+                "score": 0.823,
+                "high_freq_ratio": 0.0354
+              },
+              "no_peaks": {
+                "score": 1.0,
+                "spike_count": 0
+              }
+            },
+            "quality_avg": 0.762,
+            "warnings": [
+              "no gaps between phrases (continuous audio)"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

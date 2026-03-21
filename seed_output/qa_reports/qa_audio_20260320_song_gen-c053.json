@@ -1,0 +1,176 @@
+{
+  "summary": {
+    "total": 3,
+    "passed": 0,
+    "warned": 3,
+    "failed": 0
+  },
+  "stories": [
+    {
+      "story_id": "gen-c05399108488",
+      "title": "Orion and the Velvet Night",
+      "median_duration": 244.9,
+      "variants": [
+        {
+          "voice": "female_1",
+          "duration_seconds": 244.91,
+          "verdict": "WARN",
+          "reasons": [
+            "too loud: avg -12 dBFS (target ~-22)",
+            "no gaps between phrases (continuous audio)"
+          ],
+          "text_fidelity_combined": 0,
+          "quality_average": 0.729,
+          "duration_outlier": false,
+          "lullaby_qa": {
+            "dimensions": {
+              "duration_accuracy": {
+                "score": 1.0,
+                "actual": 239.9,
+                "target": 240,
+                "deviation_pct": 0.0
+              },
+              "volume_consistency": {
+                "score": 0.906,
+                "variance": 2.8,
+                "range_db": 5.7
+              },
+              "loudness": {
+                "score": 0.32,
+                "avg_dbfs": -11.8
+              },
+              "sparsity": {
+                "score": 0.3,
+                "quiet_ratio": 0.025
+              },
+              "spectral_softness": {
+                "score": 0.846,
+                "high_freq_ratio": 0.0308
+              },
+              "no_peaks": {
+                "score": 1.0,
+                "spike_count": 0
+              }
+            },
+            "quality_avg": 0.729,
+            "warnings": [
+              "too loud: avg -12 dBFS (target ~-22)",
+              "no gaps between phrases (continuous audio)"
+            ],
+            "fidelity": {
+              "fidelity_score": 0.975,
+              "verdict": "PASS",
+              "content_type": "L"
+            }
+          }
+        },
+        {
+          "voice": "male_1",
+          "duration_seconds": 244.91,
+          "verdict": "WARN",
+          "reasons": [
+            "too loud: avg -14 dBFS (target ~-22)",
+            "no gaps between phrases (continuous audio)"
+          ],
+          "text_fidelity_combined": 0,
+          "quality_average": 0.769,
+          "duration_outlier": false,
+          "lullaby_qa": {
+            "dimensions": {
+              "duration_accuracy": {
+                "score": 1.0,
+                "actual": 239.9,
+                "target": 240,
+                "deviation_pct": 0.0
+              },
+              "volume_consistency": {
+                "score": 0.922,
+                "variance": 2.3,
+                "range_db": 5.3
+              },
+              "loudness": {
+                "score": 0.442,
+                "avg_dbfs": -13.6
+              },
+              "sparsity": {
+                "score": 0.3,
+                "quiet_ratio": 0.0
+              },
+              "spectral_softness": {
+                "score": 0.949,
+                "high_freq_ratio": 0.0103
+              },
+              "no_peaks": {
+                "score": 1.0,
+                "spike_count": 0
+              }
+            },
+            "quality_avg": 0.769,
+            "warnings": [
+              "too loud: avg -14 dBFS (target ~-22)",
+              "no gaps between phrases (continuous audio)"
+            ],
+            "fidelity": {
+              "fidelity_score": 0.975,
+              "verdict": "PASS",
+              "content_type": "L"
+            }
+          }
+        },
+        {
+          "voice": "female_3",
+          "duration_seconds": 244.91,
+          "verdict": "WARN",
+          "reasons": [
+            "too loud: avg -13 dBFS (target ~-22)",
+            "no gaps between phrases (continuous audio)"
+          ],
+          "text_fidelity_combined": 0,
+          "quality_average": 0.772,
+          "duration_outlier": false,
+          "lullaby_qa": {
+            "dimensions": {
+              "duration_accuracy": {
+                "score": 1.0,
+                "actual": 239.9,
+                "target": 240,
+                "deviation_pct": 0.0
+              },
+              "volume_consistency": {
+                "score": 0.962,
+                "variance": 1.1,
+                "range_db": 3.5
+              },
+              "loudness": {
+                "score": 0.401,
+                "avg_dbfs": -13.0
+              },
+              "sparsity": {
+                "score": 0.3,
+                "quiet_ratio": 0.0
+              },
+              "spectral_softness": {
+                "score": 0.968,
+                "high_freq_ratio": 0.0064
+              },
+              "no_peaks": {
+                "score": 1.0,
+                "spike_count": 0
+              }
+            },
+            "quality_avg": 0.772,
+            "warnings": [
+              "too loud: avg -13 dBFS (target ~-22)",
+              "no gaps between phrases (continuous audio)"
+            ],
+            "fidelity": {
+              "fidelity_score": 0.975,
+              "verdict": "PASS",
+              "content_type": "L"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

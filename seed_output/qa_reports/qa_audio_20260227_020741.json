@@ -1,0 +1,171 @@
+{
+  "generated_at": "2026-02-27T02:07:41.494864",
+  "summary": {
+    "total": 7,
+    "passed": 5,
+    "warned": 2,
+    "failed": 0,
+    "avg_fidelity": 0.8429,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-a4a5bf8ba702",
+      "title": "Drizzle and the Harvest Moon Festival",
+      "median_duration": 263.37,
+      "variants": [
+        {
+          "voice": "female_3",
+          "duration_seconds": 262.75,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9745,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.2,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.945,
+            "word_overlap": 0.9419,
+            "word_order_score": 0.9542,
+            "combined": 0.9745
+          }
+        },
+        {
+          "voice": "female_1",
+          "duration_seconds": 321.93,
+          "verdict": "WARN",
+          "reasons": [
+            "duration_outlier (22.2% off)",
+            "marginal_fidelity (0.61)"
+          ],
+          "text_fidelity_combined": 0.6091,
+          "quality_average": 5.0,
+          "duration_outlier": true,
+          "duration_deviation_pct": 22.2,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.4581,
+            "ratio": 0.299,
+            "word_overlap": 0.9481,
+            "word_order_score": 0.9618,
+            "combined": 0.6091
+          },
+          "transcript_snippet": "High above the rolling hills of the Cherokee lands, in the heart of a soft summer sky, lived a little raindrop named Drizzle. She was no bigger than a dewdrop, but her heart was as vast as the horizon. Drizzle loved to dance on the winds, twirl through the clouds, and listen to the stories the older"
+        },
+        {
+          "voice": "female_2",
+          "duration_seconds": 292.33,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.979,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 11.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.9704,
+            "word_overlap": 0.945,
+            "word_order_score": 0.9559,
+            "combined": 0.979
+          }
+        },
+        {
+          "voice": "male_1",
+          "duration_seconds": 250.13,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.7289,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 5.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.5258,
+            "ratio": 0.897,
+            "word_overlap": 0.9265,
+            "word_order_score": 0.9552,
+            "combined": 0.7289
+          }
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 262.21,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9783,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.4,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.9674,
+            "word_overlap": 0.9419,
+            "word_order_score": 0.9558,
+            "combined": 0.9783
+          }
+        },
+        {
+          "voice": "male_3",
+          "duration_seconds": 263.37,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9808,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9984,
+            "ratio": 0.9735,
+            "word_overlap": 0.9513,
+            "word_order_score": 0.962,
+            "combined": 0.9808
+          }
+        },
+        {
+          "voice": "asmr",
+          "duration_seconds": 288.03,
+          "verdict": "WARN",
+          "reasons": [
+            "marginal_fidelity (0.65)"
+          ],
+          "text_fidelity_combined": 0.6498,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 9.4,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.3629,
+            "ratio": 0.942,
+            "word_overlap": 0.9263,
+            "word_order_score": 0.9375,
+            "combined": 0.6498
+          },
+          "transcript_snippet": "High above the rolling hills of the Cherokee lands, in the heart of a soft summer sky, lived a little raindrop named Drizzle. She was no bigger than a dewdrop, but her heart was as vast as the horizon. Drizzle loved to dance on the winds, twirl through the clouds, and listen to the stories the older"
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Drizzle and the Harvest Moon Festival",
+      "story_id": "gen-a4a5bf8ba702",
+      "voice": "female_1",
+      "verdict": "WARN",
+      "reasons": [
+        "duration_outlier (22.2% off)",
+        "marginal_fidelity (0.61)"
+      ],
+      "fidelity": 0.6091,
+      "quality_avg": 5.0
+    },
+    {
+      "story": "Drizzle and the Harvest Moon Festival",
+      "story_id": "gen-a4a5bf8ba702",
+      "voice": "asmr",
+      "verdict": "WARN",
+      "reasons": [
+        "marginal_fidelity (0.65)"
+      ],
+      "fidelity": 0.6498,
+      "quality_avg": 5.0
+    }
+  ]
+}

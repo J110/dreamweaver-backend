@@ -1,0 +1,106 @@
+{
+  "generated_at": "2026-03-15T02:56:02.918613",
+  "summary": {
+    "total": 5,
+    "passed": 5,
+    "warned": 0,
+    "failed": 0,
+    "avg_fidelity": 0.9676,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-f74b95ae583c",
+      "title": "Pip and the Evening Dew Dance",
+      "median_duration": 49.25,
+      "variants": [
+        {
+          "voice": "female_3",
+          "duration_seconds": 48.47,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9574,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 1.6,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9877,
+            "ratio": 0.8798,
+            "word_overlap": 0.9385,
+            "word_order_score": 0.9512,
+            "combined": 0.9574
+          }
+        },
+        {
+          "voice": "female_1",
+          "duration_seconds": 54.59,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9785,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 10.8,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9877,
+            "ratio": 0.9601,
+            "word_overlap": 0.9683,
+            "word_order_score": 0.9753,
+            "combined": 0.9785
+          }
+        },
+        {
+          "voice": "female_2",
+          "duration_seconds": 49.25,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 1.0,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 1.0,
+            "word_overlap": 1.0,
+            "word_order_score": 1.0,
+            "combined": 1.0
+          }
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 43.32,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9646,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 12.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9877,
+            "ratio": 0.8977,
+            "word_overlap": 0.9531,
+            "word_order_score": 0.9634,
+            "combined": 0.9646
+          }
+        },
+        {
+          "voice": "asmr",
+          "duration_seconds": 53.63,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9377,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 8.9,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9753,
+            "ratio": 0.8386,
+            "word_overlap": 0.9231,
+            "word_order_score": 0.9277,
+            "combined": 0.9377
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": []
+}

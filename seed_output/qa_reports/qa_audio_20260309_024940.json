@@ -1,0 +1,352 @@
+{
+  "generated_at": "2026-03-09T02:49:40.393497",
+  "summary": {
+    "total": 2,
+    "passed": 0,
+    "warned": 0,
+    "failed": 2,
+    "avg_fidelity": null,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-59c38722ffc1",
+      "title": "Pip and the Whispering Stars",
+      "median_duration": 184.91,
+      "variants": [
+        {
+          "voice": "male_1",
+          "duration_seconds": 184.91,
+          "verdict": "FAIL",
+          "reasons": [
+            "dynamic range 15dB (max 8dB recommended)",
+            "fidelity gate1 fail"
+          ],
+          "text_fidelity_combined": 0,
+          "quality_average": 0.698,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "lullaby_qa": {
+            "dimensions": {
+              "volume_consistency": {
+                "score": 0.483,
+                "variance": 15.5,
+                "range_db": 14.5
+              },
+              "loudness": {
+                "score": 0.719,
+                "avg_dbfs": -26.2
+              },
+              "sparsity": {
+                "score": 0.333,
+                "quiet_ratio": 0.05
+              },
+              "spectral_softness": {
+                "score": 0.954,
+                "high_freq_ratio": 0.0092
+              },
+              "no_peaks": {
+                "score": 1.0,
+                "spike_count": 0
+              }
+            },
+            "quality_avg": 0.698,
+            "warnings": [
+              "dynamic range 15dB (max 8dB recommended)",
+              "fidelity gate1 fail"
+            ],
+            "fidelity": {
+              "verdict": "REJECT",
+              "content_type": "M",
+              "fidelity_score": 0.45,
+              "gate1": {
+                "pass": false,
+                "overlap": {
+                  "pass": false,
+                  "score": 0.0,
+                  "matched": [],
+                  "fuzzy_matched": [],
+                  "missing": [
+                    "glow",
+                    "hoo",
+                    "no",
+                    "shi",
+                    "wa",
+                    "yoo"
+                  ]
+                },
+                "unexpected_ratio": 0.0,
+                "unexpected_words": []
+              },
+              "gate2": {
+                "pass": true,
+                "cue_check": {
+                  "pass": true,
+                  "score": 1.0,
+                  "detected": [],
+                  "missing": []
+                },
+                "phantom_check": {
+                  "pass": true,
+                  "high_severity": [],
+                  "medium_severity": [],
+                  "flag_for_review": false
+                }
+              },
+              "gate3": {
+                "pass": true,
+                "hits": []
+              }
+            }
+          }
+        },
+        {
+          "voice": "female_1",
+          "duration_seconds": 184.91,
+          "verdict": "FAIL",
+          "reasons": [
+            "dynamic range 13dB (max 8dB recommended)",
+            "fidelity gate1 fail"
+          ],
+          "text_fidelity_combined": 0,
+          "quality_average": 0.713,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "lullaby_qa": {
+            "dimensions": {
+              "volume_consistency": {
+                "score": 0.552,
+                "variance": 13.5,
+                "range_db": 12.9
+              },
+              "loudness": {
+                "score": 0.706,
+                "avg_dbfs": -26.4
+              },
+              "sparsity": {
+                "score": 0.333,
+                "quiet_ratio": 0.05
+              },
+              "spectral_softness": {
+                "score": 0.974,
+                "high_freq_ratio": 0.0052
+              },
+              "no_peaks": {
+                "score": 1.0,
+                "spike_count": 0
+              }
+            },
+            "quality_avg": 0.713,
+            "warnings": [
+              "dynamic range 13dB (max 8dB recommended)",
+              "fidelity gate1 fail"
+            ],
+            "fidelity": {
+              "verdict": "REJECT",
+              "content_type": "M",
+              "fidelity_score": 0.45,
+              "gate1": {
+                "pass": false,
+                "overlap": {
+                  "pass": false,
+                  "score": 0.0,
+                  "matched": [],
+                  "fuzzy_matched": [],
+                  "missing": [
+                    "glow",
+                    "hoo",
+                    "no",
+                    "shi",
+                    "wa",
+                    "yoo"
+                  ]
+                },
+                "unexpected_ratio": 0.0,
+                "unexpected_words": []
+              },
+              "gate2": {
+                "pass": true,
+                "cue_check": {
+                  "pass": true,
+                  "score": 1.0,
+                  "detected": [],
+                  "missing": []
+                },
+                "phantom_check": {
+                  "pass": true,
+                  "high_severity": [],
+                  "medium_severity": [],
+                  "flag_for_review": false
+                }
+              },
+              "gate3": {
+                "pass": true,
+                "hits": []
+              }
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Pip and the Whispering Stars",
+      "story_id": "gen-59c38722ffc1",
+      "voice": "male_1",
+      "verdict": "FAIL",
+      "reasons": [
+        "dynamic range 15dB (max 8dB recommended)",
+        "fidelity gate1 fail"
+      ],
+      "fidelity": 0,
+      "quality_avg": 0.698,
+      "lullaby_dimensions": {
+        "volume_consistency": {
+          "score": 0.483,
+          "variance": 15.5,
+          "range_db": 14.5
+        },
+        "loudness": {
+          "score": 0.719,
+          "avg_dbfs": -26.2
+        },
+        "sparsity": {
+          "score": 0.333,
+          "quiet_ratio": 0.05
+        },
+        "spectral_softness": {
+          "score": 0.954,
+          "high_freq_ratio": 0.0092
+        },
+        "no_peaks": {
+          "score": 1.0,
+          "spike_count": 0
+        }
+      },
+      "lullaby_quality_avg": 0.698,
+      "lullaby_fidelity": {
+        "verdict": "REJECT",
+        "content_type": "M",
+        "fidelity_score": 0.45,
+        "gate1": {
+          "pass": false,
+          "overlap": {
+            "pass": false,
+            "score": 0.0,
+            "matched": [],
+            "fuzzy_matched": [],
+            "missing": [
+              "glow",
+              "hoo",
+              "no",
+              "shi",
+              "wa",
+              "yoo"
+            ]
+          },
+          "unexpected_ratio": 0.0,
+          "unexpected_words": []
+        },
+        "gate2": {
+          "pass": true,
+          "cue_check": {
+            "pass": true,
+            "score": 1.0,
+            "detected": [],
+            "missing": []
+          },
+          "phantom_check": {
+            "pass": true,
+            "high_severity": [],
+            "medium_severity": [],
+            "flag_for_review": false
+          }
+        },
+        "gate3": {
+          "pass": true,
+          "hits": []
+        }
+      }
+    },
+    {
+      "story": "Pip and the Whispering Stars",
+      "story_id": "gen-59c38722ffc1",
+      "voice": "female_1",
+      "verdict": "FAIL",
+      "reasons": [
+        "dynamic range 13dB (max 8dB recommended)",
+        "fidelity gate1 fail"
+      ],
+      "fidelity": 0,
+      "quality_avg": 0.713,
+      "lullaby_dimensions": {
+        "volume_consistency": {
+          "score": 0.552,
+          "variance": 13.5,
+          "range_db": 12.9
+        },
+        "loudness": {
+          "score": 0.706,
+          "avg_dbfs": -26.4
+        },
+        "sparsity": {
+          "score": 0.333,
+          "quiet_ratio": 0.05
+        },
+        "spectral_softness": {
+          "score": 0.974,
+          "high_freq_ratio": 0.0052
+        },
+        "no_peaks": {
+          "score": 1.0,
+          "spike_count": 0
+        }
+      },
+      "lullaby_quality_avg": 0.713,
+      "lullaby_fidelity": {
+        "verdict": "REJECT",
+        "content_type": "M",
+        "fidelity_score": 0.45,
+        "gate1": {
+          "pass": false,
+          "overlap": {
+            "pass": false,
+            "score": 0.0,
+            "matched": [],
+            "fuzzy_matched": [],
+            "missing": [
+              "glow",
+              "hoo",
+              "no",
+              "shi",
+              "wa",
+              "yoo"
+            ]
+          },
+          "unexpected_ratio": 0.0,
+          "unexpected_words": []
+        },
+        "gate2": {
+          "pass": true,
+          "cue_check": {
+            "pass": true,
+            "score": 1.0,
+            "detected": [],
+            "missing": []
+          },
+          "phantom_check": {
+            "pass": true,
+            "high_severity": [],
+            "medium_severity": [],
+            "flag_for_review": false
+          }
+        },
+        "gate3": {
+          "pass": true,
+          "hits": []
+        }
+      }
+    }
+  ]
+}

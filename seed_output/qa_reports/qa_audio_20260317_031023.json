@@ -1,0 +1,135 @@
+{
+  "generated_at": "2026-03-17T03:10:23.495324",
+  "summary": {
+    "total": 5,
+    "passed": 3,
+    "warned": 2,
+    "failed": 0,
+    "avg_fidelity": 0.6947,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-d7ac25f7070f",
+      "title": "Bolt and the Twilight Family Circle",
+      "median_duration": 426.99,
+      "variants": [
+        {
+          "voice": "female_3",
+          "duration_seconds": 394.29,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.8909,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 7.7,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9952,
+            "ratio": 0.4373,
+            "word_overlap": 0.9062,
+            "word_order_score": 0.9482,
+            "combined": 0.8909
+          }
+        },
+        {
+          "voice": "female_1",
+          "duration_seconds": 491.47,
+          "verdict": "WARN",
+          "reasons": [
+            "duration_outlier (15.1% off)"
+          ],
+          "text_fidelity_combined": 0.7126,
+          "quality_average": 5.0,
+          "duration_outlier": true,
+          "duration_deviation_pct": 15.1,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.6986,
+            "ratio": 0.2567,
+            "word_overlap": 0.8902,
+            "word_order_score": 0.9433,
+            "combined": 0.7126
+          },
+          "transcript_snippet": "The meadow stretched wide and golden under the fading sky. Bolt! The little robot stood very still, his metal feet sinking slightly into the soft grass. His sensors tingled with the warmth of the earth, like a gentle hug from the world itself. Around him, fireflies began to wake. One by one, they fl"
+        },
+        {
+          "voice": "female_2",
+          "duration_seconds": 426.99,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.8734,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9928,
+            "ratio": 0.3173,
+            "word_overlap": 0.9145,
+            "word_order_score": 0.9517,
+            "combined": 0.8734
+          }
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 387.52,
+          "verdict": "WARN",
+          "reasons": [
+            "marginal_fidelity (0.50)"
+          ],
+          "text_fidelity_combined": 0.5007,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 9.2,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.2596,
+            "ratio": 0.2903,
+            "word_overlap": 0.9012,
+            "word_order_score": 0.9491,
+            "combined": 0.5007
+          },
+          "transcript_snippet": "The meadow stretched wide and golden under the fading sky. Halt! The little robot stood very still, his metal feet sinking slightly into the soft grass. His sensors tingled with the warmth of the earth like a gentle hug from the world itself. Around him, fireflies began to wake. One by one, they fli"
+        },
+        {
+          "voice": "asmr",
+          "duration_seconds": 441.11,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.4961,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 3.3,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.2572,
+            "ratio": 0.2844,
+            "word_overlap": 0.8822,
+            "word_order_score": 0.9465,
+            "combined": 0.4961
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Bolt and the Twilight Family Circle",
+      "story_id": "gen-d7ac25f7070f",
+      "voice": "female_1",
+      "verdict": "WARN",
+      "reasons": [
+        "duration_outlier (15.1% off)"
+      ],
+      "fidelity": 0.7126,
+      "quality_avg": 5.0
+    },
+    {
+      "story": "Bolt and the Twilight Family Circle",
+      "story_id": "gen-d7ac25f7070f",
+      "voice": "male_2",
+      "verdict": "WARN",
+      "reasons": [
+        "marginal_fidelity (0.50)"
+      ],
+      "fidelity": 0.5007,
+      "quality_avg": 5.0
+    }
+  ]
+}
