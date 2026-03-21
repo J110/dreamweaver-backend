@@ -250,6 +250,54 @@ def _count_todays_pregenerated_content() -> dict:
 
 
 # ═══════════════════════════════════════════════════════════════════════
+# MOOD CATCH-UP SCHEDULER (weighted distribution targets)
+# ═══════════════════════════════════════════════════════════════════════
+
+TARGET_MOOD_DISTRIBUTION = {
+    "calm":    0.30,
+    "curious": 0.25,
+    "wired":   0.20,
+    "anxious": 0.10,
+    "sad":     0.10,
+    "angry":   0.05,
+}
+
+
+def get_mood_distribution(content_data: list) -> dict:
+    """Count stories per mood from content list."""
+    from collections import Counter
+    counts = Counter()
+    for story in content_data:
+        mood = story.get("mood", "calm") or "calm"
+        counts[mood] += 1
+    return dict(counts)
+
+
+def select_mood(content_data: list) -> str:
+    """Select the mood furthest below its weighted target percentage.
+
+    During catch-up: returns the most underrepresented mood.
+    At equilibrium: still picks the mood with the largest deficit,
+    which naturally maintains the weighted distribution over time.
+    """
+    counts = get_mood_distribution(content_data)
+    total = sum(counts.values()) or 1
+
+    worst_mood = "calm"
+    worst_deficit = -1.0
+    for mood, target_pct in TARGET_MOOD_DISTRIBUTION.items():
+        actual_pct = counts.get(mood, 0) / total
+        deficit = target_pct - actual_pct
+        if deficit > worst_deficit:
+            worst_deficit = deficit
+            worst_mood = mood
+
+    logger.info("  Mood distribution: %s (total=%d)", counts, total)
+    logger.info("  Selected mood: %s (deficit=%.1f%%)", worst_mood, worst_deficit * 100)
+    return worst_mood
+
+
+# ═══════════════════════════════════════════════════════════════════════
 # PIPELINE STEPS
 # ═══════════════════════════════════════════════════════════════════════
 
@@ -267,6 +315,17 @@ def step_generate(args, state: dict) -> bool:
     count_long_stories = args.count_long_stories
 
     if not args.mood:
+        # Auto-select mood based on weighted distribution catch-up
+        try:
+            content_data = json.loads(CONTENT_PATH.read_text())
+            auto_mood = select_mood(content_data)
+            logger.info("  Auto-selected mood for daily generation: %s", auto_mood)
+            state["auto_mood"] = auto_mood
+        except Exception as e:
+            logger.warning("  Mood auto-selection failed (%s), defaulting to calm", e)
+            auto_mood = "calm"
+            state["auto_mood"] = auto_mood
+
         pregen_counts = _count_todays_pregenerated_content()
         pregen_total = sum(pregen_counts.values())
         if pregen_total > 0:
@@ -302,8 +361,11 @@ def step_generate(args, state: dict) -> bool:
     ]
     if args.lang:
         cmd += ["--lang", args.lang]
-    if args.mood:
-        cmd += ["--mood", args.mood]
+    # Pass mood: explicit --mood flag takes priority, otherwise auto-selected
+    effective_mood = args.mood or state.get("auto_mood")
+    if effective_mood:
+        cmd += ["--mood", effective_mood]
+        state["effective_mood"] = effective_mood
     if args.age:
         cmd += ["--age", args.age]
     if args.dry_run:
@@ -1039,8 +1101,10 @@ def step_covers(args, state: dict) -> bool:
             sys.executable, str(SCRIPTS_DIR / "generate_cover_experimental.py"),
             "--story-json", str(story_json_path),
         ]
-        if args.mood:
-            cmd += ["--mood", args.mood]
+        # Pass mood: explicit --mood flag takes priority, then auto-selected, then from story JSON
+        effective_mood = args.mood or state.get("effective_mood") or story_data.get("mood")
+        if effective_mood:
+            cmd += ["--mood", effective_mood]
         if args.dry_run:
             cmd += ["--dry-run"]
 

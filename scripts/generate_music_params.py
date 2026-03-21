@@ -92,6 +92,111 @@ AMBIENT_EVENTS = [
 ]
 
 
+# ── Mood-specific music rules ──
+# Applied AFTER Mistral generates the base brief, to enforce mood constraints.
+MOOD_MUSIC_RULES = {
+    "wired": {
+        "tempo_range": [66, 75],
+        "melodic_character": ["cycling_arpeggio", "descending_lullaby"],
+        "feel": "gentle_pulse",
+        "pad_character_exclude": ["deep_ocean", "cave_resonance"],
+        "ambient_events": ["cricket", "chimes", "leaves"],
+    },
+    "curious": {
+        "tempo_range": [62, 72],
+        "melodic_character": ["cycling_arpeggio", "drone_with_ornaments"],
+        "feel": "gentle_pulse",
+        "pad_character_exclude": [],
+        "ambient_events": ["owl", "leaves", "waterDrop", "chimes"],
+    },
+    "calm": {
+        "tempo_range": [58, 66],
+        "melodic_character": ["descending_lullaby", "stillness"],
+        "feel": "free_rubato",
+        "pad_character_exclude": [],
+        "ambient_events": ["cricket", "waterDrop"],
+    },
+    "sad": {
+        "tempo_range": [58, 64],
+        "melodic_character": ["descending_lullaby", "drone_with_ornaments"],
+        "feel": "free_rubato",
+        "mode_prefer": ["aeolian", "minor_pentatonic"],
+        "pad_character_prefer": ["warm_strings", "deep_ocean", "earth_drone"],
+        "ambient_events": ["waterDrop", "leaves"],
+        "nature_sound_prefer": ["rain_steady", "rain_light"],
+    },
+    "anxious": {
+        "tempo_range": [60, 68],
+        "melodic_character": ["drone_with_ornaments", "stillness"],
+        "feel": "free_rubato",
+        "pad_character_prefer": ["warm_strings", "forest_hum"],
+        "nature_sound_prefer": ["forest_night", "rain_light"],
+        "ambient_events": ["cricket", "owl"],
+    },
+    "angry": {
+        "tempo_range": [64, 72],
+        "melodic_character": ["cycling_arpeggio", "descending_lullaby"],
+        "feel": "gentle_pulse",
+        "mode_prefer": ["dorian", "aeolian"],
+        "pad_character_prefer": ["earth_drone", "deep_ocean"],
+        "nature_sound_prefer": ["river_stream", "ocean_waves_close"],
+        "ambient_events": ["waveCycle", "windGust"],
+    },
+}
+
+
+def apply_mood_to_brief(brief: dict, mood: str) -> dict:
+    """Apply mood-specific constraints to a generated Musical Brief.
+
+    Enforces tempo range, feel, mode preferences, melodic character,
+    pad character exclusions, and nature sound preferences per mood.
+    """
+    rules = MOOD_MUSIC_RULES.get(mood, MOOD_MUSIC_RULES["calm"])
+
+    # Enforce tempo range
+    if "rhythm" in brief and "baseTempo" in brief["rhythm"]:
+        lo, hi = rules["tempo_range"]
+        brief["rhythm"]["baseTempo"] = max(lo, min(hi, brief["rhythm"]["baseTempo"]))
+
+    # Enforce feel
+    if "feel" in rules and "rhythm" in brief:
+        brief["rhythm"]["feel"] = rules["feel"]
+
+    # Apply mode preferences (70% chance of switching)
+    if "mode_prefer" in rules and "tonality" in brief:
+        if brief["tonality"].get("mode") not in rules["mode_prefer"]:
+            if random.random() < 0.7:
+                brief["tonality"]["mode"] = random.choice(rules["mode_prefer"])
+
+    # Apply melodic character
+    if "melodicCharacter" in brief:
+        if brief["melodicCharacter"] not in rules.get("melodic_character", []):
+            brief["melodicCharacter"] = random.choice(rules["melodic_character"])
+
+    # Exclude inappropriate pad characters
+    if "pad_character_exclude" in rules and rules["pad_character_exclude"]:
+        mi = brief.get("musicalIdentity", {})
+        if mi.get("padCharacter") in rules["pad_character_exclude"]:
+            available = [p for p in PAD_CHARACTERS if p not in rules["pad_character_exclude"]]
+            if available:
+                mi["padCharacter"] = random.choice(available)
+
+    # Apply pad character preferences (60% chance)
+    if "pad_character_prefer" in rules:
+        mi = brief.get("musicalIdentity", {})
+        if mi.get("padCharacter") not in rules["pad_character_prefer"]:
+            if random.random() < 0.6:
+                mi["padCharacter"] = random.choice(rules["pad_character_prefer"])
+
+    # Apply nature sound preferences (60% chance)
+    if "nature_sound_prefer" in rules and "environment" in brief:
+        if brief["environment"].get("natureSoundPrimary") not in rules["nature_sound_prefer"]:
+            if random.random() < 0.6:
+                brief["environment"]["natureSoundPrimary"] = random.choice(rules["nature_sound_prefer"])
+
+    return brief
+
+
 def get_age_group(target_age):
     """Map numeric target age to age group string."""
     if target_age <= 1:
@@ -697,6 +802,11 @@ def run():
 
         try:
             brief = generate_brief_for_story(story, proc_idx, total)
+
+            # Apply mood-specific music rules
+            mood = story.get("mood", "calm") or "calm"
+            brief = apply_mood_to_brief(brief, mood)
+
             results[story["id"]] = brief
             tracker.record(brief)
 

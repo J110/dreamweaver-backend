@@ -408,18 +408,20 @@ Only `calm` and `curious` moods. Both use the existing 0-1 lullaby format (nonse
 
 ## 2.1 Voice Selection by Mood
 
-The mood influences which voice variants are prioritized, but does NOT change the number of variants generated (still 5 per language for stories/poems).
+Each content piece generates **2 mood-appropriate voice variants per language** (not 5). The voice pairing is automatically selected based on mood, content type, and age group using the maps in `voice_service.py`.
 
-| Mood | Recommended Primary Voice | Why |
-|---|---|---|
-| wired | `aria` (playful, energetic) | Comic timing needs an expressive voice. Aria's playfulness carries the humor. |
-| curious | `luna` (gentle, soothing) or `cosmo` (adventurous) | Luna for younger ages, Cosmo for 6-8 and 9-12. |
-| calm | `luna` (gentle) or `whisper` (soft) | The softest voices match the content. |
-| sad | `luna` (gentle) or `atlas` (warm, comforting) | Warmth without cheerfulness. Atlas's deeper tone provides gravitas. |
-| anxious | `atlas` (warm, comforting) or `luna` (gentle) | A reassuring, steady voice. Not whisper (too quiet for Phase 1 fear validation). |
-| angry | `cosmo` (expressive) or `atlas` (warm) | Needs range — energy for Phase 1 anger, warmth for Phase 2 settling. |
+This cuts audio generation cost and time by 60% while producing more appropriate voice pairings.
 
-**All voices still generated for all moods.** The recommendation above is for the DEFAULT voice used in social clips and previews.
+**Applies to:** Stories, Long Stories, Poems.
+**Does NOT apply to:** Lullabies (use ACE-Step, not Chatterbox TTS).
+
+See `voice-mood-autoselection.md` for the complete `STORY_VOICE_MAP`, `POEM_VOICE_MAP`, and `LONG_STORY_VOICE_MAP` tables, including age group overrides and the rationale for each pairing.
+
+**Key design choices:**
+- `gentle` (male) appears in 5/6 moods — every mood benefits from a male-female pair for variety
+- `musical` (almost-singing quality) anchors most poem deliveries
+- Long stories use mood voices for Phase 1-2, then ASMR voice always takes over Phase 3
+- Calm long stories use `gentle` as Voice 2 (not `asmr`) to preserve contrast with the ASMR Phase 3 takeover
 
 ---
 
@@ -1153,35 +1155,9 @@ sad:      10%
 angry:     5%
 ```
 
-## New Fingerprint Dimension: `storyType`
+## Future Dimension: `storyType` (Not Yet Implemented)
 
-Add `storyType` alongside mood:
-
-```python
-DIMENSION_WEIGHTS = {
-    # Tier 1
-    "characterType": 10,
-    "setting": 10,
-    "mood": 8,
-    "storyType": 10,    # NEW — immediately audible difference
-    # ... existing dimensions unchanged
-}
-```
-
-Valid values: `folk_tale`, `mythological`, `fable`, `nature`, `slice_of_life`, `dream`
-
-**Hard rule:** No same storyType within a 3-day batch.
-
-**Catalog balance target:**
-
-```
-folk_tale:     30%
-mythological:  15%
-fable:         15%
-nature:        15%
-dream:         15%
-slice_of_life: 10%
-```
+**Planned** as a future fingerprint dimension after the mood system is stable and generating content daily. Will include values like `folk_tale`, `mythological`, `fable`, `nature`, `slice_of_life`, `dream`. Not in scope for the current implementation.
 
 ---
 
@@ -1199,16 +1175,15 @@ Output lands in `seed_output/experimental/`:
 ```
 seed_output/experimental/
   gen-exp-abc123.json          # Story text + metadata + mood tag
-  gen-exp-abc123_luna.mp3      # Audio variant
-  gen-exp-abc123_aria.mp3      # Audio variant (recommended for wired)
-  gen-exp-abc123_atlas.mp3     # Audio variant
-  gen-exp-abc123_cosmo.mp3     # Audio variant
-  gen-exp-abc123_asmr.mp3      # Audio variant
+  gen-exp-abc123_melodic.mp3   # Audio variant 1 (mood-selected voice)
+  gen-exp-abc123_gentle.mp3    # Audio variant 2 (mood-selected voice)
   gen-exp-abc123_music.json    # Musical brief (mood-modified)
   gen-exp-abc123_background.webp
   gen-exp-abc123_overlay.svg
   gen-exp-abc123_combined.svg
 ```
+
+Only 2 audio variants are generated per content piece, automatically selected by mood × age × content type. See Section 2.1.
 
 ## Step 2: Review
 
@@ -1288,7 +1263,7 @@ The existing safety rules in `PIPELINE_CONTENT_GUIDELINES.md` Section 8.1 still 
 | **Audio — Exaggeration** | Per-paragraph ramp from mood start value (0.35-0.75) down to 0.25 (sleepy) |
 | **Audio — Speed** | Per-paragraph ramp from mood start value (0.83-1.00) down to 0.78 (sleepy) |
 | **Audio — Emphasis** | Key words isolated and generated with mood-specific TTS params (comic punch, heavy weight, whisper, etc.) |
-| **Audio — Voice** | Recommended primary voice per mood (aria for wired, atlas for sad/anxious) |
+| **Audio — Voice** | 2 mood-appropriate voices auto-selected per content piece (see `voice-mood-autoselection.md`) |
 | **Music** | Tempo range, mode preference, melodic character, nature sounds, pad preference |
 | **Cover** | FLUX prompt mood clause, palette boost, composition preference, overlay elements |
 | **Fingerprint** | New `mood` dimension at weight 8 in collision scoring |
@@ -1298,7 +1273,7 @@ The existing safety rules in `PIPELINE_CONTENT_GUIDELINES.md` Section 8.1 still 
 | Pipeline Stage | Unchanged |
 |---|---|
 | **Text** | Word counts, phase ratios, safety rules, diversity dimensions |
-| **Audio** | Number of variants (still 5 per language), normalization, QA, export format |
+| **Audio** | Number of variants (2 per language, mood-selected), normalization, QA, export format |
 | **Audio — Long stories** | Phase-based TTS params remain primary control; mood layers on top |
 | **Music** | Brief schema structure, diversity constraints, playback phase system, loop files |
 | **Cover** | Architecture (FLUX + SVG), diversity axes, sleep-safe animation rules, output format |
@@ -1314,4 +1289,4 @@ The existing safety rules in `PIPELINE_CONTENT_GUIDELINES.md` Section 8.1 still 
 | 5 | Speed ramping per paragraph | Medium — pace arc | Moderate |
 | 6 | Emphasis words (chunking + special params) | High — most distinctive feature | Higher — new chunking logic, seam risk |
 | 7 | Music brief mood rules | Lower — phase system handles most of it | Low |
-| 8 | Fingerprint dimensions (mood, storyType) | Future — not needed for manual runs | Low |
+| 8 | Fingerprint dimension (mood) | Future — not needed for manual runs | Low |

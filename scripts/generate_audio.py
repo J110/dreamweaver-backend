@@ -144,6 +144,111 @@ PHASE_PARA_PAUSE_MS = {
 # ASMR voice used for Phase 3 (already soft/breathy, no new clips needed)
 ASMR_VOICE = {"en": "asmr", "hi": "asmr_hi"}
 
+# ── Mood-specific paragraph pause patterns ────────────────────────────
+# The silence between paragraphs IS the mood — comedy needs irregular
+# rhythm, sadness needs weight, anger needs rapid-fire then space.
+MOOD_PAUSE_PATTERNS = {
+    "wired": {
+        # Comedy: short-short-LONG (setup-setup-punchline)
+        1: {"default": 800, "after_exclamation": 1800, "after_ellipsis": 1500, "after_caps_word": 1600},
+        2: {"default": 1500},
+        3: {"default": 3500},
+    },
+    "curious": {1: {"default": 1000}, 2: {"default": 1800}, 3: {"default": 3500}},
+    "calm":    {1: {"default": 1200}, 2: {"default": 2000}, 3: {"default": 3500}},
+    "sad":     {1: {"default": 1500}, 2: {"default": 2200}, 3: {"default": 3500}},
+    "anxious": {
+        # Phase 1: halting, uncertain alternation. Phase 2: steady = safe
+        1: {"default": 1000, "alternating": [800, 2000]},
+        2: {"default": 1800},
+        3: {"default": 3500},
+    },
+    "angry": {
+        # Phase 1: rapid-fire stacking. Phase 2: spacious (contrast = anger draining)
+        1: {"default": 600, "after_short_sentence": 500},
+        2: {"default": 2200},
+        3: {"default": 3500},
+    },
+}
+
+
+def get_mood_paragraph_pause(mood: str, phase: int, para_index: int,
+                              para_text: str, age_group: str) -> int:
+    """Mood-aware pause between paragraphs. Returns max(mood_pause, phase_base)."""
+    pattern = MOOD_PAUSE_PATTERNS.get(mood, MOOD_PAUSE_PATTERNS["calm"])
+    phase_pattern = pattern.get(phase, pattern.get(1, {"default": 1000}))
+
+    # Alternating pattern (anxious Phase 1)
+    if "alternating" in phase_pattern:
+        values = phase_pattern["alternating"]
+        mood_pause = values[para_index % len(values)]
+    else:
+        text = para_text.strip()
+        if "after_exclamation" in phase_pattern and text.endswith("!"):
+            mood_pause = phase_pattern["after_exclamation"]
+        elif "after_ellipsis" in phase_pattern and text.endswith("..."):
+            mood_pause = phase_pattern["after_ellipsis"]
+        elif "after_caps_word" in phase_pattern and re.search(r'[A-Z]{3,}', text):
+            mood_pause = phase_pattern["after_caps_word"]
+        elif "after_short_sentence" in phase_pattern and len(text) < 40:
+            mood_pause = phase_pattern["after_short_sentence"]
+        else:
+            mood_pause = phase_pattern["default"]
+
+    # Never shorter than the phase base pause for this age group
+    phase_base = PHASE_PARA_PAUSE_MS.get(age_group, PHASE_PARA_PAUSE_MS["2-5"]).get(phase, 1000)
+    return max(mood_pause, phase_base)
+
+
+# ── Per-paragraph exaggeration ramping ────────────────────────────────
+# Narrator gradually settles from mood-specific energy to sleepy.
+# Ease-out curve: drops fast early, plateaus toward the end.
+MOOD_EXAGGERATION = {
+    "wired":   {"start": 0.75, "end": 0.25},
+    "angry":   {"start": 0.70, "end": 0.25},
+    "curious": {"start": 0.60, "end": 0.25},
+    "anxious": {"start": 0.55, "end": 0.25},
+    "calm":    {"start": 0.40, "end": 0.25},
+    "sad":     {"start": 0.35, "end": 0.25},
+}
+
+
+def get_paragraph_exaggeration(mood: str, para_index: int, total_paragraphs: int) -> float:
+    """Ease-out ramp from mood start to 0.25 (sleepy)."""
+    params = MOOD_EXAGGERATION.get(mood, MOOD_EXAGGERATION["calm"])
+    progress = para_index / max(total_paragraphs - 1, 1)
+    return params["end"] + (params["start"] - params["end"]) * (1 - progress) ** 1.5
+
+
+# ── Per-paragraph speed ramping ───────────────────────────────────────
+# Same ease-out curve — narrator gradually slows.
+MOOD_SPEED = {
+    "wired":   {"start": 0.90, "end": 0.78},
+    "angry":   {"start": 0.88, "end": 0.78},
+    "curious": {"start": 0.85, "end": 0.78},
+    "anxious": {"start": 0.83, "end": 0.78},
+    "calm":    {"start": 0.80, "end": 0.78},
+    "sad":     {"start": 0.80, "end": 0.78},
+}
+
+
+def get_paragraph_speed(mood: str, para_index: int, total_paragraphs: int) -> float:
+    """Ease-out ramp from mood start speed to 0.78 (sleepy)."""
+    params = MOOD_SPEED.get(mood, MOOD_SPEED["calm"])
+    progress = para_index / max(total_paragraphs - 1, 1)
+    return params["end"] + (params["start"] - params["end"]) * (1 - progress) ** 1.5
+
+
+# ── Mood emphasis import ──────────────────────────────────────────────
+try:
+    from mood_emphasis import (
+        chunk_with_mood_emphasis, should_apply_emphasis,
+        get_emphasis_params, clamp_emphasis_exaggeration,
+    )
+    _HAS_MOOD_EMPHASIS = True
+except ImportError:
+    _HAS_MOOD_EMPHASIS = False
+
 _MARKER_RE = re.compile(
     r"\[/?"
     r"(SLEEPY|GENTLE|CALM|EXCITED|CURIOUS|ADVENTUROUS|MYSTERIOUS|"
@@ -251,14 +356,24 @@ def get_mp3_duration(filepath: Path) -> float:
 # Text parsing
 # ═════════════════════════════════════════════════════════════════════════
 
-def _strip_inline_markers(text: str) -> str:
+def _strip_inline_markers(text: str, keep_emphasis: bool = False) -> str:
     """Strip inline markers that wrap 1-2 words (e.g. [EMPHASIS]dark[/EMPHASIS]).
 
     These markers wrap short words within a sentence. Isolating them into
     separate TTS calls produces garbage (Chatterbox needs sentence context).
     Instead, strip the markers and let the word flow naturally in context.
+
+    If keep_emphasis=True, preserves [EMPHASIS]...[/EMPHASIS] markers for
+    the mood emphasis system to process (chunk_with_mood_emphasis).
     """
-    # Match [MARKER]word(s)[/MARKER] where the content is short (1-5 words)
+    if keep_emphasis:
+        # Only strip [SAFETY] markers, keep [EMPHASIS]
+        safety_re = re.compile(
+            r"\[SAFETY\](.{1,40}?)\[/SAFETY\]",
+            re.IGNORECASE,
+        )
+        return safety_re.sub(r"\1", text)
+    # Strip all inline markers
     inline_re = re.compile(
         r"\[(EMPHASIS|SAFETY)\](.{1,40}?)\[/\1\]",
         re.IGNORECASE,
@@ -266,7 +381,8 @@ def _strip_inline_markers(text: str) -> str:
     return inline_re.sub(r"\2", text)
 
 
-def parse_annotated_text(text: str, content_type: str = "story") -> List[dict]:
+def parse_annotated_text(text: str, content_type: str = "story",
+                         keep_emphasis: bool = False) -> List[dict]:
     """Parse annotated text into segments with emotion parameters.
 
     Supports character voice switching via [CHAR_START]/[CHAR_END] markers
@@ -276,7 +392,8 @@ def parse_annotated_text(text: str, content_type: str = "story") -> List[dict]:
     """
     # Pre-process: strip inline markers that wrap short words within sentences.
     # These must NOT be split into separate TTS calls (single words produce garbage).
-    text = _strip_inline_markers(text)
+    # If keep_emphasis=True, preserves [EMPHASIS] for mood emphasis chunking.
+    text = _strip_inline_markers(text, keep_emphasis=keep_emphasis)
 
     segments = []
     base_profile = CONTENT_TYPE_PROFILES.get(content_type, CONTENT_TYPE_PROFILES["story"])
@@ -1582,11 +1699,14 @@ def generate_phase_audio(
     lang: str = "en",
     content_type: str = "story",
     age_group: str = "2-5",
+    mood: str = "calm",
+    global_para_offset: int = 0,
+    total_paragraphs_all_phases: int = 1,
 ) -> Optional[AudioSegment]:
-    """Generate audio for one phase with age-specific TTS params and voice.
+    """Generate audio for one phase with age-specific TTS params, mood ramps, and voice.
 
     Uses parse_annotated_text() to strip emotion markers and handle pauses,
-    but overrides per-segment emotion values with phase-level params.
+    but overrides per-segment emotion values with mood-ramped params.
     Phase 3 uses the ASMR voice for whispered delivery.
     """
     if not phase_text.strip():
@@ -1597,44 +1717,108 @@ def generate_phase_audio(
     phase_voice = get_phase_voice(voice, phase_num, lang, age_group)
     paragraphs = phase_text.split("\n\n")
     audio_segments: List[AudioSegment] = []
-    age_pauses = PHASE_PARA_PAUSE_MS.get(age_group, PHASE_PARA_PAUSE_MS["2-5"])
-    para_pause_ms = age_pauses[phase_num]
+
+    para_counter = 0  # count non-empty paragraphs within this phase
 
     for i, para in enumerate(paragraphs):
         para = para.strip()
         if not para:
             continue
 
-        # parse_annotated_text strips emotion markers and handles pauses
-        segments = parse_annotated_text(para, content_type)
+        global_idx = global_para_offset + para_counter
+
+        # Mood-ramped exaggeration and speed
+        mood_exag = get_paragraph_exaggeration(mood, global_idx, total_paragraphs_all_phases)
+        mood_speed = get_paragraph_speed(mood, global_idx, total_paragraphs_all_phases)
+
+        # Phase 3: never exceed the phase base (keep it sleepy)
+        if phase_num == 3:
+            exag = min(mood_exag, params["exaggeration"])
+            spd = min(mood_speed, params["speed"])
+        else:
+            exag = mood_exag
+            spd = mood_speed
+        cfg = params["cfg_weight"]
+
+        # Determine if emphasis should be applied for this paragraph
+        use_emphasis = (
+            _HAS_MOOD_EMPHASIS
+            and mood and mood != "calm"
+            and content_type not in ("poem", "song")
+            and should_apply_emphasis(global_idx, total_paragraphs_all_phases)
+            and phase_num < 3  # No emphasis in Phase 3
+        )
+
+        # Parse — keep [EMPHASIS] markers if we'll use them
+        segments = parse_annotated_text(para, content_type, keep_emphasis=use_emphasis)
 
         for seg in segments:
             if seg["type"] == "pause":
                 audio_segments.append(generate_silence(seg["duration_ms"]))
             elif seg["type"] == "speech":
-                # Override emotion values with PHASE-LEVEL params
-                audio_bytes = generate_tts_for_segment(
-                    client,
-                    text=seg["text"],
-                    voice=phase_voice,
-                    exaggeration=params["exaggeration"],
-                    cfg_weight=params["cfg_weight"],
-                    lang=lang,
-                    speed=params["speed"],
-                )
-                if audio_bytes:
-                    try:
-                        audio_segments.append(audio_from_bytes(audio_bytes))
-                    except Exception as e:
-                        logger.error("  Phase %d decode error: %s", phase_num, e)
-                        return None
-                else:
-                    logger.error("  Phase %d TTS failed: %.50s...", phase_num, seg["text"])
-                    return None
+                seg_text = seg["text"]
 
-        # Inter-paragraph pause (except after last)
+                if use_emphasis:
+                    # Split into emphasis chunks and generate each with its own params
+                    chunks = chunk_with_mood_emphasis(seg_text, mood)
+                    chunk_audios = []
+                    for chunk in chunks:
+                        if chunk["params"] == "emphasis":
+                            emp = get_emphasis_params(mood, chunk.get("emphasis_type", "default"))
+                            c_exag = clamp_emphasis_exaggeration(emp["exaggeration"], exag)
+                            c_speed = spd * emp["speed_multiplier"]
+                            c_cfg = emp["cfg_weight"]
+                        else:
+                            c_exag, c_speed, c_cfg = exag, spd, cfg
+
+                        c_bytes = generate_tts_for_segment(
+                            client, text=chunk["text"], voice=phase_voice,
+                            exaggeration=c_exag, cfg_weight=c_cfg,
+                            lang=lang, speed=c_speed,
+                        )
+                        if c_bytes:
+                            try:
+                                chunk_audios.append(audio_from_bytes(c_bytes))
+                            except Exception as e:
+                                logger.error("  Phase %d emphasis decode error: %s", phase_num, e)
+                                return None
+                        else:
+                            logger.error("  Phase %d emphasis TTS failed: %.50s...", phase_num, chunk["text"])
+                            return None
+
+                    # Stitch chunks with 50ms crossfade
+                    if chunk_audios:
+                        stitched = chunk_audios[0]
+                        for ca in chunk_audios[1:]:
+                            overlap = min(50, len(stitched) // 2, len(ca) // 2)
+                            if overlap >= 10:
+                                stitched = stitched.append(ca, crossfade=overlap)
+                            else:
+                                stitched = stitched + ca
+                        audio_segments.append(stitched)
+                else:
+                    # Standard: no emphasis chunking
+                    audio_bytes = generate_tts_for_segment(
+                        client, text=seg_text, voice=phase_voice,
+                        exaggeration=exag, cfg_weight=cfg,
+                        lang=lang, speed=spd,
+                    )
+                    if audio_bytes:
+                        try:
+                            audio_segments.append(audio_from_bytes(audio_bytes))
+                        except Exception as e:
+                            logger.error("  Phase %d decode error: %s", phase_num, e)
+                            return None
+                    else:
+                        logger.error("  Phase %d TTS failed: %.50s...", phase_num, seg_text)
+                        return None
+
+        # Mood-aware inter-paragraph pause (except after last)
         if i < len(paragraphs) - 1:
-            audio_segments.append(generate_silence(para_pause_ms))
+            pause_ms = get_mood_paragraph_pause(mood, phase_num, para_counter, para, age_group)
+            audio_segments.append(generate_silence(pause_ms))
+
+        para_counter += 1
 
     if not audio_segments:
         return None
@@ -1653,27 +1837,45 @@ def generate_long_story_audio(
     lang: str = "en",
     content_type: str = "story",
     age_group: str = "2-5",
+    mood: str = "calm",
 ) -> Optional[AudioSegment]:
-    """Generate long story audio with age-specific per-phase TTS params and ASMR Phase 3.
+    """Generate long story audio with mood-ramped TTS params and ASMR Phase 3.
 
-    Flow: parse phases → generate per-phase audio → apply volume
-          → add silence padding → crossfade → normalize
+    Flow: parse phases → count total paragraphs → generate per-phase audio
+          with mood ramps → apply volume → crossfade → normalize
     """
     phases = parse_phases(story_text)
 
+    # Count total non-empty paragraphs across all phases for ramp calculation
+    total_paras = 0
+    phase_para_counts = {}
+    for pn in [1, 2, 3]:
+        pt = phases.get(pn, "")
+        count = len([p for p in pt.split("\n\n") if p.strip()]) if pt else 0
+        phase_para_counts[pn] = count
+        total_paras += count
+    total_paras = max(total_paras, 1)
+
+    logger.info("  Mood: %s, total paragraphs across phases: %d", mood, total_paras)
+
     phase_audios = []
+    global_para_offset = 0
     for phase_num in [1, 2, 3]:
         phase_text = phases.get(phase_num, "")
         if not phase_text:
             continue
 
         phase_voice = get_phase_voice(voice, phase_num, lang, age_group)
-        logger.info("  Phase %d: %d chars, voice=%s, age=%s",
-                     phase_num, len(phase_text), phase_voice, age_group)
+        logger.info("  Phase %d: %d chars, voice=%s, age=%s, mood=%s",
+                     phase_num, len(phase_text), phase_voice, age_group, mood)
 
         audio = generate_phase_audio(
-            client, phase_text, voice, phase_num, lang, content_type, age_group
+            client, phase_text, voice, phase_num, lang, content_type, age_group,
+            mood=mood,
+            global_para_offset=global_para_offset,
+            total_paragraphs_all_phases=total_paras,
         )
+        global_para_offset += phase_para_counts.get(phase_num, 0)
         if audio is None:
             logger.error("  Phase %d generation failed", phase_num)
             return None
@@ -1742,13 +1944,16 @@ def generate_story_variant(
 
     logger.info("  Generating %s / %s (%s)...", title, voice, lang)
 
+    # ── Extract mood for all flows ────────────────────────────────
+    mood = story.get("mood", "calm") or "calm"
+
     # ── Phase-based generation for new LONG stories ──────────────
     is_phased = "[PHASE_1]" in text and "[/PHASE_1]" in text
     if is_phased:
         age_group = story.get("age_group", "2-5")
-        logger.info("  Phase-tagged story — using phase-based generation (age %s)", age_group)
+        logger.info("  Phase-tagged story — using phase-based generation (age %s, mood %s)", age_group, mood)
         combined = generate_long_story_audio(
-            client, text, voice, lang, content_type, age_group
+            client, text, voice, lang, content_type, age_group, mood=mood
         )
         if combined is None:
             logger.error("  Phase-based generation failed for %s", story_id)
@@ -1777,59 +1982,110 @@ def generate_story_variant(
             "provider": "chatterbox",
         }
 
-    # ── Legacy flow (existing code, unchanged) ────────────────────
+    # ── Standard story flow (mood-aware pauses, exag/speed ramps) ──
     # Parse annotated text into segments
     paragraphs = text.split("\n\n")
+    non_empty_paras = [p for p in paragraphs if p.strip()]
+    total_paras = max(len(non_empty_paras), 1)
     audio_segments: List[AudioSegment] = []
+    para_counter = 0  # tracks non-empty paragraph index
 
     for i, para in enumerate(paragraphs):
         para = para.strip()
         if not para:
             continue
 
-        para_segments = parse_annotated_text(para, content_type)
+        # Determine phase: first 60% = Phase 1, remaining 40% = Phase 2
+        progress = para_counter / total_paras
+        phase = 1 if progress < 0.6 else 2
+
+        # Mood-ramped exaggeration and speed for this paragraph
+        exag = get_paragraph_exaggeration(mood, para_counter, total_paras)
+        spd = get_paragraph_speed(mood, para_counter, total_paras)
+
+        # Determine if emphasis should be applied
+        use_emphasis = (
+            _HAS_MOOD_EMPHASIS
+            and mood and mood != "calm"
+            and content_type not in ("poem", "song")
+            and should_apply_emphasis(para_counter, total_paras)
+        )
+
+        para_segments = parse_annotated_text(para, content_type, keep_emphasis=use_emphasis)
 
         for seg in para_segments:
             if seg["type"] == "pause":
                 audio_segments.append(generate_silence(seg["duration_ms"]))
             elif seg["type"] == "speech":
-                # Phase-based speed adjustment (slows down through phases)
-                phase = seg.get("phase", 1)
-                if phase == 1:
-                    phase_speed = speed           # normal (80% at base 0.8)
-                elif phase == 2:
-                    phase_speed = speed * 0.875   # 70% at base 0.8
-                else:
-                    phase_speed = speed * 0.75    # 60% at base 0.8
+                seg_text = seg["text"]
+                seg_cfg = seg["cfg_weight"]
 
-                audio_bytes = generate_tts_for_segment(
-                    client,
-                    text=seg["text"],
-                    voice=voice,
-                    exaggeration=seg["exaggeration"],
-                    cfg_weight=seg["cfg_weight"],
-                    lang=lang,
-                    speed=phase_speed,
-                )
-                if audio_bytes:
-                    try:
-                        seg_audio = audio_from_bytes(audio_bytes)
-                        audio_segments.append(seg_audio)
-                    except Exception as e:
-                        logger.error("  Failed to decode audio for segment: %s", e)
+                if use_emphasis:
+                    # Split into emphasis chunks
+                    chunks = chunk_with_mood_emphasis(seg_text, mood)
+                    chunk_audios = []
+                    for chunk in chunks:
+                        if chunk["params"] == "emphasis":
+                            emp = get_emphasis_params(mood, chunk.get("emphasis_type", "default"))
+                            c_exag = clamp_emphasis_exaggeration(emp["exaggeration"], exag)
+                            c_speed = spd * emp["speed_multiplier"]
+                            c_cfg = emp["cfg_weight"]
+                        else:
+                            c_exag, c_speed, c_cfg = exag, spd, seg_cfg
+
+                        c_bytes = generate_tts_for_segment(
+                            client, text=chunk["text"], voice=voice,
+                            exaggeration=c_exag, cfg_weight=c_cfg,
+                            lang=lang, speed=c_speed,
+                        )
+                        if c_bytes:
+                            try:
+                                chunk_audios.append(audio_from_bytes(c_bytes))
+                            except Exception as e:
+                                logger.error("  Emphasis decode error: %s", e)
+                                return None
+                        else:
+                            logger.error("  Emphasis TTS failed: %.50s...", chunk["text"])
+                            return None
+
+                    # Stitch chunks with 50ms crossfade
+                    if chunk_audios:
+                        stitched = chunk_audios[0]
+                        for ca in chunk_audios[1:]:
+                            overlap = min(50, len(stitched) // 2, len(ca) // 2)
+                            if overlap >= 10:
+                                stitched = stitched.append(ca, crossfade=overlap)
+                            else:
+                                stitched = stitched + ca
+                        audio_segments.append(stitched)
+                else:
+                    audio_bytes = generate_tts_for_segment(
+                        client,
+                        text=seg_text,
+                        voice=voice,
+                        exaggeration=exag,
+                        cfg_weight=seg_cfg,
+                        lang=lang,
+                        speed=spd,
+                    )
+                    if audio_bytes:
+                        try:
+                            seg_audio = audio_from_bytes(audio_bytes)
+                            audio_segments.append(seg_audio)
+                        except Exception as e:
+                            logger.error("  Failed to decode audio for segment: %s", e)
+                            return None
+                    else:
+                        logger.error("  Failed segment: %.50s...", seg_text)
                         return None
-                else:
-                    logger.error("  Failed segment: %.50s...", seg["text"])
-                    return None
 
-                # No delay — Modal auto-scales and we're paying per second
-
-        # Paragraph pause (except after last) — generous pause between paragraphs
-        # Phase-based: longer pauses as story progresses toward sleep
-        last_phase = para_segments[-1].get("phase", 1) if para_segments else 1
-        para_pause_ms = {1: 1000, 2: 1500, 3: 2500}.get(last_phase, 1000)
+        # Mood-aware paragraph pause (except after last)
         if i < len(paragraphs) - 1:
-            audio_segments.append(generate_silence(para_pause_ms))
+            age_group = story.get("age_group", "6-8")
+            pause_ms = get_mood_paragraph_pause(mood, phase, para_counter, para, age_group)
+            audio_segments.append(generate_silence(pause_ms))
+
+        para_counter += 1
 
     if not audio_segments:
         logger.error("  No audio segments for %s", story_id)

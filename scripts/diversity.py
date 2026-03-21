@@ -1,7 +1,7 @@
 """
 Narrative Diversity Engine for Dream Valley Content Generation.
 
-13-dimension fingerprint system with collision scoring, hard rules,
+14-dimension fingerprint system with collision scoring, hard rules,
 catalog gap analysis, and compact prompt building.
 """
 
@@ -12,7 +12,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 # ═══════════════════════════════════════════════════════════════════════
-# DIMENSION DEFINITIONS (13 dimensions, no colorPalette, no characterSpecies)
+# DIMENSION DEFINITIONS (14 dimensions — includes mood)
 # ═══════════════════════════════════════════════════════════════════════
 
 DIMENSIONS = {
@@ -36,6 +36,13 @@ DIMENSIONS = {
             "arctic_polar", "cozy_indoor", "village_town", "city_urban",
             "underground_cave", "garden_farm", "island_tropical",
             "imaginary_surreal", "miniature_world",
+        ],
+    },
+    "mood": {
+        "weight": 8,
+        "hard_rule": True,
+        "values": [
+            "wired", "curious", "calm", "sad", "anxious", "angry",
         ],
     },
     "plotShape": {
