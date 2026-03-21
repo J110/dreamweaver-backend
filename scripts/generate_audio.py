@@ -239,11 +239,12 @@ def get_paragraph_speed(mood: str, para_index: int, total_paragraphs: int) -> fl
     return params["end"] + (params["start"] - params["end"]) * (1 - progress) ** 1.5
 
 
-# ── Mood emphasis import ──────────────────────────────────────────────
+# ── Mood emphasis import (sentence-level, NOT word-level) ────────────
 try:
     from mood_emphasis import (
-        chunk_with_mood_emphasis, should_apply_emphasis,
-        get_emphasis_params, clamp_emphasis_exaggeration,
+        contains_mood_keyword, get_emphasis_type,
+        get_emphasis_params, should_apply_emphasis,
+        clamp_emphasis_exaggeration,
     )
     _HAS_MOOD_EMPHASIS = True
 except ImportError:
@@ -364,7 +365,7 @@ def _strip_inline_markers(text: str, keep_emphasis: bool = False) -> str:
     Instead, strip the markers and let the word flow naturally in context.
 
     If keep_emphasis=True, preserves [EMPHASIS]...[/EMPHASIS] markers for
-    the mood emphasis system to process (chunk_with_mood_emphasis).
+    the sentence-level mood emphasis system to detect emphasis sentences.
     """
     if keep_emphasis:
         # Only strip [SAFETY] markers, keep [EMPHASIS]
@@ -1759,43 +1760,37 @@ def generate_phase_audio(
                 seg_text = seg["text"]
 
                 if use_emphasis:
-                    # Split into emphasis chunks and generate each with its own params
-                    chunks = chunk_with_mood_emphasis(seg_text, mood)
-                    chunk_audios = []
-                    for chunk in chunks:
-                        if chunk["params"] == "emphasis":
-                            emp = get_emphasis_params(mood, chunk.get("emphasis_type", "default"))
-                            c_exag = clamp_emphasis_exaggeration(emp["exaggeration"], exag)
-                            c_speed = spd * emp["speed_multiplier"]
-                            c_cfg = emp["cfg_weight"]
-                        else:
-                            c_exag, c_speed, c_cfg = exag, spd, cfg
+                    # Sentence-level emphasis: check if this segment contains
+                    # mood keywords or [EMPHASIS] markers. If so, the ENTIRE
+                    # sentence gets emphasis TTS params (no word isolation —
+                    # Chatterbox hallucinates on single-word chunks).
+                    has_emph = "[EMPHASIS]" in seg_text or contains_mood_keyword(seg_text, mood)
+                    # Strip [EMPHASIS] markers before TTS
+                    clean_text = re.sub(r'\[/?EMPHASIS\]', '', seg_text).strip()
+                    if has_emph and clean_text:
+                        emph_type = get_emphasis_type(clean_text, mood)
+                        emp = get_emphasis_params(mood, emph_type)
+                        c_exag = clamp_emphasis_exaggeration(emp["exaggeration"], exag)
+                        c_speed = spd * emp["speed_multiplier"]
+                        c_cfg = emp["cfg_weight"]
+                    else:
+                        clean_text = clean_text or seg_text
+                        c_exag, c_speed, c_cfg = exag, spd, cfg
 
-                        c_bytes = generate_tts_for_segment(
-                            client, text=chunk["text"], voice=phase_voice,
-                            exaggeration=c_exag, cfg_weight=c_cfg,
-                            lang=lang, speed=c_speed,
-                        )
-                        if c_bytes:
-                            try:
-                                chunk_audios.append(audio_from_bytes(c_bytes))
-                            except Exception as e:
-                                logger.error("  Phase %d emphasis decode error: %s", phase_num, e)
-                                return None
-                        else:
-                            logger.error("  Phase %d emphasis TTS failed: %.50s...", phase_num, chunk["text"])
+                    audio_bytes = generate_tts_for_segment(
+                        client, text=clean_text, voice=phase_voice,
+                        exaggeration=c_exag, cfg_weight=c_cfg,
+                        lang=lang, speed=c_speed,
+                    )
+                    if audio_bytes:
+                        try:
+                            audio_segments.append(audio_from_bytes(audio_bytes))
+                        except Exception as e:
+                            logger.error("  Phase %d emphasis decode error: %s", phase_num, e)
                             return None
-
-                    # Stitch chunks with 50ms crossfade
-                    if chunk_audios:
-                        stitched = chunk_audios[0]
-                        for ca in chunk_audios[1:]:
-                            overlap = min(50, len(stitched) // 2, len(ca) // 2)
-                            if overlap >= 10:
-                                stitched = stitched.append(ca, crossfade=overlap)
-                            else:
-                                stitched = stitched + ca
-                        audio_segments.append(stitched)
+                    else:
+                        logger.error("  Phase %d emphasis TTS failed: %.50s...", phase_num, clean_text)
+                        return None
                 else:
                     # Standard: no emphasis chunking
                     audio_bytes = generate_tts_for_segment(
@@ -2021,43 +2016,34 @@ def generate_story_variant(
                 seg_cfg = seg["cfg_weight"]
 
                 if use_emphasis:
-                    # Split into emphasis chunks
-                    chunks = chunk_with_mood_emphasis(seg_text, mood)
-                    chunk_audios = []
-                    for chunk in chunks:
-                        if chunk["params"] == "emphasis":
-                            emp = get_emphasis_params(mood, chunk.get("emphasis_type", "default"))
-                            c_exag = clamp_emphasis_exaggeration(emp["exaggeration"], exag)
-                            c_speed = spd * emp["speed_multiplier"]
-                            c_cfg = emp["cfg_weight"]
-                        else:
-                            c_exag, c_speed, c_cfg = exag, spd, seg_cfg
+                    # Sentence-level emphasis: entire segment gets emphasis
+                    # params if it contains mood keywords or [EMPHASIS] markers.
+                    has_emph = "[EMPHASIS]" in seg_text or contains_mood_keyword(seg_text, mood)
+                    clean_text = re.sub(r'\[/?EMPHASIS\]', '', seg_text).strip()
+                    if has_emph and clean_text:
+                        emph_type = get_emphasis_type(clean_text, mood)
+                        emp = get_emphasis_params(mood, emph_type)
+                        c_exag = clamp_emphasis_exaggeration(emp["exaggeration"], exag)
+                        c_speed = spd * emp["speed_multiplier"]
+                        c_cfg = emp["cfg_weight"]
+                    else:
+                        clean_text = clean_text or seg_text
+                        c_exag, c_speed, c_cfg = exag, spd, seg_cfg
 
-                        c_bytes = generate_tts_for_segment(
-                            client, text=chunk["text"], voice=voice,
-                            exaggeration=c_exag, cfg_weight=c_cfg,
-                            lang=lang, speed=c_speed,
-                        )
-                        if c_bytes:
-                            try:
-                                chunk_audios.append(audio_from_bytes(c_bytes))
-                            except Exception as e:
-                                logger.error("  Emphasis decode error: %s", e)
-                                return None
-                        else:
-                            logger.error("  Emphasis TTS failed: %.50s...", chunk["text"])
+                    audio_bytes = generate_tts_for_segment(
+                        client, text=clean_text, voice=voice,
+                        exaggeration=c_exag, cfg_weight=c_cfg,
+                        lang=lang, speed=c_speed,
+                    )
+                    if audio_bytes:
+                        try:
+                            audio_segments.append(audio_from_bytes(audio_bytes))
+                        except Exception as e:
+                            logger.error("  Emphasis decode error: %s", e)
                             return None
-
-                    # Stitch chunks with 50ms crossfade
-                    if chunk_audios:
-                        stitched = chunk_audios[0]
-                        for ca in chunk_audios[1:]:
-                            overlap = min(50, len(stitched) // 2, len(ca) // 2)
-                            if overlap >= 10:
-                                stitched = stitched.append(ca, crossfade=overlap)
-                            else:
-                                stitched = stitched + ca
-                        audio_segments.append(stitched)
+                    else:
+                        logger.error("  Emphasis TTS failed: %.50s...", clean_text)
+                        return None
                 else:
                     audio_bytes = generate_tts_for_segment(
                         client,
