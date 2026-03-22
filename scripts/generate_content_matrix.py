@@ -880,6 +880,7 @@ def _call_mistral(client, prompt: str, max_tokens: int,
                 ],
                 max_tokens=max_tokens,
                 temperature=0.85,
+                response_format={"type": "json_object"},
             )
             if response.choices and response.choices[0].message.content:
                 return response.choices[0].message.content.strip()
