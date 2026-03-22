@@ -261,61 +261,6 @@ CATCH_UP_THRESHOLD = 0.80  # switch to steady-state when min/max ratio > 0.80
 CATCH_UP_CANDIDATES = ["wired", "sad", "anxious", "angry"]
 
 
-def get_mood_distribution(content_path=None):
-    """Count content items per mood in the library."""
-    from collections import Counter
-    path = content_path or CONTENT_PATH
-    counts = Counter()
-    try:
-        data = json.loads(Path(path).read_text())
-        for item in data:
-            mood = item.get("mood", "calm")  # legacy items default to calm
-            counts[mood] += 1
-    except (FileNotFoundError, json.JSONDecodeError):
-        pass
-    return counts
-
-
-def is_catch_up_complete(counts):
-    """Check if distribution is balanced enough for steady-state."""
-    values = [counts.get(m, 0) for m in TARGET_MOODS]
-    if max(values) == 0:
-        return False
-    return min(values) / max(values) >= CATCH_UP_THRESHOLD
-
-
-def get_next_mood(counts):
-    """Return the mood with the fewest stories (catch-up mode).
-    Only considers wired/sad/anxious/angry - calm and curious are frozen."""
-    candidate_counts = {m: counts.get(m, 0) for m in CATCH_UP_CANDIDATES}
-    return min(candidate_counts, key=candidate_counts.get)
-
-
-def select_mood(content_path=None):
-    """Main entry point: returns a mood for today's generation.
-    Catch-up mode: picks the most underrepresented mood from wired/sad/anxious/angry.
-    Steady-state: equal probability across all 6 moods."""
-    import random
-    counts = get_mood_distribution(content_path)
-
-    if is_catch_up_complete(counts):
-        # Steady-state: equal probability
-        mood = random.choice(TARGET_MOODS)
-        logger.info("  Mood selection: STEADY-STATE -> %s (distribution balanced)", mood)
-    else:
-        # Catch-up: generate the most underrepresented mood
-        mood = get_next_mood(counts)
-        logger.info("  Mood selection: CATCH-UP -> %s (least represented)", mood)
-
-    # Log distribution
-    for m in TARGET_MOODS:
-        c = counts.get(m, 0)
-        bar = "#" * (c // 2)
-        logger.info("    %-8s %3d  %s", m, c, bar)
-    logger.info("    Catch-up complete: %s", is_catch_up_complete(counts))
-
-    return mood
-
 
 # ═══════════════════════════════════════════════════════════════════════
 # MOOD CATCH-UP SCHEDULER (weighted distribution targets)
@@ -331,9 +276,15 @@ TARGET_MOOD_DISTRIBUTION = {
 }
 
 
-def get_mood_distribution(content_data: list) -> dict:
-    """Count stories per mood from content list."""
+def get_mood_distribution(content_data) -> dict:
+    """Count stories per mood from content list or file path."""
     from collections import Counter
+    # Accept either a list or a file path
+    if isinstance(content_data, (str, Path)):
+        try:
+            content_data = json.loads(Path(content_data).read_text())
+        except (FileNotFoundError, json.JSONDecodeError):
+            content_data = []
     counts = Counter()
     for story in content_data:
         mood = story.get("mood", "calm") or "calm"
@@ -341,12 +292,14 @@ def get_mood_distribution(content_data: list) -> dict:
     return dict(counts)
 
 
-def select_mood(content_data: list) -> str:
+def select_mood(content_data) -> str:
     """Select the mood furthest below its weighted target percentage.
 
     During catch-up: returns the most underrepresented mood.
     At equilibrium: still picks the mood with the largest deficit,
     which naturally maintains the weighted distribution over time.
+
+    Accepts either a list of content items or a file path.
     """
     counts = get_mood_distribution(content_data)
     total = sum(counts.values()) or 1
