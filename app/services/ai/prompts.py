@@ -37,6 +37,13 @@ Rules for markers:
 - Vary markers naturally — do not repeat the same one consecutively
 - Place markers at the start of a new emotional beat, not on every sentence
 
+TEXT FORMATTING FOR NARRATION (CRITICAL):
+- Do NOT use markdown emphasis (*italics*, **bold**, _underscores_). Write plain text only.
+- Do NOT write sound effects in ALL CAPS (e.g. POOF, CRASH, WHOOSH, BOOM).
+  Instead, describe them naturally: "There was a soft poof" or "it went whoosh through the air."
+- ALL CAPS words cause the narrator to hallucinate. Always use normal capitalization.
+- Onomatopoeia is fine in normal case: "poof", "splash", "whoosh" — just never ALL CAPS.
+
 PARAGRAPH FORMATTING (CRITICAL):
 - Split the story into short paragraphs of 2-4 sentences each
 - Separate every paragraph with a blank line (double newline)
@@ -245,6 +252,12 @@ Rules for markers:
 - Place [PAUSE] between each stanza (after a blank line)
 - End the final stanza with [SLEEPY]
 - Vary the emotional markers across stanzas for natural flow
+
+TEXT FORMATTING FOR NARRATION (CRITICAL):
+- Do NOT use markdown emphasis (*italics*, **bold**, _underscores_). Write plain text only.
+- Do NOT write sound effects in ALL CAPS (e.g. POOF, CRASH, WHOOSH).
+  Use normal case instead: "poof", "splash", "whoosh".
+- ALL CAPS words cause the narrator to hallucinate.
 
 STANZA FORMATTING (CRITICAL):
 - Separate each stanza with a blank line (double newline)

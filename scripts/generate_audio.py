@@ -357,6 +357,33 @@ def get_mp3_duration(filepath: Path) -> float:
 # Text parsing
 # ═════════════════════════════════════════════════════════════════════════
 
+def _sanitize_for_tts(text: str) -> str:
+    """Sanitize raw story text for TTS consumption.
+
+    Handles formatting that Chatterbox cannot process:
+    - Markdown emphasis (*word* or **word**) → plain word
+    - ALL CAPS words (POOF, WHOOSH, CRASH) → Title case (Poof, Whoosh, Crash)
+      Chatterbox hallucinates on isolated all-caps words.
+    - Strips underscores used as emphasis (__word__ or _word_)
+    """
+    # Strip markdown bold **word** and __word__
+    text = re.sub(r'\*\*(.+?)\*\*', r'\1', text)
+    text = re.sub(r'__(.+?)__', r'\1', text)
+    # Strip markdown italic *word* and _word_ (single markers)
+    text = re.sub(r'\*(.+?)\*', r'\1', text)
+    text = re.sub(r'(?<!\w)_(.+?)_(?!\w)', r'\1', text)
+    # Normalize ALL CAPS words (3+ letters) to title case
+    # Preserves short acronyms (OK, TV) and single letters (I, A)
+    def _lower_caps(m):
+        word = m.group(0)
+        return word.capitalize()
+    text = re.sub(r'\b[A-Z]{3,}\b', _lower_caps, text)
+    # Collapse repeated letters (3+ of same char) to max 2
+    # e.g. "Achooooo" → "Achoo", "Pooof" → "Poof"
+    text = re.sub(r'(.)\1{2,}', r'\1\1', text)
+    return text
+
+
 def _strip_inline_markers(text: str, keep_emphasis: bool = False) -> str:
     """Strip inline markers that wrap 1-2 words (e.g. [EMPHASIS]dark[/EMPHASIS]).
 
@@ -391,7 +418,9 @@ def parse_annotated_text(text: str, content_type: str = "story",
     These are backward-compatible — existing stories without these markers
     parse identically to before.
     """
-    # Pre-process: strip inline markers that wrap short words within sentences.
+    # Pre-process: sanitize raw text for TTS (markdown emphasis, ALL CAPS).
+    text = _sanitize_for_tts(text)
+    # Strip inline markers that wrap short words within sentences.
     # These must NOT be split into separate TTS calls (single words produce garbage).
     # If keep_emphasis=True, preserves [EMPHASIS] for mood emphasis chunking.
     text = _strip_inline_markers(text, keep_emphasis=keep_emphasis)

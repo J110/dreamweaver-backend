@@ -457,7 +457,7 @@ Return ONLY a valid JSON object with these fields (no markdown, no extra text):
     "characterTrait": "shy_quiet, bold_adventurous, dreamy_imaginative, kind_nurturing, clumsy_silly, wise_old_soul, anxious_worried, stubborn_determined, lonely_seeking, or playful_mischievous",
     "title": "The story/poem title",
     "description": "A 2-3 sentence mood hook (max 50 words). Start with something intriguing happening in the world, then show the character being drawn into it. Never mention sleep, bedtime, or relaxation. Never reveal the ending.",
-    "text": "The FULL story/poem text with emotion markers. MUST use \\n\\n between paragraphs/stanzas for readability.",
+    "text": "The FULL story/poem text with emotion markers. MUST use \\n\\n between paragraphs/stanzas. NEVER use markdown emphasis (*word*, **word**). NEVER use ALL CAPS for sound effects (write 'poof' not 'POOF'). Plain text only.",
     "morals": ["Moral 1", "Moral 2"],
     "categories": ["Category1", "Category2"],
     "character": {
