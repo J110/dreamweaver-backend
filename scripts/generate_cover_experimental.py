@@ -2883,7 +2883,7 @@ def _infer_character_type(story: dict) -> str:
     return "human"
 
 
-def auto_select_axes(story: dict, overrides: dict = None, mood: str = None) -> dict:
+def auto_select_axes(story: dict, overrides: dict = None, mood: str = None, story_type: str = None) -> dict:
     """Select 7 diversity axes from story metadata with optional overrides.
 
     Uses weighted random selection from the FULL pool of options for each axis.
@@ -2949,6 +2949,16 @@ def auto_select_axes(story: dict, overrides: dict = None, mood: str = None) -> d
         for pal, mult in MOOD_PALETTE_BOOSTS[mood].items():
             if pal in p_weights:
                 p_weights[pal] *= mult
+    # Story type palette boosts
+    if story_type:
+        from scripts.story_type_config import STORY_TYPE_COVER_PROMPTS
+        st_cover = STORY_TYPE_COVER_PROMPTS.get(story_type, {})
+        for pal, mult in st_cover.get("palette_boost", {}).items():
+            if pal in p_weights:
+                p_weights[pal] *= mult
+        for pal, mult in st_cover.get("palette_suppress", {}).items():
+            if pal in p_weights:
+                p_weights[pal] *= mult
     p_weights = _apply_recent_penalty(p_weights, recent.get("palette", []))
     palette = overrides.get("palette") or _weighted_choice(all_palettes, p_weights, _rng)
 
@@ -2962,6 +2972,13 @@ def auto_select_axes(story: dict, overrides: dict = None, mood: str = None) -> d
     # Mood composition boosts
     if mood and mood in MOOD_COMPOSITION_BOOSTS:
         for cp, mult in MOOD_COMPOSITION_BOOSTS[mood].items():
+            if cp in c_weights:
+                c_weights[cp] *= mult
+    # Story type composition boosts
+    if story_type:
+        from scripts.story_type_config import STORY_TYPE_COMPOSITION_BOOSTS
+        st_comp_boosts = STORY_TYPE_COMPOSITION_BOOSTS.get(story_type, {})
+        for cp, mult in st_comp_boosts.items():
             if cp in c_weights:
                 c_weights[cp] *= mult
     c_weights = _apply_recent_penalty(c_weights, recent.get("composition", []))
@@ -3175,7 +3192,7 @@ from scripts.mood_config import (
 
 # ── FLUX prompt builder ─────────────────────────────────────────────────
 
-def build_flux_prompt(story: dict, axes: dict, mood: str = None) -> str:
+def build_flux_prompt(story: dict, axes: dict, mood: str = None, story_type: str = None) -> str:
     """Build FLUX AI prompt from story metadata and axis selections.
 
     Character description is context-aware:
@@ -3264,11 +3281,20 @@ def build_flux_prompt(story: dict, axes: dict, mood: str = None) -> str:
     if mood and mood in MOOD_COVER_PROMPTS:
         mood_clause = MOOD_COVER_PROMPTS[mood] + ", "
 
+    # Story type style clause
+    story_type_clause = ""
+    if story_type:
+        from scripts.story_type_config import STORY_TYPE_COVER_PROMPTS
+        st_cover = STORY_TYPE_COVER_PROMPTS.get(story_type, {})
+        if st_cover.get("style"):
+            story_type_clause = st_cover["style"] + ", "
+
     # Character goes FIRST — FLUX weighs early tokens more, and truncation cuts from the end
     prompt = (
         f"{char_section}, "
         f"children's book illustration, {texture_name} style, "
         f"{mood_clause}"
+        f"{story_type_clause}"
         f"{context_section}"
         f"atmospheric {world_info.get('signature', 'magical scene').lower()}, "
         f"{comp_name}, "
@@ -3743,6 +3769,9 @@ def main():
     parser.add_argument("--dry-run", action="store_true", help="Show prompt without calling API")
     parser.add_argument("--mood", choices=["wired", "curious", "calm", "sad", "anxious", "angry"],
                         default=None, help="Target mood for cover atmosphere (experimental)")
+    parser.add_argument("--story-type",
+                        choices=["folk_tale", "mythological", "fable", "nature", "slice_of_life", "dream"],
+                        default=None, help="Story type for cover style modifiers")
     args = parser.parse_args()
 
     # Load story
@@ -3770,11 +3799,13 @@ def main():
         overrides["texture"] = args.texture
 
     # Auto-select axes
-    axes = auto_select_axes(story, overrides, mood=args.mood)
+    # Story type: CLI flag takes priority, then from story JSON
+    effective_story_type = args.story_type or story.get("story_type")
+    axes = auto_select_axes(story, overrides, mood=args.mood, story_type=effective_story_type)
     logger.info("Axes: %s", json.dumps(axes, indent=2))
 
     # Build FLUX prompt
-    prompt = build_flux_prompt(story, axes, mood=args.mood)
+    prompt = build_flux_prompt(story, axes, mood=args.mood, story_type=effective_story_type)
     logger.info("FLUX prompt (%d chars): %s", len(prompt), prompt[:300])
 
     if args.dry_run:

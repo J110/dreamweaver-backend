@@ -45,6 +45,14 @@ DIMENSIONS = {
             "wired", "curious", "calm", "sad", "anxious", "angry",
         ],
     },
+    "storyType": {
+        "weight": 10,
+        "hard_rule": True,
+        "values": [
+            "folk_tale", "mythological", "fable",
+            "nature", "slice_of_life", "dream",
+        ],
+    },
     "plotShape": {
         "weight": 3,
         "hard_rule": True,
@@ -53,13 +61,6 @@ DIMENSIONS = {
             "helping_someone", "building_growing", "transformation",
             "gathering_reunion", "pure_observation", "routine_ritual",
             "cyclical_seasonal",
-        ],
-    },
-    "mood": {
-        "weight": 8,
-        "hard_rule": True,
-        "values": [
-            "calm", "curious", "wired", "sad", "anxious", "angry",
         ],
     },
     # Tier 2 — medium weight — soft (collision score only)

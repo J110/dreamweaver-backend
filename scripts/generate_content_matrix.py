@@ -492,12 +492,19 @@ from scripts.mood_config import (
     MOOD_LULLABY_PROMPTS, MOOD_SAFETY, get_mood_safety,
     VALID_MOOD_AGES, VALID_MOOD_TYPES, validate_mood_combo,
 )
+from scripts.story_type_config import (
+    ENGLISH_STORY_TYPE_PROMPTS, STORY_TYPE_POEM_HINTS,
+    VALID_STORY_TYPES, VALID_STORY_TYPE_CONTENT_TYPES,
+    VALID_STORY_TYPE_AGES, validate_story_type_combo,
+    is_valid_story_type_mood, build_signature_prompt,
+)
 
 
 def build_generation_prompt(item: Dict, existing_titles: List[str],
                             recent_fingerprints: List[Dict] = None,
                             catalog_gaps: Dict = None,
-                            mood: str = None) -> str:
+                            mood: str = None,
+                            story_type: str = None) -> str:
     """Build a complete prompt for generating one content piece."""
 
     content_type = item["type"]
@@ -619,6 +626,20 @@ This is a LONG bedtime story. Write a FULL, LENGTHY, richly detailed narrative.
 Do NOT abbreviate, summarize, or write a short version. Each phase must be substantial.
 """
 
+    # Story type instruction (narrative tradition + signature)
+    story_type_block = ""
+    if story_type and content_type != "song":  # Lullabies have no story type
+        if content_type == "poem":
+            # Poem-adapted: story type voice + poem hint, no rigid signature
+            type_prompt = ENGLISH_STORY_TYPE_PROMPTS.get(story_type, "")
+            poem_hint = STORY_TYPE_POEM_HINTS.get(story_type, "")
+            story_type_block = f"{type_prompt}\n\nPOEM ADAPTATION: {poem_hint}\n"
+        else:
+            # Stories and long stories: full type prompt + signature
+            type_prompt = ENGLISH_STORY_TYPE_PROMPTS.get(story_type, "")
+            sig_prompt = build_signature_prompt(story_type)
+            story_type_block = f"{type_prompt}\n\n{sig_prompt}\n"
+
     # Mood instruction (experimental)
     mood_block = ""
     if mood:
@@ -648,6 +669,7 @@ Do NOT abbreviate, summarize, or write a short version. Each phase must be subst
 
 {theme_inst}
 
+{story_type_block}
 LENGTH: {length_desc}
 {phase_instructions}
 {phase_word_budget}
@@ -912,7 +934,8 @@ def generate_one(client, item: Dict, existing_titles: List[str],
                  max_retries: int = 3, api: str = "claude",
                  recent_fingerprints: List[Dict] = None,
                  catalog_gaps: Dict = None,
-                 mood: str = None) -> Optional[Dict]:
+                 mood: str = None,
+                 story_type: str = None) -> Optional[Dict]:
     """Generate a single content piece via Claude or Groq API."""
 
     # Poems are trickier (stanza structure, word count variability) — more attempts
@@ -922,10 +945,13 @@ def generate_one(client, item: Dict, existing_titles: List[str],
     if item.get("length") == "LONG" and item.get("type") == "story":
         max_retries = max(max_retries, 5)
 
+    # Skip story_type for lullabies
+    effective_story_type = story_type if item.get("type") != "song" else None
     prompt = build_generation_prompt(item, existing_titles,
                                      recent_fingerprints=recent_fingerprints,
                                      catalog_gaps=catalog_gaps,
-                                     mood=mood)
+                                     mood=mood,
+                                     story_type=effective_story_type)
 
     # Determine max_tokens based on word count range
     # LONG stories (up to 3000 words) need ~12K+ tokens — raise cap to 16384
@@ -1086,6 +1112,7 @@ def generate_one(client, item: Dict, existing_titles: List[str],
                 "plot_archetype": item["plot_archetype"],
                 "diversityFingerprint": fingerprint,
                 "mood": mood if mood else None,
+                "story_type": effective_story_type if effective_story_type else None,
                 "created_at": now,
                 "updated_at": now,
                 "view_count": 0,
@@ -1311,6 +1338,9 @@ def main():
                         help="Generate N additional LONG stories (bypasses matrix, for daily pipeline)")
     parser.add_argument("--mood", choices=["wired", "curious", "calm", "sad", "anxious", "angry"],
                         default=None, help="Target mood for content generation (experimental)")
+    parser.add_argument("--story-type",
+                        choices=["folk_tale", "mythological", "fable", "nature", "slice_of_life", "dream"],
+                        default=None, help="Target story type (narrative tradition) for content generation")
     parser.add_argument("--age", help="Force specific age group (e.g. 6-8) for --mood runs")
     parser.add_argument("--type", dest="content_type",
                         choices=["story", "long_story", "poem", "song", "all"],
@@ -1352,6 +1382,27 @@ def main():
             valid, reason = validate_mood_combo(args.mood, args.age, ct)
             if not valid:
                 logger.error("Invalid mood combination: %s", reason)
+                sys.exit(1)
+
+    # Validate story_type × mood combination
+    if args.story_type and args.mood:
+        if not is_valid_story_type_mood(args.story_type, args.mood):
+            logger.error("Invalid story_type × mood combination: %s × %s", args.story_type, args.mood)
+            sys.exit(1)
+
+    # Validate story_type × age × content_type
+    if args.story_type and args.age:
+        type_checks = []
+        if args.count_stories > 0:
+            type_checks.append("story")
+        if args.count_long_stories > 0:
+            type_checks.append("long_story")
+        if args.count_poems > 0:
+            type_checks.append("poem")
+        for ct in type_checks:
+            valid, reason = validate_story_type_combo(args.story_type, args.age, ct)
+            if not valid:
+                logger.error("Invalid story_type combination: %s", reason)
                 sys.exit(1)
 
     # Load existing content
@@ -1399,6 +1450,8 @@ def main():
                      args.count_stories, args.count_long_stories, args.count_poems, args.count_lullabies, lang)
         if args.mood:
             logger.info("Mood: %s (experimental)", args.mood)
+        if args.story_type:
+            logger.info("Story type: %s", args.story_type)
         logger.info("To generate: %d", len(new_plan))
     else:
         # Matrix mode — fill in missing cells
@@ -1478,6 +1531,27 @@ def main():
     logger.info("Diversity: %d recent fingerprints, gaps in %d dimensions",
                 len(recent_fps), len(catalog_gaps))
 
+    # Auto-select story type if not provided (ensures every piece gets a type)
+    if not args.story_type:
+        from scripts.story_type_config import STORY_TYPE_TARGET
+        from collections import Counter
+        type_counts = Counter()
+        for s in existing:
+            if s.get("type") != "song":
+                type_counts[s.get("story_type", "folk_tale")] += 1
+        total = sum(type_counts.values()) or 1
+        worst_type, worst_deficit = "folk_tale", -1.0
+        for stype, target_pct in STORY_TYPE_TARGET.items():
+            # Skip types invalid with current mood
+            if args.mood and not is_valid_story_type_mood(stype, args.mood):
+                continue
+            deficit = target_pct - (type_counts.get(stype, 0) / total)
+            if deficit > worst_deficit:
+                worst_deficit = deficit
+                worst_type = stype
+        args.story_type = worst_type
+        logger.info("Story type (auto-selected): %s (deficit=%.1f%%)", worst_type, worst_deficit * 100)
+
     success = 0
     failed = 0
 
@@ -1493,7 +1567,8 @@ def main():
         result = generate_one(client, item, existing_titles, api=args.api,
                               recent_fingerprints=recent_fps,
                               catalog_gaps=catalog_gaps,
-                              mood=args.mood)
+                              mood=args.mood,
+                              story_type=args.story_type)
 
         if result:
             existing.append(result)

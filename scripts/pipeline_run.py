@@ -319,6 +319,67 @@ def select_mood(content_data) -> str:
 
 
 # ═══════════════════════════════════════════════════════════════════════
+# STORY TYPE AUTO-SELECTION (Catch-Up + Steady-State)
+# ═══════════════════════════════════════════════════════════════════════
+
+def _load_story_type_config():
+    """Lazy import of story_type_config to handle both package and script execution."""
+    import importlib, sys
+    if 'scripts.story_type_config' not in sys.modules:
+        sys.path.insert(0, str(BASE_DIR))
+    from scripts.story_type_config import (
+        STORY_TYPE_TARGET, VALID_STORY_TYPES,
+        is_valid_story_type_mood, INVALID_STORY_TYPE_MOOD,
+    )
+    return STORY_TYPE_TARGET, VALID_STORY_TYPES, is_valid_story_type_mood, INVALID_STORY_TYPE_MOOD
+
+def get_story_type_distribution(content_data) -> dict:
+    """Count stories per story_type from content list or file path."""
+    from collections import Counter
+    if isinstance(content_data, (str, Path)):
+        try:
+            content_data = json.loads(Path(content_data).read_text())
+        except (FileNotFoundError, json.JSONDecodeError):
+            content_data = []
+    counts = Counter()
+    for story in content_data:
+        # Only count non-song items (lullabies have no story type)
+        if story.get("type") == "song":
+            continue
+        st = story.get("story_type", "folk_tale") or "folk_tale"
+        counts[st] += 1
+    return dict(counts)
+
+
+def select_story_type(content_data, exclude_invalid_for_mood: str = None) -> str:
+    """Select the story type furthest below its weighted target percentage.
+
+    If exclude_invalid_for_mood is provided, skip story types that form
+    invalid combos with that mood. Mood takes priority in scheduling.
+    """
+    STORY_TYPE_TARGET, _, is_valid_story_type_mood, _ = _load_story_type_config()
+    counts = get_story_type_distribution(content_data)
+    total = sum(counts.values()) or 1
+
+    worst_type = "folk_tale"
+    worst_deficit = -1.0
+
+    for stype, target_pct in STORY_TYPE_TARGET.items():
+        # Skip types that are invalid with the selected mood
+        if exclude_invalid_for_mood and not is_valid_story_type_mood(stype, exclude_invalid_for_mood):
+            continue
+        actual_pct = counts.get(stype, 0) / total
+        deficit = target_pct - actual_pct
+        if deficit > worst_deficit:
+            worst_deficit = deficit
+            worst_type = stype
+
+    logger.info("  Story type distribution: %s (total=%d)", counts, total)
+    logger.info("  Selected story type: %s (deficit=%.1f%%)", worst_type, worst_deficit * 100)
+    return worst_type
+
+
+# ═══════════════════════════════════════════════════════════════════════
 # PIPELINE STEPS
 # ═══════════════════════════════════════════════════════════════════════
 
@@ -346,6 +407,18 @@ def step_generate(args, state: dict) -> bool:
             logger.warning("  Mood auto-selection failed (%s), defaulting to calm", e)
             auto_mood = "calm"
             state["auto_mood"] = auto_mood
+
+    # Auto-select story type (mood takes priority — story type must be valid with mood)
+    if not getattr(args, 'story_type', None):
+        try:
+            content_data = json.loads(CONTENT_PATH.read_text()) if not isinstance(locals().get('content_data'), list) else content_data
+            effective_mood_for_type = args.mood or state.get("auto_mood", "calm")
+            auto_story_type = select_story_type(content_data, exclude_invalid_for_mood=effective_mood_for_type)
+            logger.info("  Auto-selected story type: %s (valid with mood=%s)", auto_story_type, effective_mood_for_type)
+            state["auto_story_type"] = auto_story_type
+        except Exception as e:
+            logger.warning("  Story type auto-selection failed (%s), defaulting to folk_tale", e)
+            state["auto_story_type"] = "folk_tale"
 
         pregen_counts = _count_todays_pregenerated_content()
         pregen_total = sum(pregen_counts.values())
@@ -387,6 +460,11 @@ def step_generate(args, state: dict) -> bool:
     if effective_mood:
         cmd += ["--mood", effective_mood]
         state["effective_mood"] = effective_mood
+    # Pass story type: explicit --story-type flag takes priority, otherwise auto-selected
+    effective_story_type = getattr(args, 'story_type', None) or state.get("auto_story_type")
+    if effective_story_type:
+        cmd += ["--story-type", effective_story_type]
+        state["effective_story_type"] = effective_story_type
     if args.age:
         cmd += ["--age", args.age]
     if args.dry_run:
@@ -1735,6 +1813,9 @@ def main():
                         help="Run only a specific step")
     parser.add_argument("--mood", choices=["wired", "curious", "calm", "sad", "anxious", "angry"],
                         default=None, help="Target mood for experimental content generation")
+    parser.add_argument("--story-type",
+                        choices=["folk_tale", "mythological", "fable", "nature", "slice_of_life", "dream"],
+                        default=None, help="Target story type (narrative tradition) for content generation")
     parser.add_argument("--age", default=None,
                         help="Force specific age group (e.g. 6-8) for --mood runs")
     parser.add_argument("--type", dest="content_type",
@@ -1772,6 +1853,12 @@ def main():
         logger.info("  Mood (auto): %s | Age: %s", args.mood, args.age or "random")
     else:
         logger.info("  Mood (manual): %s | Age: %s", args.mood, args.age or "random")
+    # Auto-select story type if not explicitly provided (mood takes priority)
+    if not args.story_type:
+        args.story_type = select_story_type(CONTENT_PATH, exclude_invalid_for_mood=args.mood)
+        logger.info("  Story type (auto): %s", args.story_type)
+    else:
+        logger.info("  Story type (manual): %s", args.story_type)
     logger.info("  Dry run: %s | Skip publish: %s", args.dry_run, args.skip_publish)
     logger.info("")
 
@@ -1794,6 +1881,8 @@ def main():
         state = {"started_at": datetime.now().isoformat(), "args": vars(args)}
         if args.mood:
             state["mood"] = args.mood
+        if args.story_type:
+            state["story_type"] = args.story_type
         save_state(state)
 
     total_start = time.time()

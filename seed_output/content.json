@@ -175,7 +175,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "calm"
+    "mood": "calm",
+    "story_type": "folk_tale"
   },
   {
     "id": "8e516449-aa48-423e-8b53-db5591ce9bed",
@@ -354,7 +355,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "sad"
+    "mood": "sad",
+    "story_type": "folk_tale"
   },
   {
     "id": "30dec3e8-5354-41ff-aadf-90def8a35df4",
@@ -532,7 +534,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "calm"
+    "mood": "calm",
+    "story_type": "folk_tale"
   },
   {
     "id": "d73e9530-b77e-4372-9ad1-070f0fa108e3",
@@ -710,7 +713,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "wired"
+    "mood": "wired",
+    "story_type": "folk_tale"
   },
   {
     "id": "9fba7605-7ffa-488d-93bc-9cca2881cf97",
@@ -888,7 +892,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "curious"
+    "mood": "curious",
+    "story_type": "folk_tale"
   },
   {
     "id": "c8796852-6d17-46e0-bcea-7985c4721d1c",
@@ -1061,7 +1066,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "calm"
+    "mood": "calm",
+    "story_type": "folk_tale"
   },
   {
     "id": "e32eaee0-2c7a-4f65-ace6-1d3a2d3ad5b0",
@@ -1238,7 +1244,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "calm"
+    "mood": "calm",
+    "story_type": "folk_tale"
   },
   {
     "id": "a3945b7b-6b20-4a39-a051-b25dfaec1d8e",
@@ -1546,7 +1553,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "calm"
+    "mood": "calm",
+    "story_type": "folk_tale"
   },
   {
     "id": "hi-bahadur-jugnu",
@@ -1726,7 +1734,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "calm"
+    "mood": "calm",
+    "story_type": "folk_tale"
   },
   {
     "id": "hi-chaand-ki-lori",
@@ -1905,7 +1914,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "calm"
+    "mood": "calm",
+    "story_type": "mythological"
   },
   {
     "id": "hi-captain-sitaara",
@@ -2083,7 +2093,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "wired"
+    "mood": "wired",
+    "story_type": "folk_tale"
   },
   {
     "id": "hi-gungunata-baag",
@@ -2262,7 +2273,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "curious"
+    "mood": "curious",
+    "story_type": "folk_tale"
   },
   {
     "id": "hi-chamakta-sapna",
@@ -2436,7 +2448,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "calm"
+    "mood": "calm",
+    "story_type": "folk_tale"
   },
   {
     "id": "hi-ullu-ki-shubhraatri",
@@ -2614,7 +2627,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "calm"
+    "mood": "calm",
+    "story_type": "folk_tale"
   },
   {
     "id": "hi-sapnon-ki-naav",
@@ -2898,7 +2912,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "wired"
+    "mood": "wired",
+    "story_type": "dream"
   },
   {
     "id": "gen-3de58fd2aa2d",
@@ -3077,7 +3092,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "calm"
+    "mood": "calm",
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-4f3ff03979dc",
@@ -3257,7 +3273,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "wired"
+    "mood": "wired",
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-a67cde9762b6",
@@ -3436,7 +3453,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "wired"
+    "mood": "wired",
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-a8a2146a4f36",
@@ -3618,7 +3636,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "curious"
+    "mood": "curious",
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-9e44d4374d44",
@@ -3795,7 +3814,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "curious"
+    "mood": "curious",
+    "story_type": "mythological"
   },
   {
     "id": "gen-b8847383ab32",
@@ -3979,7 +3999,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "curious"
+    "mood": "curious",
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-6b4b4122c529",
@@ -4163,7 +4184,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "curious"
+    "mood": "curious",
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-2fedd4d6a646",
@@ -4347,7 +4369,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "curious"
+    "mood": "curious",
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-f23316834cfd",
@@ -4531,7 +4554,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "calm"
+    "mood": "calm",
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-df0dbc9d6b74",
@@ -4708,7 +4732,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "curious"
+    "mood": "curious",
+    "story_type": "mythological"
   },
   {
     "id": "gen-e77b10c51e8f",
@@ -4885,7 +4910,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "curious"
+    "mood": "curious",
+    "story_type": "mythological"
   },
   {
     "id": "gen-593c43ad1c11",
@@ -5065,7 +5091,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "calm"
+    "mood": "calm",
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-b2e7514e8b8f",
@@ -5245,7 +5272,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "calm"
+    "mood": "calm",
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-376993c8e295",
@@ -5425,7 +5453,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "calm"
+    "mood": "calm",
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-aad0a6e0c0c0",
@@ -5607,7 +5636,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "calm"
+    "mood": "calm",
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-ddc437037568",
@@ -5785,7 +5815,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "curious"
+    "mood": "curious",
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-2b9fdf8a1222",
@@ -5965,7 +5996,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "calm"
+    "mood": "calm",
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-60370cf66525",
@@ -6150,7 +6182,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "curious"
+    "mood": "curious",
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-032fdef6f753",
@@ -6331,7 +6364,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "curious"
+    "mood": "curious",
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-febbf324eecb",
@@ -6513,7 +6547,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "calm"
+    "mood": "calm",
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-230502b905ba",
@@ -6698,7 +6733,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "wired"
+    "mood": "wired",
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-bb82f62942d0",
@@ -6874,7 +6910,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "curious"
+    "mood": "curious",
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-0027e1835f09",
@@ -7051,7 +7088,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "curious"
+    "mood": "curious",
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-586908c26fc2",
@@ -7234,7 +7272,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "curious"
+    "mood": "curious",
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-1a5a91def9ae",
@@ -7418,7 +7457,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "calm"
+    "mood": "calm",
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-ae9ed8804fa7",
@@ -7602,7 +7642,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "curious"
+    "mood": "curious",
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-be475c98edb5",
@@ -7785,7 +7826,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "curious"
+    "mood": "curious",
+    "story_type": "dream"
   },
   {
     "id": "gen-f9e33d4db1bd",
@@ -7967,7 +8009,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "calm"
+    "mood": "calm",
+    "story_type": "slice_of_life"
   },
   {
     "id": "gen-292e9eadf56e",
@@ -8149,7 +8192,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "curious"
+    "mood": "curious",
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-76b0227cc919",
@@ -8331,7 +8375,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "calm"
+    "mood": "calm",
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-7cf84ff11c04",
@@ -8515,7 +8560,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "calm"
+    "mood": "calm",
+    "story_type": "dream"
   },
   {
     "id": "gen-b5438a861ba4",
@@ -8699,7 +8745,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "calm"
+    "mood": "calm",
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-caa3a14bb706",
@@ -8882,7 +8929,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "curious"
+    "mood": "curious",
+    "story_type": "mythological"
   },
   {
     "id": "gen-01f0b88dc42d",
@@ -9069,7 +9117,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "calm"
+    "mood": "calm",
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-2f87d69ca6a2",
@@ -9248,7 +9297,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "curious"
+    "mood": "curious",
+    "story_type": "mythological"
   },
   {
     "id": "gen-d5bc0057ca40",
@@ -9430,7 +9480,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "curious"
+    "mood": "curious",
+    "story_type": "dream"
   },
   {
     "id": "gen-308d5f0d1268",
@@ -9617,7 +9668,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "calm"
+    "mood": "calm",
+    "story_type": "dream"
   },
   {
     "id": "gen-8ea1861bffab",
@@ -9805,7 +9857,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "curious"
+    "mood": "curious",
+    "story_type": "dream"
   },
   {
     "id": "gen-9e87531b7db6",
@@ -9911,7 +9964,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "curious"
+    "mood": "curious",
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-3b66368b6682",
@@ -10100,7 +10154,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "curious"
+    "mood": "curious",
+    "story_type": "dream"
   },
   {
     "id": "gen-7936c7032060",
@@ -10410,7 +10465,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "calm"
+    "mood": "calm",
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-a4a5bf8ba702",
@@ -10597,7 +10653,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "calm"
+    "mood": "calm",
+    "story_type": "mythological"
   },
   {
     "id": "gen-69ca3c81363d",
@@ -10921,7 +10978,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "curious"
+    "mood": "curious",
+    "story_type": "dream"
   },
   {
     "id": "gen-31f50f685a68",
@@ -11108,7 +11166,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "calm"
+    "mood": "calm",
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-3947965e8c2e",
@@ -11290,7 +11349,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "calm"
+    "mood": "calm",
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-6772aca6a7cc",
@@ -11734,7 +11794,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "calm"
+    "mood": "calm",
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-6034c85ea602",
@@ -11915,7 +11976,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "curious"
+    "mood": "curious",
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-0333c2f092c0",
@@ -12095,7 +12157,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "curious"
+    "mood": "curious",
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-638cb2facd22",
@@ -12279,7 +12342,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "curious"
+    "mood": "curious",
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-915a2ee015f8",
@@ -12817,7 +12881,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "calm"
+    "mood": "calm",
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-beb0f3862024",
@@ -13080,7 +13145,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "sad"
+    "mood": "sad",
+    "story_type": "mythological"
   },
   {
     "id": "gen-e47bcd61e515",
@@ -13400,7 +13466,8 @@
       "soundscapePreset": "garden",
       "musicLoop": "gentleGuitar"
     },
-    "mood": "calm"
+    "mood": "calm",
+    "story_type": "dream"
   },
   {
     "id": "gen-50e929bf696c",
@@ -13587,7 +13654,8 @@
       "soundscapePreset": "heartbeat",
       "musicLoop": "musicBox"
     },
-    "mood": "calm"
+    "mood": "calm",
+    "story_type": "slice_of_life"
   },
   {
     "id": "gen-8440041cfc57",
@@ -13985,7 +14053,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "calm"
+    "mood": "calm",
+    "story_type": "dream"
   },
   {
     "id": "gen-3e20147f02a1",
@@ -14272,7 +14341,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "calm"
+    "mood": "calm",
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-6c4170f5b3a4",
@@ -14401,7 +14471,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "curious"
+    "mood": "curious",
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-bf2a73ca2fe3",
@@ -14583,7 +14654,8 @@
       }
     },
     "duration": 14,
-    "mood": "curious"
+    "mood": "curious",
+    "story_type": "dream"
   },
   {
     "id": "gen-20ac6dcc8899",
@@ -14712,7 +14784,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "curious"
+    "mood": "curious",
+    "story_type": "dream"
   },
   {
     "id": "gen-ac421eca75dd",
@@ -14924,7 +14997,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "curious"
+    "mood": "curious",
+    "story_type": "dream"
   },
   {
     "id": "gen-59c38722ffc1",
@@ -15136,7 +15210,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "curious"
+    "mood": "curious",
+    "story_type": "mythological"
   },
   {
     "id": "gen-a306e99e9b09",
@@ -15268,7 +15343,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "calm"
+    "mood": "calm",
+    "story_type": "mythological"
   },
   {
     "id": "gen-411c4e4dde20",
@@ -15484,7 +15560,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "calm"
+    "mood": "calm",
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-9d8e3f91919c",
@@ -15616,7 +15693,8 @@
       }
     },
     "duration": 7,
-    "mood": "curious"
+    "mood": "curious",
+    "story_type": "dream"
   },
   {
     "id": "gen-c5e3d286408c",
@@ -15748,7 +15826,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "curious"
+    "mood": "curious",
+    "story_type": "dream"
   },
   {
     "id": "gen-54eea57db057",
@@ -15872,7 +15951,8 @@
       }
     },
     "mood": "calm",
-    "audio_url": ""
+    "audio_url": "",
+    "story_type": "dream"
   },
   {
     "id": "gen-be5fa39c0802",
@@ -16087,7 +16167,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "curious"
+    "mood": "curious",
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-364d8f8f090f",
@@ -16219,7 +16300,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "calm"
+    "mood": "calm",
+    "story_type": "mythological"
   },
   {
     "id": "gen-36832e27d4b5",
@@ -16518,7 +16600,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "calm"
+    "mood": "calm",
+    "story_type": "dream"
   },
   {
     "id": "gen-7f24c66d3921",
@@ -16650,7 +16733,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "calm"
+    "mood": "calm",
+    "story_type": "nature"
   },
   {
     "id": "gen-d1d9090e87f5",
@@ -16782,7 +16866,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "mood": "calm"
+    "mood": "calm",
+    "story_type": "mythological"
   },
   {
     "id": "gen-1be31ba6fc0d",
@@ -16914,7 +16999,8 @@
         "phase2": "whimsical_chase",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "story_type": "dream"
   },
   {
     "id": "gen-3ae85c812ea0",
@@ -17046,7 +17132,8 @@
         "phase2": "gentle_adventure",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "story_type": "dream"
   },
   {
     "id": "gen-00422943830e",
@@ -17178,7 +17265,8 @@
         "phase2": "soft_wonder",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "story_type": "nature"
   },
   {
     "id": "gen-025b3e47eec6",
@@ -17390,7 +17478,8 @@
         "phase2": "gentle_movement",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "story_type": "dream"
   },
   {
     "id": "gen-ced87d262b99",
@@ -17523,7 +17612,8 @@
         "phase2": "floating_wonder",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "story_type": "dream"
   },
   {
     "id": "gen-125839556ced",
@@ -17634,7 +17724,8 @@
         "phase2": "whimsical_wonder",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "story_type": "dream"
   },
   {
     "id": "gen-31a6620db402",
@@ -17766,7 +17857,8 @@
         "phase2": "gentle_longing",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-f3a6cec89977",
@@ -17898,7 +17990,8 @@
         "phase2": "gentle_mystery",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "story_type": "mythological"
   },
   {
     "id": "gen-f5a086b33ef3",
@@ -18114,7 +18207,8 @@
         "phase2": "gentle_sway",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "story_type": "nature"
   },
   {
     "id": "gen-37aca7d2ae35",
@@ -18243,7 +18337,8 @@
         "phase2": "ethereal_wonder",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "story_type": "mythological"
   },
   {
     "id": "gen-a0cbd0c0da52",
@@ -18458,7 +18553,8 @@
         "phase2": "gentle_journey",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "story_type": "dream"
   },
   {
     "id": "gen-39dc657abb17",
@@ -18590,7 +18686,8 @@
         "phase2": "gentle_warmth",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-3255a91b20c2",
@@ -18719,7 +18816,8 @@
         "phase2": "gentle_mystery",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "story_type": "dream"
   },
   {
     "id": "gen-d7ac25f7070f",
@@ -18851,7 +18949,8 @@
         "phase2": "warm_embrace",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-dc32ba401ae2",
@@ -19066,7 +19165,8 @@
         "phase2": "gentle_wonder",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-10683c7e9e25",
@@ -19278,7 +19378,8 @@
         "phase2": "gentle_journey",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "story_type": "dream"
   },
   {
     "id": "gen-b2e191e24194",
@@ -19411,7 +19512,8 @@
         "phase2": "soft_magic",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "story_type": "dream"
   },
   {
     "id": "gen-589682b9e89c",
@@ -19543,7 +19645,8 @@
         "phase2": "gentle_embrace",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "story_type": "dream"
   },
   {
     "id": "gen-486be5b2fef9",
@@ -19658,7 +19761,8 @@
         "phase2": "gentle_tension",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "story_type": "dream"
   },
   {
     "id": "gen-7bb84380c7d3",
@@ -19857,7 +19961,8 @@
         "phase2": "gentle_wonder",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "story_type": "dream"
   },
   {
     "id": "gen-a543ef7c93c0",
@@ -19972,7 +20077,8 @@
         "phase2": "soft_flow",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "story_type": "nature"
   },
   {
     "id": "gen-a59c2de7e523",
@@ -20087,7 +20193,8 @@
         "phase2": "gentle_tension",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-c05399108488",
@@ -20287,7 +20394,8 @@
         "phase2": "gentle_journey",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-1e7e0300efd5",
@@ -20420,7 +20528,8 @@
         "phase2": "gentle_searching",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "story_type": "dream"
   },
   {
     "id": "gen-473198145b30",
@@ -20553,7 +20662,8 @@
         "phase2": "soft_melancholy",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-47739ce0f283",
@@ -20686,7 +20796,8 @@
         "phase2": "soft_warmth",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "story_type": "nature"
   },
   {
     "id": "gen-e1203c22da5f",
@@ -20885,7 +20996,8 @@
         "phase2": "warm_wonder",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-f00a3b8874a3",
@@ -21084,7 +21196,8 @@
         "phase2": "gentle_discovery",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "story_type": "dream"
   },
   {
     "id": "gen-66b370730297",
@@ -21199,7 +21312,8 @@
         "phase2": "gentle_floating",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "story_type": "dream"
   },
   {
     "id": "gen-bf9047771318",
@@ -21314,7 +21428,8 @@
         "phase2": "gentle_urgency",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "story_type": "dream"
   },
   {
     "id": "gen-c5413e76bff0",
@@ -21513,7 +21628,8 @@
         "phase2": "gentle_whimsy",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-1865516ea0ac",
@@ -21628,7 +21744,8 @@
         "phase2": "gentle_chase",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "story_type": "slice_of_life"
   },
   {
     "id": "gen-7a8ee4b38802",
@@ -21743,7 +21860,8 @@
         "phase2": "warm_discovery",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-ccc1075c5943",

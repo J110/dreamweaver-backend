@@ -297,6 +297,45 @@ def apply_mood_to_brief(brief: dict, mood: str) -> dict:
     return brief
 
 
+def apply_story_type_to_brief(brief: dict, story_type: str) -> dict:
+    """Apply story-type-specific constraints to a generated Musical Brief.
+
+    Adjusts instrument preferences, tempo bias, density, and nature sound
+    levels based on the narrative tradition of the story.
+    """
+    from scripts.story_type_config import STORY_TYPE_MUSIC_RULES
+    rules = STORY_TYPE_MUSIC_RULES.get(story_type)
+    if not rules:
+        return brief
+
+    # Apply instrument preferences (60% chance of switching)
+    if "instrument_prefer" in rules:
+        mi = brief.get("musicalIdentity", {})
+        if mi.get("primaryLoop") not in rules["instrument_prefer"]:
+            if random.random() < 0.6:
+                mi["primaryLoop"] = random.choice(rules["instrument_prefer"])
+
+    # Apply tempo bias (additive adjustment)
+    if rules.get("tempo_bias") and "rhythm" in brief and "baseTempo" in brief["rhythm"]:
+        brief["rhythm"]["baseTempo"] = max(
+            50, min(80, brief["rhythm"]["baseTempo"] + rules["tempo_bias"])
+        )
+
+    # Override density if specified (fable = sparse)
+    if "density" in rules:
+        brief["density"] = rules["density"]
+
+    # Nature sound adjustments
+    if rules.get("nature_sounds_boost") and "environment" in brief:
+        brief["nature_volume_multiplier"] = rules["nature_sounds_boost"]
+    if rules.get("nature_sounds_suppress") and "environment" in brief:
+        brief["environment"]["natureSoundPrimary"] = None
+        brief["environment"]["natureSoundSecondary"] = None
+        brief["environment"]["ambientEvents"] = []
+
+    return brief
+
+
 def get_age_group(target_age):
     """Map numeric target age to age group string."""
     if target_age <= 1:
@@ -775,6 +814,11 @@ Respond with ONLY the JSON brief. No explanation.
         story_mood = story.get("mood")
         if story_mood:
             brief = apply_mood_to_brief(brief, story_mood)
+
+        # Apply story-type-specific music rules
+        story_type = story.get("story_type")
+        if story_type:
+            brief = apply_story_type_to_brief(brief, story_type)
 
         # Validate schema
         schema_errors = validate_brief_schema(brief)

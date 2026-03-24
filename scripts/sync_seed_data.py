@@ -108,13 +108,17 @@ def _build_new_entry_js(story: dict) -> str:
     mood = story.get("mood", "")
     mood_line = f'\n      mood: "{mood}",' if mood else ""
 
+    # Story type (narrative tradition)
+    story_type = story.get("story_type", "")
+    story_type_line = f'\n      story_type: "{story_type}",' if story_type else ""
+
     entry = f"""    {{
       id: "{_js_escape(sid)}",
       type: "{stype}",
       title: "{_js_escape(title)}",
       description: "{_js_escape(desc)}",
       cover: "{cover}",
-      addedAt: "{added_at}",{mood_line}
+      addedAt: "{added_at}",{mood_line}{story_type_line}
       text: "{_js_escape(text)}",{lullaby_line}{character_line}
       target_age: {target_age},
       duration: {duration},
@@ -144,8 +148,9 @@ def update_existing(seed_js: str, stories: list) -> tuple:
         content_type = story.get("type", "story")
         added_at = (story.get("addedAt") or story.get("created_at", ""))[:10] or None
         mood = story.get("mood")
+        story_type = story.get("story_type")
         if variants:
-            title_map[title] = {"variants": variants, "duration": duration, "cover": cover, "character": character, "musicalBrief": musical_brief, "addedAt": added_at, "type": content_type, "mood": mood}
+            title_map[title] = {"variants": variants, "duration": duration, "cover": cover, "character": character, "musicalBrief": musical_brief, "addedAt": added_at, "type": content_type, "mood": mood, "story_type": story_type}
 
     replacements = 0
 
@@ -289,6 +294,39 @@ def update_existing(seed_js: str, stories: list) -> tuple:
                     if added_in_entry:
                         abs_pos = search_start + added_in_entry.end()
                         seed_js = seed_js[:abs_pos] + f'\n      mood: "{mood}",' + seed_js[abs_pos:]
+
+        # Also update story_type field (same pattern as mood)
+        story_type = info.get("story_type")
+        if story_type:
+            norm_title = title.replace('\u2018', "'").replace('\u2019', "'")
+            title_pat = re.search(r'title:\s*"' + re.escape(title) + r'"', seed_js)
+            if not title_pat and norm_title != title:
+                title_pat = re.search(r'title:\s*"' + re.escape(norm_title) + r'"', seed_js)
+            if title_pat:
+                search_start = title_pat.start()
+                next_entry = seed_js.find('\n    {', search_start + 1)
+                if next_entry == -1:
+                    next_entry = len(seed_js)
+                entry_slice = seed_js[search_start:next_entry]
+
+                st_in_entry = re.search(r'story_type:\s*"[^"]*",', entry_slice)
+                if st_in_entry:
+                    abs_pos = search_start + st_in_entry.start()
+                    old_st = st_in_entry.group(0)
+                    new_st = f'story_type: "{story_type}",'
+                    if old_st != new_st:
+                        seed_js = seed_js[:abs_pos] + new_st + seed_js[abs_pos + len(old_st):]
+                else:
+                    # Insert after mood line, or after addedAt if no mood
+                    mood_in_entry = re.search(r'mood:\s*"[^"]*",', entry_slice)
+                    if mood_in_entry:
+                        abs_pos = search_start + mood_in_entry.end()
+                        seed_js = seed_js[:abs_pos] + f'\n      story_type: "{story_type}",' + seed_js[abs_pos:]
+                    else:
+                        added_in_entry = re.search(r'addedAt:\s*"[^"]*",', entry_slice)
+                        if added_in_entry:
+                            abs_pos = search_start + added_in_entry.end()
+                            seed_js = seed_js[:abs_pos] + f'\n      story_type: "{story_type}",' + seed_js[abs_pos:]
 
         # Also update musicalBrief (v3 music system)
         musical_brief = info.get("musicalBrief")
