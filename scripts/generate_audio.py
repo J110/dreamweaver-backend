@@ -374,8 +374,13 @@ def _sanitize_for_tts(text: str) -> str:
     text = re.sub(r'(?<!\w)_(.+?)_(?!\w)', r'\1', text)
     # Normalize ALL CAPS words (3+ letters) to title case
     # Preserves short acronyms (OK, TV) and single letters (I, A)
+    # Skip marker tag names (EMPHASIS, SAFETY) inside square brackets
+    _MARKER_TAGS = {"EMPHASIS", "SAFETY"}
+
     def _lower_caps(m):
         word = m.group(0)
+        if word in _MARKER_TAGS:
+            return word  # preserve marker tags verbatim
         return word.capitalize()
     text = re.sub(r'\b[A-Z]{3,}\b', _lower_caps, text)
     # Collapse repeated letters (3+ of same char) to max 2
@@ -1793,9 +1798,9 @@ def generate_phase_audio(
                     # mood keywords or [EMPHASIS] markers. If so, the ENTIRE
                     # sentence gets emphasis TTS params (no word isolation —
                     # Chatterbox hallucinates on single-word chunks).
-                    has_emph = "[EMPHASIS]" in seg_text or contains_mood_keyword(seg_text, mood)
-                    # Strip [EMPHASIS] markers before TTS
-                    clean_text = re.sub(r'\[/?EMPHASIS\]', '', seg_text).strip()
+                    has_emph = bool(re.search(r'\[EMPHASIS\]', seg_text, re.IGNORECASE)) or contains_mood_keyword(seg_text, mood)
+                    # Strip [EMPHASIS] markers before TTS (case-insensitive)
+                    clean_text = re.sub(r'\[/?EMPHASIS\]', '', seg_text, flags=re.IGNORECASE).strip()
                     if has_emph and clean_text:
                         emph_type = get_emphasis_type(clean_text, mood)
                         emp = get_emphasis_params(mood, emph_type)
