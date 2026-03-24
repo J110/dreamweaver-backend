@@ -21399,5 +21399,434 @@
     "like_count": 0,
     "save_count": 0,
     "duration": 5
+  },
+  {
+    "id": "gen-0b5c4e7f4aa7",
+    "type": "story",
+    "lang": "en",
+    "title": "Bubbles the Jellyfish’s Upside-Down Day",
+    "description": "Deep in the sparkling blue ocean, the water shimmers with golden light as tiny bubbles rise like floating lanterns. Bubbles the jellyfish is having the silliest day—everything he touches turns topsy-turvy, until he finds the coziest spot to drift and giggle.",
+    "text": "[GENTLE] Bubbles the jellyfish loved to float, but today, something was different. [JOYFUL] He wiggled his tentacles and—[EMPHASIS]whoooosh[/EMPHASIS]—went spinning like a top!\n\n[CURIOUS] A school of fish swam by, giggling. [laugh] 'Bubbles, you’re upside-down!' they teased. [EXCITED] Bubbles tried to flip right-side up, but—[EMPHASIS]splooosh[/EMPHASIS]—he bonked into a seaweed curtain instead.\n\n[GENTLE] The seaweed tickled his nose, and Bubbles couldn’t stop laughing. [chuckle] He floated in slow circles, watching the sunlight dance on the water above. [SLEEPY] The ocean rocked him gently, and his tentacles grew heavy. He curled into a little ball, drifting into the softest, warmest nap.",
+    "annotated_text": "[GENTLE] Bubbles the jellyfish loved to float, but today, something was different. [JOYFUL] He wiggled his tentacles and—[EMPHASIS]whoooosh[/EMPHASIS]—went spinning like a top!\n\n[CURIOUS] A school of fish swam by, giggling. [laugh] 'Bubbles, you’re upside-down!' they teased. [EXCITED] Bubbles tried to flip right-side up, but—[EMPHASIS]splooosh[/EMPHASIS]—he bonked into a seaweed curtain instead.\n\n[GENTLE] The seaweed tickled his nose, and Bubbles couldn’t stop laughing. [chuckle] He floated in slow circles, watching the sunlight dance on the water above. [SLEEPY] The ocean rocked him gently, and his tentacles grew heavy. He curled into a little ball, drifting into the softest, warmest nap.",
+    "target_age": 0,
+    "age_min": 0,
+    "age_max": 1,
+    "age_group": "0-1",
+    "length": "SHORT",
+    "word_count": 90,
+    "duration_seconds": 0,
+    "categories": [
+      "Nature",
+      "Humor"
+    ],
+    "theme": "nature",
+    "morals": [
+      "Even silly days can end with warmth and comfort.",
+      "It’s okay to laugh at yourself—it makes everything brighter."
+    ],
+    "cover": "/covers/gen-0b5c4e7f4aa7.svg",
+    "musicProfile": "forest-night",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-0b5c_female_3.mp3",
+        "duration_seconds": 57.51,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-0b5c_male_2.mp3",
+        "duration_seconds": 49.64,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "male",
+    "character": {
+      "name": "Bubbles",
+      "identity": "A playful jellyfish who turns every tumble into a dance",
+      "special": "He makes the ocean giggle with his wobbly, wavy moves",
+      "personality_tags": [
+        "Playful",
+        "Cheerful"
+      ]
+    },
+    "cover_context": "A sunlit ocean at late afternoon, golden rays piercing the water’s surface, tiny bubbles rising like floating stars, swaying seaweed and darting fish in soft blue hues.",
+    "lead_character_type": "sea_creature",
+    "universe": "futuristic",
+    "geography": "Africa",
+    "life_aspect": "family_home",
+    "plot_archetype": "quest_journey",
+    "diversityFingerprint": {
+      "characterType": "sea_creature",
+      "setting": "ocean_water",
+      "mood": null,
+      "plotShape": "routine_ritual",
+      "scale": "tiny_intimate",
+      "companion": "solo",
+      "movement": "floating_drifting",
+      "timeOfDay": "late_afternoon",
+      "weather": "warm_breeze",
+      "theme": "gentleness",
+      "characterTrait": "clumsy_silly",
+      "magicType": "no_magic_realistic",
+      "season": "summer",
+      "senseEmphasis": "tactile"
+    },
+    "mood": "wired",
+    "created_at": "2026-03-24T01:32:26.380430",
+    "updated_at": "2026-03-24T01:32:26.380430",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 1,
+    "musicalBrief": {
+      "storyId": "gen-0b5c4e7f4aa7",
+      "ageGroup": "0-1",
+      "musicalIdentity": {
+        "culturalReference": "ambient_electronic",
+        "primaryLoop": "singing_bowl_rings",
+        "padCharacter": "warm_strings"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "F"
+      },
+      "melodicCharacter": "descending_lullaby",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 66
+      },
+      "environment": {
+        "natureSoundPrimary": "underwater",
+        "natureSoundSecondary": "underwater_bubbling",
+        "ambientEvents": [
+          "waterDrop",
+          "waveCycle"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "playful_wonder",
+        "phase2": "gentle_whimsy",
+        "phase3": "deep_stillness"
+      }
+    }
+  },
+  {
+    "id": "gen-1865516ea0ac",
+    "type": "poem",
+    "lang": "en",
+    "title": "Jasper and the Jiggly Jelly Feet",
+    "description": "Jasper’s toes turn into wiggly jelly blobs after a bath, bouncing him across the house in giggly chaos. His mama chases after him, laughing as they turn a simple evening into a silly, squishy adventure.",
+    "text": "[RHYTHMIC] Jasper’s toes went jiggle-jag,\nsoft as pudding, wobble-wag.\nMama gasped, \"Oh my, oh dear,\nwhy are those toes dancing here?\"\n\n[PAUSE]\n\n[JOYFUL] Up he hopped on squishy pads,\nbounced right off the bathroom mats.\n\"Whee!\" he cried, \"I’m flying now!\"\nMama laughed and chased his brow.\n\n[PAUSE]\n\n[GENTLE] Down the hall in zigzag flight,\njelly toes went left and right.\nMama scooped him, soft and near,\n\"Time for snuggles, my dear.\"\n\n[PAUSE]\n\n[WHISPERING] Toes grew still, the wiggles ceased,\nwrapped in blankets, warm and peace.\nMama hummed a lullaby,\nJasper closed his sleepy eye.\n\n[PAUSE]\n\n[SLEEPY] Moonlight spills so soft and low,\ndream of jelly, slow and slow.",
+    "annotated_text": "[RHYTHMIC] Jasper’s toes went jiggle-jag,\nsoft as pudding, wobble-wag.\nMama gasped, \"Oh my, oh dear,\nwhy are those toes dancing here?\"\n\n[PAUSE]\n\n[JOYFUL] Up he hopped on squishy pads,\nbounced right off the bathroom mats.\n\"Whee!\" he cried, \"I’m flying now!\"\nMama laughed and chased his brow.\n\n[PAUSE]\n\n[GENTLE] Down the hall in zigzag flight,\njelly toes went left and right.\nMama scooped him, soft and near,\n\"Time for snuggles, my dear.\"\n\n[PAUSE]\n\n[WHISPERING] Toes grew still, the wiggles ceased,\nwrapped in blankets, warm and peace.\nMama hummed a lullaby,\nJasper closed his sleepy eye.\n\n[PAUSE]\n\n[SLEEPY] Moonlight spills so soft and low,\ndream of jelly, slow and slow.",
+    "target_age": 0,
+    "age_min": 0,
+    "age_max": 1,
+    "age_group": "0-1",
+    "length": "MEDIUM",
+    "word_count": 100,
+    "duration_seconds": 0,
+    "categories": [
+      "Family",
+      "Bedtime"
+    ],
+    "theme": "family",
+    "morals": [
+      "Even silly moments can turn into warm, loving memories.",
+      "Playfulness and laughter make everyday moments special."
+    ],
+    "cover": "/covers/gen-1865516ea0ac.svg",
+    "musicProfile": "moonlit-meadow",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-1865_female_3.mp3",
+        "duration_seconds": 70.81,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_4",
+        "url": "/audio/pre-gen/gen-1865_female_4.mp3",
+        "duration_seconds": 80.93,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "male",
+    "character": {
+      "name": "Jasper",
+      "identity": "A playful little boy with a knack for turning ordinary days into adventures",
+      "special": "His toes turn into jiggly jelly when he’s extra happy and excited",
+      "personality_tags": [
+        "Playful",
+        "Warm"
+      ]
+    },
+    "cover_context": "A cozy living room bathed in golden late-afternoon light, with a plush rug, scattered toys, and a warm quilt draped over a rocking chair. The air shimmers with laughter, and soft shadows stretch across the wooden floor.",
+    "lead_character_type": "human",
+    "universe": "prehistoric",
+    "geography": "Arctic/Polar",
+    "life_aspect": "family_home",
+    "plot_archetype": "transformation",
+    "diversityFingerprint": {
+      "characterType": "human_child",
+      "setting": "cozy_indoor",
+      "mood": null,
+      "plotShape": "routine_ritual",
+      "scale": "tiny_intimate",
+      "companion": "duo",
+      "movement": "walking_wandering",
+      "timeOfDay": "late_afternoon",
+      "weather": "warm_breeze",
+      "theme": "gentleness",
+      "characterTrait": "playful_mischievous",
+      "magicType": "no_magic_realistic",
+      "season": "seasonless_timeless",
+      "senseEmphasis": "tactile"
+    },
+    "mood": "wired",
+    "created_at": "2026-03-24T01:42:28.380784",
+    "updated_at": "2026-03-24T01:42:28.380784",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 2,
+    "musicalBrief": {
+      "storyId": "gen-1865516ea0ac",
+      "ageGroup": "0-1",
+      "musicalIdentity": {
+        "culturalReference": "celtic",
+        "primaryLoop": "harp_arpeggios",
+        "padCharacter": "silk_veil"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "D"
+      },
+      "melodicCharacter": "cycling_arpeggio",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 66
+      },
+      "environment": {
+        "natureSoundPrimary": "rain_light",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "waterDrop",
+          "cricket"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "playful_bounce",
+        "phase2": "gentle_chase",
+        "phase3": "deep_stillness"
+      }
+    }
+  },
+  {
+    "id": "gen-7a8ee4b38802",
+    "type": "long_story",
+    "lang": "en",
+    "title": "Pippa and the Dancing Pumpkin Patch",
+    "description": "When Pippa trips into a patch of pumpkins, she discovers they can wiggle, jiggle, and even dance—but only when no one is watching. A warm summer breeze carries the secret of the garden, and Pippa must learn to move with the magic instead of against it.",
+    "text": "[GENTLE] Once, in a garden where the sun always lingered just a little longer, there lived a girl named Pippa. Pippa was small, with knees that liked to bump into things and hands that dropped whatever they touched. [JOYFUL] Her favorite place was the pumpkin patch, where the vines curled like green ribbons and the pumpkins sat round and quiet, as if they were waiting for something.\n\n[EXCITED] One afternoon, Pippa decided to count every pumpkin in the patch. She tiptoed between the rows, her fingers brushing the rough leaves. [EMPHASIS]One... two... three...[/EMPHASIS] But then—oh!—her foot caught on a vine, and she went [EMPHASIS]WHOOSH[/EMPHASIS] right into a pile of soft, golden hay. [laugh] The hay tickled her nose, and she sneezed so hard her hat flew off.\n\n[CURIOUS] When she sat up, something strange happened. The pumpkins weren’t just sitting there anymore. They were... wiggling. Just a little. Like they were stretching after a long nap. Pippa rubbed her eyes. [WHISPERING] \"Did you see that?\" she asked the nearest pumpkin. It didn’t answer, but it did give a tiny little bounce.\n\n[ADVENTUROUS] Pippa grinned. She wiggled her own toes in her shoes. Then she wiggled her fingers. Then she wiggled her whole self. [EMPHASIS]And then—oh my![/EMPHASIS] The pumpkins wiggled back! They rolled a little to the left. Then a little to the right. Then—[DRAMATIC_PAUSE]—they started to dance.\n\n[JOYFUL] Big pumpkins twirled. Little pumpkins hopped. One pumpkin with a crooked stem did a little jig all by itself. Pippa clapped her hands. \"I want to dance too!\" she said. So she tried. She spun in a circle—[EMPHASIS]BONK![/EMPHASIS]—right into a fence post. She hopped—[EMPHASIS]PLOP![/EMPHASIS]—right into a puddle of mud. She wiggled—[EMPHASIS]SPLAT![/EMPHASIS]—right onto her bottom.\n\n[MYSTERIOUS] The pumpkins stopped dancing. They all turned to look at her. Pippa’s cheeks turned pink. \"I’m not very good at this,\" she whispered. The biggest pumpkin rolled forward and nudged her gently with its stem. [WHISPERING] It was as if it was saying, \"Try again. But softer this time.\"\n\n[GENTLE] Pippa took a deep breath. The warm breeze carried the smell of earth and sun-warmed leaves. She closed her eyes and listened. The garden was humming—a soft, steady sound, like a lullaby made of rustling grass and buzzing bees. She wiggled her toes again, but this time, she didn’t force it. She let them move on their own, like they were part of the breeze.\n\n[CALM] The pumpkins began to wiggle again. Just a little. Then a little more. Pippa swayed with them, her arms floating like dandelion fluff in the air. She didn’t spin. She didn’t hop. She just... swayed. The pumpkins swayed with her. The vines swayed. Even the fence posts seemed to sway, just a tiny bit.\n\n[MYSTERIOUS] The sun dipped lower, painting the garden in gold and pink. Pippa’s shadow stretched long and lazy beside her. She could feel the earth beneath her feet, warm and soft. The pumpkins rolled closer, their round bodies pressing gently against her legs. She giggled, but it was a quiet giggle, the kind that doesn’t disturb the magic.\n\n[GENTLE] The garden was still moving, but slower now. The pumpkins settled into a gentle rocking, back and forth, back and forth. Pippa sat down in the hay, her back against the biggest pumpkin. It was warm, like a cozy blanket. The breeze carried the sound of crickets tuning their tiny violins. The sky turned from gold to peach to lavender, and the first firefly blinked on, like a little star that had fallen from the sky.\n\n[CALM] Pippa’s eyelids grew heavy. The pumpkins were still rocking, but softer now. The vines curled around her ankles, not to trip her, but to keep her safe. The hay beneath her was soft. The air was soft. The light was soft. Everything was soft, and slow, and just right.\n\n[SLEEPY] The garden was still. The pumpkins were still. The breeze was still. Only the fireflies moved, blinking their tiny lights like a secret code.\n\n[WHISPERING] Pippa’s breath slowed. Her fingers loosened. Her head tipped to the side, resting against the warm pumpkin.\n\n[SLEEPY] The hay was warm. The earth was warm. The night was warm. The stars blinked, one by one, like they were tucking the world in for the night.\n\n[WHISPERING] Close your eyes. The garden is sleeping. The pumpkins are sleeping. The fireflies are sleeping.\n\n[SLEEPY] Safe... and warm... and still...",
+    "annotated_text": "[PHASE_1]\n\n[GENTLE] Once, in a garden where the sun always lingered just a little longer, there lived a girl named Pippa. Pippa was small, with knees that liked to bump into things and hands that dropped whatever they touched. [JOYFUL] Her favorite place was the pumpkin patch, where the vines curled like green ribbons and the pumpkins sat round and quiet, as if they were waiting for something.\n\n[EXCITED] One afternoon, Pippa decided to count every pumpkin in the patch. She tiptoed between the rows, her fingers brushing the rough leaves. [EMPHASIS]One... two... three...[/EMPHASIS] But then—oh!—her foot caught on a vine, and she went [EMPHASIS]WHOOSH[/EMPHASIS] right into a pile of soft, golden hay. [laugh] The hay tickled her nose, and she sneezed so hard her hat flew off.\n\n[CURIOUS] When she sat up, something strange happened. The pumpkins weren’t just sitting there anymore. They were... wiggling. Just a little. Like they were stretching after a long nap. Pippa rubbed her eyes. [WHISPERING] \"Did you see that?\" she asked the nearest pumpkin. It didn’t answer, but it did give a tiny little bounce.\n\n[ADVENTUROUS] Pippa grinned. She wiggled her own toes in her shoes. Then she wiggled her fingers. Then she wiggled her whole self. [EMPHASIS]And then—oh my![/EMPHASIS] The pumpkins wiggled back! They rolled a little to the left. Then a little to the right. Then—[DRAMATIC_PAUSE]—they started to dance.\n\n[JOYFUL] Big pumpkins twirled. Little pumpkins hopped. One pumpkin with a crooked stem did a little jig all by itself. Pippa clapped her hands. \"I want to dance too!\" she said. So she tried. She spun in a circle—[EMPHASIS]BONK![/EMPHASIS]—right into a fence post. She hopped—[EMPHASIS]PLOP![/EMPHASIS]—right into a puddle of mud. She wiggled—[EMPHASIS]SPLAT![/EMPHASIS]—right onto her bottom.\n\n[MYSTERIOUS] The pumpkins stopped dancing. They all turned to look at her. Pippa’s cheeks turned pink. \"I’m not very good at this,\" she whispered. The biggest pumpkin rolled forward and nudged her gently with its stem. [WHISPERING] It was as if it was saying, \"Try again. But softer this time.\"\n\n[/PHASE_1]\n\n\n[PHASE_2]\n\n[GENTLE] Pippa took a deep breath. The warm breeze carried the smell of earth and sun-warmed leaves. She closed her eyes and listened. The garden was humming—a soft, steady sound, like a lullaby made of rustling grass and buzzing bees. She wiggled her toes again, but this time, she didn’t force it. She let them move on their own, like they were part of the breeze.\n\n[CALM] The pumpkins began to wiggle again. Just a little. Then a little more. Pippa swayed with them, her arms floating like dandelion fluff in the air. She didn’t spin. She didn’t hop. She just... swayed. The pumpkins swayed with her. The vines swayed. Even the fence posts seemed to sway, just a tiny bit.\n\n[MYSTERIOUS] The sun dipped lower, painting the garden in gold and pink. Pippa’s shadow stretched long and lazy beside her. She could feel the earth beneath her feet, warm and soft. The pumpkins rolled closer, their round bodies pressing gently against her legs. She giggled, but it was a quiet giggle, the kind that doesn’t disturb the magic.\n\n[GENTLE] The garden was still moving, but slower now. The pumpkins settled into a gentle rocking, back and forth, back and forth. Pippa sat down in the hay, her back against the biggest pumpkin. It was warm, like a cozy blanket. The breeze carried the sound of crickets tuning their tiny violins. The sky turned from gold to peach to lavender, and the first firefly blinked on, like a little star that had fallen from the sky.\n\n[CALM] Pippa’s eyelids grew heavy. The pumpkins were still rocking, but softer now. The vines curled around her ankles, not to trip her, but to keep her safe. The hay beneath her was soft. The air was soft. The light was soft. Everything was soft, and slow, and just right.\n\n[/PHASE_2]\n\n\n[PHASE_3]\n\n[SLEEPY] The garden was still. The pumpkins were still. The breeze was still. Only the fireflies moved, blinking their tiny lights like a secret code.\n\n[WHISPERING] Pippa’s breath slowed. Her fingers loosened. Her head tipped to the side, resting against the warm pumpkin.\n\n[SLEEPY] The hay was warm. The earth was warm. The night was warm. The stars blinked, one by one, like they were tucking the world in for the night.\n\n[WHISPERING] Close your eyes. The garden is sleeping. The pumpkins are sleeping. The fireflies are sleeping.\n\n[SLEEPY] Safe... and warm... and still...\n\n[/PHASE_3]",
+    "target_age": 3,
+    "age_min": 2,
+    "age_max": 5,
+    "age_group": "2-5",
+    "length": "LONG",
+    "word_count": 715,
+    "duration_seconds": 0,
+    "categories": [
+      "Nature Stories",
+      "Gentle Adventure"
+    ],
+    "theme": "nature",
+    "morals": [
+      "Sometimes the gentlest movements create the most magic.",
+      "When we slow down and listen, the world whispers its secrets to us."
+    ],
+    "cover": "/covers/gen-7a8ee4b38802.svg",
+    "musicProfile": "moonlit-meadow",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-7a8e_female_3.mp3",
+        "duration_seconds": 350.73,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-7a8e_male_2.mp3",
+        "duration_seconds": 316.98,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "neutral",
+    "character": {
+      "name": "Pippa",
+      "identity": "A clumsy little gardener who learns to dance with the earth",
+      "special": "She can hear the quiet rhythm of the garden when she moves softly",
+      "personality_tags": [
+        "Playful",
+        "Gentle"
+      ]
+    },
+    "cover_context": "A sun-drenched garden at golden hour, where pumpkins glow warmly under strings of tiny lanterns. Vines curl like ribbons between wooden stakes, and fireflies flicker in the soft lavender light. The air shimmers with dust motes, and the first stars peek through a peach-colored sky.",
+    "lead_character_type": "human",
+    "universe": "prehistoric",
+    "geography": "Americas",
+    "life_aspect": "family_home",
+    "plot_archetype": "quest_journey",
+    "diversityFingerprint": {
+      "characterType": "human_child",
+      "setting": "garden_farm",
+      "mood": null,
+      "plotShape": "transformation",
+      "scale": "tiny_intimate",
+      "companion": "character_and_environment",
+      "movement": "building_making",
+      "timeOfDay": "late_afternoon",
+      "weather": "warm_breeze",
+      "theme": "gentleness",
+      "characterTrait": "clumsy_silly",
+      "magicType": "transformation_metamorphosis",
+      "season": "summer",
+      "senseEmphasis": "kinesthetic"
+    },
+    "mood": "wired",
+    "created_at": "2026-03-24T01:38:19.603359",
+    "updated_at": "2026-03-24T01:38:19.603359",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 6,
+    "musicalBrief": {
+      "storyId": "gen-7a8ee4b38802",
+      "ageGroup": "2-5",
+      "musicalIdentity": {
+        "culturalReference": "folk_acoustic",
+        "primaryLoop": "guitar_fingerpick",
+        "padCharacter": "forest_hum"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "Bb"
+      },
+      "melodicCharacter": "cycling_arpeggio",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 66
+      },
+      "environment": {
+        "natureSoundPrimary": "wind_gentle",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "leaves",
+          "cricket"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "playful_curiosity",
+        "phase2": "warm_discovery",
+        "phase3": "deep_stillness"
+      }
+    }
+  },
+  {
+    "id": "gen-ccc1075c5943",
+    "type": "song",
+    "lang": "en",
+    "title": "Tink and the Whispering Fireflies",
+    "description": "In a meadow where fireflies hum lullabies, a little robot named Tink hears a melody no one else can. Drawn by the glow, he follows the song into a hidden thicket where magic flickers like starlight—and a tiny friend waits to share the secret.",
+    "text": "[SINGING]\nLittle Tink with glowing eyes,\nWalks where fireflies softly rise.\nWhisper songs they hum so low,\nOnly he can hear them glow.\n\n[PAUSE]\n\n[SINGING]\nClose your eyes and drift so near,\nMoonlight holds you, safe and dear.\nStars are singing, soft and light,\nTuck you in the hush of night.\n\n[PAUSE]\n\n[SINGING]\nTink steps where the shadows play,\nFireflies dance in silver spray.\nOne small light begins to gleam,\nLeading him to dreamer’s stream.\n\n[PAUSE]\n\n[SINGING]\nClose your eyes and drift so near,\nMoonlight holds you, safe and dear.\nStars are singing, soft and light,\nTuck you in the hush of night.\n\n[PAUSE]\n\n[SLEEPY]\nNow the meadow hums so still,\nTink lies down on gentle hill.\nFireflies kiss his metal cheek,\nWhispering the dreams they seek.\n\n[PAUSE]\n\n[SINGING]\nClose your eyes and drift so near,\nMoonlight holds you, safe and dear.\nStars are singing, soft and light,\nTuck you in the hush of night.\n\n[PAUSE]\n\n[HUMMING]\nMmm mmm mmm\nMmm mmm mmm\nMmm mmm mmm",
+    "annotated_text": "[SINGING]\nLittle Tink with glowing eyes,\nWalks where fireflies softly rise.\nWhisper songs they hum so low,\nOnly he can hear them glow.\n\n[PAUSE]\n\n[SINGING]\nClose your eyes and drift so near,\nMoonlight holds you, safe and dear.\nStars are singing, soft and light,\nTuck you in the hush of night.\n\n[PAUSE]\n\n[SINGING]\nTink steps where the shadows play,\nFireflies dance in silver spray.\nOne small light begins to gleam,\nLeading him to dreamer’s stream.\n\n[PAUSE]\n\n[SINGING]\nClose your eyes and drift so near,\nMoonlight holds you, safe and dear.\nStars are singing, soft and light,\nTuck you in the hush of night.\n\n[PAUSE]\n\n[SLEEPY]\nNow the meadow hums so still,\nTink lies down on gentle hill.\nFireflies kiss his metal cheek,\nWhispering the dreams they seek.\n\n[PAUSE]\n\n[SINGING]\nClose your eyes and drift so near,\nMoonlight holds you, safe and dear.\nStars are singing, soft and light,\nTuck you in the hush of night.\n\n[PAUSE]\n\n[HUMMING]\nMmm mmm mmm\nMmm mmm mmm\nMmm mmm mmm",
+    "target_age": 3,
+    "age_min": 2,
+    "age_max": 5,
+    "age_group": "2-5",
+    "length": "MEDIUM",
+    "word_count": 153,
+    "duration_seconds": 0,
+    "categories": [
+      "Fantasy",
+      "Lullaby"
+    ],
+    "theme": "fantasy",
+    "morals": [
+      "Even the smallest light can guide you home.",
+      "Belonging begins when you listen to the quiet songs."
+    ],
+    "cover": "/covers/gen-ccc1075c5943.svg",
+    "musicProfile": "moonlit-meadow",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-ccc1_female_2.mp3",
+        "duration_seconds": 244.91,
+        "provider": "ace-step"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-ccc1_female_3.mp3",
+        "duration_seconds": 244.91,
+        "provider": "ace-step"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "male",
+    "character": {
+      "name": "Tink",
+      "identity": "A gentle robot who hears the hidden music of the world",
+      "special": "His glowing eyes see the magic others miss in twilight’s glow",
+      "personality_tags": [
+        "Dreamy",
+        "Gentle"
+      ]
+    },
+    "cover_context": "A twilight meadow bathed in soft blue and silver light, fireflies drifting like tiny lanterns above swaying grass, their glow reflecting in a quiet stream. Wildflowers nod in the warm breeze, and the sky deepens into violet as stars begin to wake.",
+    "lead_character_type": "robot",
+    "universe": "fantasy_realm",
+    "geography": "Ocean/Islands",
+    "life_aspect": "play_discovery",
+    "plot_archetype": "celebration",
+    "diversityFingerprint": {
+      "characterType": "robot_mechanical",
+      "setting": "meadow_field",
+      "mood": null,
+      "plotShape": "discovery_reveal",
+      "scale": "personal",
+      "companion": "duo",
+      "movement": "walking_wandering",
+      "timeOfDay": "twilight_blue_hour",
+      "weather": "magical_atmospheric",
+      "theme": "belonging",
+      "characterTrait": "dreamy_imaginative",
+      "magicType": "glowing_bioluminescent",
+      "season": "summer",
+      "senseEmphasis": "visual"
+    },
+    "mood": "wired",
+    "created_at": "2026-03-24T01:45:25.388720",
+    "updated_at": "2026-03-24T01:45:25.388720",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 5
   }
 ]
