@@ -55,6 +55,8 @@ CONTENT_PATH = SEED_OUTPUT / "content.json"
 CONTENT_EXPANDED_PATH = SEED_OUTPUT / "content_expanded.json"
 STATE_PATH = SEED_OUTPUT / "pipeline_state.json"
 WEB_DIR = BASE_DIR.parent / "dreamweaver-web"
+# Persistent audio store — survives git re-clones (not inside any repo)
+AUDIO_STORE = Path("/opt/audio-store/pre-gen")
 
 # ── Logging ──────────────────────────────────────────────────────────────
 LOG_DIR = BASE_DIR / "logs"
@@ -1332,7 +1334,7 @@ def step_sync(args, state: dict) -> bool:
         return False
 
     # Copy audio files to web public folder so nginx can serve them.
-    # Includes current run's items AND any recovered items from previous runs.
+    # Also back up to persistent audio store (survives git re-clones).
     web_audio_dir = WEB_DIR / "public" / "audio" / "pre-gen"
     backend_audio_dir = BASE_DIR / "audio" / "pre-gen"
     if web_audio_dir.exists() and backend_audio_dir.exists():
@@ -1361,6 +1363,37 @@ def step_sync(args, state: dict) -> bool:
                     copied += 1
         if copied:
             logger.info("  Copied %d audio files to web public folder", copied)
+
+        # ── Back up ALL audio to persistent store (survives repo re-clones) ──
+        if AUDIO_STORE.exists() or True:  # always try to create
+            AUDIO_STORE.mkdir(parents=True, exist_ok=True)
+            backed_up = 0
+            # Back up from web dir (authoritative source with all files)
+            for mp3 in web_audio_dir.glob("*.mp3"):
+                store_dest = AUDIO_STORE / mp3.name
+                if not store_dest.exists():
+                    shutil.copy2(mp3, store_dest)
+                    backed_up += 1
+            # Also back up from backend dir
+            for mp3 in backend_audio_dir.glob("*.mp3"):
+                store_dest = AUDIO_STORE / mp3.name
+                if not store_dest.exists():
+                    shutil.copy2(mp3, store_dest)
+                    backed_up += 1
+            if backed_up:
+                logger.info("  Backed up %d audio files to persistent store", backed_up)
+
+        # ── Recover missing audio from persistent store ──
+        # This handles cases where web repo was re-cloned and lost gitignored files
+        recovered = 0
+        if AUDIO_STORE.exists():
+            for mp3 in AUDIO_STORE.glob("*.mp3"):
+                web_dest = web_audio_dir / mp3.name
+                if not web_dest.exists():
+                    shutil.copy2(mp3, web_dest)
+                    recovered += 1
+            if recovered:
+                logger.info("  Recovered %d audio files from persistent store (repo re-clone detected)", recovered)
 
     # Save diversity snapshot for current/previous comparison on dashboard
     try:
@@ -1504,6 +1537,39 @@ def step_deploy_prod(args, state: dict) -> bool:
         if covers_dir.exists() and audio_dir.exists():
             frontend_ok = True
             logger.info("  Frontend: static assets served by nginx (zero-downtime, no rebuild)")
+
+            # ── Audio integrity check: verify all referenced audio files exist ──
+            api_content_path = BASE_DIR / "data" / "content.json"
+            if api_content_path.exists():
+                import shutil as _shutil
+                content = json.loads(api_content_path.read_text())
+                web_audio_dir = WEB_DIR / "public" / "audio" / "pre-gen"
+                missing_files = []
+                for item in content:
+                    for v in item.get("audio_variants") or []:
+                        url = v.get("url", "")
+                        if url:
+                            fpath = WEB_DIR / "public" / url.lstrip("/")
+                            if not fpath.exists():
+                                missing_files.append(fpath.name)
+                if missing_files:
+                    # Try to recover from persistent store
+                    recovered = 0
+                    if AUDIO_STORE.exists():
+                        for fname in missing_files:
+                            store_src = AUDIO_STORE / fname
+                            if store_src.exists():
+                                _shutil.copy2(store_src, web_audio_dir / fname)
+                                recovered += 1
+                    still_missing = len(missing_files) - recovered
+                    if recovered:
+                        logger.info("  Audio integrity: recovered %d/%d missing files from store",
+                                    recovered, len(missing_files))
+                    if still_missing:
+                        logger.warning("  Audio integrity: %d files still missing (no backup available)",
+                                       still_missing)
+                else:
+                    logger.info("  Audio integrity: all referenced audio files present")
         else:
             # First-time setup — need a full build
             logger.warning("  Public dirs missing — performing full frontend build...")

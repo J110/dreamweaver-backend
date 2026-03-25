@@ -991,6 +991,126 @@ async def dashboard_server_health(
     }
 
 
+# ── Content Audio Audit ──────────────────────────────────────────────
+
+WEB_PUBLIC = Path("/opt/dreamweaver-web/public")
+AUDIO_STORE = Path("/opt/audio-store/pre-gen")
+
+
+@router.get("/content-audit")
+async def content_audio_audit(
+    authorization: Optional[str] = Header(None),
+):
+    """Audit content for missing audio files. Returns stories with broken audio references."""
+    verify_analytics_key(authorization)
+
+    content_path = Path("data/content.json")
+    if not content_path.exists():
+        return {"status": "error", "message": "content.json not found"}
+
+    content = json.loads(content_path.read_text())
+    web_audio_dir = WEB_PUBLIC / "audio" / "pre-gen"
+
+    missing_stories = []
+    total_stories_with_audio = 0
+    total_audio_files = 0
+    total_missing_files = 0
+
+    for item in content:
+        variants = item.get("audio_variants") or []
+        if not variants:
+            continue
+        total_stories_with_audio += 1
+        story_missing = []
+        for v in variants:
+            url = v.get("url", "")
+            if url:
+                total_audio_files += 1
+                fpath = WEB_PUBLIC / url.lstrip("/")
+                if not fpath.exists():
+                    total_missing_files += 1
+                    # Check if recoverable from persistent store
+                    fname = Path(url).name
+                    recoverable = (AUDIO_STORE / fname).exists() if AUDIO_STORE.exists() else False
+                    story_missing.append({
+                        "voice": v.get("voice", ""),
+                        "url": url,
+                        "recoverable": recoverable,
+                    })
+        if story_missing:
+            missing_stories.append({
+                "id": item.get("id", ""),
+                "title": item.get("title", ""),
+                "lang": item.get("lang", "en"),
+                "type": item.get("story_type") or item.get("type", ""),
+                "created_at": item.get("created_at", ""),
+                "missing_count": len(story_missing),
+                "total_variants": len(variants),
+                "missing_variants": story_missing,
+            })
+
+    # Sort by created_at descending
+    missing_stories.sort(key=lambda x: x.get("created_at", ""), reverse=True)
+
+    return {
+        "status": "ok" if not missing_stories else "warning",
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "summary": {
+            "total_stories_with_audio": total_stories_with_audio,
+            "total_audio_files": total_audio_files,
+            "missing_files": total_missing_files,
+            "affected_stories": len(missing_stories),
+            "recoverable": sum(
+                1 for s in missing_stories
+                if all(v["recoverable"] for v in s["missing_variants"])
+            ),
+        },
+        "missing_stories": missing_stories,
+    }
+
+
+@router.post("/content-audit/recover")
+async def content_audio_recover(
+    authorization: Optional[str] = Header(None),
+):
+    """Recover missing audio files from persistent store."""
+    verify_analytics_key(authorization)
+
+    import shutil
+
+    content_path = Path("data/content.json")
+    if not content_path.exists():
+        return {"status": "error", "message": "content.json not found"}
+    if not AUDIO_STORE.exists():
+        return {"status": "error", "message": "Audio store not found at /opt/audio-store/pre-gen"}
+
+    content = json.loads(content_path.read_text())
+    web_audio_dir = WEB_PUBLIC / "audio" / "pre-gen"
+    web_audio_dir.mkdir(parents=True, exist_ok=True)
+
+    recovered = 0
+    still_missing = 0
+    for item in content:
+        for v in item.get("audio_variants") or []:
+            url = v.get("url", "")
+            if url:
+                fpath = WEB_PUBLIC / url.lstrip("/")
+                if not fpath.exists():
+                    fname = Path(url).name
+                    store_src = AUDIO_STORE / fname
+                    if store_src.exists():
+                        shutil.copy2(store_src, fpath)
+                        recovered += 1
+                    else:
+                        still_missing += 1
+
+    return {
+        "status": "ok",
+        "recovered": recovered,
+        "still_missing": still_missing,
+    }
+
+
 # ── Diversity Dashboard ──────────────────────────────────────────────
 
 DIVERSITY_SNAPSHOT_PATH = Path("data/diversity_snapshot.json")
