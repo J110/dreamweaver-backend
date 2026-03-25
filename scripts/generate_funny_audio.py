@@ -122,20 +122,22 @@ def get_tts_params(voice_id: str, is_punchline: bool) -> dict:
 
 
 def generate_tts_modal(text: str, voice_id: str, params: dict) -> bytes:
-    """Generate TTS audio via Modal Chatterbox endpoint."""
+    """Generate TTS audio via Modal Chatterbox endpoint (GET with query params)."""
     import httpx
+    from urllib.parse import urlencode
 
-    payload = {
+    query_params = {
         "text": text,
         "voice": voice_id,
         "exaggeration": params.get("exaggeration", 0.7),
         "cfg_weight": params.get("cfg_weight", 0.5),
         "speed": params.get("speed", 0.9),
-        "content_type": "funny_short",
     }
 
-    with httpx.Client(timeout=60) as client:
-        resp = client.post(MODAL_TTS_URL, json=payload)
+    url = f"{MODAL_TTS_URL}?{urlencode(query_params)}"
+
+    with httpx.Client(timeout=120) as client:
+        resp = client.get(url)
         resp.raise_for_status()
         return resp.content
 
