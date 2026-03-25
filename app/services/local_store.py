@@ -68,7 +68,7 @@ class LocalStore:
                         changed = False
                         # Fields that should always be updated from seed
                         # (frontend-owned fields that may improve over time)
-                        SEED_PREFERRED_FIELDS = {"cover", "musicParams", "audio_variants", "mood", "musicalBrief"}
+                        SEED_PREFERRED_FIELDS = {"cover", "musicParams", "audio_variants", "mood", "musicalBrief", "story_type"}
                         for item in seed_items:
                             item_id = item[key_field]
                             if item_id not in self.collections[coll_name]:
@@ -158,7 +158,7 @@ class LocalStore:
                         with open(seed_path) as f:
                             seed_items = json.load(f)
                             changed = False
-                            SEED_PREFERRED_FIELDS = {"cover", "musicParams", "audio_variants", "mood", "musicalBrief"}
+                            SEED_PREFERRED_FIELDS = {"cover", "musicParams", "audio_variants", "mood", "musicalBrief", "story_type"}
                             for item in seed_items:
                                 item_id = item[key_field]
                                 if item_id not in self.collections[coll_name]:
