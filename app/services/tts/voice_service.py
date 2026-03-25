@@ -121,6 +121,151 @@ VOICES: Dict[str, Voice] = {
 }
 
 
+# ── Funny Short Character Voices ─────────────────────────────
+# Completely separate from sleep voices. Used only by the funny
+# shorts pipeline. Never mixed with sleep story generation.
+
+FUNNY_VOICES: Dict[str, Voice] = {
+    "high_pitch_cartoon": Voice(
+        id="high_pitch_cartoon",
+        name="Mouse",
+        gender=Gender.NEUTRAL,
+        description="Squeaky, high, energetic — Minnie Mouse energy. Reacts with alarm and panic.",
+        emotions=["alarm", "panic", "confusion", "surprise"],
+        recommended_for=["funny_short"],
+        age_group="child",
+        reference_audio="high_pitch_cartoon.wav",
+    ),
+    "comedic_villain": Voice(
+        id="comedic_villain",
+        name="Croc",
+        gender=Gender.NEUTRAL,
+        description="Dramatic, deep, theatrical crocodile villain. Grand plans, spectacular defeat.",
+        emotions=["dramatic", "self-important", "outraged", "defeated"],
+        recommended_for=["funny_short"],
+        age_group="child",
+        reference_audio="comedic_villain.wav",
+    ),
+    "young_sweet": Voice(
+        id="young_sweet",
+        name="Sweet",
+        gender=Gender.FEMALE,
+        description="Young, innocent-sounding but sarcastic. Sweet tone, cutting content. Unbothered.",
+        emotions=["sarcastic", "deadpan", "unbothered", "dry"],
+        recommended_for=["funny_short"],
+        age_group="child",
+        reference_audio="young_sweet.wav",
+    ),
+    "mysterious_witch": Voice(
+        id="mysterious_witch",
+        name="Witch",
+        gender=Gender.FEMALE,
+        description="Dark, low-pitched, mysterious, ominous. Makes everything a dark prophecy.",
+        emotions=["ominous", "dramatic", "mysterious", "deadpan"],
+        recommended_for=["funny_short"],
+        age_group="child",
+        reference_audio="mysterious_witch.wav",
+    ),
+    "musical_original": Voice(
+        id="musical_original",
+        name="Musical",
+        gender=Gender.NEUTRAL,
+        description="Rhythmic, mature, poetic, almost singing. Delivers nonsense verse seriously.",
+        emotions=["rhythmic", "poetic", "whimsical", "serious"],
+        recommended_for=["funny_short"],
+        age_group="general",
+        reference_audio="musical_original.wav",
+    ),
+}
+
+
+# ── Funny Voice TTS Parameters ──────────────────────────────
+
+FUNNY_VOICE_PARAMS: Dict[str, dict] = {
+    "high_pitch_cartoon": {
+        "exaggeration": 0.80,
+        "cfg_weight": 0.60,
+        "speed": 0.95,
+    },
+    "comedic_villain": {
+        "exaggeration": 0.85,
+        "cfg_weight": 0.55,
+        "speed": 0.88,
+    },
+    "young_sweet": {
+        "exaggeration": 0.55,
+        "cfg_weight": 0.50,
+        "speed": 0.92,
+    },
+    "mysterious_witch": {
+        "exaggeration": 0.65,
+        "cfg_weight": 0.45,
+        "speed": 0.85,
+    },
+    "musical_original": {
+        "exaggeration": 0.70,
+        "cfg_weight": 0.55,
+        "speed": 0.90,
+    },
+}
+
+FUNNY_PUNCHLINE_PARAMS: Dict[str, dict] = {
+    "high_pitch_cartoon": {
+        "exaggeration": 0.88,
+        "speed_multiplier": 0.90,
+    },
+    "comedic_villain": {
+        "exaggeration": 0.92,
+        "speed_multiplier": 0.85,
+    },
+    "young_sweet": {
+        "exaggeration": 0.50,
+        "speed_multiplier": 0.95,
+    },
+    "mysterious_witch": {
+        "exaggeration": 0.70,
+        "speed_multiplier": 0.80,
+    },
+    "musical_original": {
+        "exaggeration": 0.78,
+        "speed_multiplier": 0.88,
+    },
+}
+
+# ── Funny Voice → Character Loop Mapping ─────────────────────
+
+FUNNY_VOICE_MAP: Dict[str, str] = {
+    "MOUSE": "high_pitch_cartoon",
+    "CROC": "comedic_villain",
+    "SWEET": "young_sweet",
+    "WITCH": "mysterious_witch",
+    "MUSICAL": "musical_original",
+}
+
+CHARACTER_LOOP_MAP: Dict[str, str] = {
+    "MOUSE": "bouncy_cartoon",
+    "CROC": "villain_march",
+    "WITCH": "mysterious_creep",
+    "SWEET": "sweet_innocence",
+    "MUSICAL": "poetic_bounce",
+}
+
+
+def get_funny_voice(voice_id: str) -> Optional[Voice]:
+    """Get a funny character voice by ID."""
+    return FUNNY_VOICES.get(voice_id)
+
+
+def get_funny_voice_params(voice_id: str, is_punchline: bool = False) -> dict:
+    """Get TTS params for a funny voice, with optional punchline boost."""
+    params = FUNNY_VOICE_PARAMS.get(voice_id, {}).copy()
+    if is_punchline and voice_id in FUNNY_PUNCHLINE_PARAMS:
+        punch = FUNNY_PUNCHLINE_PARAMS[voice_id]
+        params["exaggeration"] = punch["exaggeration"]
+        params["speed"] = params.get("speed", 0.90) * punch["speed_multiplier"]
+    return params
+
+
 # ── Tone Presets ──────────────────────────────────────────────────────
 # Scale factors applied on top of content-type base profiles.
 
