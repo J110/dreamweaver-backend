@@ -18,6 +18,8 @@ services:
       - ./data:/app/data
       - ./audio:/app/audio:ro
       - ./clips:/app/clips
+      - /opt/dreamweaver-web/public:/opt/dreamweaver-web/public:ro
+      - /opt/audio-store:/opt/audio-store
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
