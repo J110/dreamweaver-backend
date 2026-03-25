@@ -134,9 +134,12 @@ def parse_sting_positions(script: str, sentence_timestamps: list[float]) -> list
 
         char_match = re.match(r"^\[(\w+)\]\s*(.+)", line)
         if not char_match:
+            # Fallback: accept CHAR: text format
+            char_match = re.match(r"^(\w+):\s+(.+)", line)
+        if not char_match:
             continue
 
-        character = char_match.group(1)
+        character = char_match.group(1).upper()
         if character in ("TITLE", "AGE", "VOICES", "COMEDY_TYPE"):
             continue
 
@@ -167,8 +170,10 @@ def get_sentence_timestamps(narration: AudioSegment, script: str, gap_ms: int = 
         if not line:
             continue
         char_match = re.match(r"^\[(\w+)\]\s*(.+)", line)
+        if not char_match:
+            char_match = re.match(r"^(\w+):\s+(.+)", line)
         if char_match:
-            character = char_match.group(1)
+            character = char_match.group(1).upper()
             if character not in ("TITLE", "AGE", "VOICES", "COMEDY_TYPE"):
                 count += 1
 

@@ -124,35 +124,43 @@ PREMISE SUMMARY:
 After the cover tag, add a [PREMISE: ...] tag with a short (5-10 word) summary of the
 core premise. Example: [PREMISE: crocodile pretends to be a rock]
 
-OUTPUT FORMAT — use EXACTLY this format:
+OUTPUT FORMAT — use EXACTLY this format. Character tags MUST use square brackets like [MOUSE], [CROC], etc.
+VOICES line MUST use these exact voice IDs: high_pitch_cartoon, comedic_villain, young_sweet, mysterious_witch, musical_original
+(MOUSE=high_pitch_cartoon, CROC=comedic_villain, SWEET=young_sweet, WITCH=mysterious_witch, MUSICAL=musical_original)
+
 [TITLE: Your Title Here]
 [AGE: {age_group}]
-[VOICES: voice_id_1, voice_id_2]
+[VOICES: high_pitch_cartoon, comedic_villain]
 [COMEDY_TYPE: {comedy_type}]
 
 [SETUP]
-[CHARACTER] Sentence text. [STING: type]
-[CHARACTER] Another sentence.
+[MOUSE] Sentence text. [STING: type]
+[CROC] Another sentence.
 [/SETUP]
 
 [BEAT_1]
-[CHARACTER] Sentence text.
+[MOUSE] Sentence text.
 [/BEAT_1]
 
 [BEAT_2]
-[CHARACTER] Sentence text.
+[CROC] Sentence text.
 [/BEAT_2]
 
 [BEAT_3]
-[CHARACTER] Sentence text. [STING: type]
+[MOUSE] Sentence text. [STING: type]
 [/BEAT_3]
 
 [BUTTON]
-[CHARACTER] [PUNCHLINE]Final punchline sentence.[/PUNCHLINE] [STING: type]
+[CROC] [PUNCHLINE]Final punchline sentence.[/PUNCHLINE] [STING: type]
 [/BUTTON]
 
 [COVER: One-sentence visual description of the funniest punchline moment]
 [PREMISE: 5-10 word premise summary]
+
+CRITICAL FORMAT RULES:
+- Each dialogue line MUST start with [CHARACTER] (square brackets), e.g. [MOUSE] Hello!
+- Do NOT use "MOUSE:" or "CROC:" format — ONLY [MOUSE] and [CROC] with square brackets.
+- VOICES line must list voice IDs, not character names.
 """
 
 CHARACTER_TO_VOICE = {
@@ -249,8 +257,9 @@ def validate_script(script_text: str) -> list[str]:
     if len(stings) > 8:
         errors.append(f"Too many stings: {len(stings)} (max 8)")
 
-    # Check every content line has a character tag
+    # Check every content line has a character tag (accept [CHAR] or CHAR: format)
     in_section = False
+    valid_chars = {"MOUSE", "CROC", "SWEET", "WITCH", "MUSICAL"}
     for line in script_text.strip().split("\n"):
         line = line.strip()
         if line.startswith("[SETUP]") or line.startswith("[BEAT_") or line.startswith("[BUTTON]"):
@@ -259,8 +268,12 @@ def validate_script(script_text: str) -> list[str]:
         if line.startswith("[/"):
             in_section = False
             continue
-        if in_section and line and not line.startswith("["):
-            errors.append(f"Untagged line: {line[:50]}...")
+        if in_section and line:
+            # Accept [CHAR] format or CHAR: format
+            has_bracket_tag = re.match(r"^\[(\w+)\]", line)
+            has_colon_tag = re.match(r"^(\w+):\s", line)
+            if not has_bracket_tag and not has_colon_tag:
+                errors.append(f"Untagged line: {line[:50]}...")
 
     # Check voices
     voices_match = re.search(r"\[VOICES:\s*(.+?)\]", script_text)
@@ -281,9 +294,19 @@ def parse_script_metadata(script_text: str) -> dict:
     cover_match = re.search(r"\[COVER:\s*(.+?)\]", script_text)
     premise_match = re.search(r"\[PREMISE:\s*(.+?)\]", script_text)
 
+    # Normalize voice names: accept both character names and voice IDs
+    CHAR_NAME_TO_VOICE = {
+        "mouse": "high_pitch_cartoon",
+        "croc": "comedic_villain",
+        "sweet": "young_sweet",
+        "witch": "mysterious_witch",
+        "musical": "musical_original",
+    }
     voices = []
     if voices_match:
-        voices = [v.strip() for v in voices_match.group(1).split(",")]
+        for v in voices_match.group(1).split(","):
+            v = v.strip().lower()
+            voices.append(CHAR_NAME_TO_VOICE.get(v, v))
 
     return {
         "title": title_match.group(1).strip() if title_match else "Untitled",

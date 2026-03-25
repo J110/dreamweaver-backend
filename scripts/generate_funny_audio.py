@@ -66,12 +66,15 @@ def parse_voiced_sentences(script: str) -> list[VoicedSentence]:
         if re.match(r"^\[(TITLE|AGE|VOICES|COMEDY_TYPE):", line):
             continue
 
-        # Parse character tag
+        # Parse character tag — accept [CHAR] text or CHAR: text
         char_match = re.match(r"^\[(\w+)\]\s*(.+)", line)
+        if not char_match:
+            # Fallback: accept CHAR: text format (LLM sometimes generates this)
+            char_match = re.match(r"^(\w+):\s+(.+)", line)
         if not char_match:
             continue
 
-        character = char_match.group(1)
+        character = char_match.group(1).upper()
         rest = char_match.group(2)
 
         # Check if character is valid
