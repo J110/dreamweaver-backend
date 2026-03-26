@@ -19,5 +19,7 @@
   "play_count": 0,
   "replay_count": 0,
   "audio_file": "the-crocodile-who-couldn-t-stop-sneezing-647e.mp3",
-  "duration_seconds": 45
+  "duration_seconds": 45,
+  "format": "duo",
+  "primary_voice": "high_pitch_cartoon"
 }

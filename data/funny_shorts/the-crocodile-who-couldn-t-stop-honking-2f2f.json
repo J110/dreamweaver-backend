@@ -19,5 +19,7 @@
   "play_count": 0,
   "replay_count": 0,
   "audio_file": "the-crocodile-who-couldn-t-stop-honking-2f2f.mp3",
-  "duration_seconds": 50
+  "duration_seconds": 50,
+  "format": "duo",
+  "primary_voice": "high_pitch_cartoon"
 }

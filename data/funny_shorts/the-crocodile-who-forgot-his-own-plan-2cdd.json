@@ -19,5 +19,7 @@
   "play_count": 0,
   "replay_count": 0,
   "audio_file": "the-crocodile-who-forgot-his-own-plan-2cdd.mp3",
-  "duration_seconds": 37
+  "duration_seconds": 37,
+  "format": "duo",
+  "primary_voice": "young_sweet"
 }
