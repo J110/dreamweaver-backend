@@ -190,7 +190,7 @@ LOOP_PROMPTS = {
 }
 
 
-def generate_audio_replicate(prompt: str, duration: int, max_retries: int = 3) -> bytes | None:
+def generate_audio_replicate(prompt: str, duration: int, max_retries: int = 5) -> bytes | None:
     """Generate audio via Replicate MusicGen with rate limit handling."""
     for attempt in range(max_retries):
         try:
@@ -221,7 +221,7 @@ def generate_audio_replicate(prompt: str, duration: int, max_retries: int = 3) -
         except Exception as e:
             error_str = str(e)
             if "429" in error_str or "throttled" in error_str.lower():
-                wait = 15 * (attempt + 1)
+                wait = 60 * (attempt + 1)
                 print(f"    Rate limited, waiting {wait}s (attempt {attempt+1}/{max_retries})...")
                 time.sleep(wait)
                 continue
@@ -300,8 +300,9 @@ def generate_stings(force: bool = False):
             success += 1
             print(f"    OK (raw, no trim)")
 
-        # Rate limit — under $5 credit, Replicate throttles to 6 req/min
-        time.sleep(12)
+        # Rate limit — under $5 credit, Replicate throttles heavily
+        # MusicGen takes ~30s per call, so 30s sleep = ~1 req/min
+        time.sleep(30)
 
     print(f"\nStings: {success} generated, {skipped} skipped, "
           f"{total - success - skipped} failed")
