@@ -100,28 +100,49 @@ VOICE_AGE_VALID = {
 COMEDY_VOICE_AFFINITY = {
     "physical_escalation": {
         "solo": ["high_pitch_cartoon"],
-        "duo": ["high_pitch_cartoon", "comedic_villain"],
+        "duo": [
+            ["high_pitch_cartoon", "comedic_villain"],
+            ["high_pitch_cartoon", "musical_original"],
+        ],
     },
     "villain_fails": {
         "solo": ["comedic_villain"],
-        "duo": ["comedic_villain", "high_pitch_cartoon"],
-        "trio": ["comedic_villain", "high_pitch_cartoon", "mysterious_witch"],
+        "duo": [
+            ["comedic_villain", "high_pitch_cartoon"],
+            ["comedic_villain", "mysterious_witch"],
+        ],
+        "trio": [
+            ["comedic_villain", "high_pitch_cartoon", "mysterious_witch"],
+            ["comedic_villain", "high_pitch_cartoon", "young_sweet"],
+        ],
     },
     "misunderstanding": {
         "solo": ["young_sweet"],
-        "duo": ["young_sweet", "comedic_villain"],
+        "duo": [
+            ["young_sweet", "comedic_villain"],
+            ["young_sweet", "musical_original"],
+        ],
     },
     "ominous_mundane": {
         "solo": ["mysterious_witch"],
-        "duo": ["mysterious_witch", "young_sweet"],
+        "duo": [
+            ["mysterious_witch", "young_sweet"],
+            ["mysterious_witch", "musical_original"],
+        ],
     },
     "sarcastic_commentary": {
         "solo": ["young_sweet"],
-        "duo": ["young_sweet", "comedic_villain"],
+        "duo": [
+            ["young_sweet", "mysterious_witch"],
+            ["young_sweet", "high_pitch_cartoon"],
+        ],
     },
     "sound_effect": {
         "solo": ["high_pitch_cartoon"],
-        "duo": ["high_pitch_cartoon", "comedic_villain"],
+        "duo": [
+            ["high_pitch_cartoon", "young_sweet"],
+            ["high_pitch_cartoon", "comedic_villain"],
+        ],
     },
 }
 
@@ -240,19 +261,97 @@ def _select_trio_voices(age_shorts: list, valid_voices: list,
     return list(least_used)
 
 
+def _voice_frequency(age_shorts: list) -> Counter:
+    """Count how often each voice appears across ALL shorts for this age."""
+    freq = Counter()
+    for s in age_shorts:
+        for v in s.get("voice_combo", []):
+            freq[v] += 1
+    return freq
+
+
+def _combo_score(combo: list | tuple, age_shorts: list, voice_freq: Counter) -> float:
+    """Score a voice combo: lower = better (less used).
+
+    combo_usage (how often this exact combo appeared) is weighted 10x
+    to prevent exact repeats, then individual voice frequency breaks ties.
+    """
+    combo_key = tuple(sorted(combo))
+    combo_count = sum(
+        1 for s in age_shorts
+        if tuple(sorted(s.get("voice_combo", []))) == combo_key
+    )
+    voice_count = sum(voice_freq.get(v, 0) for v in combo)
+    return combo_count * 10 + voice_count
+
+
+def _get_affinity_candidates(comedy_type: str, format_type: str,
+                              valid_voices: list) -> list[list]:
+    """Get candidate combos from the affinity map, filtered to valid voices."""
+    affinity = COMEDY_VOICE_AFFINITY.get(comedy_type, {})
+    raw = affinity.get(format_type)
+
+    if not raw:
+        return []
+
+    # Solo: raw is a flat list like ["high_pitch_cartoon"]
+    if format_type == "solo":
+        return [[v] for v in raw if v in valid_voices]
+
+    # Duo/Trio: raw is a list of lists
+    candidates = []
+    for combo in raw:
+        if all(v in valid_voices for v in combo):
+            candidates.append(list(combo))
+    return candidates
+
+
 def _select_voices(age_shorts: list, age_group: str,
                    comedy_type: str, format_type: str) -> list:
-    """Pick the least-used valid voice combo for this comedy type + format."""
+    """Pick voices, penalizing overused individual voices.
+
+    Uses affinity candidates scored by combo_usage * 10 + voice_frequency.
+    Falls back to all-pairs/all-trios if no affinity candidates are valid.
+    """
     valid_voices = VOICE_AGE_VALID[age_group]
-    affinity = COMEDY_VOICE_AFFINITY.get(comedy_type, {})
-    suggested = affinity.get(format_type)
+    voice_freq = _voice_frequency(age_shorts)
+    candidates = _get_affinity_candidates(comedy_type, format_type, valid_voices)
 
     if format_type == "solo":
-        return _select_solo_voice(age_shorts, valid_voices, suggested)
+        # For solo, affinity suggests one voice; add all valid voices as fallback
+        all_solos = [[v] for v in valid_voices]
+        if not candidates:
+            candidates = all_solos
+        else:
+            # Add non-affinity voices as lower-priority fallback
+            for s in all_solos:
+                if s not in candidates:
+                    candidates.append(s)
+
+        return min(candidates, key=lambda c: _combo_score(c, age_shorts, voice_freq))
+
     elif format_type == "duo":
-        return _select_duo_voices(age_shorts, valid_voices, suggested)
-    else:
-        return _select_trio_voices(age_shorts, valid_voices, suggested)
+        all_pairs = [list(p) for p in combinations(valid_voices, 2)]
+        if not candidates:
+            candidates = all_pairs
+        else:
+            # Affinity candidates scored first, then all pairs as fallback
+            for p in all_pairs:
+                if sorted(p) not in [sorted(c) for c in candidates]:
+                    candidates.append(p)
+
+        return min(candidates, key=lambda c: _combo_score(c, age_shorts, voice_freq))
+
+    else:  # trio
+        all_trios = [list(t) for t in combinations(valid_voices, 3)]
+        if not candidates:
+            candidates = all_trios
+        else:
+            for t in all_trios:
+                if sorted(t) not in [sorted(c) for c in candidates]:
+                    candidates.append(t)
+
+        return min(candidates, key=lambda c: _combo_score(c, age_shorts, voice_freq))
 
 
 def select_funny_short_spec(existing_shorts: list, age_group: str) -> dict:
@@ -387,9 +486,19 @@ RULES:
    Characters say what they see. Characters say what they feel. Characters
    say what just happened. If the listener can't follow the story with
    their eyes closed, it's wrong.
-8. Each character sounds distinct: Mouse = alarm/panic, Croc = self-importance,
+8. DESCRIBE RESULTS, NOT JUST REACTIONS: When something happens, the next
+   line must tell the listener WHAT happened — not just react emotionally.
+   Each line should advance the physical situation so the listener follows
+   the chain of cause and effect.
+   "Jump off! Jump off!" / "Wheee! We're flying!" / "I'm stuck in a tree!" — BAD
+   (How did flying lead to a tree? The listener is lost.)
+   "Jump off! Jump off!" / "I can't! We're bouncing higher and higher!" /
+   "I just bounced over the treetops! And now I'm... stuck in a branch." — GOOD
+   (bouncing → too high → tree. Clear chain of events.)
+   Every line = what just physically changed. Reactions without results are empty.
+9. Each character sounds distinct: Mouse = alarm/panic, Croc = self-importance,
    Sweet = deadpan sarcasm, Witch = ominous drama.
-9. No sleep language. Pure comedy.
+10. No sleep language. Pure comedy.
 
 DELIVERY TAGS (required):
 TAG EVERY SENTENCE with [DELIVERY: tag1, tag2] BEFORE the character text.
