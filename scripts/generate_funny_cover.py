@@ -49,7 +49,10 @@ COVER_PROMPT_TEMPLATE = (
     "square composition, thick outlines, expressive eyes, slightly exaggerated "
     "proportions, Pixar-meets-picture-book aesthetic. "
     "Scene: {cover_description} "
-    "DO NOT make it dreamy, muted, watercolor, or soft. This is comedy, not bedtime."
+    "DO NOT make it dreamy, muted, watercolor, or soft. This is comedy, not bedtime. "
+    "ABSOLUTELY NO TEXT, NO WORDS, NO LETTERS, NO NUMBERS anywhere in the image. "
+    "No title, no caption, no speech bubbles with text, no signs with writing. "
+    "Pure illustration only."
 )
 
 

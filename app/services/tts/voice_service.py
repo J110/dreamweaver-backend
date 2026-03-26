@@ -232,21 +232,42 @@ FUNNY_PUNCHLINE_PARAMS: Dict[str, dict] = {
     },
 }
 
+HOST_VOICE_PARAMS = {
+    "voice": "musical_original",
+    "exaggeration": 0.65,
+    "cfg_weight": 0.50,
+    "speed": 0.90,
+}
+
 # ── Funny Voice → Character Loop Mapping ─────────────────────
 
 FUNNY_VOICE_MAP: Dict[str, str] = {
-    "MOUSE": "high_pitch_cartoon",
-    "CROC": "comedic_villain",
-    "SWEET": "young_sweet",
-    "WITCH": "mysterious_witch",
+    # New canonical names
+    "BOOMY":  "comedic_villain",
+    "PIP":    "high_pitch_cartoon",
+    "SHADOW": "mysterious_witch",
+    "SUNNY":  "young_sweet",
+    "MELODY": "musical_original",
+    # Legacy names (backward compat for existing shorts)
+    "MOUSE":  "high_pitch_cartoon",
+    "CROC":   "comedic_villain",
+    "SWEET":  "young_sweet",
+    "WITCH":  "mysterious_witch",
     "MUSICAL": "musical_original",
 }
 
 CHARACTER_LOOP_MAP: Dict[str, str] = {
-    "MOUSE": "bouncy_cartoon",
-    "CROC": "villain_march",
-    "WITCH": "mysterious_creep",
-    "SWEET": "sweet_innocence",
+    # New canonical names
+    "BOOMY":  "villain_march",
+    "PIP":    "bouncy_cartoon",
+    "SHADOW": "mysterious_creep",
+    "SUNNY":  "sweet_innocence",
+    "MELODY": "poetic_bounce",
+    # Legacy names
+    "MOUSE":  "bouncy_cartoon",
+    "CROC":   "villain_march",
+    "WITCH":  "mysterious_creep",
+    "SWEET":  "sweet_innocence",
     "MUSICAL": "poetic_bounce",
 }
 

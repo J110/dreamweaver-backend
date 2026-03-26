@@ -30,29 +30,62 @@ from mistralai import Mistral
 DATA_DIR = Path(__file__).resolve().parents[1] / "data" / "funny_shorts"
 
 CHARACTER_TO_VOICE = {
-    "MOUSE": "high_pitch_cartoon",
-    "CROC": "comedic_villain",
-    "SWEET": "young_sweet",
-    "WITCH": "mysterious_witch",
+    # Canonical names
+    "BOOMY":  "comedic_villain",
+    "PIP":    "high_pitch_cartoon",
+    "SHADOW": "mysterious_witch",
+    "SUNNY":  "young_sweet",
+    "MELODY": "musical_original",
+    # Legacy names (backward compat)
+    "MOUSE":  "high_pitch_cartoon",
+    "CROC":   "comedic_villain",
+    "SWEET":  "young_sweet",
+    "WITCH":  "mysterious_witch",
     "MUSICAL": "musical_original",
 }
 
-VOICE_TO_CHARACTER = {v: k for k, v in CHARACTER_TO_VOICE.items()}
+VOICE_TO_CHARACTER = {
+    "comedic_villain":   "BOOMY",
+    "high_pitch_cartoon": "PIP",
+    "mysterious_witch":  "SHADOW",
+    "young_sweet":       "SUNNY",
+    "musical_original":  "MELODY",
+}
 
 VOICE_DISPLAY_NAMES = {
-    "high_pitch_cartoon": "MOUSE",
-    "comedic_villain": "CROC",
-    "young_sweet": "SWEET",
-    "mysterious_witch": "WITCH",
-    "musical_original": "MUSICAL",
+    "high_pitch_cartoon": "PIP",
+    "comedic_villain":    "BOOMY",
+    "young_sweet":        "SUNNY",
+    "mysterious_witch":   "SHADOW",
+    "musical_original":   "MELODY",
 }
 
 VOICE_DESCRIPTIONS = {
-    "high_pitch_cartoon": "Squeaky Minnie Mouse energy. Reacts with alarm and panic. Short sentences.",
-    "comedic_villain": "Deep dramatic crocodile. Self-important, always failing. Non-human voice.",
-    "young_sweet": "Innocent-sounding but sarcastic. Deadpan. Unbothered. Master of understatement.",
-    "mysterious_witch": "Dark, low, mysterious. Makes everything a dark prophecy. The dramatic narrator.",
-    "musical_original": "Rhythmic, poetic, almost singing. For verse comedy and nonsense rhymes.",
+    "comedic_villain": (
+        "BOOMY: Deep, dramatic, theatrical. Over-the-top self-importance. "
+        "Cast as: villains, kings, big animals, bossy characters, anyone "
+        "with an inflated ego. The voice of spectacular failure."
+    ),
+    "high_pitch_cartoon": (
+        "PIP: Squeaky, high-pitched, energetic. Reacts with alarm and panic. "
+        "Cast as: small creatures, nervous characters, babies, anything tiny "
+        "and excitable. The character things happen to."
+    ),
+    "mysterious_witch": (
+        "SHADOW: Dark, low, mysterious. Makes everything sound ominous. "
+        "Cast as: narrators, mysterious figures, old wise characters, anyone "
+        "who knows more than they're saying. The dramatic commentator."
+    ),
+    "young_sweet": (
+        "SUNNY: Innocent-sounding but sarcastic. Deadpan, unbothered. "
+        "Cast as: observers, bored teenagers, anyone calmly pointing out the "
+        "obvious. The voice of reason that nobody listens to."
+    ),
+    "musical_original": (
+        "MELODY: Rhythmic, poetic, warm. The permanent show host. "
+        "Cast as: show host (intro/outro), poets, fairy-tale narrators, "
+        "the straight man in ensemble scenes."
+    ),
 }
 
 # ── Diversity Scheduler ────────────────────────────────────────
@@ -149,14 +182,14 @@ COMEDY_VOICE_AFFINITY = {
 SOLO_STYLES = {
     "high_pitch_cartoon": ("talking to the listener directly, breaking the fourth wall, "
                            "reacting to things happening around them that we can't see"),
-    "comedic_villain": ("monologuing to themselves about their genius plan, "
-                        "narrating their own actions in third person as if they're epic"),
-    "mysterious_witch": ("narrating to the listener as if telling a dark secret, "
-                         "treating mundane events as ominous prophecy"),
-    "young_sweet": ("talking to the listener like a friend, "
-                    "commenting on something absurd they just witnessed"),
-    "musical_original": ("performing a poem or verse directly to the listener, "
-                         "the audience is the child being read to"),
+    "comedic_villain":    ("monologuing to themselves about their genius plan, "
+                           "narrating their own actions in third person as if they're epic"),
+    "mysterious_witch":   ("narrating to the listener as if telling a dark secret, "
+                           "treating mundane events as ominous prophecy"),
+    "young_sweet":        ("talking to the listener like a friend, "
+                           "commenting on something absurd they just witnessed"),
+    "musical_original":   ("performing a poem or verse directly to the listener, "
+                           "the audience is the child being read to"),
 }
 
 
@@ -443,12 +476,12 @@ AGE_COMEDY_INSTRUCTIONS = {
 - Repetition IS the joke for this age. Same structure three times, bigger each time.""",
     "6-8": """Ages 6-8: Absurdity + Character Comedy
 - Medium sentences. Character dynamics are the comedy engine.
-- Croc's ego vs Mouse's innocence, Witch's drama vs Sweet's sarcasm.
+- Boomy's ego vs Pip's innocence, Shadow's drama vs Sunny's sarcasm.
 - Kids this age love clever word misunderstandings and dramatic irony.""",
     "9-12": """Ages 9-12: Deadpan + Meta Comedy
 - Longer sentences. Dry tone. Humor through understatement.
 - NEVER try to be funny. The restraint IS the comedy.
-- Sweet's sarcasm and Witch's deadpan drama work best.
+- Sunny's sarcasm and Shadow's deadpan drama work best.
 - Trust the audience to get the joke — don't explain it.""",
 }
 
@@ -496,8 +529,8 @@ RULES:
    "I just bounced over the treetops! And now I'm... stuck in a branch." — GOOD
    (bouncing → too high → tree. Clear chain of events.)
    Every line = what just physically changed. Reactions without results are empty.
-9. Each character sounds distinct: Mouse = alarm/panic, Croc = self-importance,
-   Sweet = deadpan sarcasm, Witch = ominous drama.
+9. Each character sounds distinct: Pip = alarm/panic, Boomy = self-importance,
+   Sunny = deadpan sarcasm, Shadow = ominous drama.
 10. No sleep language. Pure comedy.
 
 DELIVERY TAGS (required):
@@ -509,12 +542,12 @@ characters should CHANGE across the scene.
 
 Guidelines:
 - Choose 1-2 tags per sentence. More than 2 gets muddy.
-- Croc typically arcs: confident → caught off guard → desperate → deflated
-- Mouse typically arcs: curious → suspicious → calm gotcha
-- Sweet typically stays: unbothered → deadpan → devastating (minimal change IS the comedy)
-- Witch typically arcs: ominous → building → revealing (dramatic narrator energy)
+- Boomy typically arcs: confident → caught off guard → desperate → deflated
+- Pip typically arcs: curious → suspicious → calm gotcha
+- Sunny typically stays: unbothered → deadpan → devastating (minimal change IS the comedy)
+- Shadow typically arcs: ominous → building → revealing (dramatic narrator energy)
 - The CONTRAST between characters' arcs is where the comedy lives.
-  If Croc gets louder, Mouse should get quieter. The gap IS the joke.
+  If Boomy gets louder, Pip should get quieter. The gap IS the joke.
 
 Available delivery tags:
 CONFIDENCE: confident, dismissive, bluster, triumphant, smug
@@ -534,9 +567,32 @@ PREMISE SUMMARY:
 After the cover tag, add a [PREMISE: ...] tag with a short (5-10 word) summary of the
 core premise.
 
+HOST INTRO AND OUTRO:
+Write a one-sentence show introduction and a one-sentence closing callback.
+Both are read by a show host (Melody), NOT by any character in the story.
+
+[HOST_INTRO: sentence] — Who's in this episode + what they're doing +
+a hint it goes wrong. Under 20 words. Makes the child smile before
+the story starts.
+
+[HOST_OUTRO: sentence] — Winking callback to what happened. Under
+15 words. One final laugh.
+
+Examples:
+- HOST_INTRO: "Tonight, Boomy has built the perfect trap for Pip. It is not perfect."
+- HOST_INTRO: "Tonight, Shadow tells you about a perfectly normal Tuesday. It was not normal."
+- HOST_OUTRO: "Boomy is still stuck in his own net. He says he meant to do that."
+- HOST_OUTRO: "Wednesday was, in fact, worse."
+
+RULES:
+- The host is warm, slightly amused, not a character in the story.
+- Never explain the joke. Hint at it (intro) or callback to it (outro).
+- Refer to characters by their voice names: Boomy, Pip, Shadow, Sunny.
+- Under 20 words for intro. Under 15 words for outro. Shorter is better.
+
 CRITICAL FORMAT RULES:
-- Each dialogue line MUST start with [CHARACTER] (square brackets), e.g. [MOUSE] Hello!
-- Do NOT use "MOUSE:" or "CROC:" format — ONLY [MOUSE] and [CROC] with square brackets.
+- Each dialogue line MUST start with [CHARACTER] (square brackets), e.g. [PIP] Hello!
+- Do NOT use "PIP:" or "BOOMY:" format — ONLY [PIP] and [BOOMY] with square brackets.
 - VOICES line must list voice IDs, not character names."""
 
 
@@ -554,6 +610,10 @@ def build_funny_short_prompt(spec: dict) -> str:
         desc = VOICE_DESCRIPTIONS[v]
         char_lines.append(f"- {name}: {desc}")
     character_block = "\n".join(char_lines)
+
+    voice_note = ("\nThese are VOICE TYPES, not fixed characters. Boomy might play a "
+                  "crocodile tonight and a penguin tomorrow. The voice stays the same; "
+                  "the character changes with each short.\n")
 
     # Voice IDs for the VOICES header
     voice_ids = ", ".join(voices)
@@ -581,6 +641,8 @@ def build_funny_short_prompt(spec: dict) -> str:
     if format_type == "solo":
         char_name = VOICE_DISPLAY_NAMES[voices[0]]
         output_example = f"""[TITLE: Your Title Here]
+[HOST_INTRO: Tonight, {char_name} does something. It does not go well.]
+[HOST_OUTRO: {char_name} has learned nothing. See you next time.]
 [AGE: {age_group}]
 [VOICES: {voice_ids}]
 [COMEDY_TYPE: {comedy_type}]
@@ -611,6 +673,8 @@ def build_funny_short_prompt(spec: dict) -> str:
     else:
         names = [VOICE_DISPLAY_NAMES[v] for v in voices]
         output_example = f"""[TITLE: Your Title Here]
+[HOST_INTRO: Tonight, {names[0]} does something. It does not go well.]
+[HOST_OUTRO: {names[0]} has learned nothing. See you next time.]
 [AGE: {age_group}]
 [VOICES: {voice_ids}]
 [COMEDY_TYPE: {comedy_type}]
@@ -645,6 +709,7 @@ Format: {format_desc}
 
 Characters:
 {character_block}
+{voice_note}
 {solo_instruction}
 {AGE_COMEDY_INSTRUCTIONS[age_group]}
 
@@ -675,6 +740,12 @@ def validate_script(script_text: str) -> list[str]:
 
     if not re.search(r"\[PREMISE:\s*(.+?)\]", script_text):
         errors.append("Missing [PREMISE: ...] tag")
+
+    if not re.search(r"\[HOST_INTRO:\s*(.+?)\]", script_text):
+        errors.append("Missing [HOST_INTRO: ...] tag")
+
+    if not re.search(r"\[HOST_OUTRO:\s*(.+?)\]", script_text):
+        errors.append("Missing [HOST_OUTRO: ...] tag")
 
     stings = re.findall(r"\[STING:\s*\w+\]", script_text)
     if len(stings) > 8:
@@ -712,12 +783,21 @@ def parse_script_metadata(script_text: str) -> dict:
     comedy_match = re.search(r"\[COMEDY_TYPE:\s*(.+?)\]", script_text)
     cover_match = re.search(r"\[COVER:\s*(.+?)\]", script_text)
     premise_match = re.search(r"\[PREMISE:\s*(.+?)\]", script_text)
+    host_intro_match = re.search(r"\[HOST_INTRO:\s*(.+?)\]", script_text)
+    host_outro_match = re.search(r"\[HOST_OUTRO:\s*(.+?)\]", script_text)
 
     CHAR_NAME_TO_VOICE = {
-        "mouse": "high_pitch_cartoon",
-        "croc": "comedic_villain",
-        "sweet": "young_sweet",
-        "witch": "mysterious_witch",
+        # New names
+        "boomy":  "comedic_villain",
+        "pip":    "high_pitch_cartoon",
+        "shadow": "mysterious_witch",
+        "sunny":  "young_sweet",
+        "melody": "musical_original",
+        # Legacy names
+        "mouse":  "high_pitch_cartoon",
+        "croc":   "comedic_villain",
+        "sweet":  "young_sweet",
+        "witch":  "mysterious_witch",
         "musical": "musical_original",
     }
     voices = []
@@ -733,6 +813,8 @@ def parse_script_metadata(script_text: str) -> dict:
         "comedy_type": comedy_match.group(1).strip() if comedy_match else "unknown",
         "cover_description": cover_match.group(1).strip() if cover_match else "",
         "premise_summary": premise_match.group(1).strip() if premise_match else "",
+        "host_intro": host_intro_match.group(1).strip() if host_intro_match else "",
+        "host_outro": host_outro_match.group(1).strip() if host_outro_match else "",
     }
 
 
@@ -790,6 +872,8 @@ def save_script(script_text: str, spec: dict) -> dict:
         "primary_voice": voices[0] if voices else "",
         "premise_summary": meta.get("premise_summary", ""),
         "cover_description": meta.get("cover_description", ""),
+        "host_intro": meta.get("host_intro", ""),
+        "host_outro": meta.get("host_outro", ""),
         "cover_file": "",
         "duration_seconds": 0,
         "script": script_text,

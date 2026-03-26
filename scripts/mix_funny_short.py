@@ -118,6 +118,13 @@ COMEDY_BASE_MAP = {
 }
 
 CHARACTER_BASE_FALLBACK = {
+    # New canonical names
+    "BOOMY":   "sneaky",
+    "PIP":     "bouncy",
+    "SHADOW":  "mysterious",
+    "SUNNY":   "gentle_absurd",
+    "MELODY":  "whimsical",
+    # Legacy names
     "MOUSE":   "bouncy",
     "CROC":    "sneaky",
     "WITCH":   "mysterious",
