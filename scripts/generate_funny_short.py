@@ -373,7 +373,23 @@ RULES:
 4. [STING: type] at END of the sentence. Max 8 stings.
 5. Every sentence = one character. No mixing within a sentence.
 6. Sentence-level audio only — no word-level emphasis or mid-sentence changes.
-7. No sleep language. Pure comedy.
+7. AUDIO-FIRST RULE: This short will be LISTENED TO, not read. The child cannot
+   see anything. Characters must describe what they see, what they're doing, and
+   what's happening through their own dialogue.
+   "What's this big green lumpy thing lying across the path?" — GOOD
+   (the listener knows what the character is looking at)
+   "Ooooh! A big green bench!" — BAD
+   (the listener doesn't know where the character is or what they're seeing)
+   "I'm sitting down... why are you wobbling?" — GOOD
+   (the listener knows the character sat down and something is wobbling)
+   "squeak... wobble wobble!" — BAD
+   (text sound effects are not audio)
+   Characters say what they see. Characters say what they feel. Characters
+   say what just happened. If the listener can't follow the story with
+   their eyes closed, it's wrong.
+8. Each character sounds distinct: Mouse = alarm/panic, Croc = self-importance,
+   Sweet = deadpan sarcasm, Witch = ominous drama.
+9. No sleep language. Pure comedy.
 
 DELIVERY TAGS (required):
 TAG EVERY SENTENCE with [DELIVERY: tag1, tag2] BEFORE the character text.
