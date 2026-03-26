@@ -4,11 +4,11 @@ id,title,type,story_type,input_tokens,output_tokens
 30dec3e8-5354-41ff-aadf-90def8a35df4,The Moon's Lullaby,story,folk_tale,573,6
 d73e9530-b77e-4372-9ad1-070f0fa108e3,Captain Stardust and the Comet Race,story,folk_tale,609,6
 9fba7605-7ffa-488d-93bc-9cca2881cf97,The Garden of Whispers,story,folk_tale,620,6
-c8796852-6d17-46e0-bcea-7985c4721d1c,Twinkle Dream,poem,folk_tale,496,4
+c8796852-6d17-46e0-bcea-7985c4721d1c,Twinkle Dream,poem,dream,496,3
 e32eaee0-2c7a-4f65-ace6-1d3a2d3ad5b0,The Owl's Goodnight,poem,folk_tale,497,4
 hi-neendwala-badal,Neendwala Badal,story,folk_tale,591,4
 hi-bahadur-jugnu,Bahadur Chhota Jugnu,story,folk_tale,592,4
-hi-chaand-ki-lori,Chaand ki Lori,story,mythological,550,4
+hi-chaand-ki-lori,Chaand ki Lori,story,folk_tale,550,4
 hi-captain-sitaara,Captain Sitaara aur Dhumketu ki Race,story,folk_tale,554,4
 hi-gungunata-baag,Gungunata Baag,story,folk_tale,536,4
 hi-chamakta-sapna,Chamakta Sapna,poem,folk_tale,493,4
@@ -19,12 +19,12 @@ gen-4f3ff03979dc,Arjun's Flying Robot Friend,poem,folk_tale,485,4
 gen-a67cde9762b6,Pepper's Garden Light,poem,folk_tale,499,4
 gen-a8a2146a4f36,The Forest's Digital Symphony,poem,folk_tale,549,4
 gen-9e44d4374d44,Amara and the Star-Song Celebration,poem,mythological,599,4
-gen-b8847383ab32,Nayeli's Arctic School Discovery,poem,folk_tale,546,4
+gen-b8847383ab32,Nayeli's Arctic School Discovery,poem,mythological,546,4
 gen-6b4b4122c529,Arjun's Magic Peacock Feather,poem,folk_tale,497,4
 gen-2fedd4d6a646,Nayak and the Forgotten Ice Garden,poem,folk_tale,558,4
 gen-f23316834cfd,Mei and the Moonlit Origami Festival,poem,folk_tale,574,4
 gen-df0dbc9d6b74,Coral's Journey Through the Healing Tides,poem,mythological,555,4
-gen-e77b10c51e8f,Diego and the Star Map of the Ancient Temple,poem,mythological,551,4
+gen-e77b10c51e8f,Diego and the Star Map of the Ancient Temple,poem,folk_tale,551,4
 gen-593c43ad1c11,Nanha Tara Aur Neend Ki Lori,story,folk_tale,481,4
 gen-b2e7514e8b8f,Nanhe Khargosh Aur Samudra Ka Dost,story,folk_tale,509,4
 gen-376993c8e295,Asha Ki Narm Bistar Ki Khoj,poem,folk_tale,489,4
@@ -36,21 +36,21 @@ gen-032fdef6f753,Hannu Ka Jaadui Khel Mahal,poem,folk_tale,571,4
 gen-febbf324eecb,Kiran aur Samudra ke Taairte Dweep,poem,folk_tale,608,4
 gen-230502b905ba,Priya Aur Vidya Devi Ki Jaadui Shiksha Yatra,poem,folk_tale,575,4
 gen-bb82f62942d0,Samudra ki Gahrai Mein,poem,folk_tale,617,4
-gen-0027e1835f09,Advait aur Uske Sahayogiyon ki Bhavishya Yatra,story,folk_tale,966,4
-gen-586908c26fc2,Pina and the Whispering Lighthouse,story,folk_tale,682,6
+gen-0027e1835f09,Advait aur Uske Sahayogiyon ki Bhavishya Yatra,story,dream,966,3
+gen-586908c26fc2,Pina and the Whispering Lighthouse,story,folk_tale,682,4
 gen-1a5a91def9ae,Pina's Blanket of Stars,poem,folk_tale,559,4
 gen-ae9ed8804fa7,Finn's Frozen Melody,poem,folk_tale,566,4
 gen-be475c98edb5,Aria and the Starlight Cipher,poem,dream,622,3
-gen-f9e33d4db1bd,Tiko's Arctic Lullaby,story,slice_of_life,522,5
+gen-f9e33d4db1bd,Tiko's Arctic Lullaby,story,dream,522,3
 gen-292e9eadf56e,Pebble and the Whispering Willow,story,folk_tale,721,4
 gen-76b0227cc919,Priya and the Glowing Snowflakes,story,folk_tale,540,4
-gen-7cf84ff11c04,Comet’s Glowing Playdate,poem,dream,573,3
+gen-7cf84ff11c04,Comet’s Glowing Playdate,poem,mythological,573,4
 gen-b5438a861ba4,Sky’s First Warm Feather,story,folk_tale,616,4
 gen-caa3a14bb706,Ember’s Neon Dawn,poem,mythological,565,4
 gen-01f0b88dc42d,Rusty’s Starlight Path Home,story,folk_tale,524,4
 gen-2f87d69ca6a2,Bloom and the Moonlit Map,poem,mythological,564,4
-gen-d5bc0057ca40,Leo and the Dinosaur Playmates,story,dream,819,3
-gen-308d5f0d1268,Lumi and the Glowing Tide,long_story,dream,1095,3
+gen-d5bc0057ca40,Leo and the Dinosaur Playmates,story,folk_tale,819,6
+gen-308d5f0d1268,Lumi and the Glowing Tide,long_story,folk_tale,1095,6
 gen-8ea1861bffab,The Secret of the Dream Library,long_story,dream,1118,3
 gen-9e87531b7db6,Leo and the Moonlight School of Waves,story,folk_tale,719,6
 gen-3b66368b6682,Aarav and the Whispering Tides,long_story,dream,1156,3
@@ -62,18 +62,18 @@ gen-3947965e8c2e,Lila’s Treehouse Tide Song,poem,folk_tale,496,4
 gen-3fc983f95d8b,Sylvie’s Frost-Spun Secret,poem,folk_tale,613,6
 gen-6034c85ea602,Priya and the Whispering Wellness Stones,story,folk_tale,954,6
 gen-0333c2f092c0,Aria and the Celestial Playground of Shadows,story,folk_tale,992,6
-gen-638cb2facd22,Stripe of the Silver Bamboo,poem,folk_tale,641,4
+gen-638cb2facd22,Stripe of the Silver Bamboo,poem,mythological,641,4
 gen-bbf23f82bfec,Jai’s Golden Spark in the Mango Grove,poem,folk_tale,581,4
 gen-beb0f3862024,The Jade Lantern’s Journey Through the Starry Dawn,story,mythological,794,4
 gen-4ddee3cbe031,Lumi and the Whispering Petals,poem,dream,577,3
-gen-50e929bf696c,Chai's Moonlit Steam Song,story,slice_of_life,518,5
+gen-50e929bf696c,Chai's Moonlit Steam Song,story,folk_tale,518,4
 gen-e3e07799ab05,Kai and the Colors of the Night,long_story,dream,924,3
 gen-699be4247076,Orion’s Wandering Comet Lullaby,poem,folk_tale,487,4
-gen-6c4170f5b3a4,Leilani and the Festival of Whispering Shells,story,folk_tale,852,6
+gen-6c4170f5b3a4,Leilani and the Festival of Whispering Shells,story,folk_tale,852,4
 gen-15501ab0e53c,Aria and the Whispering Labyrinth of Eldermere,long_story,dream,1108,3
 gen-20ac6dcc8899,Lumi’s Circuit of the Whispering Glade,poem,dream,531,3
 gen-bfea572c7a73,Marina and the Glowing Tide’s Secret Garden,long_story,dream,1121,3
-gen-9d6661087cfa,Eli and the Whispering Pass,long_story,mythological,1124,4
+gen-9d6661087cfa,Eli and the Whispering Pass,long_story,dream,1124,3
 gen-a306e99e9b09,Breeze and the Whispering Peaks,story,mythological,881,4
 gen-71986860a0ed,Toby and the Moonlit Mirage,story,folk_tale,510,4
 gen-9d8e3f91919c,Lila and the Starry Seed,long_story,dream,1152,3
@@ -82,7 +82,7 @@ gen-54eea57db057,Zephyr and the Lullaby of the Hearth,long_story,dream,1134,3
 gen-e2a4b6a306b8,Aria and the Singing Aurora,story,folk_tale,581,6
 gen-364d8f8f090f,Luna and the Lanterns of Whispering Hollow,long_story,mythological,1114,4
 gen-a534b5798c28,Tia and the Whispering Mango Tree,poem,dream,541,3
-gen-7f24c66d3921,Marino and the Lullaby of the Tides,story,nature,499,3
+gen-7f24c66d3921,Marino and the Lullaby of the Tides,story,folk_tale,499,4
 gen-d1d9090e87f5,Sola and the Whispering Tides,long_story,mythological,737,4
 gen-1be31ba6fc0d,Bumble and the Rainbow Dust Storm,poem,dream,569,3
 gen-3ae85c812ea0,Mira and the Paintbrush Cloud,story,dream,634,3
@@ -90,15 +90,15 @@ gen-00422943830e,Finn and the Tiny Tide Pool,story,nature,497,3
 gen-bcbc176b01d9,Kestrel and the Storm That Listened,long_story,dream,1126,3
 gen-ced87d262b99,Zephyr and the Lost Snowflake Lullaby,poem,dream,562,3
 gen-125839556ced,Rohan and the Glitch in the Gravity Well,long_story,dream,1147,3
-gen-31a6620db402,Tilly and the Twilight Chorus,story,folk_tale,699,6
-gen-f3a6cec89977,Orion and the Song of the Moonlit Tide,long_story,mythological,1124,4
+gen-31a6620db402,Tilly and the Twilight Chorus,story,folk_tale,699,4
+gen-f3a6cec89977,Orion and the Song of the Moonlit Tide,long_story,dream,1124,3
 gen-f74b95ae583c,Pip and the Evening Dew Dance,poem,nature,504,3
 gen-37aca7d2ae35,Alder and the Whispering Comet,poem,mythological,531,4
 gen-dfaac825420d,Zylo and the Scent of the Sleeping Stars,long_story,dream,1131,3
 gen-39dc657abb17,Rosie and the Scent of Home,story,folk_tale,560,4
 gen-3255a91b20c2,Nix and the Starlight Circuit,story,dream,833,3
-gen-d7ac25f7070f,Bolt and the Twilight Family Circle,long_story,folk_tale,1146,10
-gen-e1635d6a5c26,Glint and the Whispering Woods,poem,folk_tale,573,4
+gen-d7ac25f7070f,Bolt and the Twilight Family Circle,long_story,nature,1146,3
+gen-e1635d6a5c26,Glint and the Whispering Woods,poem,dream,573,3
 gen-861d647d73bb,Elias and the Song of the Streetlamps,long_story,dream,1131,3
 gen-b2e191e24194,Luna and the Starlight Skyline,poem,dream,566,3
 gen-589682b9e89c,Lullaby of the Moonlit Rooftops,story,dream,483,3
@@ -108,12 +108,15 @@ gen-a543ef7c93c0,Marina and the Sapphire Tide,poem,nature,491,3
 gen-a59c2de7e523,Riley and the Storm of Stars,story,folk_tale,625,6
 gen-1bef176313bd,Lulla and the Whispering Wheat Fields,long_story,folk_tale,1124,4
 gen-1e7e0300efd5,Finnley and the Glowing Tide,poem,dream,576,3
-gen-473198145b30,Bubble and the Lonely Comet,story,folk_tale,623,6
+gen-473198145b30,Bubble and the Lonely Comet,story,folk_tale,623,4
 gen-47739ce0f283,Pebble and the River's Whisper,long_story,nature,1173,3
 gen-4277697b337e,Zizzle and the Snickering Stardust,story,folk_tale,695,4
-gen-11c8a5d4ff16,Flutterby and the Upside-Down Rainbow,story,dream,682,3
+gen-11c8a5d4ff16,Flutterby and the Upside-Down Rainbow,story,folk_tale,682,4
 gen-66b370730297,Glimmer the Bubble-Bounce Alien,poem,dream,548,3
 gen-bf9047771318,Blip and the Glowing Friendship Festival,long_story,dream,1222,3
 gen-0b5c4e7f4aa7,Bubbles the Jellyfish’s Upside-Down Day,story,folk_tale,560,4
-gen-1865516ea0ac,Jasper and the Jiggly Jelly Feet,poem,slice_of_life,541,5
+gen-1865516ea0ac,Jasper and the Jiggly Jelly Feet,poem,folk_tale,541,4
 gen-7a8ee4b38802,Pippa and the Dancing Pumpkin Patch,long_story,folk_tale,1244,4
+gen-212c2515850d,Lula and the Whispering Sand,poem,dream,546,3
+gen-95849b2417b4,Finn and the Whispering Dunes,story,folk_tale,627,6
+gen-aa2f853f44d4,Mira and the Ice That Listened,long_story,dream,1131,3

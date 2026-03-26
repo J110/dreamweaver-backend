@@ -1448,10 +1448,13 @@ def step_publish(args, state: dict) -> bool:
 
     # ── Commit and push backend (triggers Render auto-deploy) ──
     logger.info("  Committing backend changes...")
+    # Stash unstaged changes (runtime data files) before rebase
+    run_command(["git", "stash"], "Backend: git stash", timeout=30)
     backend_cmds = [
         (["git", "add", "seed_output/content.json",
           "seed_output/content_expanded.json", "audio/"], "Backend: git add"),
         (["git", "commit", "-m", commit_msg, "--allow-empty"], "Backend: git commit"),
+        (["git", "pull", "--rebase", "origin", "main"], "Backend: git pull --rebase"),
         (["git", "push", "origin", "main"], "Backend: git push"),
     ]
     for cmd, label in backend_cmds:
@@ -1461,6 +1464,8 @@ def step_publish(args, state: dict) -> bool:
             break
     else:
         backend_ok = True
+    # Restore stashed runtime data files
+    run_command(["git", "stash", "pop"], "Backend: git stash pop", timeout=30)
 
     # ── Commit and push frontend (triggers Vercel auto-deploy) ──
     if WEB_DIR.exists() and state.get("step_sync") == "done":
@@ -1470,6 +1475,7 @@ def step_publish(args, state: dict) -> bool:
             (["git", "add", "src/utils/seedData.js",
               "public/covers/"], "Frontend: git add"),
             (["git", "commit", "-m", commit_msg, "--allow-empty"], "Frontend: git commit"),
+            (["git", "pull", "--rebase", "origin", "main"], "Frontend: git pull --rebase"),
             (["git", "push", "origin", "main"], "Frontend: git push"),
         ]
         for cmd, label in frontend_cmds:

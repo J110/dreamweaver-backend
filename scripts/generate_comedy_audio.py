@@ -195,7 +195,7 @@ def generate_audio_replicate(prompt: str, duration: int, max_retries: int = 3) -
     for attempt in range(max_retries):
         try:
             output = replicate.run(
-                "meta/musicgen:671ac645ce5e552cc63a54a2bbff63fcf798043055d2dac5fc9e36a837eedbbe",
+                "meta/musicgen:671ac645ce5e552cc63a54a2bbff63fcf798043055d2dac5fc9e36a837eedcfb",
                 input={
                     "model_version": "stereo-melody-large",
                     "prompt": prompt,
