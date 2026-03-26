@@ -27,7 +27,7 @@ DATA_DIR = Path(__file__).resolve().parents[1] / "data" / "funny_shorts"
 AUDIO_OUT_DIR = Path(__file__).resolve().parents[1] / "public" / "audio" / "funny-shorts"
 MODAL_TTS_URL = os.getenv(
     "MODAL_TTS_URL",
-    "https://anmol-71634--dreamweaver-chatterbox-tts.modal.run",
+    "https://mohan-32314--dreamweaver-chatterbox-tts.modal.run",
 )
 
 
