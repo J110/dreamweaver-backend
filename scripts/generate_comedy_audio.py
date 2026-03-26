@@ -190,36 +190,45 @@ LOOP_PROMPTS = {
 }
 
 
-def generate_audio_replicate(prompt: str, duration: int) -> bytes | None:
-    """Generate audio via Replicate MusicGen."""
-    try:
-        output = replicate.run(
-            "meta/musicgen:671ac645ce5e552cc63a54a2bbff63fcf798043055d2dac5fc9e36a837eedbbe",
-            input={
-                "model_version": "stereo-melody-large",
-                "prompt": prompt,
-                "duration": duration,
-                "output_format": "wav",
-                "normalization_strategy": "peak",
-            },
-        )
-        # output is a FileOutput URL
-        if hasattr(output, 'read'):
-            audio_bytes = output.read()
-        else:
-            # It's a URL string
-            import httpx
-            resp = httpx.get(str(output), timeout=60)
-            resp.raise_for_status()
-            audio_bytes = resp.content
+def generate_audio_replicate(prompt: str, duration: int, max_retries: int = 3) -> bytes | None:
+    """Generate audio via Replicate MusicGen with rate limit handling."""
+    for attempt in range(max_retries):
+        try:
+            output = replicate.run(
+                "meta/musicgen:671ac645ce5e552cc63a54a2bbff63fcf798043055d2dac5fc9e36a837eedbbe",
+                input={
+                    "model_version": "stereo-melody-large",
+                    "prompt": prompt,
+                    "duration": duration,
+                    "output_format": "wav",
+                    "normalization_strategy": "peak",
+                },
+            )
+            # output is a FileOutput URL
+            if hasattr(output, 'read'):
+                audio_bytes = output.read()
+            else:
+                # It's a URL string
+                import httpx
+                resp = httpx.get(str(output), timeout=60)
+                resp.raise_for_status()
+                audio_bytes = resp.content
 
-        if len(audio_bytes) > 1000:
-            return audio_bytes
-        print(f"    Audio too small: {len(audio_bytes)} bytes")
-        return None
-    except Exception as e:
-        print(f"    Replicate error: {e}")
-        return None
+            if len(audio_bytes) > 1000:
+                return audio_bytes
+            print(f"    Audio too small: {len(audio_bytes)} bytes")
+            return None
+        except Exception as e:
+            error_str = str(e)
+            if "429" in error_str or "throttled" in error_str.lower():
+                wait = 15 * (attempt + 1)
+                print(f"    Rate limited, waiting {wait}s (attempt {attempt+1}/{max_retries})...")
+                time.sleep(wait)
+                continue
+            print(f"    Replicate error: {e}")
+            return None
+    print(f"    Failed after {max_retries} retries")
+    return None
 
 
 def trim_audio(input_path: Path, output_path: Path, start: float = 0.5,
@@ -291,8 +300,8 @@ def generate_stings(force: bool = False):
             success += 1
             print(f"    OK (raw, no trim)")
 
-        # Rate limit
-        time.sleep(1)
+        # Rate limit — under $5 credit, Replicate throttles to 6 req/min
+        time.sleep(12)
 
     print(f"\nStings: {success} generated, {skipped} skipped, "
           f"{total - success - skipped} failed")
