@@ -1067,7 +1067,7 @@
       }
     },
     "mood": "calm",
-    "story_type": "folk_tale"
+    "story_type": "dream"
   },
   {
     "id": "e32eaee0-2c7a-4f65-ace6-1d3a2d3ad5b0",
@@ -1915,7 +1915,7 @@
       }
     },
     "mood": "calm",
-    "story_type": "mythological"
+    "story_type": "folk_tale"
   },
   {
     "id": "hi-captain-sitaara",
@@ -4000,7 +4000,7 @@
       }
     },
     "mood": "curious",
-    "story_type": "folk_tale"
+    "story_type": "mythological"
   },
   {
     "id": "gen-6b4b4122c529",
@@ -4911,7 +4911,7 @@
       }
     },
     "mood": "curious",
-    "story_type": "mythological"
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-593c43ad1c11",
@@ -7089,7 +7089,7 @@
       }
     },
     "mood": "curious",
-    "story_type": "folk_tale"
+    "story_type": "dream"
   },
   {
     "id": "gen-586908c26fc2",
@@ -8010,7 +8010,7 @@
       }
     },
     "mood": "calm",
-    "story_type": "slice_of_life"
+    "story_type": "dream"
   },
   {
     "id": "gen-292e9eadf56e",
@@ -8561,7 +8561,7 @@
       }
     },
     "mood": "calm",
-    "story_type": "dream"
+    "story_type": "mythological"
   },
   {
     "id": "gen-b5438a861ba4",
@@ -9481,7 +9481,7 @@
       }
     },
     "mood": "curious",
-    "story_type": "dream"
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-308d5f0d1268",
@@ -9669,7 +9669,7 @@
       }
     },
     "mood": "calm",
-    "story_type": "dream"
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-8ea1861bffab",
@@ -12343,7 +12343,7 @@
       }
     },
     "mood": "curious",
-    "story_type": "folk_tale"
+    "story_type": "mythological"
   },
   {
     "id": "gen-915a2ee015f8",
@@ -13655,7 +13655,7 @@
       "musicLoop": "musicBox"
     },
     "mood": "calm",
-    "story_type": "slice_of_life"
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-8440041cfc57",
@@ -15211,7 +15211,7 @@
       }
     },
     "mood": "curious",
-    "story_type": "mythological"
+    "story_type": "dream"
   },
   {
     "id": "gen-a306e99e9b09",
@@ -16734,7 +16734,7 @@
       }
     },
     "mood": "calm",
-    "story_type": "nature"
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-d1d9090e87f5",
@@ -17991,7 +17991,7 @@
         "phase3": "deep_stillness"
       }
     },
-    "story_type": "mythological"
+    "story_type": "dream"
   },
   {
     "id": "gen-f5a086b33ef3",
@@ -18950,7 +18950,7 @@
         "phase3": "deep_stillness"
       }
     },
-    "story_type": "folk_tale"
+    "story_type": "nature"
   },
   {
     "id": "gen-dc32ba401ae2",
@@ -19166,7 +19166,7 @@
         "phase3": "deep_stillness"
       }
     },
-    "story_type": "folk_tale"
+    "story_type": "dream"
   },
   {
     "id": "gen-10683c7e9e25",
@@ -21197,7 +21197,7 @@
         "phase3": "deep_stillness"
       }
     },
-    "story_type": "dream"
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-66b370730297",
@@ -21745,7 +21745,7 @@
         "phase3": "deep_stillness"
       }
     },
-    "story_type": "slice_of_life"
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-7a8ee4b38802",
@@ -22145,7 +22145,8 @@
         "phase2": "warm_embrace",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "story_type": "dream"
   },
   {
     "id": "gen-95849b2417b4",
@@ -22260,7 +22261,8 @@
         "phase2": "gentle_mystery",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "story_type": "folk_tale"
   },
   {
     "id": "gen-aa2f853f44d4",
@@ -22372,6 +22374,351 @@
         "phase2": "fragile_wonder",
         "phase3": "deep_stillness"
       }
-    }
+    },
+    "story_type": "dream"
+  },
+  {
+    "id": "gen-058039491949",
+    "type": "song",
+    "lang": "en",
+    "title": "Mira and the Singing Raindrop",
+    "description": "When the village fountain stops singing, little Mira the fox hears a tiny sob from a lost raindrop. Together, they embark on a twilight journey to return the raindrop to the sky—where every step makes the world glow a little brighter.",
+    "text": "[SINGING]\nThe moon is rising, soft and low,\nThe stars are blinking, slow and slow.\nMira tiptoes down the lane,\nTo hear the fountain’s sweet refrain.\n\n[PAUSE]\n\n[SINGING]\nHush now, listen, don’t you hear?\nA tiny voice so soft and clear.\n\"I’m lost,\" it whispers, small and sweet,\nA raindrop hums on Mira’s feet.\n\n[PAUSE]\n\n[SINGING]\nMmm mmm mmm, the wind will guide,\nMmm mmm mmm, the stars will shine.\nTake my paw, we’ll find the way,\nTo send you home before the day.\n\n[PAUSE]\n\n[SINGING]\nOver bridges, past the mill,\nThrough the fields so calm and still.\nEvery step the raindrop sings,\nGolden light from tiny wings.\n\n[PAUSE]\n\n[SINGING]\nMmm mmm mmm, the wind will guide,\nMmm mmm mmm, the stars will shine.\nTake my paw, we’ll find the way,\nTo send you home before the day.\n\n[PAUSE]\n\n[SLEEPY]\nNow the clouds are soft and near,\nMira whispers, \"Do not fear.\"\nUp you float on silver strings,\nBack to where the raindrops sing.\n\n[PAUSE]\n\n[HUMMING]\nMmm mmm mmm...\nMmm mmm mmm...\nMmm mmm...\nMmm...",
+    "annotated_text": "[SINGING]\nThe moon is rising, soft and low,\nThe stars are blinking, slow and slow.\nMira tiptoes down the lane,\nTo hear the fountain’s sweet refrain.\n\n[PAUSE]\n\n[SINGING]\nHush now, listen, don’t you hear?\nA tiny voice so soft and clear.\n\"I’m lost,\" it whispers, small and sweet,\nA raindrop hums on Mira’s feet.\n\n[PAUSE]\n\n[SINGING]\nMmm mmm mmm, the wind will guide,\nMmm mmm mmm, the stars will shine.\nTake my paw, we’ll find the way,\nTo send you home before the day.\n\n[PAUSE]\n\n[SINGING]\nOver bridges, past the mill,\nThrough the fields so calm and still.\nEvery step the raindrop sings,\nGolden light from tiny wings.\n\n[PAUSE]\n\n[SINGING]\nMmm mmm mmm, the wind will guide,\nMmm mmm mmm, the stars will shine.\nTake my paw, we’ll find the way,\nTo send you home before the day.\n\n[PAUSE]\n\n[SLEEPY]\nNow the clouds are soft and near,\nMira whispers, \"Do not fear.\"\nUp you float on silver strings,\nBack to where the raindrops sing.\n\n[PAUSE]\n\n[HUMMING]\nMmm mmm mmm...\nMmm mmm mmm...\nMmm mmm...\nMmm...",
+    "target_age": 3,
+    "age_min": 2,
+    "age_max": 5,
+    "age_group": "2-5",
+    "length": "LONG",
+    "word_count": 162,
+    "duration_seconds": 0,
+    "categories": [
+      "Adventure",
+      "Friendship"
+    ],
+    "theme": "adventure",
+    "morals": [
+      "Kindness can light up even the smallest paths",
+      "Helping others makes the world brighter for everyone"
+    ],
+    "cover": "/covers/gen-058039491949.svg",
+    "musicProfile": "autumn-forest",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-0580_female_3.mp3",
+        "duration_seconds": 244.91,
+        "provider": "ace-step"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-0580_male_2.mp3",
+        "duration_seconds": 244.91,
+        "provider": "ace-step"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "female",
+    "character": {
+      "name": "Mira",
+      "identity": "A gentle fox who listens to the whispers of the world",
+      "special": "She can hear the songs that raindrops hum when they fall",
+      "personality_tags": [
+        "Kind",
+        "Gentle"
+      ]
+    },
+    "cover_context": "A cobblestone village square at twilight, lanterns glowing amber and blue. A stone fountain bubbles quietly, its water shimmering with faint golden ripples. Autumn leaves drift in the breeze, their edges touched with silver light.",
+    "lead_character_type": "animal",
+    "universe": "mythological",
+    "geography": "East Asia",
+    "life_aspect": "sleep_comfort",
+    "plot_archetype": "problem_solving",
+    "diversityFingerprint": {
+      "characterType": "land_mammal",
+      "setting": "village_town",
+      "mood": null,
+      "storyType": null,
+      "plotShape": "journey_destination",
+      "scale": "local_adventure",
+      "companion": "duo",
+      "movement": "walking_wandering",
+      "timeOfDay": "twilight_blue_hour",
+      "weather": "magical_atmospheric",
+      "theme": "kindness",
+      "characterTrait": "kind_nurturing",
+      "magicType": "weather_magic",
+      "season": "autumn",
+      "senseEmphasis": "auditory"
+    },
+    "mood": "wired",
+    "story_type": null,
+    "created_at": "2026-03-26T01:43:55.670044",
+    "updated_at": "2026-03-26T01:43:55.670044",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 5
+  },
+  {
+    "id": "gen-4503353a9444",
+    "type": "story",
+    "lang": "en",
+    "title": "Theo and the Tiny Thundercloud",
+    "description": "In a sleepy village where the afternoon sun turns everything gold, Theo spots a cloud no bigger than his palm hovering just above his windowsill. His neighbor, old Mr. Hargrove, claims it’s just a trick of the light—but Theo knows better. The cloud pulses with tiny lightning, and it seems to be waiting for something.",
+    "text": "[GENTLE] One day, Theo said to Mr. Hargrove—\n\n[CURIOUS] 'That cloud is following me. It’s been outside my window for three days now, and it’s the size of a teacup.'\n\n[CALM] Mr. Hargrove adjusted his spectacles and peered over the fence. 'Clouds don’t follow people, Theo. They follow the wind. And that’s not a cloud. That’s a [EMPHASIS] dust bunny.'\n\n[ADVENTUROUS] Theo squinted. The thing was definitely not a dust bunny. It had a soft, rumbling hum, like a purring cat, and every so often, a tiny bolt of lightning flickered inside it. 'Dust bunnies don’t make [EMPHASIS] electricity,' he said.\n\n[MYSTERIOUS] Mr. Hargrove sighed. 'Fine. Let’s test it. If it’s a cloud, it should respond to moisture.' He fetched a watering can and sprinkled a few drops toward it. The cloud [DRAMATIC_PAUSE] shrank. Not a lot—just enough to notice. Then it let out a little [EMPHASIS] *bzzt* and floated higher, as if offended.\n\n[JOYFUL] Theo gasped. 'It *is* a cloud! A tiny one!'\n\n[WHISPERING] Mr. Hargrove leaned in. 'I’ve read about these. Miniature weather systems. They form in still air, where the humidity and temperature are just right. They’re rare, but not unheard of. This one must have found the perfect pocket of air outside your window.'\n\n[CALM] Theo watched as the cloud drifted lazily in the breeze, its edges glowing faintly in the golden light. 'What does it want?'\n\n[GENTLE] Mr. Hargrove chuckled. 'Clouds don’t want anything, Theo. They just *are*. They form, they drift, they rain if they must, and then they fade. Maybe this one is here to remind you that even the smallest things can hold a little magic.'\n\n[SLEEPY] Theo sat on the porch steps, watching the tiny cloud until the sun dipped below the rooftops. It shimmered once, twice, and then dissolved into the evening air, leaving only the faintest scent of rain. He didn’t feel the need to chase it or ask it more questions. Some things, he decided, are perfect just as they are—small, quiet, and full of wonder.\n\nAnd Theo found his answer.",
+    "annotated_text": "[GENTLE] One day, Theo said to Mr. Hargrove—\n\n[CURIOUS] 'That cloud is following me. It’s been outside my window for three days now, and it’s the size of a teacup.'\n\n[CALM] Mr. Hargrove adjusted his spectacles and peered over the fence. 'Clouds don’t follow people, Theo. They follow the wind. And that’s not a cloud. That’s a [EMPHASIS] dust bunny.'\n\n[ADVENTUROUS] Theo squinted. The thing was definitely not a dust bunny. It had a soft, rumbling hum, like a purring cat, and every so often, a tiny bolt of lightning flickered inside it. 'Dust bunnies don’t make [EMPHASIS] electricity,' he said.\n\n[MYSTERIOUS] Mr. Hargrove sighed. 'Fine. Let’s test it. If it’s a cloud, it should respond to moisture.' He fetched a watering can and sprinkled a few drops toward it. The cloud [DRAMATIC_PAUSE] shrank. Not a lot—just enough to notice. Then it let out a little [EMPHASIS] *bzzt* and floated higher, as if offended.\n\n[JOYFUL] Theo gasped. 'It *is* a cloud! A tiny one!'\n\n[WHISPERING] Mr. Hargrove leaned in. 'I’ve read about these. Miniature weather systems. They form in still air, where the humidity and temperature are just right. They’re rare, but not unheard of. This one must have found the perfect pocket of air outside your window.'\n\n[CALM] Theo watched as the cloud drifted lazily in the breeze, its edges glowing faintly in the golden light. 'What does it want?'\n\n[GENTLE] Mr. Hargrove chuckled. 'Clouds don’t want anything, Theo. They just *are*. They form, they drift, they rain if they must, and then they fade. Maybe this one is here to remind you that even the smallest things can hold a little magic.'\n\n[SLEEPY] Theo sat on the porch steps, watching the tiny cloud until the sun dipped below the rooftops. It shimmered once, twice, and then dissolved into the evening air, leaving only the faintest scent of rain. He didn’t feel the need to chase it or ask it more questions. Some things, he decided, are perfect just as they are—small, quiet, and full of wonder.\n\nAnd Theo found his answer.",
+    "target_age": 10,
+    "age_min": 9,
+    "age_max": 12,
+    "age_group": "9-12",
+    "length": "MEDIUM",
+    "word_count": 329,
+    "duration_seconds": 0,
+    "categories": [
+      "Science Fable",
+      "Weather Story"
+    ],
+    "theme": "science",
+    "morals": [
+      "Even the smallest things can hold great beauty and wonder.",
+      "Some questions don’t need answers—they just need to be appreciated."
+    ],
+    "cover": "/covers/gen-4503353a9444.svg",
+    "musicProfile": "cosmic-voyage",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-4503_female_2.mp3",
+        "duration_seconds": 180.03,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-4503_male_2.mp3",
+        "duration_seconds": 162.3,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "male",
+    "character": {
+      "name": "Theo",
+      "identity": "A dreamy boy who notices the magic in ordinary things",
+      "special": "He can see the hidden stories in the world around him",
+      "personality_tags": [
+        "Curious",
+        "Gentle"
+      ]
+    },
+    "cover_context": "A sunlit village street at late afternoon, golden light spilling over cobblestones and flower boxes. A tiny, glowing cloud hovers near a windowsill, casting a soft shadow on the sill. The air shimmers with warmth, and the faintest hint of rain lingers in the breeze.",
+    "lead_character_type": "human",
+    "universe": "prehistoric",
+    "geography": "Ocean/Islands",
+    "life_aspect": "friendship",
+    "plot_archetype": "quest_journey",
+    "diversityFingerprint": {
+      "characterType": "human_child",
+      "setting": "village_town",
+      "mood": null,
+      "storyType": null,
+      "plotShape": "discovery_reveal",
+      "scale": "tiny_intimate",
+      "companion": "duo",
+      "movement": "sitting_watching",
+      "timeOfDay": "late_afternoon",
+      "weather": "warm_breeze",
+      "theme": "curiosity_wonder",
+      "characterTrait": "dreamy_imaginative",
+      "magicType": "miniaturization",
+      "season": "summer",
+      "senseEmphasis": "tactile"
+    },
+    "mood": "wired",
+    "story_type": "fable",
+    "created_at": "2026-03-26T01:32:19.272345",
+    "updated_at": "2026-03-26T01:32:19.272345",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 3
+  },
+  {
+    "id": "gen-6ee81a76343f",
+    "type": "long_story",
+    "lang": "en",
+    "title": "Barnaby and the Shrinking Moonbeam",
+    "description": "In a sleepy village where the lamplighter forgets to light the streets, a round little hedgehog named Barnaby discovers a moonbeam that shrinks everything it touches—including his own prickly feet. But when the beam starts tickling the town’s snoring cat, chaos unfolds in the quietest way possible.",
+    "text": "[GENTLE] One day, Barnaby the hedgehog said to the old wooden fence post —\n\n[JOYFUL] \"Have you ever noticed how the moonbeam looks like a golden ribbon tonight?\"\n\n[CURIOUS] The fence post creaked softly, which Barnaby took as a yes. [EMPHASIS]He waddled closer[/EMPHASIS] and stretched out a paw. [EXCITED] The moment his toes touched the light, they shrank to the size of acorns!\n\n[ADVENTUROUS] \"Oh my!\" Barnaby giggled, watching his feet disappear into the cobblestones. [EMPHASIS]\"I’m a tiny hedgehog in a giant village!\"[/EMPHASIS] He tiptoed toward the sleeping cat, who was snoring like a tiny thunderstorm. [DRAMATIC_PAUSE] Then—[EMPHASIS]POOF![/EMPHASIS]—the moonbeam tickled the cat’s whiskers.\n\n[JOYFUL] The cat sneezed so hard it sent Barnaby rolling into a pile of autumn leaves. [laugh] \"That was [EMPHASIS]almost[/EMPHASIS] as fun as being small!\" he said, brushing off a leaf the size of a blanket.\n\n[CALM] The village was quiet again. The moonbeam stretched long and lazy across the street, no longer shrinking anything. Barnaby’s feet had grown back to their usual roundness, and the cat had curled into a perfect circle, purring softly.\n\n[GENTLE] The air smelled of warm bread from the bakery next door. The leaves under Barnaby’s paws were crisp and cool. He waddled to the edge of the lamplight, where the shadows were soft and deep.\n\n[MYSTERIOUS] The moonbeam flickered, as if waving goodbye. Barnaby yawned, his tiny teeth glinting in the light. The cobblestones felt smooth beneath him, worn by years of quiet footsteps. The night was still. The world was still.\n\n[CALM] He found a patch of moss near the fence post. It was softer than his own prickles. Warmer than the autumn air. He curled into a ball, his nose tucked under his tail.\n\n[SLEEPY] The moonbeam hummed a quiet song. The leaves rustled, just a little. The cat’s purr was a steady whisper.\n\n[WHISPERING] Close your eyes, little one. The night is soft. The world is soft.\n\n[SLEEPY] The stars blinked slowly. The village slept. The moonbeam stretched long and golden...\n\n[WHISPERING] Safe... and warm... and still...",
+    "annotated_text": "[PHASE_1]\n[GENTLE] One day, Barnaby the hedgehog said to the old wooden fence post —\n\n[JOYFUL] \"Have you ever noticed how the moonbeam looks like a golden ribbon tonight?\"\n\n[CURIOUS] The fence post creaked softly, which Barnaby took as a yes. [EMPHASIS]He waddled closer[/EMPHASIS] and stretched out a paw. [EXCITED] The moment his toes touched the light, they shrank to the size of acorns!\n\n[ADVENTUROUS] \"Oh my!\" Barnaby giggled, watching his feet disappear into the cobblestones. [EMPHASIS]\"I’m a tiny hedgehog in a giant village!\"[/EMPHASIS] He tiptoed toward the sleeping cat, who was snoring like a tiny thunderstorm. [DRAMATIC_PAUSE] Then—[EMPHASIS]POOF![/EMPHASIS]—the moonbeam tickled the cat’s whiskers.\n\n[JOYFUL] The cat sneezed so hard it sent Barnaby rolling into a pile of autumn leaves. [laugh] \"That was [EMPHASIS]almost[/EMPHASIS] as fun as being small!\" he said, brushing off a leaf the size of a blanket.\n\n[/PHASE_1]\n\n[PHASE_2]\n[CALM] The village was quiet again. The moonbeam stretched long and lazy across the street, no longer shrinking anything. Barnaby’s feet had grown back to their usual roundness, and the cat had curled into a perfect circle, purring softly.\n\n[GENTLE] The air smelled of warm bread from the bakery next door. The leaves under Barnaby’s paws were crisp and cool. He waddled to the edge of the lamplight, where the shadows were soft and deep.\n\n[MYSTERIOUS] The moonbeam flickered, as if waving goodbye. Barnaby yawned, his tiny teeth glinting in the light. The cobblestones felt smooth beneath him, worn by years of quiet footsteps. The night was still. The world was still.\n\n[CALM] He found a patch of moss near the fence post. It was softer than his own prickles. Warmer than the autumn air. He curled into a ball, his nose tucked under his tail.\n\n[/PHASE_2]\n\n[PHASE_3]\n[SLEEPY] The moonbeam hummed a quiet song. The leaves rustled, just a little. The cat’s purr was a steady whisper.\n\n[WHISPERING] Close your eyes, little one. The night is soft. The world is soft.\n\n[SLEEPY] The stars blinked slowly. The village slept. The moonbeam stretched long and golden...\n\n[WHISPERING] Safe... and warm... and still...\n\n[/PHASE_3]",
+    "target_age": 0,
+    "age_min": 0,
+    "age_max": 1,
+    "age_group": "0-1",
+    "length": "LONG",
+    "word_count": 326,
+    "duration_seconds": 0,
+    "categories": [
+      "Bedtime",
+      "Animal Fable"
+    ],
+    "theme": "bedtime",
+    "morals": [
+      "Even the silliest moments can lead to the coziest places.",
+      "Sometimes the smallest adventures are the ones that make us feel the safest."
+    ],
+    "cover": "/covers/gen-6ee81a76343f.svg",
+    "musicProfile": "starlight-lullaby",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-6ee8_female_3.mp3",
+        "duration_seconds": 181.16,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-6ee8_male_2.mp3",
+        "duration_seconds": 168.61,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "male",
+    "character": {
+      "name": "Barnaby",
+      "identity": "A round little hedgehog who trips over his own feet and the moon",
+      "special": "He can make the moonbeam shrink things just by touching it",
+      "personality_tags": [
+        "Playful",
+        "Kind"
+      ]
+    },
+    "cover_context": "A cobblestone village street at night, bathed in golden moonlight. Autumn leaves in warm oranges and reds drift gently to the ground. A single lamppost glows faintly, casting long shadows, while a soft moonbeam stretches across the stones like a ribbon.",
+    "lead_character_type": "animal",
+    "universe": "historical",
+    "geography": "Europe",
+    "life_aspect": "family_home",
+    "plot_archetype": "discovery",
+    "diversityFingerprint": {
+      "characterType": "land_mammal",
+      "setting": "village_town",
+      "mood": null,
+      "storyType": null,
+      "plotShape": "routine_ritual",
+      "scale": "tiny_intimate",
+      "companion": "duo",
+      "movement": "walking_wandering",
+      "timeOfDay": "deep_night_starlight",
+      "weather": "magical_atmospheric",
+      "theme": "gentleness",
+      "characterTrait": "clumsy_silly",
+      "magicType": "miniaturization",
+      "season": "autumn",
+      "senseEmphasis": "tactile"
+    },
+    "mood": "wired",
+    "story_type": "fable",
+    "created_at": "2026-03-26T01:37:00.386465",
+    "updated_at": "2026-03-26T01:37:00.386465",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 3
+  },
+  {
+    "id": "gen-c70d75db83fc",
+    "type": "poem",
+    "lang": "en",
+    "title": "Leo and the Pocket-Sized Planet",
+    "description": "When Leo’s magnifying glass accidentally shrinks his backyard into a tiny, bustling world, he meets a miniature scientist who insists their planet is *already* inside someone else’s pocket. Together, they debate the universe’s biggest—and smallest—mysteries, one giggle at a time.",
+    "text": "[RHYTHMIC] Leo found a lens so bright,\nIt turned his yard to starry night.\nThe grass became a jungle deep,\nThe ants wore crowns and took their seats.\n\n[PAUSE]\n\n[JOYFUL] A tiny voice cried, \"Wait—don’t squash!\nYou’re standing on our city square!\nWe’ve got a bakery, a park, a stream…\nAnd *you’re* the giant in our dream!\"\n\n[PAUSE]\n\n[RHYTHMIC] Leo knelt down, eyes so wide,\n\"But where’s your sun? Where’s your sky?\"\nThe scientist (with specs so small)\nPointed up: \"That’s *your* wall.\"\n\n[PAUSE]\n\n[GENTLE] \"Then who,\" Leo whispered, soft and slow,\n\"Holds *us* in *their* pocket, don’t you know?\"\nThe tiny sage just grinned and said,\n\"Perhaps the one who tucks you in to bed.\"\n\n[PAUSE]\n\n[WHISPERING] The lens grew warm, the world grew tall,\nThe ants all waved—then *poof*, that’s all.\nLeo yawned, his pockets light,\nBut stars still hummed… that tiny night.\n\n[PAUSE]\n\n[SLEEPY] Now when he closes both his eyes,\nHe wonders if the moon’s his size.\nAnd if somewhere, far or near,\nA giant’s watching… with a lens to peer.",
+    "annotated_text": "[RHYTHMIC] Leo found a lens so bright,\nIt turned his yard to starry night.\nThe grass became a jungle deep,\nThe ants wore crowns and took their seats.\n\n[PAUSE]\n\n[JOYFUL] A tiny voice cried, \"Wait—don’t squash!\nYou’re standing on our city square!\nWe’ve got a bakery, a park, a stream…\nAnd *you’re* the giant in our dream!\"\n\n[PAUSE]\n\n[RHYTHMIC] Leo knelt down, eyes so wide,\n\"But where’s your sun? Where’s your sky?\"\nThe scientist (with specs so small)\nPointed up: \"That’s *your* wall.\"\n\n[PAUSE]\n\n[GENTLE] \"Then who,\" Leo whispered, soft and slow,\n\"Holds *us* in *their* pocket, don’t you know?\"\nThe tiny sage just grinned and said,\n\"Perhaps the one who tucks you in to bed.\"\n\n[PAUSE]\n\n[WHISPERING] The lens grew warm, the world grew tall,\nThe ants all waved—then *poof*, that’s all.\nLeo yawned, his pockets light,\nBut stars still hummed… that tiny night.\n\n[PAUSE]\n\n[SLEEPY] Now when he closes both his eyes,\nHe wonders if the moon’s his size.\nAnd if somewhere, far or near,\nA giant’s watching… with a lens to peer.",
+    "target_age": 10,
+    "age_min": 9,
+    "age_max": 12,
+    "age_group": "9-12",
+    "length": "LONG",
+    "word_count": 164,
+    "duration_seconds": 0,
+    "categories": [
+      "Science Fantasy",
+      "Bedtime Fable"
+    ],
+    "theme": "science",
+    "morals": [
+      "The universe is full of wonders, no matter how small you are.",
+      "Curiosity turns ordinary moments into extraordinary adventures."
+    ],
+    "cover": "/covers/gen-c70d75db83fc.svg",
+    "musicProfile": "enchanted-garden",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-c70d_female_2.mp3",
+        "duration_seconds": 98.41,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_4",
+        "url": "/audio/pre-gen/gen-c70d_female_4.mp3",
+        "duration_seconds": 120.58,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "male",
+    "character": {
+      "name": "Leo",
+      "identity": "A playful explorer who sees magic in the mechanics of the world",
+      "special": "His curiosity bends the rules of size and scale",
+      "personality_tags": [
+        "Curious",
+        "Playful"
+      ]
+    },
+    "cover_context": "A sun-dappled backyard at golden hour, where blades of grass tower like emerald skyscrapers. A tiny city of pebble roads and acorn-cap houses glows under a magnifying glass’s lens, while fireflies flicker like streetlights in the miniature twilight.",
+    "lead_character_type": "human",
+    "universe": "prehistoric",
+    "geography": "East Asia",
+    "life_aspect": "hobbies_passions",
+    "plot_archetype": "problem_solving",
+    "diversityFingerprint": {
+      "characterType": "human_child",
+      "setting": "miniature_world",
+      "mood": null,
+      "storyType": null,
+      "plotShape": "discovery_reveal",
+      "scale": "tiny_intimate",
+      "companion": "duo",
+      "movement": "walking_wandering",
+      "timeOfDay": "late_afternoon",
+      "weather": "magical_atmospheric",
+      "theme": "curiosity_wonder",
+      "characterTrait": "playful_mischievous",
+      "magicType": "miniaturization",
+      "season": "summer",
+      "senseEmphasis": "tactile"
+    },
+    "mood": "wired",
+    "story_type": "fable",
+    "created_at": "2026-03-26T01:41:21.156874",
+    "updated_at": "2026-03-26T01:41:21.156874",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 2
   }
 ]
