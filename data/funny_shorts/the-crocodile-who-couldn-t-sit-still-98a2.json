@@ -1,0 +1,23 @@
+{
+  "id": "the-crocodile-who-couldn-t-sit-still-98a2",
+  "title": "The Crocodile Who Couldn\u2019t Sit Still",
+  "age_group": "2-5",
+  "comedy_type": "physical_escalation",
+  "voices": [
+    "high_pitch_cartoon",
+    "comedic_villain"
+  ],
+  "voice_combo": [
+    "high_pitch_cartoon",
+    "comedic_villain"
+  ],
+  "premise_summary": "crocodile pretends to be a bench",
+  "cover_description": "A crocodile mid-spin with one leg in the air, eyes crossed, while a tiny mouse clings to his tail laughing",
+  "cover_file": "the-crocodile-who-couldn-t-sit-still-98a2.svg",
+  "script": "[TITLE: The Crocodile Who Couldn\u2019t Sit Still]\n[AGE: 2-5]\n[VOICES: high_pitch_cartoon, comedic_villain]\n[COMEDY_TYPE: physical_escalation]\n\n[SETUP]\n[MOUSE] [DELIVERY: curious, excited] Ooooh! A big green bench! [STING: boing]\n[CROC] [DELIVERY: confident, smug] Actually, little squeaker\u2026 that\u2019s ME. [STING: villain_dramatic]\n[MOUSE] [DELIVERY: suspicious] You don\u2019t look like a bench. [STING: mouse_squeak]\n\n[BEAT_1]\n[CROC] [DELIVERY: bluster, loud] I am the Crocodile Bench! Sit on me! [STING: slide_whistle]\n[MOUSE] [DELIVERY: tentative] Okay\u2026 *squeak*\u2026 wobble wobble! [STING: tiptoe]\n[CROC] [DELIVERY: defensive] I meant to do that! [STING: tiny]\n\n[BEAT_2]\n[MOUSE] [DELIVERY: suspicious] You\u2019re wiggling! [STING: mouse_panic]\n[CROC] [DELIVERY: scrambling, loud] It\u2019s a\u2026 vibrating massage feature! [STING: whoosh]\n[MOUSE] [DELIVERY: pointed] *squeak*\u2026 SPINNING NOW! [STING: run]\n\n[BEAT_3]\n[CROC] [DELIVERY: desperate, panicked] I\u2019M A TWIRLING BENCH! [STING: big_crash]\n[MOUSE] [DELIVERY: calm gotcha, quiet] You\u2019re just a crocodile. [STING: silence]\n[CROC] [DELIVERY: stunned, deflated] \u2026Fine. I\u2019m a crocodile. [STING: deflation]\n\n[BUTTON]\n[MOUSE] [DELIVERY: delighted] Can we do it again? [STING: mouse_surprise]\n[CROC] [DELIVERY: outraged, loud] [PUNCHLINE]NEVER![/PUNCHLINE] [STING: villain_fail]\n\n[COVER: A crocodile mid-spin with one leg in the air, eyes crossed, while a tiny mouse clings to his tail laughing]\n[PREMISE: crocodile pretends to be a bench]",
+  "created_at": "2026-03-26",
+  "play_count": 0,
+  "replay_count": 0,
+  "audio_file": "the-crocodile-who-couldn-t-sit-still-98a2.mp3",
+  "duration_seconds": 38
+}

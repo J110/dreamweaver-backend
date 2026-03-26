@@ -104,6 +104,29 @@ RULES:
    Sweet = deadpan sarcasm, Witch = ominous drama.
 8. No sleep language. Pure comedy.
 
+DELIVERY TAGS (required):
+TAG EVERY SENTENCE with [DELIVERY: tag1, tag2] BEFORE the character text.
+
+The delivery tag describes HOW the character says this line based on
+what just happened in the conversation. Tags create an emotional ARC —
+characters should CHANGE across the scene.
+
+Guidelines:
+- Choose 1-2 tags per sentence. More than 2 gets muddy.
+- Croc typically arcs: confident → caught off guard → desperate → deflated
+- Mouse typically arcs: curious → suspicious → calm gotcha
+- Sweet typically stays: unbothered → deadpan → devastating (minimal change IS the comedy)
+- Witch typically arcs: ominous → building → revealing (dramatic narrator energy)
+- The CONTRAST between characters' arcs is where the comedy lives.
+  If Croc gets louder, Mouse should get quieter. The gap IS the joke.
+
+Available delivery tags:
+CONFIDENCE: confident, dismissive, bluster, triumphant, smug
+UNCERTAINTY: tentative, caught off guard, scrambling, defensive, desperate, stunned
+PRESSURE: curious, suspicious, pointed, pressing, calm gotcha, devastating
+ENERGY: loud, excited, panicked, outraged, delighted
+CALM: quiet, deadpan, unbothered, ominous, gentle, wistful
+
 Available stings: {available_stings}
 
 COMEDY STYLE for {age_group}:
@@ -134,24 +157,24 @@ VOICES line MUST use these exact voice IDs: high_pitch_cartoon, comedic_villain,
 [COMEDY_TYPE: {comedy_type}]
 
 [SETUP]
-[MOUSE] Sentence text. [STING: type]
-[CROC] Another sentence.
+[MOUSE] [DELIVERY: curious, tentative] Sentence text. [STING: type]
+[CROC] [DELIVERY: confident, dismissive] Another sentence.
 [/SETUP]
 
 [BEAT_1]
-[MOUSE] Sentence text.
+[MOUSE] [DELIVERY: suspicious] Sentence text.
 [/BEAT_1]
 
 [BEAT_2]
-[CROC] Sentence text.
+[CROC] [DELIVERY: caught off guard] Sentence text.
 [/BEAT_2]
 
 [BEAT_3]
-[MOUSE] Sentence text. [STING: type]
+[MOUSE] [DELIVERY: quiet, devastating] Sentence text. [STING: type]
 [/BEAT_3]
 
 [BUTTON]
-[CROC] [PUNCHLINE]Final punchline sentence.[/PUNCHLINE] [STING: type]
+[CROC] [DELIVERY: desperate, loud] [PUNCHLINE]Final punchline sentence.[/PUNCHLINE] [STING: type]
 [/BUTTON]
 
 [COVER: One-sentence visual description of the funniest punchline moment]
@@ -281,6 +304,27 @@ def validate_script(script_text: str) -> list[str]:
         voices = [v.strip() for v in voices_match.group(1).split(",")]
         if len(voices) > 3:
             errors.append(f"Too many voices: {len(voices)} (max 3)")
+
+    # Check delivery tags (warn, not error — scripts still work without them)
+    tagged_lines = 0
+    total_dialogue_lines = 0
+    in_section = False
+    for line in script_text.strip().split("\n"):
+        line = line.strip()
+        if line.startswith("[SETUP]") or line.startswith("[BEAT_") or line.startswith("[BUTTON]"):
+            in_section = True
+            continue
+        if line.startswith("[/"):
+            in_section = False
+            continue
+        if in_section and line and re.match(r"^\[(\w+)\]", line):
+            total_dialogue_lines += 1
+            if re.search(r"\[DELIVERY:", line, re.IGNORECASE):
+                tagged_lines += 1
+    if total_dialogue_lines > 0 and tagged_lines == 0:
+        errors.append("WARNING: No [DELIVERY: ...] tags found — emotional arcs will be flat")
+    elif total_dialogue_lines > 0 and tagged_lines < total_dialogue_lines * 0.5:
+        errors.append(f"WARNING: Only {tagged_lines}/{total_dialogue_lines} lines have delivery tags")
 
     return errors
 

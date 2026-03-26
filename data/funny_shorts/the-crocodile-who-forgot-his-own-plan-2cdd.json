@@ -1,0 +1,23 @@
+{
+  "id": "the-crocodile-who-forgot-his-own-plan-2cdd",
+  "title": "The Crocodile Who Forgot His Own Plan",
+  "age_group": "9-12",
+  "comedy_type": "villain_fails",
+  "voices": [
+    "young_sweet",
+    "comedic_villain"
+  ],
+  "voice_combo": [
+    "young_sweet",
+    "comedic_villain"
+  ],
+  "premise_summary": "crocodile forgets his own ambush plan",
+  "cover_description": "A crocodile frozen mid-\"pounce\" with his mouth open, staring blankly at a tiny shadow on the ground while a sarcastic girl watches with arms crossed.",
+  "cover_file": "the-crocodile-who-forgot-his-own-plan-2cdd.svg",
+  "script": "[TITLE: The Crocodile Who Forgot His Own Plan]\n[AGE: 9-12]\n[VOICES: young_sweet, comedic_villain]\n[COMEDY_TYPE: villain_fails]\n\n[SETUP]\n[SWEET] [DELIVERY: deadpan, unbothered] You\u2019ve been standing on that rock for three hours. [STING: witch_ominous]\n[CROC] [DELIVERY: confident, bluster] This is not a rock. [STING: villain_dramatic]\n[SWEET] [DELIVERY: deadpan] It\u2019s not moving either. [STING: sweet_pause]\n\n[BEAT_1]\n[CROC] [DELIVERY: defensive] I\u2019m conserving energy. [STING: villain_fail]\n[SWEET] [DELIVERY: deadpan] For what, a nap? [STING: sweet_eyeroll]\n\n[BEAT_2]\n[CROC] [DELIVERY: scrambling] For... the grand ambush! [STING: buildup_short]\n[SWEET] [DELIVERY: deadpan] The one where you don\u2019t move? [STING: silence]\n\n[BEAT_3]\n[CROC] [DELIVERY: desperate] I was about to pounce! [STING: big_crash]\n[SWEET] [DELIVERY: quiet, devastating] You don\u2019t even know what you\u2019re pouncing *at*. [STING: witch_reveal]\n\n[BUTTON]\n[CROC] [DELIVERY: deflated, loud] [PUNCHLINE]Fine. What *are* we pouncing at?[/PUNCHLINE] [STING: deflation]\n[SWEET] [DELIVERY: deadpan] My shadow. It\u2019s been following me all day. [STING: medium_hit]\n\n[COVER: A crocodile frozen mid-\"pounce\" with his mouth open, staring blankly at a tiny shadow on the ground while a sarcastic girl watches with arms crossed.]\n[PREMISE: crocodile forgets his own ambush plan]",
+  "created_at": "2026-03-26",
+  "play_count": 0,
+  "replay_count": 0,
+  "audio_file": "the-crocodile-who-forgot-his-own-plan-2cdd.mp3",
+  "duration_seconds": 37
+}

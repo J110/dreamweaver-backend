@@ -53,48 +53,35 @@ COVER_PROMPT_TEMPLATE = (
 )
 
 
-# ── FLUX Image Generation (Together AI) ────────────────────────
+# ── FLUX Image Generation (Pollinations.ai) ───────────────────
 
 def generate_flux_image(prompt: str) -> bytes | None:
-    """Generate a 512x512 image via Together AI FLUX.1-schnell."""
-    api_key = os.getenv("TOGETHER_API_KEY", "")
-    if not api_key:
-        logger.warning("TOGETHER_API_KEY not set")
-        return None
+    """Generate a 512x512 image via Pollinations.ai FLUX endpoint."""
+    from urllib.parse import quote
 
-    headers = {
-        "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json",
-    }
-    payload = {
-        "model": "black-forest-labs/FLUX.1-schnell",
-        "prompt": prompt[:1500],
-        "width": 512,
-        "height": 512,
-        "steps": 4,
-        "n": 1,
-        "response_format": "b64_json",
-    }
+    # Truncate prompt to ~600 chars to stay within URL limits
+    truncated = prompt[:600]
+    encoded_prompt = quote(truncated, safe="")
+    url = f"https://gen.pollinations.ai/image/{encoded_prompt}?width=512&height=512&model=flux"
+
+    pollinations_token = os.getenv("POLLINATIONS_API_KEY", "")
+    headers = {}
+    if pollinations_token:
+        headers["Authorization"] = f"Bearer {pollinations_token}"
+
+    logger.info("  Calling FLUX via Pollinations.ai...")
 
     for attempt in range(3):
         try:
-            resp = httpx.post(
-                "https://api.together.xyz/v1/images/generations",
-                headers=headers, json=payload, timeout=120,
-            )
-            if resp.status_code == 200:
-                data = resp.json()
-                b64_data = data["data"][0]["b64_json"]
-                image_bytes = base64.b64decode(b64_data)
-                if len(image_bytes) > 1000:
-                    logger.info("  FLUX image: %d bytes", len(image_bytes))
-                    return image_bytes
-                logger.warning("  FLUX image too small: %d bytes", len(image_bytes))
+            resp = httpx.get(url, headers=headers, timeout=120, follow_redirects=True)
+            if resp.status_code == 200 and len(resp.content) > 1000:
+                logger.info("  FLUX image: %d bytes", len(resp.content))
+                return resp.content
             elif resp.status_code == 429:
                 logger.warning("  Rate limited, waiting 15s...")
                 time.sleep(15)
             else:
-                logger.error("  FLUX error %d: %s", resp.status_code, resp.text[:200])
+                logger.error("  FLUX error %d (%d bytes)", resp.status_code, len(resp.content))
                 if attempt < 2:
                     time.sleep(5)
         except httpx.TimeoutException:
@@ -343,9 +330,7 @@ def main():
     if not args.short_id and not args.all:
         parser.error("Specify --short-id or --all")
 
-    if not os.getenv("TOGETHER_API_KEY"):
-        logger.error("TOGETHER_API_KEY not set")
-        sys.exit(1)
+    # Pollinations works without API key (but slower without auth)
 
     if args.short_id:
         path = DATA_DIR / f"{args.short_id}.json"

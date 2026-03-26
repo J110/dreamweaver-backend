@@ -1,0 +1,23 @@
+{
+  "id": "the-crocodile-who-couldn-t-stop-honking-2f2f",
+  "title": "The Crocodile Who Couldn\u2019t Stop Honking",
+  "age_group": "6-8",
+  "comedy_type": "sound_effect_comedy",
+  "voices": [
+    "high_pitch_cartoon",
+    "comedic_villain"
+  ],
+  "voice_combo": [
+    "high_pitch_cartoon",
+    "comedic_villain"
+  ],
+  "premise_summary": "crocodile\u2019s shoelace honks when he moves",
+  "cover_description": "A crocodile with one shoelace dangling from his nose, mid-honk, while a mouse calmly ties it into a bow",
+  "cover_file": "the-crocodile-who-couldn-t-stop-honking-2f2f.svg",
+  "script": "[TITLE: The Crocodile Who Couldn\u2019t Stop Honking]\n[AGE: 6-8]\n[VOICES: high_pitch_cartoon, comedic_villain]\n[COMEDY_TYPE: sound_effect_comedy]\n\n[SETUP]\n[MOUSE] [DELIVERY: curious, tentative] What\u2019s that strange noise coming from the swamp? [STING: tiptoe]\n[CROC] [DELIVERY: confident, dismissive] Oh, that? That\u2019s just my *ahem* majestic swamp trumpet. [STING: villain_dramatic]\n\n[BEAT_1]\n[MOUSE] [DELIVERY: suspicious] It sounds like a goose with a kazoo. [STING: medium_hit]\n[CROC] [DELIVERY: bluster, defensive] Nonsense! It\u2019s a regal fanfare for my glorious presence. [STING: villain_entrance]\n[MOUSE] [DELIVERY: pressing] Then why did it just honk when you sneezed? [STING: boing]\n\n[BEAT_2]\n[CROC] [DELIVERY: caught off guard, scrambling] That\u2014that was a *cough* royal sneeze salute! [STING: slide_whistle]\n[MOUSE] [DELIVERY: calm gotcha] So\u2026 every time you move, it honks? [STING: tiny]\n[CROC] [DELIVERY: desperate, loud] Silence, rodent! It\u2019s a *curse*! A *hex*! [STING: big_crash]\n\n[BEAT_3]\n[MOUSE] [DELIVERY: quiet, devastating] It\u2019s your shoelace stuck in your nostril. [STING: silence]\n[CROC] [DELIVERY: stunned, deflated] \u2026Oh. [STING: deflation]\n\n[BUTTON]\n[CROC] [DELIVERY: desperate, loud] [PUNCHLINE]I meant to do that! It\u2019s my new signature scent\u2014*Eau de Gym Sock*! [/PUNCHLINE] [STING: splat]\n[MOUSE] [DELIVERY: deadpan] You\u2019re welcome. [STING: sweet_eyeroll]\n\n[COVER: A crocodile with one shoelace dangling from his nose, mid-honk, while a mouse calmly ties it into a bow]\n[PREMISE: crocodile\u2019s shoelace honks when he moves]",
+  "created_at": "2026-03-26",
+  "play_count": 0,
+  "replay_count": 0,
+  "audio_file": "the-crocodile-who-couldn-t-stop-honking-2f2f.mp3",
+  "duration_seconds": 50
+}

@@ -22,6 +22,12 @@ from app.services.tts.voice_service import (
     FUNNY_VOICE_PARAMS,
     FUNNY_PUNCHLINE_PARAMS,
 )
+from app.services.tts.delivery import (
+    apply_delivery,
+    parse_delivery_tags,
+    strip_delivery_tags,
+    get_sentence_gap,
+)
 
 DATA_DIR = Path(__file__).resolve().parents[1] / "data" / "funny_shorts"
 AUDIO_OUT_DIR = Path(__file__).resolve().parents[1] / "public" / "audio" / "funny-shorts"
@@ -39,6 +45,11 @@ class VoicedSentence:
     is_punchline: bool
     sting: Optional[str]  # Sting type if present
     section: str         # SETUP, BEAT_1, etc.
+    delivery_tags: list = None  # ["curious", "tentative"], etc.
+
+    def __post_init__(self):
+        if self.delivery_tags is None:
+            self.delivery_tags = []
 
 
 def parse_voiced_sentences(script: str) -> list[VoicedSentence]:
@@ -83,6 +94,9 @@ def parse_voiced_sentences(script: str) -> list[VoicedSentence]:
 
         voice_id = FUNNY_VOICE_MAP[character]
 
+        # Extract delivery tags before cleaning
+        delivery_tags = parse_delivery_tags(rest)
+
         # Check for punchline
         is_punchline = "[PUNCHLINE]" in rest
 
@@ -92,8 +106,8 @@ def parse_voiced_sentences(script: str) -> list[VoicedSentence]:
         if sting_match:
             sting = sting_match.group(1)
 
-        # Clean text: remove all tags
-        clean = rest
+        # Clean text: remove all tags (delivery, punchline, sting)
+        clean = strip_delivery_tags(rest)
         clean = re.sub(r"\[/?PUNCHLINE\]", "", clean)
         clean = re.sub(r"\[STING:\s*\w+\]", "", clean)
         clean = clean.strip()
@@ -106,18 +120,30 @@ def parse_voiced_sentences(script: str) -> list[VoicedSentence]:
                 is_punchline=is_punchline,
                 sting=sting,
                 section=current_section,
+                delivery_tags=delivery_tags,
             ))
 
     return sentences
 
 
-def get_tts_params(voice_id: str, is_punchline: bool) -> dict:
-    """Get TTS parameters for a voice, with punchline boost if needed."""
+def get_tts_params(voice_id: str, is_punchline: bool,
+                   delivery_tags: list = None) -> dict:
+    """Get TTS parameters for a voice, with delivery + punchline adjustments.
+
+    Order: base params -> delivery tag multipliers -> punchline boost (overwrites exag).
+    """
     params = FUNNY_VOICE_PARAMS.get(voice_id, {}).copy()
+
+    # 1. Apply delivery tag adjustments (multiplicative)
+    if delivery_tags:
+        params = apply_delivery(params, delivery_tags)
+
+    # 2. Apply punchline boost ON TOP of delivery (overwrites exaggeration)
     if is_punchline and voice_id in FUNNY_PUNCHLINE_PARAMS:
         punch = FUNNY_PUNCHLINE_PARAMS[voice_id]
         params["exaggeration"] = punch["exaggeration"]
         params["speed"] = params.get("speed", 0.90) * punch["speed_multiplier"]
+
     return params
 
 
@@ -142,15 +168,20 @@ def generate_tts_modal(text: str, voice_id: str, params: dict) -> bytes:
         return resp.content
 
 
-def stitch_audio_chunks(chunks: list[bytes], gap_ms: int = 300) -> bytes:
-    """Stitch audio chunks with gaps between them using pydub."""
+def stitch_audio_chunks(chunks: list[bytes], gap_ms: int = 300,
+                        gap_list: list[int] = None) -> bytes:
+    """Stitch audio chunks with gaps between them using pydub.
+
+    If gap_list is provided, uses variable gaps per sentence boundary.
+    gap_list[i] is the gap AFTER chunk[i] (length = len(chunks) - 1).
+    Falls back to fixed gap_ms if gap_list is not provided.
+    """
     from pydub import AudioSegment
     import io
 
     if not chunks:
         return b""
 
-    silence = AudioSegment.silent(duration=gap_ms)
     combined = AudioSegment.empty()
 
     for i, chunk in enumerate(chunks):
@@ -160,7 +191,12 @@ def stitch_audio_chunks(chunks: list[bytes], gap_ms: int = 300) -> bytes:
             seg = AudioSegment.from_wav(io.BytesIO(chunk))
 
         if i > 0:
-            combined += silence
+            # Use variable gap if available, otherwise fixed
+            if gap_list and i - 1 < len(gap_list):
+                this_gap = gap_list[i - 1]
+            else:
+                this_gap = gap_ms
+            combined += AudioSegment.silent(duration=this_gap)
         combined += seg
 
     buf = io.BytesIO()
@@ -186,10 +222,12 @@ def generate_audio_for_short(short: dict) -> Optional[str]:
 
     audio_chunks = []
     for i, sent in enumerate(sentences):
-        params = get_tts_params(sent.voice_id, sent.is_punchline)
+        params = get_tts_params(sent.voice_id, sent.is_punchline,
+                                delivery_tags=sent.delivery_tags)
         label = " [PUNCHLINE]" if sent.is_punchline else ""
+        tag_label = f" [DELIVERY: {', '.join(sent.delivery_tags)}]" if sent.delivery_tags else ""
         print(f"  [{i+1}/{len(sentences)}] {sent.character}: "
-              f"\"{sent.text[:50]}...\"{label}")
+              f"\"{sent.text[:50]}...\"{label}{tag_label}")
 
         try:
             chunk = generate_tts_modal(sent.text, sent.voice_id, params)
@@ -198,9 +236,15 @@ def generate_audio_for_short(short: dict) -> Optional[str]:
             print(f"    TTS ERROR: {e}")
             return None
 
-    # Stitch with 300ms comedy gaps
-    print(f"  Stitching {len(audio_chunks)} chunks with 300ms gaps...")
-    narration = stitch_audio_chunks(audio_chunks, gap_ms=300)
+    # Calculate variable gaps based on delivery tags
+    gap_list = []
+    for i in range(len(sentences) - 1):
+        gap = get_sentence_gap(sentences[i], sentences[i + 1])
+        gap_list.append(gap)
+
+    print(f"  Stitching {len(audio_chunks)} chunks with variable gaps "
+          f"({min(gap_list) if gap_list else 300}-{max(gap_list) if gap_list else 300}ms)...")
+    narration = stitch_audio_chunks(audio_chunks, gap_ms=300, gap_list=gap_list)
 
     AUDIO_OUT_DIR.mkdir(parents=True, exist_ok=True)
     out_file = f"{short_id}.mp3"

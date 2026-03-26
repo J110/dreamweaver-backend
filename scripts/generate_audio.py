@@ -250,6 +250,18 @@ try:
 except ImportError:
     _HAS_MOOD_EMPHASIS = False
 
+# ── Delivery tag import (sentence-level emotional TTS adjustment) ────
+try:
+    from app.services.tts.delivery import (
+        apply_delivery,
+        parse_delivery_tags,
+        strip_delivery_tags,
+        should_apply_delivery,
+    )
+    _HAS_DELIVERY = True
+except ImportError:
+    _HAS_DELIVERY = False
+
 _MARKER_RE = re.compile(
     r"\[/?"
     r"(SLEEPY|GENTLE|CALM|EXCITED|CURIOUS|ADVENTUROUS|MYSTERIOUS|"
@@ -1787,11 +1799,31 @@ def generate_phase_audio(
         # Parse — keep [EMPHASIS] markers if we'll use them
         segments = parse_annotated_text(para, content_type, keep_emphasis=use_emphasis)
 
+        # Count speech segments in this paragraph for delivery tag gating
+        speech_segments = [s for s in segments if s["type"] == "speech"]
+        speech_idx = 0
+
         for seg in segments:
             if seg["type"] == "pause":
                 audio_segments.append(generate_silence(seg["duration_ms"]))
             elif seg["type"] == "speech":
                 seg_text = seg["text"]
+
+                # ── Delivery tag processing (Phase 1 only) ──
+                # Extract and apply delivery tags before other adjustments.
+                # Tags multiply on top of mood-ramped base params.
+                d_exag, d_spd = exag, spd
+                if _HAS_DELIVERY:
+                    dtags = parse_delivery_tags(seg_text)
+                    seg_text = strip_delivery_tags(seg_text)
+                    if dtags and should_apply_delivery(
+                        content_type, phase_num, speech_idx, len(speech_segments)
+                    ):
+                        delivery_base = {"exaggeration": exag, "speed": spd}
+                        adjusted = apply_delivery(delivery_base, dtags)
+                        d_exag = adjusted["exaggeration"]
+                        d_spd = adjusted["speed"]
+                speech_idx += 1
 
                 if use_emphasis:
                     # Sentence-level emphasis: check if this segment contains
@@ -1804,12 +1836,12 @@ def generate_phase_audio(
                     if has_emph and clean_text:
                         emph_type = get_emphasis_type(clean_text, mood)
                         emp = get_emphasis_params(mood, emph_type)
-                        c_exag = clamp_emphasis_exaggeration(emp["exaggeration"], exag)
-                        c_speed = spd * emp["speed_multiplier"]
+                        c_exag = clamp_emphasis_exaggeration(emp["exaggeration"], d_exag)
+                        c_speed = d_spd * emp["speed_multiplier"]
                         c_cfg = emp["cfg_weight"]
                     else:
                         clean_text = clean_text or seg_text
-                        c_exag, c_speed, c_cfg = exag, spd, cfg
+                        c_exag, c_speed, c_cfg = d_exag, d_spd, cfg
 
                     audio_bytes = generate_tts_for_segment(
                         client, text=clean_text, voice=phase_voice,
@@ -1829,8 +1861,8 @@ def generate_phase_audio(
                     # Standard: no emphasis chunking
                     audio_bytes = generate_tts_for_segment(
                         client, text=seg_text, voice=phase_voice,
-                        exaggeration=exag, cfg_weight=cfg,
-                        lang=lang, speed=spd,
+                        exaggeration=d_exag, cfg_weight=cfg,
+                        lang=lang, speed=d_spd,
                     )
                     if audio_bytes:
                         try:
