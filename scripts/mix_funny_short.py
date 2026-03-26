@@ -1,39 +1,38 @@
 #!/usr/bin/env python3
-"""Mix narration + character loops + comedy stings for funny shorts.
+"""Mix narration chunks + base track + stings into final funny short audio.
 
-This script takes the raw narration audio (from generate_funny_audio.py)
-and mixes it with:
-1. Character-matched background music loops
-2. Comedy stings placed at script-specified positions
+Two-layer system:
+  Layer 3 (top):    Voice chunks — multi-character dialogue           0 dB
+  Layer 2 (middle): Stings — reactive comedy hits at scripted spots  -5 dB
+  Layer 1 (bottom): Base track — continuous, unique per short       -12 dB
 
-The output is a single mixed MP3 — the client plays it as-is.
+Builds sequentially: the current position IS the timestamp.
+No pre-calculation of timestamps needed.
 
 Usage:
     python3 scripts/mix_funny_short.py --short-id crocodile-rock-001-a1b2
     python3 scripts/mix_funny_short.py --all
+    python3 scripts/mix_funny_short.py --all --force
 """
 
 import argparse
 import io
 import json
-import re
+import random
 import sys
 from pathlib import Path
-from typing import Optional
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from pydub import AudioSegment
 
-from app.services.tts.voice_service import CHARACTER_LOOP_MAP
-
 DATA_DIR = Path(__file__).resolve().parents[1] / "data" / "funny_shorts"
-AUDIO_DIR = Path(__file__).resolve().parents[1] / "public" / "audio" / "funny-shorts"
+CHUNKS_DIR = Path(__file__).resolve().parents[1] / "public" / "audio" / "funny-shorts"
 MUSIC_DIR = Path(__file__).resolve().parents[1] / "public" / "audio" / "funny-music"
 STINGS_DIR = MUSIC_DIR / "stings"
-LOOPS_DIR = MUSIC_DIR / "loops"
+BASE_TRACKS_DIR = MUSIC_DIR / "base-tracks"
 
-# ── Comedy Sting Files ──────────────────────────────────────────
+# ── Sting File Mapping ────────────────────────────────────────────────
 
 COMEDY_STINGS = {
     # Universal
@@ -71,240 +70,400 @@ COMEDY_STINGS = {
     "musical_detuned":   "comedy_musical_detuned.wav",
 }
 
-# Character → loop name mapping
-CHARACTER_LOOPS = {
-    "bouncy_cartoon":   {"variants": 3},
-    "villain_march":    {"variants": 3},
-    "mysterious_creep": {"variants": 3},
-    "sweet_innocence":  {"variants": 2},
-    "poetic_bounce":    {"variants": 2},
-    "chaos_ensemble":   {"variants": 2},
+# Pre-measured sting durations (ms). Used for gap calculation.
+# If a sting file exists, its actual duration is used instead.
+STING_DURATIONS = {
+    "buildup_short":     2000,
+    "buildup_long":      4000,
+    "tiny":              500,
+    "medium_hit":        800,
+    "big_crash":         1500,
+    "silence":           500,
+    "deflation":         2000,
+    "victory":           1000,
+    "splat":             500,
+    "boing":             500,
+    "whoosh":            500,
+    "tiptoe":            2000,
+    "run":               2000,
+    "slide_whistle":     1500,
+    "villain_entrance":  1500,
+    "villain_fail":      2500,
+    "villain_dramatic":  2000,
+    "witch_ominous":     1500,
+    "witch_reveal":      1000,
+    "witch_dramatic":    2000,
+    "mouse_squeak":      300,
+    "mouse_panic":       1500,
+    "mouse_surprise":    800,
+    "sweet_eyeroll":     500,
+    "sweet_pause":       2000,
+    "musical_flourish":  1000,
+    "musical_detuned":   1000,
 }
 
-# Mixing levels (dB)
-LOOP_VOLUME = -10
-LOOP_DUCK_VOLUME = -18
+STING_BUFFER_MS = 200  # breathing room after sting ends
+
+# ── Base Track Styles ─────────────────────────────────────────────────
+
+COMEDY_BASE_MAP = {
+    "physical_escalation":  "bouncy",
+    "villain_fails":        "sneaky",
+    "ominous_mundane":      "mysterious",
+    "sarcastic_commentary": "gentle_absurd",
+    "sound_effect_comedy":  "bouncy",
+    "sound_effect":         "bouncy",
+    "misunderstanding":     "gentle_absurd",
+    "funny_poem":           "whimsical",
+}
+
+CHARACTER_BASE_FALLBACK = {
+    "MOUSE":   "bouncy",
+    "CROC":    "sneaky",
+    "WITCH":   "mysterious",
+    "SWEET":   "gentle_absurd",
+    "MUSICAL": "whimsical",
+}
+
+# ── Dialogue Gap Rules ────────────────────────────────────────────────
+
+DIALOGUE_GAP_RULES = {
+    "question_to_answer":  150,
+    "same_character":      200,
+    "character_switch":    350,
+    "before_punchline":    600,
+    "after_punchline":     400,
+}
+
+# Delivery-tag-specific gaps (on top of dialogue rules)
+DELIVERY_GAP_AFTER = {
+    "stunned":      600,
+    "devastating":  550,
+    "calm gotcha":  500,
+    "revealing":    500,
+    "building":     200,
+    "panicked":     150,
+    "scrambling":   150,
+    "excited":      200,
+}
+
+DELIVERY_GAP_BEFORE = {
+    "caught off guard": 400,
+    "stunned":          500,
+}
+
+# ── Mix Levels ────────────────────────────────────────────────────────
+
+BASE_TRACK_VOLUME = -12
+BASE_TRACK_DUCK_VOLUME = -20
+BASE_TRACK_FADE_IN_MS = 500
+BASE_TRACK_FADE_OUT_MS = 2000
+BASE_TRACK_DUCK_RECOVERY_MS = 300
+
 STING_VOLUME = -5
-LOOP_CROSSFADE_MS = 1500
-LOOP_FADE_OUT_MS = 2000
-STING_DUCK_EXTRA_MS = 300
-MIN_SENTENCES_FOR_LOOP_SWITCH = 3
+VOICE_VOLUME = 0
 
 
-def get_loop_file(loop_name: str, variant: int = 0) -> Optional[Path]:
-    """Get a loop audio file path."""
-    max_v = CHARACTER_LOOPS.get(loop_name, {}).get("variants", 1)
-    v = variant % max_v
-    # Try common extensions
-    for ext in ["wav", "mp3"]:
-        path = LOOPS_DIR / f"{loop_name}_v{v+1}.{ext}"
-        if path.exists():
-            return path
-    # Try without variant
-    for ext in ["wav", "mp3"]:
-        path = LOOPS_DIR / f"{loop_name}.{ext}"
-        if path.exists():
-            return path
-    return None
+# ── Helper Functions ──────────────────────────────────────────────────
 
-
-def get_sting_file(sting_type: str) -> Optional[Path]:
-    """Get a sting audio file path."""
+def load_sting(sting_type: str) -> AudioSegment | None:
+    """Load a sting audio file. Returns None if not found."""
     filename = COMEDY_STINGS.get(sting_type)
     if not filename:
         return None
     path = STINGS_DIR / filename
-    if path.exists():
-        return path
-    return None
+    if not path.exists():
+        return None
+    try:
+        return AudioSegment.from_file(str(path))
+    except Exception:
+        return None
 
 
-def parse_sting_positions(script: str, sentence_timestamps: list[float]) -> list[dict]:
-    """Extract sting positions from script and map to audio timestamps."""
-    stings = []
-    sentence_idx = 0
-
-    for line in script.strip().split("\n"):
-        line = line.strip()
-        if not line or line.startswith("[TITLE") or line.startswith("[AGE") or \
-           line.startswith("[VOICES") or line.startswith("[COMEDY") or \
-           line.startswith("[SETUP]") or line.startswith("[BEAT_") or \
-           line.startswith("[BUTTON]") or line.startswith("[/"):
-            continue
-
-        char_match = re.match(r"^\[(\w+)\]\s*(.+)", line)
-        if not char_match:
-            # Fallback: accept CHAR: text format
-            char_match = re.match(r"^(\w+):\s+(.+)", line)
-        if not char_match:
-            continue
-
-        character = char_match.group(1).upper()
-        if character in ("TITLE", "AGE", "VOICES", "COMEDY_TYPE"):
-            continue
-
-        rest = char_match.group(2)
-        sting_match = re.search(r"\[STING:\s*(\w+)\]", rest)
-
-        if sting_match and sentence_idx < len(sentence_timestamps):
-            stings.append({
-                "type": sting_match.group(1),
-                "timestamp": sentence_timestamps[sentence_idx],
-            })
-
-        sentence_idx += 1
-
-    return stings
+def get_sting_duration_ms(sting_type: str) -> int:
+    """Get the duration of a sting in ms."""
+    sting = load_sting(sting_type)
+    if sting:
+        return len(sting)
+    return STING_DURATIONS.get(sting_type, 500)
 
 
-def get_sentence_timestamps(narration: AudioSegment, script: str, gap_ms: int = 300) -> list[float]:
-    """Estimate when each sentence ends based on equal division + gaps.
+def get_base_track_style(comedy_type: str, primary_character: str) -> str:
+    """Determine base track style for a short."""
+    if comedy_type in COMEDY_BASE_MAP:
+        return COMEDY_BASE_MAP[comedy_type]
+    return CHARACTER_BASE_FALLBACK.get(primary_character, "bouncy")
 
-    This is a rough estimate. For precise placement, we'd need the
-    individual sentence durations from generate_funny_audio.py.
+
+def find_base_track(style: str, short_id: str) -> Path | None:
+    """Find a base track file from the pool."""
+    if not BASE_TRACKS_DIR.exists():
+        return None
+
+    candidates = sorted(BASE_TRACKS_DIR.glob(f"base_{style}_*.wav"))
+    if not candidates:
+        candidates = sorted(BASE_TRACKS_DIR.glob(f"base_{style}_*.mp3"))
+    if not candidates:
+        return None
+
+    rng = random.Random(hash(short_id))
+    return rng.choice(candidates)
+
+
+def get_dialogue_gap(prev_sent: dict | None, curr_sent: dict) -> int:
+    """Calculate the base dialogue gap between two sentences."""
+    if prev_sent is None:
+        return 0
+
+    gap = DIALOGUE_GAP_RULES["character_switch"]
+
+    if prev_sent["character"] == curr_sent["character"]:
+        gap = DIALOGUE_GAP_RULES["same_character"]
+
+    if prev_sent.get("text", "").strip().endswith("?"):
+        gap = min(gap, DIALOGUE_GAP_RULES["question_to_answer"])
+
+    if curr_sent.get("is_punchline"):
+        gap = max(gap, DIALOGUE_GAP_RULES["before_punchline"])
+
+    if prev_sent.get("is_punchline"):
+        gap = max(gap, DIALOGUE_GAP_RULES["after_punchline"])
+
+    for tag in prev_sent.get("delivery_tags", []):
+        if tag in DELIVERY_GAP_AFTER:
+            gap = max(gap, DELIVERY_GAP_AFTER[tag])
+
+    for tag in curr_sent.get("delivery_tags", []):
+        if tag in DELIVERY_GAP_BEFORE:
+            gap = max(gap, DELIVERY_GAP_BEFORE[tag])
+
+    return gap
+
+
+def get_sentence_gap(prev_sent: dict | None, curr_sent: dict) -> int:
+    """Calculate total gap between sentences, including sting duration.
+
+    If the previous sentence had a sting, the gap must be at least
+    sting_duration + buffer, so the sting plays fully before the next
+    character speaks.
     """
-    # Count sentences
-    count = 0
-    for line in script.strip().split("\n"):
-        line = line.strip()
-        if not line:
-            continue
-        char_match = re.match(r"^\[(\w+)\]\s*(.+)", line)
-        if not char_match:
-            char_match = re.match(r"^(\w+):\s+(.+)", line)
-        if char_match:
-            character = char_match.group(1).upper()
-            if character not in ("TITLE", "AGE", "VOICES", "COMEDY_TYPE"):
-                count += 1
+    base_gap = get_dialogue_gap(prev_sent, curr_sent)
 
-    if count == 0:
-        return []
+    if prev_sent and prev_sent.get("sting"):
+        sting_ms = get_sting_duration_ms(prev_sent["sting"])
+        sting_gap = sting_ms + STING_BUFFER_MS
+        return max(sting_gap, base_gap)
 
-    total_ms = len(narration)
-    # Each sentence takes roughly equal time
-    per_sentence = total_ms / count
-
-    timestamps = []
-    for i in range(count):
-        # End of each sentence
-        end_ms = (i + 1) * per_sentence
-        timestamps.append(end_ms / 1000.0)
-
-    return timestamps
+    return base_gap
 
 
-def mix_short(short: dict) -> bool:
-    """Mix narration with loops and stings for a funny short."""
+# ── Core Mix Function ─────────────────────────────────────────────────
+
+def mix_short(short: dict, chunk_dir: Path) -> bool:
+    """Mix voice chunks + base track + stings into final audio.
+
+    Builds sequentially — the current position IS the timestamp.
+    """
     short_id = short["id"]
-    audio_file = short.get("audio_file")
-    if not audio_file:
-        print(f"  No audio file for {short_id}")
+    manifest_path = chunk_dir / "manifest.json"
+
+    if not manifest_path.exists():
+        print(f"  No manifest found at {manifest_path}")
+        print(f"  Run generate_funny_audio.py first")
         return False
 
-    narration_path = AUDIO_DIR / audio_file
-    if not narration_path.exists():
-        print(f"  Narration not found: {narration_path}")
+    with open(manifest_path) as f:
+        manifest = json.load(f)
+
+    sentences = manifest["sentences"]
+    if not sentences:
+        print(f"  Empty manifest for {short_id}")
         return False
 
-    script = short.get("script", "")
-    if not script:
-        print(f"  No script for {short_id}")
-        return False
+    # Load all voice chunks
+    voice_chunks = []
+    for sent in sentences:
+        chunk_path = chunk_dir / sent["chunk_file"]
+        if not chunk_path.exists():
+            print(f"  Missing chunk: {chunk_path}")
+            return False
+        try:
+            chunk = AudioSegment.from_mp3(str(chunk_path))
+        except Exception:
+            chunk = AudioSegment.from_file(str(chunk_path))
+        voice_chunks.append(chunk)
 
-    print(f"  Loading narration: {narration_path}")
-    narration = AudioSegment.from_mp3(str(narration_path))
-    total_ms = len(narration)
+    # ── Step 1: Build the voice + gap timeline ────────────────────────
+    # Sequential build: cursor advances through gaps and chunks.
 
-    # Check if loops/stings directory exists
-    if not LOOPS_DIR.exists() and not STINGS_DIR.exists():
-        print(f"  Music directories not found ({LOOPS_DIR}, {STINGS_DIR})")
-        print(f"  Skipping mix — narration-only output is already in place")
-        return True
+    cursor = 0  # current position in ms
+    voice_events = []  # (start_ms, chunk_index)
+    sting_events = []  # (start_ms, sting_type)
 
-    # Start building the mixed timeline
-    mixed = narration
+    for i, (sent, chunk) in enumerate(zip(sentences, voice_chunks)):
+        if i > 0:
+            gap = get_sentence_gap(sentences[i - 1], sent)
+            cursor += gap
 
-    # 1. Add character loop underneath
-    # Determine primary character (most sentences)
-    chars = re.findall(r"^\[(\w+)\]", script, re.MULTILINE)
-    meta_tags = {"TITLE", "AGE", "VOICES", "COMEDY_TYPE", "SETUP", "BEAT_1",
-                 "BEAT_2", "BEAT_3", "BUTTON", "PUNCHLINE", "STING"}
-    chars = [c for c in chars if c not in meta_tags and not c.startswith("/")]
+        voice_start = cursor
+        voice_events.append((voice_start, i))
 
-    if chars:
-        from collections import Counter
-        char_counts = Counter(chars)
-        primary_char = char_counts.most_common(1)[0][0]
-        loop_name = CHARACTER_LOOP_MAP.get(primary_char)
+        voice_end = cursor + len(chunk)
 
-        if loop_name:
-            import random
-            loop_path = get_loop_file(loop_name, random.randint(0, 2))
-            if loop_path:
-                print(f"  Adding loop: {loop_name} (for {primary_char})")
-                loop = AudioSegment.from_file(str(loop_path))
-                loop = loop + LOOP_VOLUME  # Set volume
+        # Sting fires at end of voice chunk
+        if sent.get("sting"):
+            sting_events.append((voice_end, sent["sting"]))
 
-                # Loop it to cover entire narration
-                loops_needed = (total_ms // len(loop)) + 1
-                looped = loop * loops_needed
-                looped = looped[:total_ms]
+        cursor = voice_end
 
-                # Fade out at end
-                looped = looped.fade_out(LOOP_FADE_OUT_MS)
+    total_duration = cursor + 500  # 500ms padding at end
 
-                # Overlay
-                mixed = looped.overlay(narration)
+    print(f"  Timeline: {total_duration / 1000:.1f}s, "
+          f"{len(voice_events)} voice chunks, {len(sting_events)} stings")
 
-    # 2. Place stings
-    timestamps = get_sentence_timestamps(narration, script)
-    sting_positions = parse_sting_positions(script, timestamps)
+    # ── Step 2: Build the base track layer ────────────────────────────
 
+    comedy_type = short.get("comedy_type", "")
+    chars = [s["character"] for s in sentences]
+    from collections import Counter
+    primary_char = Counter(chars).most_common(1)[0][0] if chars else "MOUSE"
+    style = get_base_track_style(comedy_type, primary_char)
+
+    base_track_path = find_base_track(style, short_id)
+    base_track = None
+
+    if base_track_path:
+        print(f"  Base track: {base_track_path.name} (style: {style})")
+        base_track = AudioSegment.from_file(str(base_track_path))
+
+        # Trim or loop to match total duration
+        if len(base_track) < total_duration:
+            loops_needed = (total_duration // len(base_track)) + 1
+            base_track = base_track * loops_needed
+        base_track = base_track[:total_duration]
+
+        # Apply volume + fades
+        base_track = base_track + BASE_TRACK_VOLUME
+        base_track = base_track.fade_in(BASE_TRACK_FADE_IN_MS)
+        base_track = base_track.fade_out(BASE_TRACK_FADE_OUT_MS)
+
+        # Duck base track for each sting
+        for sting_start, sting_type in sting_events:
+            sting_dur = get_sting_duration_ms(sting_type)
+            duck_duration = sting_dur + BASE_TRACK_DUCK_RECOVERY_MS
+
+            duck_start = max(0, sting_start)
+            duck_end = min(len(base_track), sting_start + duck_duration)
+
+            if duck_start < duck_end:
+                before = base_track[:duck_start]
+                ducked = base_track[duck_start:duck_end] + (BASE_TRACK_DUCK_VOLUME - BASE_TRACK_VOLUME)
+                after = base_track[duck_end:]
+
+                if len(ducked) > BASE_TRACK_DUCK_RECOVERY_MS:
+                    recovery_start = len(ducked) - BASE_TRACK_DUCK_RECOVERY_MS
+                    ducked = ducked[:recovery_start] + ducked[recovery_start:].fade_in(BASE_TRACK_DUCK_RECOVERY_MS)
+
+                base_track = before + ducked + after
+    else:
+        print(f"  No base track found for style '{style}' — trying legacy loops")
+        base_track = _try_legacy_loop(primary_char, total_duration)
+
+    # ── Step 3: Build the final mix ───────────────────────────────────
+
+    if base_track:
+        mixed = base_track
+    else:
+        mixed = AudioSegment.silent(duration=total_duration)
+
+    # Overlay voice chunks
+    for voice_start, chunk_idx in voice_events:
+        chunk = voice_chunks[chunk_idx] + VOICE_VOLUME
+        mixed = mixed.overlay(chunk, position=voice_start)
+
+    # Overlay stings
     stings_placed = 0
-    for sp in sting_positions:
-        sting_path = get_sting_file(sp["type"])
-        if not sting_path:
-            continue
-
-        sting_audio = AudioSegment.from_file(str(sting_path))
-        sting_audio = sting_audio + STING_VOLUME
-
-        position_ms = int(sp["timestamp"] * 1000)
-        if position_ms >= total_ms:
-            position_ms = total_ms - len(sting_audio) - 100
-
-        if position_ms >= 0:
-            mixed = mixed.overlay(sting_audio, position=max(0, position_ms))
+    for sting_start, sting_type in sting_events:
+        sting_audio = load_sting(sting_type)
+        if sting_audio:
+            sting_audio = sting_audio + STING_VOLUME
+            if sting_start + len(sting_audio) > len(mixed):
+                extra = sting_start + len(sting_audio) - len(mixed) + 100
+                mixed += AudioSegment.silent(duration=extra)
+            mixed = mixed.overlay(sting_audio, position=sting_start)
             stings_placed += 1
 
-    print(f"  Placed {stings_placed} stings")
+    print(f"  Placed {stings_placed}/{len(sting_events)} stings")
 
-    # Export
-    mixed_file = f"{short_id}_mixed.mp3"
-    mixed_path = AUDIO_DIR / mixed_file
-    mixed.export(str(mixed_path), format="mp3", bitrate="128k")
+    # ── Step 4: Export ────────────────────────────────────────────────
 
-    # Update the short to point to mixed version
-    short["audio_file"] = mixed_file
+    out_file = f"{short_id}.mp3"
+    out_path = CHUNKS_DIR / out_file
+    mixed.export(str(out_path), format="mp3", bitrate="128k")
+
     duration_sec = int(len(mixed) / 1000)
-    short["duration_seconds"] = duration_sec
+    print(f"  Output: {out_path} ({duration_sec}s)")
 
-    print(f"  Mixed output: {mixed_path} ({duration_sec}s)")
+    short["audio_file"] = out_file
+    short["duration_seconds"] = duration_sec
+    short["base_track_style"] = style
+
     return True
 
 
-def process_short(short_path: Path) -> bool:
+def _try_legacy_loop(primary_char: str, total_duration: int) -> AudioSegment | None:
+    """Fall back to old character loop files if base tracks don't exist yet."""
+    from app.services.tts.voice_service import CHARACTER_LOOP_MAP
+
+    LOOPS_DIR = MUSIC_DIR / "loops"
+    if not LOOPS_DIR.exists():
+        return None
+
+    loop_name = CHARACTER_LOOP_MAP.get(primary_char)
+    if not loop_name:
+        return None
+
+    for ext in ["wav", "mp3"]:
+        for v in range(1, 4):
+            path = LOOPS_DIR / f"{loop_name}_v{v}.{ext}"
+            if path.exists():
+                print(f"  Legacy loop fallback: {path.name} (for {primary_char})")
+                loop = AudioSegment.from_file(str(path))
+                loop = loop + BASE_TRACK_VOLUME
+
+                loops_needed = (total_duration // len(loop)) + 1
+                looped = loop * loops_needed
+                looped = looped[:total_duration]
+                looped = looped.fade_in(BASE_TRACK_FADE_IN_MS)
+                looped = looped.fade_out(BASE_TRACK_FADE_OUT_MS)
+                return looped
+
+    return None
+
+
+# ── CLI ───────────────────────────────────────────────────────────────
+
+def process_short(short_path: Path, force: bool = False) -> bool:
     """Process a single funny short for mixing."""
     with open(short_path) as f:
         short = json.load(f)
 
-    short.setdefault("id", short_path.stem)
+    short_id = short.get("id", short_path.stem)
+    short.setdefault("id", short_id)
 
-    if not short.get("audio_file"):
-        print(f"  No audio generated yet — run generate_funny_audio.py first")
+    chunk_dir = CHUNKS_DIR / short_id
+
+    if not chunk_dir.exists():
+        print(f"  No chunks directory — run generate_funny_audio.py first")
         return False
 
-    result = mix_short(short)
+    if not force:
+        out_path = CHUNKS_DIR / f"{short_id}.mp3"
+        if out_path.exists() and short.get("audio_file") == f"{short_id}.mp3":
+            print(f"  Already mixed: {out_path}, skipping")
+            return True
+
+    result = mix_short(short, chunk_dir)
 
     if result:
         with open(short_path, "w") as f:
@@ -314,9 +473,12 @@ def process_short(short_path: Path) -> bool:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Mix funny short audio with loops and stings")
+    parser = argparse.ArgumentParser(
+        description="Mix funny short audio: voice chunks + base track + stings"
+    )
     parser.add_argument("--short-id", help="Mix a specific short")
-    parser.add_argument("--all", action="store_true", help="Mix all shorts with audio")
+    parser.add_argument("--all", action="store_true", help="Mix all shorts with chunks")
+    parser.add_argument("--force", action="store_true", help="Remix even if output exists")
     args = parser.parse_args()
 
     if not args.short_id and not args.all:
@@ -328,7 +490,7 @@ def main():
             print(f"ERROR: Short not found: {path}")
             sys.exit(1)
         print(f"Mixing: {args.short_id}")
-        ok = process_short(path)
+        ok = process_short(path, args.force)
         sys.exit(0 if ok else 1)
 
     if args.all:
@@ -339,7 +501,7 @@ def main():
         for path in shorts:
             print(f"\n{'='*60}")
             print(f"Mixing: {path.stem}")
-            if process_short(path):
+            if process_short(path, args.force):
                 success += 1
 
         print(f"\n{'='*60}")
