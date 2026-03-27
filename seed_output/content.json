@@ -176,7 +176,8 @@
       }
     },
     "mood": "calm",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "intermediate"
   },
   {
     "id": "8e516449-aa48-423e-8b53-db5591ce9bed",
@@ -356,7 +357,8 @@
       }
     },
     "mood": "sad",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "intermediate"
   },
   {
     "id": "30dec3e8-5354-41ff-aadf-90def8a35df4",
@@ -535,7 +537,8 @@
       }
     },
     "mood": "calm",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "intermediate"
   },
   {
     "id": "d73e9530-b77e-4372-9ad1-070f0fa108e3",
@@ -714,7 +717,8 @@
       }
     },
     "mood": "wired",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "intermediate"
   },
   {
     "id": "9fba7605-7ffa-488d-93bc-9cca2881cf97",
@@ -893,7 +897,8 @@
       }
     },
     "mood": "curious",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "intermediate"
   },
   {
     "id": "c8796852-6d17-46e0-bcea-7985c4721d1c",
@@ -1067,7 +1072,8 @@
       }
     },
     "mood": "calm",
-    "story_type": "dream"
+    "story_type": "dream",
+    "language_level": "intermediate"
   },
   {
     "id": "e32eaee0-2c7a-4f65-ace6-1d3a2d3ad5b0",
@@ -1245,7 +1251,8 @@
       }
     },
     "mood": "calm",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "basic"
   },
   {
     "id": "a3945b7b-6b20-4a39-a051-b25dfaec1d8e",
@@ -1554,7 +1561,8 @@
       }
     },
     "mood": "calm",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "intermediate"
   },
   {
     "id": "hi-bahadur-jugnu",
@@ -1735,7 +1743,8 @@
       }
     },
     "mood": "calm",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "basic"
   },
   {
     "id": "hi-chaand-ki-lori",
@@ -1915,7 +1924,8 @@
       }
     },
     "mood": "calm",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "intermediate"
   },
   {
     "id": "hi-captain-sitaara",
@@ -2094,7 +2104,8 @@
       }
     },
     "mood": "wired",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "intermediate"
   },
   {
     "id": "hi-gungunata-baag",
@@ -2274,7 +2285,8 @@
       }
     },
     "mood": "curious",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "intermediate"
   },
   {
     "id": "hi-chamakta-sapna",
@@ -2449,7 +2461,8 @@
       }
     },
     "mood": "calm",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "basic"
   },
   {
     "id": "hi-ullu-ki-shubhraatri",
@@ -2628,7 +2641,8 @@
       }
     },
     "mood": "calm",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "basic"
   },
   {
     "id": "hi-sapnon-ki-naav",
@@ -2913,7 +2927,8 @@
       }
     },
     "mood": "wired",
-    "story_type": "dream"
+    "story_type": "dream",
+    "language_level": "basic"
   },
   {
     "id": "gen-3de58fd2aa2d",
@@ -3093,7 +3108,8 @@
       }
     },
     "mood": "calm",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "basic"
   },
   {
     "id": "gen-4f3ff03979dc",
@@ -3274,7 +3290,8 @@
       }
     },
     "mood": "wired",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "basic"
   },
   {
     "id": "gen-a67cde9762b6",
@@ -3454,7 +3471,8 @@
       }
     },
     "mood": "wired",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-a8a2146a4f36",
@@ -3637,7 +3655,8 @@
       }
     },
     "mood": "curious",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "advanced"
   },
   {
     "id": "gen-9e44d4374d44",
@@ -3815,7 +3834,8 @@
       }
     },
     "mood": "curious",
-    "story_type": "mythological"
+    "story_type": "mythological",
+    "language_level": "advanced"
   },
   {
     "id": "gen-b8847383ab32",
@@ -4000,7 +4020,8 @@
       }
     },
     "mood": "curious",
-    "story_type": "mythological"
+    "story_type": "mythological",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-6b4b4122c529",
@@ -4185,7 +4206,8 @@
       }
     },
     "mood": "curious",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-2fedd4d6a646",
@@ -4370,7 +4392,8 @@
       }
     },
     "mood": "curious",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-f23316834cfd",
@@ -4555,7 +4578,8 @@
       }
     },
     "mood": "calm",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-df0dbc9d6b74",
@@ -4733,7 +4757,8 @@
       }
     },
     "mood": "curious",
-    "story_type": "mythological"
+    "story_type": "mythological",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-e77b10c51e8f",
@@ -4911,7 +4936,8 @@
       }
     },
     "mood": "curious",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-593c43ad1c11",
@@ -5092,7 +5118,8 @@
       }
     },
     "mood": "calm",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "basic"
   },
   {
     "id": "gen-b2e7514e8b8f",
@@ -5273,7 +5300,8 @@
       }
     },
     "mood": "calm",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "basic"
   },
   {
     "id": "gen-376993c8e295",
@@ -5454,7 +5482,8 @@
       }
     },
     "mood": "calm",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "basic"
   },
   {
     "id": "gen-aad0a6e0c0c0",
@@ -5637,7 +5666,8 @@
       }
     },
     "mood": "calm",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "basic"
   },
   {
     "id": "gen-ddc437037568",
@@ -5816,7 +5846,8 @@
       }
     },
     "mood": "curious",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "advanced"
   },
   {
     "id": "gen-2b9fdf8a1222",
@@ -5997,7 +6028,8 @@
       }
     },
     "mood": "calm",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "advanced"
   },
   {
     "id": "gen-60370cf66525",
@@ -6183,7 +6215,8 @@
       }
     },
     "mood": "curious",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-032fdef6f753",
@@ -6365,7 +6398,8 @@
       }
     },
     "mood": "curious",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-febbf324eecb",
@@ -6548,7 +6582,8 @@
       }
     },
     "mood": "calm",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "advanced"
   },
   {
     "id": "gen-230502b905ba",
@@ -6734,7 +6769,8 @@
       }
     },
     "mood": "wired",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-bb82f62942d0",
@@ -6911,7 +6947,8 @@
       }
     },
     "mood": "curious",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "advanced"
   },
   {
     "id": "gen-0027e1835f09",
@@ -7089,7 +7126,8 @@
       }
     },
     "mood": "curious",
-    "story_type": "dream"
+    "story_type": "dream",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-586908c26fc2",
@@ -7273,7 +7311,8 @@
       }
     },
     "mood": "curious",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-1a5a91def9ae",
@@ -7458,7 +7497,8 @@
       }
     },
     "mood": "calm",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-ae9ed8804fa7",
@@ -7643,7 +7683,8 @@
       }
     },
     "mood": "curious",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "advanced"
   },
   {
     "id": "gen-be475c98edb5",
@@ -7827,7 +7868,8 @@
       }
     },
     "mood": "curious",
-    "story_type": "dream"
+    "story_type": "dream",
+    "language_level": "advanced"
   },
   {
     "id": "gen-f9e33d4db1bd",
@@ -8010,7 +8052,8 @@
       }
     },
     "mood": "calm",
-    "story_type": "dream"
+    "story_type": "dream",
+    "language_level": "advanced"
   },
   {
     "id": "gen-292e9eadf56e",
@@ -8193,7 +8236,8 @@
       }
     },
     "mood": "curious",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-76b0227cc919",
@@ -8376,7 +8420,8 @@
       }
     },
     "mood": "calm",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-7cf84ff11c04",
@@ -8561,7 +8606,8 @@
       }
     },
     "mood": "calm",
-    "story_type": "mythological"
+    "story_type": "mythological",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-b5438a861ba4",
@@ -8746,7 +8792,8 @@
       }
     },
     "mood": "calm",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-caa3a14bb706",
@@ -8930,7 +8977,8 @@
       }
     },
     "mood": "curious",
-    "story_type": "mythological"
+    "story_type": "mythological",
+    "language_level": "advanced"
   },
   {
     "id": "gen-01f0b88dc42d",
@@ -9118,7 +9166,8 @@
       }
     },
     "mood": "calm",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "basic"
   },
   {
     "id": "gen-2f87d69ca6a2",
@@ -9298,7 +9347,8 @@
       }
     },
     "mood": "curious",
-    "story_type": "mythological"
+    "story_type": "mythological",
+    "language_level": "advanced"
   },
   {
     "id": "gen-d5bc0057ca40",
@@ -9481,7 +9531,8 @@
       }
     },
     "mood": "curious",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-308d5f0d1268",
@@ -9669,7 +9720,8 @@
       }
     },
     "mood": "calm",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-8ea1861bffab",
@@ -9858,7 +9910,8 @@
       }
     },
     "mood": "curious",
-    "story_type": "dream"
+    "story_type": "dream",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-9e87531b7db6",
@@ -9965,7 +10018,8 @@
       }
     },
     "mood": "curious",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-3b66368b6682",
@@ -10155,7 +10209,8 @@
       }
     },
     "mood": "curious",
-    "story_type": "dream"
+    "story_type": "dream",
+    "language_level": "advanced"
   },
   {
     "id": "gen-7936c7032060",
@@ -10466,7 +10521,8 @@
       }
     },
     "mood": "calm",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-a4a5bf8ba702",
@@ -10654,7 +10710,8 @@
       }
     },
     "mood": "calm",
-    "story_type": "mythological"
+    "story_type": "mythological",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-69ca3c81363d",
@@ -10979,7 +11036,8 @@
       }
     },
     "mood": "curious",
-    "story_type": "dream"
+    "story_type": "dream",
+    "language_level": "advanced"
   },
   {
     "id": "gen-31f50f685a68",
@@ -11167,7 +11225,8 @@
       }
     },
     "mood": "calm",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "advanced"
   },
   {
     "id": "gen-3947965e8c2e",
@@ -11350,7 +11409,8 @@
       }
     },
     "mood": "calm",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-6772aca6a7cc",
@@ -11795,7 +11855,8 @@
       }
     },
     "mood": "calm",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "advanced"
   },
   {
     "id": "gen-6034c85ea602",
@@ -11977,7 +12038,8 @@
       }
     },
     "mood": "curious",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "advanced"
   },
   {
     "id": "gen-0333c2f092c0",
@@ -12158,7 +12220,8 @@
       }
     },
     "mood": "curious",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "advanced"
   },
   {
     "id": "gen-638cb2facd22",
@@ -12343,7 +12406,8 @@
       }
     },
     "mood": "curious",
-    "story_type": "mythological"
+    "story_type": "mythological",
+    "language_level": "advanced"
   },
   {
     "id": "gen-915a2ee015f8",
@@ -12882,7 +12946,8 @@
       }
     },
     "mood": "calm",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-beb0f3862024",
@@ -13146,7 +13211,8 @@
       }
     },
     "mood": "sad",
-    "story_type": "mythological"
+    "story_type": "mythological",
+    "language_level": "advanced"
   },
   {
     "id": "gen-e47bcd61e515",
@@ -13467,7 +13533,8 @@
       "musicLoop": "gentleGuitar"
     },
     "mood": "calm",
-    "story_type": "dream"
+    "story_type": "dream",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-50e929bf696c",
@@ -13655,7 +13722,8 @@
       "musicLoop": "musicBox"
     },
     "mood": "calm",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-8440041cfc57",
@@ -14054,7 +14122,8 @@
       }
     },
     "mood": "calm",
-    "story_type": "dream"
+    "story_type": "dream",
+    "language_level": "advanced"
   },
   {
     "id": "gen-3e20147f02a1",
@@ -14342,7 +14411,8 @@
       }
     },
     "mood": "calm",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-6c4170f5b3a4",
@@ -14472,7 +14542,8 @@
       }
     },
     "mood": "curious",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "advanced"
   },
   {
     "id": "gen-bf2a73ca2fe3",
@@ -14655,7 +14726,8 @@
     },
     "duration": 14,
     "mood": "curious",
-    "story_type": "dream"
+    "story_type": "dream",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-20ac6dcc8899",
@@ -14785,7 +14857,8 @@
       }
     },
     "mood": "curious",
-    "story_type": "dream"
+    "story_type": "dream",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-ac421eca75dd",
@@ -14998,7 +15071,8 @@
       }
     },
     "mood": "curious",
-    "story_type": "dream"
+    "story_type": "dream",
+    "language_level": "advanced"
   },
   {
     "id": "gen-59c38722ffc1",
@@ -15211,7 +15285,8 @@
       }
     },
     "mood": "curious",
-    "story_type": "dream"
+    "story_type": "dream",
+    "language_level": "advanced"
   },
   {
     "id": "gen-a306e99e9b09",
@@ -15344,7 +15419,8 @@
       }
     },
     "mood": "calm",
-    "story_type": "mythological"
+    "story_type": "mythological",
+    "language_level": "advanced"
   },
   {
     "id": "gen-411c4e4dde20",
@@ -15561,7 +15637,8 @@
       }
     },
     "mood": "calm",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-9d8e3f91919c",
@@ -15694,7 +15771,8 @@
     },
     "duration": 7,
     "mood": "curious",
-    "story_type": "dream"
+    "story_type": "dream",
+    "language_level": "advanced"
   },
   {
     "id": "gen-c5e3d286408c",
@@ -15827,7 +15905,8 @@
       }
     },
     "mood": "curious",
-    "story_type": "dream"
+    "story_type": "dream",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-54eea57db057",
@@ -15952,7 +16031,8 @@
     },
     "mood": "calm",
     "audio_url": "",
-    "story_type": "dream"
+    "story_type": "dream",
+    "language_level": "advanced"
   },
   {
     "id": "gen-be5fa39c0802",
@@ -16168,7 +16248,8 @@
       }
     },
     "mood": "curious",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-364d8f8f090f",
@@ -16301,7 +16382,8 @@
       }
     },
     "mood": "calm",
-    "story_type": "mythological"
+    "story_type": "mythological",
+    "language_level": "advanced"
   },
   {
     "id": "gen-36832e27d4b5",
@@ -16601,7 +16683,8 @@
       }
     },
     "mood": "calm",
-    "story_type": "dream"
+    "story_type": "dream",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-7f24c66d3921",
@@ -16734,7 +16817,8 @@
       }
     },
     "mood": "calm",
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-d1d9090e87f5",
@@ -16867,7 +16951,8 @@
       }
     },
     "mood": "calm",
-    "story_type": "mythological"
+    "story_type": "mythological",
+    "language_level": "advanced"
   },
   {
     "id": "gen-1be31ba6fc0d",
@@ -17000,7 +17085,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "story_type": "dream"
+    "story_type": "dream",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-3ae85c812ea0",
@@ -17133,7 +17219,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "story_type": "dream"
+    "story_type": "dream",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-00422943830e",
@@ -17266,7 +17353,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "story_type": "nature"
+    "story_type": "nature",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-025b3e47eec6",
@@ -17479,7 +17567,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "story_type": "dream"
+    "story_type": "dream",
+    "language_level": "advanced"
   },
   {
     "id": "gen-ced87d262b99",
@@ -17613,7 +17702,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "story_type": "dream"
+    "story_type": "dream",
+    "language_level": "advanced"
   },
   {
     "id": "gen-125839556ced",
@@ -17725,7 +17815,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "story_type": "dream"
+    "story_type": "dream",
+    "language_level": "advanced"
   },
   {
     "id": "gen-31a6620db402",
@@ -17858,7 +17949,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-f3a6cec89977",
@@ -17991,7 +18083,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "story_type": "dream"
+    "story_type": "dream",
+    "language_level": "advanced"
   },
   {
     "id": "gen-f5a086b33ef3",
@@ -18208,7 +18301,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "story_type": "nature"
+    "story_type": "nature",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-37aca7d2ae35",
@@ -18338,7 +18432,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "story_type": "mythological"
+    "story_type": "mythological",
+    "language_level": "advanced"
   },
   {
     "id": "gen-a0cbd0c0da52",
@@ -18554,7 +18649,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "story_type": "dream"
+    "story_type": "dream",
+    "language_level": "advanced"
   },
   {
     "id": "gen-39dc657abb17",
@@ -18687,7 +18783,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-3255a91b20c2",
@@ -18817,7 +18914,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "story_type": "dream"
+    "story_type": "dream",
+    "language_level": "advanced"
   },
   {
     "id": "gen-d7ac25f7070f",
@@ -18950,7 +19048,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "story_type": "nature"
+    "story_type": "nature",
+    "language_level": "advanced"
   },
   {
     "id": "gen-dc32ba401ae2",
@@ -19166,7 +19265,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "story_type": "dream"
+    "story_type": "dream",
+    "language_level": "advanced"
   },
   {
     "id": "gen-10683c7e9e25",
@@ -19379,7 +19479,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "story_type": "dream"
+    "story_type": "dream",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-b2e191e24194",
@@ -19513,7 +19614,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "story_type": "dream"
+    "story_type": "dream",
+    "language_level": "advanced"
   },
   {
     "id": "gen-589682b9e89c",
@@ -19646,7 +19748,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "story_type": "dream"
+    "story_type": "dream",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-486be5b2fef9",
@@ -19762,7 +19865,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "story_type": "dream"
+    "story_type": "dream",
+    "language_level": "advanced"
   },
   {
     "id": "gen-7bb84380c7d3",
@@ -19962,7 +20066,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "story_type": "dream"
+    "story_type": "dream",
+    "language_level": "advanced"
   },
   {
     "id": "gen-a543ef7c93c0",
@@ -20078,7 +20183,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "story_type": "nature"
+    "story_type": "nature",
+    "language_level": "basic"
   },
   {
     "id": "gen-a59c2de7e523",
@@ -20194,7 +20300,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "advanced"
   },
   {
     "id": "gen-c05399108488",
@@ -20395,7 +20502,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "advanced"
   },
   {
     "id": "gen-1e7e0300efd5",
@@ -20529,7 +20637,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "story_type": "dream"
+    "story_type": "dream",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-473198145b30",
@@ -20663,7 +20772,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-47739ce0f283",
@@ -20797,7 +20907,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "story_type": "nature"
+    "story_type": "nature",
+    "language_level": "advanced"
   },
   {
     "id": "gen-e1203c22da5f",
@@ -20997,7 +21108,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-f00a3b8874a3",
@@ -21197,7 +21309,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-66b370730297",
@@ -21313,7 +21426,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "story_type": "dream"
+    "story_type": "dream",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-bf9047771318",
@@ -21429,7 +21543,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "story_type": "dream"
+    "story_type": "dream",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-c5413e76bff0",
@@ -21629,7 +21744,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "basic"
   },
   {
     "id": "gen-1865516ea0ac",
@@ -21745,7 +21861,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-7a8ee4b38802",
@@ -21861,7 +21978,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-ccc1075c5943",
@@ -22146,7 +22264,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "story_type": "dream"
+    "story_type": "dream",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-95849b2417b4",
@@ -22262,7 +22381,8 @@
         "phase3": "deep_stillness"
       }
     },
-    "story_type": "folk_tale"
+    "story_type": "folk_tale",
+    "language_level": "intermediate"
   },
   {
     "id": "gen-aa2f853f44d4",
@@ -22375,6 +22495,340 @@
         "phase3": "deep_stillness"
       }
     },
-    "story_type": "dream"
+    "story_type": "dream",
+    "language_level": "advanced"
+  },
+  {
+    "id": "gen-282dd22734a0",
+    "type": "song",
+    "lang": "en",
+    "title": "Lumi and the Singing Raindrop Family",
+    "description": "When the first raindrops hum a forgotten lullaby, little Lumi the cloud drifts over a sleepy village where families gather at windows. The melody stirs something deep inside—Lumi remembers the song too, and knows it’s time to bring everyone together under one shimmering sky.",
+    "text": "[SINGING]\nLittle Lumi floats so high,\nsoft and round up in the sky.\nHears a tune she used to know,\nraindrops humming soft and low.\n\n[PAUSE]\n\n[SINGING]\nMmm, the song is warm and sweet,\nlike a hug for tired feet.\nWindows glow with golden light,\nfamilies wait there through the night.\n\n[PAUSE]\n\n[SINGING]\nGentle rain begins to fall,\nsinging to the roofs and all.\nLumi hums along so clear,\nevery voice is welcome here.\n\n[PAUSE]\n\n[SINGING]\nMmm, the song is warm and sweet,\nlike a hug for tired feet.\nAll the stars lean in to hear,\nevery heart is drawing near.\n\n[PAUSE]\n\n[SINGING]\nNow the village joins the sound,\nvoices rise and circle round.\nLumi glows just like the moon,\ncarrying the sweetest tune.\n\n[PAUSE]\n\n[SINGING]\nMmm, the song is warm and sweet,\nlike a hug for tired feet.\nClose your eyes and drift away,\nwe’ll be here to sing all day.\n\n[PAUSE]\n\n[SLEEPY]\nLumi hums so soft and deep,\nraindrops rock the world to sleep.\nStars are singing, moon is bright,\nsafe and warm in twilight’s light.\n\n[PAUSE]\n\n[HUMMING]\nMmm mmm mmm...\nMmm mmm mmm...\nMmm mmm...",
+    "annotated_text": "[SINGING]\nLittle Lumi floats so high,\nsoft and round up in the sky.\nHears a tune she used to know,\nraindrops humming soft and low.\n\n[PAUSE]\n\n[SINGING]\nMmm, the song is warm and sweet,\nlike a hug for tired feet.\nWindows glow with golden light,\nfamilies wait there through the night.\n\n[PAUSE]\n\n[SINGING]\nGentle rain begins to fall,\nsinging to the roofs and all.\nLumi hums along so clear,\nevery voice is welcome here.\n\n[PAUSE]\n\n[SINGING]\nMmm, the song is warm and sweet,\nlike a hug for tired feet.\nAll the stars lean in to hear,\nevery heart is drawing near.\n\n[PAUSE]\n\n[SINGING]\nNow the village joins the sound,\nvoices rise and circle round.\nLumi glows just like the moon,\ncarrying the sweetest tune.\n\n[PAUSE]\n\n[SINGING]\nMmm, the song is warm and sweet,\nlike a hug for tired feet.\nClose your eyes and drift away,\nwe’ll be here to sing all day.\n\n[PAUSE]\n\n[SLEEPY]\nLumi hums so soft and deep,\nraindrops rock the world to sleep.\nStars are singing, moon is bright,\nsafe and warm in twilight’s light.\n\n[PAUSE]\n\n[HUMMING]\nMmm mmm mmm...\nMmm mmm mmm...\nMmm mmm...",
+    "target_age": 3,
+    "age_min": 2,
+    "age_max": 5,
+    "age_group": "2-5",
+    "length": "LONG",
+    "word_count": 173,
+    "duration_seconds": 0,
+    "categories": [
+      "Family",
+      "Nature"
+    ],
+    "theme": "family",
+    "morals": [
+      "Kindness grows when we share what we love with others",
+      "Everyone belongs in the song of the world"
+    ],
+    "cover": "/covers/gen-282dd22734a0.svg",
+    "musicProfile": "dreamy-clouds",
+    "music_type": "ambient",
+    "audio_variants": [],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "neutral",
+    "character": {
+      "name": "Lumi",
+      "identity": "A tender-hearted cloud who carries songs in her mist",
+      "special": "Her raindrops remember every lullaby ever sung beneath them",
+      "personality_tags": [
+        "Kind",
+        "Gentle"
+      ]
+    },
+    "cover_context": "A cobblestone village street at twilight, glowing lanterns in windows, families silhouetted together, raindrops catching golden light like tiny stars, the sky painted in soft purples and blues with a faint shimmer of cloud.",
+    "lead_character_type": "celestial",
+    "universe": "futuristic",
+    "geography": "Africa",
+    "life_aspect": "family_home",
+    "plot_archetype": "celebration",
+    "diversityFingerprint": {
+      "characterType": "celestial_weather",
+      "setting": "village_town",
+      "mood": null,
+      "storyType": null,
+      "plotShape": "gathering_reunion",
+      "scale": "local_adventure",
+      "companion": "group_community",
+      "movement": "floating_drifting",
+      "timeOfDay": "twilight_blue_hour",
+      "weather": "magical_atmospheric",
+      "theme": "belonging",
+      "characterTrait": "kind_nurturing",
+      "magicType": "weather_magic",
+      "season": "seasonless_timeless",
+      "senseEmphasis": "auditory"
+    },
+    "mood": "wired",
+    "story_type": null,
+    "created_at": "2026-03-27T01:45:34.200810",
+    "updated_at": "2026-03-27T01:45:34.200810",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0
+  },
+  {
+    "id": "gen-3324b5de2c64",
+    "type": "long_story",
+    "lang": "en",
+    "title": "Pip and the Pocket-Sized Picnic",
+    "description": "When a bumbling beetle named Pip discovers a tiny door in the village bakery, she tumbles into a world where crumbs are cliffs and raindrops are swimming pools. But the real surprise? The grumpy ant who lives there might just need a friend—and a [EMPHASIS]very[/EMPHASIS] silly picnic to prove it.",
+    "text": "[GENTLE] One day, Pip the beetle said to the bakery doorknob — \n\n[JOYFUL] \"I bet you’ve seen the most [EMPHASIS]delicious[/EMPHASIS] things in all the village! Like cinnamon swirls taller than my antennae and honey cakes as big as my whole shell!\"\n\n[CURIOUS] The doorknob, being a doorknob, said nothing. But Pip didn’t mind. She was used to talking to things that didn’t talk back. Like pebbles, breadcrumbs, and once, memorably, a very confused potato.\n\n[ADVENTUROUS] She scuttled along the windowsill, her six little legs tap-tapping like raindrops on a tin roof. The bakery was warm and smelled of sugar and butter, and Pip loved it more than anything. Except maybe the time she found a whole raspberry and rolled it downhill like a tiny, juicy boulder. That had been [EMPHASIS]glorious[/EMPHASIS].\n\n[MYSTERIOUS] Then she saw it. A door. Not the big one for humans, not even the medium one for cats. This was a door for *someone like her*. It was tucked under the counter, no bigger than a teacup, with a brass knob so shiny it looked like a tiny sun.\n\n[EXCITED] Pip gasped. \"Oh! Oh! A secret door! Maybe it leads to a land of cake crumbs and frosting rivers! Or a kingdom where jam is the national currency!\"\n\n[DRAMATIC_PAUSE] She took a deep breath. Then she pushed.\n\n[WHISPERING] The door didn’t budge.\n\n[JOYFUL] Pip giggled. \"Silly me! I forgot to knock!\" She rapped her tiny knuckles against the wood. Tap-tap-tap.\n\n[DRAMATIC] The door creaked open.\n\n[CURIOUS] Inside was not a land of cake. It was a room. A very small room, with a very small table, and a very small chair, and a very small ant sitting in it, looking very, very grumpy.\n\n[GENTLE] The ant crossed her arms. \"You’re too big,\" she said.\n\n[EXCITED] Pip blinked. \"Too big? But I’m the smallest beetle in the village! I once got stuck in a thimble for three whole minutes!\"\n\n[MYSTERIOUS] The ant sighed. \"You’re still too big for my house. You’ll knock over my teacup. You’ll sit on my bread. You’ll—\" She paused. \"You’ll *sneeze* on my rug.\"\n\n[JOYFUL] Pip gasped. \"I would *never* sneeze on a rug! Unless it was a very dusty rug. Or a rug made of pepper. Do you have a rug made of pepper?\"\n\n[WHISPERING] The ant’s antennae twitched. \"No.\"\n\n[ADVENTUROUS] Pip peered past the ant. The room was cozy—tiny books on tiny shelves, a tiny teapot with steam curling from its spout, and a tiny window that looked out onto a world that was suddenly very, very big. The bakery counter loomed like a mountain. The broom in the corner was a forest of straw. And outside, the village square stretched endlessly, full of giants (humans) and giant things (benches, pigeons, the occasional dog).\n\n[CURIOUS] \"How do you live here?\" Pip whispered. \"It’s so… small.\"\n\n[GENTLE] The ant’s voice softened. \"It’s not small. It’s *just right*. And it’s *mine*.\"\n\n[DRAMATIC_PAUSE] Pip’s heart did a little flip. She understood. This was the ant’s home. And Pip had just barged in like a clumsy, crumb-covered tornado.\n\n[JOYFUL] \"I’m sorry,\" Pip said. \"I didn’t mean to be too big. But maybe… maybe I could be just the right size for something else?\"\n\n[MYSTERIOUS] The ant tilted her head. \"Like what?\"\n\n[EXCITED] Pip grinned. \"Like a picnic!\"\n\n[GENTLE] The ant—whose name was Tilly—did not think a picnic was a good idea. Picnics, she explained, were for outside. Outside was for giants and wind and the terrifying possibility of being stepped on. Inside was for tea and tiny blankets and not being stepped on.\n\n[CALM] But Pip was already scurrying around the bakery, gathering supplies. She found a crumb of blueberry muffin that was the perfect size for a table. A thimble made an excellent pond. And a scrap of wax paper became a picnic blanket, soft and crinkly underfoot.\n\n[MYSTERIOUS] Tilly watched from the doorway of her tiny house, her arms still crossed, but her antennae no longer quite so twitchy. Pip, meanwhile, was having the time of her life. She rolled a pea into place like a boulder. She balanced a sesame seed on her nose and declared it a hat. She even attempted to do a cartwheel, which ended with her landing in the thimble-pond with a soft [EMPHASIS]plop[/EMPHASIS].\n\n[GENTLE] \"You’re making a mess,\" Tilly said.\n\n[CALM] Pip wiped water from her shell. \"It’s not a mess. It’s a *picnic*. Picnics are supposed to be a little messy. That’s the rule.\"\n\n[MYSTERIOUS] Tilly hesitated. Then, slowly, she stepped outside. The world was vast and bright, but the wax-paper blanket was small and safe. She sat down on the edge, her legs dangling over the side like she was sitting on a dock.\n\n[GENTLE] Pip beamed. \"See? It’s perfect. Now, what should we eat first? The muffin crumb? The sesame-seed hat? Or—\" She gasped. \"The *jam*!\"\n\n[CALM] She had found a single drop of strawberry jam on a butter knife. It was no bigger than a pinprick, but to Pip and Tilly, it was a feast. Pip dipped her antennae into it and licked them clean. Tilly, after a moment’s hesitation, did the same. The jam was sweet and sticky, and for a little while, neither of them said anything at all.\n\n[GENTLE] The bakery was quiet now. The humans had gone home, and the only sounds were the hum of the oven cooling and the distant chirp of crickets outside. The warm breeze drifted through the open window, carrying the scent of sugar and summer. Pip stretched out on the wax paper, her shell rising and falling with her breath. Tilly sat beside her, her tiny hands folded in her lap.\n\n[CALM] \"It’s nice,\" Tilly admitted. \"The picnic. Not being stepped on.\"\n\n[GENTLE] Pip chuckled. \"I told you. Picnics are the best.\"\n\n[MYSTERIOUS] Tilly looked at Pip. Then she looked at the tiny door to her house. Then she looked back at Pip. \"Do you… want to see my teapot? It’s very small. But it makes very good tea.\"\n\n[GENTLE] Pip’s heart did another little flip. \"I’d love to,\" she said.\n\n[SLEEPY] The teapot was indeed very small. And the tea was indeed very good. It was chamomile, sweetened with a single grain of sugar, and it tasted like sunshine and quiet afternoons.\n\n[WHISPERING] Pip and Tilly sat on the tiny chairs, their legs swinging just above the floor. The room was warm, the way only a room that has held a thousand tiny secrets can be. The walls were lined with books so small they could fit in a thimble, and the window let in just enough light to make the dust motes dance.\n\n[SLEEPY] Outside, the village was settling down. The baker had gone home, leaving behind the faint scent of bread and the quiet hum of the cooling oven. The crickets had begun their evening song, a soft, rhythmic lullaby that drifted through the open window. The wax-paper blanket from the picnic was still spread out on the counter, now empty except for a few crumbs and the memory of laughter.\n\n[WHISPERING] Pip yawned, her tiny jaws stretching wide. Her shell felt heavy, the way it always did after a long day of adventures. Tilly’s eyelids were drooping too, her antennae curling sleepily against her head.\n\n[SLEEPY] The teapot sat between them, its steam long since faded. The room was still, the kind of stillness that comes when everything is exactly where it should be. The tiny books on the shelves didn’t stir. The tiny rug didn’t wrinkle. Even the dust motes seemed to float more slowly, as if they, too, were getting ready to rest.\n\n[WHISPERING] Pip’s legs stopped swinging. Her breathing slowed. The last thing she saw before her eyes closed was Tilly’s tiny hand reaching out to pat her shell, just once, like a quiet promise.\n\n[SLEEPY] And the bakery kept its warmth.",
+    "annotated_text": "[PHASE_1]\n\n[GENTLE] One day, Pip the beetle said to the bakery doorknob — \n\n[JOYFUL] \"I bet you’ve seen the most [EMPHASIS]delicious[/EMPHASIS] things in all the village! Like cinnamon swirls taller than my antennae and honey cakes as big as my whole shell!\"\n\n[CURIOUS] The doorknob, being a doorknob, said nothing. But Pip didn’t mind. She was used to talking to things that didn’t talk back. Like pebbles, breadcrumbs, and once, memorably, a very confused potato.\n\n[ADVENTUROUS] She scuttled along the windowsill, her six little legs tap-tapping like raindrops on a tin roof. The bakery was warm and smelled of sugar and butter, and Pip loved it more than anything. Except maybe the time she found a whole raspberry and rolled it downhill like a tiny, juicy boulder. That had been [EMPHASIS]glorious[/EMPHASIS].\n\n[MYSTERIOUS] Then she saw it. A door. Not the big one for humans, not even the medium one for cats. This was a door for *someone like her*. It was tucked under the counter, no bigger than a teacup, with a brass knob so shiny it looked like a tiny sun.\n\n[EXCITED] Pip gasped. \"Oh! Oh! A secret door! Maybe it leads to a land of cake crumbs and frosting rivers! Or a kingdom where jam is the national currency!\"\n\n[DRAMATIC_PAUSE] She took a deep breath. Then she pushed.\n\n[WHISPERING] The door didn’t budge.\n\n[JOYFUL] Pip giggled. \"Silly me! I forgot to knock!\" She rapped her tiny knuckles against the wood. Tap-tap-tap.\n\n[DRAMATIC] The door creaked open.\n\n[CURIOUS] Inside was not a land of cake. It was a room. A very small room, with a very small table, and a very small chair, and a very small ant sitting in it, looking very, very grumpy.\n\n[GENTLE] The ant crossed her arms. \"You’re too big,\" she said.\n\n[EXCITED] Pip blinked. \"Too big? But I’m the smallest beetle in the village! I once got stuck in a thimble for three whole minutes!\"\n\n[MYSTERIOUS] The ant sighed. \"You’re still too big for my house. You’ll knock over my teacup. You’ll sit on my bread. You’ll—\" She paused. \"You’ll *sneeze* on my rug.\"\n\n[JOYFUL] Pip gasped. \"I would *never* sneeze on a rug! Unless it was a very dusty rug. Or a rug made of pepper. Do you have a rug made of pepper?\"\n\n[WHISPERING] The ant’s antennae twitched. \"No.\"\n\n[ADVENTUROUS] Pip peered past the ant. The room was cozy—tiny books on tiny shelves, a tiny teapot with steam curling from its spout, and a tiny window that looked out onto a world that was suddenly very, very big. The bakery counter loomed like a mountain. The broom in the corner was a forest of straw. And outside, the village square stretched endlessly, full of giants (humans) and giant things (benches, pigeons, the occasional dog).\n\n[CURIOUS] \"How do you live here?\" Pip whispered. \"It’s so… small.\"\n\n[GENTLE] The ant’s voice softened. \"It’s not small. It’s *just right*. And it’s *mine*.\"\n\n[DRAMATIC_PAUSE] Pip’s heart did a little flip. She understood. This was the ant’s home. And Pip had just barged in like a clumsy, crumb-covered tornado.\n\n[JOYFUL] \"I’m sorry,\" Pip said. \"I didn’t mean to be too big. But maybe… maybe I could be just the right size for something else?\"\n\n[MYSTERIOUS] The ant tilted her head. \"Like what?\"\n\n[EXCITED] Pip grinned. \"Like a picnic!\"\n\n[/PHASE_1]\n\n\n[PHASE_2]\n\n[GENTLE] The ant—whose name was Tilly—did not think a picnic was a good idea. Picnics, she explained, were for outside. Outside was for giants and wind and the terrifying possibility of being stepped on. Inside was for tea and tiny blankets and not being stepped on.\n\n[CALM] But Pip was already scurrying around the bakery, gathering supplies. She found a crumb of blueberry muffin that was the perfect size for a table. A thimble made an excellent pond. And a scrap of wax paper became a picnic blanket, soft and crinkly underfoot.\n\n[MYSTERIOUS] Tilly watched from the doorway of her tiny house, her arms still crossed, but her antennae no longer quite so twitchy. Pip, meanwhile, was having the time of her life. She rolled a pea into place like a boulder. She balanced a sesame seed on her nose and declared it a hat. She even attempted to do a cartwheel, which ended with her landing in the thimble-pond with a soft [EMPHASIS]plop[/EMPHASIS].\n\n[GENTLE] \"You’re making a mess,\" Tilly said.\n\n[CALM] Pip wiped water from her shell. \"It’s not a mess. It’s a *picnic*. Picnics are supposed to be a little messy. That’s the rule.\"\n\n[MYSTERIOUS] Tilly hesitated. Then, slowly, she stepped outside. The world was vast and bright, but the wax-paper blanket was small and safe. She sat down on the edge, her legs dangling over the side like she was sitting on a dock.\n\n[GENTLE] Pip beamed. \"See? It’s perfect. Now, what should we eat first? The muffin crumb? The sesame-seed hat? Or—\" She gasped. \"The *jam*!\"\n\n[CALM] She had found a single drop of strawberry jam on a butter knife. It was no bigger than a pinprick, but to Pip and Tilly, it was a feast. Pip dipped her antennae into it and licked them clean. Tilly, after a moment’s hesitation, did the same. The jam was sweet and sticky, and for a little while, neither of them said anything at all.\n\n[GENTLE] The bakery was quiet now. The humans had gone home, and the only sounds were the hum of the oven cooling and the distant chirp of crickets outside. The warm breeze drifted through the open window, carrying the scent of sugar and summer. Pip stretched out on the wax paper, her shell rising and falling with her breath. Tilly sat beside her, her tiny hands folded in her lap.\n\n[CALM] \"It’s nice,\" Tilly admitted. \"The picnic. Not being stepped on.\"\n\n[GENTLE] Pip chuckled. \"I told you. Picnics are the best.\"\n\n[MYSTERIOUS] Tilly looked at Pip. Then she looked at the tiny door to her house. Then she looked back at Pip. \"Do you… want to see my teapot? It’s very small. But it makes very good tea.\"\n\n[GENTLE] Pip’s heart did another little flip. \"I’d love to,\" she said.\n\n[/PHASE_2]\n\n\n[PHASE_3]\n\n[SLEEPY] The teapot was indeed very small. And the tea was indeed very good. It was chamomile, sweetened with a single grain of sugar, and it tasted like sunshine and quiet afternoons.\n\n[WHISPERING] Pip and Tilly sat on the tiny chairs, their legs swinging just above the floor. The room was warm, the way only a room that has held a thousand tiny secrets can be. The walls were lined with books so small they could fit in a thimble, and the window let in just enough light to make the dust motes dance.\n\n[SLEEPY] Outside, the village was settling down. The baker had gone home, leaving behind the faint scent of bread and the quiet hum of the cooling oven. The crickets had begun their evening song, a soft, rhythmic lullaby that drifted through the open window. The wax-paper blanket from the picnic was still spread out on the counter, now empty except for a few crumbs and the memory of laughter.\n\n[WHISPERING] Pip yawned, her tiny jaws stretching wide. Her shell felt heavy, the way it always did after a long day of adventures. Tilly’s eyelids were drooping too, her antennae curling sleepily against her head.\n\n[SLEEPY] The teapot sat between them, its steam long since faded. The room was still, the kind of stillness that comes when everything is exactly where it should be. The tiny books on the shelves didn’t stir. The tiny rug didn’t wrinkle. Even the dust motes seemed to float more slowly, as if they, too, were getting ready to rest.\n\n[WHISPERING] Pip’s legs stopped swinging. Her breathing slowed. The last thing she saw before her eyes closed was Tilly’s tiny hand reaching out to pat her shell, just once, like a quiet promise.\n\n[SLEEPY] And the bakery kept its warmth.\n\n[/PHASE_3]",
+    "target_age": 7,
+    "age_min": 6,
+    "age_max": 8,
+    "age_group": "6-8",
+    "length": "LONG",
+    "word_count": 1274,
+    "duration_seconds": 0,
+    "categories": [
+      "Friendship",
+      "Miniature Adventures"
+    ],
+    "theme": "friendship",
+    "morals": [
+      "Friendship can be found in the smallest of places, if you’re open to seeing it.",
+      "Sometimes, the things that make us different are the very things that bring us together."
+    ],
+    "cover": "/covers/gen-3324b5de2c64.svg",
+    "musicProfile": "enchanted-garden",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-3324_male_2.mp3",
+        "duration_seconds": 706.54,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-3324_female_3.mp3",
+        "duration_seconds": 663.7,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "female",
+    "character": {
+      "name": "Pip",
+      "identity": "A clumsy beetle who turns every crumb into an adventure",
+      "special": "She can make even the tiniest space feel like a grand picnic",
+      "personality_tags": [
+        "Playful",
+        "Kind"
+      ]
+    },
+    "cover_context": "A sunlit village bakery at late afternoon, golden light spilling through open windows. A tiny door is tucked under the counter, glowing warmly, while a wax-paper picnic blanket spreads across the wooden surface, dotted with crumbs, a thimble-pond, and a single drop of strawberry jam. Dust motes dance in the air, and the scent of sugar lingers like an invisible hug.",
+    "lead_character_type": "animal",
+    "universe": "futuristic",
+    "geography": "Africa",
+    "life_aspect": "friendship",
+    "plot_archetype": "celebration",
+    "diversityFingerprint": {
+      "characterType": "insect",
+      "setting": "village_town",
+      "mood": null,
+      "storyType": null,
+      "plotShape": "discovery_reveal",
+      "scale": "tiny_intimate",
+      "companion": "duo",
+      "movement": "walking_wandering",
+      "timeOfDay": "late_afternoon",
+      "weather": "warm_breeze",
+      "theme": "friendship",
+      "characterTrait": "clumsy_silly",
+      "magicType": "miniaturization",
+      "season": "summer",
+      "senseEmphasis": "tactile"
+    },
+    "mood": "wired",
+    "story_type": "fable",
+    "created_at": "2026-03-27T01:38:51.408756",
+    "updated_at": "2026-03-27T01:38:51.408756",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 12,
+    "language_level": "intermediate"
+  },
+  {
+    "id": "gen-6134b0c7424e",
+    "type": "story",
+    "lang": "en",
+    "title": "Stella and the Shrinking Starbeam",
+    "description": "When a tiny star named Stella tumbles into a village square, she discovers she can shrink herself—but now she’s stuck! A curious child named Milo helps her find her way home, one giggle at a time. Together, they learn that even the brightest lights need a little help sometimes.",
+    "text": "[GENTLE] One day, a little star named Stella said to the evening sky—\n\n[JOYFUL] 'I wonder what it’s like to be small enough to fit in a pocket!' [CURIOUS] And with a tiny [EMPHASIS]poof[/EMPHASIS], she shrank herself down, down, down—until she tumbled right out of the sky and landed in a village square.\n\n[EXCITED] The world looked so big now! The cobblestones were like boulders, and the lampposts stretched taller than the moon. [laugh] Stella tried to bounce, but she just went [EMPHASIS]boing[/EMPHASIS] into a pile of leaves. 'Oh dear,' she sighed. 'I don’t think I can reach the sky from here.'\n\n[WHISPERING] Just then, a small voice said, 'Are you a firefly?' [CURIOUS] Stella turned to see a boy named Milo, his eyes wide. 'No,' she giggled. 'I’m a star! But I might need a ladder.'\n\n[ADVENTUROUS] Milo grinned. 'I have an idea!' He scooped her up and carried her to the top of the clock tower, where the wind hummed a soft tune. [DRAMATIC_PAUSE] But Stella still couldn’t reach the sky—her glow was too small now.\n\n[GENTLE] 'Maybe,' Milo said, 'you don’t have to be big to shine.' [JOYFUL] And so Stella twinkled right where she was, lighting up the village square with tiny, perfect sparkles. The fireflies danced around her, and the children clapped.\n\n[SLEEPY] As the stars blinked awake above, Stella curled into Milo’s palm, warm and content. She didn’t need to be big to be exactly where she belonged.",
+    "annotated_text": "[GENTLE] One day, a little star named Stella said to the evening sky—\n\n[JOYFUL] 'I wonder what it’s like to be small enough to fit in a pocket!' [CURIOUS] And with a tiny [EMPHASIS]poof[/EMPHASIS], she shrank herself down, down, down—until she tumbled right out of the sky and landed in a village square.\n\n[EXCITED] The world looked so big now! The cobblestones were like boulders, and the lampposts stretched taller than the moon. [laugh] Stella tried to bounce, but she just went [EMPHASIS]boing[/EMPHASIS] into a pile of leaves. 'Oh dear,' she sighed. 'I don’t think I can reach the sky from here.'\n\n[WHISPERING] Just then, a small voice said, 'Are you a firefly?' [CURIOUS] Stella turned to see a boy named Milo, his eyes wide. 'No,' she giggled. 'I’m a star! But I might need a ladder.'\n\n[ADVENTUROUS] Milo grinned. 'I have an idea!' He scooped her up and carried her to the top of the clock tower, where the wind hummed a soft tune. [DRAMATIC_PAUSE] But Stella still couldn’t reach the sky—her glow was too small now.\n\n[GENTLE] 'Maybe,' Milo said, 'you don’t have to be big to shine.' [JOYFUL] And so Stella twinkled right where she was, lighting up the village square with tiny, perfect sparkles. The fireflies danced around her, and the children clapped.\n\n[SLEEPY] As the stars blinked awake above, Stella curled into Milo’s palm, warm and content. She didn’t need to be big to be exactly where she belonged.",
+    "target_age": 7,
+    "age_min": 6,
+    "age_max": 8,
+    "age_group": "6-8",
+    "length": "MEDIUM",
+    "word_count": 232,
+    "duration_seconds": 0,
+    "categories": [
+      "Friendship",
+      "Self-Discovery"
+    ],
+    "theme": "space",
+    "morals": [
+      "Even the brightest lights sometimes need help finding their way.",
+      "You don’t have to be the biggest to make the world shine."
+    ],
+    "cover": "/covers/gen-6134b0c7424e.svg",
+    "musicProfile": "cosmic-voyage",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-6134_female_3.mp3",
+        "duration_seconds": 119.12,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-6134_male_2.mp3",
+        "duration_seconds": 123.68,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "female",
+    "character": {
+      "name": "Stella",
+      "identity": "A tiny star who learns that size doesn’t dim her glow",
+      "special": "She can shrink herself with a little [EMPHASIS]poof[/EMPHASIS] of stardust",
+      "personality_tags": [
+        "Playful",
+        "Kind"
+      ]
+    },
+    "cover_context": "A twilight village square with cobblestone streets, glowing lampposts, and fireflies dancing in the soft blue light. A clock tower rises in the background, its hands frozen at golden hour, while tiny sparkles drift near the ground.",
+    "lead_character_type": "celestial",
+    "universe": "contemporary",
+    "geography": "Europe",
+    "life_aspect": "hobbies_passions",
+    "plot_archetype": "friendship_bonding",
+    "diversityFingerprint": {
+      "characterType": "celestial_weather",
+      "setting": "village_town",
+      "mood": null,
+      "storyType": null,
+      "plotShape": "routine_ritual",
+      "scale": "tiny_intimate",
+      "companion": "duo",
+      "movement": "floating_drifting",
+      "timeOfDay": "twilight_blue_hour",
+      "weather": "magical_atmospheric",
+      "theme": "self_acceptance",
+      "characterTrait": "clumsy_silly",
+      "magicType": "miniaturization",
+      "season": "seasonless_timeless",
+      "senseEmphasis": "tactile"
+    },
+    "mood": "wired",
+    "story_type": "fable",
+    "created_at": "2026-03-27T01:32:12.936222",
+    "updated_at": "2026-03-27T01:32:12.936222",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 3,
+    "language_level": "intermediate"
+  },
+  {
+    "id": "gen-abc9935e9a8c",
+    "type": "poem",
+    "lang": "en",
+    "title": "Bramble and the Tiny Tea Party",
+    "description": "In a sunlit garden where dandelions giggle, a squirrel named Bramble discovers a thimble-sized teacup hidden in the clover. When a tiny voice invites him to sit, he shrinks down to join the smallest tea party ever—and learns that even the littlest moments can hold the biggest warmth.",
+    "text": "[RHYTHMIC] The clover asked the squirrel one day,\nWhy do you scurry? Why not stay?\nBramble twitched his tiny nose,\nI’ve no time for tea—who knows?\n[PAUSE]\n\n[RHYTHMIC] The cup said, Pish, posh, don’t be silly,\nI’m no bigger than a lily!\nBramble laughed, That’s much too small,\nI’d squish you flat—goodbye, tea hall!\n[PAUSE]\n\n[RHYTHMIC] Then poof! The world grew tall and wide,\nThe cup now fit his squirrel hide.\nHe sipped the tea so sweet and light,\nAnd whispered, Oh… this feels just right.\n[PAUSE]\n\n[GENTLE] The clover hummed a sleepy tune,\nThe breeze sang beneath the moon.\nBramble curled up soft and low,\nWhere tiny cups and big hearts glow.\n[PAUSE]\n\n[SLEEPY] The garden tucked him in so tight,\nWith golden sun and fading light.",
+    "annotated_text": "[RHYTHMIC] The clover asked the squirrel one day,\nWhy do you scurry? Why not stay?\nBramble twitched his tiny nose,\nI’ve no time for tea—who knows?\n[PAUSE]\n\n[RHYTHMIC] The cup said, Pish, posh, don’t be silly,\nI’m no bigger than a lily!\nBramble laughed, That’s much too small,\nI’d squish you flat—goodbye, tea hall!\n[PAUSE]\n\n[RHYTHMIC] Then poof! The world grew tall and wide,\nThe cup now fit his squirrel hide.\nHe sipped the tea so sweet and light,\nAnd whispered, Oh… this feels just right.\n[PAUSE]\n\n[GENTLE] The clover hummed a sleepy tune,\nThe breeze sang beneath the moon.\nBramble curled up soft and low,\nWhere tiny cups and big hearts glow.\n[PAUSE]\n\n[SLEEPY] The garden tucked him in so tight,\nWith golden sun and fading light.",
+    "target_age": 3,
+    "age_min": 2,
+    "age_max": 5,
+    "age_group": "2-5",
+    "length": "MEDIUM",
+    "word_count": 119,
+    "duration_seconds": 0,
+    "categories": [
+      "Family & Togetherness",
+      "Whimsical Adventures"
+    ],
+    "theme": "family",
+    "morals": [
+      "Even the smallest moments can hold great joy.",
+      "Taking time to slow down makes the heart feel full."
+    ],
+    "cover": "/covers/gen-abc9935e9a8c.svg",
+    "musicProfile": "dreamy-clouds",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-abc9_female_3.mp3",
+        "duration_seconds": 65.88,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_4",
+        "url": "/audio/pre-gen/gen-abc9_female_4.mp3",
+        "duration_seconds": 75.5,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "male",
+    "character": {
+      "name": "Bramble",
+      "identity": "A playful squirrel who rushes through life until the world shrinks to show him wonder",
+      "special": "He can shrink just enough to see magic in the tiniest things",
+      "personality_tags": [
+        "Playful",
+        "Gentle"
+      ]
+    },
+    "cover_context": "A sun-dappled garden at late afternoon, where clover patches glow emerald and dandelions float like golden confetti. A thimble-sized teacup sits in the grass, steam curling into the warm breeze, while fireflies begin to flicker in the softening light.",
+    "lead_character_type": "animal",
+    "universe": "contemporary",
+    "geography": "Arctic/Polar",
+    "life_aspect": "family_home",
+    "plot_archetype": "transformation",
+    "diversityFingerprint": {
+      "characterType": "land_mammal",
+      "setting": "garden_farm",
+      "mood": null,
+      "storyType": null,
+      "plotShape": "routine_ritual",
+      "scale": "tiny_intimate",
+      "companion": "duo",
+      "movement": "sitting_watching",
+      "timeOfDay": "late_afternoon",
+      "weather": "warm_breeze",
+      "theme": "gentleness",
+      "characterTrait": "playful_mischievous",
+      "magicType": "miniaturization",
+      "season": "summer",
+      "senseEmphasis": "tactile"
+    },
+    "mood": "wired",
+    "story_type": "fable",
+    "created_at": "2026-03-27T01:43:01.876342",
+    "updated_at": "2026-03-27T01:43:01.876342",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 2,
+    "language_level": "intermediate"
   }
 ]
