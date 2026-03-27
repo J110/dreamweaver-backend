@@ -498,13 +498,19 @@ from scripts.story_type_config import (
     VALID_STORY_TYPE_AGES, validate_story_type_combo,
     is_valid_story_type_mood, build_signature_prompt,
 )
+from scripts.language_level_config import (
+    LANGUAGE_LEVEL_PROMPTS, LANGUAGE_LEVEL_PHASE_REMINDER,
+    LANGUAGE_LEVEL_TARGET, VALID_LANGUAGE_LEVELS,
+    validate_language_level_combo,
+)
 
 
 def build_generation_prompt(item: Dict, existing_titles: List[str],
                             recent_fingerprints: List[Dict] = None,
                             catalog_gaps: Dict = None,
                             mood: str = None,
-                            story_type: str = None) -> str:
+                            story_type: str = None,
+                            language_level: str = None) -> str:
     """Build a complete prompt for generating one content piece."""
 
     content_type = item["type"]
@@ -663,18 +669,29 @@ Do NOT abbreviate, summarize, or write a short version. Each phase must be subst
         if safety_text:
             mood_block += f"\n{safety_text}\n"
 
+    # Language level instruction (skip for lullabies — they're inherently basic)
+    language_level_block = ""
+    if language_level and content_type != "song":
+        language_level_block = LANGUAGE_LEVEL_PROMPTS.get(language_level, "")
+        # For long stories, add phase reminder to prevent drift
+        if length == "LONG" and content_type == "story":
+            reminder = LANGUAGE_LEVEL_PHASE_REMINDER.get(language_level, "")
+            if reminder and phase_instructions:
+                phase_instructions += f"\n\n{reminder}\n"
+
     prompt = f"""{base_prompt}
 
+{story_type_block}
+{mood_block}
+{language_level_block}
 {age_inst}
 
 {theme_inst}
 
-{story_type_block}
 LENGTH: {length_desc}
 {phase_instructions}
 {phase_word_budget}
 {diversity}
-{mood_block}
 {avoid}
 {SAFETY_GUIDELINES}
 
@@ -935,7 +952,8 @@ def generate_one(client, item: Dict, existing_titles: List[str],
                  recent_fingerprints: List[Dict] = None,
                  catalog_gaps: Dict = None,
                  mood: str = None,
-                 story_type: str = None) -> Optional[Dict]:
+                 story_type: str = None,
+                 language_level: str = None) -> Optional[Dict]:
     """Generate a single content piece via Claude or Groq API."""
 
     # Poems are trickier (stanza structure, word count variability) — more attempts
@@ -945,13 +963,15 @@ def generate_one(client, item: Dict, existing_titles: List[str],
     if item.get("length") == "LONG" and item.get("type") == "story":
         max_retries = max(max_retries, 5)
 
-    # Skip story_type for lullabies
+    # Skip story_type and language_level for lullabies
     effective_story_type = story_type if item.get("type") != "song" else None
+    effective_language_level = language_level if item.get("type") != "song" else None
     prompt = build_generation_prompt(item, existing_titles,
                                      recent_fingerprints=recent_fingerprints,
                                      catalog_gaps=catalog_gaps,
                                      mood=mood,
-                                     story_type=effective_story_type)
+                                     story_type=effective_story_type,
+                                     language_level=effective_language_level)
 
     # Determine max_tokens based on word count range
     # LONG stories (up to 3000 words) need ~12K+ tokens — raise cap to 16384
@@ -1113,6 +1133,7 @@ def generate_one(client, item: Dict, existing_titles: List[str],
                 "diversityFingerprint": fingerprint,
                 "mood": mood if mood else None,
                 "story_type": effective_story_type if effective_story_type else None,
+                "language_level": effective_language_level if effective_language_level else None,
                 "created_at": now,
                 "updated_at": now,
                 "view_count": 0,
@@ -1341,6 +1362,9 @@ def main():
     parser.add_argument("--story-type",
                         choices=["folk_tale", "mythological", "fable", "nature", "slice_of_life", "dream"],
                         default=None, help="Target story type (narrative tradition) for content generation")
+    parser.add_argument("--language-level",
+                        choices=["basic", "intermediate", "advanced"],
+                        default=None, help="Target language complexity level for content generation")
     parser.add_argument("--age", help="Force specific age group (e.g. 6-8) for --mood runs")
     parser.add_argument("--type", dest="content_type",
                         choices=["story", "long_story", "poem", "song", "all"],
@@ -1452,6 +1476,8 @@ def main():
             logger.info("Mood: %s (experimental)", args.mood)
         if args.story_type:
             logger.info("Story type: %s", args.story_type)
+        if args.language_level:
+            logger.info("Language level: %s", args.language_level)
         logger.info("To generate: %d", len(new_plan))
     else:
         # Matrix mode — fill in missing cells
@@ -1552,6 +1578,23 @@ def main():
         args.story_type = worst_type
         logger.info("Story type (auto-selected): %s (deficit=%.1f%%)", worst_type, worst_deficit * 100)
 
+    # Auto-select language level if not provided (deficit-based)
+    if not args.language_level:
+        from collections import Counter as _Counter
+        level_counts = _Counter()
+        for s in existing:
+            if s.get("type") not in ("song",):  # Skip lullabies
+                level_counts[s.get("language_level", "advanced")] += 1
+        level_total = sum(level_counts.values()) or 1
+        worst_level, worst_level_deficit = "intermediate", -1.0
+        for level, target_pct in LANGUAGE_LEVEL_TARGET.items():
+            deficit = target_pct - (level_counts.get(level, 0) / level_total)
+            if deficit > worst_level_deficit:
+                worst_level_deficit = deficit
+                worst_level = level
+        args.language_level = worst_level
+        logger.info("Language level (auto-selected): %s (deficit=%.1f%%)", worst_level, worst_level_deficit * 100)
+
     success = 0
     failed = 0
 
@@ -1568,7 +1611,8 @@ def main():
                               recent_fingerprints=recent_fps,
                               catalog_gaps=catalog_gaps,
                               mood=args.mood,
-                              story_type=args.story_type)
+                              story_type=args.story_type,
+                              language_level=args.language_level)
 
         if result:
             existing.append(result)

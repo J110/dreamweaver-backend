@@ -51,6 +51,7 @@ def _calculate_trending_score(content: dict) -> float:
 async def get_trending(
     limit: int = Query(20, ge=1, le=200),
     lang: Optional[str] = Query(None, description="Filter by language: 'en' or 'hi'"),
+    language_level: Optional[str] = Query(None, description="Filter by language level: 'basic', 'intermediate', or 'advanced'"),
     db_client=Depends(get_db_client),
 ) -> TrendingResponse:
     """
@@ -72,6 +73,10 @@ async def get_trending(
         # Filter by language if specified
         if lang:
             items = [item for item in items if item.get("lang", "en") == lang]
+
+        # Filter by language level if specified
+        if language_level:
+            items = [item for item in items if item.get("language_level") == language_level]
 
         # Sort by trending score (includes recency boost)
         items.sort(key=_calculate_trending_score, reverse=True)

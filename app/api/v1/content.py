@@ -43,6 +43,7 @@ async def list_content(
     content_type: Optional[str] = Query(None),
     category: Optional[str] = Query(None),
     lang: Optional[str] = Query(None, description="Filter by language: 'en' or 'hi'"),
+    language_level: Optional[str] = Query(None, description="Filter by language level: 'basic', 'intermediate', or 'advanced'"),
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     sort_by: str = Query("created_at"),
@@ -78,7 +79,11 @@ async def list_content(
 
         if category:
             items = [item for item in items if item.get("category") == category]
-        
+
+        # Filter by language level
+        if language_level:
+            items = [item for item in items if item.get("language_level") == language_level]
+
         # Sort
         if sort_by == "view_count":
             items.sort(key=lambda x: x.get("view_count", 0), reverse=True)

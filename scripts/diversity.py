@@ -64,6 +64,12 @@ DIMENSIONS = {
         ],
     },
     # Tier 2 — medium weight — soft (collision score only)
+    "languageLevel": {
+        "weight": 5,
+        "values": [
+            "basic", "intermediate", "advanced",
+        ],
+    },
     "scale": {
         "weight": 5,
         "values": [
