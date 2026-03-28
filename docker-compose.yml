@@ -18,6 +18,7 @@ services:
       - ./data:/app/data
       - ./audio:/app/audio:ro
       - ./clips:/app/clips
+      - ./public:/app/public
       - /opt/dreamweaver-web/public:/opt/dreamweaver-web/public:ro
       - /opt/audio-store:/opt/audio-store
     restart: unless-stopped

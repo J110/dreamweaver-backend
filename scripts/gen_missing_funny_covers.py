@@ -13,18 +13,21 @@ from pathlib import Path
 import httpx
 from PIL import Image
 
+# Load .env (scripts run outside Docker, so env vars aren't auto-loaded)
+_env_path = Path(__file__).resolve().parents[1] / ".env"
+if _env_path.exists():
+    with open(_env_path) as _f:
+        for _line in _f:
+            _line = _line.strip()
+            if _line and not _line.startswith("#") and "=" in _line:
+                _key, _, _val = _line.partition("=")
+                os.environ.setdefault(_key.strip(), _val.strip())
+
 DATA_DIR = Path(__file__).resolve().parents[1] / "data" / "funny_shorts"
 COVERS_DIR = Path(__file__).resolve().parents[1] / "public" / "covers" / "funny-shorts"
 COVERS_DIR.mkdir(parents=True, exist_ok=True)
 
-# Load API keys from .env
 TOGETHER_KEY = os.getenv("TOGETHER_API_KEY", "")
-if not TOGETHER_KEY:
-    env_path = Path(__file__).resolve().parents[1] / ".env"
-    if env_path.exists():
-        for line in open(env_path):
-            if line.startswith("TOGETHER_API_KEY"):
-                TOGETHER_KEY = line.split("=", 1)[1].strip().strip('"')
 
 PROMPT_TPL = (
     "Children's book illustration, bold cartoon style, bright saturated colors, "
@@ -63,12 +66,16 @@ def gen_overlay(sid):
 
 
 def _generate_image_pollinations(prompt: str, sid: str) -> bytes | None:
-    """Generate image via Pollinations.ai (free, no auth required)."""
+    """Generate image via Pollinations.ai FLUX endpoint."""
     try:
         seed = stable_seed(sid)
         encoded = urllib.parse.quote(prompt[:500])
         url = f"https://image.pollinations.ai/prompt/{encoded}?width=512&height=512&seed={seed}&nologo=true&model=flux"
-        resp = httpx.get(url, timeout=120, follow_redirects=True)
+        headers = {}
+        pollinations_token = os.getenv("POLLINATIONS_API_KEY", "")
+        if pollinations_token:
+            headers["Authorization"] = f"Bearer {pollinations_token}"
+        resp = httpx.get(url, headers=headers, timeout=120, follow_redirects=True)
         if resp.status_code == 200 and len(resp.content) > 1000:
             return resp.content
         print(f"  Pollinations: {resp.status_code} ({len(resp.content)} bytes)")
