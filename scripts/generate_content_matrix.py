@@ -1271,9 +1271,25 @@ def build_fresh_plan(count_stories: int = 1, count_poems: int = 1,
 
         # Pick random diversity dimensions
         # Lullabies (songs) are only for ages 0-1 and 2-5.
-        # Alternate roughly 40% 0-1 / 60% 2-5 to maintain healthy ratio.
+        # Balance by checking recent catalog: pick whichever age group
+        # has fewer songs in the last 7 days (target ~40% 0-1 / 60% 2-5).
         if content_type == "song":
-            age_group = _rng.choices(["0-1", "2-5"], weights=[40, 60], k=1)[0]
+            recent_songs = [s for s in existing
+                            if s.get("type") == "song"
+                            and s.get("created_at", "") >= (
+                                __import__("datetime").datetime.now()
+                                - __import__("datetime").timedelta(days=7)
+                            ).strftime("%Y-%m-%d")]
+            baby_count = sum(1 for s in recent_songs if s.get("age_min") == 0)
+            toddler_count = sum(1 for s in recent_songs if s.get("age_min") == 2)
+            # If baby songs are underrepresented (<40% of recent), favor 0-1
+            total_recent = baby_count + toddler_count
+            if total_recent > 0 and baby_count / total_recent < 0.35:
+                age_group = "0-1"
+            elif total_recent > 0 and baby_count / total_recent > 0.50:
+                age_group = "2-5"
+            else:
+                age_group = _rng.choices(["0-1", "2-5"], weights=[40, 60], k=1)[0]
         else:
             age_group = _rng.choice(age_groups_list)
         ag_info = AGE_GROUPS[age_group]
