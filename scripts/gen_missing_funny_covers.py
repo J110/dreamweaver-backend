@@ -70,7 +70,7 @@ def _generate_image_pollinations(prompt: str, sid: str) -> bytes | None:
     try:
         seed = stable_seed(sid)
         encoded = urllib.parse.quote(prompt[:500])
-        url = f"https://image.pollinations.ai/prompt/{encoded}?width=512&height=512&seed={seed}&nologo=true&model=flux"
+        url = f"https://gen.pollinations.ai/image/{encoded}?width=512&height=512&seed={seed}&nologo=true&model=flux"
         headers = {}
         pollinations_token = os.getenv("POLLINATIONS_API_KEY", "")
         if pollinations_token:

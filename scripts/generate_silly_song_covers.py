@@ -76,7 +76,7 @@ def generate_flux_image(prompt: str) -> bytes | None:
     """Generate a 512x512 image via Pollinations.ai FLUX endpoint."""
     truncated = prompt[:600]
     encoded_prompt = quote(truncated, safe="")
-    url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?width=512&height=512&model=flux&nologo=true"
+    url = f"https://gen.pollinations.ai/image/{encoded_prompt}?width=512&height=512&model=flux&nologo=true"
 
     pollinations_token = os.getenv("POLLINATIONS_API_KEY", "")
     headers = {}
