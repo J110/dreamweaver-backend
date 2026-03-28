@@ -1,0 +1,32 @@
+{
+  "id": "the-bouncy-bridge-32ce",
+  "title": "The Bouncy Bridge",
+  "age_group": "6-8",
+  "comedy_type": "physical_escalation",
+  "format": "duo",
+  "voices": [
+    "high_pitch_cartoon",
+    "musical_original"
+  ],
+  "voice_combo": [
+    "high_pitch_cartoon",
+    "musical_original"
+  ],
+  "primary_voice": "high_pitch_cartoon",
+  "premise_summary": "A bridge that bounces too much",
+  "cover_description": "Pip, tiny and wide-eyed, clings to a giant bird\u2019s nest perched on a wispy cloud, while the bouncy bridge below stretches like a trampoline gone wild.",
+  "host_intro": "Tonight, Pip tries to cross a bridge. The bridge has other plans.",
+  "host_outro": "Pip is still bouncing. The bridge is very proud.",
+  "cover_file": "the-bouncy-bridge-32ce.svg",
+  "duration_seconds": 84,
+  "script": "[TITLE: The Bouncy Bridge]\n[HOST_INTRO: Tonight, Pip tries to cross a bridge. The bridge has other plans.]\n[HOST_OUTRO: Pip is still bouncing. The bridge is very proud.]\n[AGE: 6-8]\n[VOICES: high_pitch_cartoon, musical_original]\n[COMEDY_TYPE: physical_escalation]\n\n[SETUP]\n[PIP] [DELIVERY: curious, excited] What\u2019s this long stretchy thing tied between two trees? [STING: boing]\n[MELODY] [DELIVERY: confident, gentle] That\u2019s the new bouncy bridge, Pip! Just step on and walk across.\n[/SETUP]\n\n[BEAT_1]\n[PIP] [DELIVERY: tentative] I\u2019m stepping on\u2026 why is it wobbling like a jelly snake? [STING: slide_whistle]\n[MELODY] [DELIVERY: dismissive] Oh, that\u2019s just the bounce! Keep going, you\u2019ll be fine.\n[/BEAT_1]\n\n[BEAT_2]\n[PIP] [DELIVERY: panicked] I\u2019m not fine! I just bounced up to my knees! [STING: boing]\n[MELODY] [DELIVERY: caught off guard] Hmm. Maybe hop instead of walk?\n[/BEAT_2]\n\n[BEAT_3]\n[PIP] [DELIVERY: outraged] I hopped! Now I\u2019m bouncing over the treetops! [STING: whoosh]\n[MELODY] [DELIVERY: scrambling] Oh dear. That\u2019s\u2026 higher than expected.\n[/BEAT_3]\n\n[BUTTON]\n[PIP] [DELIVERY: desperate, loud] [PUNCHLINE]I just bounced into a cloud and now I\u2019m stuck in a bird\u2019s nest! [/PUNCHLINE] [STING: big_crash]\n[MELODY] [DELIVERY: stunned, quiet] Well. That\u2019s one way to cross.\n[/BUTTON]\n\n[COVER: Pip, tiny and wide-eyed, clings to a giant bird\u2019s nest perched on a wispy cloud, while the bouncy bridge below stretches like a trampoline gone wild.]\n[PREMISE: A bridge that bounces too much]",
+  "audio_file": "the-bouncy-bridge-32ce.mp3",
+  "created_at": "2026-03-26",
+  "play_count": 2,
+  "replay_count": 2,
+  "base_track_style": "bouncy",
+  "episode_file": "the-bouncy-bridge-32ce_episode.mp3",
+  "episode_duration_seconds": 84,
+  "audio_url": "/audio/funny-shorts/the-bouncy-bridge-32ce_episode.mp3",
+  "cover": "/covers/funny-shorts/the-bouncy-bridge-32ce.svg"
+}

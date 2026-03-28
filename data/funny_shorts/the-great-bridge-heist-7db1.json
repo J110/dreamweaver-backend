@@ -1,0 +1,30 @@
+{
+  "id": "the-great-bridge-heist-7db1",
+  "title": "The Great Bridge Heist",
+  "age_group": "9-12",
+  "comedy_type": "villain_fails",
+  "format": "solo",
+  "voices": [
+    "comedic_villain"
+  ],
+  "voice_combo": [
+    "comedic_villain"
+  ],
+  "primary_voice": "comedic_villain",
+  "premise_summary": "Villain dismantles bridge, strands self",
+  "cover_description": "A dramatic crocodile clings to a single wooden plank, floating in a swamp, while the rest of the bridge lies in splinters beneath the water.",
+  "cover_file": "the-great-bridge-heist-7db1.svg",
+  "duration_seconds": 114,
+  "script": "[TITLE: The Great Bridge Heist]\n[AGE: 9-12]\n[VOICES: comedic_villain]\n[COMEDY_TYPE: villain_fails]\n\n[SETUP]\n[CROC] [DELIVERY: confident, bluster] Behold, the mighty Crocodile, architect of doom, standing before the rickety old bridge that dares to span my swamp. [STING: villain_entrance]\n[CROC] [DELIVERY: triumphant] Tonight, I shall remove it\u2014plank by plank\u2014and build a throne from its bones.\n[CROC] [DELIVERY: smug] The villagers will wake to find their precious bridge... gone.\n[/SETUP]\n\n[BEAT_1]\n[CROC] [DELIVERY: confident] First, the leftmost plank\u2014easily pried with my mighty jaws. [STING: boing]\n[CROC] [DELIVERY: caught off guard] Wait. Why is the bridge tilting? That wasn\u2019t in the plan.\n[CROC] [DELIVERY: defensive] It\u2019s fine. It\u2019s *supposed* to do that.\n[/BEAT_1]\n\n[BEAT_2]\n[CROC] [DELIVERY: tentative] Second plank\u2014gently, now. The bridge is... wobbling like a jellyfish in a hurricane.\n[CROC] [DELIVERY: scrambling] Not my fault! It\u2019s *old*! Old things wobble!\n[CROC] [DELIVERY: panicked] Oh no. The entire middle section just... sagged. That\u2019s not wobbling. That\u2019s *collapsing*.\n[/BEAT_2]\n\n[BEAT_3]\n[CROC] [DELIVERY: stunned] Third plank. The *last* plank. The bridge is now a seesaw, and I am the only one left on it.\n[CROC] [DELIVERY: desperate] One. Small. Tug.\n[CROC] [DELIVERY: quiet, devastating] ...The bridge is gone. The throne is gone. I am floating in the swamp. On a single plank. [STING: deflation]\n[/BEAT_3]\n\n[BUTTON]\n[CROC] [DELIVERY: loud, outraged] [PUNCHLINE]I DID IT! I DESTROYED THE BRIDGE! ...Now how do I get back to shore?![/PUNCHLINE] [STING: villain_fail]\n[/BUTTON]\n\n[COVER: A dramatic crocodile clings to a single wooden plank, floating in a swamp, while the rest of the bridge lies in splinters beneath the water.]\n[PREMISE: Villain dismantles bridge, strands self]",
+  "audio_file": "the-great-bridge-heist-7db1.mp3",
+  "created_at": "2026-03-26",
+  "play_count": 2,
+  "replay_count": 0,
+  "base_track_style": "sneaky",
+  "audio_url": "/audio/funny-shorts/the-great-bridge-heist-7db1_episode.mp3",
+  "cover": "/covers/funny-shorts/the-great-bridge-heist-7db1.svg",
+  "host_intro": "Tonight, Boomy steals an entire bridge. He did not plan what happens next.",
+  "host_outro": "Boomy is standing on an island he made himself. He is very proud.",
+  "episode_file": "the-great-bridge-heist-7db1_episode.mp3",
+  "episode_duration_seconds": 114
+}

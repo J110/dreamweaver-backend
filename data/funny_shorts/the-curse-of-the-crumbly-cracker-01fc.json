@@ -1,0 +1,30 @@
+{
+  "id": "the-curse-of-the-crumbly-cracker-01fc",
+  "title": "The Curse of the Crumbly Cracker",
+  "age_group": "6-8",
+  "comedy_type": "ominous_mundane",
+  "format": "solo",
+  "voices": [
+    "mysterious_witch"
+  ],
+  "voice_combo": [
+    "mysterious_witch"
+  ],
+  "primary_voice": "mysterious_witch",
+  "premise_summary": "Cracker crumbs foretell snack-time doom",
+  "cover_description": "A dramatic witch looms over a tiny crumb on the floor, pointing dramatically as a toaster pops in the background, launching toast into the air.",
+  "cover_file": "the-curse-of-the-crumbly-cracker-01fc.svg",
+  "duration_seconds": 108,
+  "script": "[TITLE: The Curse of the Crumbly Cracker]\n[AGE: 6-8]\n[VOICES: mysterious_witch]\n[COMEDY_TYPE: ominous_mundane]\n\n[SETUP]\n[WITCH] [DELIVERY: ominous, tentative] Behold, child... a humble cracker lies upon the table. [STING: witch_ominous]\n[WITCH] [DELIVERY: confident, building] But this is no ordinary snack... it is the first sign of the Great Crumbling. [STING: buildup_short]\n[/SETUP]\n\n[BEAT_1]\n[WITCH] [DELIVERY: suspicious, pressing] See how its edges fray... like the walls of a doomed castle. [STING: witch_dramatic]\n[WITCH] [DELIVERY: caught off guard] A single crumb falls... the first tremor of the coming collapse! [STING: tiny]\n[/BEAT_1]\n\n[BEAT_2]\n[WITCH] [DELIVERY: panicked, loud] The cracker splits in two! The prophecy unfolds before our very eyes! [STING: medium_hit]\n[WITCH] [DELIVERY: desperate] The table trembles... the plates rattle... the very foundations of snack time quake! [STING: buildup_long]\n[/BEAT_2]\n\n[BEAT_3]\n[WITCH] [DELIVERY: quiet, devastating] The cracker shatters into dust... and the kitchen... the kitchen is swallowed by the void. [STING: big_crash]\n[WITCH] [DELIVERY: stunned, ominous] ...Or perhaps that was just the toaster popping. [STING: deflation]\n[/BEAT_3]\n\n[BUTTON]\n[WITCH] [DELIVERY: triumphant, loud] [PUNCHLINE]Beware, child... for the next crumb may herald the end of all buttered toast![/PUNCHLINE] [STING: villain_dramatic]\n[/BUTTON]\n\n[COVER: A dramatic witch looms over a tiny crumb on the floor, pointing dramatically as a toaster pops in the background, launching toast into the air.]\n[PREMISE: Cracker crumbs foretell snack-time doom]",
+  "audio_file": "the-curse-of-the-crumbly-cracker-01fc.mp3",
+  "created_at": "2026-03-26",
+  "play_count": 4,
+  "replay_count": 1,
+  "base_track_style": "mysterious",
+  "audio_url": "/audio/funny-shorts/the-curse-of-the-crumbly-cracker-01fc_episode.mp3",
+  "cover": "/covers/funny-shorts/the-curse-of-the-crumbly-cracker-01fc.svg",
+  "host_intro": "Tonight, Shadow warns you about a cracker. It is just a cracker.",
+  "host_outro": "The kitchen survived. Shadow is not convinced it will happen again.",
+  "episode_file": "the-curse-of-the-crumbly-cracker-01fc_episode.mp3",
+  "episode_duration_seconds": 108
+}

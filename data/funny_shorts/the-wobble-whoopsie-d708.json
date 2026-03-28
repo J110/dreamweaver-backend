@@ -1,0 +1,30 @@
+{
+  "id": "the-wobble-whoopsie-d708",
+  "title": "The Wobble Whoopsie",
+  "age_group": "2-5",
+  "comedy_type": "physical_escalation",
+  "format": "solo",
+  "voices": [
+    "high_pitch_cartoon"
+  ],
+  "voice_combo": [
+    "high_pitch_cartoon"
+  ],
+  "primary_voice": "high_pitch_cartoon",
+  "premise_summary": "Mouse mistakes balloon for a chair.",
+  "cover_description": "Mouse flattened under a giant green balloon animal shaped like a lumpy seat, paw raised in shock.",
+  "cover_file": "the-wobble-whoopsie-d708.svg",
+  "duration_seconds": 94,
+  "script": "[TITLE: The Wobble Whoopsie]\n[AGE: 2-5]\n[VOICES: high_pitch_cartoon]\n[COMEDY_TYPE: physical_escalation]\n\n[SETUP]\n[MOUSE] [DELIVERY: curious, tentative] What\u2019s this squishy thing on the floor? [STING: tiptoe]\n[MOUSE] [DELIVERY: excited] Ooooh! A big green lumpy seat!\n[MOUSE] [DELIVERY: confident] I\u2019ll just sit right here. Ta-da!\n[/SETUP]\n\n[BEAT_1]\n[MOUSE] [DELIVERY: suspicious] Wait\u2026 why\u2019s it wobbling? [STING: boing]\n[MOUSE] [DELIVERY: caught off guard] Oh no! It\u2019s tipping! [STING: slide_whistle]\n[MOUSE] [DELIVERY: panicked] Wheeeee\u2014plop! [STING: splat]\n[/BEAT_1]\n\n[BEAT_2]\n[MOUSE] [DELIVERY: tentative] Okay\u2026 maybe I\u2019ll stand on it instead.\n[MOUSE] [DELIVERY: suspicious] Hmm\u2026 still wobbling. [STING: boing]\n[MOUSE] [DELIVERY: panicked] It\u2019s spinning now! [STING: slide_whistle]\n[MOUSE] [DELIVERY: loud] WHOA\u2014BONK! [STING: big_crash]\n[/BEAT_2]\n\n[BEAT_3]\n[MOUSE] [DELIVERY: desperate] Fine! I\u2019ll just\u2026 poke it with my paw.\n[MOUSE] [DELIVERY: stunned] It\u2019s\u2026 it\u2019s JUMPING! [STING: boing]\n[MOUSE] [DELIVERY: panicked] IT\u2019S CHASING ME! [STING: run]\n[MOUSE] [DELIVERY: quiet, devastating] I\u2019m tiny. It\u2019s huge. [STING: silence]\n[/BEAT_3]\n\n[BUTTON]\n[MOUSE] [DELIVERY: loud, triumphant] [PUNCHLINE]WAIT\u2014IT\u2019S JUST A GREEN BALLOON ANIMAL![/PUNCHLINE] [STING: victory]\n[MOUSE] [DELIVERY: deflated] \u2026Pop. [STING: deflation]\n[/BUTTON]\n\n[COVER: Mouse flattened under a giant green balloon animal shaped like a lumpy seat, paw raised in shock.]\n[PREMISE: Mouse mistakes balloon for a chair.]",
+  "audio_file": "the-wobble-whoopsie-d708.mp3",
+  "created_at": "2026-03-26",
+  "play_count": 1,
+  "replay_count": 0,
+  "base_track_style": "bouncy",
+  "audio_url": "/audio/funny-shorts/the-wobble-whoopsie-d708_episode.mp3",
+  "cover": "/covers/funny-shorts/the-wobble-whoopsie-d708.svg",
+  "host_intro": "Tonight, Pip finds a very comfortable chair in the park. It is not a chair.",
+  "host_outro": "Pip is fine. The balloon is not.",
+  "episode_file": "the-wobble-whoopsie-d708_episode.mp3",
+  "episode_duration_seconds": 94
+}

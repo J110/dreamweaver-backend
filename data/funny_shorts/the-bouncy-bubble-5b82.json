@@ -1,0 +1,30 @@
+{
+  "id": "the-bouncy-bubble-5b82",
+  "title": "The Bouncy Bubble",
+  "age_group": "2-5",
+  "comedy_type": "physical_escalation",
+  "format": "solo",
+  "voices": [
+    "musical_original"
+  ],
+  "voice_combo": [
+    "musical_original"
+  ],
+  "primary_voice": "musical_original",
+  "premise_summary": "A bubble won\u2019t stop bouncing higher",
+  "cover_description": "Melody, mouth open in shock, watches a giant bubble bounce on Saturn\u2019s rings while her wand floats away.",
+  "host_intro": "Tonight, Melody blows one bubble. It does not stop bouncing.",
+  "host_outro": "Melody\u2019s bubble is still bouncing. It has plans.",
+  "cover_file": "the-bouncy-bubble-5b82.svg",
+  "duration_seconds": 98,
+  "script": "[TITLE: The Bouncy Bubble]\n[HOST_INTRO: Tonight, Melody blows one bubble. It does not stop bouncing.]\n[HOST_OUTRO: Melody\u2019s bubble is still bouncing. It has plans.]\n[AGE: 2-5]\n[VOICES: musical_original]\n[COMEDY_TYPE: physical_escalation]\n\n[SETUP]\n[MELODY] [DELIVERY: excited, gentle] I dip my wand in soapy water. [STING: musical_flourish]\n[MELODY] [DELIVERY: confident] I blow one tiny bubble. [STING: tiny]\n[MELODY] [DELIVERY: curious] It floats... then bounces off my nose. [STING: boing]\n\n[BEAT_1]\n[MELODY] [DELIVERY: caught off guard] It bounces off the floor! [STING: boing]\n[MELODY] [DELIVERY: suspicious] It bounces off the wall! [STING: boing]\n[MELODY] [DELIVERY: scrambling] It bounces off my head! [STING: boing]\n\n[BEAT_2]\n[MELODY] [DELIVERY: panicked] It bounces over the table! [STING: boing]\n[MELODY] [DELIVERY: desperate] It bounces over the lamp! [STING: boing]\n[MELODY] [DELIVERY: outraged] It bounces over the ceiling fan! [STING: big_crash]\n\n[BEAT_3]\n[MELODY] [DELIVERY: stunned] It bounces out the window! [STING: whoosh]\n[MELODY] [DELIVERY: tentative] It bounces into the sky! [STING: buildup_long]\n[MELODY] [DELIVERY: quiet, devastating] It bounces past the moon. [STING: silence]\n\n[BUTTON]\n[MELODY] [DELIVERY: loud, triumphant] [PUNCHLINE]Now it\u2019s bouncing on Saturn\u2019s rings![/PUNCHLINE] [STING: musical_detuned]\n[MELODY] [DELIVERY: deflated] I think I lost my wand. [STING: splat]\n\n[COVER: Melody, mouth open in shock, watches a giant bubble bounce on Saturn\u2019s rings while her wand floats away.]\n[PREMISE: A bubble won\u2019t stop bouncing higher]",
+  "audio_file": "the-bouncy-bubble-5b82.mp3",
+  "created_at": "2026-03-26",
+  "play_count": 3,
+  "replay_count": 0,
+  "base_track_style": "bouncy",
+  "episode_file": "the-bouncy-bubble-5b82_episode.mp3",
+  "episode_duration_seconds": 98,
+  "audio_url": "/audio/funny-shorts/the-bouncy-bubble-5b82_episode.mp3",
+  "cover": "/covers/funny-shorts/the-bouncy-bubble-5b82.svg"
+}

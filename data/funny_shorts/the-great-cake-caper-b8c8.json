@@ -1,0 +1,30 @@
+{
+  "id": "the-great-cake-caper-b8c8",
+  "title": "The Great Cake Caper",
+  "age_group": "6-8",
+  "comedy_type": "villain_fails",
+  "format": "solo",
+  "voices": [
+    "comedic_villain"
+  ],
+  "voice_combo": [
+    "comedic_villain"
+  ],
+  "primary_voice": "comedic_villain",
+  "premise_summary": "Villain bakes invisible cake, wears it instead",
+  "cover_description": "Boomy stands frozen, covered head-to-toe in clear cake, with a slice of cake sliding down his face like a visor.",
+  "host_intro": "Tonight, Boomy bakes a sneaky cake. It is not sneaky.",
+  "host_outro": "Boomy\u2019s cake is now a hat. He says it\u2019s haute cuisine.",
+  "cover_file": "the-great-cake-caper-b8c8.svg",
+  "duration_seconds": 106,
+  "script": "[TITLE: The Great Cake Caper]\n[HOST_INTRO: Tonight, Boomy bakes a sneaky cake. It is not sneaky.]\n[HOST_OUTRO: Boomy\u2019s cake is now a hat. He says it\u2019s haute cuisine.]\n[AGE: 6-8]\n[VOICES: comedic_villain]\n[COMEDY_TYPE: villain_fails]\n\n[SETUP]\n[BOOMY] [DELIVERY: confident, triumphant] Behold! The villainous Boomy has crafted the most devious dessert ever\u2014an invisible cake! [STING: villain_entrance]\n[BOOMY] [DELIVERY: smug] It looks like air, tastes like treachery, and will vanish the second anyone tries to eat it!\n[BOOMY] [DELIVERY: bluster] Now, to place it on the royal banquet table... carefully... oh-so-carefully...\n[/SETUP]\n\n[BEAT_1]\n[BOOMY] [DELIVERY: tentative] Wait. Why is my paw tingling? [STING: tiny]\n[BOOMY] [DELIVERY: caught off guard] Oh no. The cake is... sticking to me.\n[BOOMY] [DELIVERY: scrambling] It\u2019s not invisible\u2014it\u2019s just *clear*! And now it\u2019s climbing up my arm like syrup!\n[/BEAT_1]\n\n[BEAT_2]\n[BOOMY] [DELIVERY: panicked, loud] I\u2019m turning into a cake statue! [STING: medium_hit]\n[BOOMY] [DELIVERY: desperate] The frosting is hardening! My villain cape is now a fondant bow!\n[BOOMY] [DELIVERY: outraged] This was supposed to be a *stealth* dessert, not a *self*-dessert!\n[/BEAT_2]\n\n[BEAT_3]\n[BOOMY] [DELIVERY: stunned, quiet] ...I can\u2019t move my whiskers. [STING: deflation]\n[BOOMY] [DELIVERY: devastated] The royal guards are pointing. And laughing. And taking *pictures*.\n[BOOMY] [DELIVERY: defensive] This is *artisanal* villainy! It\u2019s a *cake installation*!\n[/BEAT_3]\n\n[BUTTON]\n[BOOMY] [DELIVERY: desperate, loud] [PUNCHLINE]I\u2019M WEARING THE CAKE LIKE A HELMET AND IT\u2019S DRIPPING INTO MY EARS![/PUNCHLINE] [STING: big_crash]\n[/BUTTON]\n\n[COVER: Boomy stands frozen, covered head-to-toe in clear cake, with a slice of cake sliding down his face like a visor.]\n[PREMISE: Villain bakes invisible cake, wears it instead]",
+  "audio_file": "the-great-cake-caper-b8c8.mp3",
+  "created_at": "2026-03-26",
+  "play_count": 2,
+  "replay_count": 1,
+  "base_track_style": "sneaky",
+  "episode_file": "the-great-cake-caper-b8c8_episode.mp3",
+  "episode_duration_seconds": 106,
+  "audio_url": "/audio/funny-shorts/the-great-cake-caper-b8c8_episode.mp3",
+  "cover": "/covers/funny-shorts/the-great-cake-caper-b8c8.svg"
+}

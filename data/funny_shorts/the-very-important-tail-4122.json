@@ -1,0 +1,32 @@
+{
+  "id": "the-very-important-tail-4122",
+  "title": "The Very Important Tail",
+  "age_group": "9-12",
+  "comedy_type": "misunderstanding",
+  "format": "duo",
+  "voices": [
+    "young_sweet",
+    "comedic_villain"
+  ],
+  "voice_combo": [
+    "comedic_villain",
+    "young_sweet"
+  ],
+  "primary_voice": "young_sweet",
+  "premise_summary": "Croc mistakes tail for dignity",
+  "cover_description": "A dramatic crocodile flails mid-air, tail wrapped around a tree like a slingshot, picnic debris raining down.",
+  "cover_file": "the-very-important-tail-4122.svg",
+  "duration_seconds": 112,
+  "script": "[TITLE: The Very Important Tail]\n[AGE: 9-12]\n[VOICES: young_sweet, comedic_villain]\n[COMEDY_TYPE: misunderstanding]\n\n[SETUP]\n[SWEET] [DELIVERY: curious, tentative] What\u2019s that long scaly thing stretched across the path like a fallen log? [STING: tiptoe]\n[CROC] [DELIVERY: confident, dismissive] That, my small friend, is not a log. That is my Very Important Tail. [STING: villain_dramatic]\n[/SETUP]\n\n[BEAT_1]\n[SWEET] [DELIVERY: suspicious] Oh. So when it wiggles, that\u2019s your tail being important?\n[CROC] [DELIVERY: bluster] Precisely. A Very Important Tail must wiggle to maintain its dignity. [STING: buildup_short]\n[SWEET] [DELIVERY: deadpan] I see. And when it trips me, that\u2019s dignity too?\n[/BEAT_1]\n\n[BEAT_2]\n[CROC] [DELIVERY: caught off guard] Tripping is merely a side effect of importance. [STING: slide_whistle]\n[SWEET] [DELIVERY: pointed] Right. So when it knocks over the picnic basket, that\u2019s also\u2026 importance?\n[CROC] [DELIVERY: defensive] A picnic basket is no match for the grandeur of my tail! [STING: medium_hit]\n[/BEAT_2]\n\n[BEAT_3]\n[SWEET] [DELIVERY: quiet, devastating] Got it. So when it sends you rolling downhill like a boulder, that\u2019s just your tail being *extra* important. [STING: big_crash]\n[CROC] [DELIVERY: stunned] ...My tail did what now?\n[/BEAT_3]\n\n[BUTTON]\n[SWEET] [DELIVERY: unbothered] You\u2019re airborne. [STING: whoosh]\n[CROC] [DELIVERY: desperate, loud] [PUNCHLINE]I DEMAND A LESS IMPORTANT TAIL![/PUNCHLINE] [STING: splat]\n[/BUTTON]\n\n[COVER: A dramatic crocodile flails mid-air, tail wrapped around a tree like a slingshot, picnic debris raining down.]\n[PREMISE: Croc mistakes tail for dignity]",
+  "audio_file": "the-very-important-tail-4122.mp3",
+  "created_at": "2026-03-26",
+  "play_count": 1,
+  "replay_count": 0,
+  "base_track_style": "gentle_absurd",
+  "audio_url": "/audio/funny-shorts/the-very-important-tail-4122_episode.mp3",
+  "cover": "/covers/funny-shorts/the-very-important-tail-4122.svg",
+  "host_intro": "Tonight, Boomy discovers his tail is missing. Sunny is not worried.",
+  "host_outro": "The tail was there the whole time. Boomy has learned nothing.",
+  "episode_file": "the-very-important-tail-4122_episode.mp3",
+  "episode_duration_seconds": 112
+}

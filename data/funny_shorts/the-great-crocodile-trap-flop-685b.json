@@ -1,0 +1,32 @@
+{
+  "id": "the-great-crocodile-trap-flop-685b",
+  "title": "The Great Crocodile Trap Flop",
+  "age_group": "2-5",
+  "comedy_type": "villain_fails",
+  "format": "duo",
+  "voices": [
+    "comedic_villain",
+    "high_pitch_cartoon"
+  ],
+  "voice_combo": [
+    "comedic_villain",
+    "high_pitch_cartoon"
+  ],
+  "primary_voice": "comedic_villain",
+  "premise_summary": "Crocodile\u2019s traps backfire spectacularly",
+  "cover_description": "A giant, spaghetti-tied net dangles from a tree, with a tangled, upside-down crocodile stuck inside it while a tiny mouse points and giggles below.",
+  "cover_file": "the-great-crocodile-trap-flop-685b.svg",
+  "duration_seconds": 139,
+  "script": "[TITLE: The Great Crocodile Trap Flop]\n[AGE: 2-5]\n[VOICES: comedic_villain, high_pitch_cartoon]\n[COMEDY_TYPE: villain_fails]\n\n[SETUP]\n[CROC] [DELIVERY: confident, triumphant] I am Croc the Mighty! [STING: villain_entrance]\n[CROC] [DELIVERY: bluster] I will trap that tiny mouse! [STING: buildup_short]\n[MOUSE] [DELIVERY: curious] Uh-oh. What\u2019s that big green thing blocking the path? [STING: mouse_squeak]\n[/SETUP]\n\n[BEAT_1]\n[CROC] [DELIVERY: smug] Behold! My trap of doom! [STING: villain_dramatic]\n[MOUSE] [DELIVERY: suspicious] Why is it wobbling like jelly? [STING: tiptoe]\n[CROC] [DELIVERY: dismissive] Step on it, fool! [STING: slide_whistle]\n[MOUSE] [DELIVERY: panicked] I\u2019m stepping\u2026 I\u2019m sinking! [STING: splat]\n[CROC] [DELIVERY: caught off guard] Wait\u2014why am I sinking too?! [STING: boing]\n[/BEAT_1]\n\n[BEAT_2]\n[CROC] [DELIVERY: scrambling] I built a *trampoline* of doom! [STING: buildup_long]\n[MOUSE] [DELIVERY: suspicious] Why does it bounce us higher? [STING: whoosh]\n[CROC] [DELIVERY: desperate] Jump off! Jump off! [STING: run]\n[MOUSE] [DELIVERY: delighted] Wheee! We\u2019re flying! [STING: big_crash]\n[CROC] [DELIVERY: stunned] I\u2019m stuck in a tree! [STING: deflation]\n[/BEAT_2]\n\n[BEAT_3]\n[CROC] [DELIVERY: desperate] I\u2019ll build a *net* of doom! [STING: villain_dramatic]\n[MOUSE] [DELIVERY: calm gotcha] Oh no. Not again. [STING: silence]\n[CROC] [DELIVERY: triumphant] Now I\u2019ve got you! [STING: medium_hit]\n[MOUSE] [DELIVERY: quiet] \u2026Why is the net full of holes? [STING: tiny]\n[CROC] [DELIVERY: deflated] I tied it with spaghetti. [STING: villain_fail]\n[/BEAT_3]\n\n[BUTTON]\n[MOUSE] [DELIVERY: excited, loud] [PUNCHLINE]Look! You trapped *yourself* in your own net![/PUNCHLINE] [STING: victory]\n[CROC] [DELIVERY: devastated] \u2026I am Croc the *Mistake*. [STING: deflation]\n[/BUTTON]\n\n[COVER: A giant, spaghetti-tied net dangles from a tree, with a tangled, upside-down crocodile stuck inside it while a tiny mouse points and giggles below.]\n[PREMISE: Crocodile\u2019s traps backfire spectacularly]",
+  "audio_file": "the-great-crocodile-trap-flop-685b.mp3",
+  "created_at": "2026-03-26",
+  "play_count": 4,
+  "replay_count": 0,
+  "base_track_style": "sneaky",
+  "audio_url": "/audio/funny-shorts/the-great-crocodile-trap-flop-685b_episode.mp3",
+  "cover": "/covers/funny-shorts/the-great-crocodile-trap-flop-685b.svg",
+  "host_intro": "Tonight, Boomy builds the perfect trap for Pip. It is not perfect.",
+  "host_outro": "Boomy is stuck in his own spaghetti net. He says it is Italian engineering.",
+  "episode_file": "the-great-crocodile-trap-flop-685b_episode.mp3",
+  "episode_duration_seconds": 139
+}

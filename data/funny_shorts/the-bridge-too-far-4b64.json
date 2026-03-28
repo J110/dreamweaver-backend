@@ -1,0 +1,34 @@
+{
+  "id": "the-bridge-too-far-4b64",
+  "title": "The Bridge Too Far",
+  "age_group": "6-8",
+  "comedy_type": "misunderstanding",
+  "format": "trio",
+  "voices": [
+    "high_pitch_cartoon",
+    "comedic_villain",
+    "young_sweet"
+  ],
+  "voice_combo": [
+    "comedic_villain",
+    "high_pitch_cartoon",
+    "young_sweet"
+  ],
+  "primary_voice": "high_pitch_cartoon",
+  "premise_summary": "Crocodile pretends to be a bridge",
+  "cover_description": "A crocodile rolled into a wobbly tube with a mouse peeking out of his open mouth, looking unimpressed.",
+  "cover_file": "the-bridge-too-far-4b64.svg",
+  "duration_seconds": 124,
+  "script": "[TITLE: The Bridge Too Far]\n[AGE: 6-8]\n[VOICES: high_pitch_cartoon, comedic_villain, young_sweet]\n[COMEDY_TYPE: misunderstanding]\n\n[SETUP]\n[MOUSE] [DELIVERY: curious, excited] Ooooh! What\u2019s that long green thing stretched over the river? [STING: buildup_short]\n[CROC] [DELIVERY: confident, bluster] That, my tiny friend, is MY magnificent bridge! [STING: villain_dramatic]\n[SWEET] [DELIVERY: deadpan, unbothered] It\u2019s just you lying across the water. [STING: sweet_eyeroll]\n[/SETUP]\n\n[BEAT_1]\n[MOUSE] [DELIVERY: suspicious, tentative] Wait\u2026 if I step on you, will I get to the other side? [STING: tiptoe]\n[CROC] [DELIVERY: triumphant] Of course! I am the sturdiest bridge in the land! [STING: musical_flourish]\n[MOUSE] [DELIVERY: panicked] EEEP! Why are you wobbling like a bowl of jelly? [STING: mouse_panic]\n[/BEAT_1]\n\n[BEAT_2]\n[CROC] [DELIVERY: defensive, scrambling] I am NOT wobbling! I am\u2026 flexing for strength! [STING: slide_whistle]\n[SWEET] [DELIVERY: deadpan, pointed] You\u2019re rolling into a tube. [STING: sweet_pause]\n[MOUSE] [DELIVERY: outraged, loud] YOU\u2019RE A TUBE! I\u2019M STUCK IN YOUR MOUTH! [STING: big_crash]\n[/BEAT_2]\n\n[BEAT_3]\n[CROC] [DELIVERY: desperate, bluster] Ahem! This is my *bridge maintenance* position! [STING: villain_fail]\n[MOUSE] [DELIVERY: calm gotcha, quiet] So\u2026 bridges usually have legs? [STING: silence]\n[SWEET] [DELIVERY: devastating, deadpan] No. But crocodiles do. [STING: whoosh]\n[/BEAT_3]\n\n[BUTTON]\n[CROC] [DELIVERY: deflated, desperate] [PUNCHLINE]I am a very bad bridge\u2026 and a very full crocodile.[/PUNCHLINE] [STING: deflation]\n[/BUTTON]\n\n[COVER: A crocodile rolled into a wobbly tube with a mouse peeking out of his open mouth, looking unimpressed.]\n[PREMISE: Crocodile pretends to be a bridge]",
+  "audio_file": "the-bridge-too-far-4b64.mp3",
+  "created_at": "2026-03-26",
+  "play_count": 6,
+  "replay_count": 3,
+  "base_track_style": "gentle_absurd",
+  "audio_url": "/audio/funny-shorts/the-bridge-too-far-4b64_episode.mp3",
+  "cover": "/covers/funny-shorts/the-bridge-too-far-4b64.svg",
+  "host_intro": "Tonight, Boomy lies across a river and calls himself a bridge. He is not a bridge.",
+  "host_outro": "Boomy is still rolled into a tube. Sunny says that is normal for bridges.",
+  "episode_file": "the-bridge-too-far-4b64_episode.mp3",
+  "episode_duration_seconds": 124
+}

@@ -1,0 +1,34 @@
+{
+  "id": "the-ominous-lunchbox-4cf8",
+  "title": "The Ominous Lunchbox",
+  "age_group": "9-12",
+  "comedy_type": "ominous_mundane",
+  "format": "trio",
+  "voices": [
+    "young_sweet",
+    "mysterious_witch",
+    "musical_original"
+  ],
+  "voice_combo": [
+    "musical_original",
+    "mysterious_witch",
+    "young_sweet"
+  ],
+  "primary_voice": "young_sweet",
+  "premise_summary": "A normal lunch becomes apocalyptic",
+  "cover_description": "Sunny calmly eating a sandwich in the backseat of a car that\u2019s floating midair, screaming in terror.",
+  "host_intro": "Tonight, Sunny packs a lunch. Shadow thinks it\u2019s the end of the world.",
+  "host_outro": "Sunny\u2019s lunchbox is now a national monument. Nobody knows why.",
+  "cover_file": "the-ominous-lunchbox-4cf8.svg",
+  "duration_seconds": 134,
+  "script": "[TITLE: The Ominous Lunchbox]\n[HOST_INTRO: Tonight, Sunny packs a lunch. Shadow thinks it\u2019s the end of the world.]\n[HOST_OUTRO: Sunny\u2019s lunchbox is now a national monument. Nobody knows why.]\n[AGE: 9-12]\n[VOICES: young_sweet, mysterious_witch, musical_original]\n[COMEDY_TYPE: ominous_mundane]\n\n[SETUP]\n[MELODY] [DELIVERY: gentle, warm] Sunny stands in the kitchen, holding a lunchbox. [STING: sweet_pause]\n[SHADOW] [DELIVERY: ominous, confident] The lunchbox glows with an eerie, unnatural light. [STING: witch_ominous]\n[SUNNY] [DELIVERY: deadpan, unbothered] It\u2019s just a sandwich. And an apple. And a juice box. [STING: medium_hit]\n\n[BEAT_1]\n[SHADOW] [DELIVERY: building, pressing] The sandwich... it moves. [STING: buildup_short]\n[SUNNY] [DELIVERY: suspicious, quiet] That\u2019s because it\u2019s ham. Ham is meat. Meat does that. [STING: tiny]\n[SHADOW] [DELIVERY: triumphant] The ham has *eyes*. [STING: villain_dramatic]\n\n[BEAT_2]\n[SUNNY] [DELIVERY: caught off guard] Okay, that\u2019s new. [STING: mouse_surprise]\n[SHADOW] [DELIVERY: desperate, loud] The apple *rolls* toward the edge of the box! [STING: buildup_long]\n[SUNNY] [DELIVERY: deadpan] It\u2019s a round apple. Round things roll. [STING: deflation]\n\n[BEAT_3]\n[SHADOW] [DELIVERY: stunned, panicked] The juice box... it *speaks*. [STING: big_crash]\n[SUNNY] [DELIVERY: quiet, devastating] That\u2019s the straw. It\u2019s a juice *box*. [STING: silence]\n[SHADOW] [DELIVERY: scrambling] The lunchbox lid *snaps shut* on its own! [STING: villain_fail]\n\n[BUTTON]\n[SUNNY] [DELIVERY: unbothered] I\u2019m just gonna eat it in the car. [STING: sweet_eyeroll]\n[SHADOW] [DELIVERY: desperate, loud] [PUNCHLINE]The car is now a sentient, screaming entity.[/PUNCHLINE] [STING: big_crash]\n\n[COVER: Sunny calmly eating a sandwich in the backseat of a car that\u2019s floating midair, screaming in terror.]\n[PREMISE: A normal lunch becomes apocalyptic]",
+  "audio_file": "the-ominous-lunchbox-4cf8.mp3",
+  "created_at": "2026-03-26",
+  "play_count": 0,
+  "replay_count": 0,
+  "base_track_style": "mysterious",
+  "episode_file": "the-ominous-lunchbox-4cf8_episode.mp3",
+  "episode_duration_seconds": 134,
+  "audio_url": "/audio/funny-shorts/the-ominous-lunchbox-4cf8_episode.mp3",
+  "cover": "/covers/funny-shorts/the-ominous-lunchbox-4cf8.svg"
+}

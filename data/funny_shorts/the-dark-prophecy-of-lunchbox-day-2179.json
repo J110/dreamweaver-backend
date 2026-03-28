@@ -1,0 +1,30 @@
+{
+  "id": "the-dark-prophecy-of-lunchbox-day-2179",
+  "title": "The Dark Prophecy of Lunchbox Day",
+  "age_group": "9-12",
+  "comedy_type": "sarcastic_commentary",
+  "format": "solo",
+  "voices": [
+    "mysterious_witch"
+  ],
+  "voice_combo": [
+    "mysterious_witch"
+  ],
+  "primary_voice": "mysterious_witch",
+  "premise_summary": "The horror of packed lunches",
+  "cover_description": "A lunchbox oozing neon-green yogurt, with a sandwich and apple fused into its gooey mass, eyes peering out.",
+  "host_intro": "Tonight, Shadow reveals the terrifying truth about... Tuesdays.",
+  "host_outro": "Shadow still hasn\u2019t opened their yogurt. It\u2019s Thursday.",
+  "cover_file": "the-dark-prophecy-of-lunchbox-day-2179.svg",
+  "duration_seconds": 133,
+  "script": "[TITLE: The Dark Prophecy of Lunchbox Day]\n[HOST_INTRO: Tonight, Shadow reveals the terrifying truth about... Tuesdays.]\n[HOST_OUTRO: Shadow still hasn\u2019t opened their yogurt. It\u2019s Thursday.]\n[AGE: 9-12]\n[VOICES: mysterious_witch]\n[COMEDY_TYPE: sarcastic_commentary]\n\n[SETUP]\n[SHADOW] [DELIVERY: ominous, gentle] Behold, child. The day the ancients feared most. [STING: witch_ominous]\n[SHADOW] [DELIVERY: confident] Tuesday. The day the lunchbox appears. [STING: buildup_short]\n[SHADOW] [DELIVERY: deadpan] No one knows where it comes from. It just... is. [STING: silence]\n\n[BEAT_1]\n[SHADOW] [DELIVERY: suspicious] First, the sandwich. Wrapped in foil like a cursed artifact. [STING: tiny]\n[SHADOW] [DELIVERY: caught off guard] It is always... slightly squished. As if the bread itself fears its fate. [STING: deflation]\n\n[BEAT_2]\n[SHADOW] [DELIVERY: pressing] Then, the fruit. A single apple. Shiny. Too shiny. [STING: medium_hit]\n[SHADOW] [DELIVERY: stunned] It rolls. It *always* rolls. Straight into the abyss of the backpack\u2019s darkest corner. [STING: whoosh]\n\n[BEAT_3]\n[SHADOW] [DELIVERY: quiet, devastating] And finally... the yogurt. The true horror. [STING: buildup_long]\n[SHADOW] [DELIVERY: ominous] It sits. It waits. It *multiplies*. [STING: witch_dramatic]\n\n[BUTTON]\n[SHADOW] [DELIVERY: desperate, loud] [PUNCHLINE]By Friday, the lunchbox is a sentient, gelatinous blob of forgotten meals.[/PUNCHLINE] [STING: big_crash]\n[SHADOW] [DELIVERY: deadpan] And yet... you bring it home again. [STING: deflation]\n\n[COVER: A lunchbox oozing neon-green yogurt, with a sandwich and apple fused into its gooey mass, eyes peering out.]\n[PREMISE: The horror of packed lunches]",
+  "audio_file": "the-dark-prophecy-of-lunchbox-day-2179.mp3",
+  "created_at": "2026-03-26",
+  "play_count": 0,
+  "replay_count": 0,
+  "base_track_style": "gentle_absurd",
+  "episode_file": "the-dark-prophecy-of-lunchbox-day-2179_episode.mp3",
+  "episode_duration_seconds": 133,
+  "audio_url": "/audio/funny-shorts/the-dark-prophecy-of-lunchbox-day-2179_episode.mp3",
+  "cover": "/covers/funny-shorts/the-dark-prophecy-of-lunchbox-day-2179.svg"
+}
