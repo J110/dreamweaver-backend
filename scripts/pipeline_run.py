@@ -469,6 +469,8 @@ def step_generate(args, state: dict) -> bool:
         state["effective_story_type"] = effective_story_type
     if args.age:
         cmd += ["--age", args.age]
+    if args.language_level:
+        cmd += ["--language-level", args.language_level]
     if args.dry_run:
         cmd += ["--dry-run"]
 
@@ -1729,6 +1731,17 @@ def preflight_checks(args) -> bool:
             logger.error("  Mistral API check failed: %s", e)
             all_ok = False
 
+    # 5. Git pull to ensure we have the latest content.json (with language_level classifications etc.)
+    logger.info("  Pulling latest backend changes...")
+    pull_ok, _, pull_stderr, _ = run_command(
+        ["git", "pull", "--rebase", "origin", "main"],
+        "Preflight: git pull", timeout=60
+    )
+    if pull_ok:
+        logger.info("  Git pull: OK (content.json up to date)")
+    else:
+        logger.warning("  Git pull failed: %s (proceeding with local data)", pull_stderr)
+
     logger.info("  Preflight: %s", "PASS" if all_ok else "WARNINGS (proceeding)")
     return True  # Always proceed — warnings are non-fatal
 
@@ -1767,11 +1780,11 @@ def postflight_checks(state: dict):
     gcp_daily = GCP_MONTHLY / 30.0  # ~$0.54/day
 
     # Modal GPU cost — calculated from ACTUAL audio generation time
-    # Modal T4 GPU pricing: $0.000221/sec ($0.796/hr)
-    # Source: https://modal.com/pricing (T4 on-demand)
-    MODAL_T4_PER_SEC = 0.000221
+    # Modal A100 40GB GPU pricing: $0.000583/sec ($2.10/hr)
+    # Source: https://modal.com/pricing (A100 on-demand)
+    MODAL_A100_PER_SEC = 0.000583
     audio_secs = state.get("audio_elapsed_seconds", 0)
-    modal_cost = audio_secs * MODAL_T4_PER_SEC
+    modal_cost = audio_secs * MODAL_A100_PER_SEC
     audio_mins = audio_secs / 60.0
 
     # Mistral, Resend, Vercel, Render = $0 (free tiers)
@@ -1888,6 +1901,9 @@ def main():
     parser.add_argument("--story-type",
                         choices=["folk_tale", "mythological", "fable", "nature", "slice_of_life", "dream"],
                         default=None, help="Target story type (narrative tradition) for content generation")
+    parser.add_argument("--language-level",
+                        choices=["basic", "intermediate", "advanced"],
+                        default=None, help="Target language level (auto-selects from deficit if omitted)")
     parser.add_argument("--age", default=None,
                         help="Force specific age group (e.g. 6-8) for --mood runs")
     parser.add_argument("--type", dest="content_type",
@@ -1931,6 +1947,10 @@ def main():
         logger.info("  Story type (auto): %s", args.story_type)
     else:
         logger.info("  Story type (manual): %s", args.story_type)
+    if args.language_level:
+        logger.info("  Language level (manual): %s", args.language_level)
+    else:
+        logger.info("  Language level: auto (deficit-based)")
     logger.info("  Dry run: %s | Skip publish: %s", args.dry_run, args.skip_publish)
     logger.info("")
 
