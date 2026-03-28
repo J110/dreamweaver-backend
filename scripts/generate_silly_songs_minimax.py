@@ -108,7 +108,7 @@ def generate_song(song: dict, force: bool = False) -> bool:
             "minimax/music-1.5",
             input={
                 "prompt": style,
-                "lyrics_prompt": trimmed,
+                "lyrics": trimmed,
             },
         )
 
