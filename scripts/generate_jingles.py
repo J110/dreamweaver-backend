@@ -28,12 +28,6 @@ import time
 from pathlib import Path
 
 try:
-    import replicate
-except ImportError:
-    print("ERROR: replicate required — pip install replicate")
-    sys.exit(1)
-
-try:
     import httpx
 except ImportError:
     print("ERROR: httpx required — pip install httpx")
@@ -179,43 +173,77 @@ VOICE_ID_TO_NAME = {v: k for k, v in VOICE_NAME_TO_ID.items()}
 
 # ── Generation ────────────────────────────────────────────────
 
+REPLICATE_API_URL = "https://api.replicate.com/v1/predictions"
+REPLICATE_MODEL_VERSION = "671ac645ce5e552cc63a54a2bbff63fcf798043055d2dac5fc9e36a837eedcfb"
+
+
 def generate_jingle(prompt: str, duration: int, max_retries: int = 5) -> bytes | None:
-    """Generate a jingle via Replicate MusicGen."""
+    """Generate a jingle via Replicate MusicGen HTTP API (no SDK needed)."""
+    token = os.environ.get("REPLICATE_API_TOKEN", "")
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Content-Type": "application/json",
+    }
+
     for attempt in range(max_retries):
         try:
-            output = replicate.run(
-                "meta/musicgen:671ac645ce5e552cc63a54a2bbff63fcf798043055d2dac5fc9e36a837eedcfb",
-                input={
-                    "model_version": "stereo-melody-large",
-                    "prompt": prompt,
-                    "duration": duration,
-                    "output_format": "wav",
-                    "normalization_strategy": "peak",
-                },
-            )
-
-            if hasattr(output, "read"):
-                audio_bytes = output.read()
-            else:
-                resp = httpx.get(str(output), timeout=120)
+            # Create prediction
+            with httpx.Client(timeout=30) as client:
+                resp = client.post(REPLICATE_API_URL, headers=headers, json={
+                    "version": REPLICATE_MODEL_VERSION,
+                    "input": {
+                        "model_version": "stereo-melody-large",
+                        "prompt": prompt,
+                        "duration": duration,
+                        "output_format": "wav",
+                        "normalization_strategy": "peak",
+                    },
+                })
                 resp.raise_for_status()
-                audio_bytes = resp.content
+                prediction = resp.json()
 
-            if len(audio_bytes) > 1000:
-                return audio_bytes
-            else:
-                print(f"    Too small: {len(audio_bytes)} bytes")
+            pred_id = prediction["id"]
+            poll_url = f"{REPLICATE_API_URL}/{pred_id}"
+            print(f"    Prediction {pred_id} created, polling...")
 
-        except Exception as e:
-            err_str = str(e)
-            if "rate" in err_str.lower() or "429" in err_str:
+            # Poll until complete
+            with httpx.Client(timeout=30) as client:
+                for _ in range(120):  # max 4 minutes
+                    time.sleep(2)
+                    resp = client.get(poll_url, headers=headers)
+                    resp.raise_for_status()
+                    status = resp.json()
+
+                    if status["status"] == "succeeded":
+                        output_url = status["output"]
+                        if isinstance(output_url, list):
+                            output_url = output_url[0]
+                        # Download audio
+                        audio_resp = client.get(output_url, timeout=120)
+                        audio_resp.raise_for_status()
+                        if len(audio_resp.content) > 1000:
+                            return audio_resp.content
+                        print(f"    Too small: {len(audio_resp.content)} bytes")
+                        break
+
+                    elif status["status"] == "failed":
+                        print(f"    Prediction failed: {status.get('error', 'unknown')}")
+                        break
+
+            # If we get here without returning, retry
+        except httpx.HTTPStatusError as e:
+            if e.response.status_code == 429:
                 wait = 60 * (attempt + 1)
                 print(f"    Rate limited, waiting {wait}s...")
                 time.sleep(wait)
             else:
-                print(f"    Error (attempt {attempt + 1}): {e}")
+                print(f"    HTTP error (attempt {attempt + 1}): {e}")
                 if attempt < max_retries - 1:
                     time.sleep(10)
+        except Exception as e:
+            print(f"    Error (attempt {attempt + 1}): {e}")
+            if attempt < max_retries - 1:
+                time.sleep(10)
 
     return None
 
@@ -297,7 +325,17 @@ def main():
     if not args.all and not args.show_only and not args.character:
         parser.error("Specify --all, --show-only, or --character")
 
-    if not os.getenv("REPLICATE_API_TOKEN"):
+    token = os.getenv("REPLICATE_API_TOKEN")
+    if not token:
+        # Try loading from .env
+        env_path = Path(__file__).resolve().parents[1] / ".env"
+        if env_path.exists():
+            for line in env_path.read_text().splitlines():
+                if line.startswith("REPLICATE_API_TOKEN="):
+                    token = line.split("=", 1)[1].strip()
+                    os.environ["REPLICATE_API_TOKEN"] = token
+                    break
+    if not token:
         print("ERROR: REPLICATE_API_TOKEN not set")
         sys.exit(1)
 

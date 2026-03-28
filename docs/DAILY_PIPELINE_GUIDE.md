@@ -562,19 +562,42 @@ Shorts have a separate generation pipeline from stories/poems/lullabies.
 
 ### Generation Steps
 
+Scripts can be run locally, but **mixing MUST happen on the GCP server** where base tracks and stings exist.
+
 ```bash
-# 1. Generate scripts (Mistral AI)
+# 1. Generate scripts (Mistral AI) — can run locally or on server
 python3 scripts/generate_funny_short.py --age 6-8 --auto
 
-# 2. Generate audio chunks (Modal Chatterbox TTS)
+# 2. Generate audio chunks (Modal Chatterbox TTS) — can run locally or on server
 python3 scripts/generate_funny_audio.py --short-id <id>
 
-# 3. Mix audio (voice + base track + stings)
+# 3. Mix audio (voice + base track + stings) — MUST run on GCP server
+#    Base tracks: public/audio/funny-music/base-tracks/
+#    Stings:      public/audio/funny-music/stings/
+#    These only exist on the server, NOT in git. Mixing locally produces voice-only output.
 python3 scripts/mix_funny_short.py --short-id <id>
 
 # 4. Generate covers (Pollinations default, Together AI fallback)
 python3 scripts/gen_missing_funny_covers.py
 ```
+
+### Required Short Fields
+
+Every funny short JSON MUST have:
+- `host_intro` — one-line intro read before the short (e.g. "Tonight, Melody tries to steal a cake.")
+- `host_outro` — one-line outro after the punchline (e.g. "Melody is wearing the cake. The cake is winning.")
+- `base_track_style` — one of: `bouncy`, `sneaky`, `mysterious`, `gentle_absurd`, `whimsical`
+- `comedy_type`, `voices`, `voice_combo`, `primary_voice`, `cover_description`, `premise_summary`
+
+The generation script (`generate_funny_short.py`) produces `[HOST_INTRO:]` and `[HOST_OUTRO:]` tags — these get parsed into the JSON automatically.
+
+### Mixing Requirements (CRITICAL)
+
+- **NEVER mix locally** — base tracks and stings only exist on the GCP server at `/opt/dreamweaver-backend/public/audio/funny-music/`
+- If you generate audio chunks locally, **scp** them to the server before mixing
+- Verify mix output includes: base track placement, sting placement, and correct duration
+- A properly mixed short should show: `Base track: base_<style>_XX.wav` and `Placed N/N stings`
+- If it says "No base track found" or "Placed 0/N stings", the mix is **broken**
 
 ### Publishing & "New" Badge
 
@@ -604,3 +627,45 @@ After generating new shorts locally or on the server:
 - **Default**: Pollinations.ai (`image.pollinations.ai`) — free, no API key required
 - **Fallback**: Together AI (`FLUX.1-schnell`) — requires `TOGETHER_API_KEY`
 - Both `generate_funny_cover.py` and `gen_missing_funny_covers.py` use this order
+
+### Episode Structure (Intro/Outro Wrapping)
+
+Every funny short is wrapped in a "show" structure that makes Before Bed feel like a real audio show. The mixing script (`mix_funny_short.py`) automatically assembles the full episode:
+
+```
+[SHOW INTRO JINGLE]     ← 3.5s, static, same every episode
+[HOST INTRO]            ← 3-5s, dynamic TTS (Melody voice reads one-sentence premise)
+[CHARACTER JINGLES]     ← 2-4.5s, static, one per character in the short
+[STORY]                 ← 60-90s, the funny short with base track + stings
+[CHARACTER OUTRO]       ← 1-1.5s, static, primary character's sign-off jingle
+[HOST OUTRO]            ← 2-4s, dynamic TTS (Melody voice reads one-sentence callback)
+[SHOW OUTRO JINGLE]     ← 3.5s, static, same every episode
+```
+
+**Key requirements:**
+- `host_intro` and `host_outro` are **TTS-generated** from text in the short JSON (Melody/musical_original voice via Modal Chatterbox)
+- Jingle files are **static** — generated once, stored in `public/audio/funny-music/jingles/` on the GCP server
+- The mix script gracefully skips missing jingles (so shorts still work before jingles are generated)
+- **Full spec**: `docs/FUNNY_SHORTS_EPISODE_STRUCTURE.md` (voice profiles, jingle MusicGen prompts, assembly pipeline)
+- **Music spec**: `docs/FUNNY_SHORTS_MUSIC_SPEC.md` (base tracks, stings, sting-aware dialogue gaps)
+
+### Static Jingle Files (One-Time Generation)
+
+12 files stored in `public/audio/funny-music/jingles/`:
+
+| File | Duration | Purpose |
+|------|----------|---------|
+| `beforebed_intro_jingle.wav` | 3.5s | Show opener (glockenspiel ascending) |
+| `beforebed_outro_jingle.wav` | 3.5s | Show closer (same melody descending) |
+| `char_jingle_boomy_intro.wav` | 2.5s | Boomy entrance (tuba: dun dun DUNNN) |
+| `char_jingle_boomy_outro.wav` | 1.5s | Boomy exit (tuba deflating) |
+| `char_jingle_pip_intro.wav` | 2.0s | Pip entrance (xylophone run) |
+| `char_jingle_pip_outro.wav` | 1.0s | Pip exit (xylophone bing) |
+| `char_jingle_shadow_intro.wav` | 2.5s | Shadow entrance (celesta + gong) |
+| `char_jingle_shadow_outro.wav` | 1.5s | Shadow exit (celesta fade) |
+| `char_jingle_sunny_intro.wav` | 2.0s | Sunny entrance (toy piano) |
+| `char_jingle_sunny_outro.wav` | 1.0s | Sunny exit (flat piano note) |
+| `char_jingle_melody_intro.wav` | 2.5s | Melody entrance (harp flourish) |
+| `char_jingle_melody_outro.wav` | 1.5s | Melody exit (harp glissando) |
+
+Generate with MusicGen prompts from `docs/FUNNY_SHORTS_EPISODE_STRUCTURE.md`. These files are NOT in git — they live only on the server.

@@ -18,19 +18,29 @@ Usage:
 import argparse
 import io
 import json
+import os
 import random
 import sys
 from pathlib import Path
+from urllib.parse import urlencode
+
+import httpx
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from pydub import AudioSegment
+
+MODAL_TTS_URL = os.getenv(
+    "MODAL_TTS_URL",
+    "https://mohan-32314--dreamweaver-chatterbox-tts.modal.run",
+)
 
 DATA_DIR = Path(__file__).resolve().parents[1] / "data" / "funny_shorts"
 CHUNKS_DIR = Path(__file__).resolve().parents[1] / "public" / "audio" / "funny-shorts"
 MUSIC_DIR = Path(__file__).resolve().parents[1] / "public" / "audio" / "funny-music"
 STINGS_DIR = MUSIC_DIR / "stings"
 BASE_TRACKS_DIR = MUSIC_DIR / "base-tracks"
+JINGLES_DIR = Path(__file__).resolve().parents[1] / "public" / "audio" / "jingles"
 
 # ── Sting File Mapping ────────────────────────────────────────────────
 
@@ -103,6 +113,63 @@ STING_DURATIONS = {
 }
 
 STING_BUFFER_MS = 200  # breathing room after sting ends
+
+# ── Episode Structure: Jingles & Host Audio ──────────────────────────
+
+# Show jingles (static, same every episode)
+SHOW_INTRO_JINGLE = "beforebed_intro_jingle.wav"
+SHOW_OUTRO_JINGLE = "beforebed_outro_jingle.wav"
+SHOW_JINGLE_DURATION_MS = 3500
+
+# Character intro jingles (one per voice)
+CHARACTER_INTRO_JINGLES = {
+    "comedic_villain":   "char_jingle_boomy_intro.wav",
+    "high_pitch_cartoon": "char_jingle_pip_intro.wav",
+    "mysterious_witch":  "char_jingle_shadow_intro.wav",
+    "young_sweet":       "char_jingle_sunny_intro.wav",
+    "musical_original":  "char_jingle_melody_intro.wav",
+}
+
+# Character outro jingles (primary character only)
+CHARACTER_OUTRO_JINGLES = {
+    "comedic_villain":   "char_jingle_boomy_outro.wav",
+    "high_pitch_cartoon": "char_jingle_pip_outro.wav",
+    "mysterious_witch":  "char_jingle_shadow_outro.wav",
+    "young_sweet":       "char_jingle_sunny_outro.wav",
+    "musical_original":  "char_jingle_melody_outro.wav",
+}
+
+# Voice name → voice_id mapping (for determining primary voice from character tags)
+VOICE_NAME_TO_ID = {
+    "BOOMY":   "comedic_villain",
+    "PIP":     "high_pitch_cartoon",
+    "SHADOW":  "mysterious_witch",
+    "SUNNY":   "young_sweet",
+    "MELODY":  "musical_original",
+    # Legacy names
+    "CROC":    "comedic_villain",
+    "MOUSE":   "high_pitch_cartoon",
+    "WITCH":   "mysterious_witch",
+    "SWEET":   "young_sweet",
+    "MUSICAL": "musical_original",
+}
+
+# Host (Melody) TTS params — warm, measured announcer voice
+HOST_VOICE_PARAMS = {
+    "voice": "musical_original",
+    "exaggeration": 0.65,
+    "cfg_weight": 0.50,
+    "speed": 0.90,
+}
+
+# Gaps between episode sections
+JINGLE_GAP_MS = 200       # after show jingle
+HOST_INTRO_GAP_MS = 300   # after host intro
+CHAR_JINGLE_GAP_MS = 150  # between character jingles
+PRE_STORY_GAP_MS = 300    # before story starts
+POST_STORY_GAP_MS = 500   # after story ends
+CHAR_OUTRO_GAP_MS = 200   # after character outro jingle
+HOST_OUTRO_GAP_MS = 200   # after host outro
 
 # ── Base Track Styles ─────────────────────────────────────────────────
 
@@ -264,6 +331,145 @@ def get_sentence_gap(prev_sent: dict | None, curr_sent: dict) -> int:
     return base_gap
 
 
+# ── Jingle & Host TTS Helpers ─────────────────────────────────────────
+
+def load_jingle(filename: str) -> AudioSegment | None:
+    """Load a jingle WAV from the jingles directory. Returns None if missing."""
+    path = JINGLES_DIR / filename
+    if not path.exists():
+        return None
+    try:
+        return AudioSegment.from_file(str(path))
+    except Exception:
+        return None
+
+
+def generate_host_tts(text: str) -> AudioSegment | None:
+    """Generate TTS for host intro/outro using Melody voice via Modal."""
+    if not text or not text.strip():
+        return None
+
+    params = {
+        "text": text.strip(),
+        "voice": HOST_VOICE_PARAMS["voice"],
+        "exaggeration": HOST_VOICE_PARAMS["exaggeration"],
+        "cfg_weight": HOST_VOICE_PARAMS["cfg_weight"],
+        "speed": HOST_VOICE_PARAMS["speed"],
+    }
+    url = f"{MODAL_TTS_URL}?{urlencode(params)}"
+
+    try:
+        with httpx.Client(timeout=120) as client:
+            resp = client.get(url)
+            resp.raise_for_status()
+            audio = AudioSegment.from_file(io.BytesIO(resp.content))
+            print(f"    Host TTS: {len(audio)}ms")
+            return audio
+    except Exception as e:
+        print(f"    Host TTS error: {e}")
+        return None
+
+
+def build_episode(story_audio: AudioSegment, short: dict,
+                  sentences: list) -> AudioSegment:
+    """Wrap the mixed story in the full episode structure.
+
+    Structure:
+      [SHOW INTRO JINGLE] → [HOST INTRO] → [CHAR JINGLES] →
+      [STORY] →
+      [CHAR OUTRO JINGLE] → [HOST OUTRO] → [SHOW OUTRO JINGLE]
+
+    Gracefully skips any missing jingle files.
+    """
+    episode = AudioSegment.empty()
+    has_bookends = False
+
+    # === OPENING ===
+
+    # 1. Show intro jingle
+    intro_jingle = load_jingle(SHOW_INTRO_JINGLE)
+    if intro_jingle:
+        episode += intro_jingle
+        episode += AudioSegment.silent(duration=JINGLE_GAP_MS)
+        has_bookends = True
+        print(f"  + Show intro jingle ({len(intro_jingle)}ms)")
+
+    # 2. Host intro (dynamic TTS)
+    host_intro_text = short.get("host_intro", "")
+    if host_intro_text:
+        print(f"  Generating host intro TTS: \"{host_intro_text[:60]}...\"")
+        host_intro_audio = generate_host_tts(host_intro_text)
+        if host_intro_audio:
+            episode += host_intro_audio
+            episode += AudioSegment.silent(duration=HOST_INTRO_GAP_MS)
+            has_bookends = True
+
+    # 3. Character intro jingles (primary first, then others)
+    voices_in_short = short.get("voices", [])
+    if not voices_in_short:
+        # Derive from sentences
+        from collections import Counter
+        char_counts = Counter(s["character"] for s in sentences)
+        ordered_chars = [c for c, _ in char_counts.most_common()]
+        voices_in_short = [VOICE_NAME_TO_ID.get(c, "") for c in ordered_chars]
+        voices_in_short = [v for v in voices_in_short if v]
+
+    for voice_id in voices_in_short:
+        jingle_file = CHARACTER_INTRO_JINGLES.get(voice_id)
+        if jingle_file:
+            jingle = load_jingle(jingle_file)
+            if jingle:
+                episode += jingle
+                episode += AudioSegment.silent(duration=CHAR_JINGLE_GAP_MS)
+                has_bookends = True
+                print(f"  + Character intro jingle: {voice_id} ({len(jingle)}ms)")
+
+    if has_bookends:
+        episode += AudioSegment.silent(duration=PRE_STORY_GAP_MS)
+
+    # === STORY ===
+    episode += story_audio
+
+    # === CLOSING ===
+
+    episode += AudioSegment.silent(duration=POST_STORY_GAP_MS)
+
+    # 5. Primary character outro jingle
+    primary_voice = voices_in_short[0] if voices_in_short else None
+    if primary_voice:
+        outro_jingle_file = CHARACTER_OUTRO_JINGLES.get(primary_voice)
+        if outro_jingle_file:
+            outro_jingle = load_jingle(outro_jingle_file)
+            if outro_jingle:
+                episode += outro_jingle
+                episode += AudioSegment.silent(duration=CHAR_OUTRO_GAP_MS)
+                has_bookends = True
+                print(f"  + Character outro jingle: {primary_voice} ({len(outro_jingle)}ms)")
+
+    # 6. Host outro (dynamic TTS)
+    host_outro_text = short.get("host_outro", "")
+    if host_outro_text:
+        print(f"  Generating host outro TTS: \"{host_outro_text[:60]}...\"")
+        host_outro_audio = generate_host_tts(host_outro_text)
+        if host_outro_audio:
+            episode += host_outro_audio
+            episode += AudioSegment.silent(duration=HOST_OUTRO_GAP_MS)
+            has_bookends = True
+
+    # 7. Show outro jingle
+    outro_jingle = load_jingle(SHOW_OUTRO_JINGLE)
+    if outro_jingle:
+        episode += outro_jingle
+        has_bookends = True
+        print(f"  + Show outro jingle ({len(outro_jingle)}ms)")
+
+    if has_bookends:
+        print(f"  Episode: {len(episode) / 1000:.1f}s total "
+              f"(story: {len(story_audio) / 1000:.1f}s)")
+
+    return episode
+
+
 # ── Core Mix Function ─────────────────────────────────────────────────
 
 def mix_short(short: dict, chunk_dir: Path) -> bool:
@@ -402,13 +608,18 @@ def mix_short(short: dict, chunk_dir: Path) -> bool:
 
     print(f"  Placed {stings_placed}/{len(sting_events)} stings")
 
-    # ── Step 4: Export ────────────────────────────────────────────────
+    # ── Step 4: Wrap in episode structure ────────────────────────────
+
+    story_audio = mixed
+    episode = build_episode(story_audio, short, sentences)
+
+    # ── Step 5: Export ────────────────────────────────────────────────
 
     out_file = f"{short_id}.mp3"
     out_path = CHUNKS_DIR / out_file
-    mixed.export(str(out_path), format="mp3", bitrate="128k")
+    episode.export(str(out_path), format="mp3", bitrate="128k")
 
-    duration_sec = int(len(mixed) / 1000)
+    duration_sec = int(len(episode) / 1000)
     print(f"  Output: {out_path} ({duration_sec}s)")
 
     short["audio_file"] = out_file
