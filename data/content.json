@@ -22590,11 +22590,11 @@
     "music_type": "ambient",
     "audio_variants": [
       {
-        "voice_id": "female_1",
+        "voice": "female_1",
         "url": "/audio/pre-gen/gen-282d_female_1.mp3"
       },
       {
-        "voice_id": "male_1",
+        "voice": "male_1",
         "url": "/audio/pre-gen/gen-282d_male_1.mp3"
       }
     ],
@@ -22637,8 +22637,8 @@
     "mood": "wired",
     "story_type": null,
     "created_at": "2026-03-27T01:45:34.200810",
-    "updated_at": "2026-03-28T09:16:06.641551",
-    "view_count": 5,
+    "updated_at": "2026-03-28T09:17:23.917945",
+    "view_count": 8,
     "like_count": 0,
     "save_count": 0,
     "is_saved": false,
@@ -23199,11 +23199,11 @@
     "music_type": "ambient",
     "audio_variants": [
       {
-        "voice_id": "female_2",
+        "voice": "female_2",
         "url": "/audio/pre-gen/gen-dae6_female_2.mp3"
       },
       {
-        "voice_id": "female_3",
+        "voice": "female_3",
         "url": "/audio/pre-gen/gen-dae6_female_3.mp3"
       }
     ],
