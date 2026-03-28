@@ -374,10 +374,10 @@
     "duration_seconds": 69,
     "author_id": "system",
     "created_at": "2026-01-26T04:14:06.219762",
-    "updated_at": "2026-02-13T04:14:06.219763",
+    "updated_at": "2026-03-16T15:45:45.678606",
     "audio_url": null,
     "album_art_url": null,
-    "view_count": 427,
+    "view_count": 429,
     "like_count": 99,
     "save_count": 10,
     "categories": [
@@ -537,6 +537,7 @@
       }
     },
     "mood": "calm",
+    "is_saved": false,
     "story_type": "folk_tale",
     "language_level": "intermediate"
   },
@@ -554,10 +555,10 @@
     "duration_seconds": 83,
     "author_id": "system",
     "created_at": "2026-02-07T04:14:06.219774",
-    "updated_at": "2026-02-13T04:14:06.219775",
+    "updated_at": "2026-03-12T11:21:30.732102",
     "audio_url": null,
     "album_art_url": null,
-    "view_count": 394,
+    "view_count": 396,
     "like_count": 109,
     "save_count": 84,
     "categories": [
@@ -717,6 +718,7 @@
       }
     },
     "mood": "wired",
+    "is_saved": false,
     "story_type": "folk_tale",
     "language_level": "intermediate"
   },
@@ -1268,10 +1270,10 @@
     "duration_seconds": 38,
     "author_id": "system",
     "created_at": "2026-01-19T04:14:06.219809",
-    "updated_at": "2026-02-13T04:14:06.219810",
+    "updated_at": "2026-03-13T15:22:58.126962",
     "audio_url": null,
     "album_art_url": null,
-    "view_count": 285,
+    "view_count": 289,
     "like_count": 20,
     "save_count": 25,
     "categories": [
@@ -1381,7 +1383,8 @@
         "Magical"
       ]
     },
-    "mood": "calm"
+    "mood": "calm",
+    "is_saved": true
   },
   {
     "id": "hi-neendwala-badal",
@@ -3488,10 +3491,10 @@
     "duration_seconds": 90.6,
     "author_id": "system",
     "created_at": "2026-02-16T15:31:10.601630+00:00",
-    "updated_at": "2026-02-16T15:31:10.601630+00:00",
+    "updated_at": "2026-03-19T18:40:18.686705",
     "audio_url": null,
     "album_art_url": null,
-    "view_count": 210,
+    "view_count": 211,
     "like_count": 14,
     "save_count": 13,
     "categories": [
@@ -3655,6 +3658,7 @@
       }
     },
     "mood": "curious",
+    "is_saved": false,
     "story_type": "folk_tale",
     "language_level": "advanced"
   },
@@ -4774,10 +4778,10 @@
     "duration_seconds": 86.89,
     "author_id": "system",
     "created_at": "2026-02-16T15:31:10.601630+00:00",
-    "updated_at": "2026-02-16T15:31:10.601630+00:00",
+    "updated_at": "2026-03-19T23:37:15.273050",
     "audio_url": null,
     "album_art_url": null,
-    "view_count": 239,
+    "view_count": 240,
     "like_count": 36,
     "save_count": 41,
     "categories": [
@@ -6045,10 +6049,10 @@
     "duration_seconds": 55.28,
     "author_id": "system",
     "created_at": "2026-02-16T15:31:10.601630+00:00",
-    "updated_at": "2026-02-16T15:31:10.601630+00:00",
+    "updated_at": "2026-03-19T22:20:50.884341",
     "audio_url": null,
     "album_art_url": null,
-    "view_count": 60,
+    "view_count": 61,
     "like_count": 88,
     "save_count": 39,
     "categories": [
@@ -6215,6 +6219,7 @@
       }
     },
     "mood": "curious",
+    "is_saved": false,
     "story_type": "folk_tale",
     "language_level": "intermediate"
   },
@@ -7312,7 +7317,8 @@
     },
     "mood": "curious",
     "story_type": "folk_tale",
-    "language_level": "intermediate"
+    "language_level": "intermediate",
+    "is_saved": true
   },
   {
     "id": "gen-1a5a91def9ae",
@@ -7953,8 +7959,8 @@
     "life_aspect": "family_home",
     "plot_archetype": "discovery",
     "created_at": "2026-02-19T01:30:17.164921",
-    "updated_at": "2026-02-19T01:30:17.164921",
-    "view_count": 0,
+    "updated_at": "2026-03-20T02:02:08.567690",
+    "view_count": 1,
     "like_count": 0,
     "save_count": 0,
     "musicParams": {
@@ -8137,8 +8143,8 @@
     "life_aspect": "friendship",
     "plot_archetype": "friendship_bonding",
     "created_at": "2026-02-19T02:26:25.330046",
-    "updated_at": "2026-02-19T02:26:25.330046",
-    "view_count": 0,
+    "updated_at": "2026-03-14T02:39:44.274390",
+    "view_count": 1,
     "like_count": 0,
     "save_count": 0,
     "musicParams": {
@@ -8236,6 +8242,7 @@
       }
     },
     "mood": "curious",
+    "is_saved": false,
     "story_type": "folk_tale",
     "language_level": "intermediate"
   },
@@ -8321,8 +8328,8 @@
     "life_aspect": "family_home",
     "plot_archetype": "problem_solving",
     "created_at": "2026-02-20T01:30:27.854948",
-    "updated_at": "2026-02-20T01:30:27.854948",
-    "view_count": 0,
+    "updated_at": "2026-03-15T09:01:05.281126",
+    "view_count": 1,
     "like_count": 0,
     "save_count": 0,
     "musicParams": {
@@ -8420,6 +8427,7 @@
       }
     },
     "mood": "calm",
+    "is_saved": false,
     "story_type": "folk_tale",
     "language_level": "intermediate"
   },
@@ -8793,7 +8801,8 @@
     },
     "mood": "calm",
     "story_type": "folk_tale",
-    "language_level": "intermediate"
+    "language_level": "intermediate",
+    "is_saved": true
   },
   {
     "id": "gen-caa3a14bb706",
@@ -9063,8 +9072,8 @@
     "life_aspect": "sleep_comfort",
     "plot_archetype": "quest_journey",
     "created_at": "2026-02-22T01:30:18.616035",
-    "updated_at": "2026-02-22T01:30:18.616035",
-    "view_count": 0,
+    "updated_at": "2026-03-27T06:52:31.554460",
+    "view_count": 2,
     "like_count": 0,
     "save_count": 0,
     "duration": 1,
@@ -9166,6 +9175,7 @@
       }
     },
     "mood": "calm",
+    "is_saved": false,
     "story_type": "folk_tale",
     "language_level": "basic"
   },
@@ -9432,8 +9442,8 @@
     "life_aspect": "play_discovery",
     "plot_archetype": "friendship_bonding",
     "created_at": "2026-02-23T01:32:18.245478",
-    "updated_at": "2026-02-23T01:32:18.245478",
-    "view_count": 0,
+    "updated_at": "2026-03-17T15:31:42.158821",
+    "view_count": 1,
     "like_count": 0,
     "save_count": 0,
     "duration": 4,
@@ -9531,6 +9541,7 @@
       }
     },
     "mood": "curious",
+    "is_saved": false,
     "story_type": "folk_tale",
     "language_level": "intermediate"
   },
@@ -9675,8 +9686,8 @@
     "life_aspect": "sleep_comfort",
     "plot_archetype": "transformation",
     "created_at": "2026-02-23T06:30:58.145629",
-    "updated_at": "2026-02-23T06:30:58.145629",
-    "view_count": 0,
+    "updated_at": "2026-03-16T08:35:41.099033",
+    "view_count": 2,
     "like_count": 0,
     "save_count": 0,
     "character": {
@@ -9720,6 +9731,7 @@
       }
     },
     "mood": "calm",
+    "is_saved": false,
     "story_type": "folk_tale",
     "language_level": "intermediate"
   },
@@ -9976,7 +9988,7 @@
     ],
     "duration": 3,
     "created_at": "2026-03-01T00:00:00.000000",
-    "updated_at": "2026-03-01T00:00:00.000000",
+    "updated_at": "2026-03-20T03:18:26.207948",
     "character": {
       "name": "Leo",
       "identity": "A gentle dreamer who discovers magic in the ocean's whispers",
@@ -10018,6 +10030,8 @@
       }
     },
     "mood": "curious",
+    "view_count": 1,
+    "is_saved": false,
     "story_type": "folk_tale",
     "language_level": "intermediate"
   },
@@ -10167,8 +10181,8 @@
     "life_aspect": "health_wellness",
     "plot_archetype": "discovery",
     "created_at": "2026-02-26T03:45:32.993563",
-    "updated_at": "2026-02-26T03:45:32.993563",
-    "view_count": 0,
+    "updated_at": "2026-03-16T11:46:42.457035",
+    "view_count": 2,
     "like_count": 0,
     "save_count": 0,
     "character": {
@@ -10209,6 +10223,7 @@
       }
     },
     "mood": "curious",
+    "is_saved": false,
     "story_type": "dream",
     "language_level": "advanced"
   },
@@ -10607,8 +10622,8 @@
     "life_aspect": "family_home",
     "plot_archetype": "celebration",
     "created_at": "2026-02-27T01:30:41.502518",
-    "updated_at": "2026-02-27T01:30:41.502518",
-    "view_count": 0,
+    "updated_at": "2026-03-16T15:34:31.107108",
+    "view_count": 1,
     "like_count": 0,
     "save_count": 0,
     "duration": 5,
@@ -10710,6 +10725,7 @@
       }
     },
     "mood": "calm",
+    "is_saved": false,
     "story_type": "mythological",
     "language_level": "intermediate"
   },
@@ -11226,7 +11242,8 @@
     },
     "mood": "calm",
     "story_type": "folk_tale",
-    "language_level": "advanced"
+    "language_level": "advanced",
+    "is_saved": true
   },
   {
     "id": "gen-3947965e8c2e",
@@ -11543,7 +11560,8 @@
         "Kind"
       ]
     },
-    "mood": "calm"
+    "mood": "calm",
+    "is_saved": true
   },
   {
     "id": "gen-146a4028274a",
@@ -11856,7 +11874,8 @@
     },
     "mood": "calm",
     "story_type": "folk_tale",
-    "language_level": "advanced"
+    "language_level": "advanced",
+    "is_saved": true
   },
   {
     "id": "gen-6034c85ea602",
@@ -14188,12 +14207,13 @@
     "life_aspect": "family_home",
     "plot_archetype": "quest_journey",
     "created_at": "2026-03-05T07:54:27.070620",
-    "updated_at": "2026-03-05T07:54:27.070620",
-    "view_count": 0,
+    "updated_at": "2026-03-19T22:12:44.973131",
+    "view_count": 2,
     "like_count": 0,
     "save_count": 0,
     "duration": 4,
-    "mood": "calm"
+    "mood": "calm",
+    "is_saved": false
   },
   {
     "id": "gen-5232e740399d",
@@ -14374,8 +14394,8 @@
     "life_aspect": "sleep_comfort",
     "plot_archetype": "quest_journey",
     "created_at": "2026-03-06T01:32:28.950441",
-    "updated_at": "2026-03-06T01:32:28.950441",
-    "view_count": 0,
+    "updated_at": "2026-03-19T18:03:12.275435",
+    "view_count": 1,
     "like_count": 0,
     "save_count": 0,
     "duration": 1,
@@ -14411,6 +14431,7 @@
       }
     },
     "mood": "calm",
+    "is_saved": false,
     "story_type": "folk_tale",
     "language_level": "intermediate"
   },
@@ -14505,8 +14526,8 @@
     "life_aspect": "school_learning",
     "plot_archetype": "celebration",
     "created_at": "2026-03-06T01:31:32.779457",
-    "updated_at": "2026-03-06T01:31:32.779457",
-    "view_count": 0,
+    "updated_at": "2026-03-17T09:53:52.387920",
+    "view_count": 2,
     "like_count": 0,
     "save_count": 0,
     "duration": 4,
@@ -14542,6 +14563,7 @@
       }
     },
     "mood": "curious",
+    "is_saved": false,
     "story_type": "folk_tale",
     "language_level": "advanced"
   },
@@ -14936,8 +14958,8 @@
       "senseEmphasis": "tactile"
     },
     "created_at": "2026-03-08T01:43:40.684798",
-    "updated_at": "2026-03-08T01:43:40.684798",
-    "view_count": 0,
+    "updated_at": "2026-03-18T20:01:59.476471",
+    "view_count": 1,
     "like_count": 0,
     "save_count": 0,
     "duration": 4,
@@ -15150,12 +15172,13 @@
       "senseEmphasis": "auditory"
     },
     "created_at": "2026-03-09T01:48:39.448729",
-    "updated_at": "2026-03-09T01:48:39.448729",
-    "view_count": 0,
+    "updated_at": "2026-03-19T19:00:24.663778",
+    "view_count": 1,
     "like_count": 0,
     "save_count": 0,
     "duration": 4,
-    "mood": "calm"
+    "mood": "calm",
+    "is_saved": false
   },
   {
     "id": "gen-9d6661087cfa",
@@ -15251,8 +15274,8 @@
       "senseEmphasis": "auditory"
     },
     "created_at": "2026-03-09T01:41:43.786968",
-    "updated_at": "2026-03-09T01:41:43.786968",
-    "view_count": 0,
+    "updated_at": "2026-03-19T09:39:57.054758",
+    "view_count": 2,
     "like_count": 0,
     "save_count": 0,
     "duration": 9,
@@ -15285,6 +15308,7 @@
       }
     },
     "mood": "curious",
+    "is_saved": false,
     "story_type": "dream",
     "language_level": "advanced"
   },
@@ -15382,8 +15406,8 @@
       "senseEmphasis": "auditory"
     },
     "created_at": "2026-03-09T01:35:01.646008",
-    "updated_at": "2026-03-09T01:35:01.646008",
-    "view_count": 0,
+    "updated_at": "2026-03-15T15:16:33.583265",
+    "view_count": 2,
     "like_count": 0,
     "save_count": 0,
     "duration": 5,
@@ -15419,6 +15443,7 @@
       }
     },
     "mood": "calm",
+    "is_saved": false,
     "story_type": "mythological",
     "language_level": "advanced"
   },
@@ -15600,8 +15625,8 @@
       "senseEmphasis": "tactile"
     },
     "created_at": "2026-03-10T01:32:01.166947",
-    "updated_at": "2026-03-10T01:32:01.166947",
-    "view_count": 0,
+    "updated_at": "2026-03-15T15:16:27.833750",
+    "view_count": 2,
     "like_count": 0,
     "save_count": 0,
     "duration": 1,
@@ -15636,6 +15661,7 @@
         "phase3": "deep_stillness"
       }
     },
+    "is_saved": false,
     "mood": "calm",
     "story_type": "folk_tale",
     "language_level": "intermediate"
@@ -15734,8 +15760,8 @@
       "senseEmphasis": "visual"
     },
     "created_at": "2026-03-10T01:37:38.562713",
-    "updated_at": "2026-03-10T01:37:38.562713",
-    "view_count": 0,
+    "updated_at": "2026-03-19T09:40:10.473965",
+    "view_count": 2,
     "like_count": 0,
     "save_count": 0,
     "musicalBrief": {
@@ -15771,6 +15797,7 @@
     },
     "duration": 7,
     "mood": "curious",
+    "is_saved": false,
     "story_type": "dream",
     "language_level": "advanced"
   },
@@ -15997,8 +16024,8 @@
       "senseEmphasis": "auditory"
     },
     "created_at": "2026-03-11T04:49:37.577893",
-    "updated_at": "2026-03-11T04:49:37.577893",
-    "view_count": 0,
+    "updated_at": "2026-03-14T03:22:07.912927",
+    "view_count": 7,
     "like_count": 0,
     "save_count": 0,
     "musicalBrief": {
@@ -16029,6 +16056,8 @@
         "phase3": "deep_stillness"
       }
     },
+    "duration": 10,
+    "is_saved": false,
     "mood": "calm",
     "audio_url": "",
     "story_type": "dream",
@@ -16211,8 +16240,8 @@
       "senseEmphasis": "auditory"
     },
     "created_at": "2026-03-11T04:43:09.039355",
-    "updated_at": "2026-03-11T04:43:09.039355",
-    "view_count": 0,
+    "updated_at": "2026-03-19T09:35:55.438285",
+    "view_count": 6,
     "like_count": 0,
     "save_count": 0,
     "duration": 2,
@@ -16247,6 +16276,7 @@
         "phase3": "deep_stillness"
       }
     },
+    "is_saved": false,
     "mood": "curious",
     "story_type": "folk_tale",
     "language_level": "intermediate"
@@ -16345,10 +16375,10 @@
       "senseEmphasis": "visual"
     },
     "created_at": "2026-03-12T03:52:22.731918",
-    "updated_at": "2026-03-12T03:52:22.731918",
-    "view_count": 0,
+    "updated_at": "2026-03-13T16:55:26.472014",
+    "view_count": 7,
     "like_count": 0,
-    "save_count": 0,
+    "save_count": 1,
     "duration": 7,
     "musicalBrief": {
       "storyId": "gen-364d8f8f090f",
@@ -16381,6 +16411,7 @@
         "phase3": "deep_stillness"
       }
     },
+    "is_saved": false,
     "mood": "calm",
     "story_type": "mythological",
     "language_level": "advanced"
@@ -16462,10 +16493,11 @@
       "senseEmphasis": "visual"
     },
     "created_at": "2026-03-12T03:59:28.481728",
-    "updated_at": "2026-03-12T03:59:28.481728",
-    "view_count": 0,
+    "updated_at": "2026-03-15T15:15:13.931354",
+    "view_count": 11,
     "like_count": 0,
     "save_count": 0,
+    "is_saved": false,
     "duration": 5,
     "mood": "calm"
   },
@@ -16545,12 +16577,13 @@
       "senseEmphasis": "auditory"
     },
     "created_at": "2026-03-13T01:47:10.204090",
-    "updated_at": "2026-03-13T01:47:10.204090",
-    "view_count": 0,
+    "updated_at": "2026-03-14T02:16:16.601906",
+    "view_count": 5,
     "like_count": 0,
     "save_count": 0,
     "duration": 5,
-    "mood": "calm"
+    "mood": "calm",
+    "is_saved": false
   },
   {
     "id": "gen-a534b5798c28",
@@ -16646,8 +16679,8 @@
       "senseEmphasis": "olfactory"
     },
     "created_at": "2026-03-13T01:44:39.181020",
-    "updated_at": "2026-03-13T01:44:39.181020",
-    "view_count": 0,
+    "updated_at": "2026-03-13T03:59:14.441053",
+    "view_count": 3,
     "like_count": 0,
     "save_count": 0,
     "duration": 2,
@@ -16683,6 +16716,7 @@
       }
     },
     "mood": "calm",
+    "is_saved": false,
     "story_type": "dream",
     "language_level": "intermediate"
   },
@@ -16780,8 +16814,8 @@
       "senseEmphasis": "auditory"
     },
     "created_at": "2026-03-13T01:49:39.265751",
-    "updated_at": "2026-03-13T01:49:39.265751",
-    "view_count": 0,
+    "updated_at": "2026-03-13T03:14:03.444338",
+    "view_count": 2,
     "like_count": 0,
     "save_count": 0,
     "duration": 1,
@@ -16817,6 +16851,7 @@
       }
     },
     "mood": "calm",
+    "is_saved": false,
     "story_type": "folk_tale",
     "language_level": "intermediate"
   },
@@ -16914,8 +16949,8 @@
       "senseEmphasis": "auditory"
     },
     "created_at": "2026-03-13T01:54:15.781821",
-    "updated_at": "2026-03-13T01:54:15.781821",
-    "view_count": 0,
+    "updated_at": "2026-03-14T02:43:28.081997",
+    "view_count": 5,
     "like_count": 0,
     "save_count": 0,
     "duration": 3,
@@ -16951,6 +16986,7 @@
       }
     },
     "mood": "calm",
+    "is_saved": false,
     "story_type": "mythological",
     "language_level": "advanced"
   },
@@ -17049,8 +17085,8 @@
     },
     "mood": "wired",
     "created_at": "2026-03-13T06:36:54.878535",
-    "updated_at": "2026-03-13T06:36:54.878535",
-    "view_count": 0,
+    "updated_at": "2026-03-27T01:42:35.638299",
+    "view_count": 6,
     "like_count": 0,
     "save_count": 0,
     "duration": 2,
@@ -17085,6 +17121,7 @@
         "phase3": "deep_stillness"
       }
     },
+    "is_saved": false,
     "story_type": "dream",
     "language_level": "intermediate"
   },
@@ -17183,8 +17220,8 @@
     },
     "mood": "wired",
     "created_at": "2026-03-13T06:32:42.800197",
-    "updated_at": "2026-03-13T06:32:42.800197",
-    "view_count": 0,
+    "updated_at": "2026-03-16T15:40:50.244525",
+    "view_count": 8,
     "like_count": 0,
     "save_count": 0,
     "duration": 2,
@@ -17219,6 +17256,7 @@
         "phase3": "deep_stillness"
       }
     },
+    "is_saved": false,
     "story_type": "dream",
     "language_level": "intermediate"
   },
@@ -17317,11 +17355,12 @@
     },
     "mood": "calm",
     "created_at": "2026-03-14T01:32:09.435874",
-    "updated_at": "2026-03-14T01:32:09.435874",
-    "view_count": 0,
+    "updated_at": "2026-03-17T10:16:05.029367",
+    "view_count": 9,
     "like_count": 0,
     "save_count": 0,
     "duration": 1,
+    "is_saved": false,
     "musicalBrief": {
       "storyId": "gen-00422943830e",
       "ageGroup": "0-1",
@@ -17433,11 +17472,12 @@
     },
     "mood": "calm",
     "created_at": "2026-03-14T01:46:53.959264",
-    "updated_at": "2026-03-14T01:46:53.959264",
-    "view_count": 0,
+    "updated_at": "2026-03-14T15:54:08.099860",
+    "view_count": 4,
     "like_count": 0,
     "save_count": 0,
-    "duration": 5
+    "duration": 5,
+    "is_saved": false
   },
   {
     "id": "gen-bcbc176b01d9",
@@ -17534,10 +17574,11 @@
     },
     "mood": "curious",
     "created_at": "2026-03-14T01:39:37.704131",
-    "updated_at": "2026-03-14T01:39:37.704131",
-    "view_count": 0,
+    "updated_at": "2026-03-14T02:12:27.281979",
+    "view_count": 2,
     "like_count": 0,
     "save_count": 0,
+    "is_saved": false,
     "duration": 8,
     "musicalBrief": {
       "storyId": "gen-bcbc176b01d9",
@@ -17666,10 +17707,11 @@
     },
     "mood": "calm",
     "created_at": "2026-03-14T01:51:12.413548",
-    "updated_at": "2026-03-14T01:51:12.413548",
-    "view_count": 0,
+    "updated_at": "2026-03-14T03:15:27.131378",
+    "view_count": 4,
     "like_count": 0,
     "save_count": 0,
+    "is_saved": false,
     "duration": 2,
     "musicalBrief": {
       "storyId": "gen-ced87d262b99",
@@ -17722,7 +17764,7 @@
     "length": "LONG",
     "word_count": 2941,
     "duration_seconds": 0,
-    "duration": 28,
+    "duration": 25,
     "categories": [
       "Adventure",
       "Science",
@@ -17782,8 +17824,8 @@
     "life_aspect": "friendship",
     "plot_archetype": "discovery",
     "created_at": "2026-03-14T04:56:33.299765",
-    "updated_at": "2026-03-14T04:56:33.299765",
-    "view_count": 0,
+    "updated_at": "2026-03-16T08:29:44.274009",
+    "view_count": 10,
     "like_count": 0,
     "save_count": 0,
     "mood": "wired",
@@ -17815,6 +17857,7 @@
         "phase3": "deep_stillness"
       }
     },
+    "is_saved": false,
     "story_type": "dream",
     "language_level": "advanced"
   },
@@ -17913,8 +17956,8 @@
     },
     "mood": "calm",
     "created_at": "2026-03-15T01:32:15.197785",
-    "updated_at": "2026-03-15T01:32:15.197785",
-    "view_count": 0,
+    "updated_at": "2026-03-18T09:26:43.906200",
+    "view_count": 3,
     "like_count": 0,
     "save_count": 0,
     "duration": 3,
@@ -17949,6 +17992,7 @@
         "phase3": "deep_stillness"
       }
     },
+    "is_saved": false,
     "story_type": "folk_tale",
     "language_level": "intermediate"
   },
@@ -18047,8 +18091,8 @@
     },
     "mood": "curious",
     "created_at": "2026-03-15T01:38:30.249369",
-    "updated_at": "2026-03-15T01:38:30.249369",
-    "view_count": 0,
+    "updated_at": "2026-03-27T00:10:20.813813",
+    "view_count": 5,
     "like_count": 0,
     "save_count": 0,
     "duration": 9,
@@ -18083,6 +18127,7 @@
         "phase3": "deep_stillness"
       }
     },
+    "is_saved": false,
     "story_type": "dream",
     "language_level": "advanced"
   },
@@ -18164,11 +18209,12 @@
     },
     "mood": "calm",
     "created_at": "2026-03-15T01:45:52.684576",
-    "updated_at": "2026-03-15T01:45:52.684576",
-    "view_count": 0,
+    "updated_at": "2026-03-16T17:09:49.743381",
+    "view_count": 2,
     "like_count": 0,
     "save_count": 0,
-    "duration": 5
+    "duration": 5,
+    "is_saved": false
   },
   {
     "id": "gen-f74b95ae583c",
@@ -18243,7 +18289,7 @@
       ]
     },
     "cover_context": "A lush summer garden at late afternoon, bathed in golden light. Dewdrops glisten on broad green leaves, while fireflies begin to flicker in the warm, hazy air. A small pond reflects the fading sky, and wildflowers sway gently in the breeze.",
-    "lead_character_type": "animal",
+    "lead_character_type": "atmospheric",
     "universe": "futuristic",
     "geography": "East Asia",
     "life_aspect": "play_discovery",
@@ -18265,8 +18311,8 @@
     },
     "mood": "calm",
     "created_at": "2026-03-15T01:49:52.768691",
-    "updated_at": "2026-03-15T01:49:52.768691",
-    "view_count": 0,
+    "updated_at": "2026-03-15T03:41:23.928062",
+    "view_count": 3,
     "like_count": 0,
     "save_count": 0,
     "duration": 1,
@@ -18301,6 +18347,7 @@
         "phase3": "deep_stillness"
       }
     },
+    "is_saved": false,
     "story_type": "nature",
     "language_level": "intermediate"
   },
@@ -18512,11 +18559,12 @@
     },
     "mood": "calm",
     "created_at": "2026-03-16T01:46:48.095632",
-    "updated_at": "2026-03-16T01:46:48.095632",
-    "view_count": 0,
+    "updated_at": "2026-03-16T15:40:42.499483",
+    "view_count": 4,
     "like_count": 0,
     "save_count": 0,
-    "duration": 5
+    "duration": 5,
+    "is_saved": false
   },
   {
     "id": "gen-dfaac825420d",
@@ -18613,8 +18661,8 @@
     },
     "mood": "curious",
     "created_at": "2026-03-16T01:39:45.816994",
-    "updated_at": "2026-03-16T01:39:45.816994",
-    "view_count": 0,
+    "updated_at": "2026-03-16T16:15:48.955972",
+    "view_count": 2,
     "like_count": 0,
     "save_count": 0,
     "duration": 7,
@@ -18649,6 +18697,7 @@
         "phase3": "deep_stillness"
       }
     },
+    "is_saved": false,
     "story_type": "dream",
     "language_level": "advanced"
   },
@@ -18747,8 +18796,8 @@
     },
     "mood": "calm",
     "created_at": "2026-03-16T01:49:31.666551",
-    "updated_at": "2026-03-16T01:49:31.666551",
-    "view_count": 0,
+    "updated_at": "2026-03-17T13:07:39.040559",
+    "view_count": 10,
     "like_count": 0,
     "save_count": 0,
     "duration": 2,
@@ -18783,6 +18832,7 @@
         "phase3": "deep_stillness"
       }
     },
+    "is_saved": false,
     "story_type": "folk_tale",
     "language_level": "intermediate"
   },
@@ -18881,8 +18931,8 @@
     },
     "mood": "curious",
     "created_at": "2026-03-17T01:32:32.105512",
-    "updated_at": "2026-03-17T01:32:32.105512",
-    "view_count": 0,
+    "updated_at": "2026-03-17T15:56:44.097360",
+    "view_count": 4,
     "like_count": 0,
     "save_count": 0,
     "duration": 5,
@@ -18914,6 +18964,7 @@
         "phase3": "deep_stillness"
       }
     },
+    "is_saved": false,
     "story_type": "dream",
     "language_level": "advanced"
   },
@@ -19229,8 +19280,8 @@
     },
     "mood": "curious",
     "created_at": "2026-03-17T01:42:34.395364",
-    "updated_at": "2026-03-17T01:42:34.395364",
-    "view_count": 0,
+    "updated_at": "2026-03-27T02:01:18.466868",
+    "view_count": 1,
     "like_count": 0,
     "save_count": 0,
     "duration": 2,
@@ -19266,6 +19317,7 @@
       }
     },
     "story_type": "dream",
+    "is_saved": false,
     "language_level": "advanced"
   },
   {
@@ -19446,8 +19498,8 @@
     },
     "mood": "curious",
     "created_at": "2026-03-18T01:40:24.754292",
-    "updated_at": "2026-03-18T01:40:24.754292",
-    "view_count": 0,
+    "updated_at": "2026-03-20T03:02:55.992641",
+    "view_count": 2,
     "like_count": 0,
     "save_count": 0,
     "duration": 11,
@@ -19479,6 +19531,7 @@
         "phase3": "deep_stillness"
       }
     },
+    "is_saved": false,
     "story_type": "dream",
     "language_level": "intermediate"
   },
@@ -19712,8 +19765,8 @@
     },
     "mood": "calm",
     "created_at": "2026-03-18T01:49:39.506989",
-    "updated_at": "2026-03-18T01:49:39.506989",
-    "view_count": 0,
+    "updated_at": "2026-03-20T03:07:55.725283",
+    "view_count": 6,
     "like_count": 0,
     "save_count": 0,
     "duration": 1,
@@ -19748,6 +19801,7 @@
         "phase3": "deep_stillness"
       }
     },
+    "is_saved": false,
     "story_type": "dream",
     "language_level": "intermediate"
   },
@@ -19829,11 +19883,11 @@
     },
     "mood": "anxious",
     "created_at": "2026-03-19T01:38:23.892592",
-    "updated_at": "2026-03-19T01:38:23.892592",
-    "view_count": 0,
+    "updated_at": "2026-03-27T00:46:18.449104",
+    "view_count": 5,
     "like_count": 0,
     "save_count": 0,
-    "duration": 5,
+    "duration": 6,
     "musicalBrief": {
       "storyId": "gen-486be5b2fef9",
       "ageGroup": "6-8",
@@ -19865,6 +19919,7 @@
         "phase3": "deep_stillness"
       }
     },
+    "is_saved": false,
     "story_type": "dream",
     "language_level": "advanced"
   },
@@ -19946,11 +20001,12 @@
     },
     "mood": "anxious",
     "created_at": "2026-03-19T01:45:48.593053",
-    "updated_at": "2026-03-19T01:45:48.593053",
-    "view_count": 0,
+    "updated_at": "2026-03-20T03:40:17.068353",
+    "view_count": 3,
     "like_count": 0,
     "save_count": 0,
-    "duration": 5
+    "duration": 5,
+    "is_saved": false
   },
   {
     "id": "gen-ee66b4718ed1",
@@ -20030,11 +20086,11 @@
     },
     "mood": "anxious",
     "created_at": "2026-03-19T01:32:24.797042",
-    "updated_at": "2026-03-19T01:32:24.797042",
-    "view_count": 0,
+    "updated_at": "2026-03-27T01:23:53.135954",
+    "view_count": 17,
     "like_count": 0,
     "save_count": 0,
-    "duration": 3,
+    "duration": 4,
     "musicalBrief": {
       "storyId": "gen-ee66b4718ed1",
       "ageGroup": "6-8",
@@ -20066,6 +20122,7 @@
         "phase3": "deep_stillness"
       }
     },
+    "is_saved": false,
     "story_type": "dream",
     "language_level": "advanced"
   },
@@ -20147,8 +20204,8 @@
     },
     "mood": "calm",
     "created_at": "2026-03-19T01:49:49.964849",
-    "updated_at": "2026-03-19T01:49:49.964849",
-    "view_count": 0,
+    "updated_at": "2026-03-19T03:32:10.144075",
+    "view_count": 2,
     "like_count": 0,
     "save_count": 0,
     "duration": 1,
@@ -20183,6 +20240,7 @@
         "phase3": "deep_stillness"
       }
     },
+    "is_saved": false,
     "story_type": "nature",
     "language_level": "basic"
   },
@@ -20264,8 +20322,8 @@
     },
     "mood": "angry",
     "created_at": "2026-03-20T01:32:14.816524",
-    "updated_at": "2026-03-20T01:32:14.816524",
-    "view_count": 0,
+    "updated_at": "2026-03-20T03:04:31.760197",
+    "view_count": 3,
     "like_count": 0,
     "save_count": 0,
     "duration": 2,
@@ -20300,6 +20358,7 @@
         "phase3": "deep_stillness"
       }
     },
+    "is_saved": false,
     "story_type": "folk_tale",
     "language_level": "advanced"
   },
@@ -20382,10 +20441,11 @@
     },
     "mood": "angry",
     "created_at": "2026-03-20T01:46:14.337054",
-    "updated_at": "2026-03-20T01:46:14.337054",
-    "view_count": 0,
+    "updated_at": "2026-03-20T04:54:16.314576",
+    "view_count": 2,
     "like_count": 0,
     "save_count": 0,
+    "is_saved": false,
     "duration": 5
   },
   {
@@ -20601,8 +20661,8 @@
     },
     "mood": "sad",
     "created_at": "2026-03-21T01:41:41.941601",
-    "updated_at": "2026-03-21T01:41:41.941601",
-    "view_count": 0,
+    "updated_at": "2026-03-27T02:01:39.123534",
+    "view_count": 1,
     "like_count": 0,
     "save_count": 0,
     "duration": 2,
@@ -21507,8 +21567,8 @@
     },
     "mood": "wired",
     "created_at": "2026-03-23T01:38:40.690565",
-    "updated_at": "2026-03-23T01:38:40.690565",
-    "view_count": 0,
+    "updated_at": "2026-03-27T00:46:36.587520",
+    "view_count": 1,
     "like_count": 0,
     "save_count": 0,
     "duration": 11,
@@ -21544,6 +21604,7 @@
       }
     },
     "story_type": "dream",
+    "is_saved": false,
     "language_level": "intermediate"
   },
   {
@@ -21708,8 +21769,8 @@
     },
     "mood": "wired",
     "created_at": "2026-03-24T01:32:26.380430",
-    "updated_at": "2026-03-24T01:32:26.380430",
-    "view_count": 0,
+    "updated_at": "2026-03-27T06:53:04.984141",
+    "view_count": 3,
     "like_count": 0,
     "save_count": 0,
     "duration": 1,
@@ -21745,6 +21806,7 @@
       }
     },
     "story_type": "folk_tale",
+    "is_saved": false,
     "language_level": "basic"
   },
   {
@@ -22345,8 +22407,8 @@
     },
     "mood": "anxious",
     "created_at": "2026-03-25T01:32:09.313226",
-    "updated_at": "2026-03-25T01:32:09.313226",
-    "view_count": 0,
+    "updated_at": "2026-03-27T06:14:06.814799",
+    "view_count": 3,
     "like_count": 0,
     "save_count": 0,
     "duration": 3,
@@ -22382,6 +22444,7 @@
       }
     },
     "story_type": "folk_tale",
+    "is_saved": false,
     "language_level": "intermediate"
   },
   {
@@ -22527,28 +22590,12 @@
     "music_type": "ambient",
     "audio_variants": [
       {
-        "voice": "female_2",
-        "url": "/audio/pre-gen/gen-282d_female_2.mp3",
-        "duration_seconds": 244.91,
-        "provider": "ace-step"
+        "voice_id": "female_1",
+        "url": "/audio/pre-gen/gen-282d_female_1.mp3"
       },
       {
-        "voice": "female_1",
-        "url": "/audio/pre-gen/gen-282d_female_1.mp3",
-        "duration_seconds": 244.91,
-        "provider": "ace-step"
-      },
-      {
-        "voice": "male_1",
-        "url": "/audio/pre-gen/gen-282d_male_1.mp3",
-        "duration_seconds": 244.91,
-        "provider": "ace-step"
-      },
-      {
-        "voice": "male_2",
-        "url": "/audio/pre-gen/gen-282d_male_2.mp3",
-        "duration_seconds": 244.91,
-        "provider": "ace-step"
+        "voice_id": "male_1",
+        "url": "/audio/pre-gen/gen-282d_male_1.mp3"
       }
     ],
     "author_id": "system",
@@ -22590,10 +22637,11 @@
     "mood": "wired",
     "story_type": null,
     "created_at": "2026-03-27T01:45:34.200810",
-    "updated_at": "2026-03-27T01:45:34.200810",
-    "view_count": 0,
+    "updated_at": "2026-03-28T09:16:06.641551",
+    "view_count": 5,
     "like_count": 0,
     "save_count": 0,
+    "is_saved": false,
     "duration": 5
   },
   {
@@ -22763,11 +22811,12 @@
     "mood": "wired",
     "story_type": "fable",
     "created_at": "2026-03-27T01:32:12.936222",
-    "updated_at": "2026-03-27T01:32:12.936222",
-    "view_count": 0,
+    "updated_at": "2026-03-27T17:16:48.170724",
+    "view_count": 6,
     "like_count": 0,
     "save_count": 0,
     "duration": 3,
+    "is_saved": false,
     "language_level": "intermediate"
   },
   {
@@ -23150,10 +23199,12 @@
     "music_type": "ambient",
     "audio_variants": [
       {
-        "voice": "female_2",
-        "url": "/audio/pre-gen/gen-dae6_female_2.mp3",
-        "duration_seconds": 244.91,
-        "provider": "ace-step"
+        "voice_id": "female_2",
+        "url": "/audio/pre-gen/gen-dae6_female_2.mp3"
+      },
+      {
+        "voice_id": "female_3",
+        "url": "/audio/pre-gen/gen-dae6_female_3.mp3"
       }
     ],
     "author_id": "system",
@@ -23197,10 +23248,11 @@
     "story_type": null,
     "language_level": null,
     "created_at": "2026-03-28T01:44:50.768967",
-    "updated_at": "2026-03-28T01:44:50.768967",
-    "view_count": 0,
+    "updated_at": "2026-03-28T09:15:44.698785",
+    "view_count": 5,
     "like_count": 0,
     "save_count": 0,
+    "is_saved": false,
     "duration": 5
   }
 ]
