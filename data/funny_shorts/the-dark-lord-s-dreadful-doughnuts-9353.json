@@ -1,0 +1,30 @@
+{
+  "id": "the-dark-lord-s-dreadful-doughnuts-9353",
+  "title": "The Dark Lord\u2019s Dreadful Doughnuts",
+  "age_group": "6-8",
+  "comedy_type": "villain_fails",
+  "format": "trio",
+  "voices": [
+    "young_sweet",
+    "mysterious_witch",
+    "musical_original"
+  ],
+  "voice_combo": [
+    "young_sweet",
+    "musical_original",
+    "mysterious_witch"
+  ],
+  "primary_voice": "young_sweet",
+  "premise_summary": "Evil doughnuts turn on their baker",
+  "cover_description": "SHADOW buried under a giant pile of bouncing, gigantic doughnuts, arms flailing while SUNNY calmly nibbles one from inside a light fixture.",
+  "host_intro": "Tonight, SHADOW bakes a treat to trap SUNNY. The treat has other plans.",
+  "host_outro": "The doughnuts are still rising. SHADOW is hiding in the pantry.",
+  "cover_file": "the-dark-lord-s-dreadful-doughnuts-9353.svg",
+  "duration_seconds": 61,
+  "script": "[TITLE: The Dark Lord\u2019s Dreadful Doughnuts]\n[HOST_INTRO: Tonight, SHADOW bakes a treat to trap SUNNY. The treat has other plans.]\n[HOST_OUTRO: The doughnuts are still rising. SHADOW is hiding in the pantry.]\n[AGE: 6-8]\n[VOICES: young_sweet, mysterious_witch, musical_original]\n[COMEDY_TYPE: villain_fails]\n\n[SETUP]\n[MELODY] [DELIVERY: gentle, excited] Welcome, brave listeners, to the kitchen of doom.\n[SHADOW] [DELIVERY: ominous, confident] I have crafted the stickiest, heaviest doughnuts in history.\n[SUNNY] [DELIVERY: deadpan, unbothered] Those look like normal doughnuts to me.\n\n[BEAT_1]\n[SHADOW] [DELIVERY: triumphant] Watch as they glue SUNNY to the floor forever.\n[SUNNY] [DELIVERY: suspicious] Why are they bouncing instead of sticking?\n[SHADOW] [DELIVERY: caught off guard] That\u2019s\u2026 not supposed to happen. [STING: boing]\n\n[BEAT_2]\n[MELODY] [DELIVERY: excited] Oh! They\u2019re bouncing higher!\n[SUNNY] [DELIVERY: deadpan] I\u2019m being launched into the ceiling.\n[SHADOW] [DELIVERY: panicked] No! My evil pastries are rebelling! [STING: whoosh]\n\n[BEAT_3]\n[SUNNY] [DELIVERY: quiet, devastating] I\u2019m now stuck in the light fixture.\n[MELODY] [DELIVERY: delighted] And the doughnuts are forming a pyramid!\n[SHADOW] [DELIVERY: desperate, loud] [PUNCHLINE]I just got buried under my own doughnut avalanche![/PUNCHLINE] [STING: big_crash]\n\n[BUTTON]\n[SUNNY] [DELIVERY: unbothered] I\u2019ll just eat my way out.\n[SHADOW] [DELIVERY: stunned] ...They\u2019re delicious. [STING: deflation]\n\n[COVER: SHADOW buried under a giant pile of bouncing, gigantic doughnuts, arms flailing while SUNNY calmly nibbles one from inside a light fixture.]\n[PREMISE: Evil doughnuts turn on their baker]",
+  "audio_file": "the-dark-lord-s-dreadful-doughnuts-9353.mp3",
+  "created_at": "2026-03-28",
+  "play_count": 0,
+  "replay_count": 0,
+  "base_track_style": "sneaky"
+}

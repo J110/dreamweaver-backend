@@ -1,0 +1,26 @@
+{
+  "id": "the-bouncy-path-de28",
+  "title": "The Bouncy Path",
+  "age_group": "6-8",
+  "comedy_type": "physical_escalation",
+  "format": "solo",
+  "voices": [
+    "young_sweet"
+  ],
+  "voice_combo": [
+    "young_sweet"
+  ],
+  "primary_voice": "young_sweet",
+  "premise_summary": "A path that won\u2019t stop bouncing",
+  "cover_description": "Sunny clings to a tree branch, legs dangling, while the entire path below bounces wildly like a trampoline.",
+  "host_intro": "Tonight, Sunny tries to walk to the park. The path has other plans.",
+  "host_outro": "Sunny is now best friends with a very bouncy tree.",
+  "cover_file": "the-bouncy-path-de28.svg",
+  "duration_seconds": 68,
+  "script": "[TITLE: The Bouncy Path]\n[HOST_INTRO: Tonight, Sunny tries to walk to the park. The path has other plans.]\n[HOST_OUTRO: Sunny is now best friends with a very bouncy tree.]\n[AGE: 6-8]\n[VOICES: young_sweet]\n[COMEDY_TYPE: physical_escalation]\n\n[SETUP]\n[SUNNY] [DELIVERY: curious, tentative] Okay, so I\u2019m walking to the park, right? [STING: tiptoe]\n[SUNNY] [DELIVERY: deadpan] The path looks normal. Just a bunch of big green lumps lying across it.\n[SUNNY] [DELIVERY: unbothered] I step on the first lump. It\u2019s squishy. Weird, but whatever.\n\n[BEAT_1]\n[SUNNY] [DELIVERY: suspicious] Oh. It\u2019s not just squishy. It\u2019s *bouncy*. [STING: boing]\n[SUNNY] [DELIVERY: caught off guard] I bounced right over the next lump. Landed on the third one.\n[SUNNY] [DELIVERY: defensive] Okay, fine, maybe I should walk around them.\n\n[BEAT_2]\n[SUNNY] [DELIVERY: scrambling] Wait, why is the *grass* bouncing now? [STING: boing]\n[SUNNY] [DELIVERY: panicked] I\u2019m bouncing higher than the bushes! And the bushes are bouncing too!\n[SUNNY] [DELIVERY: desperate] I just bounced over a bench. A *bench*!\n\n[BEAT_3]\n[SUNNY] [DELIVERY: stunned, quiet] I think I broke the sky. [STING: big_crash]\n[SUNNY] [DELIVERY: deadpan] No, wait. That\u2019s just me stuck in a tree. A *very* bouncy tree.\n\n[BUTTON]\n[SUNNY] [DELIVERY: loud, triumphant] [PUNCHLINE]I\u2019m not walking home. I\u2019m just gonna live up here now.[/PUNCHLINE] [STING: slide_whistle]\n[SUNNY] [DELIVERY: unbothered] The squirrels seem nice.\n\n[COVER: Sunny clings to a tree branch, legs dangling, while the entire path below bounces wildly like a trampoline.]\n[PREMISE: A path that won\u2019t stop bouncing]",
+  "audio_file": "the-bouncy-path-de28.mp3",
+  "created_at": "2026-03-28",
+  "play_count": 0,
+  "replay_count": 0,
+  "base_track_style": "bouncy"
+}

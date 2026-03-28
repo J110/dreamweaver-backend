@@ -65,7 +65,7 @@ def generate_flux_image(prompt: str) -> bytes | None:
     # Truncate prompt to ~600 chars to stay within URL limits
     truncated = prompt[:600]
     encoded_prompt = quote(truncated, safe="")
-    url = f"https://gen.pollinations.ai/image/{encoded_prompt}?width=512&height=512&model=flux"
+    url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?width=512&height=512&model=flux&nologo=true"
 
     pollinations_token = os.getenv("POLLINATIONS_API_KEY", "")
     headers = {}

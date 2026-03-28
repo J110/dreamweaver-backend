@@ -553,3 +553,40 @@ pm2 restart all
 | **Monthly** | **~30** | **~30** | **~30** | **~90** |
 
 **Monthly cost**: ~$36.53/mo total ($16.13 GCP cash + ~$20.40 Modal from free credits). Actual cash spend: **~$16.13/mo** (GCP VM + disk only). All text generation, covers, and email are $0 (free tiers).
+
+---
+
+## Funny Shorts (Before Bed Tab)
+
+Shorts have a separate generation pipeline from stories/poems/lullabies.
+
+### Generation Steps
+
+```bash
+# 1. Generate scripts (Mistral AI)
+python3 scripts/generate_funny_short.py --age 6-8 --auto
+
+# 2. Generate audio chunks (Modal Chatterbox TTS)
+python3 scripts/generate_funny_audio.py --short-id <id>
+
+# 3. Mix audio (voice + base track + stings)
+python3 scripts/mix_funny_short.py --short-id <id>
+
+# 4. Generate covers (Pollinations default, Together AI fallback)
+python3 scripts/gen_missing_funny_covers.py
+```
+
+### Publishing & "New" Badge
+
+- The frontend **Before Bed** page shows a **"NEW" badge** on shorts where `created_at` matches today's date (same pattern as regular content's `addedAt` in `ContentCard.js`)
+- Shorts data lives in `data/funny_shorts/*.json` — the API serves them directly
+- Audio files go to `public/audio/funny-shorts/`
+- Covers go to `public/covers/funny-shorts/`
+- **To publish**: push backend repo + rebuild Docker container on GCP. Covers/audio are served by nginx aliases (no frontend rebuild needed)
+- **IMPORTANT**: When generating new shorts for publication, ensure `created_at` is set to today's date so the "NEW" badge appears
+
+### Cover Image Provider
+
+- **Default**: Pollinations.ai (`image.pollinations.ai`) — free, no API key required
+- **Fallback**: Together AI (`FLUX.1-schnell`) — requires `TOGETHER_API_KEY`
+- Both `generate_funny_cover.py` and `gen_missing_funny_covers.py` use this order
