@@ -29,7 +29,7 @@ musicgen_image = (
 
 @app.cls(
     image=musicgen_image,
-    gpu="A100",
+    gpu="T4",
     timeout=300,
     scaledown_window=60,
 )

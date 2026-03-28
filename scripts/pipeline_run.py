@@ -1780,11 +1780,11 @@ def postflight_checks(state: dict):
     gcp_daily = GCP_MONTHLY / 30.0  # ~$0.54/day
 
     # Modal GPU cost — calculated from ACTUAL audio generation time
-    # Modal A100 40GB GPU pricing: $0.000583/sec ($2.10/hr)
-    # Source: https://modal.com/pricing (A100 on-demand)
-    MODAL_A100_PER_SEC = 0.000583
+    # Modal T4 GPU pricing: $0.000221/sec ($0.796/hr)
+    # Source: https://modal.com/pricing (T4 on-demand)
+    MODAL_T4_PER_SEC = 0.000221
     audio_secs = state.get("audio_elapsed_seconds", 0)
-    modal_cost = audio_secs * MODAL_A100_PER_SEC
+    modal_cost = audio_secs * MODAL_T4_PER_SEC
     audio_mins = audio_secs / 60.0
 
     # Mistral, Resend, Vercel, Render = $0 (free tiers)
