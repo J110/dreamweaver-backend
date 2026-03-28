@@ -581,9 +581,23 @@ python3 scripts/gen_missing_funny_covers.py
 - The frontend **Before Bed** page shows a **"NEW" badge** on shorts where `created_at` matches today's date (same pattern as regular content's `addedAt` in `ContentCard.js`)
 - Shorts data lives in `data/funny_shorts/*.json` — the API serves them directly
 - Audio files go to `public/audio/funny-shorts/`
-- Covers go to `public/covers/funny-shorts/`
-- **To publish**: push backend repo + rebuild Docker container on GCP. Covers/audio are served by nginx aliases (no frontend rebuild needed)
+- Covers go to `public/covers/funny-shorts/` — served by nginx from `/opt/dreamweaver-web/public/covers/` (same alias as regular covers)
 - **IMPORTANT**: When generating new shorts for publication, ensure `created_at` is set to today's date so the "NEW" badge appears
+- **No frontend rebuild needed** — shorts are API-served, covers/audio are nginx-served
+
+### Publishing Checklist (CRITICAL)
+
+After generating new shorts locally or on the server:
+
+1. **Commit ALL generated assets to git** — data JSONs, audio MP3s, AND cover SVGs
+2. **Push to remote** before deploying
+3. On GCP: `git pull` then `docker-compose up -d --build`
+4. After Docker rebuild: **verify covers still exist** with `ls public/covers/funny-shorts/`
+5. If covers are missing: `git checkout -- public/covers/funny-shorts/` to restore them
+
+**WHY**: Docker `COPY . /app` copies the repo at build time, but the running container doesn't write back to the host. If covers were generated on-server but not committed, `docker-compose down` + `up --build` wipes the build context. Always commit generated assets to git so `git checkout` can restore them.
+
+**NEVER** generate covers only on the server without committing — they WILL be lost on next Docker rebuild.
 
 ### Cover Image Provider
 
