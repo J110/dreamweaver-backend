@@ -22525,7 +22525,32 @@
     "cover": "/covers/gen-282dd22734a0.svg",
     "musicProfile": "dreamy-clouds",
     "music_type": "ambient",
-    "audio_variants": [],
+    "audio_variants": [
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-282d_female_2.mp3",
+        "duration_seconds": 244.91,
+        "provider": "ace-step"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-282d_female_1.mp3",
+        "duration_seconds": 244.91,
+        "provider": "ace-step"
+      },
+      {
+        "voice": "male_1",
+        "url": "/audio/pre-gen/gen-282d_male_1.mp3",
+        "duration_seconds": 244.91,
+        "provider": "ace-step"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-282d_male_2.mp3",
+        "duration_seconds": 244.91,
+        "provider": "ace-step"
+      }
+    ],
     "author_id": "system",
     "is_generated": true,
     "generation_quality": "pending_review",
@@ -22568,7 +22593,8 @@
     "updated_at": "2026-03-27T01:45:34.200810",
     "view_count": 0,
     "like_count": 0,
-    "save_count": 0
+    "save_count": 0,
+    "duration": 5
   },
   {
     "id": "gen-3324b5de2c64",
@@ -22830,5 +22856,351 @@
     "save_count": 0,
     "duration": 2,
     "language_level": "intermediate"
+  },
+  {
+    "id": "gen-728f2c9e4615",
+    "type": "long_story",
+    "lang": "en",
+    "title": "Zorv and the Clockwork Tide",
+    "description": "In a sky where time flows like water, a lonely cloud-keeper named Zorv watches the hours dissolve into mist. When he discovers a pocket of frozen time hidden in the folds of the wind, he must decide whether to hold onto the past—or let it drift into the endless blue.",
+    "text": "[GENTLE] One day, Zorv said to the wind—\n\nThe sky was a vast canvas of shifting blues, striped with the silver trails of passing clouds. Zorv floated there, a small being made of mist and starlight, his edges flickering like candle flames. He was the keeper of the Clockwork Tide, a river of time that flowed through the sky, carrying moments like leaves on water. But today, the tide felt heavier than usual. The hours slipped through his fingers, dissolving into nothing before he could even name them.\n\n[MYSTERIOUS] Below him, the world stretched out in patches of green and gold, but Zorv barely glanced at it. His gaze was fixed on the empty space where yesterday had been. He had tried to catch it, of course—reaching out with his misty hands, whispering the old words his grandmother had taught him. But the past was slippery, and no matter how tightly he clenched his fists, it always slipped away.\n\n[CURIOUS] That was when he saw it: a glimmer in the distance, a pocket of stillness where the wind didn’t blow. Zorv tilted his head, his form rippling like water. It was strange, that stillness. The sky was never still. Even the stars moved, slow and steady as breathing. But this—this was something else. A pause. A breath held too long.\n\n[ADVENTUROUS] Without thinking, he drifted toward it. The air grew colder as he approached, his mist thickening into something almost solid. And then he saw it: a sphere of frozen time, suspended in the sky like a soap bubble. Inside, the world was paused—trees mid-sway, birds mid-flight, a child mid-laugh, her mouth open in a silent giggle. Zorv pressed his hand against the surface, and it shimmered like ice.\n\n[DRAMATIC] \"What is this?\" he whispered. The words hung in the air, unanswered. He had never seen anything like it. The Clockwork Tide carried moments forward, never backward, never still. This was a secret. A mystery. And for the first time in a long time, Zorv felt something other than [EMPHASIS]sadness[/EMPHASIS]. He felt curious.\n\n[EXCITED] He reached out again, and this time, the sphere trembled. A crack ran through its surface, thin as a hair. Zorv gasped, pulling his hand back. Had he broken it? But the sphere didn’t shatter. Instead, it pulsed, warm and alive, like a heartbeat. And then—[DRAMATIC_PAUSE]—it spoke.\n\n[WHISPERING] \"You’ve found me.\"\n\n[CALM] The voice was soft, like the hum of a distant harp. Zorv looked around, but there was no one else there. Just him, the sphere, and the endless sky.\n\n\"Who are you?\" Zorv asked, his voice barely louder than the wind.\n\n[MYSTERIOUS] \"I am what you’ve been looking for,\" the sphere said. \"A moment that didn’t want to leave.\" It pulsed again, and the crack widened, revealing more of the frozen scene inside—the child, the trees, the sky. \"I was supposed to dissolve, like all the others. But I clung on. I didn’t want to go.\"\n\n[GENTLE] Zorv understood. He had done the same thing, hadn’t he? Tried to hold onto moments that were meant to fade. The last time he’d seen his grandmother. The first time he’d heard the Clockwork Tide sing. He had reached for them, again and again, but they always slipped through his fingers like mist.\n\n\"It hurts,\" Zorv said quietly. \"Letting go.\"\n\n[CALM] The sphere was silent for a long moment. Then, softly: \"Yes. But look.\" The scene inside shifted, the child’s laughter still frozen, but the colors around her deepening, the light softening. \"I’ve been here a long time. And in all that time, nothing has changed. The child is still laughing. The trees are still swaying. But outside, the world keeps moving. The child grows. The trees grow. Everything changes.\"\n\n[DRAMATIC] Zorv’s heart ached. He knew what the sphere was saying. It wasn’t just a moment. It was a [EMPHASIS]prison[/EMPHASIS]. A beautiful, terrible prison, where nothing could grow, nothing could become.\n\n\"I don’t want to be alone,\" the sphere whispered. \"But I don’t want to be stuck, either.\"\n\n[GENTLE] Zorv pressed his hand against the sphere again. This time, he didn’t try to hold on. He just let his mist seep into the crack, warm and gentle. The sphere trembled, and for a moment, Zorv thought it might shatter. But then—slowly, so slowly—the frozen scene inside began to move. The child’s laughter spilled out, bright and real, carried away by the wind. The trees swayed. The birds took flight. And the sphere, no longer frozen, dissolved into the sky like a sigh.\n\n[CALM] Zorv watched it go, his chest tight. He had let something go. Not just the sphere, but the weight he’d been carrying—the fear of losing, the fear of forgetting. The sky felt lighter now, the Clockwork Tide flowing smoother, as if it had been waiting for him to understand.\n\n[WHISPERING] The wind brushed against his misty edges, and for the first time in a long time, Zorv didn’t try to catch it. He just let it carry him.\n\n[SLEEPY] The sky was vast, and Zorv was small. That was okay. He didn’t need to be big. He didn’t need to hold onto everything. The moments would come, and they would go, and that was the way of things.\n\n[WHISPERING] He drifted, his edges softening, his thoughts slowing. The Clockwork Tide hummed beneath him, a steady rhythm, like a lullaby. He didn’t need to name the hours anymore. He didn’t need to catch them. They would find him, when they were ready.\n\n[SLEEPY] The wind carried him higher, into the cooler layers of the sky, where the air was thin and the stars shone brighter. He could see the curve of the world below, a blue-green jewel wrapped in clouds. It was beautiful. It was enough.\n\n[WHISPERING] Zorv closed his eyes—or at least, he imagined closing them. There were no lids, no lashes, just the soft fade of awareness. The sky held him, and he let it. The past was gone. The future was not yet here. And the present—well, the present was just this. Drifting. Floating. Being.\n\n[SLEEPY] The stars didn’t answer, but he hadn’t expected them to. They were too busy shining.",
+    "annotated_text": "[PHASE_1]\n\n[GENTLE] One day, Zorv said to the wind—\n\nThe sky was a vast canvas of shifting blues, striped with the silver trails of passing clouds. Zorv floated there, a small being made of mist and starlight, his edges flickering like candle flames. He was the keeper of the Clockwork Tide, a river of time that flowed through the sky, carrying moments like leaves on water. But today, the tide felt heavier than usual. The hours slipped through his fingers, dissolving into nothing before he could even name them.\n\n[MYSTERIOUS] Below him, the world stretched out in patches of green and gold, but Zorv barely glanced at it. His gaze was fixed on the empty space where yesterday had been. He had tried to catch it, of course—reaching out with his misty hands, whispering the old words his grandmother had taught him. But the past was slippery, and no matter how tightly he clenched his fists, it always slipped away.\n\n[CURIOUS] That was when he saw it: a glimmer in the distance, a pocket of stillness where the wind didn’t blow. Zorv tilted his head, his form rippling like water. It was strange, that stillness. The sky was never still. Even the stars moved, slow and steady as breathing. But this—this was something else. A pause. A breath held too long.\n\n[ADVENTUROUS] Without thinking, he drifted toward it. The air grew colder as he approached, his mist thickening into something almost solid. And then he saw it: a sphere of frozen time, suspended in the sky like a soap bubble. Inside, the world was paused—trees mid-sway, birds mid-flight, a child mid-laugh, her mouth open in a silent giggle. Zorv pressed his hand against the surface, and it shimmered like ice.\n\n[DRAMATIC] \"What is this?\" he whispered. The words hung in the air, unanswered. He had never seen anything like it. The Clockwork Tide carried moments forward, never backward, never still. This was a secret. A mystery. And for the first time in a long time, Zorv felt something other than [EMPHASIS]sadness[/EMPHASIS]. He felt curious.\n\n[EXCITED] He reached out again, and this time, the sphere trembled. A crack ran through its surface, thin as a hair. Zorv gasped, pulling his hand back. Had he broken it? But the sphere didn’t shatter. Instead, it pulsed, warm and alive, like a heartbeat. And then—[DRAMATIC_PAUSE]—it spoke.\n\n[WHISPERING] \"You’ve found me.\"\n\n[/PHASE_1]\n\n\n[PHASE_2]\n\n[CALM] The voice was soft, like the hum of a distant harp. Zorv looked around, but there was no one else there. Just him, the sphere, and the endless sky.\n\n\"Who are you?\" Zorv asked, his voice barely louder than the wind.\n\n[MYSTERIOUS] \"I am what you’ve been looking for,\" the sphere said. \"A moment that didn’t want to leave.\" It pulsed again, and the crack widened, revealing more of the frozen scene inside—the child, the trees, the sky. \"I was supposed to dissolve, like all the others. But I clung on. I didn’t want to go.\"\n\n[GENTLE] Zorv understood. He had done the same thing, hadn’t he? Tried to hold onto moments that were meant to fade. The last time he’d seen his grandmother. The first time he’d heard the Clockwork Tide sing. He had reached for them, again and again, but they always slipped through his fingers like mist.\n\n\"It hurts,\" Zorv said quietly. \"Letting go.\"\n\n[CALM] The sphere was silent for a long moment. Then, softly: \"Yes. But look.\" The scene inside shifted, the child’s laughter still frozen, but the colors around her deepening, the light softening. \"I’ve been here a long time. And in all that time, nothing has changed. The child is still laughing. The trees are still swaying. But outside, the world keeps moving. The child grows. The trees grow. Everything changes.\"\n\n[DRAMATIC] Zorv’s heart ached. He knew what the sphere was saying. It wasn’t just a moment. It was a [EMPHASIS]prison[/EMPHASIS]. A beautiful, terrible prison, where nothing could grow, nothing could become.\n\n\"I don’t want to be alone,\" the sphere whispered. \"But I don’t want to be stuck, either.\"\n\n[GENTLE] Zorv pressed his hand against the sphere again. This time, he didn’t try to hold on. He just let his mist seep into the crack, warm and gentle. The sphere trembled, and for a moment, Zorv thought it might shatter. But then—slowly, so slowly—the frozen scene inside began to move. The child’s laughter spilled out, bright and real, carried away by the wind. The trees swayed. The birds took flight. And the sphere, no longer frozen, dissolved into the sky like a sigh.\n\n[CALM] Zorv watched it go, his chest tight. He had let something go. Not just the sphere, but the weight he’d been carrying—the fear of losing, the fear of forgetting. The sky felt lighter now, the Clockwork Tide flowing smoother, as if it had been waiting for him to understand.\n\n[WHISPERING] The wind brushed against his misty edges, and for the first time in a long time, Zorv didn’t try to catch it. He just let it carry him.\n\n[/PHASE_2]\n\n\n[PHASE_3]\n\n[SLEEPY] The sky was vast, and Zorv was small. That was okay. He didn’t need to be big. He didn’t need to hold onto everything. The moments would come, and they would go, and that was the way of things.\n\n[WHISPERING] He drifted, his edges softening, his thoughts slowing. The Clockwork Tide hummed beneath him, a steady rhythm, like a lullaby. He didn’t need to name the hours anymore. He didn’t need to catch them. They would find him, when they were ready.\n\n[SLEEPY] The wind carried him higher, into the cooler layers of the sky, where the air was thin and the stars shone brighter. He could see the curve of the world below, a blue-green jewel wrapped in clouds. It was beautiful. It was enough.\n\n[WHISPERING] Zorv closed his eyes—or at least, he imagined closing them. There were no lids, no lashes, just the soft fade of awareness. The sky held him, and he let it. The past was gone. The future was not yet here. And the present—well, the present was just this. Drifting. Floating. Being.\n\n[SLEEPY] The stars didn’t answer, but he hadn’t expected them to. They were too busy shining.\n\n[/PHASE_3]",
+    "target_age": 10,
+    "age_min": 9,
+    "age_max": 12,
+    "age_group": "9-12",
+    "length": "LONG",
+    "word_count": 1012,
+    "duration_seconds": 0,
+    "categories": [
+      "Fantasy",
+      "Emotional Growth"
+    ],
+    "theme": "mystery",
+    "morals": [
+      "Some things are meant to be let go, not kept.",
+      "Holding on too tightly can keep us from moving forward."
+    ],
+    "cover": "/covers/gen-728f2c9e4615.svg",
+    "musicProfile": "autumn-forest",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-728f_male_2.mp3",
+        "duration_seconds": 651.66,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-728f_female_1.mp3",
+        "duration_seconds": 719.27,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "male",
+    "character": {
+      "name": "Zorv",
+      "identity": "A lonely cloud-keeper who guards the river of time",
+      "special": "He can see moments that have already passed, but not hold onto them",
+      "personality_tags": [
+        "Gentle",
+        "Wise"
+      ]
+    },
+    "cover_context": "A surreal sky at twilight, where rivers of light flow like water, carrying glowing orbs of frozen moments. The horizon glows with soft blues and purples, and the air shimmers with mist and stardust. A single, small figure drifts near a pocket of stillness, where a child’s laughter hangs suspended in the air.",
+    "lead_character_type": "alien",
+    "universe": "fantasy_realm",
+    "geography": "Arctic/Polar",
+    "life_aspect": "school_learning",
+    "plot_archetype": "discovery",
+    "diversityFingerprint": {
+      "characterType": "celestial_weather",
+      "setting": "imaginary_surreal",
+      "mood": null,
+      "storyType": null,
+      "plotShape": "cyclical_seasonal",
+      "languageLevel": null,
+      "scale": "epic_vast",
+      "companion": "character_and_environment",
+      "movement": "floating_drifting",
+      "timeOfDay": "timeless",
+      "weather": "magical_atmospheric",
+      "theme": "letting_go",
+      "characterTrait": "lonely_seeking",
+      "magicType": "time_magic",
+      "season": "seasonless_timeless",
+      "senseEmphasis": "visual"
+    },
+    "mood": "sad",
+    "story_type": "fable",
+    "language_level": "intermediate",
+    "created_at": "2026-03-28T01:38:10.908035",
+    "updated_at": "2026-03-28T01:38:10.908035",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 12
+  },
+  {
+    "id": "gen-7b207c25a434",
+    "type": "story",
+    "lang": "en",
+    "title": "Tuck and the Ticking Clover",
+    "description": "In a sunlit meadow where time hums softly, a little beetle named Tuck watches the world move while he stays still. Something small and golden catches his eye—a clover that glows when the breeze touches it. But why does it feel like the meadow is whispering to him?",
+    "text": "[GENTLE] One day, a small beetle named Tuck said to the empty meadow—\n\nI lost my shiny pebble today. The one I found yesterday, the one that fit just right in my little claw. I looked under every leaf, behind every blade of grass. It’s [EMPHASIS]gone[/EMPHASIS].\n\n[CALM] The meadow hummed back, but Tuck didn’t hear it. He sat on a smooth stone, watching the ants march by, the butterflies dance, the clouds drift. Everything moved. Everything but him.\n\n[WHISPERING] Then he saw it—a single clover, different from the rest. Its leaves shimmered gold when the warm breeze brushed past. Tuck crawled closer. The clover didn’t move. It just… waited.\n\n[CURIOUS] He touched it. The gold spread up his leg, warm like sunlight. The meadow seemed to sigh. The ants still marched. The butterflies still danced. But now, Tuck felt the breeze on his back, the stone beneath him, the quiet hum of the world.\n\n[SLEEPY] He didn’t find his pebble. But the clover stayed golden, and the meadow stayed kind. And that was enough.\n\nAnd Tuck found his answer.",
+    "annotated_text": "[GENTLE] One day, a small beetle named Tuck said to the empty meadow—\n\nI lost my shiny pebble today. The one I found yesterday, the one that fit just right in my little claw. I looked under every leaf, behind every blade of grass. It’s [EMPHASIS]gone[/EMPHASIS].\n\n[CALM] The meadow hummed back, but Tuck didn’t hear it. He sat on a smooth stone, watching the ants march by, the butterflies dance, the clouds drift. Everything moved. Everything but him.\n\n[WHISPERING] Then he saw it—a single clover, different from the rest. Its leaves shimmered gold when the warm breeze brushed past. Tuck crawled closer. The clover didn’t move. It just… waited.\n\n[CURIOUS] He touched it. The gold spread up his leg, warm like sunlight. The meadow seemed to sigh. The ants still marched. The butterflies still danced. But now, Tuck felt the breeze on his back, the stone beneath him, the quiet hum of the world.\n\n[SLEEPY] He didn’t find his pebble. But the clover stayed golden, and the meadow stayed kind. And that was enough.\n\nAnd Tuck found his answer.",
+    "target_age": 3,
+    "age_min": 2,
+    "age_max": 5,
+    "age_group": "2-5",
+    "length": "MEDIUM",
+    "word_count": 174,
+    "duration_seconds": 0,
+    "categories": [
+      "Comfort",
+      "Nature"
+    ],
+    "theme": "animals",
+    "morals": [
+      "Sometimes what we lose makes room for something new to find us",
+      "The world keeps moving, but we can still feel its warmth"
+    ],
+    "cover": "/covers/gen-7b207c25a434.svg",
+    "musicProfile": "forest-night",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-7b20_male_2.mp3",
+        "duration_seconds": 118.46,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-7b20_female_1.mp3",
+        "duration_seconds": 127.6,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "male",
+    "character": {
+      "name": "Tuck",
+      "identity": "A quiet little beetle who notices the small, still things",
+      "special": "He can feel the quiet magic hiding in ordinary places",
+      "personality_tags": [
+        "Gentle",
+        "Quiet"
+      ]
+    },
+    "cover_context": "A sunlit meadow at late afternoon, golden light filtering through tall grass. A single clover glows softly among green leaves, while ants march in neat lines and butterflies drift on a warm breeze. The air shimmers with tiny floating seeds.",
+    "lead_character_type": "insect",
+    "universe": "fantasy_realm",
+    "geography": "Europe",
+    "life_aspect": "school_learning",
+    "plot_archetype": "problem_solving",
+    "diversityFingerprint": {
+      "characterType": "insect",
+      "setting": "meadow_field",
+      "mood": null,
+      "storyType": null,
+      "plotShape": "pure_observation",
+      "languageLevel": null,
+      "scale": "tiny_intimate",
+      "companion": "character_and_environment",
+      "movement": "sitting_watching",
+      "timeOfDay": "late_afternoon",
+      "weather": "warm_breeze",
+      "theme": "letting_go",
+      "characterTrait": "lonely_seeking",
+      "magicType": "time_magic",
+      "season": "summer",
+      "senseEmphasis": "tactile"
+    },
+    "mood": "sad",
+    "story_type": "fable",
+    "language_level": "intermediate",
+    "created_at": "2026-03-28T01:32:05.987985",
+    "updated_at": "2026-03-28T01:32:05.987985",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 3
+  },
+  {
+    "id": "gen-913ac4fe8d55",
+    "type": "poem",
+    "lang": "en",
+    "title": "Liora and the Lantern of Lost Hours",
+    "description": "A celestial lantern drifts through the cosmos, collecting forgotten moments like stardust. When a lonely girl whispers her regrets into the night, the lantern glows brighter—holding time itself in its gentle light.",
+    "text": "[RHYTHMIC] The lantern asked the night one eve,\nWhy do the hours slip and leave?\nThe stars just hummed a quiet tune,\nLike wind through silver leaves in June.\n\n[PAUSE]\n\n[GENTLE] Some days are heavy, soft and slow,\nSome days the heart just wants to go.\nThe lantern listened, round and bright,\nTo every word the dark held tight.\n\n[PAUSE]\n\n[CALM] It gathered whispers, soft and deep,\nLike seeds the wind might softly keep.\nNot to fix, not to mend,\nJust to hold—until the end.\n\n[PAUSE]\n\n[WHISPERING] And when the girl closed weary eyes,\nThe lantern let the hours rise.\nNot gone, just drifting, soft and free,\nLike fireflies on a summer sea.\n\n[PAUSE]\n\n[SLEEPY] The night is kind, the stars agree,\nSome things are meant to drift and flee.\nThe lantern glows, a quiet spark,\nGuiding lost things home in the dark.",
+    "annotated_text": "[RHYTHMIC] The lantern asked the night one eve,\nWhy do the hours slip and leave?\nThe stars just hummed a quiet tune,\nLike wind through silver leaves in June.\n\n[PAUSE]\n\n[GENTLE] Some days are heavy, soft and slow,\nSome days the heart just wants to go.\nThe lantern listened, round and bright,\nTo every word the dark held tight.\n\n[PAUSE]\n\n[CALM] It gathered whispers, soft and deep,\nLike seeds the wind might softly keep.\nNot to fix, not to mend,\nJust to hold—until the end.\n\n[PAUSE]\n\n[WHISPERING] And when the girl closed weary eyes,\nThe lantern let the hours rise.\nNot gone, just drifting, soft and free,\nLike fireflies on a summer sea.\n\n[PAUSE]\n\n[SLEEPY] The night is kind, the stars agree,\nSome things are meant to drift and flee.\nThe lantern glows, a quiet spark,\nGuiding lost things home in the dark.",
+    "target_age": 10,
+    "age_min": 9,
+    "age_max": 12,
+    "age_group": "9-12",
+    "length": "SHORT",
+    "word_count": 134,
+    "duration_seconds": 0,
+    "categories": [
+      "Cosmic Comfort",
+      "Whimsical Wisdom"
+    ],
+    "theme": "space",
+    "morals": [
+      "Some moments are meant to be held gently, then released.",
+      "Even the heaviest feelings can drift away like stardust."
+    ],
+    "cover": "/covers/gen-913ac4fe8d55.svg",
+    "musicProfile": "cosmic-voyage",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-913a_male_2.mp3",
+        "duration_seconds": 93.48,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-913a_female_1.mp3",
+        "duration_seconds": 99.34,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "female",
+    "character": {
+      "name": "Liora",
+      "identity": "A wise old lantern who carries forgotten time",
+      "special": "She collects lost moments and lets them drift like stardust",
+      "personality_tags": [
+        "Wise",
+        "Gentle"
+      ]
+    },
+    "cover_context": "A deep indigo cosmos streaked with swirling violet and gold, tiny glowing lanterns drifting among stars, their light reflecting on cosmic dust like scattered embers. The void hums with quiet magic, time suspended in soft radiance.",
+    "lead_character_type": "object",
+    "universe": "futuristic",
+    "geography": "Arctic/Polar",
+    "life_aspect": "health_wellness",
+    "plot_archetype": "discovery",
+    "diversityFingerprint": {
+      "characterType": "object_alive",
+      "setting": "sky_space",
+      "mood": null,
+      "storyType": null,
+      "plotShape": "routine_ritual",
+      "languageLevel": null,
+      "scale": "tiny_intimate",
+      "companion": "character_and_environment",
+      "movement": "floating_drifting",
+      "timeOfDay": "deep_night_starlight",
+      "weather": "magical_atmospheric",
+      "theme": "letting_go",
+      "characterTrait": "wise_old_soul",
+      "magicType": "time_magic",
+      "season": "seasonless_timeless",
+      "senseEmphasis": "visual"
+    },
+    "mood": "sad",
+    "story_type": "fable",
+    "language_level": "intermediate",
+    "created_at": "2026-03-28T01:42:15.711894",
+    "updated_at": "2026-03-28T01:42:15.711894",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 2
+  },
+  {
+    "id": "gen-dae685fc3b7b",
+    "type": "song",
+    "lang": "en",
+    "title": "Lulla and the Whispering Hourglass",
+    "description": "In a garden where fireflies hum lullabies, a tiny hourglass named Lulla begins to glow as twilight deepens. When she hears the softest chime from a hidden clock tree, she knows it’s time to drift into the sky—and this time, she might not come back.",
+    "text": "[SINGING]\nLittle Lulla, soft and round,\nTick and tock without a sound.\nGlass so clear, sand so bright,\nHolding time in golden light.\n\n[PAUSE]\n\n[SINGING]\nClose your eyes, the stars will rise,\nDrifting slow in twilight skies.\nI’ll be near, though out of sight,\nSinging soft through quiet night.\n\n[PAUSE]\n\n[SINGING]\nFireflies hum a sleepy tune,\nUnderneath the waking moon.\nLulla spins in gentle breeze,\nTime is slow, just take your ease.\n\n[PAUSE]\n\n[SINGING]\nClose your eyes, the stars will rise,\nDrifting slow in twilight skies.\nI’ll be near, though out of sight,\nSinging soft through quiet night.\n\n[PAUSE]\n\n[SLEEPY]\nNow the sand begins to fade,\nTime is soft, the night’s repaid.\nDrift away on whispered air,\nDream of me when I’m not there.\n\n[PAUSE]\n\n[SINGING]\nClose your eyes, the stars will rise,\nDrifting slow in twilight skies.\nI’ll be near, though out of sight,\nSinging soft through quiet night.\n\n[HUMMING]\nMmm mmm mmm...\nMmm mmm mmm...\nMmm mmm...",
+    "annotated_text": "[SINGING]\nLittle Lulla, soft and round,\nTick and tock without a sound.\nGlass so clear, sand so bright,\nHolding time in golden light.\n\n[PAUSE]\n\n[SINGING]\nClose your eyes, the stars will rise,\nDrifting slow in twilight skies.\nI’ll be near, though out of sight,\nSinging soft through quiet night.\n\n[PAUSE]\n\n[SINGING]\nFireflies hum a sleepy tune,\nUnderneath the waking moon.\nLulla spins in gentle breeze,\nTime is slow, just take your ease.\n\n[PAUSE]\n\n[SINGING]\nClose your eyes, the stars will rise,\nDrifting slow in twilight skies.\nI’ll be near, though out of sight,\nSinging soft through quiet night.\n\n[PAUSE]\n\n[SLEEPY]\nNow the sand begins to fade,\nTime is soft, the night’s repaid.\nDrift away on whispered air,\nDream of me when I’m not there.\n\n[PAUSE]\n\n[SINGING]\nClose your eyes, the stars will rise,\nDrifting slow in twilight skies.\nI’ll be near, though out of sight,\nSinging soft through quiet night.\n\n[HUMMING]\nMmm mmm mmm...\nMmm mmm mmm...\nMmm mmm...",
+    "target_age": 3,
+    "age_min": 2,
+    "age_max": 5,
+    "age_group": "2-5",
+    "length": "MEDIUM",
+    "word_count": 147,
+    "duration_seconds": 0,
+    "categories": [
+      "Fantasy",
+      "Lullaby"
+    ],
+    "theme": "fantasy",
+    "morals": [
+      "Some goodbyes are just see-you-soons in disguise.",
+      "Letting go can be the gentlest kind of love."
+    ],
+    "cover": "/covers/gen-dae685fc3b7b.svg",
+    "musicProfile": "enchanted-garden",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-dae6_female_2.mp3",
+        "duration_seconds": 244.91,
+        "provider": "ace-step"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "female",
+    "character": {
+      "name": "Lulla",
+      "identity": "A dreamy hourglass who collects quiet moments",
+      "special": "She can slow time to a whisper when twilight chimes",
+      "personality_tags": [
+        "Gentle",
+        "Dreamy"
+      ]
+    },
+    "cover_context": "A twilight garden bathed in indigo and lavender, fireflies weaving glowing trails between tall grasses. A clock tree stands at the center, its branches adorned with tiny hourglasses, while soft chimes drift through the warm, misty air.",
+    "lead_character_type": "object",
+    "universe": "historical",
+    "geography": "East Asia",
+    "life_aspect": "family_home",
+    "plot_archetype": "transformation",
+    "diversityFingerprint": {
+      "characterType": "object_alive",
+      "setting": "garden_farm",
+      "mood": null,
+      "storyType": null,
+      "plotShape": "transformation",
+      "languageLevel": null,
+      "scale": "tiny_intimate",
+      "companion": "duo",
+      "movement": "floating_drifting",
+      "timeOfDay": "twilight_blue_hour",
+      "weather": "magical_atmospheric",
+      "theme": "letting_go",
+      "characterTrait": "dreamy_imaginative",
+      "magicType": "time_magic",
+      "season": "seasonal_transition",
+      "senseEmphasis": "auditory"
+    },
+    "mood": "sad",
+    "story_type": null,
+    "language_level": null,
+    "created_at": "2026-03-28T01:44:50.768967",
+    "updated_at": "2026-03-28T01:44:50.768967",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 5
   }
 ]
