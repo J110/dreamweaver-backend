@@ -215,6 +215,16 @@ pregen_dir = Path("audio/pre-gen")
 pregen_dir.mkdir(parents=True, exist_ok=True)
 app.mount("/audio/pre-gen", StaticFiles(directory="audio/pre-gen"), name="pre-gen-audio")
 
+# Mount silly-songs audio (public/audio/silly-songs/)
+silly_songs_audio_dir = Path("public/audio/silly-songs")
+silly_songs_audio_dir.mkdir(parents=True, exist_ok=True)
+app.mount("/audio/silly-songs", StaticFiles(directory=str(silly_songs_audio_dir)), name="silly-songs-audio")
+
+# Mount silly-songs covers (public/covers/silly-songs/)
+silly_songs_covers_dir = Path("public/covers/silly-songs")
+silly_songs_covers_dir.mkdir(parents=True, exist_ok=True)
+app.mount("/covers/silly-songs", StaticFiles(directory=str(silly_songs_covers_dir)), name="silly-songs-covers")
+
 
 @app.get(
     "/health",

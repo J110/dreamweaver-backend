@@ -587,9 +587,40 @@ Every funny short JSON MUST have:
 - `host_intro` — one-line intro read before the short (e.g. "Tonight, Melody tries to steal a cake.")
 - `host_outro` — one-line outro after the punchline (e.g. "Melody is wearing the cake. The cake is winning.")
 - `base_track_style` — one of: `bouncy`, `sneaky`, `mysterious`, `gentle_absurd`, `whimsical`
-- `comedy_type`, `voices`, `voice_combo`, `primary_voice`, `cover_description`, `premise_summary`
+- `comedy_type`, `format`, `voices`, `voice_combo`, `primary_voice`, `cover_description`, `premise_summary`
 
 The generation script (`generate_funny_short.py`) produces `[HOST_INTRO:]` and `[HOST_OUTRO:]` tags — these get parsed into the JSON automatically.
+
+### Hard Validation Rules (MUST pass before publishing)
+
+**Full spec**: `docs/FUNNY_SHORTS_GENERATION_GUIDELINES.md`
+
+1. **Max 8 stings per short** — count `[STING:]` tags in script
+2. **Max 2 characters for ages 2-5** — NO trios for youngest age group
+3. **Comedy type must be valid for age group** — e.g. no `physical_escalation` for 9-12
+4. **Voices must be valid for age group** — e.g. no `high_pitch_cartoon` (Pip) for 9-12
+5. **Every sentence must have `[DELIVERY: tag1, tag2]`** — drives emotional arcs via TTS params
+6. **Must have `[PUNCHLINE]` tag** — triggers special voice params
+7. **Must have `[HOST_INTRO:]` and `[HOST_OUTRO:]`** — for episode wrapping
+8. **Format must include duos** — target 40% solo / 40% duo / 20% trio (not all solos+trios)
+9. **No identical fingerprint in last 5** — comedy_type × format × voice_combo per age group
+
+### Diversity Scheduler
+
+**Full spec**: `docs/FUNNY_SHORTS_DIVERSITY_SCHEDULER.md`
+
+When generating shorts with `--auto`, the scheduler picks the most underrepresented comedy_type × format × voice_combo for the given age group. This prevents template repetition (e.g. all villain_fails solos).
+
+### Related Spec Documents
+
+| Doc | What It Covers |
+|-----|---------------|
+| `docs/FUNNY_SHORTS_GENERATION_GUIDELINES.md` | **Start here** — all hard rules consolidated |
+| `docs/FUNNY_SHORTS_SPEC.md` | Original spec — comedy structure, voices, age rules |
+| `docs/FUNNY_SHORTS_DELIVERY_TAGS.md` | Delivery tag dictionary, multipliers, character arcs |
+| `docs/FUNNY_SHORTS_DIVERSITY_SCHEDULER.md` | Fingerprint-based generation targeting |
+| `docs/FUNNY_SHORTS_EPISODE_STRUCTURE.md` | Show jingles, host intro/outro, assembly pipeline |
+| `docs/FUNNY_SHORTS_MUSIC_SPEC.md` | Base tracks, stings, sting-aware dialogue gaps |
 
 ### Mixing Requirements (CRITICAL)
 
@@ -644,14 +675,14 @@ Every funny short is wrapped in a "show" structure that makes Before Bed feel li
 
 **Key requirements:**
 - `host_intro` and `host_outro` are **TTS-generated** from text in the short JSON (Melody/musical_original voice via Modal Chatterbox)
-- Jingle files are **static** — generated once, stored in `public/audio/funny-music/jingles/` on the GCP server
+- Jingle files are **static** — generated once, stored in `public/audio/jingles/` on the GCP server
 - The mix script gracefully skips missing jingles (so shorts still work before jingles are generated)
 - **Full spec**: `docs/FUNNY_SHORTS_EPISODE_STRUCTURE.md` (voice profiles, jingle MusicGen prompts, assembly pipeline)
 - **Music spec**: `docs/FUNNY_SHORTS_MUSIC_SPEC.md` (base tracks, stings, sting-aware dialogue gaps)
 
 ### Static Jingle Files (One-Time Generation)
 
-12 files stored in `public/audio/funny-music/jingles/`:
+12 files stored in `public/audio/jingles/`:
 
 | File | Duration | Purpose |
 |------|----------|---------|
