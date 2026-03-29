@@ -23254,5 +23254,119 @@
     "save_count": 0,
     "is_saved": false,
     "duration": 5
+  },
+  {
+    "id": "heartbeat-0-1-13e8",
+    "type": "song",
+    "lang": "en",
+    "title": "Humming",
+    "cover": "/covers/heartbeat-0-1-13e8.svg",
+    "description": "Just a gentle hum",
+    "text": "[verse]\nMmm mmm mmm mmm\nLa la la la\nMmm mmm mmm mmm\nShh shh shh shh\n\n[verse]\nMmm mmm mmm mmm\nLa la la la\nMmm mmm mmm mmm\nLa la la la\n\n[verse]\nMmm mmm mmm\nLa la la\nMmm mmm\nLa la\nMmm",
+    "target_age": 0,
+    "age_min": 0,
+    "age_max": 1,
+    "duration_seconds": 109,
+    "author_id": "system",
+    "created_at": "2026-03-29T17:59:45.574922",
+    "updated_at": "2026-03-29T17:59:45.574933",
+    "audio_url": null,
+    "album_art_url": null,
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "categories": [
+      "Lullabies"
+    ],
+    "theme": "dreamy",
+    "is_generated": true,
+    "generation_quality": "good",
+    "music_genre": "lullaby",
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/heartbea_female_1.mp3",
+        "duration_seconds": 109,
+        "provider": "minimax-music-v2"
+      }
+    ],
+    "mood": "calm",
+    "lullaby_type": "heartbeat"
+  },
+  {
+    "id": "shield-2-5-15de",
+    "type": "song",
+    "lang": "en",
+    "title": "You Are Safe",
+    "cover": "/covers/shield-2-5-15de.svg",
+    "description": "A song about being protected",
+    "text": "[verse]\nI am here\nThe walls are strong the door is shut\nThe blanket wrapped around\nAnd nothing from the dark outside\nCan make a single sound\n\n[chorus]\nI am here, I am here\nNothing going to come\nI am here, I am here\nYou are safe at home\n\n[verse]\nThe shadows are just shapes that play\nThey cannot touch they cannot stay\nAnd every sound you hear tonight\nIs just the house that holds you tight\n\n[chorus]\nI am here, I am here\nNothing going to come\nI am here, I am here\nI am still here",
+    "target_age": 3,
+    "age_min": 2,
+    "age_max": 5,
+    "duration_seconds": 196,
+    "author_id": "system",
+    "created_at": "2026-03-29T17:59:45.578728",
+    "updated_at": "2026-03-29T17:59:45.578738",
+    "audio_url": null,
+    "album_art_url": null,
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "categories": [
+      "Lullabies"
+    ],
+    "theme": "dreamy",
+    "is_generated": true,
+    "generation_quality": "good",
+    "music_genre": "lullaby",
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/shield-2_female_1.mp3",
+        "duration_seconds": 196,
+        "provider": "minimax-music-v2"
+      }
+    ],
+    "mood": "anxious",
+    "lullaby_type": "shield"
+  },
+  {
+    "id": "origin-6-8-164c",
+    "type": "song",
+    "lang": "en",
+    "title": "How Dreams Began",
+    "cover": "/covers/origin-6-8-164c.svg",
+    "description": "Where dreams come from",
+    "text": "[verse]\nLong before you were born\nBefore there were dreams the night was just dark\nAnd no one knew why they would sleep\nUntil a small star fell out of the sky\nAnd cracked open soft warm and deep\n\n[chorus]\nAnd that was the first dream\nThe very first one\nIt taught all the others\nHow dreaming is done\n\n[verse]\nIt floated through windows of every house\nAnd showed the sleeping world things\nMountains that talked and oceans that sang\nAnd fish that had feathery wings\n\n[chorus]\nAnd that was the first dream\nThe very first one\nAnd it's still true tonight",
+    "target_age": 7,
+    "age_min": 6,
+    "age_max": 8,
+    "duration_seconds": 160,
+    "author_id": "system",
+    "created_at": "2026-03-29T17:59:45.584697",
+    "updated_at": "2026-03-29T17:59:45.584712",
+    "audio_url": null,
+    "album_art_url": null,
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "categories": [
+      "Lullabies"
+    ],
+    "theme": "dreamy",
+    "is_generated": true,
+    "generation_quality": "good",
+    "music_genre": "lullaby",
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/origin-6_female_1.mp3",
+        "duration_seconds": 160,
+        "provider": "minimax-music-v2"
+      }
+    ],
+    "mood": "curious",
+    "lullaby_type": "origin"
   }
 ]
