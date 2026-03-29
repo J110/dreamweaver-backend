@@ -55,8 +55,9 @@ CONTENT_PATH = SEED_OUTPUT / "content.json"
 CONTENT_EXPANDED_PATH = SEED_OUTPUT / "content_expanded.json"
 STATE_PATH = SEED_OUTPUT / "pipeline_state.json"
 WEB_DIR = BASE_DIR.parent / "dreamweaver-web"
-# Persistent audio store — survives git re-clones (not inside any repo)
+# Persistent stores — survive git re-clones (not inside any repo)
 AUDIO_STORE = Path("/opt/audio-store/pre-gen")
+COVER_STORE = Path("/opt/cover-store")
 
 # ── Logging ──────────────────────────────────────────────────────────────
 LOG_DIR = BASE_DIR / "logs"
@@ -1396,6 +1397,40 @@ def step_sync(args, state: dict) -> bool:
                     recovered += 1
             if recovered:
                 logger.info("  Recovered %d audio files from persistent store (repo re-clone detected)", recovered)
+
+        # ── Back up ALL covers to persistent store (survives repo re-clones, Docker rebuilds) ──
+        web_covers_dir = WEB_DIR / "public" / "covers"
+        COVER_STORE.mkdir(parents=True, exist_ok=True)
+        covers_backed_up = 0
+        if web_covers_dir.exists():
+            for svg in web_covers_dir.glob("*.svg"):
+                store_dest = COVER_STORE / svg.name
+                if not store_dest.exists() or svg.stat().st_size != store_dest.stat().st_size:
+                    shutil.copy2(svg, store_dest)
+                    covers_backed_up += 1
+        # Also back up from backend experimental covers
+        exp_covers = SEED_OUTPUT / "covers_experimental"
+        if exp_covers.exists():
+            for svg in exp_covers.glob("*_combined.svg"):
+                # Store as gen-{id}.svg to match web naming
+                story_id = svg.stem.replace("_combined", "")
+                store_dest = COVER_STORE / f"{story_id}.svg"
+                if not store_dest.exists() or svg.stat().st_size != store_dest.stat().st_size:
+                    shutil.copy2(svg, store_dest)
+                    covers_backed_up += 1
+        if covers_backed_up:
+            logger.info("  Backed up %d cover files to persistent store", covers_backed_up)
+
+        # ── Recover missing covers from persistent store ──
+        covers_recovered = 0
+        if COVER_STORE.exists() and web_covers_dir.exists():
+            for svg in COVER_STORE.glob("*.svg"):
+                web_dest = web_covers_dir / svg.name
+                if not web_dest.exists():
+                    shutil.copy2(svg, web_dest)
+                    covers_recovered += 1
+            if covers_recovered:
+                logger.info("  Recovered %d cover files from persistent store", covers_recovered)
 
     # Save diversity snapshot for current/previous comparison on dashboard
     try:

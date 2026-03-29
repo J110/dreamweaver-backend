@@ -302,6 +302,89 @@ python3 scripts/generate_cover_svg.py --new-only
 
 ---
 
+## Cover & Audio Persistence (CRITICAL)
+
+Covers and audio are the most fragile assets in the system. Both have persistent backup stores outside any git repo that survive re-clones, Docker rebuilds, and frontend rebuilds.
+
+### Storage Architecture
+
+```
+AUTHORITATIVE (what nginx serves):
+  /opt/dreamweaver-web/public/covers/*.svg          ← Regular story/poem covers (141+)
+  /opt/dreamweaver-backend/public/covers/funny-shorts/  ← Funny shorts covers
+  /opt/dreamweaver-backend/public/covers/silly-songs/   ← Silly songs covers
+  /opt/dreamweaver-web/public/audio/pre-gen/*.mp3   ← All story/poem audio
+
+PERSISTENT BACKUP (outside git, survives everything):
+  /opt/cover-store/*.svg                            ← Backup of ALL covers
+  /opt/audio-store/pre-gen/*.mp3                    ← Backup of ALL audio
+
+GENERATION OUTPUT (backend, committed to git):
+  seed_output/covers_experimental/*_combined.svg    ← Raw generated covers
+  audio/pre-gen/*.mp3                               ← Raw generated audio
+```
+
+### nginx Configuration (dreamvalley.app)
+
+```nginx
+# Specific paths (checked first by nginx longest-prefix matching):
+location /covers/funny-shorts/ { alias /opt/dreamweaver-backend/public/covers/funny-shorts/; }
+location /covers/silly-songs/  { alias /opt/dreamweaver-backend/public/covers/silly-songs/; }
+
+# General covers (all gen-*.svg and legacy named covers):
+location /covers/ { alias /opt/dreamweaver-web/public/covers/; }
+```
+
+**CRITICAL**: The general `/covers/` MUST point to the **frontend** directory (`/opt/dreamweaver-web/public/covers/`), NOT the backend. The backend only has funny-shorts and silly-songs subdirectories. Pointing `/covers/` to the backend will break ALL regular story covers.
+
+### What Survives What
+
+| Event | Covers | Audio | Action Needed |
+|-------|--------|-------|---------------|
+| Docker rebuild (`docker-compose up --build`) | ✅ Safe (volume mount `./public:/app/public`) | ✅ Safe | None |
+| `git pull` in frontend | ✅ Safe (covers are in git) | ⚠️ Audio is gitignored | Pipeline auto-recovers from `/opt/audio-store` |
+| `git pull` in backend | ✅ Safe (experimental covers in git) | ⚠️ Audio is gitignored | Pipeline auto-recovers |
+| Frontend re-clone | ⚠️ Only git-tracked covers survive | ❌ Audio lost | Run `python3 scripts/pipeline_run.py --step sync` to recover from stores |
+| Backend re-clone | ✅ Git-tracked covers survive | ❌ Audio lost | Same as above |
+| `npm run build` (frontend) | ✅ Safe (build doesn't delete public/) | ✅ Safe | None |
+| nginx config change | ⚠️ Check aliases point to correct dirs | ✅ Safe | Verify with `curl` after reload |
+
+### Automatic Backup/Recovery (Pipeline Step 6: SYNC)
+
+The pipeline's sync step automatically:
+1. **Backs up** all covers from `dreamweaver-web/public/covers/` → `/opt/cover-store/`
+2. **Backs up** experimental covers from `seed_output/covers_experimental/` → `/opt/cover-store/`
+3. **Recovers** any missing covers from `/opt/cover-store/` → `dreamweaver-web/public/covers/`
+4. Same for audio: backup to `/opt/audio-store/`, recover from it
+
+### Manual Recovery
+
+```bash
+# Audit covers (check what's missing)
+curl -s https://api.dreamvalley.app/api/v1/analytics/content-audit/covers \
+  -H "Authorization: Bearer $(grep ANALYTICS_KEY .env | cut -d= -f2)" | python3 -m json.tool
+
+# Auto-recover missing covers from persistent store
+curl -s -X POST https://api.dreamvalley.app/api/v1/analytics/content-audit/covers/recover \
+  -H "Authorization: Bearer $(grep ANALYTICS_KEY .env | cut -d= -f2)" | python3 -m json.tool
+
+# Same for audio (existing endpoints)
+curl -s https://api.dreamvalley.app/api/v1/analytics/content-audit \
+  -H "Authorization: Bearer $(grep ANALYTICS_KEY .env | cut -d= -f2)" | python3 -m json.tool
+curl -s -X POST https://api.dreamvalley.app/api/v1/analytics/content-audit/recover \
+  -H "Authorization: Bearer $(grep ANALYTICS_KEY .env | cut -d= -f2)" | python3 -m json.tool
+```
+
+### Rules for Agents / Developers
+
+1. **NEVER change the nginx `/covers/` alias** to point to the backend — it must point to `/opt/dreamweaver-web/public/covers/`
+2. **NEVER re-clone repos** without first checking `/opt/cover-store/` and `/opt/audio-store/` exist and are populated
+3. **After any Docker rebuild**: verify covers still serve — `curl -s -o /dev/null -w '%{http_code}' https://dreamvalley.app/covers/gen-728f2c9e4615.svg` should return 200
+4. **After any nginx change**: test ALL cover types (gen-*, funny-shorts/*, silly-songs/*, legacy named covers)
+5. **If covers are missing**: use the audit/recover API endpoints above before regenerating — they may be recoverable from the persistent store
+
+---
+
 ## Known Limitations
 
 | Step | Status | Notes |

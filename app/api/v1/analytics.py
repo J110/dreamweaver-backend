@@ -995,6 +995,7 @@ async def dashboard_server_health(
 
 WEB_PUBLIC = Path("/opt/dreamweaver-web/public")
 AUDIO_STORE = Path("/opt/audio-store/pre-gen")
+COVER_STORE = Path("/opt/cover-store")
 
 
 @router.get("/content-audit")
@@ -1103,6 +1104,103 @@ async def content_audio_recover(
                         recovered += 1
                     else:
                         still_missing += 1
+
+    return {
+        "status": "ok",
+        "recovered": recovered,
+        "still_missing": still_missing,
+    }
+
+
+# ── Content Cover Audit ─────────────────────────────────────────────
+
+
+@router.get("/content-audit/covers")
+async def content_cover_audit(
+    authorization: Optional[str] = Header(None),
+):
+    """Audit content for missing cover files. Returns stories with broken cover references."""
+    verify_analytics_key(authorization)
+
+    content_path = Path("data/content.json")
+    if not content_path.exists():
+        return {"status": "error", "message": "content.json not found"}
+
+    content = json.loads(content_path.read_text())
+    web_covers_dir = WEB_PUBLIC / "covers"
+
+    missing_stories = []
+    total_with_cover = 0
+    total_missing = 0
+
+    for item in content:
+        cover = item.get("cover", "")
+        if not cover or cover == "/covers/default.svg":
+            continue
+        total_with_cover += 1
+        fpath = WEB_PUBLIC / cover.lstrip("/")
+        if not fpath.exists():
+            total_missing += 1
+            fname = Path(cover).name
+            recoverable = (COVER_STORE / fname).exists() if COVER_STORE.exists() else False
+            missing_stories.append({
+                "id": item.get("id", ""),
+                "title": item.get("title", ""),
+                "lang": item.get("lang", "en"),
+                "type": item.get("story_type") or item.get("type", ""),
+                "cover": cover,
+                "recoverable": recoverable,
+            })
+
+    missing_stories.sort(key=lambda x: x.get("id", ""))
+
+    return {
+        "status": "ok" if not missing_stories else "warning",
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "summary": {
+            "total_with_cover": total_with_cover,
+            "missing_covers": total_missing,
+            "recoverable": sum(1 for s in missing_stories if s["recoverable"]),
+        },
+        "missing_stories": missing_stories,
+    }
+
+
+@router.post("/content-audit/covers/recover")
+async def content_cover_recover(
+    authorization: Optional[str] = Header(None),
+):
+    """Recover missing cover files from persistent store."""
+    verify_analytics_key(authorization)
+
+    import shutil
+
+    content_path = Path("data/content.json")
+    if not content_path.exists():
+        return {"status": "error", "message": "content.json not found"}
+    if not COVER_STORE.exists():
+        return {"status": "error", "message": "Cover store not found at /opt/cover-store"}
+
+    content = json.loads(content_path.read_text())
+    web_covers_dir = WEB_PUBLIC / "covers"
+    web_covers_dir.mkdir(parents=True, exist_ok=True)
+
+    recovered = 0
+    still_missing = 0
+    for item in content:
+        cover = item.get("cover", "")
+        if not cover or cover == "/covers/default.svg":
+            continue
+        fpath = WEB_PUBLIC / cover.lstrip("/")
+        if not fpath.exists():
+            fname = Path(cover).name
+            store_src = COVER_STORE / fname
+            if store_src.exists():
+                fpath.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(store_src, fpath)
+                recovered += 1
+            else:
+                still_missing += 1
 
     return {
         "status": "ok",
