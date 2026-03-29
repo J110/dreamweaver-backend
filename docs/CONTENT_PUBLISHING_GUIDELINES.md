@@ -10,10 +10,11 @@
 2. **Never modify seedData.js without verifying that referenced assets exist.** This includes audio files, cover SVGs, and any other referenced paths.
 3. **NEVER do `npm build` + `pm2 restart` for daily content updates.** nginx serves `/covers/` and `/audio/` directly from `public/`. Backend hot-reloads content via admin reload or 60s polling. Only rebuild frontend for CODE changes (JS/CSS/components).
 4. **Every content item MUST have `created_at` and `updated_at` as ISO strings.** Missing `created_at` crashes the entire API sort, making ALL content disappear. Always validate after manual edits.
-5. **Audio files must exist in BOTH backend AND frontend `public/` directories.** nginx serves from frontend `public/`. Backend stores the source copies.
-6. **NEVER remove audio files from `public/audio/pre-gen/` unless the corresponding seedData.js entries are also removed.** Orphan URLs → 404 errors → broken playback.
-7. **Every content item MUST have `lead_character_type` set.** Without it, FLUX cover generation defaults to "human child" — producing a girl/boy for stories about owls, clouds, fireflies, etc. Pipeline-generated stories set this automatically. For manually added stories, set it explicitly or ensure the `_infer_character_type()` fallback in `generate_cover_experimental.py` can detect the correct type from the title/description.
-8. **NEVER replace content that is already live on production unless specifically requested.** Before any `git pull` or file copy on production, verify that existing assets (covers, audio, content data) won't be overwritten. If production has newer files than the git repo (e.g., FLUX covers regenerated after a pipeline fallback), those files MUST be committed to git FIRST before pulling. Always run `git status` on production before pulling to check for local changes.
+5. **Audio files must exist in BOTH backend AND frontend `public/` directories.** nginx serves from frontend `public/`. Backend stores the source copies. This applies to stories (`audio/pre-gen/`) AND lullabies (`audio/lullabies/`).
+6. **NEVER remove audio files from `public/audio/` unless the corresponding data entries are also removed.** Orphan URLs → 404 errors → broken playback. For stories: check seedData.js. For lullabies: check `lullabies.json`.
+7. **Lullabies are SEPARATE from main content.** They use their own index (`lullabies.json`), own API (`/api/v1/lullabies`), own directories (`audio/lullabies/`, `covers/lullabies/`). Do NOT add lullabies to `content.json` or `seedData.js`.
+8. **Every content item MUST have `lead_character_type` set.** Without it, FLUX cover generation defaults to "human child" — producing a girl/boy for stories about owls, clouds, fireflies, etc. Pipeline-generated stories set this automatically. For manually added stories, set it explicitly or ensure the `_infer_character_type()` fallback in `generate_cover_experimental.py` can detect the correct type from the title/description.
+9. **NEVER replace content that is already live on production unless specifically requested.** Before any `git pull` or file copy on production, verify that existing assets (covers, audio, content data) won't be overwritten. If production has newer files than the git repo (e.g., FLUX covers regenerated after a pipeline fallback), those files MUST be committed to git FIRST before pulling. Always run `git status` on production before pulling to check for local changes.
 
 ---
 
@@ -66,6 +67,20 @@ Only when JS/CSS/component code changes:
 3. cp -r public .next/standalone/public && cp -r .next/static .next/standalone/.next/static
 4. pm2 restart all
 
+                    LULLABY DATA FLOW (separate from main content)
+                    ================================================
+
+Backend                                         Frontend
+────────────────────                           ────────────────────
+seed_output/lullabies/lullabies.json ── API ──► /api/v1/lullabies (served from JSON)
+seed_output/lullabies/*.mp3          ── copy ──► public/audio/lullabies/*.mp3
+seed_output/lullabies/*.svg          ── copy ──► public/covers/lullabies/*.svg
+
+⚠️  Lullabies are NOT in content.json or seedData.js.
+    They have their own index (lullabies.json), own API endpoint, and own directories.
+    Home page fetches lullabies separately via lullabiesApi.list() and maps them
+    to ContentCard-compatible format for display in the "Lullabies" section.
+
                     MANUAL PUBLISHING
                     =================
 
@@ -87,6 +102,10 @@ Only when JS/CSS/component code changes:
 | `dreamweaver-web/src/utils/seedData.js` | Frontend content data (generated from content.json) | Frontend |
 | `dreamweaver-web/public/audio/pre-gen/*.mp3` | Frontend audio files (copied from backend) | Frontend |
 | `dreamweaver-web/public/covers/*.svg` | Cover illustrations | Frontend |
+| `dreamweaver-backend/seed_output/lullabies/lullabies.json` | Lullaby index (all metadata) | Backend |
+| `dreamweaver-backend/seed_output/lullabies/*.mp3` | Source lullaby audio files | Backend |
+| `dreamweaver-web/public/audio/lullabies/*.mp3` | Frontend lullaby audio files | Frontend |
+| `dreamweaver-web/public/covers/lullabies/*.svg` | Lullaby cover illustrations | Frontend |
 
 ---
 
@@ -94,13 +113,25 @@ Only when JS/CSS/component code changes:
 
 The daily pipeline (`pipeline_run.py`) handles everything automatically:
 
-1. **Generate** → Creates story/poem/lullaby text
-2. **Audio** → Generates MP3 variants via Chatterbox TTS
+1. **Generate** → Creates story/poem text (lullabies handled separately)
+2. **Audio** → Generates MP3 variants via Chatterbox TTS (stories/poems only)
 3. **QA** → Validates audio duration + fidelity
 4. **Enrich** → Generates unique musicParams
-5. **Covers** → Generates animated SVG covers
-6. **Sync** → Writes seedData.js + copies audio/covers to frontend
-7. **Publish** → `git push` both repos → Vercel/Render auto-deploy
+5. **Mood** → Assigns mood tags
+6. **Covers** → Generates animated SVG covers
+7. **Lullabies** → Generates lullaby lyrics (Mistral) + audio (fal.ai MiniMax Music v2)
+8. **Sync** → Writes seedData.js + copies audio/covers to frontend
+9. **Clips** → Generates short clips
+10. **Publish** → `git push` both repos → Vercel/Render auto-deploy
+11. **Deploy Prod** → Hot-reloads backend + pulls frontend on GCP
+
+**What the lullabies step does:**
+- Runs `generate_lullaby.py` to create 1-2 lullabies per pipeline run
+- Generates lyrics via Mistral AI (type-specific structure: heartbeat, rocking, shield, etc.)
+- Generates audio via fal.ai MiniMax Music v2 ($0.03/generation), with Replicate MiniMax 1.5 as fallback
+- Saves output to `seed_output/lullabies/` (individual JSONs + MP3s + lullabies.json index)
+- Copies audio to `web/public/audio/lullabies/` and covers to `web/public/covers/lullabies/`
+- Lullabies are served via `/api/v1/lullabies` endpoint (separate from main content API)
 
 **What the sync step does:**
 - Runs `sync_seed_data.py` to convert content.json → seedData.js
@@ -283,7 +314,31 @@ grep -c "melodyInterval.*4000" src/utils/seedData.js
 - Never run destructive git commands without checking for uncommitted audio files first
 - The pipeline should commit audio files in the same commit as seedData.js changes
 
-### 11. Cover Shows Wrong Character (THE OWL BUG)
+### 11. Lullaby Audio Missing or Not Playing
+
+**What can go wrong**: Lullaby MP3 exists in `seed_output/lullabies/` but wasn't copied to `public/audio/lullabies/` in the frontend repo. The home page shows the lullaby card but audio fails with a 404.
+
+**Root cause**: The pipeline lullabies step copies files automatically, but manual generation or partial pipeline runs may skip the copy.
+
+**Prevention**:
+```bash
+# Verify all lullaby audio files exist in frontend
+python3 -c "
+import json, os
+lullabies = json.load(open('seed_output/lullabies/lullabies.json'))
+web_audio = '/opt/dreamweaver-web/public/audio/lullabies'
+for l in lullabies:
+    f = l.get('audio_file', '')
+    if f and not os.path.exists(os.path.join(web_audio, f)):
+        print('MISSING:', f, '(' + l.get('title', '?') + ')')
+"
+```
+
+**Quick fix**: `cp seed_output/lullabies/*.mp3 /opt/dreamweaver-web/public/audio/lullabies/`
+
+**Key differences from stories/poems**: Lullabies are NOT in content.json or seedData.js. They use their own `lullabies.json` index, own API endpoint (`/api/v1/lullabies`), and own directories (`audio/lullabies/`, `covers/lullabies/`). Do NOT add lullabies to content.json or seedData.js.
+
+### 12. Cover Shows Wrong Character (THE OWL BUG)
 
 **What happened**: "The Owl's Goodnight" cover showed a sparrow instead of an owl. "Chai's Moonlit Steam Song" showed a generic object instead of a teacup.
 
@@ -365,6 +420,39 @@ format=mp3"
 2. Verify seedData.js audio_variants match the file names
 3. Commit and push both repos
 4. Deploy to production
+
+---
+
+## Manual Lullaby Generation
+
+To generate lullabies outside the pipeline:
+
+```bash
+cd /opt/dreamweaver-backend
+
+# Generate 1 lullaby with auto-selected type based on mood
+python3 scripts/generate_lullaby.py --mood calm --age 0-1 --count 1
+
+# Generate a specific lullaby type
+python3 scripts/generate_lullaby.py --type heartbeat --age 0-1
+
+# Dry run (no API calls, uses fallback lyrics)
+python3 scripts/generate_lullaby.py --mood calm --dry-run
+
+# After generation, ALWAYS copy to frontend:
+cp seed_output/lullabies/*.mp3 /opt/dreamweaver-web/public/audio/lullabies/
+cp seed_output/lullabies/*.svg /opt/dreamweaver-web/public/covers/lullabies/
+
+# Hot-reload backend to pick up new lullabies.json
+curl -s -X POST http://localhost:8000/api/v1/admin/reload \
+  -H "X-Admin-Key: $(grep ADMIN_API_KEY .env | cut -d= -f2)"
+```
+
+**Lullaby types**: `heartbeat`, `permission`, `shield`, `closing`, `rocking`, `counting`, `parent_song`, `warning`, `origin`
+
+**Audio generation**: fal.ai MiniMax Music v2 (primary, $0.03/gen) → Replicate MiniMax 1.5 (fallback). Requires `FAL_KEY` and `REPLICATE_API_TOKEN` in `.env`.
+
+**Lyrics generation**: Mistral AI with type-specific structure instructions. Falls back to built-in fallback lyrics if Mistral unavailable.
 
 ---
 
@@ -460,7 +548,24 @@ for item in content:
 print('Missing audio files:', missing)
 "
 
-# 3. Verify cover files exist
+# 3. Verify lullaby audio files exist
+python3 -c "
+import json, os
+lullabies = json.load(open('/opt/dreamweaver-backend/seed_output/lullabies/lullabies.json'))
+missing = 0
+for l in lullabies:
+    f = l.get('audio_file', '')
+    if f and not os.path.exists(os.path.join('public/audio/lullabies', f)):
+        print('MISSING lullaby audio:', f, '(' + l.get('title', '?') + ')')
+        missing += 1
+    c = l.get('cover_file', '')
+    if c and not os.path.exists(os.path.join('public/covers/lullabies', c)):
+        print('MISSING lullaby cover:', c, '(' + l.get('title', '?') + ')')
+        missing += 1
+print('Missing lullaby files:', missing)
+"
+
+# 4. Verify cover files exist
 python3 -c "
 import json, os
 content = json.load(open('/opt/dreamweaver-backend/seed_output/content.json'))
@@ -593,7 +698,34 @@ else
   echo "✅ No empty audio files"
 fi
 
-# Check 4: Total audio count
+# Check 4: Lullaby audio files
+echo ""
+echo "🎵 Checking lullaby files..."
+if [ -f "/opt/dreamweaver-backend/seed_output/lullabies/lullabies.json" ]; then
+  MISSING_LULLABY=$(python3 -c "
+import json, os
+lullabies = json.load(open('/opt/dreamweaver-backend/seed_output/lullabies/lullabies.json'))
+for l in lullabies:
+    f = l.get('audio_file', '')
+    if f and not os.path.exists(os.path.join('public/audio/lullabies', f)):
+        print('audio: ' + f)
+    c = l.get('cover_file', '')
+    if c and not os.path.exists(os.path.join('public/covers/lullabies', c)):
+        print('cover: ' + c)
+" 2>/dev/null)
+
+  if [ -n "$MISSING_LULLABY" ]; then
+    echo "❌ MISSING LULLABY FILES:"
+    echo "$MISSING_LULLABY"
+    ERRORS=$((ERRORS + 1))
+  else
+    echo "✅ All lullaby files present"
+  fi
+else
+  echo "⚠️  No lullabies.json found (skipping)"
+fi
+
+# Check 5: Total audio count
 TOTAL_AUDIO=$(find public/audio/pre-gen/ -name "*.mp3" 2>/dev/null | wc -l)
 TOTAL_REFS=$(grep -oP '/audio/pre-gen/[^"]+\.mp3' src/utils/seedData.js | sort -u | wc -l)
 echo ""
@@ -619,6 +751,10 @@ fi
 | Story ID | `gen-{12-char-hex}` | `gen-9e87531b7db6` |
 | Audio file | `gen-{first8}_{voice}.mp3` | `gen-9e87_female_1.mp3` |
 | Cover SVG | `{slug}.svg` | `leo-moonlight-waves.svg` |
+| Lullaby ID | `{type}-{age_group}-{4hex}` | `heartbeat-0-1-13e8` |
+| Lullaby audio | `{lullaby_id}.mp3` | `heartbeat-0-1-13e8.mp3` |
+| Lullaby cover | `{lullaby_id}.svg` | `heartbeat-0-1-13e8.svg` |
+| Lullaby index | `lullabies.json` | `seed_output/lullabies/lullabies.json` |
 | Voice names | `female_1`, `female_2`, `female_3`, `male_1`, `male_2` | — |
 
 ### Audio Variants per Content Type
@@ -627,7 +763,7 @@ fi
 |------|--------|-------------|
 | Story | female_1, female_2, female_3, male_1, male_2 | 5 |
 | Poem | female_1, female_2, female_3, male_1, male_2 | 5 |
-| Lullaby (song) | Generated via ACE-Step (single variant) | 1-3 |
+| Lullaby (MiniMax) | Generated via fal.ai MiniMax Music v2 (single variant) | 1 |
 
 ---
 
@@ -678,4 +814,7 @@ fi
 | Audio 404 on production | Check file exists in `public/audio/pre-gen/` (nginx serves from there, NOT from `.next/standalone/`) |
 | Cover 404 on production | Check file exists in `public/covers/` (nginx serves from there, NOT from `.next/standalone/`) |
 | Backend content stale | `curl -X POST localhost:8000/api/v1/admin/reload -H "X-Admin-Key: KEY"` or wait 60s for polling |
+| Need to add lullabies manually | `generate_lullaby.py --mood calm --count 1` → Copy MP3 + cover to frontend `public/audio/lullabies/` and `public/covers/lullabies/` → Hot-reload backend |
+| Lullaby audio 404 | Check file exists in `public/audio/lullabies/` (nginx serves from there). Copy from `seed_output/lullabies/` if missing |
+| fal.ai MiniMax fails | Script auto-falls back to Replicate MiniMax 1.5. If both fail, check FAL_KEY and REPLICATE_API_TOKEN in `.env` |
 | Need to rollback | `git checkout <good-commit>` → Backend auto-reloads content. Frontend covers/audio: nginx serves from `public/` (no rebuild needed) |

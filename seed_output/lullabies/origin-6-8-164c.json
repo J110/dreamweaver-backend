@@ -1,0 +1,27 @@
+{
+  "id": "origin-6-8-164c",
+  "title": "How Dreams Began",
+  "content_type": "lullaby",
+  "lullaby_type": "origin",
+  "card_label": "How Dreams Began",
+  "card_subtitle": "Where dreams come from",
+  "age_group": "6-8",
+  "mood": "curious",
+  "language": "en",
+  "instrument": "drone",
+  "imagery": "ancient_sky",
+  "audio_file": "origin-6-8-164c.mp3",
+  "cover_file": "origin-6-8-164c_cover.svg",
+  "cover_prompt": "Watercolor, single star falling through vast night sky, cracking open revealing golden light, deep blue, ancient, mythological",
+  "duration_seconds": 160,
+  "lyrics": "[verse]\nLong before you were born\nBefore there were dreams the night was just dark\nAnd no one knew why they would sleep\nUntil a small star fell out of the sky\nAnd cracked open soft warm and deep\n\n[chorus]\nAnd that was the first dream\nThe very first one\nIt taught all the others\nHow dreaming is done\n\n[verse]\nIt floated through windows of every house\nAnd showed the sleeping world things\nMountains that talked and oceans that sang\nAnd fish that had feathery wings\n\n[chorus]\nAnd that was the first dream\nThe very first one\nAnd it's still true tonight",
+  "style_prompt": "Ancient storytelling lullaby, warm resonant female vocal, singing bowl and soft cello drone, 60 BPM, mythological, vast, reverent, timeless, the voice of someone very old and very kind, starts spacious and narrows to intimate, wonder without weight, low drone pad accompaniment",
+  "engine": "minimax-music-v2-fal",
+  "fingerprint": {
+    "lullabyType": "origin",
+    "instrument": "drone",
+    "imagery": "ancient_sky",
+    "mood": "curious"
+  },
+  "created_at": "2026-03-29"
+}

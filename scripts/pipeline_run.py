@@ -32,6 +32,7 @@ import argparse
 import json
 import logging
 import os
+import random
 import resource
 import shutil
 import subprocess
@@ -75,7 +76,7 @@ logging.basicConfig(
 logger = logging.getLogger("pipeline")
 
 # ── Pipeline steps ───────────────────────────────────────────────────────
-STEPS = ["generate", "audio", "qa", "enrich", "mood", "covers", "sync", "clips", "publish", "deploy_prod"]
+STEPS = ["generate", "audio", "qa", "enrich", "mood", "covers", "lullabies", "sync", "clips", "publish", "deploy_prod"]
 
 CHATTERBOX_HEALTH = "https://mohan-32314--dreamweaver-chatterbox-health.modal.run"
 
@@ -447,13 +448,15 @@ def step_generate(args, state: dict) -> bool:
 
     before_ids = get_existing_ids()
 
-    # Build the generation command using --count-stories/--count-poems/--count-lullabies for fresh daily content
+    # Build the generation command using --count-stories/--count-poems for fresh daily content.
+    # Lullabies are now generated separately in step_lullabies (MiniMax via fal.ai),
+    # so --count-lullabies is always 0 here to stop ACE-Step song generation.
     cmd = [
         sys.executable, str(SCRIPTS_DIR / "generate_content_matrix.py"),
         "--api", "mistral",
         "--count-stories", str(count_stories),
         "--count-poems", str(count_poems),
-        "--count-lullabies", str(count_lullabies),
+        "--count-lullabies", "0",
         "--count-long-stories", str(count_long_stories),
     ]
     if args.lang:
@@ -1311,6 +1314,76 @@ def step_clips(args, state: dict) -> bool:
     return True
 
 
+def step_lullabies(args, state: dict) -> bool:
+    """Step 6b: Generate lullaby audio via MiniMax Music on fal.ai.
+
+    Standalone lullaby generation — lyrics (Mistral) + audio (fal.ai MiniMax) + cover.
+    Separate from the story/poem pipeline. Replaces ACE-Step for vocal lullabies.
+    """
+    logger.info("\n╔══════════════════════════════════════╗")
+    logger.info("║  STEP 6b: GENERATE LULLABY           ║")
+    logger.info("╚══════════════════════════════════════╝")
+
+    count = args.count_lullabies
+    if count <= 0:
+        logger.info("  No lullabies requested (--count-lullabies 0). Skipping.")
+        state["step_lullabies"] = "skipped"
+        save_state(state)
+        return True
+
+    if args.dry_run:
+        logger.info("  [DRY RUN] Would generate %d lullaby(ies)", count)
+        state["step_lullabies"] = "skipped"
+        save_state(state)
+        return True
+
+    effective_mood = args.mood or state.get("auto_mood", "calm")
+    age = args.age or random.choice(["0-1", "2-5", "6-8"])
+
+    cmd = [
+        sys.executable, str(SCRIPTS_DIR / "generate_lullaby.py"),
+        "--mood", effective_mood,
+        "--age", age,
+        "--count", str(count),
+    ]
+
+    ok, stdout, stderr, elapsed = run_command(
+        cmd, "Lullaby Generation (MiniMax)", timeout=600
+    )
+
+    if ok:
+        state["step_lullabies"] = "done"
+        state["lullaby_elapsed_seconds"] = elapsed
+        logger.info("  Lullaby generation completed in %.0fs", elapsed)
+
+        # Copy lullaby audio + covers to web frontend public dirs
+        if WEB_DIR.exists():
+            import shutil as _shutil
+            lullaby_audio_src = BASE_DIR / "public" / "audio" / "lullabies"
+            lullaby_cover_src = BASE_DIR / "seed_output" / "lullabies"
+            web_audio_dst = WEB_DIR / "public" / "audio" / "lullabies"
+            web_cover_dst = WEB_DIR / "public" / "covers" / "lullabies"
+            web_audio_dst.mkdir(parents=True, exist_ok=True)
+            web_cover_dst.mkdir(parents=True, exist_ok=True)
+
+            copied_audio = copied_covers = 0
+            if lullaby_audio_src.exists():
+                for f in lullaby_audio_src.glob("*.mp3"):
+                    _shutil.copy2(str(f), str(web_audio_dst / f.name))
+                    copied_audio += 1
+            if lullaby_cover_src.exists():
+                for f in lullaby_cover_src.glob("*_cover.svg"):
+                    _shutil.copy2(str(f), str(web_cover_dst / f.name))
+                    copied_covers += 1
+            logger.info("  Copied to web: %d audio, %d covers", copied_audio, copied_covers)
+    else:
+        state["step_lullabies"] = "failed"
+        logger.error("  Lullaby generation failed")
+
+    save_state(state)
+    return ok
+
+
 def step_sync(args, state: dict) -> bool:
     """Step 7: Sync content.json → seedData.js for the web frontend."""
     logger.info("\n╔══════════════════════════════════════╗")
@@ -1822,8 +1895,13 @@ def postflight_checks(state: dict):
     modal_cost = audio_secs * MODAL_T4_PER_SEC
     audio_mins = audio_secs / 60.0
 
+    # fal.ai MiniMax lullaby cost: $0.03/generation
+    lullaby_count = 1 if state.get("step_lullabies") == "done" else 0
+    fal_cost = lullaby_count * 0.03
+    state["cost_fal"] = f"${fal_cost:.2f}" if fal_cost > 0 else "$0.00"
+
     # Mistral, Resend, Vercel, Render = $0 (free tiers)
-    total_run_cost = modal_cost + gcp_daily
+    total_run_cost = modal_cost + gcp_daily + fal_cost
 
     # Build cost breakdown for this run
     state["cost_this_run"] = f"${total_run_cost:.2f}"
@@ -1889,6 +1967,7 @@ def print_summary(state: dict, total_elapsed: float):
                 len(state.get("covers_flux", [])),
                 len(state.get("covers_fallback", [])),
                 len(state.get("covers_failed", [])))
+    logger.info("  Lullabies:  %s", state.get("step_lullabies", "not run"))
     logger.info("  Enriched:   %s", state.get("step_enrich", "not run"))
     logger.info("  Synced:     %s", state.get("step_sync", "not run"))
     logger.info("  Published:  %s", state.get("step_publish", "not run"))
@@ -2025,6 +2104,7 @@ def main():
         "enrich": step_enrich,
         "mood": step_mood,
         "covers": step_covers,
+        "lullabies": step_lullabies,
         "sync": step_sync,         # sync BEFORE clips so new audio/covers are available
         "clips": step_clips,
         "publish": step_publish,

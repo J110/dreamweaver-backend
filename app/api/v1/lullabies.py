@@ -1,9 +1,10 @@
-"""Lullaby endpoints — serves test lullabies from seed_output/lullabies/."""
+"""Lullaby endpoints — serves lullabies from seed_output/lullabies/."""
 
 import json
 from pathlib import Path
+from typing import Optional
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel
 
 from app.utils.logger import get_logger
@@ -11,7 +12,6 @@ from app.utils.logger import get_logger
 logger = get_logger(__name__)
 router = APIRouter()
 
-# Lullabies data loaded from seed_output/lullabies/lullabies.json
 LULLABIES_PATH = Path(__file__).parent.parent.parent.parent / "seed_output" / "lullabies" / "lullabies.json"
 
 
@@ -40,9 +40,23 @@ class LullabyResponse(BaseModel):
 
 
 @router.get("", response_model=LullabyListResponse)
-async def list_lullabies():
-    """List all available lullabies."""
+async def list_lullabies(
+    age_group: Optional[str] = Query(None, description="Filter by age group (0-1, 2-5, 6-8, 9-12)"),
+    mood: Optional[str] = Query(None, description="Filter by mood (calm, wired, curious, sad, anxious, angry)"),
+    lullaby_type: Optional[str] = Query(None, description="Filter by lullaby type"),
+):
+    """List lullabies with optional mood and age filtering."""
     lullabies = _load_lullabies()
+
+    if age_group:
+        lullabies = [l for l in lullabies if l.get("age_group") == age_group]
+
+    if mood:
+        lullabies = [l for l in lullabies if l.get("mood") == mood]
+
+    if lullaby_type:
+        lullabies = [l for l in lullabies if l.get("lullaby_type") == lullaby_type]
+
     return {
         "success": True,
         "data": {"items": lullabies, "total": len(lullabies)},

@@ -1,0 +1,27 @@
+{
+  "id": "shield-2-5-15de",
+  "title": "You Are Safe",
+  "content_type": "lullaby",
+  "lullaby_type": "shield",
+  "card_label": "You Are Safe",
+  "card_subtitle": "A song about being protected",
+  "age_group": "2-5",
+  "mood": "anxious",
+  "language": "en",
+  "instrument": "piano",
+  "imagery": "blanket",
+  "audio_file": "shield-2-5-15de.mp3",
+  "cover_file": "shield-2-5-15de_cover.svg",
+  "cover_prompt": "Watercolor, warm glowing house at night, strong walls, warm light in window, stars above, solid safe golden warmth",
+  "duration_seconds": 196,
+  "lyrics": "[verse]\nI am here\nThe walls are strong the door is shut\nThe blanket wrapped around\nAnd nothing from the dark outside\nCan make a single sound\n\n[chorus]\nI am here, I am here\nNothing going to come\nI am here, I am here\nYou are safe at home\n\n[verse]\nThe shadows are just shapes that play\nThey cannot touch they cannot stay\nAnd every sound you hear tonight\nIs just the house that holds you tight\n\n[chorus]\nI am here, I am here\nNothing going to come\nI am here, I am here\nI am still here",
+  "style_prompt": "Protective lullaby, warm female vocal, low register, simple piano chords, 62 BPM, steady, certain, grounded, reassuring, no vibrato, direct delivery, like a spoken promise set to a simple melody, minimal melodic movement, unwavering, soft piano accompaniment",
+  "engine": "minimax-music-v2-fal",
+  "fingerprint": {
+    "lullabyType": "shield",
+    "instrument": "piano",
+    "imagery": "blanket",
+    "mood": "anxious"
+  },
+  "created_at": "2026-03-29"
+}
