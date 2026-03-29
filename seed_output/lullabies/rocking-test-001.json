@@ -1,0 +1,24 @@
+{
+  "id": "rocking-test-001",
+  "title": "Rock-a-bye",
+  "lullaby_type": "rocking",
+  "card_label": "Rock-a-bye",
+  "card_subtitle": "A classic cradle song",
+  "age_group": "0-1",
+  "mood": "calm",
+  "language": "en",
+  "audio_file": "rocking-test-001.mp3",
+  "cover_file": "rocking-test-001_cover.svg",
+  "duration_seconds": 50,
+  "lyrics": "[verse]\nRock-a-bye, rock-a-bye\nRock-a-bye over the sea\nRock-a-bye rock-a-bye\nCome back to me\nSailing on moonlight rocking on air\nRock-a-bye rock-a-bye I'll meet you there\n\n[chorus]\nSway and sway and sway and sleep\nSway and sway and sway and sleep\n\n[verse]\nRock-a-bye rock-a-bye into the night\nRock-a-bye rock-a-bye hold on tight\nCarried by starlight drifting so slow\nRock-a-bye rock-a-bye let yourself go\n\n[chorus]\nSway and sway and sway and sleep\nSway and sway and sway and sleep\nRock-a-bye goodnight",
+  "genre_description": "lullaby, cradle song, folk, traditional, harp arpeggios, gentle, swaying, rocking, warm, safe, female, warm, clear, maternal, mid-register, soft vibrato, 6/8 time signature, 64 BPM, swinging rocking rhythm, lilting, the feeling of being carried, celtic lullaby influence",
+  "yue_params": {
+    "temperature": 0.75,
+    "top_p": 0.85,
+    "repetition_penalty": 1.0,
+    "max_new_tokens": 2500,
+    "num_segments": 2
+  },
+  "created_at": "2026-03-29",
+  "is_test": true
+}
