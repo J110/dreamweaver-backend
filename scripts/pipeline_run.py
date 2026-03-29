@@ -1356,26 +1356,97 @@ def step_lullabies(args, state: dict) -> bool:
         state["lullaby_elapsed_seconds"] = elapsed
         logger.info("  Lullaby generation completed in %.0fs", elapsed)
 
-        # Copy lullaby audio + covers to web frontend public dirs
-        if WEB_DIR.exists():
+        # Integrate lullabies into content.json (same flow as stories/poems)
+        lullaby_index = BASE_DIR / "seed_output" / "lullabies" / "lullabies.json"
+        if lullaby_index.exists():
             import shutil as _shutil
-            lullaby_audio_src = BASE_DIR / "public" / "audio" / "lullabies"
-            lullaby_cover_src = BASE_DIR / "seed_output" / "lullabies"
-            web_audio_dst = WEB_DIR / "public" / "audio" / "lullabies"
-            web_cover_dst = WEB_DIR / "public" / "covers" / "lullabies"
-            web_audio_dst.mkdir(parents=True, exist_ok=True)
-            web_cover_dst.mkdir(parents=True, exist_ok=True)
+            lullabies = json.loads(lullaby_index.read_text())
+            content_path = BASE_DIR / "seed_output" / "content.json"
+            content = json.loads(content_path.read_text())
+            existing_ids = {c["id"] for c in content}
+            age_map = {"0-1": (0, 1), "2-5": (2, 5), "6-8": (6, 8), "9-12": (9, 12)}
 
-            copied_audio = copied_covers = 0
-            if lullaby_audio_src.exists():
-                for f in lullaby_audio_src.glob("*.mp3"):
-                    _shutil.copy2(str(f), str(web_audio_dst / f.name))
-                    copied_audio += 1
-            if lullaby_cover_src.exists():
-                for f in lullaby_cover_src.glob("*_cover.svg"):
-                    _shutil.copy2(str(f), str(web_cover_dst / f.name))
-                    copied_covers += 1
-            logger.info("  Copied to web: %d audio, %d covers", copied_audio, copied_covers)
+            added = 0
+            for ll in lullabies:
+                if ll["id"] in existing_ids:
+                    continue
+                age_min, age_max = age_map.get(ll.get("age_group", "0-1"), (0, 8))
+                lid = ll["id"]
+
+                # Add to content.json as type: "song"
+                entry = {
+                    "id": lid, "type": "song", "lang": ll.get("language", "en"),
+                    "title": ll.get("title", ll.get("card_label", "Lullaby")),
+                    "card_label": ll.get("card_label", ""),
+                    "cover": f"/covers/{lid}.svg",
+                    "description": ll.get("card_subtitle", ""),
+                    "text": ll.get("lyrics", ""),
+                    "annotated_text": ll.get("lyrics", ""),
+                    "cover_context": ll.get("cover_prompt", ""),
+                    "target_age": (age_min + age_max) // 2,
+                    "age_min": age_min, "age_max": age_max,
+                    "duration_seconds": ll.get("duration_seconds", 120),
+                    "author_id": "system",
+                    "created_at": datetime.now().isoformat(),
+                    "updated_at": datetime.now().isoformat(),
+                    "audio_url": None, "album_art_url": None,
+                    "view_count": 0, "like_count": 0, "save_count": 0,
+                    "categories": ["Lullabies"], "theme": "dreamy",
+                    "is_generated": True, "generation_quality": "good",
+                    "music_genre": "lullaby",
+                    "lead_character_type": "object",
+                    "audio_variants": [{
+                        "voice": "female_1",
+                        "url": f"/audio/pre-gen/{lid}_female_1.mp3",
+                        "duration_seconds": ll.get("duration_seconds", 120),
+                        "provider": "minimax-music-v2",
+                    }],
+                    "mood": ll.get("mood", "calm"),
+                    "lullaby_type": ll.get("lullaby_type", ""),
+                }
+                content.append(entry)
+                existing_ids.add(lid)
+                added += 1
+
+                # Copy audio to standard audio/pre-gen/ directory
+                src_mp3 = BASE_DIR / "seed_output" / "lullabies" / ll.get("audio_file", "")
+                if src_mp3.exists():
+                    dst_mp3 = BASE_DIR / "audio" / "pre-gen" / f"{lid}_female_1.mp3"
+                    dst_mp3.parent.mkdir(parents=True, exist_ok=True)
+                    _shutil.copy2(str(src_mp3), str(dst_mp3))
+                    # Also copy to web frontend
+                    if WEB_DIR.exists():
+                        web_mp3 = WEB_DIR / "public" / "audio" / "pre-gen" / f"{lid}_female_1.mp3"
+                        web_mp3.parent.mkdir(parents=True, exist_ok=True)
+                        _shutil.copy2(str(src_mp3), str(web_mp3))
+
+                # Write temp JSON for FLUX cover generation
+                temp_json = BASE_DIR / "seed_output" / f"{lid}.json"
+                temp_json.write_text(json.dumps(entry, indent=2, ensure_ascii=False))
+
+                # Generate FLUX cover
+                cover_cmd = [
+                    sys.executable, str(SCRIPTS_DIR / "generate_cover_experimental.py"),
+                    "--story-json", str(temp_json),
+                ]
+                cover_ok, _, _, cover_elapsed = run_command(
+                    cover_cmd, f"FLUX Cover ({lid})", timeout=120
+                )
+                if cover_ok:
+                    logger.info("  FLUX cover generated for %s (%.0fs)", lid, cover_elapsed)
+                else:
+                    logger.warning("  FLUX cover failed for %s — placeholder cover used", lid)
+
+                # Clean up temp JSON
+                temp_json.unlink(missing_ok=True)
+
+                logger.info("  Added lullaby to content.json: %s - %s", lid, entry["title"])
+
+            if added > 0:
+                content_path.write_text(json.dumps(content, indent=2, ensure_ascii=False))
+                logger.info("  Added %d lullaby(ies) to content.json (total: %d)", added, len(content))
+            else:
+                logger.info("  No new lullabies to add (all already in content.json)")
     else:
         state["step_lullabies"] = "failed"
         logger.error("  Lullaby generation failed")
