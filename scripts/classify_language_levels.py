@@ -282,6 +282,25 @@ def main():
             json.dump(content, f, indent=2, ensure_ascii=False)
         print(f"\n✅ Saved {content_path}")
 
+        # Also propagate language_level to content_expanded.json (used by generate_content_matrix.py)
+        expanded_path = content_path.parent / "content_expanded.json"
+        if expanded_path.exists():
+            try:
+                expanded = json.loads(expanded_path.read_text())
+                # Build lookup from content.json classifications
+                ll_by_id = {s["id"]: s["language_level"] for s in content if s.get("language_level")}
+                updated = 0
+                for item in expanded:
+                    if item.get("id") in ll_by_id and not item.get("language_level"):
+                        item["language_level"] = ll_by_id[item["id"]]
+                        updated += 1
+                if updated:
+                    with open(expanded_path, "w", encoding="utf-8") as f:
+                        json.dump(expanded, f, indent=2, ensure_ascii=False)
+                    print(f"✅ Propagated language_level to {updated} items in content_expanded.json")
+            except Exception as e:
+                print(f"⚠️ Could not update content_expanded.json: {e}")
+
     # Write CSV log
     log_path = Path(args.log)
     with open(log_path, "w", newline="", encoding="utf-8") as f:

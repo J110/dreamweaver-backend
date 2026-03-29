@@ -1595,10 +1595,20 @@ def main():
         logger.info("Story type (auto-selected): %s (deficit=%.1f%%)", worst_type, worst_deficit * 100)
 
     # Auto-select language level if not provided (deficit-based)
+    # NOTE: Read from content.json (has language_level classifications),
+    # NOT content_expanded.json (which may lack them).
     if not args.language_level:
         from collections import Counter as _Counter
+        content_json_path = BASE_DIR / "seed_output" / "content.json"
+        level_source = existing  # fallback to expanded
+        if content_json_path.exists():
+            try:
+                level_source = json.loads(content_json_path.read_text())
+                logger.info("Language level deficit: reading from content.json (%d items)", len(level_source))
+            except Exception as e:
+                logger.warning("Could not read content.json for language level deficit: %s", e)
         level_counts = _Counter()
-        for s in existing:
+        for s in level_source:
             if s.get("type") not in ("song",):  # Skip lullabies
                 level_counts[s.get("language_level", "advanced")] += 1
         level_total = sum(level_counts.values()) or 1
@@ -1610,6 +1620,7 @@ def main():
                 worst_level = level
         args.language_level = worst_level
         logger.info("Language level (auto-selected): %s (deficit=%.1f%%)", worst_level, worst_level_deficit * 100)
+        logger.info("  Distribution: %s", {l: f"{level_counts.get(l,0)}/{level_total} ({level_counts.get(l,0)/level_total*100:.0f}%%)" for l in ["basic", "intermediate", "advanced"]})
 
     success = 0
     failed = 0
