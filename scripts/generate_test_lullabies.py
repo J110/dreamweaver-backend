@@ -17,165 +17,96 @@ import time
 from datetime import date
 from pathlib import Path
 
-# ── YuE Modal endpoint ──────────────────────────────────────────────
-YUE_ENDPOINT = "https://mohan-32314--dreamweaver-yue-generate-song.modal.run"
+# ── Load .env ────────────────────────────────────────────────────────
+_env_path = Path(__file__).resolve().parents[1] / ".env"
+if _env_path.exists():
+    with open(_env_path) as _f:
+        for _line in _f:
+            _line = _line.strip()
+            if _line and not _line.startswith("#") and "=" in _line:
+                _key, _, _val = _line.partition("=")
+                os.environ.setdefault(_key.strip(), _val.strip())
 
 # ── Output directory ─────────────────────────────────────────────────
 SCRIPT_DIR = Path(__file__).parent
 OUTPUT_DIR = SCRIPT_DIR.parent / "seed_output" / "lullabies"
 
-# ── Per-type YuE configs ────────────────────────────────────────────
-LULLABY_TYPE_CONFIGS = {
-    "heartbeat": {
-        "temperature":        0.7,
-        "top_p":              0.80,
-        "repetition_penalty": 1.0,     # NO penalty — pure repetition IS the point
-        "max_new_tokens":     2000,    # ~20s per segment
-        "num_segments":       2,       # 2 × 20s = ~40s (reduced for test)
-        "stage2_batch_size":  4,
-        "genre": (
-            "lullaby, drone, ambient, minimalist, "
-            "no instruments, vocal only, a cappella, "
-            "meditative, hypnotic, primal, extremely calm, "
-            "female, breathy, warm, humming, mouth-closed, intimate, low register, "
-            "58 BPM, no melody variation, sustained tones, "
-            "monotone, like breathing set to pitch"
-        ),
-    },
-    "rocking": {
-        "temperature":        0.75,
-        "top_p":              0.85,
-        "repetition_penalty": 1.0,     # NO penalty — rocking repeats
-        "max_new_tokens":     2500,
-        "num_segments":       2,       # 2 × 25s = ~50s (reduced for test)
-        "stage2_batch_size":  4,
-        "genre": (
-            "lullaby, cradle song, folk, traditional, "
-            "harp arpeggios, "
-            "gentle, swaying, rocking, warm, safe, "
-            "female, warm, clear, maternal, mid-register, soft vibrato, "
-            "6/8 time signature, 64 BPM, swinging rocking rhythm, "
-            "lilting, the feeling of being carried, celtic lullaby influence"
-        ),
-    },
-    "permission": {
-        "temperature":        0.85,
-        "top_p":              0.90,
-        "repetition_penalty": 1.05,
-        "max_new_tokens":     3000,
-        "num_segments":       3,
-        "stage2_batch_size":  4,
-        "genre": (
-            "lullaby, pastoral, folk, nature, "
-            "fingerpicked acoustic guitar, "
-            "settling, peaceful, descending, evening, "
-            "female, warm, clear, gentle, mid-register, conversational singing, "
-            "64 BPM, descending melody phrases, each verse lower energy, "
-            "pastoral, like describing a landscape getting quieter"
-        ),
-    },
-    "shield": {
-        "temperature":        0.8,
-        "top_p":              0.85,
-        "repetition_penalty": 1.02,
-        "max_new_tokens":     2500,
-        "num_segments":       2,
-        "stage2_batch_size":  4,
-        "genre": (
-            "lullaby, protective, grounded, "
-            "simple piano chords, "
-            "certain, steady, reassuring, unwavering, safe, "
-            "female, warm, low register, steady, no vibrato, direct, "
-            "like a spoken promise set to simple melody, "
-            "62 BPM, minimal melodic movement, grounded, "
-            "the voice is a wall not a river"
-        ),
-    },
-    "closing": {
-        "temperature":        0.85,
-        "top_p":              0.90,
-        "repetition_penalty": 1.05,
-        "max_new_tokens":     3000,
-        "num_segments":       3,
-        "stage2_batch_size":  4,
-        "genre": (
-            "lullaby, intimate, folk, domestic, "
-            "soft acoustic guitar, "
-            "cozy, familiar, wrapping up, warm, domestic, "
-            "female, warm, conversational, almost speaking melodically, "
-            "intimate, like talking to someone in the next pillow, "
-            "64 BPM, kitchen-to-bedroom energy, not performative, "
-            "the gentlest folk song, a parent voice at the end of the day"
-        ),
-    },
-    "counting": {
-        "temperature":        0.8,
-        "top_p":              0.88,
-        "repetition_penalty": 1.02,
-        "max_new_tokens":     2000,
-        "num_segments":       4,
-        "stage2_batch_size":  4,
-        "genre": (
-            "lullaby, nursery rhyme, children's, counting song, "
-            "xylophone, music box, "
-            "simple, repetitive, innocent, predictable, bright but soft, "
-            "female, clear, childlike, sweet, high-mid register, simple, "
-            "66 BPM, same melody every line, cumulative structure, "
-            "music box quality, extremely predictable rhythm"
-        ),
-    },
-    "parent_song": {
-        "temperature":        0.85,
-        "top_p":              0.90,
-        "repetition_penalty": 1.05,
-        "max_new_tokens":     2000,
-        "num_segments":       2,
-        "stage2_batch_size":  4,
-        "genre": (
-            "lullaby, singer-songwriter, intimate, folk, "
-            "sparse solo piano, single notes, "
-            "vulnerable, tender, raw, emotional, real, "
-            "female, breathy, unpolished, slightly rough, intimate, low register, "
-            "like singing alone late at night, not performing, "
-            "60 BPM, extreme sparsity, long pauses, "
-            "piano plays maybe one chord per bar, "
-            "the voice carries everything, imperfect is better than polished"
-        ),
-    },
-    "warning": {
-        "temperature":        0.9,
-        "top_p":              0.93,
-        "repetition_penalty": 1.08,
-        "max_new_tokens":     2500,
-        "num_segments":       2,
-        "stage2_batch_size":  4,
-        "genre": (
-            "lullaby, fairy tale, playful, mysterious, "
-            "soft woodwind, low flute, "
-            "mischievous, conspiratorial, mysterious but gentle, whimsical, "
-            "female, warm, slightly playful, mid-register, a hint of smile, "
-            "like sharing a secret, "
-            "64 BPM, fairy tale energy, storytelling melody, "
-            "mysterious but never dark"
-        ),
-    },
-    "origin": {
-        "temperature":        0.9,
-        "top_p":              0.93,
-        "repetition_penalty": 1.1,
-        "max_new_tokens":     3000,
-        "num_segments":       3,
-        "stage2_batch_size":  4,
-        "genre": (
-            "lullaby, mythological, ancient, storytelling, "
-            "singing bowl, soft cello drone, "
-            "vast, reverent, ancient, wonder, timeless, "
-            "female, warm, resonant, low-mid register, slight reverb quality, "
-            "the voice of someone very old telling a very old story, "
-            "60 BPM, starts spacious and vast, narrows to intimate, "
-            "singing bowl sustain underneath, mythological gravity but not heavy"
-        ),
-    },
+# ── Per-type MiniMax style prompts ───────────────────────────────────
+LULLABY_STYLE_PROMPTS = {
+    "heartbeat": (
+        "Solo female vocal lullaby, humming only, no instruments, "
+        "no melody variation, sustained warm tones, 58 BPM, "
+        "extremely intimate, breathy, mouth-closed humming, "
+        "monotone drone, like breathing set to pitch, "
+        "meditative, hypnotic, the simplest possible sound, "
+        "no percussion, no rhythm section, pure voice"
+    ),
+    "permission": (
+        "Gentle folk lullaby, warm female vocal, "
+        "fingerpicked acoustic guitar, 64 BPM, "
+        "pastoral, settling, peaceful, evening atmosphere, "
+        "descending melody phrases, each verse quieter, "
+        "conversational singing, nature imagery, "
+        "the world going to sleep"
+    ),
+    "shield": (
+        "Protective lullaby, warm female vocal, low register, "
+        "simple piano chords, 62 BPM, "
+        "steady, certain, grounded, reassuring, "
+        "no vibrato, direct delivery, "
+        "like a spoken promise set to a simple melody, "
+        "minimal melodic movement, unwavering, "
+        "the voice is solid and present"
+    ),
+    "closing": (
+        "Intimate domestic lullaby, warm female vocal, "
+        "soft acoustic guitar, 64 BPM, "
+        "cozy, familiar, conversational, "
+        "almost speaking melodically, not performative, "
+        "kitchen-to-bedroom energy, "
+        "the gentlest folk song, end of day warmth"
+    ),
+    "rocking": (
+        "Traditional cradle song, warm maternal female vocal, "
+        "harp arpeggios, 6/8 time signature, 64 BPM, "
+        "swaying rocking rhythm, gentle lilting motion, "
+        "the feeling of being carried and rocked, "
+        "celtic lullaby influence, soft vibrato, "
+        "repetitive swinging pattern"
+    ),
+    "counting": (
+        "Children's counting lullaby, clear sweet female vocal, "
+        "xylophone and music box, 66 BPM, "
+        "simple repetitive melody, same tune every line, "
+        "cumulative nursery rhyme structure, "
+        "bright but soft, childlike, innocent, "
+        "extremely predictable rhythm"
+    ),
+    "parent_song": (
+        "Intimate singer-songwriter lullaby, "
+        "breathy unpolished female vocal, low register, "
+        "sparse solo piano with single notes, 60 BPM, "
+        "vulnerable, tender, raw, emotional, "
+        "like singing alone late at night, "
+        "not a performance, imperfect and real, "
+        "long pauses between phrases, extreme sparsity"
+    ),
+    "warning": (
+        "Playful mysterious lullaby, warm female vocal, "
+        "soft woodwind and low flute, 64 BPM, "
+        "mischievous, conspiratorial, whimsical, "
+        "fairy tale energy, like sharing a secret, "
+        "mysterious but gentle and never dark, "
+        "storytelling melody with a hint of smile"
+    ),
+    "origin": (
+        "Ancient storytelling lullaby, warm resonant female vocal, "
+        "singing bowl and soft cello drone, 60 BPM, "
+        "mythological, vast, reverent, timeless, "
+        "the voice of someone very old and very kind, "
+        "starts spacious and narrows to intimate, "
+        "wonder without weight"
+    ),
 }
 
 # ── Test lyrics (from spec) ─────────────────────────────────────────
@@ -457,31 +388,36 @@ CARD_META = {
 }
 
 
-def generate_lullaby_via_modal(lullaby_type: str) -> bytes:
-    """Call YuE Modal function to generate a lullaby. Returns MP3 bytes."""
-    import modal
+def generate_lullaby_minimax(lullaby_type: str) -> bytes:
+    """Generate a lullaby via MiniMax Music on Replicate. Returns MP3 bytes."""
+    import replicate
+    import httpx
 
-    config = LULLABY_TYPE_CONFIGS[lullaby_type]
+    style_prompt = LULLABY_STYLE_PROMPTS[lullaby_type]
     lyrics = LULLABY_LYRICS[lullaby_type]
 
-    # Look up the deployed Modal function
-    generate_song = modal.Function.from_name("dreamweaver-yue", "generate_song")
-
-    print(f"  Calling YuE via Modal SDK... (this may take 2-8 min on first call)")
-    print(f"  Params: temp={config['temperature']}, top_p={config['top_p']}, "
-          f"rep_penalty={config['repetition_penalty']}, "
-          f"segments={config['num_segments']}, tokens={config['max_new_tokens']}")
+    print(f"  Calling MiniMax Music 1.5 on Replicate...")
+    print(f"  Style: {style_prompt[:80]}...")
     start = time.time()
-    audio_bytes = generate_song.remote(
-        genre_description=config["genre"],
-        lyrics=lyrics,
-        num_segments=config["num_segments"],
-        max_new_tokens=config["max_new_tokens"],
-        stage2_batch_size=config["stage2_batch_size"],
-        temperature=config["temperature"],
-        top_p=config["top_p"],
-        repetition_penalty=config["repetition_penalty"],
+
+    output = replicate.run(
+        "minimax/music-1.5",
+        input={
+            "prompt": style_prompt,
+            "lyrics": lyrics,
+        },
     )
+
+    if not output:
+        raise RuntimeError("No output from MiniMax")
+
+    audio_url = str(output)
+    print(f"  Got audio URL, downloading...")
+    resp = httpx.get(audio_url, timeout=120, follow_redirects=True)
+    if resp.status_code != 200 or len(resp.content) < 1000:
+        raise RuntimeError(f"Download failed ({resp.status_code}, {len(resp.content)} bytes)")
+
+    audio_bytes = resp.content
     elapsed = time.time() - start
     print(f"  Got {len(audio_bytes):,} bytes in {elapsed:.0f}s")
     return audio_bytes
@@ -529,14 +465,8 @@ def create_metadata(lullaby_type: str, duration_seconds: int) -> dict:
         "cover_file": f"{lullaby_id}_cover.svg",
         "duration_seconds": duration_seconds,
         "lyrics": LULLABY_LYRICS[lullaby_type],
-        "genre_description": LULLABY_TYPE_CONFIGS[lullaby_type]["genre"],
-        "yue_params": {
-            "temperature": LULLABY_TYPE_CONFIGS[lullaby_type]["temperature"],
-            "top_p": LULLABY_TYPE_CONFIGS[lullaby_type]["top_p"],
-            "repetition_penalty": LULLABY_TYPE_CONFIGS[lullaby_type]["repetition_penalty"],
-            "max_new_tokens": LULLABY_TYPE_CONFIGS[lullaby_type]["max_new_tokens"],
-            "num_segments": LULLABY_TYPE_CONFIGS[lullaby_type]["num_segments"],
-        },
+        "style_prompt": LULLABY_STYLE_PROMPTS[lullaby_type],
+        "engine": "minimax-music-1.5",
         "created_at": str(date.today()),
         "is_test": True,
     }
@@ -559,7 +489,7 @@ def main():
     parser.add_argument(
         "--types", nargs="+",
         default=["heartbeat", "rocking"],
-        choices=list(LULLABY_TYPE_CONFIGS.keys()),
+        choices=list(LULLABY_STYLE_PROMPTS.keys()),
         help="Lullaby types to generate (default: heartbeat rocking)",
     )
     parser.add_argument(
@@ -583,7 +513,7 @@ def main():
         if args.skip_audio and mp3_path.exists():
             print(f"  Skipping audio (--skip-audio, file exists)")
         else:
-            audio_bytes = generate_lullaby_via_modal(ltype)
+            audio_bytes = generate_lullaby_minimax(ltype)
             mp3_path.write_bytes(audio_bytes)
             print(f"  Audio: {mp3_path.name} ({mp3_path.stat().st_size:,} bytes)")
 

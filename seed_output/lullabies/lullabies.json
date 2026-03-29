@@ -10,16 +10,10 @@
     "language": "en",
     "audio_file": "heartbeat-test-001.mp3",
     "cover_file": "heartbeat-test-001_cover.svg",
-    "duration_seconds": 40,
+    "duration_seconds": 168,
     "lyrics": "[verse]\nMmm mmm mmm mmm\nLa la la la\nMmm mmm mmm mmm\nShh shh shh shh\n\n[verse]\nMmm mmm mmm mmm\nLa la la la\nMmm mmm mmm mmm\nLa la la la\n\n[verse]\nMmm mmm mmm\nLa la la\nMmm mmm\nLa la\nMmm",
-    "genre_description": "lullaby, drone, ambient, minimalist, no instruments, vocal only, a cappella, meditative, hypnotic, primal, extremely calm, female, breathy, warm, humming, mouth-closed, intimate, low register, 58 BPM, no melody variation, sustained tones, monotone, like breathing set to pitch",
-    "yue_params": {
-      "temperature": 0.7,
-      "top_p": 0.8,
-      "repetition_penalty": 1.0,
-      "max_new_tokens": 2000,
-      "num_segments": 2
-    },
+    "style_prompt": "Solo female vocal lullaby, humming only, no instruments, no melody variation, sustained warm tones, 58 BPM, extremely intimate, breathy, mouth-closed humming, monotone drone, like breathing set to pitch, meditative, hypnotic, the simplest possible sound, no percussion, no rhythm section, pure voice",
+    "engine": "minimax-music-1.5",
     "created_at": "2026-03-29",
     "is_test": true
   },
@@ -34,16 +28,10 @@
     "language": "en",
     "audio_file": "rocking-test-001.mp3",
     "cover_file": "rocking-test-001_cover.svg",
-    "duration_seconds": 50,
+    "duration_seconds": 118,
     "lyrics": "[verse]\nRock-a-bye, rock-a-bye\nRock-a-bye over the sea\nRock-a-bye rock-a-bye\nCome back to me\nSailing on moonlight rocking on air\nRock-a-bye rock-a-bye I'll meet you there\n\n[chorus]\nSway and sway and sway and sleep\nSway and sway and sway and sleep\n\n[verse]\nRock-a-bye rock-a-bye into the night\nRock-a-bye rock-a-bye hold on tight\nCarried by starlight drifting so slow\nRock-a-bye rock-a-bye let yourself go\n\n[chorus]\nSway and sway and sway and sleep\nSway and sway and sway and sleep\nRock-a-bye goodnight",
-    "genre_description": "lullaby, cradle song, folk, traditional, harp arpeggios, gentle, swaying, rocking, warm, safe, female, warm, clear, maternal, mid-register, soft vibrato, 6/8 time signature, 64 BPM, swinging rocking rhythm, lilting, the feeling of being carried, celtic lullaby influence",
-    "yue_params": {
-      "temperature": 0.75,
-      "top_p": 0.85,
-      "repetition_penalty": 1.0,
-      "max_new_tokens": 2500,
-      "num_segments": 2
-    },
+    "style_prompt": "Traditional cradle song, warm maternal female vocal, harp arpeggios, 6/8 time signature, 64 BPM, swaying rocking rhythm, gentle lilting motion, the feeling of being carried and rocked, celtic lullaby influence, soft vibrato, repetitive swinging pattern",
+    "engine": "minimax-music-1.5",
     "created_at": "2026-03-29",
     "is_test": true
   }
