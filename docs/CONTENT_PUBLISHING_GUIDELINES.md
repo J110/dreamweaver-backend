@@ -454,6 +454,30 @@ curl -s -X POST http://localhost:8000/api/v1/admin/reload \
 
 **Lyrics generation**: Mistral AI with type-specific structure instructions. Falls back to built-in fallback lyrics if Mistral unavailable.
 
+### Lullaby Naming & Cover Rules
+
+Lullabies are **functional sleep tools**, NOT narrative content. They do NOT have characters or story arcs.
+
+**Titles**: Each lullaby has TWO name fields:
+- `card_label` — Fixed per type (e.g., "Humming", "Rock-a-bye", "You Are Safe"). Same for all lullabies of that type. Helps parents recognize the category.
+- `title` — Unique per lullaby. The most evocative **image** from the lyrics. NOT the type name, NOT a character name.
+
+| Type | card_label (fixed) | Example titles (unique per lullaby) |
+|------|-------------------|--------------------------------------|
+| heartbeat | Humming | "Soft as Breathing", "Warm and Still", "The Quietest Sound" |
+| permission | The World Sleeps | "When the River Stopped", "Even the Wind" |
+| shield | You Are Safe | "These Strong Walls", "The Blanket Fort" |
+| closing | Day Is Done | "Shoes by the Door", "Everything in Its Place" |
+| rocking | Rock-a-bye | "Sailing on Moonlight", "The Gentle Wave" |
+| counting | One by One | "Three Clouds and a Star", "One Sleepy Owl" |
+| parent_song | For You | "When You Were New", "I'll Remember" |
+| warning | Dream Catcher | "Wings at the Window", "The Ship That Sailed Past" |
+| origin | How Dreams Began | "The First Star That Fell", "Before There Were Dreams" |
+
+**Cover prompts**: Each lullaby's cover shows the specific visual moment from its lyrics, NOT a generic type image. The `generate_lullaby.py` script extracts `[TITLE:]` and `[COVER:]` tags from the Mistral output. Type-level cover prompts are fallbacks only.
+
+**When adding lullabies manually**: Read the lyrics, pick the most visual image, use it for both title and cover. Two lullabies of the same type MUST have different titles and different covers.
+
 ---
 
 ## Production Deployment Procedure

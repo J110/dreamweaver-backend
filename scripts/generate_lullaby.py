@@ -526,13 +526,13 @@ def generate_lyrics(lullaby_type: str, age: str, mood: str, imagery: str) -> str
     api_key = os.environ.get("MISTRAL_API_KEY")
     if not api_key:
         print("  WARNING: No MISTRAL_API_KEY — using fallback lyrics")
-        return FALLBACK_LYRICS.get(lullaby_type, FALLBACK_LYRICS["rocking"])
+        return FALLBACK_LYRICS.get(lullaby_type, FALLBACK_LYRICS["rocking"]), None, None
 
     try:
         from mistralai import Mistral
     except ImportError:
         print("  WARNING: mistralai not installed — using fallback lyrics")
-        return FALLBACK_LYRICS.get(lullaby_type, FALLBACK_LYRICS["rocking"])
+        return FALLBACK_LYRICS.get(lullaby_type, FALLBACK_LYRICS["rocking"]), None, None
 
     type_cfg = LULLABY_TYPES[lullaby_type]
     structure = STRUCTURE_INSTRUCTIONS[lullaby_type]
@@ -558,7 +558,33 @@ IMAGERY: {imagery.replace('_', ' ')}
 STRUCTURE:
 {structure}
 
-Write ONLY the lyrics with [verse] and [chorus] tags. Nothing else."""
+Write the lyrics with [verse] and [chorus] tags.
+
+After the lyrics, generate a title and cover description on their own lines:
+
+[TITLE: your title here]
+[COVER: your cover description here]
+
+TITLE RULES:
+The title is the single most evocative IMAGE from the lyrics.
+NOT the type name. NOT a character name. Just the image.
+Examples:
+- If lyrics mention a river stopping: "When the River Stopped"
+- If lyrics mention shoes by the door: "Shoes by the Door"
+- If lyrics count creatures: "One Sleepy Owl"
+Keep it under 6 words.
+
+COVER RULES:
+The cover shows the single most visual moment from the lyrics.
+NOT a generic sleeping scene. The SPECIFIC image from THIS lullaby.
+Examples:
+- Lyrics about a river stopping and flowers closing:
+  [COVER: A still river at dusk with closed flowers along the bank, watercolor, soft blues and silver]
+- Lyrics about shoes by the door and dishes stacked:
+  [COVER: A pair of small shoes by a warm door, soft kitchen light behind, watercolor, golden warmth]
+- Lyrics about counting an owl, fish, and clouds:
+  [COVER: A tiny owl asleep on a branch with one eye barely open, watercolor, soft moonlight]
+Keep the watercolor children's book style. Warm, soft, sleep-appropriate colors."""
 
     print(f"  Generating lyrics via Mistral...")
     client = Mistral(api_key=api_key)
@@ -579,8 +605,26 @@ Write ONLY the lyrics with [verse] and [chorus] tags. Nothing else."""
         lines = lyrics.split("\n")
         lyrics = "\n".join(l for l in lines if not l.startswith("```"))
 
+    # Extract [TITLE: ...] and [COVER: ...] if present
+    title = None
+    cover_prompt = None
+    import re
+    title_match = re.search(r'\[TITLE:\s*(.+?)\]', lyrics)
+    if title_match:
+        title = title_match.group(1).strip().strip('"\'')
+        lyrics = re.sub(r'\n*\[TITLE:[^\]]+\]\n*', '\n', lyrics).strip()
+
+    cover_match = re.search(r'\[COVER:\s*(.+?)\]', lyrics)
+    if cover_match:
+        cover_prompt = cover_match.group(1).strip().strip('"\'')
+        lyrics = re.sub(r'\n*\[COVER:[^\]]+\]\n*', '\n', lyrics).strip()
+
     print(f"  Lyrics: {len(lyrics)} chars, {lyrics.count('[verse]')} verses, {lyrics.count('[chorus]')} choruses")
-    return lyrics
+    if title:
+        print(f"  Title: {title}")
+    if cover_prompt:
+        print(f"  Cover: {cover_prompt[:60]}...")
+    return lyrics, title, cover_prompt
 
 
 # ═════════════════════════════════════════════════════════════════════
@@ -740,12 +784,14 @@ def generate_one(mood: str, age: str, lullaby_type: str = None,
         return {"id": lullaby_id, "lullaby_type": lullaby_type, "dry_run": True}
 
     # 1. Generate lyrics
+    generated_title = None
+    generated_cover_prompt = None
     if skip_lyrics_gen:
         lyrics = FALLBACK_LYRICS.get(lullaby_type, FALLBACK_LYRICS["rocking"])
         print(f"  Using fallback lyrics ({len(lyrics)} chars)")
     else:
         try:
-            lyrics = generate_lyrics(lullaby_type, age, mood, imagery)
+            lyrics, generated_title, generated_cover_prompt = generate_lyrics(lullaby_type, age, mood, imagery)
         except Exception as e:
             print(f"  Lyrics generation failed: {e}")
             lyrics = FALLBACK_LYRICS.get(lullaby_type, FALLBACK_LYRICS["rocking"])
@@ -791,9 +837,14 @@ def generate_one(mood: str, age: str, lullaby_type: str = None,
     duration = get_audio_duration(mp3_path)
 
     # 6. Build metadata
+    # Title: use LLM-generated title, fallback to type label
+    title = generated_title or type_cfg["title"]
+    # Cover prompt: use LLM-generated (lyrics-specific), fallback to type-level generic
+    cover_prompt_text = generated_cover_prompt or COVER_PROMPTS.get(lullaby_type, "")
+
     meta = {
         "id": lullaby_id,
-        "title": type_cfg["title"],
+        "title": title,
         "content_type": "lullaby",
         "lullaby_type": lullaby_type,
         "card_label": type_cfg["title"],
@@ -805,7 +856,7 @@ def generate_one(mood: str, age: str, lullaby_type: str = None,
         "imagery": imagery,
         "audio_file": f"{lullaby_id}.mp3",
         "cover_file": cover_file,
-        "cover_prompt": COVER_PROMPTS.get(lullaby_type, ""),
+        "cover_prompt": cover_prompt_text,
         "duration_seconds": duration,
         "lyrics": lyrics,
         "style_prompt": style_prompt,
