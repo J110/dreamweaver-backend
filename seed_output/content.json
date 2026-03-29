@@ -23285,7 +23285,7 @@
     "audio_variants": [
       {
         "voice": "female_1",
-        "url": "/audio/pre-gen/heartbea_female_1.mp3",
+        "url": "/audio/pre-gen/heartbeat-0-1-13e8_female_1.mp3",
         "duration_seconds": 109,
         "provider": "minimax-music-v2"
       }
@@ -23323,7 +23323,7 @@
     "audio_variants": [
       {
         "voice": "female_1",
-        "url": "/audio/pre-gen/shield-2_female_1.mp3",
+        "url": "/audio/pre-gen/shield-2-5-15de_female_1.mp3",
         "duration_seconds": 196,
         "provider": "minimax-music-v2"
       }
@@ -23361,12 +23361,88 @@
     "audio_variants": [
       {
         "voice": "female_1",
-        "url": "/audio/pre-gen/origin-6_female_1.mp3",
+        "url": "/audio/pre-gen/origin-6-8-164c_female_1.mp3",
         "duration_seconds": 160,
         "provider": "minimax-music-v2"
       }
     ],
     "mood": "curious",
     "lullaby_type": "origin"
+  },
+  {
+    "id": "heartbeat-test-001",
+    "type": "song",
+    "lang": "en",
+    "title": "Humming",
+    "cover": "/covers/heartbeat-test-001.svg",
+    "description": "Just a gentle hum",
+    "text": "[verse]\nMmm mmm mmm mmm\nLa la la la\nMmm mmm mmm mmm\nShh shh shh shh\n\n[verse]\nMmm mmm mmm mmm\nLa la la la\nMmm mmm mmm mmm\nLa la la la\n\n[verse]\nMmm mmm mmm\nLa la la\nMmm mmm\nLa la\nMmm",
+    "target_age": 0,
+    "age_min": 0,
+    "age_max": 1,
+    "duration_seconds": 168,
+    "author_id": "system",
+    "created_at": "2026-03-29T18:03:42.354602",
+    "updated_at": "2026-03-29T18:03:42.354618",
+    "audio_url": null,
+    "album_art_url": null,
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "categories": [
+      "Lullabies"
+    ],
+    "theme": "dreamy",
+    "is_generated": true,
+    "generation_quality": "good",
+    "music_genre": "lullaby",
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/heartbeat-test-001_female_1.mp3",
+        "duration_seconds": 168,
+        "provider": "minimax-music-v2"
+      }
+    ],
+    "mood": "calm",
+    "lullaby_type": "heartbeat"
+  },
+  {
+    "id": "rocking-test-001",
+    "type": "song",
+    "lang": "en",
+    "title": "Rock-a-bye",
+    "cover": "/covers/rocking-test-001.svg",
+    "description": "A classic cradle song",
+    "text": "[verse]\nRock-a-bye, rock-a-bye\nRock-a-bye over the sea\nRock-a-bye rock-a-bye\nCome back to me\nSailing on moonlight rocking on air\nRock-a-bye rock-a-bye I'll meet you there\n\n[chorus]\nSway and sway and sway and sleep\nSway and sway and sway and sleep\n\n[verse]\nRock-a-bye rock-a-bye into the night\nRock-a-bye rock-a-bye hold on tight\nCarried by starlight drifting so slow\nRock-a-bye rock-a-bye let yourself go\n\n[chorus]\nSway and sway and sway and sleep\nSway and sway and sway and sleep\nRock-a-bye goodnight",
+    "target_age": 0,
+    "age_min": 0,
+    "age_max": 1,
+    "duration_seconds": 118,
+    "author_id": "system",
+    "created_at": "2026-03-29T18:03:42.354633",
+    "updated_at": "2026-03-29T18:03:42.354634",
+    "audio_url": null,
+    "album_art_url": null,
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "categories": [
+      "Lullabies"
+    ],
+    "theme": "dreamy",
+    "is_generated": true,
+    "generation_quality": "good",
+    "music_genre": "lullaby",
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/rocking-test-001_female_1.mp3",
+        "duration_seconds": 118,
+        "provider": "minimax-music-v2"
+      }
+    ],
+    "mood": "calm",
+    "lullaby_type": "rocking"
   }
 ]
