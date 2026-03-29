@@ -1421,10 +1421,26 @@ def step_lullabies(args, state: dict) -> bool:
                         _shutil.copy2(str(src_mp3), str(web_mp3))
 
                 # Write temp JSON for FLUX cover generation
+                # Override cover_context with abstract lullaby style
+                LULLABY_COVER_STYLE = (
+                    "Minimal abstract nursery art, extremely soft, dreamy, "
+                    "no characters, no faces, no animals, no figures, "
+                    "one simple shape or light source only, "
+                    "soft gradient background, blurred edges, "
+                    "like looking through half-closed eyes, "
+                    "deep muted blues and soft warm golds, "
+                    "large empty space, restful negative space, "
+                    "the visual equivalent of silence, "
+                    "NOT an illustration, NOT a scene, NOT watercolor, "
+                    "closer to abstract photography or soft pastel texture"
+                )
+                llm_cover_desc = ll.get("cover_prompt", "a single soft light in deep blue darkness")
+                entry["cover_context"] = f"{LULLABY_COVER_STYLE}, {llm_cover_desc}"
+
                 temp_json = BASE_DIR / "seed_output" / f"{lid}.json"
                 temp_json.write_text(json.dumps(entry, indent=2, ensure_ascii=False))
 
-                # Generate FLUX cover
+                # Generate FLUX cover (abstract style for lullabies)
                 cover_cmd = [
                     sys.executable, str(SCRIPTS_DIR / "generate_cover_experimental.py"),
                     "--story-json", str(temp_json),

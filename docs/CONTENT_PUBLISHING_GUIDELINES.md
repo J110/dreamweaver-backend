@@ -474,9 +474,17 @@ Lullabies are **functional sleep tools**, NOT narrative content. They do NOT hav
 | warning | Dream Catcher | "Wings at the Window", "The Ship That Sailed Past" |
 | origin | How Dreams Began | "The First Star That Fell", "Before There Were Dreams" |
 
-**Cover prompts**: Each lullaby's cover shows the specific visual moment from its lyrics, NOT a generic type image. The `generate_lullaby.py` script extracts `[TITLE:]` and `[COVER:]` tags from the Mistral output. Type-level cover prompts are fallbacks only.
+**Cover style**: Lullaby covers must look COMPLETELY DIFFERENT from story covers. Stories use watercolor illustrations with characters and scenes. Lullabies are **abstract, minimal, nearly empty** — one shape, one light source, one gradient. NO characters, NO animals, NO faces, NO scenes. The parent should see the difference instantly in the app grid.
 
-**When adding lullabies manually**: Read the lyrics, pick the most visual image, use it for both title and cover. Two lullabies of the same type MUST have different titles and different covers.
+**Cover prompts**: Each lullaby's cover is the most important FEELING from its lyrics expressed as a single abstract visual. The `generate_lullaby.py` script extracts `[COVER:]` tags from Mistral output. The pipeline wraps these with `LULLABY_COVER_STYLE` prefix before sending to FLUX. Type-level cover prompts are fallbacks only.
+
+**Examples of good lullaby covers**:
+- Lyrics about a river stopping → a single horizontal line of silver on deep blue
+- Lyrics about being safe → a warm circle of amber light surrounded by calm deep blue
+- Lyrics about rocking → a single gentle curved line, like one wave from very far away
+- Lyrics about a falling star → one thin streak of gold cutting across deep blue
+
+**When adding lullabies manually**: Read the lyrics, pick the most visual image, use it for both title and cover. Two lullabies of the same type MUST have different titles and different covers. Cover must be abstract/minimal, not illustrated.
 
 ---
 

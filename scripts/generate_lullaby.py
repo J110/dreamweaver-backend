@@ -575,16 +575,20 @@ Examples:
 Keep it under 6 words.
 
 COVER RULES:
-The cover shows the single most visual moment from the lyrics.
-NOT a generic sleeping scene. The SPECIFIC image from THIS lullaby.
-Examples:
-- Lyrics about a river stopping and flowers closing:
-  [COVER: A still river at dusk with closed flowers along the bank, watercolor, soft blues and silver]
-- Lyrics about shoes by the door and dishes stacked:
-  [COVER: A pair of small shoes by a warm door, soft kitchen light behind, watercolor, golden warmth]
-- Lyrics about counting an owl, fish, and clouds:
-  [COVER: A tiny owl asleep on a branch with one eye barely open, watercolor, soft moonlight]
-Keep the watercolor children's book style. Warm, soft, sleep-appropriate colors."""
+LULLABY COVERS ARE NOT ILLUSTRATIONS. They are abstract, minimal,
+and almost empty. NO characters. NO animals. NO faces. NO scenes.
+Just ONE simple visual element — a shape, a light, a gradient.
+
+Take the most important FEELING from your lyrics and express it
+as a single abstract visual:
+- Lyrics about a river stopping: a single horizontal line of silver on deep blue, like still water reflecting nothing
+- Lyrics about shoes by the door: a small warm golden rectangle on soft darkness, like doorway light
+- Lyrics about counting sleeping creatures: four tiny dots in a diagonal line, each dimmer than the last
+- Lyrics about being safe: a warm circle of amber light surrounded by calm deep blue
+- Lyrics about rocking on the sea: a single gentle curved line on deep blue, like one wave seen from very far away
+- Lyrics about a falling star: one thin streak of gold cutting across deep blue, with a faint glow at the end
+
+Style: minimal abstract, soft gradient, blurred edges, deep muted blues and warm golds, large negative space, nursery art aesthetic, extremely restful."""
 
     print(f"  Generating lyrics via Mistral...")
     client = Mistral(api_key=api_key)
