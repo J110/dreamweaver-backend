@@ -116,13 +116,17 @@ def _build_new_entry_js(story: dict) -> str:
     experimental_v2 = story.get("experimental_v2", False)
     experimental_v2_line = "\n      experimental_v2: true," if experimental_v2 else ""
 
+    # has_baked_music: audio file already contains background music — disables client-side ambient music
+    has_baked_music = story.get("has_baked_music", False)
+    has_baked_music_line = "\n      has_baked_music: true," if has_baked_music else ""
+
     entry = f"""    {{
       id: "{_js_escape(sid)}",
       type: "{stype}",
       title: "{_js_escape(title)}",
       description: "{_js_escape(desc)}",
       cover: "{cover}",
-      addedAt: "{added_at}",{mood_line}{story_type_line}{experimental_v2_line}
+      addedAt: "{added_at}",{mood_line}{story_type_line}{experimental_v2_line}{has_baked_music_line}
       text: "{_js_escape(text)}",{lullaby_line}{character_line}
       target_age: {target_age},
       duration: {duration},

@@ -23606,6 +23606,7 @@
         "phase3": "deep_stillness"
       }
     },
+    "has_baked_music": true,
     "musicParams": {},
     "character": {
       "name": "Little Frog",
@@ -23706,6 +23707,88 @@
     "has_qa": false,
     "has_games": false,
     "hook": "The night the moon bounced like a rubber ball.",
+    "repeated_phrase": "Not yet, not yet",
+    "experimental_v2": true
+  },
+  {
+    "id": "exp2-5ce3a0a5ad",
+    "type": "story",
+    "lang": "en",
+    "title": "What happens when a whole village’s bread bounces away?",
+    "description": "What happens when a whole village’s bread bounces away?",
+    "text": "Not yet, not yet --- Once, in a village where the ovens never slept, there lived a baker named Mira. Every morning, she pulled warm loaves from the oven—soft like clouds, golden like sunrise. But one day, the dough was different. It wobbled. It jiggled. Mira poked it, and it boinged right back. Not yet, not yet, she whispered, sliding the loaves into the oven. The bread baked. The village waited. Then—POP!—the loaves shot out of the oven like frogs from a pond. They bounced off the walls. They ricocheted off the ceiling. One smacked Mira right on the nose. BONK! Can you guess what happened next? The loaves didn’t stop. They bounced down the streets. They leaped over fences. They boinged into the river with a SPLASH! Mira chased them, arms flailing. Not yet, not yet, she gasped, but the bread was too fast. It bounced over rooftops. It boinged into trees. It even landed in a goat’s mouth—CHOMP!—before the goat spat it out. BLEH! Then, as suddenly as it started, the bouncing slowed. The loaves wobbled. They teetered. And one by one, they flopped onto the ground like tired puppies. Mira gathered them up, still warm, still golden. She carried them home, and this time, she let them rest. The loaves didn’t bounce again. They didn’t boing. They just… sat. Soft. Still. And if you listen carefully tonight, you might hear the echo of a loaf, settling into sleep. Not yet, not yet… until morning.",
+    "cover": "/covers/exp2-5ce3a0a5ad.svg",
+    "target_age": 7,
+    "age_min": 6,
+    "age_max": 8,
+    "duration": 4,
+    "duration_seconds": 213.94,
+    "author_id": "system",
+    "created_at": "2026-03-30T13:52:39.586904",
+    "updated_at": "2026-03-30T13:52:39.586904",
+    "addedAt": "2026-03-30",
+    "theme": "folk_tale",
+    "mood": "wired",
+    "story_type": "folk_tale",
+    "categories": [
+      "Bedtime"
+    ],
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/exp2-5ce3a0a5ad_female_1.mp3",
+        "duration_seconds": 223.08,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/exp2-5ce3a0a5ad_asmr.mp3",
+        "duration_seconds": 204.79,
+        "provider": "chatterbox"
+      }
+    ],
+    "musicalBrief": {
+      "storyId": "exp2-5ce3a0a5ad",
+      "ageGroup": "6-8",
+      "musicalIdentity": {
+        "culturalReference": "folk_acoustic",
+        "primaryLoop": "guitar_fingerpick",
+        "padCharacter": "warm_strings"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "G"
+      },
+      "melodicCharacter": "cycling_arpeggio",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 58
+      },
+      "environment": {
+        "natureSoundPrimary": "wind_gentle",
+        "natureSoundSecondary": "wind_chimes",
+        "ambientEvents": [
+          "cricket",
+          "leaves",
+          "waterDrop"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "gentle_wonder",
+        "phase2": "soft_floating",
+        "phase3": "deep_stillness"
+      }
+    },
+    "musicParams": {},
+    "character": {},
+    "word_count": 247,
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "is_generated": true,
+    "has_qa": false,
+    "has_games": false,
+    "hook": "What happens when a whole village’s bread bounces away?",
     "repeated_phrase": "Not yet, not yet",
     "experimental_v2": true
   }
