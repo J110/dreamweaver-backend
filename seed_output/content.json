@@ -23446,97 +23446,6 @@
     "lullaby_type": "rocking"
   },
   {
-    "id": "gen-f5740d9199ee",
-    "type": "story",
-    "lang": "en",
-    "title": "Moonlight on the Lily Pad",
-    "description": "A frog sits very still on a lily pad, watching the moon's reflection shimmer on the pond.",
-    "text": "Did you know the moon leaves light on the water? Frog sits on his lily pad. The pond is dark. The air is soft. Just a little shimmer... just a little.\n\nFrog blinks. The water moves. Just a little shimmer... just a little. Can you see it? Close your eyes. The moon on the water. Just a little shimmer... just a little.\n\nThe wind stops. The ripples fade. Just a little shimmer... just a little. Frog breathes. The night breathes. The lily pad is still.\n\nMoonlight stays. The pond is quiet. Just a little.\n\nShimmer.\n\nStill.",
-    "cover": "/covers/gen-f5740d9199ee.svg",
-    "target_age": 3,
-    "age_min": 2,
-    "age_max": 5,
-    "duration": 2,
-    "duration_seconds": 79.44,
-    "author_id": "system",
-    "created_at": "2026-03-30T09:24:38.368022",
-    "updated_at": "2026-03-30T09:24:38.368022",
-    "addedAt": "2026-03-30",
-    "theme": "nature",
-    "mood": "calm",
-    "story_type": "nature",
-    "categories": [
-      "Nature",
-      "Bedtime"
-    ],
-    "audio_variants": [
-      {
-        "voice": "female_1",
-        "url": "/audio/pre-gen/gen-f574_female_1.mp3",
-        "duration_seconds": 89.14,
-        "provider": "chatterbox"
-      },
-      {
-        "voice": "asmr",
-        "url": "/audio/pre-gen/gen-f574_asmr.mp3",
-        "duration_seconds": 69.75,
-        "provider": "chatterbox"
-      }
-    ],
-    "musicalBrief": {
-      "storyId": "gen-f5740d9199ee",
-      "ageGroup": "2-5",
-      "musicalIdentity": {
-        "culturalReference": "japanese",
-        "primaryLoop": "koto_plucks",
-        "padCharacter": "silk_veil"
-      },
-      "tonality": {
-        "mode": "major_pentatonic",
-        "rootNote": "E"
-      },
-      "melodicCharacter": "descending_lullaby",
-      "rhythm": {
-        "feel": "gentle_pulse",
-        "baseTempo": 58
-      },
-      "environment": {
-        "natureSoundPrimary": "forest_night",
-        "natureSoundSecondary": "wind_chimes",
-        "ambientEvents": [
-          "cricket",
-          "waterDrop",
-          "starTwinkle"
-        ]
-      },
-      "emotionalArc": {
-        "phase1": "gentle_wonder",
-        "phase2": "soft_floating",
-        "phase3": "deep_stillness"
-      }
-    },
-    "musicParams": {},
-    "character": {
-      "name": "Frog",
-      "identity": "a small green frog",
-      "special": "sits very still",
-      "personality_tags": [
-        "gentle",
-        "quiet"
-      ]
-    },
-    "word_count": 96,
-    "view_count": 0,
-    "like_count": 0,
-    "save_count": 0,
-    "is_generated": true,
-    "has_qa": false,
-    "has_games": false,
-    "hook": "Have you ever watched the moon dance on water?",
-    "repeated_phrase": "Just a little shimmer... just a little.",
-    "experimental": true
-  },
-  {
     "id": "gen-041123d72402",
     "type": "story",
     "lang": "en",
@@ -23626,7 +23535,8 @@
     "has_games": false,
     "hook": "Did you know the lake listens to the moon?",
     "repeated_phrase": "Just one more ripple...",
-    "experimental": true
+    "experimental": true,
+    "language_level": "basic"
   },
   {
     "id": "exp2-d586859ee5",
@@ -23716,6 +23626,7 @@
     "has_games": false,
     "hook": "What happens when a girl finally makes the moon bounce?",
     "repeated_phrase": "Not yet, not yet",
-    "experimental_v2": true
+    "experimental_v2": true,
+    "language_level": "intermediate"
   }
 ]
