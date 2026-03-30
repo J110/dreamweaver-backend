@@ -23626,5 +23626,87 @@
     "hook": "Did you know the lake listens to the moon?",
     "repeated_phrase": "Just one more ripple...",
     "experimental": true
+  },
+  {
+    "id": "exp2-d586859ee5",
+    "type": "story",
+    "lang": "en",
+    "title": "The night the moon bounced like a rubber ball.",
+    "description": "The night the moon bounced like a rubber ball.",
+    "text": "Once, in a village where the moon always hung just too low, there lived a girl named Lumi. Every night, she’d stretch her arms up, up, up——and tap the moon’s bottom like a drum. Tock. Tock. It wobbled, but never fell. One evening, Lumi stood on her tiptoes, fingers wiggling. \"Tonight,\" she whispered, \"I’ll make it bounce.\" She wound her arm back——and WHACK! Her palm smacked the moon’s belly. Not yet, not yet, the sky seemed to hum. The moon didn’t bounce. It stretched. Like taffy, like a yawn, like a cat arching its back. Lumi gasped as it bulged, then—BOING!—sproinged straight up, higher than the trees, higher than the clouds. Can you guess what happened next? The moon didn’t stop. It ricocheted off a star, pinged off a cloud, and—SPLAT!—landed right in the village pond. Water whooshed over the banks. Frogs cheered. Fish flapped in the mud. Lumi clapped her hands. \"Again!\" She wound up, swung——WHACK! Not yet, not yet, the sky sighed. This time, the moon shot sideways. It bonked the bakery chimney, boinged off the blacksmith’s anvil, and—CRASH!—rolled into Lumi’s own bedroom. Right onto her bed. The room glowed silver. Lumi’s blanket puffed up like a cloud. She giggled, then yawned, then curled into the moon’s soft light. One last time, she raised her hand——but the moon just shivered. Not yet, not yet, it whispered. Lumi’s eyelids drooped. Her fingers loosened. The moon settled, warm and round, beside her. And if you listen carefully tonight, you might hear the pond still giggling.",
+    "cover": "/covers/exp2-d586859ee5.svg",
+    "target_age": 7,
+    "age_min": 6,
+    "age_max": 8,
+    "duration": 4,
+    "duration_seconds": 236.26,
+    "author_id": "system",
+    "created_at": "2026-03-30T13:11:13.982583",
+    "updated_at": "2026-03-30T13:11:13.982583",
+    "addedAt": "2026-03-30",
+    "theme": "folk_tale",
+    "mood": "wired",
+    "story_type": "folk_tale",
+    "categories": [
+      "Bedtime"
+    ],
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/exp2-d586859ee5_female_1.mp3",
+        "duration_seconds": 238.96,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/exp2-d586859ee5_asmr.mp3",
+        "duration_seconds": 233.57,
+        "provider": "chatterbox"
+      }
+    ],
+    "musicalBrief": {
+      "storyId": "exp2-d586859ee5",
+      "ageGroup": "6-8",
+      "musicalIdentity": {
+        "culturalReference": "ambient_electronic",
+        "primaryLoop": "hang_drum_melody",
+        "padCharacter": "starfield"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "E"
+      },
+      "melodicCharacter": "descending_lullaby",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 58
+      },
+      "environment": {
+        "natureSoundPrimary": "forest_night",
+        "natureSoundSecondary": "wind_chimes",
+        "ambientEvents": [
+          "starTwinkle",
+          "cricket",
+          "leaves"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "gentle_wonder",
+        "phase2": "soft_floating",
+        "phase3": "deep_stillness"
+      }
+    },
+    "musicParams": {},
+    "character": {},
+    "word_count": 255,
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "is_generated": true,
+    "has_qa": false,
+    "has_games": false,
+    "hook": "The night the moon bounced like a rubber ball.",
+    "repeated_phrase": "Not yet, not yet",
+    "experimental_v2": true
   }
 ]
