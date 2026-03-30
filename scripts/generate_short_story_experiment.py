@@ -280,6 +280,34 @@ def parse_story_with_music(story_text: str):
         else:
             chunk_index += 1
             chunks.append(part)
+
+    # Debug: print all chunks to catch duplicates
+    for i, c in enumerate(chunks):
+        tag = " [MUSIC after]" if i in music_positions else ""
+        print(f"    chunk[{i}]: {c[:80]!r}...{tag}")
+
+    # Deduplicate: if last two chunks end with the same sentence, drop the duplicate
+    if len(chunks) >= 2:
+        def last_sentence(text):
+            sentences = re.split(r'[.!?]+', text.strip())
+            sentences = [s.strip() for s in sentences if s.strip()]
+            return sentences[-1].lower() if sentences else ""
+
+        last_1 = last_sentence(chunks[-1])
+        last_2 = last_sentence(chunks[-2])
+        if last_1 and last_2 and last_1 == last_2:
+            print(f"    ⚠️  Duplicate last sentence detected: {last_1!r}")
+            print(f"    Removing duplicate chunk[-1]: {chunks[-1][:80]!r}")
+            # If the last chunk is ONLY the repeated sentence, drop it entirely
+            clean_last = re.sub(r'[.!?\s]+', '', chunks[-1]).lower()
+            clean_sentence = re.sub(r'[.!?\s]+', '', last_1).lower()
+            if clean_last == clean_sentence:
+                chunks.pop()
+                # Also remove any music_position pointing to removed chunk
+                music_positions = [p for p in music_positions if p < len(chunks)]
+            else:
+                print(f"    (Last chunk has more content, keeping it)")
+
     return chunks, music_positions
 
 
