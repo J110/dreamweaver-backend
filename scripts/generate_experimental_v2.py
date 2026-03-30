@@ -206,9 +206,13 @@ Generate these BEFORE the story:
 
 [HOOK: one sentence, under 15 words, makes the child want to listen]
 
-[TITLE: most evocative IMAGE from the story. Under 6 words.]
+[TITLE: Character Name and the evocative IMAGE. Under 8 words. Must include the lead character's name.]
 
-[COVER: abstract minimal visual — one shape, one light, one gradient. NO characters. The FEELING as deep blues and warm golds. One sentence.]
+[CHARACTER_NAME: the lead character's first name, e.g. "Lumi", "Little Frog", "Nimbus"]
+
+[CHARACTER_IDENTITY: one sentence describing who the character is, e.g. "A curious girl who taps the moon every night"]
+
+[COVER: the lead character in one vivid scene from the story. Describe what the character looks like, what they're doing, and the setting. One sentence.]
 
 [REPEATED_PHRASE: the exact phrase that repeats 3+ times]
 
@@ -278,8 +282,25 @@ def call_mistral(prompt: str, max_tokens: int = 2000) -> str:
     raise RuntimeError("Mistral API failed")
 
 
+def normalize_for_tts(text: str) -> str:
+    """Normalize text for TTS: fix ALL CAPS words (prevents acronym spelling)."""
+    def fix_caps(match):
+        word = match.group(0)
+        if len(word) <= 2:  # Keep I, A, OK, etc.
+            return word
+        return word.capitalize()  # WHACK → Whack, BOOM → Boom, CRASH → Crash
+    return re.sub(r'\b[A-Z]{3,}\b', fix_caps, text)
+
+
 def generate_tts(text: str, voice: str, exaggeration: float = 0.45,
-                 cfg_weight: float = 0.5, speed: float = 0.85) -> AudioSegment:
+                 cfg_weight: float = 0.5, speed: float = 0.85,
+                 is_phrase: bool = False) -> AudioSegment:
+    # Normalize ALL CAPS → Title Case to prevent TTS acronym spelling
+    text = normalize_for_tts(text)
+    # Prefix phrases with ellipsis — adds a tiny breath that prevents
+    # Chatterbox from swallowing the first word
+    if is_phrase:
+        text = f"... {text}"
     params = {
         "text": text, "voice": voice, "lang": "en",
         "exaggeration": exaggeration, "cfg_weight": cfg_weight,
@@ -475,6 +496,8 @@ def parse_story_output(raw: str) -> dict:
     title = extract_tag(raw, "TITLE")
     cover_desc = extract_tag(raw, "COVER")
     repeated_phrase = extract_tag(raw, "REPEATED_PHRASE")
+    character_name = extract_tag(raw, "CHARACTER_NAME")
+    character_identity = extract_tag(raw, "CHARACTER_IDENTITY")
 
     # Fallback: extract repeated phrase from [PHRASE] tags in the body
     if not repeated_phrase:
@@ -509,6 +532,8 @@ def parse_story_output(raw: str) -> dict:
         "title": title,
         "cover_desc": cover_desc,
         "repeated_phrase": repeated_phrase,
+        "character_name": character_name,
+        "character_identity": character_identity,
         "segments": segments,
         "raw_text": story_text,
         "clean_text": clean,
@@ -694,7 +719,7 @@ def main():
                 print(f"    -> {len(audio)}ms")
             elif stype == "phrase":
                 print(f"  TTS [phrase]: {content}")
-                audio = generate_tts(content, voice, **PHRASE_TTS)
+                audio = generate_tts(content, voice, **PHRASE_TTS, is_phrase=True)
                 segment_audios.append(("audio", audio))
                 print(f"    -> {len(audio)}ms")
             elif stype == "pause":
@@ -881,7 +906,12 @@ def main():
         "audio_variants": audio_variants,
         "musicalBrief": musical_brief,
         "musicParams": {},
-        "character": {},
+        "character": {
+            "name": parsed.get("character_name", ""),
+            "identity": parsed.get("character_identity", ""),
+            "special": "",
+            "personality_tags": [],
+        },
         "word_count": parsed["word_count"],
         "view_count": 0,
         "like_count": 0,

@@ -23540,7 +23540,7 @@
     "id": "gen-041123d72402",
     "type": "story",
     "lang": "en",
-    "title": "Moonlight on the Lake",
+    "title": "Little Frog and the Moonlit Lake",
     "description": "A small frog sits on a lily pad, watching the moon make ripples on the water.",
     "text": "Did you know the lake listens to the moon? Soft night. Dark sky. One bright moon.\nLittle Frog sits on a wide green leaf.\nThe leaf is his boat.\nThe lake is still.\n\nThen—\nthe moon breathes.\nA tiny wave.\nJust one more ripple...\n\nLittle Frog feels it under his toes.\nCool. Gentle. Can you feel it too?\nClose your eyes.\nJust one more ripple...\n\nThe moon breathes again.\nAnother wave.\nSmaller now.\nJust one more ripple...\n\nLittle Frog blinks.\nHis eyes grow heavy.\nThe lake grows quiet.\nJust one more ripple...\n\nThe moon stays.\nThe lake stays.\nLittle Frog closes his eyes.\nThe ripples stop.\n\nAnd right now, somewhere,\nthe lake still listens.",
     "cover": "/covers/gen-041123d72402.svg",
@@ -23632,15 +23632,15 @@
     "id": "exp2-d586859ee5",
     "type": "story",
     "lang": "en",
-    "title": "The night the moon bounced like a rubber ball.",
-    "description": "The night the moon bounced like a rubber ball.",
-    "text": "Once, in a village where the moon always hung just too low, there lived a girl named Lumi. Every night, she’d stretch her arms up, up, up——and tap the moon’s bottom like a drum. Tock. Tock. It wobbled, but never fell. One evening, Lumi stood on her tiptoes, fingers wiggling. \"Tonight,\" she whispered, \"I’ll make it bounce.\" She wound her arm back——and WHACK! Her palm smacked the moon’s belly. Not yet, not yet, the sky seemed to hum. The moon didn’t bounce. It stretched. Like taffy, like a yawn, like a cat arching its back. Lumi gasped as it bulged, then—BOING!—sproinged straight up, higher than the trees, higher than the clouds. Can you guess what happened next? The moon didn’t stop. It ricocheted off a star, pinged off a cloud, and—SPLAT!—landed right in the village pond. Water whooshed over the banks. Frogs cheered. Fish flapped in the mud. Lumi clapped her hands. \"Again!\" She wound up, swung——WHACK! Not yet, not yet, the sky sighed. This time, the moon shot sideways. It bonked the bakery chimney, boinged off the blacksmith’s anvil, and—CRASH!—rolled into Lumi’s own bedroom. Right onto her bed. The room glowed silver. Lumi’s blanket puffed up like a cloud. She giggled, then yawned, then curled into the moon’s soft light. One last time, she raised her hand——but the moon just shivered. Not yet, not yet, it whispered. Lumi’s eyelids drooped. Her fingers loosened. The moon settled, warm and round, beside her. And if you listen carefully tonight, you might hear the pond still giggling.",
+    "title": "Lumi and the Bouncing Moon",
+    "description": "A girl named Lumi who taps the moon every night finally makes it bounce — and it won’t stop!",
+    "text": "Once, in a village where the moon always hung just too low, there lived a girl named Lumi. Every night, she’d stretch her arms up, up, up——and tap the moon’s bottom like a drum. Tock. Tock. It wobbled, but never fell. One evening, Lumi stood on her tiptoes, fingers wiggling. \"Tonight,\" she whispered, \"I’ll make it bounce.\" She wound her arm back——and Whack! Her palm smacked the moon’s belly. Not yet, not yet, the sky seemed to hum. The moon didn’t bounce. It stretched. Like taffy, like a yawn, like a cat arching its back. Lumi gasped as it bulged, then—Boing!—sproinged straight up, higher than the trees, higher than the clouds. Can you guess what happened next? The moon didn’t stop. It ricocheted off a star, pinged off a cloud, and—Splat!—landed right in the village pond. Water whooshed over the banks. Frogs cheered. Fish flapped in the mud. Lumi clapped her hands. \"Again!\" She wound up, swung——Whack! Not yet, not yet, the sky sighed. This time, the moon shot sideways. It bonked the bakery chimney, boinged off the blacksmith’s anvil, and—Crash!—rolled into Lumi’s own bedroom. Right onto her bed. The room glowed silver. Lumi’s blanket puffed up like a cloud. She giggled, then yawned, then curled into the moon’s soft light. One last time, she raised her hand——but the moon just shivered. Not yet, not yet, it whispered. Lumi’s eyelids drooped. Her fingers loosened. The moon settled, warm and round, beside her. And if you listen carefully tonight, you might hear the pond still giggling.",
     "cover": "/covers/exp2-d586859ee5.svg",
     "target_age": 7,
     "age_min": 6,
     "age_max": 8,
     "duration": 4,
-    "duration_seconds": 236.26,
+    "duration_seconds": 234.07,
     "author_id": "system",
     "created_at": "2026-03-30T13:11:13.982583",
     "updated_at": "2026-03-30T13:11:13.982583",
@@ -23655,13 +23655,13 @@
       {
         "voice": "female_1",
         "url": "/audio/pre-gen/exp2-d586859ee5_female_1.mp3",
-        "duration_seconds": 238.96,
+        "duration_seconds": 241.07,
         "provider": "chatterbox"
       },
       {
         "voice": "asmr",
         "url": "/audio/pre-gen/exp2-d586859ee5_asmr.mp3",
-        "duration_seconds": 233.57,
+        "duration_seconds": 227.08,
         "provider": "chatterbox"
       }
     ],
@@ -23698,7 +23698,15 @@
       }
     },
     "musicParams": {},
-    "character": {},
+    "character": {
+      "name": "Lumi",
+      "identity": "A curious girl who taps the moon every night",
+      "special": "She finally made the moon bounce",
+      "personality_tags": [
+        "Curious",
+        "Playful"
+      ]
+    },
     "word_count": 255,
     "view_count": 0,
     "like_count": 0,
@@ -23706,7 +23714,7 @@
     "is_generated": true,
     "has_qa": false,
     "has_games": false,
-    "hook": "The night the moon bounced like a rubber ball.",
+    "hook": "What happens when a girl finally makes the moon bounce?",
     "repeated_phrase": "Not yet, not yet",
     "experimental_v2": true
   }
