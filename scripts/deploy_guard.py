@@ -37,9 +37,17 @@ PROD_API = "https://api.dreamvalley.app"
 # Local API (for local testing)
 LOCAL_API = "http://localhost:8000"
 
+# Frontend (nginx serves /covers/ and /audio/)
+PROD_FRONTEND = "https://dreamvalley.app"
+LOCAL_FRONTEND = "http://localhost:3000"
+
 
 def get_api(use_local: bool = False) -> str:
     return LOCAL_API if use_local else PROD_API
+
+
+def get_frontend(use_local: bool = False) -> str:
+    return LOCAL_FRONTEND if use_local else PROD_FRONTEND
 
 
 def capture_state(api: str) -> dict:
@@ -67,13 +75,20 @@ def capture_state(api: str) -> dict:
 
         stories = []
         for item in all_items:
+            audio_urls = []
+            for av in (item.get("audio_variants") or []):
+                if av.get("url"):
+                    audio_urls.append(av["url"])
+            cover_url = item.get("cover", "")
             stories.append({
                 "id": item.get("id"),
                 "title": item.get("title"),
                 "lang": item.get("lang", "en"),
                 "type": item.get("type"),
-                "has_audio": bool(item.get("audio_variants")),
-                "has_cover": bool(item.get("cover") and item["cover"] != "/covers/default.svg"),
+                "has_audio": bool(audio_urls),
+                "has_cover": bool(cover_url and cover_url != "/covers/default.svg"),
+                "audio_urls": audio_urls,
+                "cover_url": cover_url if cover_url != "/covers/default.svg" else "",
                 "mood": item.get("mood"),
             })
         state["stories"] = {s["id"]: s for s in stories}
@@ -96,6 +111,8 @@ def capture_state(api: str) -> dict:
                 item["id"]: {
                     "title": item.get("title"),
                     "has_audio": bool(item.get("audio_file")),
+                    "audio_url": item.get("audio_url", ""),
+                    "cover_url": item.get("cover", ""),
                 }
                 for item in items
             }
@@ -116,6 +133,8 @@ def capture_state(api: str) -> dict:
                 item["id"]: {
                     "title": item.get("title"),
                     "has_audio": bool(item.get("audio_file")),
+                    "audio_url": f"/audio/silly-songs/{item.get('audio_file', '')}" if item.get("audio_file") else "",
+                    "cover_url": f"/covers/silly-songs/{item.get('cover_file', '')}" if item.get("cover_file") else "",
                 }
                 for item in items
             }
@@ -125,6 +144,64 @@ def capture_state(api: str) -> dict:
             state["silly_songs_count"][age] = 0
 
     return state
+
+
+def verify_files(state: dict, frontend: str) -> list[str]:
+    """HEAD-check all audio and cover URLs to verify they're actually reachable.
+
+    Returns list of issues found (empty = all good).
+    """
+    issues = []
+    urls_to_check = []  # (url_path, label)
+
+    # Stories
+    for sid, s in state.get("stories", {}).items():
+        for url in s.get("audio_urls", []):
+            if url:
+                urls_to_check.append((url, f"story audio: {sid}"))
+        if s.get("cover_url"):
+            urls_to_check.append((s["cover_url"], f"story cover: {sid}"))
+
+    # Funny shorts
+    for age, items in state.get("funny_shorts", {}).items():
+        for fid, f in items.items():
+            if f.get("audio_url"):
+                urls_to_check.append((f["audio_url"], f"funny short audio ({age}): {fid}"))
+            if f.get("cover_url"):
+                urls_to_check.append((f["cover_url"], f"funny short cover ({age}): {fid}"))
+
+    # Silly songs
+    for age, items in state.get("silly_songs", {}).items():
+        for sid, s in items.items():
+            if s.get("audio_url"):
+                urls_to_check.append((s["audio_url"], f"silly song audio ({age}): {sid}"))
+            if s.get("cover_url"):
+                urls_to_check.append((s["cover_url"], f"silly song cover ({age}): {sid}"))
+
+    if not urls_to_check:
+        return issues
+
+    print(f"\n  Checking {len(urls_to_check)} file URLs via HEAD requests...")
+
+    ok = 0
+    failed = 0
+    client = httpx.Client(timeout=10, follow_redirects=True)
+    for url_path, label in urls_to_check:
+        full_url = f"{frontend}{url_path}"
+        try:
+            resp = client.head(full_url)
+            if resp.status_code == 200:
+                ok += 1
+            else:
+                failed += 1
+                issues.append(f"  MISSING FILE ({resp.status_code}): {url_path} — {label}")
+        except Exception as e:
+            failed += 1
+            issues.append(f"  UNREACHABLE: {url_path} — {label} ({e})")
+
+    print(f"  Results: {ok} reachable, {failed} missing/broken")
+
+    return issues
 
 
 def save_snapshot(state: dict):
@@ -273,6 +350,7 @@ def cmd_verify(args):
         sys.exit(1)
 
     api = get_api(args.local)
+    frontend = get_frontend(args.local)
     print(f"Capturing current state from {api}...")
     after = capture_state(api)
 
@@ -291,6 +369,19 @@ def cmd_verify(args):
             print(c)
     print(f"{'='*60}")
 
+    # File reachability check
+    if not args.skip_files:
+        file_issues = verify_files(after, frontend)
+        print(f"\n{'='*60}")
+        if not file_issues:
+            print("  ✅ All audio & cover files are reachable.")
+        else:
+            print(f"  ⚠️  {len(file_issues)} FILE(S) MISSING OR BROKEN:")
+            print()
+            for issue in file_issues:
+                print(issue)
+        print(f"{'='*60}")
+
     if changes:
         print("\n  Review the changes above.")
         print("  If any are UNINTENDED, roll back before users are affected.")
@@ -302,6 +393,7 @@ def cmd_verify(args):
 def cmd_check(args):
     """Quick consistency check without a prior snapshot."""
     api = get_api(args.local)
+    frontend = get_frontend(args.local)
     print(f"Checking production state from {api}...")
     state = capture_state(api)
     print_state_summary(state, "Current")
@@ -344,7 +436,23 @@ def cmd_check(args):
         print()
         for issue in issues:
             print(issue)
-    print(f"{'='*60}\n")
+    print(f"{'='*60}")
+
+    # File reachability check
+    if not args.skip_files:
+        file_issues = verify_files(state, frontend)
+        print(f"\n{'='*60}")
+        if not file_issues:
+            print("  ✅ All audio & cover files are reachable.")
+        else:
+            print(f"  ⚠️  {len(file_issues)} FILE(S) MISSING OR BROKEN:")
+            print()
+            for issue in file_issues:
+                print(issue)
+        print(f"{'='*60}")
+        issues.extend(file_issues)
+
+    print()
 
     if issues:
         sys.exit(1)
@@ -370,10 +478,12 @@ Examples:
 
     ver = sub.add_parser("verify", help="Compare current state against snapshot")
     ver.add_argument("--local", action="store_true", help="Use localhost instead of production")
+    ver.add_argument("--skip-files", action="store_true", help="Skip HEAD checks on audio/cover files")
     ver.set_defaults(func=cmd_verify)
 
     chk = sub.add_parser("check", help="Quick consistency check (no snapshot needed)")
     chk.add_argument("--local", action="store_true", help="Use localhost instead of production")
+    chk.add_argument("--skip-files", action="store_true", help="Skip HEAD checks on audio/cover files")
     chk.set_defaults(func=cmd_check)
 
     args = parser.parse_args()
