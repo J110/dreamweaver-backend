@@ -42,7 +42,6 @@ MUSIC_DIR.mkdir(parents=True, exist_ok=True)
 
 MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY", "nkMwV9APQAsY4KALXMk3CaGLV1a5RPBa")
 CHATTERBOX_URL = "https://mohan-32314--dreamweaver-chatterbox-tts.modal.run"
-FAL_KEY = os.getenv("FAL_KEY")
 
 # ── Config: Calm × Nature × 2-5 ──────────────────────────────────────
 MOOD = "calm"
@@ -78,18 +77,15 @@ MOOD_OUTRO = {
 STING_MAP = {
     "early": {
         "prompt": "2 second warm moment, soft piano chord, gentle, held, safe",
-        "duration": 5,  # Beatoven min 5s, we trim to ~2.5s
-        "trim_to": 2500,
+        "duration_seconds": 2,
     },
     "mid": {
         "prompt": "3 second pre-reveal shimmer, about to see something beautiful, golden",
-        "duration": 5,
-        "trim_to": 3000,
+        "duration_seconds": 3,
     },
     "late": {
         "prompt": "2.5 second feeling of being safe, warm low chord, held, protected, blanketed",
-        "duration": 5,
-        "trim_to": 2500,
+        "duration_seconds": 3,
     },
 }
 
@@ -321,36 +317,29 @@ def generate_tts(text: str, voice: str, exaggeration: float = 0.5,
     raise RuntimeError(f"TTS failed for voice={voice}")
 
 
-def generate_music_replicate(prompt: str, duration: int, label: str) -> AudioSegment:
-    """Generate instrumental music via fal.ai MiniMax Music v2. Returns AudioSegment."""
-    import fal_client
+def get_musicgen():
+    """Get a handle to the deployed MusicGen Modal class."""
+    import modal
+    gen_cls = modal.Cls.from_name("dreamweaver-musicgen", "MusicGenerator")
+    return gen_cls()
 
-    print(f"    fal.ai MiniMax Music v2: generating {label} ({duration}s)...")
+
+def generate_music(gen, prompt: str, duration_seconds: float, label: str) -> AudioSegment:
+    """Generate instrumental music via MusicGen on Modal T4. Returns AudioSegment.
+
+    MusicGen gives exact duration — no trimming needed.
+    """
+    print(f"    MusicGen: {label} ({duration_seconds}s)...")
     start = time.time()
 
-    result = fal_client.subscribe("fal-ai/minimax-music/v2", arguments={
-        "prompt": prompt,
-        "lyrics_prompt": "[instrumental] no vocals no singing no lyrics",
-        "audio_setting": {
-            "sample_rate": 44100,
-            "bitrate": 256000,
-            "format": "mp3",
-        },
-    })
-
-    audio_info = result.get("audio") or result.get("data", {}).get("audio")
-    if not audio_info or not audio_info.get("url"):
-        raise RuntimeError(f"No audio URL: {result}")
-
-    audio_url = audio_info["url"]
-    resp = httpx.get(audio_url, timeout=120, follow_redirects=True)
-    if resp.status_code != 200 or len(resp.content) < 1000:
-        raise RuntimeError(f"Download failed ({resp.status_code})")
+    mp3_data = gen.generate.remote(prompt, duration=int(duration_seconds))
+    if not mp3_data or len(mp3_data) < 500:
+        raise RuntimeError(f"MusicGen returned empty for {label}")
 
     elapsed = time.time() - start
-    print(f"    ✓ {label}: {len(resp.content):,} bytes in {elapsed:.0f}s")
+    print(f"    ✓ {label}: {len(mp3_data):,} bytes in {elapsed:.0f}s")
 
-    return AudioSegment.from_file(io.BytesIO(resp.content))
+    return AudioSegment.from_file(io.BytesIO(mp3_data))
 
 
 def generate_cover_svg(story_id: str) -> str:
@@ -433,47 +422,36 @@ def main():
     print(f"  Chunks: {len(chunks)}, Music tags: {len(music_positions)}")
     print()
 
-    # ── 2. Generate music via fal.ai Beatoven ────────────────────────
-    print("[2/6] Generating music via fal.ai MiniMax Music v2...")
+    # ── 2. Generate music via MusicGen on Modal T4 ────────────────────
+    print("[2/6] Generating music via MusicGen (Modal T4)...")
+    gen = get_musicgen()
 
-    # Generate intro+sting source (one track, trim for intro and stings)
-    intro_source = generate_music_replicate(
-        MOOD_INTRO["prompt"], 0, "calm intro+stings"
-    )
-    # Trim to 6s for intro with fade in/out
-    intro_audio = intro_source[:6000].fade_in(200).fade_out(800)
+    # Intro — exact 6 seconds
+    intro_audio = generate_music(gen, MOOD_INTRO["prompt"], 6, "calm intro")
     intro_path = MUSIC_DIR / "intro_calm.mp3"
     intro_audio.export(str(intro_path), format="mp3", bitrate="256k")
-    print(f"    Trimmed intro: {len(intro_audio)}ms")
 
-    # Extract stings from the same source (different segments)
+    # Outro — exact 45 seconds
+    outro_audio = generate_music(gen, MOOD_OUTRO["prompt"], 45, "calm outro")
+    outro_path = MUSIC_DIR / "outro_calm.mp3"
+    outro_audio.export(str(outro_path), format="mp3", bitrate="256k")
+
+    # Stings — exact durations per zone, no trimming
     zones_needed = set()
     for pos in music_positions:
         zone = select_sting_zone(pos, len(chunks))
         zones_needed.add(zone)
 
     sting_audio = {}
-    offset_ms = 8000  # start extracting stings after the intro portion
     for zone in sorted(zones_needed):
         cfg = STING_MAP[zone]
-        trim_ms = cfg["trim_to"]
-        segment = intro_source[offset_ms:offset_ms + trim_ms].fade_in(100).fade_out(500)
-        sting_audio[zone] = segment
-        offset_ms += trim_ms + 2000  # gap between extracts
+        duration_s = cfg["duration_seconds"]
+        seg = generate_music(gen, cfg["prompt"], duration_s, f"sting_{zone}")
+        sting_audio[zone] = seg
         sting_path = MUSIC_DIR / f"sting_{zone}.mp3"
-        segment.export(str(sting_path), format="mp3", bitrate="256k")
-        print(f"    Trimmed sting_{zone}: {len(segment)}ms")
+        seg.export(str(sting_path), format="mp3", bitrate="256k")
 
-    # Generate outro (separate track — needs 45s fade-to-sleep feel)
-    outro_source = generate_music_replicate(
-        MOOD_OUTRO["prompt"], 0, "calm outro"
-    )
-    outro_audio = outro_source[:45000].fade_out(5000)
-    outro_path = MUSIC_DIR / "outro_calm.mp3"
-    outro_audio.export(str(outro_path), format="mp3", bitrate="256k")
-    print(f"    Trimmed outro: {len(outro_audio)}ms")
-
-    print(f"  Generated: intro, outro, {len(sting_audio)} stings\n")
+    print(f"  Generated: intro (6s), outro (45s), {len(sting_audio)} stings\n")
 
     # ── 3. Generate TTS for each chunk × each voice ─────────────────
     print("[3/6] Generating TTS for 2 voice variants...")
