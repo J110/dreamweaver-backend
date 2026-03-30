@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 """
-Generate ONE experimental short story (150-300 words) using the new strategy.
+Generate ONE experimental short story with intro, stings, and outro music.
 
-Simplified stories with repeated phrases, direct address,
-short sentences designed to be heard in bed with eyes closing.
+Strategy: 150-300 word story with repeated phrases, direct address,
+[MUSIC] tags for sting placement. Audio assembled as:
+  intro (6s) → narration chunks with stings → silence (2s) → outro (45s)
 
-Publishes through the normal pipeline: content.json → seedData.js → audio → cover.
+Music generated via fal.ai Beatoven (instrumental).
+Voice selection: 2 variants via mood-based voice system (calm → female_1 + asmr).
 
 Usage:
     python3 scripts/generate_short_story_experiment.py
@@ -34,19 +36,66 @@ load_dotenv(BASE_DIR / ".env", override=True)
 
 CONTENT_PATH = BASE_DIR / "seed_output" / "content.json"
 AUDIO_DIR = BASE_DIR / "audio" / "pre-gen"
+MUSIC_DIR = BASE_DIR / "audio" / "story_music"
 AUDIO_DIR.mkdir(parents=True, exist_ok=True)
+MUSIC_DIR.mkdir(parents=True, exist_ok=True)
 
 MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY", "nkMwV9APQAsY4KALXMk3CaGLV1a5RPBa")
 CHATTERBOX_URL = "https://mohan-32314--dreamweaver-chatterbox-tts.modal.run"
+FAL_KEY = os.getenv("FAL_KEY")
 
-# ── Test story config: Calm × Nature × 2-5 ───────────────────────────
+# ── Config: Calm × Nature × 2-5 ──────────────────────────────────────
 MOOD = "calm"
 STORY_TYPE = "nature"
 AGE_GROUP = "2-5"
 
-# ── Prompt from the spec ─────────────────────────────────────────────
+# Mood voice selection: calm → female_1 + asmr
+MOOD_VOICES = ["female_1", "asmr"]
 
-EXPERIMENTAL_SHORT_STORY_PROMPT = """
+# ── Music configs from spec ───────────────────────────────────────────
+
+MOOD_INTRO = {
+    "prompt": (
+        "6 second gentle calm intro, soft music box, "
+        "3-4 simple descending notes, already peaceful, "
+        "60 BPM, warm, like a sigh of contentment, "
+        "pulling up a blanket"
+    ),
+    "duration": 6,
+}
+
+MOOD_OUTRO = {
+    "prompt": (
+        "45 second sleep outro, same music box but even slower, "
+        "notes further apart, descending, last note rings for "
+        "5 seconds and fades, 60 BPM slowing to 35 BPM, "
+        "calm becoming fully asleep, gentlest possible fade"
+    ),
+    "duration": 45,
+}
+
+# Stings selected by position in story + mood
+STING_MAP = {
+    "early": {
+        "prompt": "2 second warm moment, soft piano chord, gentle, held, safe",
+        "duration": 5,  # Beatoven min 5s, we trim to ~2.5s
+        "trim_to": 2500,
+    },
+    "mid": {
+        "prompt": "3 second pre-reveal shimmer, about to see something beautiful, golden",
+        "duration": 5,
+        "trim_to": 3000,
+    },
+    "late": {
+        "prompt": "2.5 second feeling of being safe, warm low chord, held, protected, blanketed",
+        "duration": 5,
+        "trim_to": 2500,
+    },
+}
+
+# ── Story prompt ──────────────────────────────────────────────────────
+
+EXPERIMENTAL_PROMPT = """
 Write a BEDTIME STORY for ages {age_group}.
 Mood: {mood}
 Story type: {story_type}
@@ -61,36 +110,46 @@ listen tomorrow.
 many concepts. Cut until only one remains.
 
 === ONE CONCEPT ===
-{mood_concept}
+ONE slow observation. Almost nothing happens. The character
+is already at peace. They notice something quiet.
+The noticing IS the story.
 
 ONE character does ONE thing. No subplot, no secondary
-characters (unless fable — then exactly two), no thematic
-layers, no stated lessons.
+characters, no thematic layers, no stated lessons.
 
 === THE REPEATED PHRASE ===
 Create ONE phrase that appears at least 3 times in the story.
 This is the most important element. By the third time, the
 child is saying it before the narrator.
 
-The phrase should feel natural to the story type:
-- Nature: a sensory observation that keeps returning
+The phrase should be a sensory observation that keeps returning.
 
 GOOD phrases: "Not yet... not yet." / "And the wind carried
-it away." / "Same as always." / "But the fox just smiled." /
-"One more, just one more." / "Quieter now."
+it away." / "Same as always." / "Quieter now."
 
-BAD phrases: anything over 8 words, "The end", "Goodnight"
-(too generic).
+BAD phrases: anything over 8 words, "The end", "Goodnight".
 
 === DIRECT ADDRESS ===
 Include 2-3 moments where the narrator speaks DIRECTLY to
-the child.
+the child. Ages 2-5: Simple SENSORY invitations.
+  "Can you hear how quiet it is? ...That quiet."
+  "Shhh... listen... did you hear that?"
+  "Close your eyes for a second. Can you see it?"
 
-{direct_address_instructions}
+=== MUSICAL PAUSES ===
+Place [MUSIC] tags wherever the story needs to BREATHE —
+a pause where the child absorbs what happened or leans into
+what's coming.
+
+Put [MUSIC] where YOU would pause if telling this story to
+a child in a dark room. Where you'd let a moment land.
+
+Some stories need 3-4 pauses. A very quiet story might need
+1-2. Don't overthink it. Just pause where it feels natural.
 
 === STORY STRUCTURE ===
 
-Opening: {story_type_opening}
+Opening: Did you know that {{natural wonder}}?
 
 The story gets SIMPLER toward the end. Not more complex.
 Sentences shorten. Details fade. The world gets quieter.
@@ -99,25 +158,24 @@ The last 3-4 sentences should be fragments — almost words.
 Final line mirrors sleep: the character closes eyes, stops
 moving, or goes quiet. The character IS the child.
 
-Closing: {story_type_closing}
+Closing: And right now, somewhere, {{wonder is still happening}}.
 
 === SENTENCES ===
 - 5-10 words per sentence for ages 2-5
 - Concrete, sensory — things you see, hear, feel
-- No abstract concepts
-- No metaphors
+- No abstract concepts, no metaphors
 - Written for the EAR, not the page
 
 === OUTPUT FORMAT ===
-Return ONLY valid JSON with these fields:
+Return ONLY valid JSON:
 
 {{
-  "title": "the most evocative IMAGE from the story, under 6 words",
-  "hook": "one sentence that makes the child want to listen, under 15 words",
-  "cover_desc": "abstract minimal visual — one shape, one light, one gradient. NO characters, NO animals. The FEELING of the story as deep blues and warm golds. One sentence.",
-  "repeated_phrase": "the exact phrase that repeats 3+ times",
+  "title": "evocative IMAGE from story, under 6 words",
+  "hook": "one sentence to make child want to listen, under 15 words",
+  "cover_desc": "abstract minimal visual — one shape, one light, one gradient. NO characters. The FEELING as deep blues and warm golds.",
+  "repeated_phrase": "exact phrase that repeats 3+ times",
   "description": "one sentence describing the story",
-  "text": "the full story text, flowing prose, 150-300 words",
+  "text": "full story text with [MUSIC] tags where pauses feel natural",
   "character": {{
     "name": "character name",
     "identity": "what the character is",
@@ -127,24 +185,16 @@ Return ONLY valid JSON with these fields:
   "categories": ["Nature", "Bedtime"],
   "morals": []
 }}
-
-Do NOT include [MUSIC] tags or any other markup in the text.
-Just write flowing prose.
 """
 
 MUSICAL_BRIEF_PROMPT = """You are a music director for a children's bedtime story app.
 
-Given this story, generate a Musical Brief — a compact creative direction
-for background ambient music composed by a browser-side synthesizer.
+Given this story, generate a Musical Brief for background ambient music.
 
-STORY:
-Title: {title}
-Mood: {mood}
-Age group: {age_group}
-Text (excerpt): {text_excerpt}
+STORY: {title} | Mood: {mood} | Age: {age_group}
+Text: {text_excerpt}
 
 Return ONLY valid JSON:
-
 {{
   "storyId": "{story_id}",
   "ageGroup": "{age_group}",
@@ -158,32 +208,30 @@ Return ONLY valid JSON:
     "rootNote": "one of: C, D, Eb, E, F, G, A, Bb"
   }},
   "melodicCharacter": "one of: descending_lullaby, cycling_arpeggio, drone_with_ornaments",
-  "rhythm": {{
-    "feel": "gentle_pulse",
-    "baseTempo": 58
-  }},
+  "rhythm": {{ "feel": "gentle_pulse", "baseTempo": 58 }},
   "environment": {{
     "natureSoundPrimary": "one of: wind_gentle, rain_soft, forest_night, ocean_distant, creek",
     "natureSoundSecondary": "one of: distant_thunder, distant_stream, wind_chimes, none",
-    "ambientEvents": ["pick 2-3 from: chimes, cricket, owl, leaves, waterDrop, heartbeat, starTwinkle, birdChirp"]
+    "ambientEvents": ["pick 2-3 from: chimes, cricket, owl, leaves, waterDrop, heartbeat, starTwinkle"]
   }},
   "emotionalArc": {{
-    "phase1": "one of: gentle_wonder, whimsical_wonder, curious_wonder",
-    "phase2": "one of: soft_floating, warm_guidance, gentle_excitement, soothing_flow",
+    "phase1": "gentle_wonder",
+    "phase2": "soft_floating",
     "phase3": "deep_stillness"
   }}
 }}
-
-For a CALM mood ages 2-5: tempo 55-62 BPM, warm simple instruments, phase3 = deep_stillness.
 """
 
 
+# ══════════════════════════════════════════════════════════════════════
+# HELPERS
+# ══════════════════════════════════════════════════════════════════════
+
 def call_mistral(prompt: str, max_tokens: int = 2000) -> str:
-    """Call Mistral API and return response text."""
     client = Mistral(api_key=MISTRAL_API_KEY)
     for attempt in range(3):
         try:
-            response = client.chat.complete(
+            resp = client.chat.complete(
                 model="mistral-large-latest",
                 messages=[
                     {"role": "system", "content": "You are a creative bedtime story generator. Return ONLY valid JSON."},
@@ -193,17 +241,16 @@ def call_mistral(prompt: str, max_tokens: int = 2000) -> str:
                 temperature=0.85,
                 response_format={"type": "json_object"},
             )
-            if response.choices and response.choices[0].message.content:
-                return response.choices[0].message.content.strip()
+            if resp.choices and resp.choices[0].message.content:
+                return resp.choices[0].message.content.strip()
         except Exception as e:
-            print(f"  Mistral attempt {attempt+1} failed: {e}")
+            print(f"  Mistral attempt {attempt+1}: {e}")
             if attempt < 2:
                 time.sleep(5)
-    raise RuntimeError("Mistral API failed after retries")
+    raise RuntimeError("Mistral API failed")
 
 
 def parse_json(text: str) -> dict:
-    """Parse JSON from LLM response."""
     text = text.strip()
     if text.startswith("```"):
         text = re.sub(r"^```(?:json)?\s*\n?", "", text)
@@ -214,23 +261,51 @@ def parse_json(text: str) -> dict:
         match = re.search(r"\{[\s\S]*\}", text)
         if match:
             return json.loads(match.group())
-    raise ValueError(f"Could not parse JSON: {text[:200]}")
+    raise ValueError(f"JSON parse failed: {text[:200]}")
+
+
+def parse_story_with_music(story_text: str):
+    """Split story into narration chunks and music positions.
+
+    Input:  "The bear sat down. [MUSIC] And then he yawned."
+    Output: chunks=["The bear sat down.", "And then he yawned."], music_positions=[0]
+    """
+    chunks = []
+    music_positions = []
+    parts = re.split(r'(\[MUSIC\])', story_text)
+    chunk_index = -1
+    for part in parts:
+        part = part.strip()
+        if not part:
+            continue
+        if part == "[MUSIC]":
+            if chunk_index >= 0:
+                music_positions.append(chunk_index)
+        else:
+            chunk_index += 1
+            chunks.append(part)
+    return chunks, music_positions
+
+
+def select_sting_zone(chunk_pos: int, total_chunks: int) -> str:
+    progress = chunk_pos / max(total_chunks, 1)
+    if progress < 0.3:
+        return "early"
+    elif progress < 0.7:
+        return "mid"
+    else:
+        return "late"
 
 
 def generate_tts(text: str, voice: str, exaggeration: float = 0.5,
                  cfg_weight: float = 0.4, speed: float = 0.88) -> bytes:
-    """Call Chatterbox TTS and return WAV bytes."""
+    """Call Chatterbox TTS, return WAV bytes."""
     params = {
-        "text": text,
-        "voice": voice,
-        "lang": "en",
-        "exaggeration": exaggeration,
-        "cfg_weight": cfg_weight,
-        "speed": speed,
-        "format": "wav",
+        "text": text, "voice": voice, "lang": "en",
+        "exaggeration": exaggeration, "cfg_weight": cfg_weight,
+        "speed": speed, "format": "wav",
     }
     url = f"{CHATTERBOX_URL}?{urlencode(params)}"
-
     with httpx.Client() as client:
         for attempt in range(3):
             try:
@@ -246,8 +321,40 @@ def generate_tts(text: str, voice: str, exaggeration: float = 0.5,
     raise RuntimeError(f"TTS failed for voice={voice}")
 
 
+def generate_music_replicate(prompt: str, duration: int, label: str) -> AudioSegment:
+    """Generate instrumental music via fal.ai MiniMax Music v2. Returns AudioSegment."""
+    import fal_client
+
+    print(f"    fal.ai MiniMax Music v2: generating {label} ({duration}s)...")
+    start = time.time()
+
+    result = fal_client.subscribe("fal-ai/minimax-music/v2", arguments={
+        "prompt": prompt,
+        "lyrics_prompt": "[instrumental] no vocals no singing no lyrics",
+        "audio_setting": {
+            "sample_rate": 44100,
+            "bitrate": 256000,
+            "format": "mp3",
+        },
+    })
+
+    audio_info = result.get("audio") or result.get("data", {}).get("audio")
+    if not audio_info or not audio_info.get("url"):
+        raise RuntimeError(f"No audio URL: {result}")
+
+    audio_url = audio_info["url"]
+    resp = httpx.get(audio_url, timeout=120, follow_redirects=True)
+    if resp.status_code != 200 or len(resp.content) < 1000:
+        raise RuntimeError(f"Download failed ({resp.status_code})")
+
+    elapsed = time.time() - start
+    print(f"    ✓ {label}: {len(resp.content):,} bytes in {elapsed:.0f}s")
+
+    return AudioSegment.from_file(io.BytesIO(resp.content))
+
+
 def generate_cover_svg(story_id: str) -> str:
-    """Generate a simple animated SVG cover for calm/nature mood."""
+    """Fallback animated SVG cover for calm/nature mood."""
     return f"""<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <defs>
@@ -285,37 +392,23 @@ def generate_cover_svg(story_id: str) -> str:
 </svg>"""
 
 
+# ══════════════════════════════════════════════════════════════════════
+# MAIN
+# ══════════════════════════════════════════════════════════════════════
+
 def main():
     story_id = f"gen-{uuid.uuid4().hex[:12]}"
     short_id = story_id[:8]
     print(f"\n{'='*60}")
-    print(f"Experimental Short Story Generator")
-    print(f"ID: {story_id}  |  {MOOD} × {STORY_TYPE} × {AGE_GROUP}")
+    print(f"Experimental Short Story — {MOOD} × {STORY_TYPE} × {AGE_GROUP}")
+    print(f"ID: {story_id}  |  Voices: {MOOD_VOICES}")
     print(f"{'='*60}\n")
 
-    # ── 1. Generate story text ───────────────────────────────────────
-    print("[1/5] Generating story text via Mistral...")
-    prompt = EXPERIMENTAL_SHORT_STORY_PROMPT.format(
-        age_group=AGE_GROUP,
-        mood=MOOD,
-        story_type=STORY_TYPE,
-        mood_concept=(
-            "ONE slow observation. Almost nothing happens. The character "
-            "is already at peace. They notice something quiet. "
-            "The noticing IS the story."
-        ),
-        direct_address_instructions=(
-            "Ages 2-5: Simple SENSORY invitations.\n"
-            "  'Can you hear how quiet it is? ...That quiet.'\n"
-            "  'Shhh... listen... did you hear that?'\n"
-            "  'Do you know what he said? ...He said goodnight.'\n"
-            "  'Close your eyes for a second. Can you see it?'"
-        ),
-        story_type_opening="Did you know that {natural wonder}?",
-        story_type_closing="And right now, somewhere, {wonder is still happening}.",
-    )
-
-    raw = call_mistral(prompt)
+    # ── 1. Generate story text with [MUSIC] tags ─────────────────────
+    print("[1/6] Generating story text via Mistral...")
+    raw = call_mistral(EXPERIMENTAL_PROMPT.format(
+        age_group=AGE_GROUP, mood=MOOD, story_type=STORY_TYPE,
+    ))
     story = parse_json(raw)
 
     title = story["title"]
@@ -327,112 +420,183 @@ def main():
     character = story.get("character", {})
     categories = story.get("categories", ["Nature", "Bedtime"])
 
-    word_count = len(text.split())
+    # Parse [MUSIC] tags
+    chunks, music_positions = parse_story_with_music(text)
+    # Clean text for content.json (without [MUSIC] tags)
+    clean_text = re.sub(r'\s*\[MUSIC\]\s*', ' ', text).strip()
+    word_count = len(clean_text.split())
+
     print(f"  Title: {title}")
     print(f"  Hook: {hook}")
     print(f"  Phrase: \"{repeated_phrase}\"")
     print(f"  Words: {word_count}")
+    print(f"  Chunks: {len(chunks)}, Music tags: {len(music_positions)}")
     print()
 
-    # ── 2. Generate audio variants ───────────────────────────────────
-    print("[2/5] Generating audio via Chatterbox TTS...")
-    voices = ["female_1", "female_2", "female_3", "male_2", "asmr"]
+    # ── 2. Generate music via fal.ai Beatoven ────────────────────────
+    print("[2/6] Generating music via fal.ai MiniMax Music v2...")
 
-    audio_variants = []
-    for voice in voices:
+    # Generate intro+sting source (one track, trim for intro and stings)
+    intro_source = generate_music_replicate(
+        MOOD_INTRO["prompt"], 0, "calm intro+stings"
+    )
+    # Trim to 6s for intro with fade in/out
+    intro_audio = intro_source[:6000].fade_in(200).fade_out(800)
+    intro_path = MUSIC_DIR / "intro_calm.mp3"
+    intro_audio.export(str(intro_path), format="mp3", bitrate="256k")
+    print(f"    Trimmed intro: {len(intro_audio)}ms")
+
+    # Extract stings from the same source (different segments)
+    zones_needed = set()
+    for pos in music_positions:
+        zone = select_sting_zone(pos, len(chunks))
+        zones_needed.add(zone)
+
+    sting_audio = {}
+    offset_ms = 8000  # start extracting stings after the intro portion
+    for zone in sorted(zones_needed):
+        cfg = STING_MAP[zone]
+        trim_ms = cfg["trim_to"]
+        segment = intro_source[offset_ms:offset_ms + trim_ms].fade_in(100).fade_out(500)
+        sting_audio[zone] = segment
+        offset_ms += trim_ms + 2000  # gap between extracts
+        sting_path = MUSIC_DIR / f"sting_{zone}.mp3"
+        segment.export(str(sting_path), format="mp3", bitrate="256k")
+        print(f"    Trimmed sting_{zone}: {len(segment)}ms")
+
+    # Generate outro (separate track — needs 45s fade-to-sleep feel)
+    outro_source = generate_music_replicate(
+        MOOD_OUTRO["prompt"], 0, "calm outro"
+    )
+    outro_audio = outro_source[:45000].fade_out(5000)
+    outro_path = MUSIC_DIR / "outro_calm.mp3"
+    outro_audio.export(str(outro_path), format="mp3", bitrate="256k")
+    print(f"    Trimmed outro: {len(outro_audio)}ms")
+
+    print(f"  Generated: intro, outro, {len(sting_audio)} stings\n")
+
+    # ── 3. Generate TTS for each chunk × each voice ─────────────────
+    print("[3/6] Generating TTS for 2 voice variants...")
+    chunk_audio_by_voice = {}  # voice → [AudioSegment per chunk]
+
+    for voice in MOOD_VOICES:
         print(f"  Voice: {voice}")
-        try:
-            wav_bytes = generate_tts(text, voice)
-            audio_seg = AudioSegment.from_wav(io.BytesIO(wav_bytes))
-            output_path = AUDIO_DIR / f"{short_id}_{voice}.mp3"
-            audio_seg.export(str(output_path), format="mp3", bitrate="256k")
-            duration = len(audio_seg) / 1000.0
-            size_kb = output_path.stat().st_size / 1024
-            print(f"    ✓ {output_path.name} ({size_kb:.0f} KB, {duration:.1f}s)")
-            audio_variants.append({
-                "voice": voice,
-                "url": f"/audio/pre-gen/{output_path.name}",
-                "duration_seconds": round(duration, 2),
-                "provider": "chatterbox",
-            })
-        except Exception as e:
-            print(f"    ✗ FAILED: {e}")
+        chunk_audios = []
+        for i, chunk in enumerate(chunks):
+            wav_bytes = generate_tts(chunk, voice)
+            seg = AudioSegment.from_wav(io.BytesIO(wav_bytes))
+            chunk_audios.append(seg)
+        chunk_audio_by_voice[voice] = chunk_audios
+        print(f"    ✓ {len(chunk_audios)} chunks")
 
-    if not audio_variants:
-        print("ERROR: No audio generated. Aborting.")
-        sys.exit(1)
+    print()
+
+    # ── 4. Assemble: intro → narration with stings → silence → outro ─
+    print("[4/6] Assembling final audio...")
+    audio_variants = []
+
+    for voice in MOOD_VOICES:
+        print(f"  Assembling {voice}...")
+        output = AudioSegment.silent(duration=0)
+
+        # 1. Intro (6s)
+        output += intro_audio
+        output += AudioSegment.silent(duration=500)
+
+        # 2. Narration with stings at marked positions
+        chunk_audios = chunk_audio_by_voice[voice]
+        for i, seg in enumerate(chunk_audios):
+            output += seg
+
+            if i in music_positions:
+                zone = select_sting_zone(i, len(chunks))
+                output += AudioSegment.silent(duration=500)  # breath before
+                output += sting_audio[zone]
+                output += AudioSegment.silent(duration=500)  # breath after
+
+        # 3. Silence before outro
+        output += AudioSegment.silent(duration=2000)
+
+        # 4. Outro (45s)
+        output += outro_audio
+
+        # Export
+        output_path = AUDIO_DIR / f"{short_id}_{voice}.mp3"
+        output.export(str(output_path), format="mp3", bitrate="256k")
+        duration = len(output) / 1000.0
+        size_kb = output_path.stat().st_size / 1024
+        print(f"    ✓ {output_path.name} ({size_kb:.0f} KB, {duration:.1f}s)")
+
+        audio_variants.append({
+            "voice": voice,
+            "url": f"/audio/pre-gen/{output_path.name}",
+            "duration_seconds": round(duration, 2),
+            "provider": "chatterbox",
+        })
 
     avg_dur = sum(v["duration_seconds"] for v in audio_variants) / len(audio_variants)
     dur_min = max(1, math.ceil(avg_dur / 60))
-    print(f"  {len(audio_variants)} variants, avg {avg_dur:.1f}s\n")
+    print()
 
-    # ── 3. Generate musical brief ────────────────────────────────────
-    print("[3/5] Generating musical brief...")
+    # ── 5. Generate musical brief ────────────────────────────────────
+    print("[5/6] Generating musical brief...")
     time.sleep(32)  # Mistral free tier: 2 req/min
     mb_raw = call_mistral(MUSICAL_BRIEF_PROMPT.format(
         title=title, mood=MOOD, age_group=AGE_GROUP,
-        text_excerpt=text[:300], story_id=story_id,
+        text_excerpt=clean_text[:300], story_id=story_id,
     ), max_tokens=1000)
     musical_brief = parse_json(mb_raw)
     musical_brief["storyId"] = story_id
     musical_brief["ageGroup"] = AGE_GROUP
-    print(f"  ✓ Brief: {musical_brief.get('musicalIdentity', {}).get('primaryLoop', '?')}\n")
+    print(f"  ✓ {musical_brief.get('musicalIdentity', {}).get('primaryLoop', '?')}\n")
 
-    # ── 4. Generate cover ────────────────────────────────────────────
-    print("[4/5] Generating cover...")
+    # ── 6. Generate cover + add to content.json ──────────────────────
+    print("[6/6] Cover + content.json...")
+
+    # Try FLUX cover script
     cover_dir = BASE_DIR / "seed_output" / "covers_experimental"
     cover_dir.mkdir(parents=True, exist_ok=True)
-
     cover_generated = False
-    # Try FLUX via experimental cover script
     try:
         cover_script = BASE_DIR / "scripts" / "generate_cover_experimental.py"
         if cover_script.exists():
-            story_json_path = BASE_DIR / "seed_output" / f"{story_id}_tmp.json"
-            with open(story_json_path, "w") as f:
+            tmp_json = BASE_DIR / "seed_output" / f"{story_id}_tmp.json"
+            with open(tmp_json, "w") as f:
                 json.dump({
                     "id": story_id, "title": title, "description": description,
-                    "text": text, "mood": MOOD, "story_type": STORY_TYPE,
+                    "text": clean_text, "mood": MOOD, "story_type": STORY_TYPE,
                     "target_age": 3, "age_min": 2, "age_max": 5,
                     "cover_desc": cover_desc, "character": character,
                 }, f, indent=2)
-
             import subprocess
-            result = subprocess.run(
-                [sys.executable, str(cover_script), "--story-json", str(story_json_path)],
+            subprocess.run(
+                [sys.executable, str(cover_script), "--story-json", str(tmp_json)],
                 capture_output=True, text=True, timeout=120, cwd=str(BASE_DIR),
             )
-            story_json_path.unlink(missing_ok=True)
-
+            tmp_json.unlink(missing_ok=True)
             flux_cover = cover_dir / f"{story_id}_combined.svg"
             if flux_cover.exists():
                 cover_generated = True
-                print(f"  ✓ FLUX cover: {flux_cover.name}")
+                print(f"  ✓ FLUX cover")
     except Exception as e:
-        print(f"  FLUX cover failed: {e}")
+        print(f"  FLUX failed: {e}")
 
     if not cover_generated:
         svg = generate_cover_svg(story_id)
-        cover_file = cover_dir / f"{story_id}_combined.svg"
-        with open(cover_file, "w") as f:
+        with open(cover_dir / f"{story_id}_combined.svg", "w") as f:
             f.write(svg)
         print(f"  ✓ Fallback SVG cover")
 
-    cover_url = f"/covers/{story_id}.svg"
-    print()
-
-    # ── 5. Add to content.json ───────────────────────────────────────
-    print("[5/5] Adding to content.json...")
-
-    now = datetime.utcnow().isoformat()
+    # Add to content.json
+    now = datetime.now().isoformat()
     entry = {
         "id": story_id,
         "type": "story",
         "lang": "en",
         "title": title,
         "description": description,
-        "text": text,
-        "cover": cover_url,
+        "text": clean_text,
+        "cover": f"/covers/{story_id}.svg",
         "target_age": 3,
         "age_min": 2,
         "age_max": 5,
@@ -464,29 +628,29 @@ def main():
 
     with open(CONTENT_PATH, "r", encoding="utf-8") as f:
         all_content = json.load(f)
+
+    # Remove old experimental story if exists
+    all_content = [s for s in all_content if s.get("id") != "gen-b3b4ff39a1e6"]
     all_content.append(entry)
+
     with open(CONTENT_PATH, "w", encoding="utf-8") as f:
         json.dump(all_content, f, ensure_ascii=False, indent=2)
         f.write("\n")
 
     print(f"  ✓ content.json updated ({len(all_content)} entries)")
 
-    # ── Done ─────────────────────────────────────────────────────────
+    # ── Summary ──────────────────────────────────────────────────────
     print(f"\n{'='*60}")
-    print(f"✓ EXPERIMENTAL STORY GENERATED")
+    print(f"✓ DONE")
     print(f"{'='*60}")
     print(f"  ID:     {story_id}")
     print(f"  Title:  {title}")
     print(f"  Words:  {word_count}")
     print(f"  Phrase: \"{repeated_phrase}\"")
+    print(f"  Music:  intro + {len(music_positions)} stings + outro")
     print(f"  Audio:  {len(audio_variants)} variants ({avg_dur:.0f}s avg)")
-    print()
-    print("Next: sync + copy + push")
-    print(f"  python3 scripts/sync_seed_data.py")
-    print(f"  cp audio/pre-gen/{short_id}_*.mp3 ../dreamweaver-web/public/audio/pre-gen/")
-    print(f"  cp seed_output/covers_experimental/{story_id}_combined.svg ../dreamweaver-web/public/covers/{story_id}.svg")
+    print(f"  Voices: {MOOD_VOICES}")
 
-    # Return story_id for downstream use
     return story_id
 
 
