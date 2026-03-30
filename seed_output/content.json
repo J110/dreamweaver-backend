@@ -19900,7 +19900,7 @@
     "age_min": 2,
     "age_max": 5,
     "duration": 3,
-    "duration_seconds": 131.46,
+    "duration_seconds": 179.5,
     "author_id": "system",
     "created_at": "2026-03-30T09:38:40.740505",
     "updated_at": "2026-03-30T09:38:40.740505",
@@ -19916,13 +19916,13 @@
       {
         "voice": "female_1",
         "url": "/audio/pre-gen/gen-0411_female_1.mp3",
-        "duration_seconds": 141.4,
+        "duration_seconds": 179.5,
         "provider": "chatterbox"
       },
       {
         "voice": "asmr",
         "url": "/audio/pre-gen/gen-0411_asmr.mp3",
-        "duration_seconds": 121.52,
+        "duration_seconds": 164.7,
         "provider": "chatterbox"
       }
     ],
@@ -19993,7 +19993,7 @@
     "age_min": 6,
     "age_max": 8,
     "duration": 4,
-    "duration_seconds": 234.07,
+    "duration_seconds": 227.19,
     "author_id": "system",
     "created_at": "2026-03-30T13:11:13.982583",
     "updated_at": "2026-03-30T13:11:13.982583",
@@ -20006,15 +20006,15 @@
     ],
     "audio_variants": [
       {
-        "voice": "female_1",
-        "url": "/audio/pre-gen/exp2-d586859ee5_female_1.mp3",
-        "duration_seconds": 241.07,
+        "voice": "female_3",
+        "url": "/audio/pre-gen/exp2-d586859ee5_female_3.mp3",
+        "duration_seconds": 220.7,
         "provider": "chatterbox"
       },
       {
-        "voice": "asmr",
-        "url": "/audio/pre-gen/exp2-d586859ee5_asmr.mp3",
-        "duration_seconds": 227.08,
+        "voice": "male_2",
+        "url": "/audio/pre-gen/exp2-d586859ee5_male_2.mp3",
+        "duration_seconds": 233.69,
         "provider": "chatterbox"
       }
     ],

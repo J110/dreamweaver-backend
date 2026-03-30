@@ -254,6 +254,7 @@ except ImportError:
 try:
     from app.services.tts.delivery import (
         apply_delivery,
+        apply_story_delivery,
         parse_delivery_tags,
         strip_delivery_tags,
         should_apply_delivery,
@@ -1817,10 +1818,26 @@ def generate_phase_audio(
                     dtags = parse_delivery_tags(seg_text)
                     seg_text = strip_delivery_tags(seg_text)
                     if dtags and should_apply_delivery(
-                        content_type, phase_num, speech_idx, len(speech_segments)
+                        content_type, phase_num, speech_idx, len(speech_segments),
+                        paragraph_index=global_idx,
+                        total_paragraphs=total_paragraphs_all_phases,
                     ):
                         delivery_base = {"exaggeration": exag, "speed": spd}
-                        adjusted = apply_delivery(delivery_base, dtags)
+                        if content_type in ("story", "long_story"):
+                            # Sleep stories: tight clamping + mood ceiling
+                            mood_exag_start = MOOD_EXAGGERATION.get(
+                                mood, MOOD_EXAGGERATION["calm"]
+                            )["start"]
+                            mood_spd_start = MOOD_SPEED.get(
+                                mood, MOOD_SPEED["calm"]
+                            )["start"]
+                            adjusted = apply_story_delivery(
+                                delivery_base, dtags,
+                                mood_exag_start, mood_spd_start,
+                            )
+                        else:
+                            # Funny shorts: wide range
+                            adjusted = apply_delivery(delivery_base, dtags)
                         d_exag = adjusted["exaggeration"]
                         d_spd = adjusted["speed"]
                 speech_idx += 1
@@ -2202,6 +2219,79 @@ def generate_story_variant(
     }
 
 
+def _is_v2_story(story: dict) -> bool:
+    """Check if a story uses the v2 baked-music format."""
+    return bool(story.get("has_baked_music") or story.get("experimental_v2"))
+
+
+def generate_v2_story_variant(
+    story: dict,
+    voice: str,
+    output_path: Path,
+    force: bool = False,
+) -> Optional[dict]:
+    """Generate a v2 story audio variant with baked-in music (intro + bed + swells + outro).
+
+    V2 stories have [MUSIC], [PAUSE:ms], [PHRASE] tags in their annotated_text.
+    Uses mood-based 2-voice selection and pre-generated mood music files.
+    """
+    from audio_assembly import (
+        parse_segments, assemble_v2_audio, get_voices_for_mood,
+    )
+
+    story_id = story["id"]
+    title = story.get("title", "")
+    mood = story.get("mood", "calm") or "calm"
+
+    if output_path.exists() and not force:
+        logger.info("  Skipping %s (exists)", output_path.name)
+        duration = get_mp3_duration(output_path)
+        return {
+            "voice": voice,
+            "url": f"/audio/pre-gen/{output_path.name}",
+            "duration_seconds": round(duration, 2),
+            "provider": "chatterbox",
+        }
+
+    # Get the tagged text for assembly
+    text = story.get("raw_text") or story.get("annotated_text") or story.get("text", "")
+    if not text:
+        logger.error("  No text for v2 story %s", story_id)
+        return None
+
+    hook = story.get("hook", title or "A bedtime story")
+    logger.info("  V2 assembly: %s / %s (mood=%s)", title, voice, mood)
+
+    # Parse segments from tagged text
+    segments = parse_segments(text)
+    music_count = sum(1 for s in segments if s[0] == "music")
+    phrase_count = sum(1 for s in segments if s[0] == "phrase")
+    logger.info("  Segments: %d total, %d swells, %d phrases", len(segments), music_count, phrase_count)
+
+    # Assemble with baked-in music
+    with_music, without_music = assemble_v2_audio(
+        segments=segments,
+        voice=voice,
+        mood=mood,
+        hook=hook,
+    )
+
+    # Export
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    with_music.export(str(output_path), format="mp3", bitrate="256k")
+
+    duration = len(with_music) / 1000.0
+    size_kb = output_path.stat().st_size / 1024
+    logger.info("  Saved %s (%.0f KB, %.1f sec, v2 baked music)", output_path.name, size_kb, duration)
+
+    return {
+        "voice": voice,
+        "url": f"/audio/pre-gen/{output_path.name}",
+        "duration_seconds": round(duration, 2),
+        "provider": "chatterbox",
+    }
+
+
 def main():
     parser = argparse.ArgumentParser(description="Pre-generate story audio via Chatterbox (parallel)")
     parser.add_argument("--story-id", help="Generate for a specific story ID only")
@@ -2247,8 +2337,15 @@ def main():
     for story in stories:
         lang = story.get("lang", "en")
         content_type = story.get("type", "story")
+        is_v2 = _is_v2_story(story)
+
+        # V2 stories: use explicit MOOD_VOICES from audio_assembly (2 voices per mood)
+        if is_v2:
+            from audio_assembly import get_voices_for_mood
+            mood = story.get("mood", "calm") or "calm"
+            voices = get_voices_for_mood(mood)
         # Songs use age-appropriate voice variants via get_lullaby_config()
-        if content_type == "song" and SONGGEN_URL:
+        elif content_type == "song" and SONGGEN_URL:
             styles, voice_map = get_lullaby_config(story)
             if styles is None:
                 logger.info("Skipping song %s (age 6+ — no lullabies)", story["title"])
@@ -2269,6 +2366,7 @@ def main():
                 "voice": voice,
                 "output_path": output_path,
                 "exists": output_path.exists(),
+                "is_v2": is_v2,
             })
 
     # Filter plan based on force flag
@@ -2354,14 +2452,21 @@ def main():
         voice = item["voice"]
         output_path = item["output_path"]
         content_type = story.get("type", "story")
+        is_v2 = item.get("is_v2", False)
 
         # Each thread gets its own HTTP client for thread safety
         thread_client = httpx.Client(timeout=300.0)
         try:
-            logger.info("[%d/%d] %s / %s [%s]", item_idx + 1, total, story["title"], voice, content_type)
+            logger.info("[%d/%d] %s / %s [%s%s]", item_idx + 1, total, story["title"], voice,
+                       content_type, " v2" if is_v2 else "")
 
-            # Route songs to SongGen, everything else to Chatterbox
-            if content_type == "song" and SONGGEN_URL:
+            # Route: v2 stories → baked music assembly, songs → SongGen, rest → Chatterbox
+            if is_v2:
+                variant = generate_v2_story_variant(
+                    story, voice, output_path,
+                    force=args.force,
+                )
+            elif content_type == "song" and SONGGEN_URL:
                 variant = generate_song_variant(
                     thread_client, story, voice, output_path,
                     force=args.force,

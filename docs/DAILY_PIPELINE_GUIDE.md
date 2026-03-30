@@ -10,10 +10,10 @@
 GCP VM (dreamvalley-prod) runs pipeline_run.py daily via cron (7 days/week):
 
   PREFLIGHT → Warm Modal + test Mistral + check disk + kill stale processes
-  1. GENERATE  → Mistral Large (free tier)         → 1 story + 1 poem + 1 lullaby
-  2. AUDIO GEN → Modal Chatterbox TTS + ACE-Step   → 14 MP3s (Chatterbox) + 3 MP3s (ACE-Step)
+  1. GENERATE  → Mistral Large (free tier)         → 1 story (v2) + 1 poem + 1 lullaby
+  2. AUDIO GEN → Chatterbox TTS + CassetteAI beds  → 2 MP3s/story (v2 baked music) + lullabies
   3. AUDIO QA  → Voxtral transcription (free tier)  → PASS/FAIL
-  4. ENRICH    → Mistral Large (free tier)          → unique musicParams
+  4. ENRICH    → Mistral Large (free tier)          → musicParams (skipped for v2 stories)
   5. COVERS    → Mistral Large (free tier)          → animated SVG cover per story
   6. SYNC      → content.json → seedData.js + copy audio/covers to web public/
   7. PUBLISH   → git push both repos → Render/Vercel auto-deploy
@@ -39,7 +39,7 @@ The pipeline's `step_deploy_prod()` calls the admin API automatically. The `ADMI
 | Step | Service | Cost |
 |------|---------|------|
 | Content generation | Mistral Large (free experiment tier) | $0.00 |
-| Audio generation (14 story/poem + 3 lullaby variants) | Modal T4 GPU (~51 GPU-min) | ~$0.68 (from $30/mo free credits) |
+| Audio generation (2 v2 story + poems + lullaby variants) | Modal T4 GPU + CassetteAI | ~$0.43 (from $30/mo free credits) |
 | Audio QA (transcription + fidelity) | Voxtral via Mistral API (free tier) | $0.00 |
 | Music params | Mistral Large (free tier) | $0.00 |
 | Cover SVG generation | Mistral Large (free tier) | $0.00 |
@@ -522,7 +522,9 @@ print(r.choices[0].message.content)
 | `scripts/pipeline_run.py` | Main orchestrator (preflight → 8 steps → postflight → notify) |
 | `scripts/pipeline_notify.py` | Email notifications via Resend API |
 | `scripts/generate_content_matrix.py` | Story/poem generation with diversity matrix |
-| `scripts/generate_audio.py` | Audio generation (Chatterbox TTS for stories/poems, ACE-Step for lullabies) |
+| `scripts/generate_audio.py` | Audio generation (v2 baked music for short stories, Chatterbox TTS for long/poems, lullabies) |
+| `scripts/audio_assembly.py` | Shared v2 audio assembly library (TTS + intro/bed/outro + swells) |
+| `scripts/generate_mood_beds.py` | Generate mood bed WAV files via CassetteAI |
 | `scripts/qa_audio.py` | Audio QA (duration + fidelity) |
 | `scripts/generate_music_params.py` | Unique ambient music parameters per story |
 | `scripts/generate_cover_svg.py` | AI-powered animated SVG cover generation |

@@ -37,6 +37,32 @@ Rules for markers:
 - Vary markers naturally — do not repeat the same one consecutively
 - Place markers at the start of a new emotional beat, not on every sentence
 
+DELIVERY TAGS (opening sentences only):
+Tag the first 3-4 sentences of the story with [DELIVERY: tag] before the text.
+Do NOT tag the remaining sentences — they use flat mood-ramped params.
+The tag describes the narrator's emotional quality for that sentence.
+
+Available tags:
+WONDER: noticing, wonder, awe, discovery
+WARMTH: warm, tender, comforting, fond
+TENSION (mild only): uncertain, cautious, hushed, mysterious
+SENSORY: sensory, still, cozy, vast
+NARRATIVE: setting the scene, transition, arrival, revealing
+
+Rules for delivery tags:
+1. ONLY the first 3-4 sentences. No delivery tags after that.
+2. 1 tag per sentence. Keep it subtle.
+3. No more than 2 consecutive sentences with the same tag.
+4. The last tagged sentence should use warm/tender/cozy to bridge into the untagged rest.
+5. NEVER use tags that create arousal — the maximum energy is "awe" (slow and reverent).
+
+Example:
+[DELIVERY: setting the scene] The forest was older here, where the path turned to moss.
+[DELIVERY: noticing] Something flickered between the branches — small and golden.
+[DELIVERY: wonder] She followed, and the moss beneath her paws was soft as sleep.
+[DELIVERY: warm] And from inside came the smallest, softest humming.
+The fox sat down beside the door. The humming was gentle and slow.
+
 TEXT FORMATTING FOR NARRATION (CRITICAL):
 - Do NOT use markdown emphasis (*italics*, **bold**, _underscores_). Write plain text only.
 - Do NOT write sound effects in ALL CAPS (e.g. POOF, CRASH, WHOOSH, BOOM).
@@ -60,9 +86,41 @@ PARAGRAPH FORMATTING (CRITICAL):
 #   Phase 2 style:  2-5 uses repetition; 6-8/9-12 use longer clauses (no repetition)
 #   Phase 3 style:  2-5 incantatory; 6-8 poetic; 9-12 literary prose poetry
 
+_DELIVERY_TAG_INSTRUCTIONS = """
+DELIVERY TAGS (Phase 1 only):
+Tag each sentence in Phase 1 with [DELIVERY: tag] before the text.
+The tag describes the narrator's emotional quality for that sentence.
+
+Available tags:
+WONDER: noticing, wonder, awe, discovery
+WARMTH: warm, tender, comforting, fond
+TENSION (mild only): uncertain, cautious, hushed, mysterious
+SENSORY: sensory, still, cozy, vast
+NARRATIVE: setting the scene, transition, arrival, revealing
+
+Rules:
+1. Phase 1 ONLY. Do NOT tag Phase 2 or Phase 3 sentences.
+2. 1 tag per sentence. Keep it subtle.
+3. The emotional arc should move toward warmth by the end of Phase 1,
+   so the transition to Phase 2's flat delivery feels natural.
+4. No more than 2 consecutive sentences with the same tag.
+5. The last 2-3 sentences of Phase 1 should use warm/tender/cozy tags
+   to bridge smoothly into Phase 2.
+6. NEVER use tags that create arousal: no excitement, no alarm, no shock.
+   The maximum energy is "awe" — which is still slow and reverent, not fast.
+
+Example:
+[DELIVERY: setting the scene] The forest was older here, where the path turned to moss.
+[DELIVERY: noticing] Something flickered between the branches — small and golden.
+[DELIVERY: cautious] The fox stopped. Her ears turned forward.
+[DELIVERY: wonder] She followed, and the moss beneath her paws was soft as sleep.
+[DELIVERY: warm] And from inside came the smallest, softest humming.
+"""
+
 _LONG_STORY_PHASE_FOOTER = """
 You MUST include all six tags: [PHASE_1], [/PHASE_1], [PHASE_2], [/PHASE_2], [PHASE_3], [/PHASE_3].
 The phase tags go AROUND the story text. Emotion markers go INSIDE the phase text as usual.
+Delivery tags go INSIDE Phase 1 text, before each sentence. Do NOT use delivery tags in Phase 2 or Phase 3.
 """
 
 # ── Ages 2-5 ──────────────────────────────────────────────────────────
@@ -79,7 +137,7 @@ Engagement — first 30-35% of the story.
 - Narration style: an engaged, warm storyteller. Not excited or dramatic — but present and alive.
   Think: a parent settling into the bedside, opening the book, beginning with warmth.
 - Use varied emotion markers: [EXCITED], [CURIOUS], [ADVENTUROUS], [MYSTERIOUS], [JOYFUL]
-[/PHASE_1]
+""" + _DELIVERY_TAG_INSTRUCTIONS + """[/PHASE_1]
 
 [PHASE_2]
 Settling — next 35-40%. The story's action resolves here — not in Phase 3.
@@ -125,7 +183,7 @@ Engagement — first 30-35% of the story.
 - Emotional tone: intriguing, warm, adventurous (not hyper)
 - Slightly more energetic narration — these kids are more attentive
 - Use varied emotion markers: [EXCITED], [CURIOUS], [ADVENTUROUS], [MYSTERIOUS], [JOYFUL]
-[/PHASE_1]
+""" + _DELIVERY_TAG_INSTRUCTIONS + """[/PHASE_1]
 
 [PHASE_2]
 Settling — next 35-40%. The story's mystery/exploration resolves here — not in Phase 3.
@@ -177,7 +235,7 @@ Engagement — first 25-30% of the story (shorter — older kids engage faster).
 - Closer to natural conversational pace — these kids are sharp listeners
 - Emotional tone: compelling, thoughtful, slightly mysterious
 - Use varied emotion markers: [EXCITED], [CURIOUS], [ADVENTUROUS], [MYSTERIOUS], [JOYFUL]
-[/PHASE_1]
+""" + _DELIVERY_TAG_INSTRUCTIONS + """[/PHASE_1]
 
 [PHASE_2]
 Settling — next 35-40%. THE STORY MUST RESOLVE IN THIS PHASE.

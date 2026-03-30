@@ -35,7 +35,16 @@ AUDIO_DIR.mkdir(parents=True, exist_ok=True)
 
 CHATTERBOX_URL = "https://mohan-32314--dreamweaver-chatterbox-tts.modal.run"
 
-VOICES = ["female_1", "asmr"]
+# Voice mapping by mood (from AUDIO_GENERATION_GUIDELINES)
+MOOD_VOICES = {
+    "wired":   ["female_3", "male_2"],    # melodic + gentle
+    "curious": ["female_4", "male_2"],    # musical + gentle
+    "calm":    ["female_1", "asmr"],      # calm + asmr
+    "sad":     ["male_2", "female_1"],    # gentle + calm
+    "anxious": ["male_2", "female_1"],    # gentle + calm
+    "angry":   ["female_3", "male_2"],    # melodic + gentle
+}
+DEFAULT_VOICES = ["female_1", "asmr"]
 
 NORMAL_TTS = {"exaggeration": 0.45, "speed": 0.85, "cfg_weight": 0.5}
 HOOK_TTS = {"exaggeration": 0.55, "speed": 0.82, "cfg_weight": 0.45}
@@ -207,7 +216,9 @@ def main():
 
     # Generate TTS per voice
     audio_variants = []
-    for voice in VOICES:
+    voices = MOOD_VOICES.get(mood, DEFAULT_VOICES)
+    print(f"Voices for mood '{mood}': {voices}\n")
+    for voice in voices:
         print(f"Generating TTS for {voice}...")
 
         # Hook
@@ -275,13 +286,18 @@ def main():
         total_ms = len(narration)
         print(f"    Total: {total_ms/1000:.1f}s, Swells: {len(swell_regions)}\n")
 
-        # Shape bed and mix
+        # Shape bed and mix — bed fades out before outro
         print(f"Shaping bed + mixing ({voice})...")
-        if len(bed) >= total_ms:
-            shaped_bed = bed[:total_ms]
+        outro_dur = len(outro)
+        gap_before_outro = 3000
+        bed_end_ms = total_ms - outro_dur - gap_before_outro
+        if len(bed) >= bed_end_ms:
+            shaped_bed = bed[:bed_end_ms]
         else:
-            loops = (total_ms // len(bed)) + 1
-            shaped_bed = (bed * loops)[:total_ms]
+            loops = (bed_end_ms // len(bed)) + 1
+            shaped_bed = (bed * loops)[:bed_end_ms]
+        shaped_bed = shaped_bed.fade_out(3000)
+        shaped_bed += AudioSegment.silent(duration=total_ms - bed_end_ms)
 
         swells = []
         for start_ms, end_ms in swell_regions:

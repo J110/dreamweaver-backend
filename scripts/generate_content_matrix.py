@@ -439,6 +439,106 @@ def build_generation_plan(lang_filter: Optional[str] = None,
 # PROMPT BUILDING
 # ═══════════════════════════════════════════════════════════════════════
 
+# ── V2 short story prompt (baked-in music, simplified structure) ───────
+# Used for SHORT and MEDIUM stories. LONG stories keep the old format.
+V2_STORY_PROMPT = """You are a creative bedtime story generator.
+THIS IS NOT A LITERARY STORY. This is a story designed to be HEARD IN BED
+with eyes closing. Simple enough that a sleepy child follows every word.
+Engaging enough they WANT to listen tomorrow.
+
+=== ONE CONCEPT ===
+ONE character does ONE thing. No subplot, no secondary characters
+(unless fable — then exactly two), no thematic layers, no stated lessons.
+
+=== THE REPEATED PHRASE ===
+Create ONE phrase that appears at least 3 times.
+Wrap every instance in [PHRASE] tags:
+[PHRASE]Not yet, not yet[/PHRASE]
+
+The phrase should be under 8 words. By the third time, the child is
+saying it before the narrator. Do NOT repeat any other sentence.
+Every non-phrase line must be unique.
+
+=== DIRECT ADDRESS ===
+Include 2-3 moments where the narrator speaks to the child:
+- Ages 2-5: Simple SENSORY invitations. 'Shhh... listen...'
+- Ages 6-8: WONDERING together. 'Can you guess what happened?'
+- Ages 9-12: CONSPIRATORIAL. 'Between you and me...'
+
+=== MUSICAL BREATHING ===
+Place [MUSIC] tags wherever the story needs to BREATHE.
+At these points, narration pauses for 6 seconds while background
+music swells up then settles back down.
+
+Put [MUSIC] where YOU would pause if telling this to a child in a dark room.
+Where you'd let a moment land. Some stories need 3-5 pauses.
+
+=== STRATEGIC PAUSES ===
+Insert [PAUSE: ms] tags where the listener needs silence:
+[PAUSE: 800] — normal breath between images
+[PAUSE: 1200] — a moment that should land and sit
+[PAUSE: 1500] — significant stillness
+[PAUSE: 2000] — the deepest pause, 1-2 times max
+
+Pauses are between MOMENTS, not between every sentence.
+
+=== STORY STRUCTURE ===
+The story gets SIMPLER toward the end. Sentences shorten. Details fade.
+The world gets quieter. The last 3-4 sentences should be fragments.
+The final line mirrors sleep: the character closes eyes, stops moving,
+or goes quiet.
+
+=== SENTENCES ===
+- 8-15 words per sentence for ages 6-8
+- Concrete, sensory — things you see, hear, feel
+- No abstract concepts. Simple similes only ("soft like moss")
+- Written for the EAR, not the page
+- NEVER use ALL CAPS for emphasis (write 'splash' not 'SPLASH')
+- NEVER use markdown (*word*, **word**)
+
+=== DO NOT ===
+- Do NOT use emotion markers like [GENTLE], [SLEEPY], [EXCITED], etc.
+- Do NOT use [PHASE_1], [PHASE_2], [PHASE_3] tags
+- Do NOT use [DELIVERY: tag] tags
+- Do NOT use [EMPHASIS] tags
+- Only use [MUSIC], [PAUSE: ms], and [PHRASE]...[/PHRASE] tags
+"""
+
+V2_FORMAT_JSON = """
+Return ONLY a valid JSON object with these fields (no markdown, no extra text):
+{
+    "title": "Character Name and the evocative IMAGE. Under 8 words. Must include the lead character's name.",
+    "hook": "One sentence, under 15 words, makes the child want to listen",
+    "description": "A 2-3 sentence mood hook (max 50 words). Start with something intriguing.",
+    "text": "The FULL story text with [MUSIC], [PAUSE: ms], and [PHRASE]...[/PHRASE] tags inline. Use \\n\\n between paragraphs. NEVER use markdown or ALL CAPS.",
+    "repeated_phrase": "The exact phrase that repeats 3+ times",
+    "morals": ["Moral 1", "Moral 2"],
+    "categories": ["Category1", "Category2"],
+    "character": {
+        "name": "The lead character's first name (e.g. 'Lumi', 'Little Frog', 'Nimbus')",
+        "identity": "One sentence describing who the character is (e.g. 'A curious girl who taps the moon every night')",
+        "special": "Their unique ability or quality (max 20 words)",
+        "personality_tags": ["Trait1", "Trait2"]
+    },
+    "cover_context": "1-2 sentence visual scene description for the cover. Describe ONLY the world/scene, NOT the character.",
+    "characterType": "main character type",
+    "setting": "where it happens",
+    "plotShape": "story structure",
+    "timeOfDay": "time of day",
+    "weather": "weather type",
+    "theme": "story theme",
+    "scale": "story scale",
+    "companion": "companion type",
+    "movement": "movement type",
+    "magicType": "magic type",
+    "season": "season",
+    "senseEmphasis": "dominant sense",
+    "characterTrait": "character trait"
+}
+
+personality_tags must be exactly 2 warm trait words from: Curious, Brave, Gentle, Dreamy, Playful, Kind, Quiet, Wise, Adventurous, Warm, Creative, Patient, Cheerful, Determined, Magical, Peaceful.
+"""
+
 FORMAT_JSON = """
 Return ONLY a valid JSON object with these fields (no markdown, no extra text):
 {
@@ -521,8 +621,15 @@ def build_generation_prompt(item: Dict, existing_titles: List[str],
     min_words = item["min_words"]
     max_words = item["max_words"]
 
+    # V2 short story detection: SHORT/MEDIUM stories use the v2 prompt
+    # with [MUSIC], [PAUSE:ms], [PHRASE] tags and baked-in music.
+    # LONG stories, poems, and songs keep the old format.
+    is_v2_story = (content_type == "story" and length in ("SHORT", "MEDIUM"))
+
     # Base system prompt
-    if content_type == "story":
+    if is_v2_story:
+        base_prompt = V2_STORY_PROMPT
+    elif content_type == "story":
         base_prompt = STORY_SYSTEM_PROMPT
     elif content_type == "song":
         # Age 0-1 uses infant lullaby prompt (a cappella, nonsense syllables)
@@ -679,6 +786,9 @@ Do NOT abbreviate, summarize, or write a short version. Each phase must be subst
             if reminder and phase_instructions:
                 phase_instructions += f"\n\n{reminder}\n"
 
+    # Select format block based on v2 vs legacy
+    format_block = V2_FORMAT_JSON if is_v2_story else FORMAT_JSON
+
     prompt = f"""{base_prompt}
 
 {story_type_block}
@@ -697,7 +807,7 @@ LENGTH: {length_desc}
 
 {hindi_block}
 
-{FORMAT_JSON}
+{format_block}
 
 Now generate a {content_type} following ALL the above instructions. Return ONLY the JSON object."""
 
@@ -1046,6 +1156,23 @@ def generate_one(client, item: Dict, existing_titles: List[str],
             if text_devanagari:
                 text_devanagari = ensure_paragraph_breaks(text_devanagari, item["type"])
 
+            # Validate v2 tags for SHORT/MEDIUM stories
+            is_v2 = (item["type"] == "story" and item["length"] in ("SHORT", "MEDIUM"))
+            if is_v2:
+                phrase_count = len(re.findall(r'\[PHRASE\]', text))
+                if phrase_count < 2:
+                    logger.warning("  Attempt %d: V2 story has only %d [PHRASE] tags (need 3+), retrying...",
+                                   attempt + 1, phrase_count)
+                    if attempt < max_retries - 1:
+                        time.sleep(retry_delay)
+                        continue
+                    logger.warning("  Accepting v2 story with %d phrases on final attempt", phrase_count)
+                # Extract repeated_phrase from [PHRASE] tags if not in JSON
+                if not parsed.get("repeated_phrase"):
+                    phrase_matches = re.findall(r'\[PHRASE\](.*?)\[/PHRASE\]', text, re.DOTALL)
+                    if phrase_matches:
+                        parsed["repeated_phrase"] = phrase_matches[0].strip()
+
             # Validate phase markers for LONG stories
             if item["length"] == "LONG" and item["type"] == "story":
                 if "[PHASE_1]" not in text or "[/PHASE_3]" not in text:
@@ -1091,9 +1218,16 @@ def generate_one(client, item: Dict, existing_titles: List[str],
             if item["length"] == "LONG" and content_type == "story":
                 content_type = "long_story"
 
+            # V2 short stories: text contains [MUSIC], [PAUSE], [PHRASE] tags
+            is_v2 = (item["type"] == "story" and item["length"] in ("SHORT", "MEDIUM"))
+
             # Strip phase markers from display text; keep in annotated_text for TTS
             display_text = text
-            if "[PHASE_1]" in text:
+            if is_v2:
+                # V2: strip tags for display, keep raw text with tags for audio assembly
+                from scripts.audio_assembly import clean_display_text
+                display_text = clean_display_text(text)
+            elif "[PHASE_1]" in text:
                 display_text = re.sub(r'\[/?PHASE_\d+\]', '', text).strip()
                 display_text = re.sub(r'\n{3,}', '\n\n', display_text)
 
@@ -1104,7 +1238,7 @@ def generate_one(client, item: Dict, existing_titles: List[str],
                 "title": title,
                 "description": description,
                 "text": display_text,
-                "annotated_text": text,  # Keeps phase markers for TTS pipeline
+                "annotated_text": text,  # Keeps tags for TTS pipeline
                 "target_age": item["target_age"],
                 "age_min": item["age_min"],
                 "age_max": item["age_max"],
@@ -1140,6 +1274,17 @@ def generate_one(client, item: Dict, existing_titles: List[str],
                 "like_count": 0,
                 "save_count": 0,
             }
+
+            # V2 short story: add baked music fields
+            if is_v2:
+                content_obj["has_baked_music"] = True
+                content_obj["experimental_v2"] = True
+                content_obj["hook"] = parsed.get("hook", title or "A bedtime story")
+                content_obj["repeated_phrase"] = parsed.get("repeated_phrase", "")
+                content_obj["raw_text"] = text  # Full text with v2 tags
+                # Override music_type — client-side ambient music disabled
+                content_obj["music_type"] = "baked"
+                content_obj["musicProfile"] = ""
 
             # Add Hindi Devanagari if available
             if item["lang"] == "hi" and text_devanagari:

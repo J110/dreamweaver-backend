@@ -13,6 +13,7 @@ Usage:
 
 import io
 import os
+import re
 import time
 from pathlib import Path
 from urllib.parse import urlencode
@@ -71,9 +72,23 @@ OUTRO_PROMPT = (
 # HELPERS
 # ══════════════════════════════════════════════════════════════════════
 
+def normalize_for_tts(text: str) -> str:
+    """Convert ALL CAPS words to Title Case to prevent TTS acronym spelling."""
+    def fix_caps(match):
+        word = match.group(0)
+        if len(word) <= 2:
+            return word
+        return word.capitalize()
+    return re.sub(r'\b[A-Z]{3,}\b', fix_caps, text)
+
+
 def generate_tts(text: str, voice: str, exaggeration: float = 0.45,
-                 cfg_weight: float = 0.5, speed: float = 0.85) -> AudioSegment:
+                 cfg_weight: float = 0.5, speed: float = 0.85,
+                 is_phrase: bool = False) -> AudioSegment:
     """Call Chatterbox TTS, return AudioSegment."""
+    text = normalize_for_tts(text)
+    if is_phrase:
+        text = f"... {text}"
     params = {
         "text": text, "voice": voice, "lang": "en",
         "exaggeration": exaggeration, "cfg_weight": cfg_weight,
@@ -315,6 +330,7 @@ def build_narration(voice: str, intro: AudioSegment, outro: AudioSegment):
             exaggeration=params["exaggeration"],
             speed=params["speed"],
             cfg_weight=params["cfg_weight"],
+            is_phrase=(ptype == "phrase"),
         )
         dur = len(seg)
         pos = len(narration)
@@ -378,14 +394,19 @@ def main():
         # ── 4. Shape bed and mix ─────────────────────────────────────
         print(f"\n[4/4] Shaping bed + mixing for {voice}...")
 
-        # Trim or loop bed to match narration length
-        total_ms = len(narration)
-        if len(bed) >= total_ms:
-            shaped_bed = bed[:total_ms]
+        # Trim or loop bed to match narration length MINUS the outro
+        # The bed should fade out before the outro starts
+        outro_dur = len(outro)
+        gap_before_outro = 3000  # matches the gap added in build_narration
+        bed_end_ms = len(narration) - outro_dur - gap_before_outro
+        if len(bed) >= bed_end_ms:
+            shaped_bed = bed[:bed_end_ms]
         else:
-            # Loop bed to fill
-            loops_needed = (total_ms // len(bed)) + 1
-            shaped_bed = (bed * loops_needed)[:total_ms]
+            loops_needed = (bed_end_ms // len(bed)) + 1
+            shaped_bed = (bed * loops_needed)[:bed_end_ms]
+        # Fade out bed over 3 seconds, then pad silence for the outro portion
+        shaped_bed = shaped_bed.fade_out(3000)
+        shaped_bed += AudioSegment.silent(duration=len(narration) - bed_end_ms)
 
         # Build swell envelope data
         swells = []

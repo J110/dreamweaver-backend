@@ -9,10 +9,10 @@ creating emotional arcs that sound reactive and alive.
 """
 
 import re
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 
-# ── Delivery Tag Dictionary ────────────────────────────────────────────
+# ── Delivery Tag Dictionary (Funny Shorts) ─────────────────────────────
 # Each tag specifies multipliers applied to the base voice params.
 # Multiple tags multiply together. Result is clamped to safe ranges.
 
@@ -64,6 +64,45 @@ DELIVERY_PARAMS = {
     "warm":             {"exag_mult": 0.75, "speed_mult": 0.88},
     "matter of fact":   {"exag_mult": 0.70, "speed_mult": 1.00},
 }
+
+
+# ── Sleep Story Delivery Tags ──────────────────────────────────────────
+# Narrower, calmer vocabulary for Phase 1 of sleep stories.
+# These are MULTIPLIERS on the mood-ramped base params, not absolute values.
+# Tight clamping (±0.15 exag, ±0.05 speed) keeps variation subtle.
+
+STORY_DELIVERY_PARAMS: Dict[str, Dict[str, float]] = {
+    # Wonder spectrum (discovery moments)
+    "noticing":         {"exag_mult": 1.05, "speed_mult": 0.95},
+    "wonder":           {"exag_mult": 1.10, "speed_mult": 0.92},
+    "awe":              {"exag_mult": 1.12, "speed_mult": 0.88},
+    "discovery":        {"exag_mult": 1.08, "speed_mult": 0.95},
+
+    # Warmth spectrum (emotional connection)
+    "warm":             {"exag_mult": 1.05, "speed_mult": 0.97},
+    "tender":           {"exag_mult": 1.08, "speed_mult": 0.92},
+    "comforting":       {"exag_mult": 1.06, "speed_mult": 0.94},
+    "fond":             {"exag_mult": 1.04, "speed_mult": 0.96},
+
+    # Tension spectrum (mild, sleep-safe)
+    "uncertain":        {"exag_mult": 0.90, "speed_mult": 0.95},
+    "cautious":         {"exag_mult": 0.88, "speed_mult": 0.92},
+    "hushed":           {"exag_mult": 0.82, "speed_mult": 0.88},
+    "mysterious":       {"exag_mult": 0.85, "speed_mult": 0.90},
+
+    # Sensory spectrum (grounding in the physical world)
+    "sensory":          {"exag_mult": 1.03, "speed_mult": 0.93},
+    "still":            {"exag_mult": 0.85, "speed_mult": 0.88},
+    "cozy":             {"exag_mult": 1.05, "speed_mult": 0.92},
+    "vast":             {"exag_mult": 0.90, "speed_mult": 0.85},
+
+    # Narrative spectrum (story mechanics)
+    "setting_the_scene": {"exag_mult": 0.95, "speed_mult": 0.95},
+    "transition":       {"exag_mult": 0.90, "speed_mult": 0.93},
+    "arrival":          {"exag_mult": 1.06, "speed_mult": 0.90},
+    "revealing":        {"exag_mult": 1.08, "speed_mult": 0.88},
+}
+
 
 # Safe ranges for Chatterbox
 EXAG_MIN = 0.25
@@ -126,31 +165,90 @@ def apply_delivery(base_params: dict, delivery_tags: List[str]) -> dict:
     return adjusted
 
 
+def apply_story_delivery(
+    base_params: dict,
+    delivery_tags: List[str],
+    mood_start_exag: float,
+    mood_start_speed: float,
+) -> dict:
+    """Adjust base TTS params using sleep-story delivery tags.
+
+    Tighter than apply_delivery():
+    - Uses STORY_DELIVERY_PARAMS (calmer vocabulary)
+    - Relative clamp: ±0.15 exag, ±0.05 speed from base
+    - Absolute ceiling: never exceed mood's Phase 1 start + small headroom
+    Returns a new dict — does not mutate base_params.
+    """
+    if not delivery_tags:
+        return base_params.copy()
+
+    adjusted = base_params.copy()
+    base_exag = adjusted["exaggeration"]
+    base_speed = adjusted["speed"]
+
+    for tag in delivery_tags:
+        tag_key = tag.strip().lower().replace(" ", "_")
+        if tag_key in STORY_DELIVERY_PARAMS:
+            d = STORY_DELIVERY_PARAMS[tag_key]
+            adjusted["exaggeration"] *= d["exag_mult"]
+            adjusted["speed"] *= d["speed_mult"]
+
+    # Tight relative clamp: ±0.15 exag, ±0.05 speed from paragraph base
+    adjusted["exaggeration"] = max(
+        base_exag - 0.15,
+        min(base_exag + 0.15, adjusted["exaggeration"]),
+    )
+    adjusted["speed"] = max(
+        base_speed - 0.05,
+        min(base_speed + 0.05, adjusted["speed"]),
+    )
+
+    # Absolute ceiling: never exceed mood's Phase 1 starting values + headroom
+    adjusted["exaggeration"] = min(adjusted["exaggeration"], mood_start_exag + 0.05)
+    adjusted["speed"] = min(adjusted["speed"], mood_start_speed + 0.03)
+
+    # Floor: still respect Chatterbox minimums
+    adjusted["exaggeration"] = max(EXAG_MIN, adjusted["exaggeration"])
+    adjusted["speed"] = max(SPEED_MIN, adjusted["speed"])
+
+    return adjusted
+
+
 def should_apply_delivery(
     content_type: str,
     phase: int,
     sentence_index: int,
     total_phase_sentences: int,
+    paragraph_index: Optional[int] = None,
+    total_paragraphs: Optional[int] = None,
 ) -> bool:
     """Determine if delivery tags should be applied for this sentence.
 
     - Funny shorts: always apply
-    - Stories/long stories: Phase 1 only, skip last 20% for smooth Phase 2 transition
-    - Poems: never (uses rhythmic cadence instead)
+    - Long stories: Phase 1 only (explicit phase tags)
+    - Short stories: first 35% of paragraphs (implicit Phase 1)
+    - Poems/songs: never (uses rhythmic cadence instead)
     """
     if content_type == "funny_short":
         return True
 
-    if content_type in ("story", "long_story"):
+    if content_type == "long_story":
         if phase != 1:
             return False
-
-        # Phase 1: apply, but flatten in last 20%
+        # Phase 1: apply, but flatten in last 20% of phase sentences
         progress = sentence_index / max(total_phase_sentences - 1, 1)
-        if progress > 0.80:
-            return False
+        return progress <= 0.80
 
-        return True
+    if content_type == "story":
+        # Short stories: no explicit phases. Use paragraph position.
+        # First 35% of paragraphs = implicit Phase 1.
+        if paragraph_index is not None and total_paragraphs is not None:
+            return paragraph_index < total_paragraphs * 0.35
+        # Fallback: if entire text was treated as Phase 1, use sentence progress
+        if phase == 1:
+            progress = sentence_index / max(total_phase_sentences - 1, 1)
+            return progress <= 0.80
+        return False
 
     return False
 

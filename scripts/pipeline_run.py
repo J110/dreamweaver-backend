@@ -713,6 +713,19 @@ def step_audio(args, state: dict) -> bool:
     logger.info("║  STEP 2: GENERATE AUDIO              ║")
     logger.info("╚══════════════════════════════════════╝")
 
+    # Pre-generate any missing mood bed WAV files (needed for v2 baked music)
+    effective_mood = state.get("effective_mood")
+    if effective_mood:
+        music_dir = BASE_DIR / "audio" / "story_music"
+        bed_path = music_dir / f"bed_{effective_mood}.wav"
+        if not bed_path.exists():
+            logger.info("  Generating missing mood bed: %s", bed_path.name)
+            cmd = [sys.executable, str(SCRIPTS_DIR / "generate_mood_beds.py"),
+                   "--mood", effective_mood]
+            ok, _, _, _ = run_command(cmd, f"Mood bed: {effective_mood}", timeout=600)
+            if not ok:
+                logger.warning("  Mood bed generation failed for %s — v2 audio will fail", effective_mood)
+
     new_ids = state.get("generated_ids", [])
 
     # Auto-recover: find content from previous runs that's missing audio
@@ -1023,9 +1036,13 @@ def step_enrich(args, state: dict) -> bool:
     enrich_failures = []
     for sid in enrich_ids:
         # Songs (lullabies) don't need Musical Briefs — ACE-Step output has vocals + instrument
+        # V2 stories don't need Musical Briefs — they have baked-in music
         item = content_by_id.get(sid, {})
         if item.get("type", "").lower() == "song":
             logger.info("  Skipping Musical Brief for %s (song/lullaby — no background music)", sid[:8])
+            continue
+        if item.get("has_baked_music") or item.get("experimental_v2"):
+            logger.info("  Skipping Musical Brief for %s (v2 baked music)", sid[:8])
             continue
 
         cmd = [
