@@ -543,6 +543,87 @@ print(r.choices[0].message.content)
 
 ---
 
+## Deploy Guard (MANDATORY)
+
+**Every deploy — whether it's a Docker rebuild, git pull, admin reload, or frontend rebuild — MUST follow this process.** This prevents unintended changes like Hindi stories reappearing, content going missing, or extra items sneaking in.
+
+### The Rule
+
+> **Only change what you specifically intend to change. Everything else must remain identical.**
+
+### Before ANY Deploy
+
+```bash
+# Snapshot current production state
+python3 scripts/deploy_guard.py snapshot
+```
+
+This saves a snapshot of every story, funny short, and silly song currently live — their IDs, titles, languages, audio status, and counts per age group.
+
+### After EVERY Deploy
+
+```bash
+# Verify only intended changes happened
+python3 scripts/deploy_guard.py verify
+```
+
+This compares the current state against the snapshot and flags every difference:
+- Stories added or removed
+- Stories that lost audio or covers
+- New languages appearing (e.g. Hindi)
+- Funny shorts count changing per age group
+- Silly songs losing audio
+
+**If you see ANY unintended change, roll back immediately.**
+
+### Quick Consistency Check
+
+```bash
+# No snapshot needed — just validates expected state
+python3 scripts/deploy_guard.py check
+```
+
+Checks: no Hindi stories, 6 funny shorts per age group, 1 silly song per age group with audio, no stories without audio.
+
+### What This Catches
+
+| Past Incident | How Deploy Guard Catches It |
+|---------------|---------------------------|
+| Hindi stories reappearing after Docker rebuild | `verify` shows "ADDED story: ... (lang=hi)" |
+| Silly songs losing audio after rebuild | `verify` shows "LOST AUDIO silly song" |
+| Extra funny shorts appearing | `verify` shows "ADDED funny short (2-5): ..." |
+| Stories accidentally removed | `verify` shows "REMOVED story: ..." |
+| Audio files lost after git pull | `verify` shows "LOST AUDIO: ..." |
+
+### Integration with Manual Deploys
+
+For **backend code deploys**:
+```bash
+python3 scripts/deploy_guard.py snapshot          # 1. Snapshot BEFORE
+cd /opt/dreamweaver-backend && git pull
+sudo docker-compose down && sudo docker-compose up -d --build
+sleep 10                                           # Wait for startup
+python3 scripts/deploy_guard.py verify            # 2. Verify AFTER
+```
+
+For **frontend code deploys**:
+```bash
+python3 scripts/deploy_guard.py snapshot          # 1. Snapshot BEFORE
+cd /opt/dreamweaver-web && git pull
+sudo npm run build
+sudo cp -r public .next/standalone/public && sudo cp -r .next/static .next/standalone/.next/static
+sudo pm2 restart dreamweaver-web
+python3 scripts/deploy_guard.py verify            # 2. Verify AFTER
+```
+
+For **content-only deploys** (daily pipeline):
+```bash
+# Pipeline should auto-run: snapshot → deploy → verify
+# Only new stories should appear as ADDED; nothing should be REMOVED
+```
+
+---
+
 ## Deployment Flow
 
 ```

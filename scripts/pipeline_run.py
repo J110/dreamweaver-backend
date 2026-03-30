@@ -1695,6 +1695,39 @@ def step_publish(args, state: dict) -> bool:
     return backend_ok or frontend_ok
 
 
+def _deploy_guard_snapshot() -> dict | None:
+    """Capture production state before deploy for verification."""
+    try:
+        from scripts.deploy_guard import capture_state
+        state = capture_state("http://localhost:8000")
+        logger.info("  Deploy Guard: snapshot captured (%d stories, fs=%s, ss=%s)",
+                     state.get("story_count", 0),
+                     state.get("funny_shorts_count", {}),
+                     state.get("silly_songs_count", {}))
+        return state
+    except Exception as e:
+        logger.warning("  Deploy Guard: snapshot failed (%s) — continuing without guard", e)
+        return None
+
+
+def _deploy_guard_verify(before: dict | None):
+    """Compare post-deploy state against pre-deploy snapshot."""
+    if before is None:
+        return
+    try:
+        from scripts.deploy_guard import capture_state, diff_states
+        after = capture_state("http://localhost:8000")
+        changes = diff_states(before, after)
+        if not changes:
+            logger.info("  Deploy Guard: ✅ no unintended changes")
+        else:
+            logger.warning("  Deploy Guard: ⚠️ %d change(s) detected:", len(changes))
+            for c in changes:
+                logger.warning("    %s", c)
+    except Exception as e:
+        logger.warning("  Deploy Guard: verify failed (%s)", e)
+
+
 def step_deploy_prod(args, state: dict) -> bool:
     """Step 8: Deploy to local production (zero-downtime static copy + backend hot-reload).
 
@@ -1714,6 +1747,9 @@ def step_deploy_prod(args, state: dict) -> bool:
         state["step_deploy_prod"] = "skipped"
         save_state(state)
         return True
+
+    # Snapshot production state before any changes
+    guard_snapshot = _deploy_guard_snapshot()
 
     # Deploy all stories with audio, not just QA-passed
     new_ids = state.get("generated_ids", [])
@@ -1826,6 +1862,12 @@ def step_deploy_prod(args, state: dict) -> bool:
             logger.info("  Backend restarted successfully (fallback)")
         else:
             logger.error("  Backend restart also failed: %s", stderr)
+
+    # Verify production state after deploy — flag unintended changes
+    if backend_ok:
+        import time as _time
+        _time.sleep(3)  # Give backend a moment to finish loading
+        _deploy_guard_verify(guard_snapshot)
 
     state["step_deploy_prod"] = "done" if (frontend_ok or backend_ok) else "failed"
     state["deploy_prod_frontend"] = "ok" if frontend_ok else "failed"
