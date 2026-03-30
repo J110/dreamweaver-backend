@@ -50,16 +50,23 @@ def capture_state(api: str) -> dict:
         "api": api,
     }
 
-    # 1. Stories
+    # 1. Stories (paginate — API max page_size=100)
     try:
-        resp = client.get(f"{api}/api/v1/content")
-        data = resp.json()
-        items = data.get("data", data) if isinstance(data, dict) else data
-        if isinstance(items, dict):
-            items = items.get("items", [])
+        all_items = []
+        page = 1
+        while True:
+            resp = client.get(f"{api}/api/v1/content", params={"page_size": 100, "page": page})
+            data = resp.json()
+            page_data = data.get("data", data) if isinstance(data, dict) else data
+            items = page_data.get("items", []) if isinstance(page_data, dict) else page_data
+            all_items.extend(items)
+            total_pages = page_data.get("pages", 1) if isinstance(page_data, dict) else 1
+            if page >= total_pages:
+                break
+            page += 1
 
         stories = []
-        for item in items:
+        for item in all_items:
             stories.append({
                 "id": item.get("id"),
                 "title": item.get("title"),
@@ -207,31 +214,44 @@ def diff_states(before: dict, after: dict) -> list[str]:
 
 def print_state_summary(state: dict, label: str = "Current"):
     """Print a compact summary of state."""
+    stories = state.get("stories", {})
+    en_stories = [s for s in stories.values() if s.get("lang", "en") == "en"]
+    hi_stories = [s for s in stories.values() if s.get("lang") == "hi"]
+
     print(f"\n{'='*60}")
     print(f"  {label} Production State")
     print(f"  Captured: {state.get('captured_at', '?')}")
     print(f"{'='*60}")
 
-    print(f"\n  Stories: {state.get('story_count', '?')}")
-    langs = state.get("story_langs", [])
-    if langs:
-        print(f"  Languages: {', '.join(langs)}")
-        if "hi" in langs:
-            hi_count = sum(1 for s in state.get("stories", {}).values() if s.get("lang") == "hi")
-            print(f"  ⚠️  Hindi stories present: {hi_count}")
+    # ── Stories Tab ──
+    print(f"\n  STORIES TAB")
+    print(f"    Total: {len(en_stories)} English stories")
+    with_audio = sum(1 for s in en_stories if s.get("has_audio"))
+    with_cover = sum(1 for s in en_stories if s.get("has_cover"))
+    no_audio = len(en_stories) - with_audio
+    no_cover = len(en_stories) - with_cover
+    print(f"    Audio: {with_audio} with audio{f', {no_audio} WITHOUT' if no_audio else ''}")
+    print(f"    Covers: {with_cover} with covers{f', {no_cover} WITHOUT' if no_cover else ''}")
+    if hi_stories:
+        print(f"    ⚠️  Hindi stories present: {len(hi_stories)} (should be 0)")
 
-    print(f"\n  Funny Shorts:")
+    # ── Before Bed Tab ──
+    print(f"\n  BEFORE BED TAB")
+    print(f"    Funny Shorts:")
     for age in ["2-5", "6-8", "9-12"]:
-        count = state.get("funny_shorts_count", {}).get(age, 0)
-        print(f"    {age}: {count}")
+        items = state.get("funny_shorts", {}).get(age, {})
+        count = len(items)
+        with_audio = sum(1 for d in items.values() if d.get("has_audio"))
+        print(f"      {age}: {count} shorts, {with_audio} with audio")
 
-    print(f"\n  Silly Songs:")
+    print(f"    Silly Songs:")
     for age in ["2-5", "6-8", "9-12"]:
-        count = state.get("silly_songs_count", {}).get(age, 0)
         items = state.get("silly_songs", {}).get(age, {})
-        no_audio = [s for s, d in items.items() if not d.get("has_audio")]
-        suffix = f" (⚠️  no audio: {', '.join(no_audio)})" if no_audio else ""
-        print(f"    {age}: {count}{suffix}")
+        count = len(items)
+        with_audio = sum(1 for d in items.values() if d.get("has_audio"))
+        no_audio_list = [s for s, d in items.items() if not d.get("has_audio")]
+        suffix = f" (⚠️  no audio: {', '.join(no_audio_list)})" if no_audio_list else ""
+        print(f"      {age}: {count} songs, {with_audio} with audio{suffix}")
 
 
 def cmd_snapshot(args):
@@ -293,11 +313,11 @@ def cmd_check(args):
         if s.get("lang") == "hi":
             issues.append(f"  Hindi story present: {sid} — \"{s['title']}\"")
 
-    # Check funny shorts counts (expect 6 per group)
+    # Check funny shorts counts (expect 4 per group — properly mixed ones only)
     for age in ["2-5", "6-8", "9-12"]:
         count = state.get("funny_shorts_count", {}).get(age, 0)
-        if count != 6:
-            issues.append(f"  Funny shorts ({age}): expected 6, got {count}")
+        if count != 4:
+            issues.append(f"  Funny shorts ({age}): expected 4, got {count}")
 
     # Check silly songs counts (expect 1 per group)
     for age in ["2-5", "6-8", "9-12"]:

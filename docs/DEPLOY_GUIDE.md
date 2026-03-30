@@ -194,8 +194,8 @@ These are the expected counts. If deploy guard shows anything different, investi
 
 | Content Type | Expected Count | Notes |
 |-------------|---------------|-------|
-| English stories | ~20+ (growing daily) | NO Hindi stories mixed in |
-| Funny shorts per age group | 6 | 2-5: 6, 6-8: 6, 9-12: 6 |
+| English stories | ~147+ (growing daily) | NO Hindi stories mixed in |
+| Funny shorts per age group | 4 | 2-5: 4, 6-8: 4, 9-12: 4 (all with mixed episode audio) |
 | Silly songs per age group | 1 | 2-5: Five More Minutes, 6-8: Vegetables Are Plotting, 9-12: My Homework Ate Itself |
 | All silly songs have audio | Yes | `audio_file` must not be null |
 | All stories have audio | Yes (for published ones) | Check with `deploy_guard.py check` |
