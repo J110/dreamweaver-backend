@@ -23444,5 +23444,115 @@
     ],
     "mood": "calm",
     "lullaby_type": "rocking"
+  },
+  {
+    "id": "gen-b3b4ff39a1e6",
+    "type": "story",
+    "lang": "en",
+    "title": "Moonlight on the River",
+    "description": "A little otter floats on the river, listening to the quiet song of moonlight and water.",
+    "text": "Did you know the river hums when the moon is high? Not loud. Not fast. Just a soft, shimmering song. That’s what Little Otter heard tonight. He floated on his back, paws tucked close, tail curled like a comma. The water held him. Just the river... just the moon. Shhh... listen. Can you hear it? That quiet. That silver quiet. The moon dripped light onto the water. Little Otter watched it dance. Not yet... not yet. Just the river... just the moon. The air smelled like wet stones and sleep. His eyelids grew heavy. The hum grew softer. Closer your eyes for a second. Can you see it? The light. The water. The quiet. Just the river... just the moon. Little Otter sighed. His breath rippled the song. Then his eyes closed. His paws stilled. The river hummed. The moon watched. Just the river. Just the moon. Quiet now.",
+    "cover": "/covers/gen-b3b4ff39a1e6.svg",
+    "target_age": 3,
+    "age_min": 2,
+    "age_max": 5,
+    "duration": 1,
+    "duration_seconds": 45.45,
+    "author_id": "system",
+    "created_at": "2026-03-30T03:28:30.906697",
+    "updated_at": "2026-03-30T03:28:30.906697",
+    "addedAt": "2026-03-30",
+    "theme": "nature",
+    "mood": "calm",
+    "story_type": "nature",
+    "categories": [
+      "Nature",
+      "Bedtime"
+    ],
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-b3b4_female_1.mp3",
+        "duration_seconds": 45.45,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-b3b4_female_2.mp3",
+        "duration_seconds": 45.44,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-b3b4_female_3.mp3",
+        "duration_seconds": 45.44,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-b3b4_male_2.mp3",
+        "duration_seconds": 45.45,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "asmr",
+        "url": "/audio/pre-gen/gen-b3b4_asmr.mp3",
+        "duration_seconds": 45.45,
+        "provider": "chatterbox"
+      }
+    ],
+    "musicalBrief": {
+      "storyId": "gen-b3b4ff39a1e6",
+      "ageGroup": "2-5",
+      "musicalIdentity": {
+        "culturalReference": "ambient_electronic",
+        "primaryLoop": "harp_arpeggios",
+        "padCharacter": "starfield"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "F"
+      },
+      "melodicCharacter": "descending_lullaby",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 58
+      },
+      "environment": {
+        "natureSoundPrimary": "creek",
+        "natureSoundSecondary": "wind_chimes",
+        "ambientEvents": [
+          "waterDrop",
+          "cricket",
+          "starTwinkle"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "gentle_wonder",
+        "phase2": "soft_floating",
+        "phase3": "deep_stillness"
+      }
+    },
+    "musicParams": {},
+    "character": {
+      "name": "Little Otter",
+      "identity": "a river otter",
+      "special": "floats on his back without moving",
+      "personality_tags": [
+        "gentle",
+        "quiet",
+        "dreamy"
+      ]
+    },
+    "word_count": 149,
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "is_generated": true,
+    "has_qa": false,
+    "has_games": false,
+    "hook": "Did you know the river hums when the moon is high?",
+    "repeated_phrase": "Just the river... just the moon.",
+    "experimental": true
   }
 ]
