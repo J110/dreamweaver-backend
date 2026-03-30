@@ -133,8 +133,8 @@ def capture_state(api: str) -> dict:
                 item["id"]: {
                     "title": item.get("title"),
                     "has_audio": bool(item.get("audio_file")),
-                    "audio_url": f"/audio/silly-songs/{item.get('audio_file', '')}" if item.get("audio_file") else "",
-                    "cover_url": f"/covers/silly-songs/{item.get('cover_file', '')}" if item.get("cover_file") else "",
+                    "audio_url": f"/audio/silly-songs/{item['audio_file']}" if item.get("audio_file") else "",
+                    "cover_url": f"/covers/silly-songs/{item['cover_file']}" if item.get("cover_file") else "",
                 }
                 for item in items
             }
@@ -146,37 +146,40 @@ def capture_state(api: str) -> dict:
     return state
 
 
-def verify_files(state: dict, frontend: str) -> list[str]:
+def verify_files(state: dict, frontend: str, api: str) -> list[str]:
     """HEAD-check all audio and cover URLs to verify they're actually reachable.
+
+    Stories audio/covers are served by nginx (frontend).
+    Funny shorts and silly songs audio/covers are served by the backend API.
 
     Returns list of issues found (empty = all good).
     """
     issues = []
-    urls_to_check = []  # (url_path, label)
+    urls_to_check = []  # (base_url, url_path, label)
 
-    # Stories
+    # Stories — served by nginx (frontend)
     for sid, s in state.get("stories", {}).items():
         for url in s.get("audio_urls", []):
             if url:
-                urls_to_check.append((url, f"story audio: {sid}"))
+                urls_to_check.append((frontend, url, f"story audio: {sid}"))
         if s.get("cover_url"):
-            urls_to_check.append((s["cover_url"], f"story cover: {sid}"))
+            urls_to_check.append((frontend, s["cover_url"], f"story cover: {sid}"))
 
-    # Funny shorts
+    # Funny shorts — served by backend API
     for age, items in state.get("funny_shorts", {}).items():
         for fid, f in items.items():
             if f.get("audio_url"):
-                urls_to_check.append((f["audio_url"], f"funny short audio ({age}): {fid}"))
+                urls_to_check.append((api, f["audio_url"], f"funny short audio ({age}): {fid}"))
             if f.get("cover_url"):
-                urls_to_check.append((f["cover_url"], f"funny short cover ({age}): {fid}"))
+                urls_to_check.append((frontend, f["cover_url"], f"funny short cover ({age}): {fid}"))
 
-    # Silly songs
+    # Silly songs — served by backend API
     for age, items in state.get("silly_songs", {}).items():
         for sid, s in items.items():
             if s.get("audio_url"):
-                urls_to_check.append((s["audio_url"], f"silly song audio ({age}): {sid}"))
+                urls_to_check.append((api, s["audio_url"], f"silly song audio ({age}): {sid}"))
             if s.get("cover_url"):
-                urls_to_check.append((s["cover_url"], f"silly song cover ({age}): {sid}"))
+                urls_to_check.append((frontend, s["cover_url"], f"silly song cover ({age}): {sid}"))
 
     if not urls_to_check:
         return issues
@@ -186,8 +189,8 @@ def verify_files(state: dict, frontend: str) -> list[str]:
     ok = 0
     failed = 0
     client = httpx.Client(timeout=10, follow_redirects=True)
-    for url_path, label in urls_to_check:
-        full_url = f"{frontend}{url_path}"
+    for base_url, url_path, label in urls_to_check:
+        full_url = f"{base_url}{url_path}"
         try:
             resp = client.head(full_url)
             if resp.status_code == 200:
@@ -371,7 +374,7 @@ def cmd_verify(args):
 
     # File reachability check
     if not args.skip_files:
-        file_issues = verify_files(after, frontend)
+        file_issues = verify_files(after, frontend, api)
         print(f"\n{'='*60}")
         if not file_issues:
             print("  ✅ All audio & cover files are reachable.")
@@ -440,7 +443,7 @@ def cmd_check(args):
 
     # File reachability check
     if not args.skip_files:
-        file_issues = verify_files(state, frontend)
+        file_issues = verify_files(state, frontend, api)
         print(f"\n{'='*60}")
         if not file_issues:
             print("  ✅ All audio & cover files are reachable.")
