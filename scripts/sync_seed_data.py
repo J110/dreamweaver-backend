@@ -112,13 +112,17 @@ def _build_new_entry_js(story: dict) -> str:
     story_type = story.get("story_type", "")
     story_type_line = f'\n      story_type: "{story_type}",' if story_type else ""
 
+    # experimental_v2: bed music baked into audio — disables client-side ambient music
+    experimental_v2 = story.get("experimental_v2", False)
+    experimental_v2_line = "\n      experimental_v2: true," if experimental_v2 else ""
+
     entry = f"""    {{
       id: "{_js_escape(sid)}",
       type: "{stype}",
       title: "{_js_escape(title)}",
       description: "{_js_escape(desc)}",
       cover: "{cover}",
-      addedAt: "{added_at}",{mood_line}{story_type_line}
+      addedAt: "{added_at}",{mood_line}{story_type_line}{experimental_v2_line}
       text: "{_js_escape(text)}",{lullaby_line}{character_line}
       target_age: {target_age},
       duration: {duration},
