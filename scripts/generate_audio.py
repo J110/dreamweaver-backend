@@ -1817,6 +1817,10 @@ def generate_phase_audio(
                 if _HAS_DELIVERY:
                     dtags = parse_delivery_tags(seg_text)
                     seg_text = strip_delivery_tags(seg_text)
+                # Catch-all: strip any remaining [TAG] or [/TAG] brackets
+                # that the LLM may have injected (e.g. [DELIVERY:...] when
+                # _HAS_DELIVERY is False, or unknown tags).
+                seg_text = re.sub(r'\[/?[A-Za-z_][A-Za-z0-9_:. ]*\]', '', seg_text).strip()
                     if dtags and should_apply_delivery(
                         content_type, phase_num, speech_idx, len(speech_segments),
                         paragraph_index=global_idx,

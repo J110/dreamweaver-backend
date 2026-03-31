@@ -1228,8 +1228,11 @@ def generate_one(client, item: Dict, existing_titles: List[str],
                 from scripts.audio_assembly import clean_display_text
                 display_text = clean_display_text(text)
             elif "[PHASE_1]" in text:
-                display_text = re.sub(r'\[/?PHASE_\d+\]', '', text).strip()
-                display_text = re.sub(r'\n{3,}', '\n\n', display_text)
+                # Strip all markers: [PHASE_N], [DELIVERY: ...], [CURIOUS], etc.
+                display_text = re.sub(r'\[/?PHASE_\d+\]', '', text)
+                display_text = re.sub(r'\[/?[A-Za-z_][A-Za-z0-9_:. ]*\]', '', display_text)
+                display_text = re.sub(r'\*+', '', display_text)
+                display_text = re.sub(r'\n{3,}', '\n\n', display_text).strip()
 
             content_obj = {
                 "id": content_id,
