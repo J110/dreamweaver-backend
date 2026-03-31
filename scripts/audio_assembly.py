@@ -96,12 +96,11 @@ def parse_segments(text: str) -> list:
             content = re.sub(r'\*+', '', content)  # Strip markdown
             segments.append(("phrase", content))
         else:
-            # Strip markdown and any stray emotion markers the LLM included
+            # Strip markdown and any stray markers the LLM included
             cleaned = re.sub(r'\*+', '', part)
-            cleaned = re.sub(r'\[/?(?:EMPHASIS|GENTLE|SLEEPY|EXCITED|CURIOUS|'
-                             r'ADVENTUROUS|MYSTERIOUS|JOYFUL|DRAMATIC|WHISPERING|'
-                             r'DRAMATIC_PAUSE|CALM|SAFETY|DELIVERY:[^\]]*)\]',
-                             '', cleaned, flags=re.IGNORECASE)
+            # Catch-all: strip any remaining [TAG] or [/TAG] brackets
+            # (LLMs sometimes add [EMPHASIS], [DELIVERY:high], [high], etc.)
+            cleaned = re.sub(r'\[/?[A-Za-z_][A-Za-z0-9_:. ]*\]', '', cleaned)
             cleaned = cleaned.strip()
             if cleaned:
                 segments.append(("text", cleaned))
@@ -114,10 +113,8 @@ def clean_display_text(raw_text: str) -> str:
     clean = re.sub(r'\[MUSIC\]', '', raw_text)
     clean = re.sub(r'\[PAUSE:\s*\d+\]', '', clean)
     clean = re.sub(r'\[/?PHRASE\]', '', clean)
-    # Strip any stray emotion/emphasis markers the LLM may have included
-    clean = re.sub(r'\[/?(?:EMPHASIS|GENTLE|SLEEPY|EXCITED|CURIOUS|ADVENTUROUS|'
-                   r'MYSTERIOUS|JOYFUL|DRAMATIC|WHISPERING|DRAMATIC_PAUSE|'
-                   r'CALM|SAFETY|DELIVERY:[^\]]*)\]', '', clean, flags=re.IGNORECASE)
+    # Catch-all: strip any remaining [TAG] or [/TAG] brackets
+    clean = re.sub(r'\[/?[A-Za-z_][A-Za-z0-9_:. ]*\]', '', clean)
     clean = re.sub(r'\*+', '', clean)
     clean = re.sub(r'\s+', ' ', clean).strip()
     return normalize_display_text(clean)
