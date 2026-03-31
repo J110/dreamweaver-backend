@@ -1669,12 +1669,12 @@ def step_publish(args, state: dict) -> bool:
                  "seed_output/content_expanded.json", "audio/"], "Backend: git add", timeout=60)
     run_command(["git", "stash", "--keep-index"], "Backend: git stash --keep-index", timeout=30)
     backend_cmds = [
-        (["git", "commit", "-m", commit_msg, "--allow-empty"], "Backend: git commit"),
-        (["git", "pull", "--rebase", "origin", "main"], "Backend: git pull --rebase"),
-        (["git", "push", "origin", "main"], "Backend: git push"),
+        (["git", "commit", "-m", commit_msg, "--allow-empty"], "Backend: git commit", 60),
+        (["git", "pull", "--rebase", "origin", "main"], "Backend: git pull --rebase", 60),
+        (["git", "push", "origin", "main"], "Backend: git push", 300),
     ]
-    for cmd, label in backend_cmds:
-        ok, _, stderr, _ = run_command(cmd, label, timeout=60)
+    for cmd, label, cmd_timeout in backend_cmds:
+        ok, _, stderr, _ = run_command(cmd, label, timeout=cmd_timeout)
         if not ok and "nothing to commit" not in str(stderr):
             logger.warning("  %s failed", label)
             break
