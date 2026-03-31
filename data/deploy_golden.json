@@ -1,0 +1,2497 @@
+{
+  "captured_at": "2026-03-31T14:57:52.762342",
+  "api": "https://api.dreamvalley.app",
+  "stories": {
+    "counting-2-5-4f65": {
+      "id": "counting-2-5-4f65",
+      "title": "One Sleepy Owl",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/counting-2-5-4f65_female_1.mp3"
+      ],
+      "cover_url": "/covers/counting-2-5-4f65.svg",
+      "mood": "wired"
+    },
+    "gen-e59a917fea74": {
+      "id": "gen-e59a917fea74",
+      "title": "Marina and the Singing Shell",
+      "type": "poem",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-e59a_female_4.mp3",
+        "/audio/pre-gen/gen-e59a_female_2.mp3"
+      ],
+      "cover_url": "/covers/gen-e59a917fea74.svg",
+      "mood": "wired"
+    },
+    "gen-f16e100e357b": {
+      "id": "gen-f16e100e357b",
+      "title": "Finn and the Glowing Moss Council",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-f16e_male_2.mp3",
+        "/audio/pre-gen/gen-f16e_female_2.mp3"
+      ],
+      "cover_url": "/covers/gen-f16e100e357b.svg",
+      "mood": "wired"
+    },
+    "gen-ef0e1730cfeb": {
+      "id": "gen-ef0e1730cfeb",
+      "title": "Toby and the Sniffly Cloud",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-ef0e_female_3.mp3",
+        "/audio/pre-gen/gen-ef0e_male_2.mp3"
+      ],
+      "cover_url": "/covers/gen-ef0e1730cfeb.svg",
+      "mood": "wired"
+    },
+    "gen-63e5fb0661c8": {
+      "id": "gen-63e5fb0661c8",
+      "title": "Sparka and the Glowing Puddle",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-63e5_male_2.mp3",
+        "/audio/pre-gen/gen-63e5_female_3.mp3"
+      ],
+      "cover_url": "/covers/gen-63e5fb0661c8.svg",
+      "mood": "wired"
+    },
+    "exp2-d586859ee5": {
+      "id": "exp2-d586859ee5",
+      "title": "Lumi and the Bouncing Moon",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/exp2-d586859ee5_female_3.mp3",
+        "/audio/pre-gen/exp2-d586859ee5_male_2.mp3"
+      ],
+      "cover_url": "/covers/exp2-d586859ee5.svg",
+      "mood": "wired"
+    },
+    "gen-041123d72402": {
+      "id": "gen-041123d72402",
+      "title": "Little Frog and the Moonlit Lake",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-0411_female_1.mp3",
+        "/audio/pre-gen/gen-0411_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-041123d72402.svg",
+      "mood": "calm"
+    },
+    "rocking-test-001": {
+      "id": "rocking-test-001",
+      "title": "Rock-a-bye",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/rocking-test-001_female_1.mp3"
+      ],
+      "cover_url": "/covers/rocking-test-001.svg",
+      "mood": "calm"
+    },
+    "heartbeat-test-001": {
+      "id": "heartbeat-test-001",
+      "title": "Humming",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/heartbeat-test-001_female_1.mp3"
+      ],
+      "cover_url": "/covers/heartbeat-test-001.svg",
+      "mood": "calm"
+    },
+    "origin-6-8-164c": {
+      "id": "origin-6-8-164c",
+      "title": "How Dreams Began",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/origin-6-8-164c_female_1.mp3"
+      ],
+      "cover_url": "/covers/origin-6-8-164c.svg",
+      "mood": "curious"
+    },
+    "shield-2-5-15de": {
+      "id": "shield-2-5-15de",
+      "title": "You Are Safe",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/shield-2-5-15de_female_1.mp3"
+      ],
+      "cover_url": "/covers/shield-2-5-15de.svg",
+      "mood": "anxious"
+    },
+    "heartbeat-0-1-13e8": {
+      "id": "heartbeat-0-1-13e8",
+      "title": "Humming",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/heartbeat-0-1-13e8_female_1.mp3"
+      ],
+      "cover_url": "/covers/heartbeat-0-1-13e8.svg",
+      "mood": "calm"
+    },
+    "gen-dae685fc3b7b": {
+      "id": "gen-dae685fc3b7b",
+      "title": "Lulla and the Whispering Hourglass",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-dae6_female_2.mp3",
+        "/audio/pre-gen/gen-dae6_female_3.mp3"
+      ],
+      "cover_url": "/covers/gen-dae685fc3b7b.svg",
+      "mood": "sad"
+    },
+    "gen-913ac4fe8d55": {
+      "id": "gen-913ac4fe8d55",
+      "title": "Liora and the Lantern of Lost Hours",
+      "type": "poem",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-913a_male_2.mp3",
+        "/audio/pre-gen/gen-913a_female_1.mp3"
+      ],
+      "cover_url": "/covers/gen-913ac4fe8d55.svg",
+      "mood": "sad"
+    },
+    "gen-728f2c9e4615": {
+      "id": "gen-728f2c9e4615",
+      "title": "Zorv and the Clockwork Tide",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-728f_male_2.mp3",
+        "/audio/pre-gen/gen-728f_female_1.mp3"
+      ],
+      "cover_url": "/covers/gen-728f2c9e4615.svg",
+      "mood": "sad"
+    },
+    "gen-7b207c25a434": {
+      "id": "gen-7b207c25a434",
+      "title": "Tuck and the Ticking Clover",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-7b20_male_2.mp3",
+        "/audio/pre-gen/gen-7b20_female_1.mp3"
+      ],
+      "cover_url": "/covers/gen-7b207c25a434.svg",
+      "mood": "sad"
+    },
+    "gen-282dd22734a0": {
+      "id": "gen-282dd22734a0",
+      "title": "Lumi and the Singing Raindrop Family",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-282d_female_1.mp3",
+        "/audio/pre-gen/gen-282d_male_1.mp3"
+      ],
+      "cover_url": "/covers/gen-282dd22734a0.svg",
+      "mood": "wired"
+    },
+    "gen-abc9935e9a8c": {
+      "id": "gen-abc9935e9a8c",
+      "title": "Bramble and the Tiny Tea Party",
+      "type": "poem",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-abc9_female_3.mp3",
+        "/audio/pre-gen/gen-abc9_female_4.mp3"
+      ],
+      "cover_url": "/covers/gen-abc9935e9a8c.svg",
+      "mood": "wired"
+    },
+    "gen-3324b5de2c64": {
+      "id": "gen-3324b5de2c64",
+      "title": "Pip and the Pocket-Sized Picnic",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-3324_male_2.mp3",
+        "/audio/pre-gen/gen-3324_female_3.mp3"
+      ],
+      "cover_url": "/covers/gen-3324b5de2c64.svg",
+      "mood": "wired"
+    },
+    "gen-6134b0c7424e": {
+      "id": "gen-6134b0c7424e",
+      "title": "Stella and the Shrinking Starbeam",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-6134_female_3.mp3",
+        "/audio/pre-gen/gen-6134_male_2.mp3"
+      ],
+      "cover_url": "/covers/gen-6134b0c7424e.svg",
+      "mood": "wired"
+    },
+    "gen-115645b8fe76": {
+      "id": "gen-115645b8fe76",
+      "title": "Luna and the Whispering Wind",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-1156_female_1.mp3",
+        "/audio/pre-gen/gen-1156_male_1.mp3"
+      ],
+      "cover_url": "/covers/gen-115645b8fe76.svg",
+      "mood": "anxious"
+    },
+    "gen-212c2515850d": {
+      "id": "gen-212c2515850d",
+      "title": "Lula and the Whispering Sand",
+      "type": "poem",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-212c_female_4.mp3",
+        "/audio/pre-gen/gen-212c_female_1.mp3"
+      ],
+      "cover_url": "/covers/gen-212c2515850d.svg",
+      "mood": "anxious"
+    },
+    "gen-aa2f853f44d4": {
+      "id": "gen-aa2f853f44d4",
+      "title": "Mira and the Ice That Listened",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-aa2f_male_2.mp3",
+        "/audio/pre-gen/gen-aa2f_female_2.mp3"
+      ],
+      "cover_url": "/covers/gen-aa2f853f44d4.svg",
+      "mood": "anxious"
+    },
+    "gen-95849b2417b4": {
+      "id": "gen-95849b2417b4",
+      "title": "Finn and the Whispering Dunes",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-9584_female_1.mp3",
+        "/audio/pre-gen/gen-9584_male_2.mp3"
+      ],
+      "cover_url": "/covers/gen-95849b2417b4.svg",
+      "mood": "anxious"
+    },
+    "gen-ccc1075c5943": {
+      "id": "gen-ccc1075c5943",
+      "title": "Tink and the Whispering Fireflies",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-ccc1_female_2.mp3",
+        "/audio/pre-gen/gen-ccc1_female_3.mp3"
+      ],
+      "cover_url": "/covers/gen-ccc1075c5943.svg",
+      "mood": "wired"
+    },
+    "gen-1865516ea0ac": {
+      "id": "gen-1865516ea0ac",
+      "title": "Jasper and the Jiggly Jelly Feet",
+      "type": "poem",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-1865_female_3.mp3",
+        "/audio/pre-gen/gen-1865_female_4.mp3"
+      ],
+      "cover_url": "/covers/gen-1865516ea0ac.svg",
+      "mood": "wired"
+    },
+    "gen-7a8ee4b38802": {
+      "id": "gen-7a8ee4b38802",
+      "title": "Pippa and the Dancing Pumpkin Patch",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-7a8e_female_3.mp3",
+        "/audio/pre-gen/gen-7a8e_male_2.mp3"
+      ],
+      "cover_url": "/covers/gen-7a8ee4b38802.svg",
+      "mood": "wired"
+    },
+    "gen-0b5c4e7f4aa7": {
+      "id": "gen-0b5c4e7f4aa7",
+      "title": "Bubbles the Jellyfish\u2019s Upside-Down Day",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-0b5c_female_3.mp3",
+        "/audio/pre-gen/gen-0b5c_male_2.mp3"
+      ],
+      "cover_url": "/covers/gen-0b5c4e7f4aa7.svg",
+      "mood": "wired"
+    },
+    "gen-c5413e76bff0": {
+      "id": "gen-c5413e76bff0",
+      "title": "Lumi and the Glowing Bridge",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-c541_female_1.mp3",
+        "/audio/pre-gen/gen-c541_female_3.mp3"
+      ],
+      "cover_url": "/covers/gen-c5413e76bff0.svg",
+      "mood": "wired"
+    },
+    "gen-66b370730297": {
+      "id": "gen-66b370730297",
+      "title": "Glimmer the Bubble-Bounce Alien",
+      "type": "poem",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-66b3_female_3.mp3",
+        "/audio/pre-gen/gen-66b3_female_4.mp3"
+      ],
+      "cover_url": "/covers/gen-66b370730297.svg",
+      "mood": "wired"
+    },
+    "gen-bf9047771318": {
+      "id": "gen-bf9047771318",
+      "title": "Blip and the Glowing Friendship Festival",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-bf90_female_3.mp3",
+        "/audio/pre-gen/gen-bf90_male_2.mp3"
+      ],
+      "cover_url": "/covers/gen-bf9047771318.svg",
+      "mood": "wired"
+    },
+    "gen-11c8a5d4ff16": {
+      "id": "gen-11c8a5d4ff16",
+      "title": "Flutterby and the Upside-Down Rainbow",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-11c8_female_3.mp3",
+        "/audio/pre-gen/gen-11c8_male_2.mp3"
+      ],
+      "cover_url": "/covers/gen-11c8a5d4ff16.svg",
+      "mood": "wired"
+    },
+    "gen-f00a3b8874a3": {
+      "id": "gen-f00a3b8874a3",
+      "title": "Breezy and the Scented Tide",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-f00a_female_1.mp3",
+        "/audio/pre-gen/gen-f00a_male_1.mp3"
+      ],
+      "cover_url": "/covers/gen-f00a3b8874a3.svg",
+      "mood": "wired"
+    },
+    "gen-4277697b337e": {
+      "id": "gen-4277697b337e",
+      "title": "Zizzle and the Snickering Stardust",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-4277_male_2.mp3",
+        "/audio/pre-gen/gen-4277_female_3.mp3"
+      ],
+      "cover_url": "/covers/gen-4277697b337e.svg",
+      "mood": "wired"
+    },
+    "gen-e1203c22da5f": {
+      "id": "gen-e1203c22da5f",
+      "title": "Coral and the Glowing Shell",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-e120_male_1.mp3",
+        "/audio/pre-gen/gen-e120_male_2.mp3"
+      ],
+      "cover_url": "/covers/gen-e1203c22da5f.svg",
+      "mood": "sad"
+    },
+    "gen-1e7e0300efd5": {
+      "id": "gen-1e7e0300efd5",
+      "title": "Finnley and the Glowing Tide",
+      "type": "poem",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-1e7e_female_1.mp3",
+        "/audio/pre-gen/gen-1e7e_female_3.mp3",
+        "/audio/pre-gen/gen-1e7e_female_2.mp3",
+        "/audio/pre-gen/gen-1e7e_male_2.mp3",
+        "/audio/pre-gen/gen-1e7e_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-1e7e0300efd5.svg",
+      "mood": "sad"
+    },
+    "gen-47739ce0f283": {
+      "id": "gen-47739ce0f283",
+      "title": "Pebble and the River's Whisper",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-4773_female_3.mp3",
+        "/audio/pre-gen/gen-4773_female_2.mp3",
+        "/audio/pre-gen/gen-4773_female_1.mp3",
+        "/audio/pre-gen/gen-4773_asmr.mp3",
+        "/audio/pre-gen/gen-4773_male_2.mp3"
+      ],
+      "cover_url": "/covers/gen-47739ce0f283.svg",
+      "mood": "sad"
+    },
+    "gen-473198145b30": {
+      "id": "gen-473198145b30",
+      "title": "Bubble and the Lonely Comet",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-4731_female_3.mp3",
+        "/audio/pre-gen/gen-4731_female_2.mp3",
+        "/audio/pre-gen/gen-4731_female_1.mp3",
+        "/audio/pre-gen/gen-4731_male_2.mp3",
+        "/audio/pre-gen/gen-4731_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-473198145b30.svg",
+      "mood": "sad"
+    },
+    "gen-1bef176313bd": {
+      "id": "gen-1bef176313bd",
+      "title": "Lulla and the Whispering Wheat Fields",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-1bef_female_1.mp3",
+        "/audio/pre-gen/gen-1bef_male_2.mp3"
+      ],
+      "cover_url": "/covers/gen-1bef176313bd.svg",
+      "mood": "calm"
+    },
+    "gen-c05399108488": {
+      "id": "gen-c05399108488",
+      "title": "Orion and the Velvet Night",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-c053_male_1.mp3",
+        "/audio/pre-gen/gen-c053_female_3.mp3"
+      ],
+      "cover_url": "/covers/gen-c05399108488.svg",
+      "mood": "angry"
+    },
+    "gen-a59c2de7e523": {
+      "id": "gen-a59c2de7e523",
+      "title": "Riley and the Storm of Stars",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-a59c_female_2.mp3",
+        "/audio/pre-gen/gen-a59c_male_2.mp3"
+      ],
+      "cover_url": "/covers/gen-a59c2de7e523.svg",
+      "mood": "angry"
+    },
+    "gen-a543ef7c93c0": {
+      "id": "gen-a543ef7c93c0",
+      "title": "Marina and the Sapphire Tide",
+      "type": "poem",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-a543_female_4.mp3",
+        "/audio/pre-gen/gen-a543_female_1.mp3"
+      ],
+      "cover_url": "/covers/gen-a543ef7c93c0.svg",
+      "mood": "calm"
+    },
+    "gen-7bb84380c7d3": {
+      "id": "gen-7bb84380c7d3",
+      "title": "Finn and the Glowing Cave Whispers",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-7bb8_male_2.mp3",
+        "/audio/pre-gen/gen-7bb8_female_2.mp3"
+      ],
+      "cover_url": "/covers/gen-7bb84380c7d3.svg",
+      "mood": "anxious"
+    },
+    "gen-486be5b2fef9": {
+      "id": "gen-486be5b2fef9",
+      "title": "Pip and the Clockwork Stars",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-486b_male_2.mp3",
+        "/audio/pre-gen/gen-486b_female_2.mp3"
+      ],
+      "cover_url": "/covers/gen-486be5b2fef9.svg",
+      "mood": "anxious"
+    },
+    "gen-ee66b4718ed1": {
+      "id": "gen-ee66b4718ed1",
+      "title": "Mira and the Colors of the Dark",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-ee66_male_2.mp3",
+        "/audio/pre-gen/gen-ee66_female_2.mp3"
+      ],
+      "cover_url": "/covers/gen-ee66b4718ed1.svg",
+      "mood": "anxious"
+    },
+    "gen-589682b9e89c": {
+      "id": "gen-589682b9e89c",
+      "title": "Lullaby of the Moonlit Rooftops",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-5896_female_2.mp3",
+        "/audio/pre-gen/gen-5896_female_3.mp3",
+        "/audio/pre-gen/gen-5896_female_1.mp3",
+        "/audio/pre-gen/gen-5896_male_2.mp3",
+        "/audio/pre-gen/gen-5896_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-589682b9e89c.svg",
+      "mood": "calm"
+    },
+    "gen-10683c7e9e25": {
+      "id": "gen-10683c7e9e25",
+      "title": "Lumi and the Lantern Night",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-1068_female_3.mp3",
+        "/audio/pre-gen/gen-1068_female_1.mp3"
+      ],
+      "cover_url": "/covers/gen-10683c7e9e25.svg",
+      "mood": "calm"
+    },
+    "gen-b2e191e24194": {
+      "id": "gen-b2e191e24194",
+      "title": "Luna and the Starlight Skyline",
+      "type": "poem",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-b2e1_female_2.mp3",
+        "/audio/pre-gen/gen-b2e1_female_1.mp3",
+        "/audio/pre-gen/gen-b2e1_female_3.mp3",
+        "/audio/pre-gen/gen-b2e1_male_2.mp3",
+        "/audio/pre-gen/gen-b2e1_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-b2e191e24194.svg",
+      "mood": "calm"
+    },
+    "gen-861d647d73bb": {
+      "id": "gen-861d647d73bb",
+      "title": "Elias and the Song of the Streetlamps",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-861d_female_2.mp3",
+        "/audio/pre-gen/gen-861d_female_3.mp3",
+        "/audio/pre-gen/gen-861d_female_1.mp3",
+        "/audio/pre-gen/gen-861d_male_2.mp3",
+        "/audio/pre-gen/gen-861d_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-861d647d73bb.svg",
+      "mood": "curious"
+    },
+    "gen-dc32ba401ae2": {
+      "id": "gen-dc32ba401ae2",
+      "title": "Casper and the Meadow\u2019s Gentle Glow",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-dc32_female_1.mp3",
+        "/audio/pre-gen/gen-dc32_female_3.mp3"
+      ],
+      "cover_url": "/covers/gen-dc32ba401ae2.svg",
+      "mood": "calm"
+    },
+    "gen-e1635d6a5c26": {
+      "id": "gen-e1635d6a5c26",
+      "title": "Glint and the Whispering Woods",
+      "type": "poem",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-e163_female_2.mp3",
+        "/audio/pre-gen/gen-e163_female_3.mp3",
+        "/audio/pre-gen/gen-e163_female_1.mp3",
+        "/audio/pre-gen/gen-e163_male_2.mp3",
+        "/audio/pre-gen/gen-e163_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-e1635d6a5c26.svg",
+      "mood": "curious"
+    },
+    "gen-d7ac25f7070f": {
+      "id": "gen-d7ac25f7070f",
+      "title": "Bolt and the Twilight Family Circle",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-d7ac_female_3.mp3",
+        "/audio/pre-gen/gen-d7ac_female_1.mp3",
+        "/audio/pre-gen/gen-d7ac_female_2.mp3",
+        "/audio/pre-gen/gen-d7ac_male_2.mp3",
+        "/audio/pre-gen/gen-d7ac_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-d7ac25f7070f.svg",
+      "mood": "calm"
+    },
+    "gen-3255a91b20c2": {
+      "id": "gen-3255a91b20c2",
+      "title": "Nix and the Starlight Circuit",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-3255_female_2.mp3",
+        "/audio/pre-gen/gen-3255_female_3.mp3",
+        "/audio/pre-gen/gen-3255_female_1.mp3",
+        "/audio/pre-gen/gen-3255_male_2.mp3",
+        "/audio/pre-gen/gen-3255_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-3255a91b20c2.svg",
+      "mood": "curious"
+    },
+    "gen-39dc657abb17": {
+      "id": "gen-39dc657abb17",
+      "title": "Rosie and the Scent of Home",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-39dc_female_3.mp3",
+        "/audio/pre-gen/gen-39dc_female_1.mp3",
+        "/audio/pre-gen/gen-39dc_male_2.mp3",
+        "/audio/pre-gen/gen-39dc_asmr.mp3",
+        "/audio/pre-gen/gen-39dc_female_2.mp3"
+      ],
+      "cover_url": "/covers/gen-39dc657abb17.svg",
+      "mood": "calm"
+    },
+    "gen-a0cbd0c0da52": {
+      "id": "gen-a0cbd0c0da52",
+      "title": "Milo and the Nighttime Nest Song",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-a0cb_female_3.mp3",
+        "/audio/pre-gen/gen-a0cb_female_2.mp3"
+      ],
+      "cover_url": "/covers/gen-a0cbd0c0da52.svg",
+      "mood": "calm"
+    },
+    "gen-37aca7d2ae35": {
+      "id": "gen-37aca7d2ae35",
+      "title": "Alder and the Whispering Comet",
+      "type": "poem",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-37ac_female_2.mp3",
+        "/audio/pre-gen/gen-37ac_female_1.mp3",
+        "/audio/pre-gen/gen-37ac_female_3.mp3",
+        "/audio/pre-gen/gen-37ac_asmr.mp3",
+        "/audio/pre-gen/gen-37ac_male_2.mp3"
+      ],
+      "cover_url": "/covers/gen-37aca7d2ae35.svg",
+      "mood": "calm"
+    },
+    "gen-dfaac825420d": {
+      "id": "gen-dfaac825420d",
+      "title": "Zylo and the Scent of the Sleeping Stars",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-dfaa_female_1.mp3",
+        "/audio/pre-gen/gen-dfaa_female_3.mp3",
+        "/audio/pre-gen/gen-dfaa_female_2.mp3",
+        "/audio/pre-gen/gen-dfaa_male_2.mp3",
+        "/audio/pre-gen/gen-dfaa_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-dfaac825420d.svg",
+      "mood": "curious"
+    },
+    "gen-f74b95ae583c": {
+      "id": "gen-f74b95ae583c",
+      "title": "Pip and the Evening Dew Dance",
+      "type": "poem",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-f74b_female_3.mp3",
+        "/audio/pre-gen/gen-f74b_female_1.mp3",
+        "/audio/pre-gen/gen-f74b_female_2.mp3",
+        "/audio/pre-gen/gen-f74b_male_2.mp3",
+        "/audio/pre-gen/gen-f74b_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-f74b95ae583c.svg",
+      "mood": "calm"
+    },
+    "gen-f5a086b33ef3": {
+      "id": "gen-f5a086b33ef3",
+      "title": "Luna and the Nighttime Stargazers",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-f5a0_female_3.mp3",
+        "/audio/pre-gen/gen-f5a0_male_2.mp3"
+      ],
+      "cover_url": "/covers/gen-f5a086b33ef3.svg",
+      "mood": "calm"
+    },
+    "gen-f3a6cec89977": {
+      "id": "gen-f3a6cec89977",
+      "title": "Orion and the Song of the Moonlit Tide",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-f3a6_female_3.mp3",
+        "/audio/pre-gen/gen-f3a6_female_2.mp3",
+        "/audio/pre-gen/gen-f3a6_female_1.mp3",
+        "/audio/pre-gen/gen-f3a6_male_2.mp3",
+        "/audio/pre-gen/gen-f3a6_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-f3a6cec89977.svg",
+      "mood": "curious"
+    },
+    "gen-31a6620db402": {
+      "id": "gen-31a6620db402",
+      "title": "Tilly and the Twilight Chorus",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-31a6_female_2.mp3",
+        "/audio/pre-gen/gen-31a6_female_1.mp3",
+        "/audio/pre-gen/gen-31a6_female_3.mp3",
+        "/audio/pre-gen/gen-31a6_male_2.mp3",
+        "/audio/pre-gen/gen-31a6_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-31a6620db402.svg",
+      "mood": "calm"
+    },
+    "gen-125839556ced": {
+      "id": "gen-125839556ced",
+      "title": "Rohan and the Glitch in the Gravity Well",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-1258_female_1.mp3",
+        "/audio/pre-gen/gen-1258_female_2.mp3",
+        "/audio/pre-gen/gen-1258_female_3.mp3",
+        "/audio/pre-gen/gen-1258_male_2.mp3",
+        "/audio/pre-gen/gen-1258_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-125839556ced.svg",
+      "mood": "wired"
+    },
+    "gen-ced87d262b99": {
+      "id": "gen-ced87d262b99",
+      "title": "Zephyr and the Lost Snowflake Lullaby",
+      "type": "poem",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-ced8_female_1.mp3",
+        "/audio/pre-gen/gen-ced8_female_2.mp3",
+        "/audio/pre-gen/gen-ced8_female_3.mp3",
+        "/audio/pre-gen/gen-ced8_male_2.mp3",
+        "/audio/pre-gen/gen-ced8_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-ced87d262b99.svg",
+      "mood": "calm"
+    },
+    "gen-025b3e47eec6": {
+      "id": "gen-025b3e47eec6",
+      "title": "Lila and the Tiny Perfume Cloud",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-025b_male_2.mp3",
+        "/audio/pre-gen/gen-025b_male_1.mp3"
+      ],
+      "cover_url": "/covers/gen-025b3e47eec6.svg",
+      "mood": "calm"
+    },
+    "gen-bcbc176b01d9": {
+      "id": "gen-bcbc176b01d9",
+      "title": "Kestrel and the Storm That Listened",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-bcbc_female_2.mp3",
+        "/audio/pre-gen/gen-bcbc_female_3.mp3",
+        "/audio/pre-gen/gen-bcbc_female_1.mp3",
+        "/audio/pre-gen/gen-bcbc_male_2.mp3",
+        "/audio/pre-gen/gen-bcbc_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-bcbc176b01d9.svg",
+      "mood": "curious"
+    },
+    "gen-00422943830e": {
+      "id": "gen-00422943830e",
+      "title": "Finn and the Tiny Tide Pool",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-0042_female_1.mp3",
+        "/audio/pre-gen/gen-0042_female_3.mp3",
+        "/audio/pre-gen/gen-0042_female_2.mp3",
+        "/audio/pre-gen/gen-0042_male_2.mp3",
+        "/audio/pre-gen/gen-0042_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-00422943830e.svg",
+      "mood": "calm"
+    },
+    "gen-1be31ba6fc0d": {
+      "id": "gen-1be31ba6fc0d",
+      "title": "Bumble and the Rainbow Dust Storm",
+      "type": "poem",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-1be3_female_2.mp3",
+        "/audio/pre-gen/gen-1be3_female_3.mp3",
+        "/audio/pre-gen/gen-1be3_female_1.mp3",
+        "/audio/pre-gen/gen-1be3_male_2.mp3",
+        "/audio/pre-gen/gen-1be3_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-1be31ba6fc0d.svg",
+      "mood": "wired"
+    },
+    "gen-3ae85c812ea0": {
+      "id": "gen-3ae85c812ea0",
+      "title": "Mira and the Paintbrush Cloud",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-3ae8_female_2.mp3",
+        "/audio/pre-gen/gen-3ae8_female_1.mp3",
+        "/audio/pre-gen/gen-3ae8_female_3.mp3",
+        "/audio/pre-gen/gen-3ae8_male_2.mp3",
+        "/audio/pre-gen/gen-3ae8_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-3ae85c812ea0.svg",
+      "mood": "wired"
+    },
+    "gen-d1d9090e87f5": {
+      "id": "gen-d1d9090e87f5",
+      "title": "Sola and the Whispering Tides",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-d1d9_female_2.mp3",
+        "/audio/pre-gen/gen-d1d9_female_3.mp3",
+        "/audio/pre-gen/gen-d1d9_female_1.mp3",
+        "/audio/pre-gen/gen-d1d9_male_2.mp3",
+        "/audio/pre-gen/gen-d1d9_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-d1d9090e87f5.svg",
+      "mood": "calm"
+    },
+    "gen-7f24c66d3921": {
+      "id": "gen-7f24c66d3921",
+      "title": "Marino and the Lullaby of the Tides",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-7f24_female_3.mp3",
+        "/audio/pre-gen/gen-7f24_female_2.mp3",
+        "/audio/pre-gen/gen-7f24_female_1.mp3",
+        "/audio/pre-gen/gen-7f24_male_2.mp3",
+        "/audio/pre-gen/gen-7f24_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-7f24c66d3921.svg",
+      "mood": "calm"
+    },
+    "gen-910ff4401b32": {
+      "id": "gen-910ff4401b32",
+      "title": "Pip and the Whispering Echoes",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-910f_female_1.mp3",
+        "/audio/pre-gen/gen-910f_male_2.mp3"
+      ],
+      "cover_url": "/covers/gen-910ff4401b32.svg",
+      "mood": "calm"
+    },
+    "gen-a534b5798c28": {
+      "id": "gen-a534b5798c28",
+      "title": "Tia and the Whispering Mango Tree",
+      "type": "poem",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-a534_female_3.mp3",
+        "/audio/pre-gen/gen-a534_female_2.mp3",
+        "/audio/pre-gen/gen-a534_female_1.mp3",
+        "/audio/pre-gen/gen-a534_male_2.mp3",
+        "/audio/pre-gen/gen-a534_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-a534b5798c28.svg",
+      "mood": "calm"
+    },
+    "gen-36832e27d4b5": {
+      "id": "gen-36832e27d4b5",
+      "title": "Bella and the Starlight Window",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-3683_male_2.mp3",
+        "/audio/pre-gen/gen-3683_female_3.mp3"
+      ],
+      "cover_url": "/covers/gen-36832e27d4b5.svg",
+      "mood": "calm"
+    },
+    "gen-364d8f8f090f": {
+      "id": "gen-364d8f8f090f",
+      "title": "Luna and the Lanterns of Whispering Hollow",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-364d_female_2.mp3",
+        "/audio/pre-gen/gen-364d_female_1.mp3",
+        "/audio/pre-gen/gen-364d_female_3.mp3",
+        "/audio/pre-gen/gen-364d_male_2.mp3",
+        "/audio/pre-gen/gen-364d_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-364d8f8f090f.svg",
+      "mood": "calm"
+    },
+    "gen-be5fa39c0802": {
+      "id": "gen-be5fa39c0802",
+      "title": "Luno and the Song of the Snowflakes",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-be5f_male_2.mp3",
+        "/audio/pre-gen/gen-be5f_female_3.mp3"
+      ],
+      "cover_url": "/covers/gen-be5fa39c0802.svg",
+      "mood": "calm"
+    },
+    "gen-54eea57db057": {
+      "id": "gen-54eea57db057",
+      "title": "Zephyr and the Lullaby of the Hearth",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-54ee_female_1.mp3",
+        "/audio/pre-gen/gen-54ee_female_2.mp3",
+        "/audio/pre-gen/gen-54ee_female_3.mp3",
+        "/audio/pre-gen/gen-54ee_male_2.mp3",
+        "/audio/pre-gen/gen-54ee_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-54eea57db057.svg",
+      "mood": "calm"
+    },
+    "gen-e2a4b6a306b8": {
+      "id": "gen-e2a4b6a306b8",
+      "title": "Aria and the Singing Aurora",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-e2a4_female_2.mp3",
+        "/audio/pre-gen/gen-e2a4_female_3.mp3",
+        "/audio/pre-gen/gen-e2a4_female_1.mp3",
+        "/audio/pre-gen/gen-e2a4_male_2.mp3",
+        "/audio/pre-gen/gen-e2a4_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-e2a4b6a306b8.svg",
+      "mood": "curious"
+    },
+    "gen-411c4e4dde20": {
+      "id": "gen-411c4e4dde20",
+      "title": "Milo and the Glowing Night Song",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-411c_female_1.mp3",
+        "/audio/pre-gen/gen-411c_female_3.mp3"
+      ],
+      "cover_url": "/covers/gen-411c4e4dde20.svg",
+      "mood": "calm"
+    },
+    "gen-c5e3d286408c": {
+      "id": "gen-c5e3d286408c",
+      "title": "Finn and the Meadow\u2019s Shimmering Secret",
+      "type": "poem",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-c5e3_female_3.mp3",
+        "/audio/pre-gen/gen-c5e3_female_1.mp3",
+        "/audio/pre-gen/gen-c5e3_female_2.mp3",
+        "/audio/pre-gen/gen-c5e3_male_2.mp3",
+        "/audio/pre-gen/gen-c5e3_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-c5e3d286408c.svg",
+      "mood": "curious"
+    },
+    "gen-9d8e3f91919c": {
+      "id": "gen-9d8e3f91919c",
+      "title": "Lila and the Starry Seed",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-9d8e_female_1.mp3",
+        "/audio/pre-gen/gen-9d8e_female_2.mp3",
+        "/audio/pre-gen/gen-9d8e_female_3.mp3",
+        "/audio/pre-gen/gen-9d8e_asmr.mp3",
+        "/audio/pre-gen/gen-9d8e_male_2.mp3"
+      ],
+      "cover_url": "/covers/gen-9d8e3f91919c.svg",
+      "mood": "curious"
+    },
+    "gen-71986860a0ed": {
+      "id": "gen-71986860a0ed",
+      "title": "Toby and the Moonlit Mirage",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-7198_female_3.mp3",
+        "/audio/pre-gen/gen-7198_female_1.mp3",
+        "/audio/pre-gen/gen-7198_female_2.mp3",
+        "/audio/pre-gen/gen-7198_male_2.mp3",
+        "/audio/pre-gen/gen-7198_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-71986860a0ed.svg",
+      "mood": "calm"
+    },
+    "gen-59c38722ffc1": {
+      "id": "gen-59c38722ffc1",
+      "title": "Pip and the Whispering Stars",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-59c3_male_1.mp3",
+        "/audio/pre-gen/gen-59c3_female_1.mp3"
+      ],
+      "cover_url": "/covers/gen-59c38722ffc1.svg",
+      "mood": "calm"
+    },
+    "gen-9d6661087cfa": {
+      "id": "gen-9d6661087cfa",
+      "title": "Eli and the Whispering Pass",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-9d66_asmr.mp3",
+        "/audio/pre-gen/gen-9d66_male_2.mp3",
+        "/audio/pre-gen/gen-9d66_female_1.mp3",
+        "/audio/pre-gen/gen-9d66_female_2.mp3",
+        "/audio/pre-gen/gen-9d66_female_3.mp3"
+      ],
+      "cover_url": "/covers/gen-9d6661087cfa.svg",
+      "mood": "curious"
+    },
+    "gen-a306e99e9b09": {
+      "id": "gen-a306e99e9b09",
+      "title": "Breeze and the Whispering Peaks",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-a306_male_2.mp3",
+        "/audio/pre-gen/gen-a306_asmr.mp3",
+        "/audio/pre-gen/gen-a306_female_1.mp3",
+        "/audio/pre-gen/gen-a306_female_2.mp3",
+        "/audio/pre-gen/gen-a306_female_3.mp3"
+      ],
+      "cover_url": "/covers/gen-a306e99e9b09.svg",
+      "mood": "calm"
+    },
+    "gen-ac421eca75dd": {
+      "id": "gen-ac421eca75dd",
+      "title": "Tiko and the Glowing Moss Cradle",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-ac42_female_1.mp3",
+        "/audio/pre-gen/gen-ac42_male_1.mp3"
+      ],
+      "cover_url": "/covers/gen-ac421eca75dd.svg",
+      "mood": "calm"
+    },
+    "gen-20ac6dcc8899": {
+      "id": "gen-20ac6dcc8899",
+      "title": "Lumi\u2019s Circuit of the Whispering Glade",
+      "type": "poem",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-20ac_female_3.mp3",
+        "/audio/pre-gen/gen-20ac_female_2.mp3",
+        "/audio/pre-gen/gen-20ac_male_2.mp3",
+        "/audio/pre-gen/gen-20ac_female_1.mp3",
+        "/audio/pre-gen/gen-20ac_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-20ac6dcc8899.svg",
+      "mood": "curious"
+    },
+    "gen-bfea572c7a73": {
+      "id": "gen-bfea572c7a73",
+      "title": "Marina and the Glowing Tide\u2019s Secret Garden",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-bfea_female_1.mp3",
+        "/audio/pre-gen/gen-bfea_female_2.mp3",
+        "/audio/pre-gen/gen-bfea_female_3.mp3",
+        "/audio/pre-gen/gen-bfea_male_2.mp3",
+        "/audio/pre-gen/gen-bfea_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-bfea572c7a73.svg",
+      "mood": "curious"
+    },
+    "gen-15501ab0e53c": {
+      "id": "gen-15501ab0e53c",
+      "title": "Aria and the Whispering Labyrinth of Eldermere",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-1550_female_1.mp3",
+        "/audio/pre-gen/gen-1550_female_3.mp3",
+        "/audio/pre-gen/gen-1550_female_2.mp3",
+        "/audio/pre-gen/gen-1550_male_2.mp3",
+        "/audio/pre-gen/gen-1550_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-15501ab0e53c.svg",
+      "mood": "curious"
+    },
+    "gen-bf2a73ca2fe3": {
+      "id": "gen-bf2a73ca2fe3",
+      "title": "Shimmer\u2019s Frosted Lullaby of the Aurora",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-bf2a_male_1.mp3",
+        "/audio/pre-gen/gen-bf2a_female_1.mp3"
+      ],
+      "cover_url": "/covers/shimmer-s-frosted-lullaby-of-the-aurora.svg",
+      "mood": "calm"
+    },
+    "gen-699be4247076": {
+      "id": "gen-699be4247076",
+      "title": "Orion\u2019s Wandering Comet Lullaby",
+      "type": "poem",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-699b_female_1.mp3",
+        "/audio/pre-gen/gen-699b_female_3.mp3",
+        "/audio/pre-gen/gen-699b_female_2.mp3",
+        "/audio/pre-gen/gen-699b_male_1.mp3",
+        "/audio/pre-gen/gen-699b_male_3.mp3",
+        "/audio/pre-gen/gen-699b_male_2.mp3",
+        "/audio/pre-gen/gen-699b_asmr.mp3"
+      ],
+      "cover_url": "/covers/orion-s-wandering-comet-lullaby.svg",
+      "mood": "calm"
+    },
+    "gen-6c4170f5b3a4": {
+      "id": "gen-6c4170f5b3a4",
+      "title": "Leilani and the Festival of Whispering Shells",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-6c41_female_3.mp3",
+        "/audio/pre-gen/gen-6c41_female_2.mp3",
+        "/audio/pre-gen/gen-6c41_female_1.mp3",
+        "/audio/pre-gen/gen-6c41_male_1.mp3",
+        "/audio/pre-gen/gen-6c41_male_3.mp3",
+        "/audio/pre-gen/gen-6c41_male_2.mp3",
+        "/audio/pre-gen/gen-6c41_asmr.mp3"
+      ],
+      "cover_url": "/covers/leilani-and-the-festival-of-whispering-s.svg",
+      "mood": "curious"
+    },
+    "gen-5232e740399d": {
+      "id": "gen-5232e740399d",
+      "title": "Chai\u2019s Frosted Window Lullaby",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-5232_male_2.mp3",
+        "/audio/pre-gen/gen-5232_female_1.mp3",
+        "/audio/pre-gen/gen-5232_female_2.mp3",
+        "/audio/pre-gen/gen-5232_female_3.mp3",
+        "/audio/pre-gen/gen-5232_male_1.mp3"
+      ],
+      "cover_url": "/covers/gen-5232e740399d.svg",
+      "mood": "calm"
+    },
+    "gen-3e20147f02a1": {
+      "id": "gen-3e20147f02a1",
+      "title": "Kai\u2019s Whispering Tide and the Dragon\u2019s Pearl",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-3e20_female_1.mp3",
+        "/audio/pre-gen/gen-3e20_male_1.mp3"
+      ],
+      "cover_url": "/covers/gen-3e20147f02a1.svg",
+      "mood": "calm"
+    },
+    "gen-e3e07799ab05": {
+      "id": "gen-e3e07799ab05",
+      "title": "Kai and the Colors of the Night",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-e3e0_male_1.mp3",
+        "/audio/pre-gen/gen-e3e0_female_1.mp3",
+        "/audio/pre-gen/gen-e3e0_female_2.mp3",
+        "/audio/pre-gen/gen-e3e0_male_2.mp3",
+        "/audio/pre-gen/gen-e3e0_female_3.mp3",
+        "/audio/pre-gen/gen-e3e0_male_3.mp3",
+        "/audio/pre-gen/gen-e3e0_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-e3e07799ab05.svg",
+      "mood": "calm"
+    },
+    "gen-27e126b38fc4": {
+      "id": "gen-27e126b38fc4",
+      "title": "Finn\u2019s Moonlit Friendship Song",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-27e1_female_1.mp3",
+        "/audio/pre-gen/gen-27e1_female_3.mp3",
+        "/audio/pre-gen/gen-27e1_male_1.mp3"
+      ],
+      "cover_url": "/covers/gen-27e126b38fc4.svg",
+      "mood": "calm"
+    },
+    "gen-bbf23f82bfec": {
+      "id": "gen-bbf23f82bfec",
+      "title": "Jai\u2019s Golden Spark in the Mango Grove",
+      "type": "poem",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-bbf2_female_2.mp3",
+        "/audio/pre-gen/gen-bbf2_female_3.mp3",
+        "/audio/pre-gen/gen-bbf2_female_1.mp3",
+        "/audio/pre-gen/gen-bbf2_male_1.mp3",
+        "/audio/pre-gen/gen-bbf2_male_2.mp3",
+        "/audio/pre-gen/gen-bbf2_male_3.mp3",
+        "/audio/pre-gen/gen-bbf2_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-bbf23f82bfec.svg",
+      "mood": "calm"
+    },
+    "gen-beb0f3862024": {
+      "id": "gen-beb0f3862024",
+      "title": "The Jade Lantern\u2019s Journey Through the Starry Dawn",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-beb0_female_1.mp3",
+        "/audio/pre-gen/gen-beb0_female_2.mp3",
+        "/audio/pre-gen/gen-beb0_female_3.mp3",
+        "/audio/pre-gen/gen-beb0_male_1.mp3",
+        "/audio/pre-gen/gen-beb0_male_2.mp3",
+        "/audio/pre-gen/gen-beb0_male_3.mp3",
+        "/audio/pre-gen/gen-beb0_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-beb0f3862024.svg",
+      "mood": "sad"
+    },
+    "gen-915a2ee015f8": {
+      "id": "gen-915a2ee015f8",
+      "title": "Kite\u2019s Cosmic Breeze Quest",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-915a_male_1.mp3",
+        "/audio/pre-gen/gen-915a_female_1.mp3",
+        "/audio/pre-gen/gen-915a_female_3.mp3"
+      ],
+      "cover_url": "/covers/gen-915a2ee015f8.svg",
+      "mood": "calm"
+    },
+    "gen-638cb2facd22": {
+      "id": "gen-638cb2facd22",
+      "title": "Stripe of the Silver Bamboo",
+      "type": "poem",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-638c_female_1.mp3",
+        "/audio/pre-gen/gen-638c_female_3.mp3",
+        "/audio/pre-gen/gen-638c_female_2.mp3",
+        "/audio/pre-gen/gen-638c_male_1.mp3",
+        "/audio/pre-gen/gen-638c_male_2.mp3",
+        "/audio/pre-gen/gen-638c_male_3.mp3",
+        "/audio/pre-gen/gen-638c_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-638cb2facd22.svg",
+      "mood": "curious"
+    },
+    "gen-0333c2f092c0": {
+      "id": "gen-0333c2f092c0",
+      "title": "Aria and the Celestial Playground of Shadows",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-0333_male_2.mp3",
+        "/audio/pre-gen/gen-0333_male_1.mp3",
+        "/audio/pre-gen/gen-0333_male_3.mp3",
+        "/audio/pre-gen/gen-0333_asmr.mp3",
+        "/audio/pre-gen/gen-0333_female_1.mp3",
+        "/audio/pre-gen/gen-0333_female_2.mp3",
+        "/audio/pre-gen/gen-0333_female_3.mp3"
+      ],
+      "cover_url": "/covers/gen-0333c2f092c0.svg",
+      "mood": "curious"
+    },
+    "gen-146a4028274a": {
+      "id": "gen-146a4028274a",
+      "title": "Drizzle\u2019s Glow Below the Neon Sky",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-146a_female_1.mp3",
+        "/audio/pre-gen/gen-146a_male_1.mp3",
+        "/audio/pre-gen/gen-146a_female_3.mp3"
+      ],
+      "cover_url": "/covers/gen-146a4028274a.svg",
+      "mood": "curious"
+    },
+    "gen-3fc983f95d8b": {
+      "id": "gen-3fc983f95d8b",
+      "title": "Sylvie\u2019s Frost-Spun Secret",
+      "type": "poem",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-3fc9_female_1.mp3",
+        "/audio/pre-gen/gen-3fc9_female_2.mp3",
+        "/audio/pre-gen/gen-3fc9_female_3.mp3",
+        "/audio/pre-gen/gen-3fc9_male_1.mp3",
+        "/audio/pre-gen/gen-3fc9_male_2.mp3",
+        "/audio/pre-gen/gen-3fc9_male_3.mp3",
+        "/audio/pre-gen/gen-3fc9_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-3fc983f95d8b.svg",
+      "mood": "calm"
+    },
+    "gen-6034c85ea602": {
+      "id": "gen-6034c85ea602",
+      "title": "Priya and the Whispering Wellness Stones",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-6034_female_2.mp3",
+        "/audio/pre-gen/gen-6034_female_1.mp3",
+        "/audio/pre-gen/gen-6034_female_3.mp3",
+        "/audio/pre-gen/gen-6034_male_2.mp3",
+        "/audio/pre-gen/gen-6034_male_1.mp3",
+        "/audio/pre-gen/gen-6034_male_3.mp3",
+        "/audio/pre-gen/gen-6034_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-6034c85ea602.svg",
+      "mood": "curious"
+    },
+    "gen-8cbe4f84a9ac": {
+      "id": "gen-8cbe4f84a9ac",
+      "title": "Aarohi and the River of Whispering Lanterns",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-8cbe_male_1.mp3",
+        "/audio/pre-gen/gen-8cbe_female_2.mp3",
+        "/audio/pre-gen/gen-8cbe_female_1.mp3",
+        "/audio/pre-gen/gen-8cbe_male_2.mp3",
+        "/audio/pre-gen/gen-8cbe_female_3.mp3",
+        "/audio/pre-gen/gen-8cbe_male_3.mp3",
+        "/audio/pre-gen/gen-8cbe_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-8cbe4f84a9ac.svg",
+      "mood": "curious"
+    },
+    "gen-6772aca6a7cc": {
+      "id": "gen-6772aca6a7cc",
+      "title": "Finn\u2019s Ancient Lagoon Lullaby",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-6772_female_1.mp3",
+        "/audio/pre-gen/gen-6772_male_1.mp3",
+        "/audio/pre-gen/gen-6772_female_3.mp3"
+      ],
+      "cover_url": "/covers/gen-6772aca6a7cc.svg",
+      "mood": "calm"
+    },
+    "gen-3947965e8c2e": {
+      "id": "gen-3947965e8c2e",
+      "title": "Lila\u2019s Treehouse Tide Song",
+      "type": "poem",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-3947_female_3.mp3",
+        "/audio/pre-gen/gen-3947_female_2.mp3",
+        "/audio/pre-gen/gen-3947_female_1.mp3",
+        "/audio/pre-gen/gen-3947_male_1.mp3",
+        "/audio/pre-gen/gen-3947_male_3.mp3",
+        "/audio/pre-gen/gen-3947_male_2.mp3",
+        "/audio/pre-gen/gen-3947_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-3947965e8c2e.svg",
+      "mood": "calm"
+    },
+    "gen-31f50f685a68": {
+      "id": "gen-31f50f685a68",
+      "title": "Tick\u2019s Timeless Lesson in the Clockwork Glade",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-31f5_female_3.mp3",
+        "/audio/pre-gen/gen-31f5_female_2.mp3",
+        "/audio/pre-gen/gen-31f5_female_1.mp3",
+        "/audio/pre-gen/gen-31f5_male_1.mp3",
+        "/audio/pre-gen/gen-31f5_male_2.mp3",
+        "/audio/pre-gen/gen-31f5_male_3.mp3",
+        "/audio/pre-gen/gen-31f5_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-31f50f685a68.svg",
+      "mood": "calm"
+    },
+    "gen-9e87531b7db6": {
+      "id": "gen-9e87531b7db6",
+      "title": "Leo and the Moonlight School of Waves",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-9e87_female_1.mp3",
+        "/audio/pre-gen/gen-9e87_male_1.mp3",
+        "/audio/pre-gen/gen-9e87_male_2.mp3",
+        "/audio/pre-gen/gen-9e87_female_3.mp3",
+        "/audio/pre-gen/gen-9e87_female_2.mp3",
+        "/audio/pre-gen/gen-9e87_male_3.mp3",
+        "/audio/pre-gen/gen-9e87_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-9e87531b7db6.svg",
+      "mood": "curious"
+    },
+    "gen-69ca3c81363d": {
+      "id": "gen-69ca3c81363d",
+      "title": "Priya and the River of Echoing Hearts",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-69ca_female_1.mp3",
+        "/audio/pre-gen/gen-69ca_female_3.mp3",
+        "/audio/pre-gen/gen-69ca_male_1.mp3"
+      ],
+      "cover_url": "/covers/gen-69ca3c81363d.svg",
+      "mood": "calm"
+    },
+    "gen-7936c7032060": {
+      "id": "gen-7936c7032060",
+      "title": "Priya and the Starlight Compass",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-7936_male_1.mp3",
+        "/audio/pre-gen/gen-7936_female_1.mp3",
+        "/audio/pre-gen/gen-7936_female_3.mp3"
+      ],
+      "cover_url": "/covers/gen-7936c7032060.svg",
+      "mood": "calm"
+    },
+    "gen-a32abc379f3e": {
+      "id": "gen-a32abc379f3e",
+      "title": "Lumi\u2019s Lantern and the School of Tides",
+      "type": "poem",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-a32a_female_2.mp3",
+        "/audio/pre-gen/gen-a32a_female_3.mp3",
+        "/audio/pre-gen/gen-a32a_female_1.mp3",
+        "/audio/pre-gen/gen-a32a_male_1.mp3",
+        "/audio/pre-gen/gen-a32a_male_2.mp3",
+        "/audio/pre-gen/gen-a32a_male_3.mp3",
+        "/audio/pre-gen/gen-a32a_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-a32abc379f3e.svg",
+      "mood": "calm"
+    },
+    "gen-a4a5bf8ba702": {
+      "id": "gen-a4a5bf8ba702",
+      "title": "Drizzle and the Harvest Moon Festival",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-a4a5_female_3.mp3",
+        "/audio/pre-gen/gen-a4a5_female_1.mp3",
+        "/audio/pre-gen/gen-a4a5_female_2.mp3",
+        "/audio/pre-gen/gen-a4a5_male_1.mp3",
+        "/audio/pre-gen/gen-a4a5_male_2.mp3",
+        "/audio/pre-gen/gen-a4a5_male_3.mp3",
+        "/audio/pre-gen/gen-a4a5_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-a4a5bf8ba702.svg",
+      "mood": "calm"
+    },
+    "gen-3b66368b6682": {
+      "id": "gen-3b66368b6682",
+      "title": "Aarav and the Whispering Tides",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-3b66_male_2.mp3",
+        "/audio/pre-gen/gen-3b66_male_1.mp3",
+        "/audio/pre-gen/gen-3b66_female_3.mp3",
+        "/audio/pre-gen/gen-3b66_female_2.mp3",
+        "/audio/pre-gen/gen-3b66_female_1.mp3",
+        "/audio/pre-gen/gen-3b66_male_3.mp3",
+        "/audio/pre-gen/gen-3b66_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-3b66368b6682.svg",
+      "mood": "curious"
+    },
+    "gen-e47bcd61e515": {
+      "id": "gen-e47bcd61e515",
+      "title": "Stripe and the Whispering Bamboo",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-e47b_female_1.mp3",
+        "/audio/pre-gen/gen-e47b_female_3.mp3",
+        "/audio/pre-gen/gen-e47b_male_1.mp3"
+      ],
+      "cover_url": "/covers/gen-e47bcd61e515.svg",
+      "mood": "calm"
+    },
+    "gen-4ddee3cbe031": {
+      "id": "gen-4ddee3cbe031",
+      "title": "Lumi and the Whispering Petals",
+      "type": "poem",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-4dde_asmr.mp3",
+        "/audio/pre-gen/gen-4dde_female_1.mp3",
+        "/audio/pre-gen/gen-4dde_female_2.mp3",
+        "/audio/pre-gen/gen-4dde_female_3.mp3",
+        "/audio/pre-gen/gen-4dde_male_1.mp3",
+        "/audio/pre-gen/gen-4dde_male_2.mp3",
+        "/audio/pre-gen/gen-4dde_male_3.mp3"
+      ],
+      "cover_url": "/covers/gen-4ddee3cbe031.svg",
+      "mood": "calm"
+    },
+    "gen-50e929bf696c": {
+      "id": "gen-50e929bf696c",
+      "title": "Chai's Moonlit Steam Song",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-50e9_asmr.mp3",
+        "/audio/pre-gen/gen-50e9_female_1.mp3",
+        "/audio/pre-gen/gen-50e9_female_2.mp3",
+        "/audio/pre-gen/gen-50e9_female_3.mp3",
+        "/audio/pre-gen/gen-50e9_male_1.mp3",
+        "/audio/pre-gen/gen-50e9_male_2.mp3",
+        "/audio/pre-gen/gen-50e9_male_3.mp3"
+      ],
+      "cover_url": "/covers/gen-50e929bf696c.svg",
+      "mood": "calm"
+    },
+    "gen-8440041cfc57": {
+      "id": "gen-8440041cfc57",
+      "title": "Pebble's Moonlit Shell Song",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-8440_female_1.mp3",
+        "/audio/pre-gen/gen-8440_female_3.mp3",
+        "/audio/pre-gen/gen-8440_male_1.mp3"
+      ],
+      "cover_url": "/covers/gen-8440041cfc57.svg",
+      "mood": "calm"
+    },
+    "gen-8ea1861bffab": {
+      "id": "gen-8ea1861bffab",
+      "title": "The Secret of the Dream Library",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-8ea1_female_3.mp3",
+        "/audio/pre-gen/gen-8ea1_male_3.mp3",
+        "/audio/pre-gen/gen-8ea1_male_2.mp3",
+        "/audio/pre-gen/gen-8ea1_male_1.mp3",
+        "/audio/pre-gen/gen-8ea1_asmr.mp3",
+        "/audio/pre-gen/gen-8ea1_female_2.mp3",
+        "/audio/pre-gen/gen-8ea1_female_1.mp3"
+      ],
+      "cover_url": "/covers/gen-8ea1861bffab.svg",
+      "mood": "curious"
+    },
+    "gen-308d5f0d1268": {
+      "id": "gen-308d5f0d1268",
+      "title": "Lumi and the Glowing Tide",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-308d_female_2.mp3",
+        "/audio/pre-gen/gen-308d_male_1.mp3",
+        "/audio/pre-gen/gen-308d_female_1.mp3",
+        "/audio/pre-gen/gen-308d_female_3.mp3",
+        "/audio/pre-gen/gen-308d_male_2.mp3",
+        "/audio/pre-gen/gen-308d_male_3.mp3",
+        "/audio/pre-gen/gen-308d_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-308d5f0d1268.svg",
+      "mood": "calm"
+    },
+    "gen-2f87d69ca6a2": {
+      "id": "gen-2f87d69ca6a2",
+      "title": "Bloom and the Moonlit Map",
+      "type": "poem",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-2f87_female_1.mp3",
+        "/audio/pre-gen/gen-2f87_female_3.mp3",
+        "/audio/pre-gen/gen-2f87_female_2.mp3",
+        "/audio/pre-gen/gen-2f87_male_1.mp3",
+        "/audio/pre-gen/gen-2f87_male_2.mp3",
+        "/audio/pre-gen/gen-2f87_male_3.mp3",
+        "/audio/pre-gen/gen-2f87_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-2f87d69ca6a2.svg",
+      "mood": "curious"
+    },
+    "gen-d5bc0057ca40": {
+      "id": "gen-d5bc0057ca40",
+      "title": "Leo and the Dinosaur Playmates",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-d5bc_female_2.mp3",
+        "/audio/pre-gen/gen-d5bc_female_3.mp3",
+        "/audio/pre-gen/gen-d5bc_female_1.mp3",
+        "/audio/pre-gen/gen-d5bc_male_1.mp3",
+        "/audio/pre-gen/gen-d5bc_male_2.mp3",
+        "/audio/pre-gen/gen-d5bc_male_3.mp3",
+        "/audio/pre-gen/gen-d5bc_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-d5bc0057ca40.svg",
+      "mood": "curious"
+    },
+    "gen-01f0b88dc42d": {
+      "id": "gen-01f0b88dc42d",
+      "title": "Rusty\u2019s Starlight Path Home",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-01f0_female_1.mp3",
+        "/audio/pre-gen/gen-01f0_female_2.mp3",
+        "/audio/pre-gen/gen-01f0_female_3.mp3",
+        "/audio/pre-gen/gen-01f0_male_1.mp3",
+        "/audio/pre-gen/gen-01f0_male_2.mp3",
+        "/audio/pre-gen/gen-01f0_male_3.mp3",
+        "/audio/pre-gen/gen-01f0_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-01f0b88dc42d.svg",
+      "mood": "calm"
+    },
+    "gen-caa3a14bb706": {
+      "id": "gen-caa3a14bb706",
+      "title": "Ember\u2019s Neon Dawn",
+      "type": "poem",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-caa3_female_3.mp3",
+        "/audio/pre-gen/gen-caa3_female_2.mp3",
+        "/audio/pre-gen/gen-caa3_female_1.mp3",
+        "/audio/pre-gen/gen-caa3_male_1.mp3",
+        "/audio/pre-gen/gen-caa3_male_3.mp3",
+        "/audio/pre-gen/gen-caa3_male_2.mp3",
+        "/audio/pre-gen/gen-caa3_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-caa3a14bb706.svg",
+      "mood": "curious"
+    },
+    "gen-b5438a861ba4": {
+      "id": "gen-b5438a861ba4",
+      "title": "Sky\u2019s First Warm Feather",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-b543_female_2.mp3",
+        "/audio/pre-gen/gen-b543_female_3.mp3",
+        "/audio/pre-gen/gen-b543_female_1.mp3",
+        "/audio/pre-gen/gen-b543_male_1.mp3",
+        "/audio/pre-gen/gen-b543_male_2.mp3",
+        "/audio/pre-gen/gen-b543_male_3.mp3",
+        "/audio/pre-gen/gen-b543_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-b5438a861ba4.svg",
+      "mood": "calm"
+    },
+    "gen-7cf84ff11c04": {
+      "id": "gen-7cf84ff11c04",
+      "title": "Comet\u2019s Glowing Playdate",
+      "type": "poem",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-7cf8_female_2.mp3",
+        "/audio/pre-gen/gen-7cf8_female_3.mp3",
+        "/audio/pre-gen/gen-7cf8_female_1.mp3",
+        "/audio/pre-gen/gen-7cf8_male_1.mp3",
+        "/audio/pre-gen/gen-7cf8_male_2.mp3",
+        "/audio/pre-gen/gen-7cf8_male_3.mp3",
+        "/audio/pre-gen/gen-7cf8_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-7cf84ff11c04.svg",
+      "mood": "calm"
+    },
+    "gen-76b0227cc919": {
+      "id": "gen-76b0227cc919",
+      "title": "Priya and the Glowing Snowflakes",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-76b0_female_1.mp3",
+        "/audio/pre-gen/gen-76b0_female_2.mp3",
+        "/audio/pre-gen/gen-76b0_female_3.mp3",
+        "/audio/pre-gen/gen-76b0_male_1.mp3",
+        "/audio/pre-gen/gen-76b0_male_2.mp3",
+        "/audio/pre-gen/gen-76b0_male_3.mp3",
+        "/audio/pre-gen/gen-76b0_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-76b0227cc919.svg",
+      "mood": "calm"
+    },
+    "gen-292e9eadf56e": {
+      "id": "gen-292e9eadf56e",
+      "title": "Pebble and the Whispering Willow",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-292e_female_3.mp3",
+        "/audio/pre-gen/gen-292e_female_2.mp3",
+        "/audio/pre-gen/gen-292e_female_1.mp3",
+        "/audio/pre-gen/gen-292e_male_1.mp3",
+        "/audio/pre-gen/gen-292e_male_2.mp3",
+        "/audio/pre-gen/gen-292e_male_3.mp3",
+        "/audio/pre-gen/gen-292e_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-292e9eadf56e.svg",
+      "mood": "curious"
+    },
+    "gen-be475c98edb5": {
+      "id": "gen-be475c98edb5",
+      "title": "Aria and the Starlight Cipher",
+      "type": "poem",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-be47_female_2.mp3",
+        "/audio/pre-gen/gen-be47_female_3.mp3",
+        "/audio/pre-gen/gen-be47_female_1.mp3",
+        "/audio/pre-gen/gen-be47_male_1.mp3",
+        "/audio/pre-gen/gen-be47_male_3.mp3",
+        "/audio/pre-gen/gen-be47_male_2.mp3",
+        "/audio/pre-gen/gen-be47_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-be475c98edb5.svg",
+      "mood": "curious"
+    },
+    "gen-f9e33d4db1bd": {
+      "id": "gen-f9e33d4db1bd",
+      "title": "Tiko's Arctic Lullaby",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-f9e3_female_3.mp3",
+        "/audio/pre-gen/gen-f9e3_female_1.mp3",
+        "/audio/pre-gen/gen-f9e3_female_2.mp3",
+        "/audio/pre-gen/gen-f9e3_male_1.mp3",
+        "/audio/pre-gen/gen-f9e3_male_2.mp3",
+        "/audio/pre-gen/gen-f9e3_male_3.mp3",
+        "/audio/pre-gen/gen-f9e3_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-f9e33d4db1bd.svg",
+      "mood": "calm"
+    },
+    "gen-ae9ed8804fa7": {
+      "id": "gen-ae9ed8804fa7",
+      "title": "Finn's Frozen Melody",
+      "type": "poem",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-ae9e_female_3.mp3",
+        "/audio/pre-gen/gen-ae9e_female_2.mp3",
+        "/audio/pre-gen/gen-ae9e_female_1.mp3",
+        "/audio/pre-gen/gen-ae9e_male_1.mp3",
+        "/audio/pre-gen/gen-ae9e_male_2.mp3",
+        "/audio/pre-gen/gen-ae9e_male_3.mp3",
+        "/audio/pre-gen/gen-ae9e_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-ae9ed8804fa7.svg",
+      "mood": "curious"
+    },
+    "gen-1a5a91def9ae": {
+      "id": "gen-1a5a91def9ae",
+      "title": "Pina's Blanket of Stars",
+      "type": "poem",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-1a5a_male_2.mp3",
+        "/audio/pre-gen/gen-1a5a_female_3.mp3",
+        "/audio/pre-gen/gen-1a5a_female_2.mp3",
+        "/audio/pre-gen/gen-1a5a_female_1.mp3",
+        "/audio/pre-gen/gen-1a5a_male_1.mp3",
+        "/audio/pre-gen/gen-1a5a_male_3.mp3",
+        "/audio/pre-gen/gen-1a5a_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-1a5a91def9ae.svg",
+      "mood": "calm"
+    },
+    "gen-586908c26fc2": {
+      "id": "gen-586908c26fc2",
+      "title": "Pina and the Whispering Lighthouse",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-5869_female_3.mp3",
+        "/audio/pre-gen/gen-5869_male_1.mp3",
+        "/audio/pre-gen/gen-5869_male_2.mp3",
+        "/audio/pre-gen/gen-5869_female_2.mp3",
+        "/audio/pre-gen/gen-5869_female_1.mp3",
+        "/audio/pre-gen/gen-5869_male_3.mp3",
+        "/audio/pre-gen/gen-5869_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-586908c26fc2.svg",
+      "mood": "curious"
+    },
+    "gen-6e675d15e1f5": {
+      "id": "gen-6e675d15e1f5",
+      "title": "Moonbeam's Ocean Friend",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-6e67_male_1.mp3",
+        "/audio/pre-gen/gen-6e67_female_3.mp3",
+        "/audio/pre-gen/gen-6e67_female_1.mp3",
+        "/audio/pre-gen/gen-6e67_female_2.mp3",
+        "/audio/pre-gen/gen-6e67_male_3.mp3",
+        "/audio/pre-gen/gen-6e67_male_2.mp3",
+        "/audio/pre-gen/gen-6e67_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-6e675d15e1f5.svg",
+      "mood": "wired"
+    },
+    "gen-3de58fd2aa2d": {
+      "id": "gen-3de58fd2aa2d",
+      "title": "Bella's Soft Petal Bed",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-3de5_female_1.mp3",
+        "/audio/pre-gen/gen-3de5_female_3.mp3",
+        "/audio/pre-gen/gen-3de5_female_2.mp3",
+        "/audio/pre-gen/gen-3de5_male_2.mp3",
+        "/audio/pre-gen/gen-3de5_male_1.mp3",
+        "/audio/pre-gen/gen-3de5_male_3.mp3",
+        "/audio/pre-gen/gen-3de5_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-3de58fd2aa2d.svg",
+      "mood": "calm"
+    },
+    "gen-4f3ff03979dc": {
+      "id": "gen-4f3ff03979dc",
+      "title": "Arjun's Flying Robot Friend",
+      "type": "poem",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-4f3f_female_2.mp3",
+        "/audio/pre-gen/gen-4f3f_female_1.mp3",
+        "/audio/pre-gen/gen-4f3f_male_1.mp3",
+        "/audio/pre-gen/gen-4f3f_female_3.mp3",
+        "/audio/pre-gen/gen-4f3f_male_2.mp3",
+        "/audio/pre-gen/gen-4f3f_asmr.mp3",
+        "/audio/pre-gen/gen-4f3f_male_3.mp3"
+      ],
+      "cover_url": "/covers/gen-4f3ff03979dc.svg",
+      "mood": "wired"
+    },
+    "gen-a67cde9762b6": {
+      "id": "gen-a67cde9762b6",
+      "title": "Pepper's Garden Light",
+      "type": "poem",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-a67c_female_1.mp3",
+        "/audio/pre-gen/gen-a67c_female_2.mp3",
+        "/audio/pre-gen/gen-a67c_female_3.mp3",
+        "/audio/pre-gen/gen-a67c_male_1.mp3",
+        "/audio/pre-gen/gen-a67c_male_2.mp3",
+        "/audio/pre-gen/gen-a67c_male_3.mp3",
+        "/audio/pre-gen/gen-a67c_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-a67cde9762b6.svg",
+      "mood": "wired"
+    },
+    "gen-a8a2146a4f36": {
+      "id": "gen-a8a2146a4f36",
+      "title": "The Forest's Digital Symphony",
+      "type": "poem",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-a8a2_female_2.mp3",
+        "/audio/pre-gen/gen-a8a2_female_1.mp3",
+        "/audio/pre-gen/gen-a8a2_male_1.mp3",
+        "/audio/pre-gen/gen-a8a2_female_3.mp3",
+        "/audio/pre-gen/gen-a8a2_male_2.mp3",
+        "/audio/pre-gen/gen-a8a2_male_3.mp3",
+        "/audio/pre-gen/gen-a8a2_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-a8a2146a4f36.svg",
+      "mood": "curious"
+    },
+    "gen-9e44d4374d44": {
+      "id": "gen-9e44d4374d44",
+      "title": "Amara and the Star-Song Celebration",
+      "type": "poem",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-9e44_female_1.mp3",
+        "/audio/pre-gen/gen-9e44_female_3.mp3",
+        "/audio/pre-gen/gen-9e44_female_2.mp3",
+        "/audio/pre-gen/gen-9e44_male_1.mp3",
+        "/audio/pre-gen/gen-9e44_male_2.mp3",
+        "/audio/pre-gen/gen-9e44_male_3.mp3",
+        "/audio/pre-gen/gen-9e44_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-9e44d4374d44.svg",
+      "mood": "curious"
+    },
+    "gen-b8847383ab32": {
+      "id": "gen-b8847383ab32",
+      "title": "Nayeli's Arctic School Discovery",
+      "type": "poem",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-b884_female_2.mp3",
+        "/audio/pre-gen/gen-b884_female_1.mp3",
+        "/audio/pre-gen/gen-b884_male_1.mp3",
+        "/audio/pre-gen/gen-b884_female_3.mp3",
+        "/audio/pre-gen/gen-b884_male_2.mp3",
+        "/audio/pre-gen/gen-b884_asmr.mp3",
+        "/audio/pre-gen/gen-b884_male_3.mp3"
+      ],
+      "cover_url": "/covers/gen-b8847383ab32.svg",
+      "mood": "curious"
+    },
+    "gen-6b4b4122c529": {
+      "id": "gen-6b4b4122c529",
+      "title": "Arjun's Magic Peacock Feather",
+      "type": "poem",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-6b4b_female_2.mp3",
+        "/audio/pre-gen/gen-6b4b_female_1.mp3",
+        "/audio/pre-gen/gen-6b4b_female_3.mp3",
+        "/audio/pre-gen/gen-6b4b_male_1.mp3",
+        "/audio/pre-gen/gen-6b4b_male_2.mp3",
+        "/audio/pre-gen/gen-6b4b_male_3.mp3",
+        "/audio/pre-gen/gen-6b4b_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-6b4b4122c529.svg",
+      "mood": "curious"
+    },
+    "gen-2fedd4d6a646": {
+      "id": "gen-2fedd4d6a646",
+      "title": "Nayak and the Forgotten Ice Garden",
+      "type": "poem",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-2fed_female_3.mp3",
+        "/audio/pre-gen/gen-2fed_female_2.mp3",
+        "/audio/pre-gen/gen-2fed_female_1.mp3",
+        "/audio/pre-gen/gen-2fed_male_1.mp3",
+        "/audio/pre-gen/gen-2fed_male_2.mp3",
+        "/audio/pre-gen/gen-2fed_male_3.mp3",
+        "/audio/pre-gen/gen-2fed_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-2fedd4d6a646.svg",
+      "mood": "curious"
+    },
+    "gen-f23316834cfd": {
+      "id": "gen-f23316834cfd",
+      "title": "Mei and the Moonlit Origami Festival",
+      "type": "poem",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-f233_female_2.mp3",
+        "/audio/pre-gen/gen-f233_female_3.mp3",
+        "/audio/pre-gen/gen-f233_female_1.mp3",
+        "/audio/pre-gen/gen-f233_male_1.mp3",
+        "/audio/pre-gen/gen-f233_male_2.mp3",
+        "/audio/pre-gen/gen-f233_male_3.mp3",
+        "/audio/pre-gen/gen-f233_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-f23316834cfd.svg",
+      "mood": "calm"
+    },
+    "gen-df0dbc9d6b74": {
+      "id": "gen-df0dbc9d6b74",
+      "title": "Coral's Journey Through the Healing Tides",
+      "type": "poem",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-df0d_female_1.mp3",
+        "/audio/pre-gen/gen-df0d_female_3.mp3",
+        "/audio/pre-gen/gen-df0d_female_2.mp3",
+        "/audio/pre-gen/gen-df0d_male_1.mp3",
+        "/audio/pre-gen/gen-df0d_male_3.mp3",
+        "/audio/pre-gen/gen-df0d_male_2.mp3",
+        "/audio/pre-gen/gen-df0d_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-df0dbc9d6b74.svg",
+      "mood": "curious"
+    },
+    "gen-e77b10c51e8f": {
+      "id": "gen-e77b10c51e8f",
+      "title": "Diego and the Star Map of the Ancient Temple",
+      "type": "poem",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-e77b_female_1.mp3",
+        "/audio/pre-gen/gen-e77b_female_2.mp3",
+        "/audio/pre-gen/gen-e77b_female_3.mp3",
+        "/audio/pre-gen/gen-e77b_male_2.mp3",
+        "/audio/pre-gen/gen-e77b_male_3.mp3",
+        "/audio/pre-gen/gen-e77b_asmr.mp3",
+        "/audio/pre-gen/gen-e77b_male_1.mp3"
+      ],
+      "cover_url": "/covers/gen-e77b10c51e8f.svg",
+      "mood": "curious"
+    },
+    "d73e9530-b77e-4372-9ad1-070f0fa108e3": {
+      "id": "d73e9530-b77e-4372-9ad1-070f0fa108e3",
+      "title": "Captain Stardust and the Comet Race",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/d73e9530_female_1.mp3",
+        "/audio/pre-gen/d73e9530_male_1.mp3",
+        "/audio/pre-gen/d73e9530_female_2.mp3",
+        "/audio/pre-gen/d73e9530_male_2.mp3",
+        "/audio/pre-gen/d73e9530_male_3.mp3",
+        "/audio/pre-gen/d73e9530_female_3.mp3",
+        "/audio/pre-gen/d73e9530_asmr.mp3"
+      ],
+      "cover_url": "/covers/d73e9530-b77e-4372-9ad1-070f0fa108e3.svg",
+      "mood": "wired"
+    },
+    "9fba7605-7ffa-488d-93bc-9cca2881cf97": {
+      "id": "9fba7605-7ffa-488d-93bc-9cca2881cf97",
+      "title": "The Garden of Whispers",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/9fba7605_female_1.mp3",
+        "/audio/pre-gen/9fba7605_female_2.mp3",
+        "/audio/pre-gen/9fba7605_male_1.mp3",
+        "/audio/pre-gen/9fba7605_female_3.mp3",
+        "/audio/pre-gen/9fba7605_male_2.mp3",
+        "/audio/pre-gen/9fba7605_male_3.mp3",
+        "/audio/pre-gen/9fba7605_asmr.mp3"
+      ],
+      "cover_url": "/covers/9fba7605-7ffa-488d-93bc-9cca2881cf97.svg",
+      "mood": "curious"
+    },
+    "e32eaee0-2c7a-4f65-ace6-1d3a2d3ad5b0": {
+      "id": "e32eaee0-2c7a-4f65-ace6-1d3a2d3ad5b0",
+      "title": "The Owl's Goodnight",
+      "type": "poem",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/e32eaee0_female_1.mp3",
+        "/audio/pre-gen/e32eaee0_female_2.mp3",
+        "/audio/pre-gen/e32eaee0_male_1.mp3",
+        "/audio/pre-gen/e32eaee0_female_3.mp3",
+        "/audio/pre-gen/e32eaee0_asmr.mp3",
+        "/audio/pre-gen/e32eaee0_male_3.mp3",
+        "/audio/pre-gen/e32eaee0_male_2.mp3"
+      ],
+      "cover_url": "/covers/e32eaee0-2c7a-4f65-ace6-1d3a2d3ad5b0.svg",
+      "mood": "calm"
+    },
+    "c8796852-6d17-46e0-bcea-7985c4721d1c": {
+      "id": "c8796852-6d17-46e0-bcea-7985c4721d1c",
+      "title": "Twinkle Dream",
+      "type": "poem",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/c8796852_female_1.mp3",
+        "/audio/pre-gen/c8796852_female_2.mp3",
+        "/audio/pre-gen/c8796852_male_1.mp3",
+        "/audio/pre-gen/c8796852_male_3.mp3",
+        "/audio/pre-gen/c8796852_male_2.mp3",
+        "/audio/pre-gen/c8796852_female_3.mp3",
+        "/audio/pre-gen/c8796852_asmr.mp3"
+      ],
+      "cover_url": "/covers/c8796852-6d17-46e0-bcea-7985c4721d1c.svg",
+      "mood": "calm"
+    },
+    "30dec3e8-5354-41ff-aadf-90def8a35df4": {
+      "id": "30dec3e8-5354-41ff-aadf-90def8a35df4",
+      "title": "The Moon's Lullaby",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/30dec3e8_female_1.mp3",
+        "/audio/pre-gen/30dec3e8_female_2.mp3",
+        "/audio/pre-gen/30dec3e8_male_1.mp3",
+        "/audio/pre-gen/30dec3e8_female_3.mp3",
+        "/audio/pre-gen/30dec3e8_male_2.mp3",
+        "/audio/pre-gen/30dec3e8_male_3.mp3",
+        "/audio/pre-gen/30dec3e8_asmr.mp3"
+      ],
+      "cover_url": "/covers/30dec3e8-5354-41ff-aadf-90def8a35df4.svg",
+      "mood": "calm"
+    },
+    "8e516449-aa48-423e-8b53-db5591ce9bed": {
+      "id": "8e516449-aa48-423e-8b53-db5591ce9bed",
+      "title": "The Brave Little Firefly",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/8e516449_female_1.mp3",
+        "/audio/pre-gen/8e516449_female_2.mp3",
+        "/audio/pre-gen/8e516449_male_1.mp3",
+        "/audio/pre-gen/8e516449_male_3.mp3",
+        "/audio/pre-gen/8e516449_male_2.mp3",
+        "/audio/pre-gen/8e516449_female_3.mp3",
+        "/audio/pre-gen/8e516449_asmr.mp3"
+      ],
+      "cover_url": "/covers/8e516449-aa48-423e-8b53-db5591ce9bed.svg",
+      "mood": "sad"
+    },
+    "7fe248e1-f1ad-44a0-9c4e-95924d27fb5e": {
+      "id": "7fe248e1-f1ad-44a0-9c4e-95924d27fb5e",
+      "title": "The Sleepy Cloud",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/7fe248e1_female_1.mp3",
+        "/audio/pre-gen/7fe248e1_female_2.mp3",
+        "/audio/pre-gen/7fe248e1_male_1.mp3",
+        "/audio/pre-gen/7fe248e1_male_3.mp3",
+        "/audio/pre-gen/7fe248e1_male_2.mp3",
+        "/audio/pre-gen/7fe248e1_female_3.mp3",
+        "/audio/pre-gen/7fe248e1_asmr.mp3"
+      ],
+      "cover_url": "/covers/7fe248e1-f1ad-44a0-9c4e-95924d27fb5e.svg",
+      "mood": "calm"
+    },
+    "a3945b7b-6b20-4a39-a051-b25dfaec1d8e": {
+      "id": "a3945b7b-6b20-4a39-a051-b25dfaec1d8e",
+      "title": "Sailing to Dreamland",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/a3945b7b_female_1.mp3",
+        "/audio/pre-gen/a3945b7b_male_1.mp3",
+        "/audio/pre-gen/a3945b7b_female_3.mp3",
+        "/audio/pre-gen/a3945b7b_male_2.mp3"
+      ],
+      "cover_url": "/covers/a3945b7b-6b20-4a39-a051-b25dfaec1d8e.svg",
+      "mood": "calm"
+    }
+  },
+  "story_count": 152,
+  "funny_shorts": {
+    "2-5": {
+      "the-bouncy-bubble-5b82": {
+        "title": "The Bouncy Bubble",
+        "has_audio": true,
+        "audio_url": "/audio/funny-shorts/the-bouncy-bubble-5b82_episode.mp3",
+        "cover_url": "/covers/funny-shorts/the-bouncy-bubble-5b82.svg"
+      },
+      "the-great-crocodile-trap-flop-685b": {
+        "title": "The Great Crocodile Trap Flop",
+        "has_audio": true,
+        "audio_url": "/audio/funny-shorts/the-great-crocodile-trap-flop-685b_episode.mp3",
+        "cover_url": "/covers/funny-shorts/the-great-crocodile-trap-flop-685b.svg"
+      },
+      "the-wobble-whoopsie-d708": {
+        "title": "The Wobble Whoopsie",
+        "has_audio": true,
+        "audio_url": "/audio/funny-shorts/the-wobble-whoopsie-d708_episode.mp3",
+        "cover_url": "/covers/funny-shorts/the-wobble-whoopsie-d708.svg"
+      },
+      "the-wobbly-bridge-eb6c": {
+        "title": "The Wobbly Bridge",
+        "has_audio": true,
+        "audio_url": "/audio/funny-shorts/the-wobbly-bridge-eb6c_episode.mp3",
+        "cover_url": "/covers/funny-shorts/the-wobbly-bridge-eb6c.svg"
+      }
+    },
+    "6-8": {
+      "the-bouncy-bridge-32ce": {
+        "title": "The Bouncy Bridge",
+        "has_audio": true,
+        "audio_url": "/audio/funny-shorts/the-bouncy-bridge-32ce_episode.mp3",
+        "cover_url": "/covers/funny-shorts/the-bouncy-bridge-32ce.svg"
+      },
+      "the-bridge-too-far-4b64": {
+        "title": "The Bridge Too Far",
+        "has_audio": true,
+        "audio_url": "/audio/funny-shorts/the-bridge-too-far-4b64_episode.mp3",
+        "cover_url": "/covers/funny-shorts/the-bridge-too-far-4b64.svg"
+      },
+      "the-curse-of-the-crumbly-cracker-01fc": {
+        "title": "The Curse of the Crumbly Cracker",
+        "has_audio": true,
+        "audio_url": "/audio/funny-shorts/the-curse-of-the-crumbly-cracker-01fc_episode.mp3",
+        "cover_url": "/covers/funny-shorts/the-curse-of-the-crumbly-cracker-01fc.svg"
+      },
+      "the-great-cake-caper-b8c8": {
+        "title": "The Great Cake Caper",
+        "has_audio": true,
+        "audio_url": "/audio/funny-shorts/the-great-cake-caper-b8c8_episode.mp3",
+        "cover_url": "/covers/funny-shorts/the-great-cake-caper-b8c8.svg"
+      }
+    },
+    "9-12": {
+      "the-dark-prophecy-of-lunchbox-day-2179": {
+        "title": "The Dark Prophecy of Lunchbox Day",
+        "has_audio": true,
+        "audio_url": "/audio/funny-shorts/the-dark-prophecy-of-lunchbox-day-2179_episode.mp3",
+        "cover_url": "/covers/funny-shorts/the-dark-prophecy-of-lunchbox-day-2179.svg"
+      },
+      "the-great-bridge-heist-7db1": {
+        "title": "The Great Bridge Heist",
+        "has_audio": true,
+        "audio_url": "/audio/funny-shorts/the-great-bridge-heist-7db1_episode.mp3",
+        "cover_url": "/covers/funny-shorts/the-great-bridge-heist-7db1.svg"
+      },
+      "the-ominous-lunchbox-4cf8": {
+        "title": "The Ominous Lunchbox",
+        "has_audio": true,
+        "audio_url": "/audio/funny-shorts/the-ominous-lunchbox-4cf8_episode.mp3",
+        "cover_url": "/covers/funny-shorts/the-ominous-lunchbox-4cf8.svg"
+      },
+      "the-very-important-tail-4122": {
+        "title": "The Very Important Tail",
+        "has_audio": true,
+        "audio_url": "/audio/funny-shorts/the-very-important-tail-4122_episode.mp3",
+        "cover_url": "/covers/funny-shorts/the-very-important-tail-4122.svg"
+      }
+    }
+  },
+  "silly_songs": {
+    "2-5": {
+      "not_tired_2_5": {
+        "title": "I'm Not Tired",
+        "has_audio": true,
+        "audio_url": "/audio/silly-songs/not_tired_2_5.mp3",
+        "cover_url": "/covers/silly-songs/not_tired_2_5.webp"
+      },
+      "socks-dont-match": {
+        "title": "My Socks Don't Match",
+        "has_audio": true,
+        "audio_url": "/audio/silly-songs/socks-dont-match.mp3",
+        "cover_url": "/covers/silly-songs/socks-dont-match.webp"
+      },
+      "five-more-minutes": {
+        "title": "Five More Minutes",
+        "has_audio": true,
+        "audio_url": "/audio/silly-songs/five-more-minutes.mp3",
+        "cover_url": "/covers/silly-songs/five-more-minutes.webp"
+      }
+    },
+    "6-8": {
+      "not_fair_6_8": {
+        "title": "That's Not Fair",
+        "has_audio": true,
+        "audio_url": "/audio/silly-songs/not_fair_6_8.mp3",
+        "cover_url": "/covers/silly-songs/not_fair_6_8.webp"
+      },
+      "backpack-too-heavy": {
+        "title": "My Backpack Is Too Heavy",
+        "has_audio": true,
+        "audio_url": "/audio/silly-songs/backpack-too-heavy.mp3",
+        "cover_url": "/covers/silly-songs/backpack-too-heavy.webp"
+      },
+      "vegetables-plotting": {
+        "title": "Vegetables Are Plotting Against Me",
+        "has_audio": true,
+        "audio_url": "/audio/silly-songs/vegetables-plotting.mp3",
+        "cover_url": "/covers/silly-songs/vegetables-plotting.webp"
+      }
+    },
+    "9-12": {
+      "i_forgot_9_12": {
+        "title": "I Forgot",
+        "has_audio": true,
+        "audio_url": "/audio/silly-songs/i_forgot_9_12.mp3",
+        "cover_url": "/covers/silly-songs/i_forgot_9_12.webp"
+      },
+      "goodnight-already": {
+        "title": "I Said Goodnight Already",
+        "has_audio": true,
+        "audio_url": "/audio/silly-songs/goodnight-already.mp3",
+        "cover_url": "/covers/silly-songs/goodnight-already.webp"
+      },
+      "homework-ate-itself": {
+        "title": "My Homework Ate Itself",
+        "has_audio": true,
+        "audio_url": "/audio/silly-songs/homework-ate-itself.mp3",
+        "cover_url": "/covers/silly-songs/homework-ate-itself.webp"
+      }
+    }
+  }
+}
