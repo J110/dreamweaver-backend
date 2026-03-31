@@ -1,0 +1,19 @@
+{
+  "id": "not_tired_2_5",
+  "title": "I'm Not Tired",
+  "age_group": "2-5",
+  "lyrics": "[opening]\nMama, mama, mama, mama!\nWhat?\nMama, mama, mama, mama!\nWhat now?\nMama, mama, mama, mama!\nWHAT?!\nI'm not tired!\n\n[verse]\nMy toes are dancing, still wired!\nI don't wanna go, I'm fired!\nLook at me jump so much higher!\nI'm not sleepy, you're the liar!\n\n[chorus]\nI'm not tired! No, no, no!\nI'm not tired! Watch me go!\nI'm not tired! Here I am!\nI'm not tired! *bam bam bam*\n\n[verse]\nI need more water from my cup! *what?*\nMy blanket's wrong side up!\nThe cat still needs a hug! *really?*\nI found a cool new bug!\n\n[chorus]\nI'm not tired! No, no, no!\nI'm not tired! Watch me go!\nI'm not tired! Here I am!\nI'm not tired! *bam bam bam*\n\n[verse]\nThe moon is too bright in the sky! *yawn*\nI need to tell you why!\nMy socks don't match, oh my!\nI'm just... so... *burp* ...not... shy!\n\n[chorus]\nI'm not tired... no, no...\nI'm not tired... *yawn*... so...\nI'm not... *snore*... tired...\n...zzz... *crash* ...goodnight.",
+  "style_prompt": "Super catchy bouncy children's song, bright ukulele, hand claps, strong bouncy bass pop, 120 BPM, toddler bounce energy, call and response, cheeky fun playground chant, simple infectious groove",
+  "cover_description": "A tiny toddler in pajamas standing defiantly with arms crossed, eyes WIDE OPEN while a huge yawn escapes, a teddy bear asleep beside them, nighttime bedroom with stars outside the window",
+  "animation_preset": "bounce_rhythmic",
+  "created_at": "2026-03-31",
+  "play_count": 0,
+  "replay_count": 0,
+  "battle_cry_id": "not_tired",
+  "battle_cry": "I'm not tired",
+  "key_word": "tired",
+  "rhyme_family": "wired, fired, hired, mired, inspired, acquired, required, expired, retired, admired, choir-ed, higher, liar, flyer, buyer, drier, crier, sired, spired, pyre-ed",
+  "generation_method": "battlecry_v1",
+  "audio_file": "not_tired_2_5.mp3",
+  "cover_file": "not_tired_2_5.webp"
+}

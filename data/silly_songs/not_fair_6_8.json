@@ -1,0 +1,19 @@
+{
+  "id": "not_fair_6_8",
+  "title": "That's Not Fair",
+  "age_group": "6-8",
+  "lyrics": "[opening]\nMama, mama, mama, mama!\nWhat?\nPapa, papa, papa, papa!\nWhat NOW?\nMama, papa, mama, papa!\nWHAT?!\nThat's not fair!\n\n[verse]\nYou got the last cookie right there!\nMy ice cream fell and that's not fair!\nI sat on the floor, there's no chair!\nYou gave him the big one, I swear! *what?*\n\n[chorus]\nThat's not fair! That's not fair!\nI didn't get any, you don't care!\nThat's not fair! That's not fair!\nI want the sparkly one right there!\n\n[verse]\nMy brother got more, he's a bear!\nI tripped on the rug, now I tear! *gasp*\nYou never let me go nowhere!\nI didn't mean to, I swear!\n\n[chorus]\nThat's not fair! That's not fair!\nI didn't get any, you don't care!\nThat's not fair! That's not fair!\nI want the sparkly one right there!\n\n[verse]\nI wanted the green one, not that pear! *burp*\nHe got the whole thing, no share!\nI only got one and it's rare!\nYou won't let me do the dare! *hmm?*\n\n[chorus]\nThat's not fair... *snore*\nThat's not fair... *zzz*\nI didn't get any...\n...maybe tomorrow's... okay?",
+  "style_prompt": "Catchy bouncy children's song, guitar, snappy drums, groovy bass, 118 BPM, school bus singalong energy, punchy beat clapping on 2 and 4, fun physical comedic vocal, call and response",
+  "cover_description": "A child standing on a couch like a courtroom lawyer, pointing dramatically at an imaginary jury, a dog sitting as the judge wearing a tiny wig, living room turned into a courtroom",
+  "animation_preset": "bounce_rhythmic",
+  "created_at": "2026-03-31",
+  "play_count": 0,
+  "replay_count": 0,
+  "battle_cry_id": "not_fair",
+  "battle_cry": "That's not fair",
+  "key_word": "fair",
+  "rhyme_family": "air, bear, care, chair, dare, flare, hair, lair, pair, pear, rare, share, snare, stair, stare, swear, tear, there, where, wear",
+  "generation_method": "battlecry_v1",
+  "audio_file": "not_fair_6_8.mp3",
+  "cover_file": "not_fair_6_8.webp"
+}

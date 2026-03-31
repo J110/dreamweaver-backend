@@ -1,0 +1,19 @@
+{
+  "id": "i_forgot_9_12",
+  "title": "I Forgot",
+  "age_group": "9-12",
+  "lyrics": "[opening]\nMama, mama, mama, mama!\nWhat?\nPapa, papa, papa, papa!\nWhat NOW?\nMama, papa, mama, papa!\nWHAT?!\nI forgot!\n\n[verse]\nThe homework's in the dog, he ate the lot!\nI didn't take the cookie\u2014okay, maybe I got.\nThere's mud on the rug, it's a really bad spot.\nI swear I cleaned my room, well maybe not. *what?*\n\n[chorus]\nI forgot! I forgot!\nIt's not my fault\u2014nope, not a dot!\nI forgot! I forgot!\nSo why you yellin'? I forgot!\n\n[verse]\nI left the milk out and now it's hot.\nMy room's a disaster but that's not my plot. *really?*\nI had the remote but now I ain't got.\nThe trash smells like something starting to rot.\n\n[chorus]\nI forgot! I forgot!\nIt's not my fault\u2014nope, not a plot!\nI forgot! I forgot!\nSo why you sighin'? I forgot!\n\n[verse]\nI boiled my crayons in Mom's cooking pot. *burp*\nI slept in my clothes on my brother's cot.\nMy shoelaces are tied in a knot.\nI spilled the juice\u2014it was my best shot!\n\n[chorus]\nI forgot! I forgot!\nIt's not my fault\u2014hey, look, a spot!\nI forgot... I forgot...\n*yawn* Maybe I'll clean... *snore* zzzzzzz.",
+  "style_prompt": "Catchy bouncy song, acoustic guitar, punchy pop beat, 115 BPM, boppy bass, snappy snare, groovy confident, slightly sarcastic, dramatic comedy pauses, cool not babyish, undeniable bounce",
+  "cover_description": "A child standing at the school door with a giant backpack but missing one shoe, homework papers trailing behind like a bread crumb trail, a goldfish bowl balanced on their head, chaos energy",
+  "animation_preset": "bounce_rhythmic",
+  "created_at": "2026-03-31",
+  "play_count": 0,
+  "replay_count": 0,
+  "battle_cry_id": "i_forgot",
+  "battle_cry": "I forgot",
+  "key_word": "forgot",
+  "rhyme_family": "hot, lot, spot, not, dot, got, rot, pot, cot, knot, shot, tot, squat, plot, blot, yacht, caught, thought, ought, bot",
+  "generation_method": "battlecry_v1",
+  "audio_file": "i_forgot_9_12.mp3",
+  "cover_file": "i_forgot_9_12.webp"
+}
