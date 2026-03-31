@@ -1817,10 +1817,6 @@ def generate_phase_audio(
                 if _HAS_DELIVERY:
                     dtags = parse_delivery_tags(seg_text)
                     seg_text = strip_delivery_tags(seg_text)
-                # Catch-all: strip any remaining [TAG] or [/TAG] brackets
-                # that the LLM may have injected (e.g. [DELIVERY:...] when
-                # _HAS_DELIVERY is False, or unknown tags).
-                seg_text = re.sub(r'\[/?[A-Za-z_][A-Za-z0-9_:. ]*\]', '', seg_text).strip()
                     if dtags and should_apply_delivery(
                         content_type, phase_num, speech_idx, len(speech_segments),
                         paragraph_index=global_idx,
@@ -1864,6 +1860,8 @@ def generate_phase_audio(
                         clean_text = clean_text or seg_text
                         c_exag, c_speed, c_cfg = d_exag, d_spd, cfg
 
+                    # Catch-all: strip any stray [TAG] markers before TTS
+                    clean_text = re.sub(r'\[/?[A-Za-z_][A-Za-z0-9_:. ]*\]', '', clean_text).strip()
                     audio_bytes = generate_tts_for_segment(
                         client, text=clean_text, voice=phase_voice,
                         exaggeration=c_exag, cfg_weight=c_cfg,
@@ -1880,6 +1878,8 @@ def generate_phase_audio(
                         return None
                 else:
                     # Standard: no emphasis chunking
+                    # Catch-all: strip any stray [TAG] markers before TTS
+                    seg_text = re.sub(r'\[/?[A-Za-z_][A-Za-z0-9_:. ]*\]', '', seg_text).strip()
                     audio_bytes = generate_tts_for_segment(
                         client, text=seg_text, voice=phase_voice,
                         exaggeration=d_exag, cfg_weight=cfg,
