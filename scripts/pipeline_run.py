@@ -1392,12 +1392,18 @@ def step_lullabies(args, state: dict) -> bool:
                 lid = ll["id"]
 
                 # Add to content.json as type: "song"
+                # Build character info if available
+                character = ll.get("character")
+                about = ll.get("about", "")
+                # Use about text or card_subtitle as description
+                description = about or ll.get("card_subtitle", "")
+
                 entry = {
                     "id": lid, "type": "song", "lang": ll.get("language", "en"),
                     "title": ll.get("title", ll.get("card_label", "Lullaby")),
                     "card_label": ll.get("card_label", ""),
                     "cover": f"/covers/{lid}.svg",
-                    "description": ll.get("card_subtitle", ""),
+                    "description": description,
                     "text": ll.get("lyrics", ""),
                     "annotated_text": ll.get("lyrics", ""),
                     "cover_context": ll.get("cover_prompt", ""),
@@ -1412,7 +1418,9 @@ def step_lullabies(args, state: dict) -> bool:
                     "categories": ["Lullabies"], "theme": "dreamy",
                     "is_generated": True, "generation_quality": "good",
                     "music_genre": "lullaby",
-                    "lead_character_type": "object",
+                    "lead_character_type": "animal" if character else "object",
+                    "character": character,
+                    "about": about,
                     "audio_variants": [{
                         "voice": "female_1",
                         "url": f"/audio/pre-gen/{lid}_female_1.mp3",
@@ -1439,21 +1447,9 @@ def step_lullabies(args, state: dict) -> bool:
                         _shutil.copy2(str(src_mp3), str(web_mp3))
 
                 # Write temp JSON for FLUX cover generation
-                # Override cover_context with abstract lullaby style
-                LULLABY_COVER_STYLE = (
-                    "Minimal abstract nursery art, extremely soft, dreamy, "
-                    "no characters, no faces, no animals, no figures, "
-                    "one simple shape or light source only, "
-                    "soft gradient background, blurred edges, "
-                    "like looking through half-closed eyes, "
-                    "deep muted blues and soft warm golds, "
-                    "large empty space, restful negative space, "
-                    "the visual equivalent of silence, "
-                    "NOT an illustration, NOT a scene, NOT watercolor, "
-                    "closer to abstract photography or soft pastel texture"
-                )
-                llm_cover_desc = ll.get("cover_prompt", "a single soft light in deep blue darkness")
-                entry["cover_context"] = f"{LULLABY_COVER_STYLE}, {llm_cover_desc}"
+                # Use the LLM-generated cover prompt (now character-aware)
+                llm_cover_desc = ll.get("cover_prompt", "a soft glowing light in deep blue darkness, dreamy nursery art")
+                entry["cover_context"] = llm_cover_desc
 
                 temp_json = BASE_DIR / "seed_output" / f"{lid}.json"
                 temp_json.write_text(json.dumps(entry, indent=2, ensure_ascii=False))

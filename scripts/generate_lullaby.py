@@ -526,13 +526,13 @@ def generate_lyrics(lullaby_type: str, age: str, mood: str, imagery: str) -> str
     api_key = os.environ.get("MISTRAL_API_KEY")
     if not api_key:
         print("  WARNING: No MISTRAL_API_KEY — using fallback lyrics")
-        return FALLBACK_LYRICS.get(lullaby_type, FALLBACK_LYRICS["rocking"]), None, None
+        return FALLBACK_LYRICS.get(lullaby_type, FALLBACK_LYRICS["rocking"]), None, None, None, None
 
     try:
         from mistralai import Mistral
     except ImportError:
         print("  WARNING: mistralai not installed — using fallback lyrics")
-        return FALLBACK_LYRICS.get(lullaby_type, FALLBACK_LYRICS["rocking"]), None, None
+        return FALLBACK_LYRICS.get(lullaby_type, FALLBACK_LYRICS["rocking"]), None, None, None, None
 
     type_cfg = LULLABY_TYPES[lullaby_type]
     structure = STRUCTURE_INSTRUCTIONS[lullaby_type]
@@ -560,10 +560,14 @@ STRUCTURE:
 
 Write the lyrics with [verse] and [chorus] tags.
 
-After the lyrics, generate a title and cover description on their own lines:
+After the lyrics, generate these metadata lines:
 
 [TITLE: your title here]
 [COVER: your cover description here]
+[CHARACTER_NAME: the main character's name from the lyrics]
+[CHARACTER_IDENTITY: one sentence describing who they are]
+[CHARACTER_SPECIAL: one sentence about what makes them special]
+[ABOUT: 2-3 sentence description of the lullaby for parents]
 
 TITLE RULES:
 The title is the single most evocative IMAGE from the lyrics.
@@ -575,20 +579,24 @@ Examples:
 Keep it under 6 words.
 
 COVER RULES:
-LULLABY COVERS ARE NOT ILLUSTRATIONS. They are abstract, minimal,
-and almost empty. NO characters. NO animals. NO faces. NO scenes.
-Just ONE simple visual element — a shape, a light, a gradient.
+Describe the main character or scene from the lyrics as a soft, dreamy
+children's book illustration. Include the character (animal, creature, or
+object) and their setting. Keep it cozy and sleepy.
+Examples:
+- Lyrics about a sleepy owl counting: a round fluffy owl with half-closed eyes perched on a moonlit branch
+- Lyrics about a river stopping: a gentle stream at dusk with soft glowing fireflies
+- Lyrics about being safe: a small bunny wrapped in a warm blanket under soft starlight
 
-Take the most important FEELING from your lyrics and express it
-as a single abstract visual:
-- Lyrics about a river stopping: a single horizontal line of silver on deep blue, like still water reflecting nothing
-- Lyrics about shoes by the door: a small warm golden rectangle on soft darkness, like doorway light
-- Lyrics about counting sleeping creatures: four tiny dots in a diagonal line, each dimmer than the last
-- Lyrics about being safe: a warm circle of amber light surrounded by calm deep blue
-- Lyrics about rocking on the sea: a single gentle curved line on deep blue, like one wave seen from very far away
-- Lyrics about a falling star: one thin streak of gold cutting across deep blue, with a faint glow at the end
+Style: soft watercolor, dreamy, warm muted colors, cozy nighttime, children's book illustration.
 
-Style: minimal abstract, soft gradient, blurred edges, deep muted blues and warm golds, large negative space, nursery art aesthetic, extremely restful."""
+CHARACTER RULES:
+- CHARACTER_NAME: The name of the main character in the lyrics (e.g., "Owl", "Nimbus", "Lumi"). If no named character, use the most prominent creature or thing.
+- CHARACTER_IDENTITY: A warm, short description (e.g., "A round fluffy owl who counts the forest friends to sleep")
+- CHARACTER_SPECIAL: Their special quality (e.g., "Knows every creature in the forest by name")
+- If the lyrics have no character at all (pure abstract/humming), write "none" for all three.
+
+ABOUT RULES:
+Write 2-3 gentle sentences describing the lullaby for parents. Mention what the lullaby is about, the sleep mechanism, and why it helps children sleep. Example: "A gentle counting lullaby where forest creatures drift off one by one. The predictable, cumulative rhythm soothes active minds into stillness.\" """
 
     print(f"  Generating lyrics via Mistral...")
     client = Mistral(api_key=api_key)
@@ -609,10 +617,13 @@ Style: minimal abstract, soft gradient, blurred edges, deep muted blues and warm
         lines = lyrics.split("\n")
         lyrics = "\n".join(l for l in lines if not l.startswith("```"))
 
-    # Extract [TITLE: ...] and [COVER: ...] if present
+    # Extract metadata tags from lyrics
     title = None
     cover_prompt = None
+    character = None
+    about = None
     import re
+
     title_match = re.search(r'\[TITLE:\s*(.+?)\]', lyrics)
     if title_match:
         title = title_match.group(1).strip().strip('"\'')
@@ -623,12 +634,39 @@ Style: minimal abstract, soft gradient, blurred edges, deep muted blues and warm
         cover_prompt = cover_match.group(1).strip().strip('"\'')
         lyrics = re.sub(r'\n*\[COVER:[^\]]+\]\n*', '\n', lyrics).strip()
 
+    # Extract character info
+    char_name_match = re.search(r'\[CHARACTER_NAME:\s*(.+?)\]', lyrics)
+    char_identity_match = re.search(r'\[CHARACTER_IDENTITY:\s*(.+?)\]', lyrics)
+    char_special_match = re.search(r'\[CHARACTER_SPECIAL:\s*(.+?)\]', lyrics)
+    if char_name_match:
+        name = char_name_match.group(1).strip().strip('"\'')
+        if name.lower() != "none":
+            character = {
+                "name": name,
+                "identity": char_identity_match.group(1).strip().strip('"\'') if char_identity_match else "",
+                "special": char_special_match.group(1).strip().strip('"\'') if char_special_match else "",
+                "personality_tags": ["Gentle", "Sleepy"],
+            }
+    # Strip character tags from lyrics
+    for tag in ["CHARACTER_NAME", "CHARACTER_IDENTITY", "CHARACTER_SPECIAL"]:
+        lyrics = re.sub(rf'\n*\[{tag}:[^\]]+\]\n*', '\n', lyrics).strip()
+
+    # Extract about text
+    about_match = re.search(r'\[ABOUT:\s*(.+?)\]', lyrics)
+    if about_match:
+        about = about_match.group(1).strip().strip('"\'')
+        lyrics = re.sub(r'\n*\[ABOUT:[^\]]+\]\n*', '\n', lyrics).strip()
+
     print(f"  Lyrics: {len(lyrics)} chars, {lyrics.count('[verse]')} verses, {lyrics.count('[chorus]')} choruses")
     if title:
         print(f"  Title: {title}")
     if cover_prompt:
         print(f"  Cover: {cover_prompt[:60]}...")
-    return lyrics, title, cover_prompt
+    if character:
+        print(f"  Character: {character['name']} — {character.get('identity', '')[:50]}...")
+    if about:
+        print(f"  About: {about[:60]}...")
+    return lyrics, title, cover_prompt, character, about
 
 
 # ═════════════════════════════════════════════════════════════════════
@@ -790,12 +828,14 @@ def generate_one(mood: str, age: str, lullaby_type: str = None,
     # 1. Generate lyrics
     generated_title = None
     generated_cover_prompt = None
+    generated_character = None
+    generated_about = None
     if skip_lyrics_gen:
         lyrics = FALLBACK_LYRICS.get(lullaby_type, FALLBACK_LYRICS["rocking"])
         print(f"  Using fallback lyrics ({len(lyrics)} chars)")
     else:
         try:
-            lyrics, generated_title, generated_cover_prompt = generate_lyrics(lullaby_type, age, mood, imagery)
+            lyrics, generated_title, generated_cover_prompt, generated_character, generated_about = generate_lyrics(lullaby_type, age, mood, imagery)
         except Exception as e:
             print(f"  Lyrics generation failed: {e}")
             lyrics = FALLBACK_LYRICS.get(lullaby_type, FALLBACK_LYRICS["rocking"])
@@ -872,6 +912,8 @@ def generate_one(mood: str, age: str, lullaby_type: str = None,
             "mood": mood,
         },
         "created_at": str(date.today()),
+        "character": generated_character,
+        "about": generated_about or "",
     }
 
     # Save individual metadata
