@@ -303,7 +303,7 @@ def apply_story_type_to_brief(brief: dict, story_type: str) -> dict:
     Adjusts instrument preferences, tempo bias, density, and nature sound
     levels based on the narrative tradition of the story.
     """
-    from scripts.story_type_config import STORY_TYPE_MUSIC_RULES
+    from story_type_config import STORY_TYPE_MUSIC_RULES
     rules = STORY_TYPE_MUSIC_RULES.get(story_type)
     if not rules:
         return brief

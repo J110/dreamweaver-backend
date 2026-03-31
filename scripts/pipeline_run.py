@@ -1663,11 +1663,12 @@ def step_publish(args, state: dict) -> bool:
 
     # ── Commit and push backend (triggers Render auto-deploy) ──
     logger.info("  Committing backend changes...")
-    # Stash unstaged changes (runtime data files) before rebase
-    run_command(["git", "stash"], "Backend: git stash", timeout=30)
+    # Stage content files FIRST, then stash unstaged runtime data (data/content.json etc.)
+    # with --keep-index so the staged content.json changes are preserved in the commit.
+    run_command(["git", "add", "seed_output/content.json",
+                 "seed_output/content_expanded.json", "audio/"], "Backend: git add", timeout=60)
+    run_command(["git", "stash", "--keep-index"], "Backend: git stash --keep-index", timeout=30)
     backend_cmds = [
-        (["git", "add", "seed_output/content.json",
-          "seed_output/content_expanded.json", "audio/"], "Backend: git add"),
         (["git", "commit", "-m", commit_msg, "--allow-empty"], "Backend: git commit"),
         (["git", "pull", "--rebase", "origin", "main"], "Backend: git pull --rebase"),
         (["git", "push", "origin", "main"], "Backend: git push"),
