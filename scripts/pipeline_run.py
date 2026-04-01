@@ -1385,6 +1385,7 @@ def step_lullabies(args, state: dict) -> bool:
             age_map = {"0-1": (0, 1), "2-5": (2, 5), "6-8": (6, 8), "9-12": (9, 12)}
 
             added = 0
+            lullaby_ids = []
             for ll in lullabies:
                 if ll["id"] in existing_ids:
                     continue
@@ -1398,6 +1399,8 @@ def step_lullabies(args, state: dict) -> bool:
                 # Use about text or card_subtitle as description
                 description = about or ll.get("card_subtitle", "")
 
+                dur_secs = ll.get("duration_seconds", 120)
+                dur_mins = max(1, round(dur_secs / 60))
                 entry = {
                     "id": lid, "type": "song", "lang": ll.get("language", "en"),
                     "title": ll.get("title", ll.get("card_label", "Lullaby")),
@@ -1409,7 +1412,9 @@ def step_lullabies(args, state: dict) -> bool:
                     "cover_context": ll.get("cover_prompt", ""),
                     "target_age": (age_min + age_max) // 2,
                     "age_min": age_min, "age_max": age_max,
-                    "duration_seconds": ll.get("duration_seconds", 120),
+                    "age_group": ll.get("age_group", "2-5"),
+                    "duration": dur_mins,
+                    "duration_seconds": dur_secs,
                     "author_id": "system",
                     "created_at": datetime.now().isoformat(),
                     "updated_at": datetime.now().isoformat(),
@@ -1424,7 +1429,7 @@ def step_lullabies(args, state: dict) -> bool:
                     "audio_variants": [{
                         "voice": "female_1",
                         "url": f"/audio/pre-gen/{lid}_female_1.mp3",
-                        "duration_seconds": ll.get("duration_seconds", 120),
+                        "duration_seconds": dur_secs,
                         "provider": "minimax-music-v2",
                     }],
                     "mood": ll.get("mood", "calm"),
@@ -1432,6 +1437,7 @@ def step_lullabies(args, state: dict) -> bool:
                 }
                 content.append(entry)
                 existing_ids.add(lid)
+                lullaby_ids.append(lid)
                 added += 1
 
                 # Copy audio to standard audio/pre-gen/ directory
@@ -1475,6 +1481,12 @@ def step_lullabies(args, state: dict) -> bool:
             if added > 0:
                 content_path.write_text(json.dumps(content, indent=2, ensure_ascii=False))
                 logger.info("  Added %d lullaby(ies) to content.json (total: %d)", added, len(content))
+                # Add lullaby IDs to generated_ids so they appear in email notification
+                existing_gen_ids = state.get("generated_ids", [])
+                existing_gen_ids.extend(lullaby_ids)
+                state["generated_ids"] = existing_gen_ids
+                # Update lullaby count
+                state["generated_lullabies"] = state.get("generated_lullabies", 0) + added
             else:
                 logger.info("  No new lullabies to add (all already in content.json)")
     else:

@@ -570,13 +570,13 @@ After the lyrics, generate these metadata lines:
 [ABOUT: 2-3 sentence description of the lullaby for parents]
 
 TITLE RULES:
-The title is the single most evocative IMAGE from the lyrics.
-NOT the type name. NOT a character name. Just the image.
+The title MUST include the character's name AND one evocative image from the lyrics.
+Format: "CharacterName and the Image" or "CharacterName's Image" — under 8 words.
 Examples:
-- If lyrics mention a river stopping: "When the River Stopped"
-- If lyrics mention shoes by the door: "Shoes by the Door"
-- If lyrics count creatures: "One Sleepy Owl"
-Keep it under 6 words.
+- If character is Owl and lyrics mention counting: "Owl's Counting Song"
+- If character is Nimbus and lyrics mention a river: "Nimbus and the Still River"
+- If character is Lumi and lyrics mention stars: "Lumi's Starlight Lullaby"
+If the lyrics truly have no named character (pure humming/abstract), use the most evocative image only.
 
 COVER RULES:
 Describe the main character or scene from the lyrics as a soft, dreamy

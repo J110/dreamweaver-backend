@@ -504,11 +504,21 @@ or goes quiet.
 - Only use [MUSIC], [PAUSE: ms], and [PHRASE]...[/PHRASE] tags
 """
 
+HOOK_FORMATS = {
+    "wired":   'Did you know... {surprising fact from this story}?',
+    "curious": 'Have you ever wondered... {question from this story}?',
+    "calm":    'Tonight... {quiet observation from this story}.',
+    "sad":     'You know that feeling when... {feeling from this story}?',
+    "anxious": "I'm going to tell you something... {reassurance from this story}.",
+    "angry":   "Once, something happened that wasn't fair... {setup from this story}.",
+}
+HOOK_FORMAT_DEFAULT = 'One sentence, under 15 words, makes the child want to listen'
+
 V2_FORMAT_JSON = """
 Return ONLY a valid JSON object with these fields (no markdown, no extra text):
 {
     "title": "Character Name and the evocative IMAGE. Under 8 words. Must include the lead character's name.",
-    "hook": "One sentence, under 15 words, makes the child want to listen",
+    "hook": "MUST follow the exact hook format specified below",
     "description": "A 2-3 sentence mood hook (max 50 words). Start with something intriguing.",
     "text": "The FULL story text with [MUSIC], [PAUSE: ms], and [PHRASE]...[/PHRASE] tags inline. Use \\n\\n between paragraphs. NEVER use markdown or ALL CAPS.",
     "repeated_phrase": "The exact phrase that repeats 3+ times",
@@ -789,6 +799,18 @@ Do NOT abbreviate, summarize, or write a short version. Each phase must be subst
     # Select format block based on v2 vs legacy
     format_block = V2_FORMAT_JSON if is_v2_story else FORMAT_JSON
 
+    # Mood-specific hook instruction for v2 stories
+    hook_instruction = ""
+    if is_v2_story and mood:
+        hook_fmt = HOOK_FORMATS.get(mood, HOOK_FORMAT_DEFAULT)
+        hook_instruction = f"""
+HOOK FORMAT (MANDATORY — the hook format is FIXED by mood):
+The hook MUST use EXACTLY this format: {hook_fmt}
+Fill in the blank with something specific to THIS story's content.
+The format never changes. The content always does.
+This is a Pavlovian signal — the child hears the opener and knows what kind of experience is coming.
+Do NOT use "What if..." or any other format. Use the EXACT format above."""
+
     prompt = f"""{base_prompt}
 
 {story_type_block}
@@ -808,6 +830,7 @@ LENGTH: {length_desc}
 {hindi_block}
 
 {format_block}
+{hook_instruction}
 
 Now generate a {content_type} following ALL the above instructions. Return ONLY the JSON object."""
 
