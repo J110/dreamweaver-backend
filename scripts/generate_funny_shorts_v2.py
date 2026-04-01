@@ -1028,16 +1028,17 @@ def assemble_funny_short(audio_segments: list, bed_path: Path,
 # Step 8: Cover Generation (FLUX via Pollinations)
 # ═══════════════════════════════════════════════════════════════════
 
-def generate_cover(title: str, episode_id: str) -> Path | None:
-    """Generate a cover image via Pollinations.ai FLUX."""
+def generate_cover(title: str, episode_id: str, scene_description: str = "") -> Path | None:
+    """Generate a cover image via Pollinations.ai FLUX.
+
+    IMPORTANT: Never put the title in the prompt — FLUX will render it as
+    visible text on the image.  Use scene_description for visual details only.
+    """
+    scene = scene_description or title.replace("The ", "").replace("'", "")
     prompt = (
-        f"Fun warm children's illustration, {title}, "
-        f"cartoon style, gentle colors, bedtime comedy, "
-        f"cozy and funny, not loud or chaotic, "
-        f"soft warm lighting, children's book style, "
-        f"no text anywhere in the image, no words, no letters, no numbers, "
-        f"no titles, no captions, no labels, no signs, no writing of any kind. "
-        f"ABSOLUTELY NO TEXT, NO WORDS, NO LETTERS."
+        f"Children's book illustration, {scene}, "
+        f"cartoon style, gentle warm colors, cozy bedtime feeling, "
+        f"clean simple composition, no background text"
     )
     truncated = prompt[:600]
     encoded = quote(truncated, safe="")

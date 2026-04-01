@@ -483,12 +483,14 @@ Covers are generated via **Pollinations.ai FLUX** image model.
 
 > **HARD RULE: NO TEXT ON COVERS.** Covers must never contain any text, words, letters, numbers, or typographic elements. This is enforced in the prompt and must be maintained in any future prompt changes. FLUX models often try to add text — the "ABSOLUTELY NO TEXT" suffix is critical.
 
-**Prompt template**:
+**Prompt template** (scene description only — NEVER include the title):
 ```
-Fun warm children's illustration, {title}, cartoon style, gentle colors,
-bedtime comedy, cozy and funny, not loud or chaotic, soft warm lighting,
-children's book style. ABSOLUTELY NO TEXT, NO WORDS, NO LETTERS.
+Children's book illustration, {scene_description}, cartoon style,
+gentle warm colors, cozy bedtime feeling, clean simple composition,
+no background text
 ```
+
+> **WHY no title?** FLUX interprets any readable phrase in the prompt as text to render on the image. Even with "NO TEXT" suffixes, if the title is in the prompt, FLUX will paint it on the cover. The fix: describe the *scene*, not the *title*.
 
 **Parameters**: 512x512, model=flux, nologo=true
 
