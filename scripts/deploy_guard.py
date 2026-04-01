@@ -251,6 +251,10 @@ def verify_files(state: dict, frontend: str, api: str) -> tuple[list[str], list[
 def auto_recover(recoverable: list[dict], dry_run: bool = False) -> tuple[int, int]:
     """Attempt to recover missing files from backup stores on the GCP VM.
 
+    Recovery chain (tries each in order):
+      1. Backup store (/opt/cover-store, /opt/audio-store)
+      2. git restore (for files tracked in git that were deleted from disk)
+
     Returns (recovered_count, failed_count).
     """
     if not recoverable:
@@ -273,14 +277,13 @@ def auto_recover(recoverable: list[dict], dry_run: bool = False) -> tuple[int, i
             )
         elif ftype == "story_cover":
             # Covers served from frontend /covers/
-            # Cover store uses flat naming — try exact match first, then with prefix
             recover_commands.append(
                 f'if [ -f "{COVER_STORE}/{filename}" ]; then '
                 f'cp "{COVER_STORE}/{filename}" "{FRONTEND_COVERS}/{filename}" && echo "RECOVERED: {filename}"; '
                 f'else echo "NOT_IN_STORE: {filename}"; fi'
             )
         elif ftype == "funny_short_cover":
-            # Funny short covers: store uses "funny-shorts--{name}.svg" naming
+            # Funny short covers: store uses "funny-shorts--{name}" naming
             store_name = f"funny-shorts--{filename}"
             recover_commands.append(
                 f'if [ -f "{COVER_STORE}/{store_name}" ]; then '
@@ -289,6 +292,9 @@ def auto_recover(recoverable: list[dict], dry_run: bool = False) -> tuple[int, i
                 f'cp "{COVER_STORE}/{filename}" "{BACKEND_COVERS_FUNNY}/{filename}" && echo "RECOVERED: {filename}"; '
                 f'else echo "NOT_IN_STORE: {filename}"; fi'
             )
+        elif ftype == "funny_short_audio":
+            # Funny short audio: no dedicated store, will fall through to git restore
+            recover_commands.append(f'echo "NOT_IN_STORE: {filename}"')
         elif ftype == "silly_song_audio":
             recover_commands.append(
                 f'if [ -f "{AUDIO_STORE_SILLY}/{filename}" ]; then '
@@ -314,8 +320,12 @@ def auto_recover(recoverable: list[dict], dry_run: bool = False) -> tuple[int, i
             print(f"    Would run: {cmd[:100]}...")
         return 0, 0
 
-    # Execute all recovery commands via SSH
+    # Phase 1: Try backup stores
     full_script = " && ".join(recover_commands)
+    recovered = 0
+    not_found = 0
+    not_found_files = []  # Track which files need git restore
+
     try:
         result = subprocess.run(
             SSH_CMD + [full_script],
@@ -323,8 +333,6 @@ def auto_recover(recoverable: list[dict], dry_run: bool = False) -> tuple[int, i
         )
         output = result.stdout.strip()
         if output:
-            recovered = 0
-            not_found = 0
             for line in output.split("\n"):
                 line = line.strip()
                 if line.startswith("RECOVERED:"):
@@ -332,8 +340,9 @@ def auto_recover(recoverable: list[dict], dry_run: bool = False) -> tuple[int, i
                     print(f"    ✅ {line}")
                 elif line.startswith("NOT_IN_STORE:"):
                     not_found += 1
-                    print(f"    ❌ {line}")
-            return recovered, not_found
+                    fname = line.split("NOT_IN_STORE:")[-1].strip()
+                    not_found_files.append(fname)
+                    print(f"    ⚠️  {line} — will try git restore")
         if result.returncode != 0 and result.stderr:
             print(f"    SSH error: {result.stderr[:200]}")
     except subprocess.TimeoutExpired:
@@ -341,7 +350,142 @@ def auto_recover(recoverable: list[dict], dry_run: bool = False) -> tuple[int, i
     except Exception as e:
         print(f"    Recovery error: {e}")
 
-    return 0, len(recover_commands)
+    # Phase 2: git restore for files not in backup stores
+    if not_found_files:
+        print(f"\n  Attempting git restore for {len(not_found_files)} file(s)...")
+        git_recovered = _git_restore_recover(not_found_files, recoverable)
+        recovered += git_recovered
+        not_found -= git_recovered
+
+    # Phase 3: Back up any recovered files to the store for next time
+    if recovered > 0:
+        _backup_to_store(recoverable)
+
+    return recovered, not_found
+
+
+def _git_restore_recover(filenames: list[str], recoverable: list[dict]) -> int:
+    """Try git restore on the backend and frontend repos for missing files.
+
+    Files tracked in git that were deleted from disk can be restored this way.
+    Returns count of successfully recovered files.
+    """
+    # Map filenames to their recovery info for determining which repo to restore from
+    file_types = {}
+    for item in recoverable:
+        file_types[item["filename"]] = item["type"]
+
+    # Group by repo
+    backend_paths = []
+    frontend_paths = []
+    for fname in filenames:
+        ftype = file_types.get(fname, "")
+        if ftype in ("funny_short_cover", "funny_short_audio", "silly_song_cover", "silly_song_audio"):
+            # These are in the backend repo
+            if "cover" in ftype:
+                subdir = "funny-shorts" if "funny" in ftype else "silly-songs"
+                backend_paths.append(f"public/covers/{subdir}/{fname}")
+            else:
+                subdir = "funny-shorts" if "funny" in ftype else "silly-songs"
+                backend_paths.append(f"public/audio/{subdir}/{fname}")
+        elif ftype in ("story_audio",):
+            frontend_paths.append(f"public/audio/pre-gen/{fname}")
+        elif ftype in ("story_cover",):
+            frontend_paths.append(f"public/covers/{fname}")
+
+    git_recovered = 0
+
+    # Restore from backend repo
+    if backend_paths:
+        paths_str = " ".join(f'"{p}"' for p in backend_paths)
+        cmd = f'cd /opt/dreamweaver-backend && git restore {paths_str} 2>&1 && echo "GIT_RESTORE_OK"'
+        try:
+            result = subprocess.run(
+                SSH_CMD + [cmd], capture_output=True, text=True, timeout=60
+            )
+            if "GIT_RESTORE_OK" in result.stdout:
+                # Verify which files were actually restored
+                for path in backend_paths:
+                    check_cmd = f'[ -f "/opt/dreamweaver-backend/{path}" ] && echo "EXISTS"'
+                    check = subprocess.run(
+                        SSH_CMD + [check_cmd], capture_output=True, text=True, timeout=15
+                    )
+                    if "EXISTS" in check.stdout:
+                        git_recovered += 1
+                        fname = path.split("/")[-1]
+                        print(f"    ✅ RECOVERED (git restore): {fname}")
+            elif result.stderr:
+                print(f"    git restore (backend) error: {result.stderr[:200]}")
+        except Exception as e:
+            print(f"    git restore (backend) failed: {e}")
+
+    # Restore from frontend repo
+    if frontend_paths:
+        paths_str = " ".join(f'"{p}"' for p in frontend_paths)
+        cmd = f'cd /opt/dreamweaver-web && git restore {paths_str} 2>&1 && echo "GIT_RESTORE_OK"'
+        try:
+            result = subprocess.run(
+                SSH_CMD + [cmd], capture_output=True, text=True, timeout=60
+            )
+            if "GIT_RESTORE_OK" in result.stdout:
+                for path in frontend_paths:
+                    check_cmd = f'[ -f "/opt/dreamweaver-web/{path}" ] && echo "EXISTS"'
+                    check = subprocess.run(
+                        SSH_CMD + [check_cmd], capture_output=True, text=True, timeout=15
+                    )
+                    if "EXISTS" in check.stdout:
+                        git_recovered += 1
+                        fname = path.split("/")[-1]
+                        print(f"    ✅ RECOVERED (git restore): {fname}")
+            elif result.stderr:
+                print(f"    git restore (frontend) error: {result.stderr[:200]}")
+        except Exception as e:
+            print(f"    git restore (frontend) failed: {e}")
+
+    return git_recovered
+
+
+def _backup_to_store(recoverable: list[dict]):
+    """After recovery, back up restored files to the backup store so they're available next time."""
+    backup_cmds = []
+    for item in recoverable:
+        ftype = item["type"]
+        filename = item["filename"]
+
+        if ftype == "story_cover":
+            backup_cmds.append(
+                f'[ -f "{FRONTEND_COVERS}/{filename}" ] && '
+                f'cp "{FRONTEND_COVERS}/{filename}" "{COVER_STORE}/{filename}" 2>/dev/null'
+            )
+        elif ftype == "funny_short_cover":
+            store_name = f"funny-shorts--{filename}"
+            backup_cmds.append(
+                f'[ -f "{BACKEND_COVERS_FUNNY}/{filename}" ] && '
+                f'cp "{BACKEND_COVERS_FUNNY}/{filename}" "{COVER_STORE}/{store_name}" 2>/dev/null'
+            )
+        elif ftype == "silly_song_cover":
+            store_name = f"silly-songs--{filename}"
+            backup_cmds.append(
+                f'[ -f "{BACKEND_COVERS_SILLY}/{filename}" ] && '
+                f'cp "{BACKEND_COVERS_SILLY}/{filename}" "{COVER_STORE}/{store_name}" 2>/dev/null'
+            )
+        elif ftype == "story_audio":
+            backup_cmds.append(
+                f'[ -f "{FRONTEND_AUDIO}/{filename}" ] && '
+                f'cp "{FRONTEND_AUDIO}/{filename}" "{AUDIO_STORE_PREGEN}/{filename}" 2>/dev/null'
+            )
+        elif ftype == "silly_song_audio":
+            backup_cmds.append(
+                f'[ -f "{BACKEND_AUDIO_SILLY}/{filename}" ] && '
+                f'cp "{BACKEND_AUDIO_SILLY}/{filename}" "{AUDIO_STORE_SILLY}/{filename}" 2>/dev/null'
+            )
+
+    if backup_cmds:
+        script = " ; ".join(backup_cmds)
+        try:
+            subprocess.run(SSH_CMD + [script], capture_output=True, text=True, timeout=60)
+        except Exception:
+            pass  # Best-effort — don't fail recovery over backup
 
 
 def diff_states(before: dict, after: dict) -> list[str]:
