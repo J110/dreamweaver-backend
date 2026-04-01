@@ -20593,13 +20593,13 @@
       {
         "voice": "male_2",
         "url": "/audio/pre-gen/gen-f16e_male_2.mp3",
-        "duration_seconds": 281.15,
+        "duration_seconds": 270.08,
         "provider": "chatterbox"
       },
       {
         "voice": "female_2",
         "url": "/audio/pre-gen/gen-f16e_female_2.mp3",
-        "duration_seconds": 297.54,
+        "duration_seconds": 285.72,
         "provider": "chatterbox"
       }
     ],
@@ -20720,5 +20720,382 @@
     ],
     "mood": "wired",
     "lullaby_type": "counting"
+  },
+  {
+    "id": "gen-2cfeb691ea27",
+    "type": "story",
+    "lang": "en",
+    "title": "Maya and the Waiting Moon",
+    "description": "Maya lies in bed, watching the dark window. The moon hasn’t come yet. Her heart beats fast. What if tonight it never does? A quiet story about waiting, and the gentle return of light.",
+    "text": "It was evening, and evenings always meant the moon would rise. Maya sat in bed. The room was dark. The window was empty. Not yet, not yet. She listened. The house creaked. A car hummed outside. The clock ticked. Her hands felt tight. Her breath felt quick. What if the moon forgot? Shhh... listen... the wind outside. A rustle. A whisper. A sliver of light crept in. A glow on the windowsill. The moon was back. Not yet, not yet. It climbed. It shone. It filled the room. Maya’s hands loosened. Her breath slowed. The moon was there. Not yet, not yet. The bed was soft. The blanket was warm. The moon stayed. Her eyes closed. The room was quiet. The moon kept shining. And the house was quiet. And everything was fine. Just like that.",
+    "annotated_text": "It was evening, and evenings always meant the moon would rise.\n\nMaya sat in bed. The room was dark. The window was empty. [PHRASE]Not yet, not yet[/PHRASE].\n\nShe listened. The house creaked. A car hummed outside. [PAUSE: 800] The clock ticked. [PAUSE: 1200]\n\nHer hands felt tight. Her breath felt quick. What if the moon forgot?\n\nShhh... listen... the wind outside. A rustle. A whisper. [MUSIC]\n\nA sliver of light crept in. A glow on the windowsill. The moon was back. [PHRASE]Not yet, not yet[/PHRASE].\n\nIt climbed. It shone. It filled the room. [PAUSE: 1500]\n\nMaya’s hands loosened. Her breath slowed. The moon was there. [PHRASE]Not yet, not yet[/PHRASE].\n\nThe bed was soft. The blanket was warm. The moon stayed. [MUSIC]\n\nHer eyes closed. The room was quiet. The moon kept shining.\n\nAnd the house was quiet. And everything was fine. Just like that.",
+    "target_age": 0,
+    "age_min": 0,
+    "age_max": 1,
+    "age_group": "0-1",
+    "length": "SHORT",
+    "word_count": 142,
+    "duration_seconds": 0,
+    "categories": [
+      "Slice of Life",
+      "Bedtime"
+    ],
+    "theme": "family",
+    "morals": [
+      "Waiting can feel long, but some things always return",
+      "The dark is just the world holding its breath"
+    ],
+    "cover": "/covers/gen-2cfeb691ea27.svg",
+    "musicProfile": "",
+    "music_type": "baked",
+    "audio_variants": [
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-2cfe_male_2.mp3",
+        "duration_seconds": 157.46,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-2cfe_female_1.mp3",
+        "duration_seconds": 161.5,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "female",
+    "character": {
+      "name": "Maya",
+      "identity": "A girl who watches the moon every night",
+      "special": "She notices when the moon is late",
+      "personality_tags": [
+        "Gentle",
+        "Patient"
+      ]
+    },
+    "cover_context": "A dark bedroom window framing a sliver of moonlight on the sill. The rest of the room is shadowy, with soft blue tones and a faint glow from outside.",
+    "lead_character_type": "human",
+    "universe": "prehistoric",
+    "geography": "India",
+    "life_aspect": "family_home",
+    "plot_archetype": "celebration",
+    "diversityFingerprint": {
+      "characterType": "human_child",
+      "setting": null,
+      "mood": null,
+      "storyType": null,
+      "plotShape": null,
+      "languageLevel": null,
+      "scale": "tiny_intimate",
+      "companion": null,
+      "movement": null,
+      "timeOfDay": null,
+      "weather": "clear_calm",
+      "theme": "curiosity_wonder",
+      "characterTrait": null,
+      "magicType": null,
+      "season": null,
+      "senseEmphasis": null
+    },
+    "mood": "anxious",
+    "story_type": "slice_of_life",
+    "language_level": "basic",
+    "created_at": "2026-04-01T01:32:10.191115",
+    "updated_at": "2026-04-01T01:32:10.191115",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "has_baked_music": true,
+    "experimental_v2": true,
+    "hook": "What if the moon forgot to rise?",
+    "repeated_phrase": "Not yet, not yet",
+    "raw_text": "It was evening, and evenings always meant the moon would rise.\n\nMaya sat in bed. The room was dark. The window was empty. [PHRASE]Not yet, not yet[/PHRASE].\n\nShe listened. The house creaked. A car hummed outside. [PAUSE: 800] The clock ticked. [PAUSE: 1200]\n\nHer hands felt tight. Her breath felt quick. What if the moon forgot?\n\nShhh... listen... the wind outside. A rustle. A whisper. [MUSIC]\n\nA sliver of light crept in. A glow on the windowsill. The moon was back. [PHRASE]Not yet, not yet[/PHRASE].\n\nIt climbed. It shone. It filled the room. [PAUSE: 1500]\n\nMaya’s hands loosened. Her breath slowed. The moon was there. [PHRASE]Not yet, not yet[/PHRASE].\n\nThe bed was soft. The blanket was warm. The moon stayed. [MUSIC]\n\nHer eyes closed. The room was quiet. The moon kept shining.\n\nAnd the house was quiet. And everything was fine. Just like that.",
+    "duration": 3
+  },
+  {
+    "id": "gen-75c00c0bb504",
+    "type": "poem",
+    "lang": "en",
+    "title": "Willa and the Quiet Corner",
+    "description": "The garden hums with evening sounds, but one little sparrow hears only the rustling in the darkest corner. What if something scary lives there? She must find the courage to listen closer.",
+    "text": "[RHYTHMIC] The garden settles for the night,\nWilla perches, feathers tight.\nEvery leaf that shakes and stirs,\nMakes her heart go pit-a-pat.\n\n[PAUSE]\n\n[GENTLE] The dark corner whispers low,\nA sound she does not want to know.\nIs it claws? Is it teeth?\nOr just the wind beneath the leaves?\n\n[PAUSE]\n\n[CALM] She hops a little closer still,\nHer tiny feet so light, so chill.\nThe rustling softens, turns to song,\nA cricket hums the whole night long.\n\n[PAUSE]\n\n[WHISPERING] The dark is just a place to rest,\nFor crickets, moths, and all the best.\nWilla listens, safe and near,\nThe quiet corner holds no fear.\n\n[PAUSE]\n\n[SLEEPY] The stars blink on, the breeze is kind,\nThe garden sings her to her mind.",
+    "annotated_text": "[RHYTHMIC] The garden settles for the night,\nWilla perches, feathers tight.\nEvery leaf that shakes and stirs,\nMakes her heart go pit-a-pat.\n\n[PAUSE]\n\n[GENTLE] The dark corner whispers low,\nA sound she does not want to know.\nIs it claws? Is it teeth?\nOr just the wind beneath the leaves?\n\n[PAUSE]\n\n[CALM] She hops a little closer still,\nHer tiny feet so light, so chill.\nThe rustling softens, turns to song,\nA cricket hums the whole night long.\n\n[PAUSE]\n\n[WHISPERING] The dark is just a place to rest,\nFor crickets, moths, and all the best.\nWilla listens, safe and near,\nThe quiet corner holds no fear.\n\n[PAUSE]\n\n[SLEEPY] The stars blink on, the breeze is kind,\nThe garden sings her to her mind.",
+    "target_age": 7,
+    "age_min": 6,
+    "age_max": 8,
+    "age_group": "6-8",
+    "length": "MEDIUM",
+    "word_count": 114,
+    "duration_seconds": 0,
+    "categories": [
+      "Nature",
+      "Courage"
+    ],
+    "theme": "nature",
+    "morals": [
+      "Even small fears can be faced with gentle steps",
+      "What we don’t understand can become a comforting friend"
+    ],
+    "cover": "/covers/gen-75c00c0bb504.svg",
+    "musicProfile": "moonlit-meadow",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-75c0_male_2.mp3",
+        "duration_seconds": 76.24,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_4",
+        "url": "/audio/pre-gen/gen-75c0_female_4.mp3",
+        "duration_seconds": 83.07,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "female",
+    "character": {
+      "name": "Willa",
+      "identity": "A little sparrow who listens too hard to the night",
+      "special": "She hears the quietest sounds before anyone else does",
+      "personality_tags": [
+        "Gentle",
+        "Brave"
+      ]
+    },
+    "cover_context": "A sunlit garden at twilight, golden light filtering through tall grass and wildflowers. A small, shadowy corner glows softly, with fireflies beginning to flicker near the ground. The air shimmers with warmth and the faintest hum of evening.",
+    "lead_character_type": "bird",
+    "universe": "futuristic",
+    "geography": "Americas",
+    "life_aspect": "family_home",
+    "plot_archetype": "discovery",
+    "diversityFingerprint": {
+      "characterType": "bird",
+      "setting": "garden_farm",
+      "mood": null,
+      "storyType": null,
+      "plotShape": "pure_observation",
+      "languageLevel": null,
+      "scale": "tiny_intimate",
+      "companion": "character_and_environment",
+      "movement": "sitting_watching",
+      "timeOfDay": "twilight_blue_hour",
+      "weather": "warm_breeze",
+      "theme": "gentleness",
+      "characterTrait": "anxious_worried",
+      "magicType": "no_magic_realistic",
+      "season": "summer",
+      "senseEmphasis": "auditory"
+    },
+    "mood": "anxious",
+    "story_type": "slice_of_life",
+    "language_level": "basic",
+    "created_at": "2026-04-01T01:41:39.446526",
+    "updated_at": "2026-04-01T01:41:39.446526",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 2,
+    "musicalBrief": {
+      "storyId": "gen-75c00c0bb504",
+      "ageGroup": "6-8",
+      "musicalIdentity": {
+        "culturalReference": "japanese",
+        "primaryLoop": "piano_lullaby",
+        "padCharacter": "forest_hum"
+      },
+      "tonality": {
+        "mode": "minor_pentatonic",
+        "rootNote": "Eb"
+      },
+      "melodicCharacter": "drone_with_ornaments",
+      "rhythm": {
+        "feel": "free_rubato",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "forest_night",
+        "natureSoundSecondary": null,
+        "ambientEvents": []
+      },
+      "emotionalArc": {
+        "phase1": "curious_whispers",
+        "phase2": "soft_tension",
+        "phase3": "deep_stillness"
+      }
+    }
+  },
+  {
+    "id": "gen-d31a9e0324bc",
+    "type": "long_story",
+    "lang": "en",
+    "title": "Lila and the Whispering Meadow",
+    "description": "In a meadow where the wind carries secrets, a young sapling named Lila listens to the evening sounds. But tonight, her leaves tremble with worry—what if the others don’t remember her when the sun rises? The meadow hums with life, yet all she hears is the echo of her own doubt.",
+    "text": "The meadow was quiet at twilight.\n The air smelled like warm grass and clover.\n Lila stood very still, her leaves rustling softly.\n She listened to the crickets begin their song.\n\n It was evening, and evenings always brought the same sounds.\n The fireflies flickered on and off like tiny stars.\n Lila wished she could fly with them, just for a little while.\n But trees don’t fly. They stay.\n\n Lila was a sapling, the youngest in the meadow.\n She worried about tomorrow.\n What if the wind forgot her name?\n What if the others stopped talking to her?\n\n The tall oaks murmured to each other, their voices deep and slow.\n Lila leaned toward them, hoping to hear her name.\n The breeze carried their words, but none were for her.\n She sighed, and her leaves shivered.\n\n The moment grew bigger in the dark, the way moments do when there’s nothing else to look at.\n Lila closed her eyes and listened harder.\n Maybe if she listened hard enough, she’d hear something kind.\n\n The crickets sang louder now, their voices weaving together like a blanket.\nLila focused on the sound, letting it fill her branches.\nThe worry was still there, but it felt smaller, like a leaf caught in the wind.\nShe took a deep breath, and the air smelled sweet, like honey and earth.\n\n The meadow was alive, even in the quiet.\nThe tall oaks creaked softly, their branches swaying in the breeze.\nLila realized she wasn’t listening for her name anymore.\nShe was just listening.\n\n A rabbit hopped past, its nose twitching.\nIt paused for a moment, as if it sensed her thoughts.\nThen it moved on, leaving tiny footprints in the soft dirt.\nLila watched it go, and for the first time, she didn’t feel left behind.\n\n The fireflies danced above the grass, their light flickering like tiny lanterns.\nLila imagined they were telling stories, each flash a word in a language only they understood.\nShe wondered what they’d say about her if they could talk.\nMaybe something simple, like “she stands tall” or “she listens well.”\n\n The wind brushed against her leaves, and she swayed gently.\nIt wasn’t a whisper or a secret—just the wind, moving through the meadow like a breath.\nLila let herself sway with it, her roots holding her steady.\nThe ground beneath her was warm and firm, and she remembered she wasn’t going anywhere.\n\n The stars began to appear, one by one.\nLila looked up at them, feeling small but not alone.\nThe meadow had always been there, and so had she.\nThe wind would still blow tomorrow, and the crickets would still sing.\nThe tall oaks would still murmur, and the fireflies would still dance.\n\n Lila closed her eyes again, but this time, she wasn’t listening for her name.\nShe was listening to the meadow, and the meadow was listening back.\nThe sounds wrapped around her like a hug, warm and familiar.\nShe didn’t need to hear her name to know she belonged.\n\n The worry wasn’t gone, but it wasn’t as loud anymore.\nIt was just a small voice, like the rustle of a single leaf.\nThe rest of her was quiet, and the quiet felt good.\n\n The crickets sang their song, steady and soft.\nLila swayed with the breeze, her leaves brushing against each other like old friends.\nThe stars blinked above her, patient and bright.\n\n The meadow held its breath, and so did she.\nThe night was deep, but it wasn’t empty.\nIt was full of quiet things—roots stretching, leaves resting, the earth breathing.\n\n Lila let the sounds wash over her.\nThe fireflies’ light faded, but the dark wasn’t scary.\nIt was just the space between the stars, the place where everything waited.\n\n She wasn’t afraid of tomorrow.\nTomorrow would come, and she would still be here.\nThe meadow would still be here.\nThe wind would still blow, and the crickets would still sing.\n\n Lila closed her eyes, and the night closed around her like a blanket.\nThe worry was still there, but it was small now, like a seed waiting to grow.\nShe didn’t need to fix it tonight.\nShe just needed to listen.\n\n And the meadow listened with her.",
+    "annotated_text": "[PHASE_1]\n[DELIVERY: sensory] The meadow was quiet at twilight.\n[DELIVERY: noticing] The air smelled like warm grass and clover.\n[DELIVERY: warm] Lila stood very still, her leaves rustling softly.\n[DELIVERY: cautious] She listened to the crickets begin their song.\n\n[GENTLE] It was evening, and evenings always brought the same sounds.\n[CURIOUS] The fireflies flickered on and off like tiny stars.\n[ADVENTUROUS] Lila wished she could fly with them, just for a little while.\n[MYSTERIOUS] But trees don’t fly. They stay.\n\n[GENTLE] Lila was a sapling, the youngest in the meadow.\n[WHISPERING] She worried about tomorrow.\n[CALM] What if the wind forgot her name?\n[DRAMATIC_PAUSE] What if the others stopped talking to her?\n\n[DELIVERY: wonder] The tall oaks murmured to each other, their voices deep and slow.\n[DELIVERY: warm] Lila leaned toward them, hoping to hear her name.\n[DELIVERY: sensory] The breeze carried their words, but none were for her.\n[DELIVERY: tender] She sighed, and her leaves shivered.\n\n[GENTLE] The moment grew bigger in the dark, the way moments do when there’s nothing else to look at.\n[CALM] Lila closed her eyes and listened harder.\n[WHISPERING] Maybe if she listened hard enough, she’d hear something kind.\n\n[/PHASE_1]\n\n[PHASE_2]\n[GENTLE] The crickets sang louder now, their voices weaving together like a blanket.\nLila focused on the sound, letting it fill her branches.\nThe worry was still there, but it felt smaller, like a leaf caught in the wind.\nShe took a deep breath, and the air smelled sweet, like honey and earth.\n\n[CALM] The meadow was alive, even in the quiet.\nThe tall oaks creaked softly, their branches swaying in the breeze.\nLila realized she wasn’t listening for her name anymore.\nShe was just listening.\n\n[GENTLE] A rabbit hopped past, its nose twitching.\nIt paused for a moment, as if it sensed her thoughts.\nThen it moved on, leaving tiny footprints in the soft dirt.\nLila watched it go, and for the first time, she didn’t feel left behind.\n\n[CALM] The fireflies danced above the grass, their light flickering like tiny lanterns.\nLila imagined they were telling stories, each flash a word in a language only they understood.\nShe wondered what they’d say about her if they could talk.\nMaybe something simple, like “she stands tall” or “she listens well.”\n\n[GENTLE] The wind brushed against her leaves, and she swayed gently.\nIt wasn’t a whisper or a secret—just the wind, moving through the meadow like a breath.\nLila let herself sway with it, her roots holding her steady.\nThe ground beneath her was warm and firm, and she remembered she wasn’t going anywhere.\n\n[CALM] The stars began to appear, one by one.\nLila looked up at them, feeling small but not alone.\nThe meadow had always been there, and so had she.\nThe wind would still blow tomorrow, and the crickets would still sing.\nThe tall oaks would still murmur, and the fireflies would still dance.\n\n[GENTLE] Lila closed her eyes again, but this time, she wasn’t listening for her name.\nShe was listening to the meadow, and the meadow was listening back.\nThe sounds wrapped around her like a hug, warm and familiar.\nShe didn’t need to hear her name to know she belonged.\n\n[WHISPERING] The worry wasn’t gone, but it wasn’t as loud anymore.\nIt was just a small voice, like the rustle of a single leaf.\nThe rest of her was quiet, and the quiet felt good.\n\n[/PHASE_2]\n\n[PHASE_3]\n[SLEEPY] The crickets sang their song, steady and soft.\nLila swayed with the breeze, her leaves brushing against each other like old friends.\nThe stars blinked above her, patient and bright.\n\n[WHISPERING] The meadow held its breath, and so did she.\nThe night was deep, but it wasn’t empty.\nIt was full of quiet things—roots stretching, leaves resting, the earth breathing.\n\n[SLEEPY] Lila let the sounds wash over her.\nThe fireflies’ light faded, but the dark wasn’t scary.\nIt was just the space between the stars, the place where everything waited.\n\n[WHISPERING] She wasn’t afraid of tomorrow.\nTomorrow would come, and she would still be here.\nThe meadow would still be here.\nThe wind would still blow, and the crickets would still sing.\n\n[SLEEPY] Lila closed her eyes, and the night closed around her like a blanket.\nThe worry was still there, but it was small now, like a seed waiting to grow.\nShe didn’t need to fix it tonight.\nShe just needed to listen.\n\n[WHISPERING] And the meadow listened with her.\n\n[/PHASE_3]",
+    "target_age": 10,
+    "age_min": 9,
+    "age_max": 12,
+    "age_group": "9-12",
+    "length": "LONG",
+    "word_count": 715,
+    "duration_seconds": 0,
+    "categories": [
+      "Nature Stories",
+      "Emotional Growth"
+    ],
+    "theme": "nature",
+    "morals": [
+      "Even when you feel small, you belong to something bigger.",
+      "Listening to the world can quiet the noise inside you."
+    ],
+    "cover": "/covers/gen-d31a9e0324bc.svg",
+    "musicProfile": "forest-night",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-d31a_male_2.mp3",
+        "duration_seconds": 432.57,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-d31a_female_2.mp3",
+        "duration_seconds": 458.56,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "female",
+    "character": {
+      "name": "Lila",
+      "identity": "A young sapling learning to trust the quiet around her",
+      "special": "She hears the meadow’s secrets in the rustle of the wind",
+      "personality_tags": [
+        "Gentle",
+        "Patient"
+      ]
+    },
+    "cover_context": "A summer meadow at twilight, bathed in soft blue light. Fireflies flicker above tall grass, and wildflowers nod in the warm breeze. The sky is streaked with pink and gold, fading into deep blue. Crickets sing from hidden places, and the air hums with quiet life.",
+    "lead_character_type": "animal",
+    "universe": "fantasy_realm",
+    "geography": "India",
+    "life_aspect": "school_learning",
+    "plot_archetype": "friendship_bonding",
+    "diversityFingerprint": {
+      "characterType": "plant_tree",
+      "setting": "meadow_field",
+      "mood": null,
+      "storyType": null,
+      "plotShape": "routine_ritual",
+      "languageLevel": null,
+      "scale": "tiny_intimate",
+      "companion": "character_and_environment",
+      "movement": "sitting_watching",
+      "timeOfDay": "twilight_blue_hour",
+      "weather": "warm_breeze",
+      "theme": "belonging",
+      "characterTrait": "anxious_worried",
+      "magicType": "no_magic_realistic",
+      "season": "summer",
+      "senseEmphasis": "auditory"
+    },
+    "mood": "anxious",
+    "story_type": "slice_of_life",
+    "language_level": "basic",
+    "created_at": "2026-04-01T01:37:38.253660",
+    "updated_at": "2026-04-01T01:37:38.253660",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 8,
+    "musicalBrief": {
+      "storyId": "gen-d31a9e0324bc",
+      "ageGroup": "9-12",
+      "musicalIdentity": {
+        "culturalReference": "nordic",
+        "primaryLoop": "cello_sustains",
+        "padCharacter": "forest_hum"
+      },
+      "tonality": {
+        "mode": "aeolian",
+        "rootNote": "G"
+      },
+      "melodicCharacter": "drone_with_ornaments",
+      "rhythm": {
+        "feel": "free_rubato",
+        "baseTempo": 66
+      },
+      "environment": {
+        "natureSoundPrimary": "rain_light",
+        "natureSoundSecondary": null,
+        "ambientEvents": []
+      },
+      "emotionalArc": {
+        "phase1": "soft_uncertainty",
+        "phase2": "gentle_reassurance",
+        "phase3": "deep_stillness"
+      }
+    }
+  },
+  {
+    "id": "shield-0-1-7d05",
+    "type": "song",
+    "lang": "en",
+    "title": "Warm as Light",
+    "card_label": "You Are Safe",
+    "cover": "/covers/shield-0-1-7d05.svg",
+    "description": "A reassuring lullaby that wraps little ones in safety and warmth. The repeating promise of presence calms anxious hearts, reminding children they are never alone. Gentle declarations of protection help ease bedtime fears into peaceful sleep.",
+    "text": "[verse]\nI am here, you’re wrapped so tight\nSoft as moon, warm as light\nStars won’t fade, the night is kind\nI hold your dreams inside my mind\n\n[chorus]\nI am here\nI am here\nI am here\n\n[verse]\nDark won’t stay, the dawn will rise\nClose your eyes, no need for cries\nEvery breath, my voice will keep\nSafe and sound, so soft, so deep\n\n[chorus]\nI am here\nI am here\nI am here\n\nI am still here",
+    "annotated_text": "[verse]\nI am here, you’re wrapped so tight\nSoft as moon, warm as light\nStars won’t fade, the night is kind\nI hold your dreams inside my mind\n\n[chorus]\nI am here\nI am here\nI am here\n\n[verse]\nDark won’t stay, the dawn will rise\nClose your eyes, no need for cries\nEvery breath, my voice will keep\nSafe and sound, so soft, so deep\n\n[chorus]\nI am here\nI am here\nI am here\n\nI am still here",
+    "cover_context": "A small child curled in a rocking chair, wrapped in a golden blanket that glows softly like moonlight, while a gentle figure with outstretched arms stands beside them, their silhouette warm and steady against a starry night sky",
+    "target_age": 0,
+    "age_min": 0,
+    "age_max": 1,
+    "duration_seconds": 58,
+    "author_id": "system",
+    "created_at": "2026-04-01T02:05:53.505930",
+    "updated_at": "2026-04-01T02:05:53.506024",
+    "audio_url": null,
+    "album_art_url": null,
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "categories": [
+      "Lullabies"
+    ],
+    "theme": "dreamy",
+    "is_generated": true,
+    "generation_quality": "good",
+    "music_genre": "lullaby",
+    "lead_character_type": "animal",
+    "character": {
+      "name": "Mara",
+      "identity": "A quiet guardian who sings the night into stillness",
+      "special": "Her voice carries the warmth of sunlight, even in the darkest hours",
+      "personality_tags": [
+        "Gentle",
+        "Sleepy"
+      ]
+    },
+    "about": "A reassuring lullaby that wraps little ones in safety and warmth. The repeating promise of presence calms anxious hearts, reminding children they are never alone. Gentle declarations of protection help ease bedtime fears into peaceful sleep.",
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/shield-0-1-7d05_female_1.mp3",
+        "duration_seconds": 58,
+        "provider": "minimax-music-v2"
+      }
+    ],
+    "mood": "anxious",
+    "lullaby_type": "shield"
   }
 ]
