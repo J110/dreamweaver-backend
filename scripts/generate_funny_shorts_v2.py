@@ -1034,7 +1034,9 @@ def generate_cover(title: str, episode_id: str) -> Path | None:
         f"Fun warm children's illustration, {title}, "
         f"cartoon style, gentle colors, bedtime comedy, "
         f"cozy and funny, not loud or chaotic, "
-        f"soft warm lighting, children's book style. "
+        f"soft warm lighting, children's book style, "
+        f"no text anywhere in the image, no words, no letters, no numbers, "
+        f"no titles, no captions, no labels, no signs, no writing of any kind. "
         f"ABSOLUTELY NO TEXT, NO WORDS, NO LETTERS."
     )
     truncated = prompt[:600]

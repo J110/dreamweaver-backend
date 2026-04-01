@@ -481,6 +481,8 @@ Two MP3 files at 128kbps:
 
 Covers are generated via **Pollinations.ai FLUX** image model.
 
+> **HARD RULE: NO TEXT ON COVERS.** Covers must never contain any text, words, letters, numbers, or typographic elements. This is enforced in the prompt and must be maintained in any future prompt changes. FLUX models often try to add text — the "ABSOLUTELY NO TEXT" suffix is critical.
+
 **Prompt template**:
 ```
 Fun warm children's illustration, {title}, cartoon style, gentle colors,
@@ -491,6 +493,8 @@ children's book style. ABSOLUTELY NO TEXT, NO WORDS, NO LETTERS.
 **Parameters**: 512x512, model=flux, nologo=true
 
 **Output format**: The API returns PNG. The script converts it to WebP (quality 85) using Pillow. Falls back to saving as PNG if Pillow conversion fails.
+
+**QA check**: After generation, visually inspect covers for any text/lettering that FLUX may have added despite the prompt. Regenerate with `--force` if text appears.
 
 **Frontend compatibility**: The frontend handles both SVG covers (legacy V1) and WebP covers (V2).
 
