@@ -1,0 +1,20 @@
+{
+  "id": "five_minutes_2_5",
+  "title": "Five More Minutes",
+  "age_group": "2-5",
+  "lyrics": "[verse]\nSat down\u2014can\u2019t quit yet!\nFive More Minutes!\nTower\u2019s tall, don\u2019t wreck it\u2014\n*clatter* Five More Minutes!\nSpin it fast\u2014keep it?\n*whirrr* Really?\nFive More Minutes!\n\n[chorus]\nFive more minutes!\nNot done yet!\nFive more minutes!\nPleeeease don\u2019t\u2014 *sniffle*\n\n[verse]\nChin\u2019s clean, I licked it\u2014\nFive More Minutes!\nSoup\u2019s hot, I\u2019ll fix it\u2014\n*pshhh* What?\nFive More Minutes!\nFish looks sad, I\u2019ll pet it\u2014\n*blub blub* Hmm?\nFive More Minutes!\n\n[chorus]\nFive more minutes!\nI\u2019m winning now!\nFive more minutes!\nJust one more\u2014 *yawn*\n\n[verse]\nKnee\u2019s scraped, I\u2019ll fix it\u2014\nFive More Minutes!\nCousin\u2019s here, I\u2019ll hug it\u2014\n*giggle* Why?\nFive More Minutes!\nNot a baby\u2014hush now\u2014\n*snore* \u2026zZZ\u2026\nFive More\u2014 *thud*\n\n[chorus]\nFive more minutes\u2026\n*whisper* Not tired\u2026\nFive more\u2026 *snore*\n\u2026okay.",
+  "style_prompt": "Catchy children's song, xylophone and gentle stomps, warm and fun, 110 BPM, singalong energy, gentle bass bounce, soft vocal not shouty, bedtime fun not daytime energy, cozy song you'd hum in bed",
+  "instruments": "xylophone and gentle stomps",
+  "tempo": 110,
+  "cover_description": "Kid hugging a tower of blocks, clock hands spinning fast.",
+  "animation_preset": "bounce_rhythmic",
+  "created_at": "2026-04-02",
+  "play_count": 0,
+  "replay_count": 0,
+  "battle_cry_id": "five_minutes",
+  "battle_cry": "Five more minutes",
+  "key_word": "minutes",
+  "rhyme_family": "in it, bin it, spin it, grin it, chin it, thin it, fin it, pin it, win it, begin it, skin it, kin it, dinner, winner, sin it, tin it, whiner, inner",
+  "generation_method": "battlecry_v2",
+  "cover_file": "five_minutes_2_5.webp"
+}

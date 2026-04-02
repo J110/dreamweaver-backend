@@ -1,0 +1,20 @@
+{
+  "id": "not_my_fault_9_12",
+  "title": "It'S Not My Fault",
+  "age_group": "9-12",
+  "lyrics": "*whispered*\nOkay, not my fault!\n\n[verse]\nSalt in the cake? Rude!\nDog in the vault\u2014his mood!\nTried to stop, it flew!\nMilkshake\u2019s gone\u2014wasn\u2019t me!\n\n*parent:* \"Why the dog?\"\n*whisper-yell* Dog! Duh!\n\n[chorus]\nIT\u2019S Not MY Fault!\nNot my fault\u2014no way!\nIT\u2019S Not MY Fault!\nSnack time? *crunch*\n\n[verse]\nJumped too high\u2014oops!\nPoked my bro\u2014he\u2019s fine!\nGame reset? Not me!\nZapped myself\u2014nope!\n\n*parent:* \"You poked who?\"\n*giggle* Bro. He did first!\n\n[chorus]\nIT\u2019S Not MY Fault!\nCat\u2019s just purrin\u2019!\nIT\u2019S Not MY Fault!\nCookie? *munch*\n\n[verse]\nDoor fell off? Not me!\nColt kicked first\u2014mean!\nYelled \u201cToo cold!\u201d\u2014no lie!\nTreehouse hole? Not mine!\n\n*parent:* \"You yelled when?\"\n*whisper* Ice. *shiver*\n\n[chorus]\nIT\u2019S Not MY Fault!\nNot my fault\u2014nope!\nIT\u2019S Not MY\u2014*yawn*\u2014fault\u2026\n\u2026Cookie\u2019s gone?",
+  "style_prompt": "Catchy children's song, ukulele and lo-fi beat, warm and fun, 105 BPM, singalong energy, gentle bass bounce, soft vocal not shouty, bedtime fun not daytime energy, cozy song you'd hum in bed",
+  "instruments": "ukulele and lo-fi beat",
+  "tempo": 105,
+  "cover_description": "Kid pointing at dog eating cake, milkshake spilled, treehouse half-collapsed.",
+  "animation_preset": "bounce_rhythmic",
+  "created_at": "2026-04-02",
+  "play_count": 0,
+  "replay_count": 0,
+  "battle_cry_id": "not_my_fault",
+  "battle_cry": "It's not my fault",
+  "key_word": "fault",
+  "rhyme_family": "salt, vault, halt, malt, exalt, assault, default, jolt, bolt, colt, revolt,holt, molt, volt, stilt, guilt, tilt, built, quilts, results",
+  "generation_method": "battlecry_v2",
+  "cover_file": "not_my_fault_9_12.webp"
+}

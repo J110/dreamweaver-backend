@@ -27,6 +27,7 @@ Usage:
 import argparse
 import json
 import os
+import random
 import re
 import sys
 import time
@@ -101,68 +102,77 @@ TEST_MODE_SONGS = [
     {"cry_id": "i_forgot",   "cry": "I forgot",         "age": "9-12"},
 ]
 
-# ── MiniMax Style Prompts ────────────────────────────────────────────
+# ── Instrument & Tempo Diversity ─────────────────────────────────────
 
-SILLY_SONG_STYLES = {
-    "2-5": (
-        "Super catchy bouncy children's song, bright ukulele and "
-        "hand claps with a strong bouncy bass pop on every beat, "
-        "120 BPM, the kind of beat that makes a toddler bounce "
-        "up and down, ba-BOP ba-BOP, call and response energy, "
-        "cheeky and fun, playground chant with a groove, "
-        "simple and infectious, impossible to sit still"
-    ),
-    "6-8": (
-        "Super catchy bouncy children's song, guitar and snappy drums "
-        "with a groovy bass that bops, 118 BPM, the kind of song "
-        "kids sing on a school bus, strong punchy beat clapping on "
-        "2 and 4, feel it in your chest, fun and physical, "
-        "comedic vocal energy, each WHY or response gets louder"
-    ),
-    "9-12": (
-        "Catchy bouncy song with acoustic guitar and punchy pop beat, "
-        "115 BPM, bass line that bops and snare that snaps, "
-        "like a hit song on the radio but for kids, groovy and confident, "
-        "slightly sarcastic delivery, dramatic pauses for comedy, "
-        "cool not babyish, undeniable bounce"
-    ),
+INSTRUMENT_POOLS = {
+    "2-5": [
+        "ukulele and hand claps",
+        "kalimba and soft shaker",
+        "acoustic guitar and finger snaps",
+        "xylophone and gentle stomps",
+        "banjo and soft tambourine",
+    ],
+    "6-8": [
+        "guitar and light drums",
+        "piano and finger snaps",
+        "ukulele and light percussion",
+        "acoustic guitar and cajón",
+        "mandolin and soft claps",
+    ],
+    "9-12": [
+        "acoustic guitar and soft beat",
+        "piano and soft snare",
+        "ukulele and lo-fi beat",
+        "guitar and soft beatbox",
+        "keys and gentle groove",
+    ],
 }
 
-# ── Cover Descriptions (per battle cry) ──────────────────────────────
-
-COVER_DESCRIPTIONS = {
-    "not_tired": (
-        "A tiny toddler in pajamas standing defiantly with arms crossed, "
-        "eyes WIDE OPEN while a huge yawn escapes, a teddy bear asleep "
-        "beside them, nighttime bedroom with stars outside the window"
-    ),
-    "dont_like_it": (
-        "A small child pushing away a plate of vegetables with dramatic "
-        "disgust, face scrunched up, broccoli flying off the plate, "
-        "colorful kitchen background with a shocked parent in the distance"
-    ),
-    "not_fair": (
-        "A child standing on a couch like a courtroom lawyer, pointing "
-        "dramatically at an imaginary jury, a dog sitting as the judge "
-        "wearing a tiny wig, living room turned into a courtroom"
-    ),
-    "but_why": (
-        "A curious child with an enormous magnifying glass examining "
-        "a parent's face, question marks floating everywhere, the child "
-        "has one eyebrow raised, colorful background with WHY written "
-        "in thought bubbles — wait NO TEXT, just question mark symbols"
-    ),
-    "i_forgot": (
-        "A child standing at the school door with a giant backpack but "
-        "missing one shoe, homework papers trailing behind like a bread "
-        "crumb trail, a goldfish bowl balanced on their head, chaos energy"
-    ),
-    "in_a_minute": (
-        "A child playing a video game with intense focus, a giant clock "
-        "melting like a Dali painting behind them, the parent's shadow "
-        "looming in the doorway, one finger held up saying 'wait'"
-    ),
+# Bouncy but bedtime-appropriate — swaying, not jumping
+TEMPO_RANGE = {
+    "2-5":  (104, 116),
+    "6-8":  (100, 112),
+    "9-12": (98, 110),
 }
+
+
+def build_style_prompt(age_group: str, recent_songs: list = None) -> tuple:
+    """Build a style prompt with varied instruments and tempo.
+
+    Returns: (style_prompt, instruments, tempo)
+    """
+    recent_songs = recent_songs or []
+
+    # Pick instruments not used in last 3 songs
+    recent_instruments = [s.get("instruments") for s in recent_songs[-3:]]
+    available = [i for i in INSTRUMENT_POOLS[age_group]
+                 if i not in recent_instruments]
+    if not available:
+        available = INSTRUMENT_POOLS[age_group]
+    instruments = random.choice(available)
+
+    # Pick tempo within range
+    lo, hi = TEMPO_RANGE[age_group]
+    tempo = random.randint(lo, hi)
+
+    # Build prompt — calm constraint baked in, must stay under 300 chars for MiniMax
+    prompt = (
+        f"Catchy children's song, {instruments}, "
+        f"warm and fun, {tempo} BPM, singalong energy, "
+        f"gentle bass bounce, soft vocal not shouty, "
+        f"bedtime fun not daytime energy, "
+        f"cozy song you'd hum in bed"
+    )
+
+    # Safety: MiniMax limit is 300 chars
+    if len(prompt) > 295:
+        prompt = prompt[:295]
+
+    return prompt, instruments, tempo
+
+# Cover descriptions are now generated from lyrics via [COVER:] tag.
+# No more hardcoded COVER_DESCRIPTIONS dict — each song gets a unique
+# cover based on its own funniest/most visual moment.
 
 # ── LLM Prompts ──────────────────────────────────────────────────────
 
@@ -226,10 +236,18 @@ slightly if needed but the END RHYME WORD must stay:
 
 === STRUCTURE ===
 
-Opening call-and-response:
-Mama/Papa, mama/papa, mama/papa, mama/papa
-What? / What NOW? / WHAT?
-[child says the battle cry]
+OPENING:
+Every song starts differently. The opening matches
+THIS battle cry's specific energy and situation.
+
+Some songs start with the child mid-argument.
+Some start with a parent's demand.
+Some start with no preamble — straight into the verse.
+Some start with the child talking to themselves.
+Some start with a sound effect.
+
+Do not follow the same opening pattern as other songs.
+Do NOT always use "Mama/Papa."
 
 Then:
 
@@ -262,10 +280,17 @@ Then:
    when they're arguing. "I don't even need that" beats
    "I don't even need that particular thing."
 
-5. Include 2-3 sound effects in the lyrics: *yawn*, *burp*, *snore*,
-   *crash*, *splash*, *gasp*. Wrap in asterisks. These are comedy gold.
-   Place them where they interrupt the child's argument —
-   the interruption IS the joke.
+5. SOUND COMEDY:
+   Include 2-3 sound effects written as *sound* in the lyrics.
+   These interrupt the child's argument at funny moments.
+
+   Invent sounds specific to THIS song's topic.
+   A song about not being tired uses sleepy sounds.
+   A song about food uses eating sounds.
+   A song about bath time uses water sounds.
+
+   The sounds should be unique to this song. Do not reuse
+   sounds from other songs.
 
 6. Call-and-response: after some lines, the parent responds.
    "why?" or "what?" or "really?" or "hmm?"
@@ -286,11 +311,28 @@ Then:
    child gets distracted by something else, OR
    child quietly admits defeat but frames it as a choice.
 
+=== VOCAL ENERGY ===
+
+The singer sounds like a child being cheeky at bedtime —
+not a child screaming on a playground. The voice is warm,
+slightly conspiratorial, having fun but keeping it down
+because it's late.
+
+Think: giggling under the blankets, not shouting across
+the yard. The volume never goes above indoor voice.
+
 === OUTPUT ===
 
-Just the lyrics with [verse] and [chorus] tags.
-Start with the call-and-response opening.
+Write the lyrics with [verse] and [chorus] tags.
+Start with the opening.
 No title needed. No markdown code blocks.
+
+THEN, after the lyrics, generate a cover description on its own line:
+[COVER: one-sentence visual description of the funniest moment from YOUR lyrics, bold cartoon style, bright colors, energetic but warm]
+
+The cover shows the FEELING of this specific song,
+not a generic version of the battle cry. Draw from
+the funniest or most visual moment in YOUR lyrics.
 """
 
 # ── Syllable Counter ─────────────────────────────────────────────────
@@ -415,8 +457,8 @@ def extract_sections(lyrics: str) -> dict[str, list[str]]:
 
 # ── Validation ───────────────────────────────────────────────────────
 
-def validate_silly_song(lyrics: str, battle_cry: str, age_group: str) -> tuple[bool, list[str]]:
-    """Validate all five formula elements. Returns (passed, errors)."""
+def validate_silly_song(lyrics: str, battle_cry: str, age_group: str) -> tuple[bool, list[str], list[dict]]:
+    """Validate all five formula elements. Returns (passed, errors, structured_errors)."""
     lines = [l.strip() for l in lyrics.split('\n')
              if l.strip() and not l.strip().startswith('[')]
     sections = extract_sections(lyrics)
@@ -426,6 +468,7 @@ def validate_silly_song(lyrics: str, battle_cry: str, age_group: str) -> tuple[b
     verses = sections["verses"]
 
     errors = []
+    structured = []  # For retry-with-feedback
 
     # 1. BATTLE CRY in chorus
     cry_lower = battle_cry.lower()
@@ -437,6 +480,7 @@ def validate_silly_song(lyrics: str, battle_cry: str, age_group: str) -> tuple[b
     )
     if not cry_in_chorus:
         errors.append(f"Battle cry '{battle_cry}' not found in chorus")
+        structured.append({"type": "missing_cry", "detail": battle_cry})
 
     # 2. WORD LENGTH
     max_syl = {"2-5": 2, "6-8": 3, "9-12": 4}[age_group]
@@ -451,6 +495,7 @@ def validate_silly_song(lyrics: str, battle_cry: str, age_group: str) -> tuple[b
                 long_words.append(clean)
     if long_words:
         errors.append(f"Words too long for {age_group}: {', '.join(long_words[:5])}")
+        structured.append({"type": "long_words", "words": long_words[:5], "max_syl": max_syl})
 
     # 3. LINE LENGTH
     max_words = {"2-5": 7, "6-8": 9, "9-12": 11}[age_group]
@@ -458,18 +503,22 @@ def validate_silly_song(lyrics: str, battle_cry: str, age_group: str) -> tuple[b
         wc = len(line.split())
         if wc > max_words:
             errors.append(f"Line too long ({wc} words): '{line[:50]}...'")
+            structured.append({"type": "line_length", "line": line, "words": wc, "max": max_words})
 
     # 4. SOUND EFFECTS present
     has_sfx = '*' in lyrics
     has_response = any(w in lyrics.lower() for w in ['why?', 'what?', 'really?', 'hmm?'])
     if not has_sfx:
         errors.append("No sound effects (*yawn*, *burp*, etc.) found")
+        structured.append({"type": "no_sfx"})
     if not has_response:
         errors.append("No call-and-response (why? / what?) found")
+        structured.append({"type": "no_response"})
 
     # 5. ESCALATION — check we have 3 verses
     if len(verses) < 3:
         errors.append(f"Only {len(verses)} verses (need 3 for escalation)")
+        structured.append({"type": "few_verses", "count": len(verses)})
     elif len(verses) >= 3:
         print(f"  MANUAL CHECK: Does V3 escalate beyond V1?")
         print(f"    V1: {verses[0][:60]}...")
@@ -480,8 +529,85 @@ def validate_silly_song(lyrics: str, battle_cry: str, age_group: str) -> tuple[b
         avg_chorus_len = len(chorus_lines) / max(len(sections["choruses"]), 1)
         if avg_chorus_len > 5:
             errors.append(f"Chorus too long: avg {avg_chorus_len:.0f} lines (max 4-5)")
+            structured.append({"type": "chorus_long", "avg": avg_chorus_len})
 
-    return (len(errors) == 0, errors)
+    return (len(errors) == 0, errors, structured)
+
+
+def retry_with_feedback(lyrics: str, structured_errors: list, age_group: str,
+                        battle_cry: str, api_key: str) -> str:
+    """Retry lyrics generation with specific failure feedback.
+
+    Shows the LLM exactly which lines failed and asks it to shorten THOSE lines.
+    LLMs can't count words, but they CAN shorten specific examples.
+    """
+    max_words = {"2-5": 7, "6-8": 9, "9-12": 11}[age_group]
+
+    # Build specific error feedback
+    feedback_parts = []
+
+    line_errors = [e for e in structured_errors if e["type"] == "line_length"]
+    if line_errors:
+        lines_list = "\n".join(
+            f"  TOO LONG: \"{e['line'][:80]}\" ({e['words']} words, max {max_words})"
+            for e in line_errors[:8]
+        )
+        feedback_parts.append(f"LINES TOO LONG — rewrite shorter, keep end rhyme:\n{lines_list}")
+
+    word_errors = [e for e in structured_errors if e["type"] == "long_words"]
+    if word_errors:
+        words = word_errors[0]["words"]
+        feedback_parts.append(
+            f"WORDS TOO COMPLEX for ages {age_group}: {', '.join(words)}\n"
+            f"  Replace with simpler words (1-{word_errors[0]['max_syl']} syllables)."
+        )
+
+    cry_errors = [e for e in structured_errors if e["type"] == "missing_cry"]
+    if cry_errors:
+        feedback_parts.append(
+            f"MISSING BATTLE CRY in chorus — the phrase \"{battle_cry}\" must appear in [chorus]."
+        )
+
+    response_errors = [e for e in structured_errors if e["type"] == "no_response"]
+    if response_errors:
+        feedback_parts.append(
+            "MISSING CALL-AND-RESPONSE — add a parent line like: *parent:* \"Why?\" or \"What?\" or \"Really?\""
+        )
+
+    feedback = "\n\n".join(feedback_parts)
+
+    retry_prompt = f"""These lyrics for "{battle_cry}" (ages {age_group}) have problems.
+
+{feedback}
+
+ORIGINAL LYRICS:
+{lyrics}
+
+Rewrite the COMPLETE song fixing ALL problems above.
+Keep the structure ([verse], [chorus], sound effects, parent responses).
+Keep end rhyme words. Keep the meaning. Just use fewer, simpler words.
+
+Shorter is ALWAYS better for sung lyrics:
+"I don't even need that stuff right now" → "Don't need that stuff"
+"I was going to do it right now" → "Gonna do it now"
+"I didn't mean to let the hamster fly" → "I let the hamster fly"
+
+Ages {age_group} max: {max_words} words per line. EVERY line must fit.
+
+Output ONLY the fixed lyrics with section tags, then [COVER: one-line visual scene].
+No explanations."""
+
+    time.sleep(32)  # Mistral rate limit
+
+    return call_mistral(
+        retry_prompt,
+        system_msg=(
+            "You are a lyrics editor. Fix the specific problems listed. "
+            "Make lines shorter by cutting filler words. Keep rhymes and fun. "
+            "Output ONLY the fixed lyrics. No markdown code blocks."
+        ),
+        api_key=api_key,
+    )
 
 
 # ── TTS Normalization ────────────────────────────────────────────────
@@ -543,7 +669,10 @@ def generate_audio_minimax(song: dict, force: bool = False) -> bool:
         return True
 
     lyrics = song["lyrics"]
-    style = SILLY_SONG_STYLES[song["age_group"]]
+    style = song.get("style_prompt", "")
+    if not style:
+        # Fallback: build a fresh style prompt
+        style, _, _ = build_style_prompt(song["age_group"])
 
     trimmed = trim_lyrics_for_minimax(lyrics)
     print(f"    Lyrics: {len(lyrics)} chars -> {len(trimmed)} chars (trimmed for MiniMax)")
@@ -595,19 +724,16 @@ def generate_audio_minimax(song: dict, force: bool = False) -> bool:
 
 # ── Cover Generation (FLUX via Pollinations) ─────────────────────────
 
+# CRITICAL: FLUX renders any text-like word as visible text on the image.
+# Do NOT mention "text/words/letters" even negatively — FLUX interprets
+# "no text" as "generate text". Keep the prompt purely visual.
 COVER_PROMPT_TEMPLATE = (
-    "Children's book illustration, bold cartoon style, bright saturated colors, "
-    "simple background, exaggerated funny expressions, playful and energetic, "
-    "square composition, thick outlines, expressive eyes, slightly exaggerated "
-    "proportions, Pixar-meets-picture-book aesthetic. "
-    "Musical scene: {cover_description} "
-    "Include subtle musical elements: small floating music notes, or the "
-    "character holding/near an instrument, or a stage-like spotlight feel. "
-    "NOT a realistic concert — cartoon musical energy. "
-    "DO NOT make it dreamy, muted, watercolor, or soft. This is comedy + music, not bedtime. "
-    "ABSOLUTELY NO TEXT, NO WORDS, NO LETTERS, NO NUMBERS anywhere in the image. "
-    "No title, no caption, no speech bubbles with text, no signs with writing. "
-    "Pure illustration only."
+    "Digital painting of {cover_description}, "
+    "bold cartoon style, bright saturated colors, "
+    "simple flat background, exaggerated funny expressions, "
+    "playful and warm, thick outlines, expressive eyes, "
+    "Pixar-meets-picture-book aesthetic, "
+    "small floating music notes, cozy musical energy, minimalist"
 )
 
 
@@ -626,8 +752,8 @@ def generate_cover_flux(song: dict, force: bool = False) -> bool:
 
     description = song.get("cover_description", "")
     if not description:
-        print(f"    No cover_description, skipping")
-        return False
+        # Fallback: generate a generic description from the battle cry
+        description = f"a cartoon child with funny expression in a cozy bedroom scene"
 
     prompt = COVER_PROMPT_TEMPLATE.format(cover_description=description)
     truncated = prompt[:600]
@@ -671,6 +797,96 @@ def generate_cover_flux(song: dict, force: bool = False) -> bool:
     return False
 
 
+# ── Diversity Tracking ───────────────────────────────────────────────
+
+def _load_existing_songs() -> list:
+    """Load all existing silly song metadata for diversity tracking."""
+    songs = []
+    if DATA_DIR.exists():
+        for f in sorted(DATA_DIR.glob("*.json"), key=lambda p: p.stat().st_mtime):
+            try:
+                songs.append(json.loads(f.read_text()))
+            except Exception:
+                pass
+    return songs
+
+
+# Full battle cry library (expandable)
+BATTLE_CRIES = {
+    "not_tired":    {"cry": "I'm not tired",     "ages": ["2-5"]},
+    "dont_like_it": {"cry": "I don't like it",   "ages": ["2-5"]},
+    "five_minutes": {"cry": "Five more minutes",  "ages": ["2-5", "6-8"]},
+    "not_fair":     {"cry": "That's not fair",    "ages": ["6-8"]},
+    "but_why":      {"cry": "But why",            "ages": ["6-8"]},
+    "not_my_fault": {"cry": "It's not my fault",  "ages": ["6-8", "9-12"]},
+    "i_forgot":     {"cry": "I forgot",           "ages": ["9-12"]},
+    "in_a_minute":  {"cry": "In a minute",        "ages": ["9-12"]},
+    "already_did":  {"cry": "I already did it",   "ages": ["9-12"]},
+    "dont_wanna":   {"cry": "I don't wanna",      "ages": ["2-5"]},
+}
+
+
+def select_silly_song_params(existing_songs: list, age_group: str = None) -> dict:
+    """Select parameters ensuring variety across songs.
+
+    Returns dict with: age_group, battle_cry_id, battle_cry, style_prompt,
+    instruments, tempo.
+    """
+    # Age group rotation
+    if age_group is None:
+        recent_ages = [s.get("age_group") for s in existing_songs[-3:]]
+        age_options = ["2-5", "6-8", "9-12"]
+        age_group = next((a for a in age_options if a not in recent_ages),
+                         random.choice(age_options))
+
+    # Battle cry — not used in last 10 songs for this age
+    recent_cries = [s.get("battle_cry_id") for s in existing_songs[-10:]
+                    if s.get("age_group") == age_group]
+    available_cries = [k for k, v in BATTLE_CRIES.items()
+                       if age_group in v["ages"] and k not in recent_cries]
+    if not available_cries:
+        available_cries = [k for k, v in BATTLE_CRIES.items()
+                           if age_group in v["ages"]]
+    cry_id = random.choice(available_cries)
+
+    # Style prompt with varied instruments/tempo
+    style_prompt, instruments, tempo = build_style_prompt(age_group, existing_songs)
+
+    return {
+        "age_group": age_group,
+        "battle_cry_id": cry_id,
+        "battle_cry": BATTLE_CRIES[cry_id]["cry"],
+        "style_prompt": style_prompt,
+        "instruments": instruments,
+        "tempo": tempo,
+    }
+
+
+def extract_cover_from_lyrics(lyrics_response: str) -> str:
+    """Extract [COVER: description] from lyrics LLM response."""
+    m = re.search(r'\[COVER:\s*(.+?)\]', lyrics_response, re.IGNORECASE)
+    if m:
+        return m.group(1).strip()
+    return ""
+
+
+def check_audio_loudness(audio_path: str, max_dbfs: float = -14.0) -> bool:
+    """Flag if the generated song is too loud."""
+    try:
+        from pydub import AudioSegment
+        audio = AudioSegment.from_file(audio_path)
+        loudness = audio.dBFS
+        if loudness > max_dbfs:
+            print(f"  ⚠️  Song is loud ({loudness:.1f} dBFS, max {max_dbfs}). "
+                  f"Consider regenerating with calmer style prompt.")
+            return False
+        print(f"  ✓ Volume OK ({loudness:.1f} dBFS)")
+        return True
+    except Exception as e:
+        print(f"  Could not check loudness: {e}")
+        return True  # Don't block on failure
+
+
 # ── Main Generation ──────────────────────────────────────────────────
 
 def generate_silly_song(
@@ -681,13 +897,29 @@ def generate_silly_song(
     lyrics_only: bool = False,
     force: bool = False,
     max_retries: int = 2,
+    params: dict = None,
 ) -> dict | None:
-    """Generate one silly song using the two-step battle cry process."""
+    """Generate one silly song using the two-step battle cry process.
+
+    Args:
+        cry_id: Battle cry identifier
+        battle_cry: The actual phrase ("I'm not tired")
+        age_group: "2-5", "6-8", or "9-12"
+        api_key: Mistral API key
+        lyrics_only: Skip audio/cover generation
+        force: Regenerate even if exists
+        max_retries: Max lyrics retry attempts
+        params: Diversity params from select_silly_song_params(). If provided,
+                style_prompt, instruments, tempo are taken from params.
+    """
 
     song_id = f"{cry_id}_{age_group.replace('-', '_')}"
     print(f"\n{'='*60}")
     print(f"  Generating: \"{battle_cry}\" (ages {age_group})")
     print(f"  Song ID: {song_id}")
+    if params:
+        print(f"  Instruments: {params.get('instruments')}")
+        print(f"  Tempo: {params.get('tempo')} BPM")
     print(f"{'='*60}")
 
     # Check if already exists
@@ -699,6 +931,11 @@ def generate_silly_song(
 
     # ── STEP 1: Generate rhyme family ──
     print(f"\n  Step 1: Generating rhyme family...")
+
+    # Check for key_word overlap with recent songs
+    existing_songs = _load_existing_songs()
+    recent_key_words = [s.get("key_word", "").lower() for s in existing_songs[-10:]]
+
     rhyme_prompt = RHYME_FAMILY_PROMPT.format(
         battle_cry=battle_cry,
         age_group=age_group,
@@ -718,6 +955,9 @@ def generate_silly_song(
     print(f"  Rhyme family: {rhyme_family}")
     print(f"  Lines generated: {len(rhyme_lines)}")
 
+    if key_word.lower() in recent_key_words:
+        print(f"  ⚠️  Key word '{key_word}' was used recently — rhymes may overlap")
+
     if len(rhyme_lines) < 8:
         print(f"  WARNING: Only {len(rhyme_lines)} lines generated, may need more variety")
 
@@ -725,70 +965,114 @@ def generate_silly_song(
     rhyme_debug_path = OUTPUT_DIR / f"{song_id}_rhymes.txt"
     rhyme_debug_path.write_text(rhyme_response)
 
-    # ── STEP 2: Assemble lyrics (with retry) ──
-    lyrics = ""
-    for attempt in range(max_retries + 1):
-        print(f"\n  Step 2: Assembling lyrics (attempt {attempt + 1})...")
+    # ── STEP 2: Assemble lyrics ──
+    print(f"\n  Step 2: Assembling lyrics...")
 
-        lyrics_prompt = LYRICS_ASSEMBLY_PROMPT.format(
-            age_group=age_group,
-            battle_cry=battle_cry,
-            rhyme_lines='\n'.join(f"- {l}" for l in rhyme_lines),
-        )
+    lyrics_prompt = LYRICS_ASSEMBLY_PROMPT.format(
+        age_group=age_group,
+        battle_cry=battle_cry,
+        rhyme_lines='\n'.join(f"- {l}" for l in rhyme_lines),
+    )
 
-        # Rate limit: Mistral free tier is 2 req/min
-        time.sleep(32)
+    # Rate limit: Mistral free tier is 2 req/min
+    time.sleep(32)
 
-        lyrics_response = call_mistral(
-            lyrics_prompt,
-            system_msg=(
-                "You are a children's songwriter. Write fun, bouncy silly songs "
-                "that children sing along to. Output ONLY the lyrics with section "
-                "tags. No explanations, no markdown code blocks."
-            ),
-            api_key=api_key,
-        )
-        lyrics = extract_lyrics(lyrics_response)
+    lyrics_response = call_mistral(
+        lyrics_prompt,
+        system_msg=(
+            "You are a children's songwriter. Write fun, bouncy silly songs "
+            "that children sing along to. The voice should be warm and cheeky, "
+            "like giggling under blankets — NOT shouty or aggressive. "
+            "Output ONLY the lyrics with section tags, then a [COVER:] tag. "
+            "No explanations, no markdown code blocks."
+        ),
+        api_key=api_key,
+    )
 
-        print(f"\n--- LYRICS ---")
-        print(lyrics)
-        print(f"--- END ---\n")
+    cover_description = extract_cover_from_lyrics(lyrics_response)
+    lyrics = extract_lyrics(lyrics_response)
+    lyrics = re.sub(r'\[COVER:.*?\]', '', lyrics, flags=re.IGNORECASE).strip()
 
-        # ── STEP 3: Validate ──
-        passed, errors = validate_silly_song(lyrics, battle_cry, age_group)
-        if passed:
-            print(f"  ✓ All validation checks passed")
-            break
-        else:
-            print(f"  VALIDATION ISSUES:")
-            for e in errors:
-                print(f"    ✗ {e}")
-            if attempt < max_retries:
-                print(f"  Retrying with same rhyme family...")
+    print(f"\n--- LYRICS (initial) ---")
+    print(lyrics)
+    print(f"--- END ---\n")
+    if cover_description:
+        print(f"  Cover: {cover_description[:80]}...")
+
+    # ── STEP 3: Validate + retry with specific feedback ──
+    passed, errors, structured = validate_silly_song(lyrics, battle_cry, age_group)
+    if passed:
+        print(f"  ✓ All validation checks passed")
+    else:
+        print(f"  VALIDATION ISSUES:")
+        for e in errors:
+            print(f"    ✗ {e}")
+
+        # Retry up to max_retries times with specific feedback
+        for retry_num in range(max_retries):
+            fixable = [e for e in structured if e["type"] in ("line_length", "long_words", "missing_cry", "no_response")]
+            if not fixable:
+                print(f"  (remaining issues not fixable by retry)")
+                break
+
+            print(f"\n  Retry {retry_num + 1}/{max_retries}: feeding {len(fixable)} errors back to LLM...")
+            retry_response = retry_with_feedback(
+                lyrics, structured, age_group, battle_cry, api_key
+            )
+
+            new_cover = extract_cover_from_lyrics(retry_response)
+            if new_cover:
+                cover_description = new_cover
+            lyrics = extract_lyrics(retry_response)
+            lyrics = re.sub(r'\[COVER:.*?\]', '', lyrics, flags=re.IGNORECASE).strip()
+
+            print(f"\n--- LYRICS (retry {retry_num + 1}) ---")
+            print(lyrics)
+            print(f"--- END ---\n")
+
+            passed, errors, structured = validate_silly_song(lyrics, battle_cry, age_group)
+            if passed:
+                print(f"  ✓ All validation checks passed after retry {retry_num + 1}")
+                break
             else:
-                print(f"  ✗ Failed after {max_retries + 1} attempts. Saving anyway for review.")
+                print(f"  Still has issues:")
+                for e in errors:
+                    print(f"    ✗ {e}")
+
+        if not passed:
+            print(f"  Deploying anyway — sung lyrics compress to fit melody.")
 
     # ── STEP 4: Normalize for TTS ──
     lyrics_normalized = normalize_caps_for_tts(lyrics)
 
-    # ── Build song metadata ──
+    # Build style prompt from params or generate fresh
+    if params and params.get("style_prompt"):
+        style_prompt = params["style_prompt"]
+        instruments = params.get("instruments", "")
+        tempo = params.get("tempo", 0)
+    else:
+        style_prompt, instruments, tempo = build_style_prompt(age_group, existing_songs)
+
+    # ── Build song metadata (all diversity dimensions tracked) ──
     song = {
         "id": song_id,
         "title": battle_cry.title(),
         "age_group": age_group,
         "lyrics": lyrics_normalized,
-        "style_prompt": SILLY_SONG_STYLES[age_group],
-        "cover_description": COVER_DESCRIPTIONS.get(cry_id, f"A child shouting '{battle_cry}' with funny energy"),
+        "style_prompt": style_prompt,
+        "instruments": instruments,
+        "tempo": tempo,
+        "cover_description": cover_description or f"a cartoon child with funny expression in a cozy bedroom",
         "animation_preset": "bounce_rhythmic",
         "created_at": date.today().isoformat(),
         "play_count": 0,
         "replay_count": 0,
-        # Battle cry metadata (extra, for tracking)
+        # Battle cry metadata
         "battle_cry_id": cry_id,
         "battle_cry": battle_cry,
         "key_word": key_word,
         "rhyme_family": rhyme_family,
-        "generation_method": "battlecry_v1",
+        "generation_method": "battlecry_v2",
     }
 
     # Save JSON (before audio/cover so we don't lose lyrics on failure)
@@ -812,6 +1096,11 @@ def generate_silly_song(
         with open(json_path, "w") as f:
             json.dump(song, f, indent=2)
         print(f"  ✓ Audio generated")
+
+        # Post-generation loudness check
+        audio_path = AUDIO_DIR / f"{song_id}.mp3"
+        if audio_path.exists():
+            check_audio_loudness(str(audio_path))
     else:
         print(f"  ✗ Audio generation failed")
 
@@ -840,12 +1129,18 @@ Examples:
   All 6 test songs:   python3 scripts/generate_silly_songs_battlecry.py --all
   Specific cry:       python3 scripts/generate_silly_songs_battlecry.py --cry not_tired
   Lyrics only:        python3 scripts/generate_silly_songs_battlecry.py --test --lyrics-only
+  Fresh (diversity):  python3 scripts/generate_silly_songs_battlecry.py --fresh --count 3
+  Fresh + force:      python3 scripts/generate_silly_songs_battlecry.py --fresh --count 3 --force
         """,
     )
     parser.add_argument("--test", action="store_true",
                         help="Generate one song per age group (3 songs)")
     parser.add_argument("--all", action="store_true",
                         help="Generate all 6 test songs")
+    parser.add_argument("--fresh", action="store_true",
+                        help="Diversity-tracked generation (auto-selects cry, instruments, tempo)")
+    parser.add_argument("--count", type=int, default=3,
+                        help="Number of songs to generate in --fresh mode (default: 3)")
     parser.add_argument("--cry", help="Generate a specific battle cry by ID")
     parser.add_argument("--lyrics-only", action="store_true",
                         help="Skip audio and cover generation")
@@ -853,8 +1148,8 @@ Examples:
                         help="Regenerate even if files exist")
     args = parser.parse_args()
 
-    if not args.test and not args.all and not args.cry:
-        parser.error("Specify --test, --all, or --cry <id>")
+    if not args.test and not args.all and not args.cry and not args.fresh:
+        parser.error("Specify --test, --all, --fresh, or --cry <id>")
 
     api_key = os.getenv("MISTRAL_API_KEY", "")
     if not api_key:
@@ -867,7 +1162,56 @@ Examples:
         if not os.getenv("REPLICATE_API_TOKEN"):
             print("WARNING: REPLICATE_API_TOKEN not set — audio generation will fail")
 
-    # Select songs to generate
+    # ── Fresh mode: diversity-tracked generation ──
+    if args.fresh:
+        existing_songs = _load_existing_songs()
+        count = args.count
+
+        print(f"\n{'='*60}")
+        print(f"  Battle Cry Silly Songs Generator (FRESH / diversity-tracked)")
+        print(f"  Songs to generate: {count}")
+        print(f"  Existing songs for diversity: {len(existing_songs)}")
+        print(f"  Mode: {'lyrics only' if args.lyrics_only else 'full (lyrics + audio + cover)'}")
+        print(f"{'='*60}")
+
+        results = []
+        for i in range(count):
+            try:
+                if i > 0:
+                    print(f"\n  Waiting 35s for Mistral rate limit...")
+                    time.sleep(35)
+
+                params = select_silly_song_params(existing_songs)
+                print(f"\n  Selected: {params['battle_cry']} (ages {params['age_group']})")
+                print(f"  Instruments: {params['instruments']}")
+                print(f"  Tempo: {params['tempo']} BPM")
+
+                result = generate_silly_song(
+                    cry_id=params["battle_cry_id"],
+                    battle_cry=params["battle_cry"],
+                    age_group=params["age_group"],
+                    api_key=api_key,
+                    lyrics_only=args.lyrics_only,
+                    force=args.force,
+                    params=params,
+                )
+                if result:
+                    results.append(result)
+                    # Add to existing so next iteration sees it for diversity
+                    existing_songs.append(result)
+            except Exception as e:
+                print(f"  ✗ FAILED: {e}")
+                import traceback
+                traceback.print_exc()
+
+        print(f"\n{'='*60}")
+        print(f"  Generated {len(results)}/{count} songs (fresh mode)")
+        for r in results:
+            print(f"    • {r['title']} (ages {r['age_group']}) — {r.get('instruments', '?')}")
+        print(f"{'='*60}\n")
+        return
+
+    # ── Legacy modes: --test, --all, --cry ──
     if args.cry:
         songs_to_gen = [s for s in TEST_SONGS if s["cry_id"] == args.cry]
         if not songs_to_gen:
