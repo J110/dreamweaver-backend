@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Deploy Guard v2 — protect production state before, during, and after deploys.
+Deploy Guard v3 — protect production state before, during, and after deploys.
 
 Features:
   1. Persistent golden snapshot — baseline of known-good state that survives
@@ -10,9 +10,18 @@ Features:
      diffs, and file checks (they're invisible to users).
   4. Auto-recovery — missing files are restored from backup stores
      (/opt/cover-store, /opt/audio-store) automatically.
+  5. JSON data file protection — backs up and restores JSON data files
+     (silly_songs/*.json, funny_shorts/*.json) so accidental deletions
+     are auto-recovered from /opt/json-store/.
+  6. Golden baseline enforcement — verify compares against golden, not just
+     snapshot. Items in golden that disappear are auto-recovered.
+  7. New item serving check — for each ADDED item, verifies audio + cover
+     URLs are reachable before declaring the deploy successful.
+  8. Change tracking — detects and reports updated items (same ID, different
+     content), not just additions and removals.
 
 Usage:
-    # BEFORE deploy: capture current live state
+    # BEFORE deploy: capture current live state + back up JSON data files
     python3 scripts/deploy_guard.py snapshot
 
     # AFTER deploy: verify + auto-recover anything broken
@@ -61,6 +70,7 @@ SSH_CMD = ["gcloud", "compute", "ssh", "dreamvalley-prod",
 COVER_STORE = "/opt/cover-store"
 AUDIO_STORE_PREGEN = "/opt/audio-store/pre-gen"
 AUDIO_STORE_SILLY = "/opt/audio-store/silly-songs"
+JSON_STORE = "/opt/json-store"  # JSON data file backups
 
 # Serve paths on the GCP VM
 FRONTEND_COVERS = "/opt/dreamweaver-web/public/covers"
@@ -68,6 +78,8 @@ FRONTEND_AUDIO = "/opt/dreamweaver-web/public/audio/pre-gen"
 BACKEND_COVERS_FUNNY = "/opt/dreamweaver-backend/public/covers/funny-shorts"
 BACKEND_COVERS_SILLY = "/opt/dreamweaver-backend/public/covers/silly-songs"
 BACKEND_AUDIO_SILLY = "/opt/dreamweaver-backend/public/audio/silly-songs"
+BACKEND_DATA_SILLY = "/opt/dreamweaver-backend/data/silly_songs"
+BACKEND_DATA_FUNNY = "/opt/dreamweaver-backend/data/funny_shorts"
 
 
 def get_api(use_local: bool = False) -> str:
@@ -488,64 +500,264 @@ def _backup_to_store(recoverable: list[dict]):
             pass  # Best-effort — don't fail recovery over backup
 
 
-def diff_states(before: dict, after: dict) -> list[str]:
-    """Compare two states and return list of changes (English only)."""
-    changes = []
+def backup_json_files():
+    """Back up all JSON data files (silly_songs, funny_shorts) to /opt/json-store/.
 
-    # Stories
+    Called during snapshot to ensure we have a copy of every JSON before deploy.
+    """
+    cmds = [
+        f'sudo mkdir -p "{JSON_STORE}/silly_songs" "{JSON_STORE}/funny_shorts"',
+        f'cp -f {BACKEND_DATA_SILLY}/*.json "{JSON_STORE}/silly_songs/" 2>/dev/null; true',
+        f'cp -f {BACKEND_DATA_FUNNY}/*.json "{JSON_STORE}/funny_shorts/" 2>/dev/null; true',
+        'echo "JSON_BACKUP_OK"',
+    ]
+    script = " && ".join(cmds)
+    try:
+        result = subprocess.run(
+            SSH_CMD + [script], capture_output=True, text=True, timeout=30
+        )
+        if "JSON_BACKUP_OK" in result.stdout:
+            # Count backed-up files
+            count_cmd = (
+                f'ls "{JSON_STORE}/silly_songs/"*.json 2>/dev/null | wc -l; '
+                f'ls "{JSON_STORE}/funny_shorts/"*.json 2>/dev/null | wc -l'
+            )
+            count_result = subprocess.run(
+                SSH_CMD + [count_cmd], capture_output=True, text=True, timeout=15
+            )
+            counts = count_result.stdout.strip().split("\n")
+            silly = int(counts[0].strip()) if counts else 0
+            funny = int(counts[1].strip()) if len(counts) > 1 else 0
+            print(f"  📦 JSON backup: {silly} silly songs, {funny} funny shorts → {JSON_STORE}/")
+            return True
+        else:
+            print(f"  ⚠️  JSON backup may have failed: {result.stderr[:200]}")
+            return False
+    except Exception as e:
+        print(f"  ⚠️  JSON backup error: {e}")
+        return False
+
+
+def recover_json_files(missing_items: list[dict]) -> tuple[int, int]:
+    """Restore missing JSON data files from /opt/json-store/.
+
+    Each item in missing_items should have:
+      category: 'silly_songs' | 'funny_shorts'
+      item_id: the ID of the item
+      age_group: the age group (for logging)
+
+    Returns (recovered_count, failed_count).
+    """
+    if not missing_items:
+        return 0, 0
+
+    print(f"\n  🔧 Recovering {len(missing_items)} missing JSON data file(s)...")
+
+    recover_cmds = []
+    for item in missing_items:
+        cat = item["category"]
+        item_id = item["item_id"]
+        store_dir = f"{JSON_STORE}/{cat}"
+        data_dir = BACKEND_DATA_SILLY if cat == "silly_songs" else BACKEND_DATA_FUNNY
+
+        # Try exact match first, then glob for ID prefix
+        recover_cmds.append(
+            f'if [ -f "{store_dir}/{item_id}.json" ]; then '
+            f'cp "{store_dir}/{item_id}.json" "{data_dir}/{item_id}.json" && echo "RECOVERED_JSON:{item_id}"; '
+            f'else echo "NO_BACKUP:{item_id}"; fi'
+        )
+
+    script = " && ".join(recover_cmds)
+    recovered = 0
+    failed = 0
+
+    try:
+        result = subprocess.run(
+            SSH_CMD + [script], capture_output=True, text=True, timeout=60
+        )
+        for line in result.stdout.strip().split("\n"):
+            line = line.strip()
+            if line.startswith("RECOVERED_JSON:"):
+                recovered += 1
+                item_id = line.split(":")[-1]
+                print(f"    ✅ Restored JSON: {item_id}.json")
+            elif line.startswith("NO_BACKUP:"):
+                failed += 1
+                item_id = line.split(":")[-1]
+                print(f"    ❌ No backup found: {item_id}.json")
+    except Exception as e:
+        print(f"    Recovery error: {e}")
+        failed = len(missing_items)
+
+    return recovered, failed
+
+
+def verify_new_items_serving(added_items: list[dict], frontend: str, api: str) -> list[str]:
+    """For each newly added item, verify its audio and cover URLs are reachable.
+
+    Each item in added_items should have:
+      category: 'story' | 'funny_short' | 'silly_song'
+      item_id: the ID
+      age_group: (for funny_shorts/silly_songs)
+      audio_url: URL path to check
+      cover_url: URL path to check
+
+    Returns list of issues found.
+    """
+    if not added_items:
+        return []
+
+    print(f"\n  🔍 Verifying {len(added_items)} new item(s) are fully serving...")
+
+    issues = []
+    client = httpx.Client(timeout=10, follow_redirects=True)
+
+    for item in added_items:
+        cat = item["category"]
+        item_id = item["item_id"]
+        label = f"{cat} ({item.get('age_group', '')}): {item_id}" if item.get("age_group") else f"{cat}: {item_id}"
+
+        # Determine base URL based on category
+        audio_base = api if cat in ("funny_short", "silly_song") else frontend
+        cover_base = frontend
+
+        # Check audio
+        audio_url = item.get("audio_url", "")
+        if audio_url:
+            full = f"{audio_base}{audio_url}"
+            try:
+                resp = client.head(full)
+                if resp.status_code == 200:
+                    print(f"    ✅ {label} — audio serving")
+                else:
+                    issues.append(f"  ❌ NEW {label} — audio NOT serving ({resp.status_code}): {audio_url}")
+            except Exception as e:
+                issues.append(f"  ❌ NEW {label} — audio unreachable: {audio_url} ({e})")
+        else:
+            issues.append(f"  ⚠️  NEW {label} — no audio URL")
+
+        # Check cover
+        cover_url = item.get("cover_url", "")
+        if cover_url:
+            full = f"{cover_base}{cover_url}"
+            try:
+                resp = client.head(full)
+                if resp.status_code == 200:
+                    print(f"    ✅ {label} — cover serving")
+                else:
+                    issues.append(f"  ❌ NEW {label} — cover NOT serving ({resp.status_code}): {cover_url}")
+            except Exception as e:
+                issues.append(f"  ❌ NEW {label} — cover unreachable: {cover_url} ({e})")
+
+    return issues
+
+
+def diff_states(before: dict, after: dict) -> dict:
+    """Compare two states and return structured change report.
+
+    Returns dict with keys:
+      added: list of change strings (new items)
+      removed: list of change strings (missing items, regressions)
+      updated: list of change strings (same ID, content changed)
+      degraded: list of change strings (lost audio/cover)
+      removed_items: list of dicts for auto-recovery {category, item_id, age_group}
+      added_items: list of dicts for serving check {category, item_id, age_group, audio_url, cover_url}
+    """
+    added = []
+    removed = []
+    updated = []
+    degraded = []
+    removed_items = []  # For JSON recovery
+    added_items = []    # For serving verification
+
+    # ── Stories ──
     before_ids = set(before.get("stories", {}).keys())
     after_ids = set(after.get("stories", {}).keys())
 
-    added = after_ids - before_ids
-    removed = before_ids - after_ids
+    for sid in sorted(after_ids - before_ids):
+        s = after["stories"][sid]
+        added.append(f"  ADDED story: {sid} — \"{s['title']}\"")
+        added_items.append({
+            "category": "story", "item_id": sid,
+            "audio_url": (s.get("audio_urls") or [""])[0],
+            "cover_url": s.get("cover_url", ""),
+        })
 
-    if added:
-        for sid in sorted(added):
-            s = after["stories"][sid]
-            changes.append(f"  ADDED story: {sid} — \"{s['title']}\"")
+    for sid in sorted(before_ids - after_ids):
+        s = before["stories"][sid]
+        removed.append(f"  ❌ REMOVED story: {sid} — \"{s['title']}\"")
 
-    if removed:
-        for sid in sorted(removed):
-            s = before["stories"][sid]
-            changes.append(f"  ❌ REMOVED story: {sid} — \"{s['title']}\"")
-
-    # Check for stories that lost audio or cover
     for sid in before_ids & after_ids:
         b, a = before["stories"][sid], after["stories"][sid]
         if b.get("has_audio") and not a.get("has_audio"):
-            changes.append(f"  ❌ LOST AUDIO: {sid} — \"{a['title']}\"")
+            degraded.append(f"  ❌ LOST AUDIO: {sid} — \"{a['title']}\"")
         if b.get("has_cover") and not a.get("has_cover"):
-            changes.append(f"  ❌ LOST COVER: {sid} — \"{a['title']}\"")
+            degraded.append(f"  ❌ LOST COVER: {sid} — \"{a['title']}\"")
+        # Detect title changes (content update)
+        if b.get("title") != a.get("title"):
+            updated.append(f"  ✏️  UPDATED story: {sid} — title \"{b['title']}\" → \"{a['title']}\"")
 
-    # Funny shorts per age group
+    # ── Funny shorts per age group ──
     for age in ["2-5", "6-8", "9-12"]:
         before_fs = set(before.get("funny_shorts", {}).get(age, {}).keys())
         after_fs = set(after.get("funny_shorts", {}).get(age, {}).keys())
+
         for fid in sorted(after_fs - before_fs):
-            changes.append(f"  ADDED funny short ({age}): {fid}")
+            f = after["funny_shorts"][age][fid]
+            added.append(f"  ADDED funny short ({age}): {fid}")
+            added_items.append({
+                "category": "funny_short", "item_id": fid, "age_group": age,
+                "audio_url": f.get("audio_url", ""),
+                "cover_url": f.get("cover_url", ""),
+            })
+
         for fid in sorted(before_fs - after_fs):
-            changes.append(f"  ❌ REMOVED funny short ({age}): {fid}")
+            removed.append(f"  ❌ REMOVED funny short ({age}): {fid}")
+            removed_items.append({"category": "funny_shorts", "item_id": fid, "age_group": age})
+
         for fid in before_fs & after_fs:
             b = before["funny_shorts"][age][fid]
             a = after["funny_shorts"][age][fid]
             if b.get("has_audio") and not a.get("has_audio"):
-                changes.append(f"  ❌ LOST AUDIO funny short ({age}): {fid}")
+                degraded.append(f"  ❌ LOST AUDIO funny short ({age}): {fid}")
 
-    # Silly songs per age group
+    # ── Silly songs per age group ──
     for age in ["2-5", "6-8", "9-12"]:
         before_ss = set(before.get("silly_songs", {}).get(age, {}).keys())
         after_ss = set(after.get("silly_songs", {}).get(age, {}).keys())
+
         for sid in sorted(after_ss - before_ss):
-            changes.append(f"  ADDED silly song ({age}): {sid}")
+            s = after["silly_songs"][age][sid]
+            added.append(f"  ADDED silly song ({age}): {sid}")
+            added_items.append({
+                "category": "silly_song", "item_id": sid, "age_group": age,
+                "audio_url": s.get("audio_url", ""),
+                "cover_url": s.get("cover_url", ""),
+            })
+
         for sid in sorted(before_ss - after_ss):
-            changes.append(f"  ❌ REMOVED silly song ({age}): {sid}")
+            removed.append(f"  ❌ REMOVED silly song ({age}): {sid}")
+            removed_items.append({"category": "silly_songs", "item_id": sid, "age_group": age})
+
         for sid in before_ss & after_ss:
             b = before["silly_songs"][age][sid]
             a = after["silly_songs"][age][sid]
             if b.get("has_audio") and not a.get("has_audio"):
-                changes.append(f"  ❌ LOST AUDIO silly song ({age}): {sid}")
+                degraded.append(f"  ❌ LOST AUDIO silly song ({age}): {sid}")
+            # Detect content updates (title change)
+            if b.get("title") != a.get("title"):
+                updated.append(f"  ✏️  UPDATED silly song ({age}): {sid} — \"{b.get('title')}\" → \"{a.get('title')}\"")
+            elif b.get("audio_url") != a.get("audio_url") and a.get("audio_url"):
+                updated.append(f"  ✏️  UPDATED silly song ({age}): {sid} — new audio")
 
-    return changes
+    return {
+        "added": added,
+        "removed": removed,
+        "updated": updated,
+        "degraded": degraded,
+        "removed_items": removed_items,
+        "added_items": added_items,
+    }
 
 
 def merge_golden(golden: dict, current: dict) -> dict:
@@ -637,50 +849,124 @@ def load_json(path: Path) -> dict:
 # ────────────────────────────────────────────────────────────
 
 def cmd_snapshot(args):
-    """Capture and save pre-deploy state."""
+    """Capture and save pre-deploy state + back up JSON data files."""
     api = get_api(args.local)
     print(f"Capturing live state from {api}...")
     state = capture_state(api)
     save_json(SNAPSHOT_PATH, state)
     print_state_summary(state, "Snapshot Saved (pre-deploy)")
     print(f"\n  Saved to: {SNAPSHOT_PATH}")
+
+    # Back up JSON data files so we can recover if they're deleted during deploy
+    if not args.local:
+        print()
+        backup_json_files()
+
     print(f"\n  ✅ Run your deploy now, then run: python3 scripts/deploy_guard.py verify\n")
 
 
 def cmd_verify(args):
-    """Compare current state against snapshot, check files, auto-recover."""
+    """Compare current state against snapshot AND golden, check files, auto-recover."""
     before = load_json(SNAPSHOT_PATH)
     if not before:
-        print("❌ No snapshot found. Run 'snapshot' before deploying.")
-        sys.exit(1)
+        print("⚠️  No snapshot found. Using golden baseline as reference.")
+
+    golden = load_json(GOLDEN_PATH)
 
     api = get_api(args.local)
     frontend = get_frontend(args.local)
     print(f"Capturing live state from {api}...")
     after = capture_state(api)
 
-    print_state_summary(before, "BEFORE (pre-deploy snapshot)")
+    # Use snapshot if available, otherwise golden, otherwise just show current
+    reference = before or golden or {}
+    ref_label = "BEFORE (pre-deploy snapshot)" if before else "GOLDEN BASELINE (reference)"
+
+    if reference:
+        print_state_summary(reference, ref_label)
     print_state_summary(after, "AFTER (current live)")
 
-    changes = diff_states(before, after)
+    # ── Diff against snapshot ──
+    if reference:
+        changes = diff_states(reference, after)
 
-    print(f"\n{'='*60}")
-    if not changes:
-        print("  ✅ NO REGRESSIONS — content is identical.")
-    else:
-        regressions = [c for c in changes if "❌" in c]
-        additions = [c for c in changes if "ADDED" in c and "❌" not in c]
-        if additions:
-            print(f"  ✅ {len(additions)} new item(s) added (expected):")
-            for c in additions:
-                print(c)
-        if regressions:
-            print(f"\n  ❌ {len(regressions)} REGRESSION(S) DETECTED:")
-            for c in regressions:
-                print(c)
-    print(f"{'='*60}")
+        print(f"\n{'='*60}")
+        has_issues = False
 
-    # File reachability check
+        if changes["added"]:
+            print(f"  ✅ {len(changes['added'])} new item(s) added:")
+            for c in changes["added"]:
+                print(c)
+
+        if changes["updated"]:
+            print(f"\n  ✏️  {len(changes['updated'])} item(s) updated:")
+            for c in changes["updated"]:
+                print(c)
+
+        if changes["removed"]:
+            has_issues = True
+            print(f"\n  ❌ {len(changes['removed'])} REMOVAL(S) DETECTED:")
+            for c in changes["removed"]:
+                print(c)
+
+        if changes["degraded"]:
+            has_issues = True
+            print(f"\n  ❌ {len(changes['degraded'])} DEGRADATION(S) DETECTED:")
+            for c in changes["degraded"]:
+                print(c)
+
+        if not changes["added"] and not changes["removed"] and not changes["updated"] and not changes["degraded"]:
+            print("  ✅ NO CHANGES — content is identical.")
+
+        print(f"{'='*60}")
+
+        # ── Auto-recover removed items (JSON data files) ──
+        if changes["removed_items"] and not args.no_recover and not args.local:
+            json_recovered, json_failed = recover_json_files(changes["removed_items"])
+            if json_recovered > 0:
+                print(f"\n  ♻️  Recovered {json_recovered} JSON data file(s). Re-capturing state...")
+                # Reload the API to trigger it to pick up restored files
+                after = capture_state(api)
+                # Re-diff to confirm recovery
+                changes2 = diff_states(reference, after)
+                still_removed = len(changes2["removed"])
+                if still_removed == 0:
+                    print("  ✅ All removed items restored!")
+                else:
+                    print(f"  ⚠️  {still_removed} item(s) still missing after JSON recovery")
+
+        # ── Verify new items are fully serving ──
+        if changes["added_items"] and not args.skip_files:
+            new_issues = verify_new_items_serving(changes["added_items"], frontend, api)
+            if new_issues:
+                print(f"\n{'='*60}")
+                print(f"  ⚠️  {len(new_issues)} new item(s) NOT fully serving:")
+                for issue in new_issues:
+                    print(issue)
+                print(f"{'='*60}")
+            else:
+                print(f"\n  ✅ All new items fully serving (audio + cover reachable).")
+
+    # ── Also diff against golden baseline (if golden exists and is different from reference) ──
+    if golden and before and golden != before:
+        golden_changes = diff_states(golden, after)
+        golden_removed = golden_changes["removed"]
+        if golden_removed:
+            print(f"\n{'='*60}")
+            print(f"  ⚠️  {len(golden_removed)} item(s) missing vs GOLDEN BASELINE:")
+            for c in golden_removed:
+                print(c)
+            print(f"  These items existed in the golden baseline but are now missing.")
+
+            # Auto-recover from JSON store
+            if golden_changes["removed_items"] and not args.no_recover and not args.local:
+                json_recovered, _ = recover_json_files(golden_changes["removed_items"])
+                if json_recovered > 0:
+                    print(f"  ♻️  Recovered {json_recovered} JSON(s) from golden baseline check.")
+                    after = capture_state(api)
+            print(f"{'='*60}")
+
+    # ── File reachability check ──
     if not args.skip_files:
         file_issues, recoverable = verify_files(after, frontend, api)
         print(f"\n{'='*60}")
@@ -706,20 +992,25 @@ def cmd_verify(args):
                         print(f"  ⚠️  {still_missing} file(s) still missing after recovery")
         print(f"{'='*60}")
 
-    # Auto-update golden baseline: merge new content into golden
-    golden = load_json(GOLDEN_PATH)
+    # ── Update golden baseline: merge new content ──
     if golden:
         merged = merge_golden(golden, after)
         save_json(GOLDEN_PATH, merged)
-        new_in_golden = len(merged.get("stories", {})) - len(golden.get("stories", {}))
-        if new_in_golden > 0:
-            print(f"\n  📌 Golden baseline updated: +{new_in_golden} new story/stories added")
+        new_stories = len(merged.get("stories", {})) - len(golden.get("stories", {}))
+        # Count new silly songs + funny shorts
+        new_other = 0
+        for cat in ["silly_songs", "funny_shorts"]:
+            for age in ["2-5", "6-8", "9-12"]:
+                new_other += len(merged.get(cat, {}).get(age, {})) - len(golden.get(cat, {}).get(age, {}))
+        total_new = new_stories + new_other
+        if total_new > 0:
+            print(f"\n  📌 Golden baseline updated: +{total_new} new item(s) added")
     else:
         # First run — create golden from current state
         save_json(GOLDEN_PATH, after)
         print(f"\n  📌 Golden baseline created with {len(after.get('stories', {}))} stories")
 
-    # Run invariant checks with auto-recovery
+    # ── Run invariant checks with auto-recovery ──
     print("\n  Running content invariant checks...")
     class InvariantArgs:
         auto_recover_invariants = True
@@ -728,6 +1019,10 @@ def cmd_verify(args):
     except SystemExit as e:
         if e.code != 0:
             print("  ⚠️  Invariant checks failed — see above for details.")
+
+    # ── Back up current JSON files (so they're available for next recovery) ──
+    if not args.local:
+        backup_json_files()
 
     print()
 
@@ -842,20 +1137,28 @@ def cmd_audit(args):
     changes = diff_states(golden, current)
 
     print(f"\n{'='*60}")
-    regressions = [c for c in changes if "❌" in c]
-    additions = [c for c in changes if "ADDED" in c and "❌" not in c]
+    all_empty = not any([changes["added"], changes["removed"], changes["updated"], changes["degraded"]])
 
-    if not changes:
+    if all_empty:
         print("  ✅ Live state matches golden baseline perfectly.")
     else:
-        if additions:
-            print(f"  ℹ️  {len(additions)} new item(s) since baseline (will be added to golden):")
-            for c in additions:
+        if changes["added"]:
+            print(f"  ✅ {len(changes['added'])} new item(s) since baseline (will be added to golden):")
+            for c in changes["added"]:
                 print(c)
-        if regressions:
-            print(f"\n  ❌ {len(regressions)} REGRESSION(S) vs golden baseline:")
-            for c in regressions:
+        if changes["updated"]:
+            print(f"\n  ✏️  {len(changes['updated'])} item(s) updated:")
+            for c in changes["updated"]:
                 print(c)
+        if changes["removed"]:
+            print(f"\n  ❌ {len(changes['removed'])} REMOVAL(S) vs golden baseline:")
+            for c in changes["removed"]:
+                print(c)
+        if changes["degraded"]:
+            print(f"\n  ❌ {len(changes['degraded'])} DEGRADATION(S) vs golden baseline:")
+            for c in changes["degraded"]:
+                print(c)
+        if changes["removed"] or changes["degraded"]:
             print(f"\n  These items existed in the golden baseline but are now missing or degraded.")
             print(f"  Run 'verify' or 'recover' to attempt auto-recovery.")
     print(f"{'='*60}")
@@ -876,11 +1179,17 @@ def cmd_audit(args):
                 print(f"\n  Recovery: {recovered} restored, {not_found} not in backup stores")
         print(f"{'='*60}")
 
+    # Auto-recover removed items from JSON store
+    if changes["removed_items"] and not args.no_recover and not getattr(args, 'local', False):
+        json_recovered, json_failed = recover_json_files(changes["removed_items"])
+        if json_recovered > 0:
+            print(f"\n  ♻️  Recovered {json_recovered} JSON data file(s)")
+
     # Merge new content into golden
-    if additions:
+    if changes["added"]:
         merged = merge_golden(golden, current)
         save_json(GOLDEN_PATH, merged)
-        print(f"\n  📌 Golden baseline updated: +{len(additions)} new item(s)")
+        print(f"\n  📌 Golden baseline updated: +{len(changes['added'])} new item(s)")
 
     print()
 
@@ -1072,6 +1381,77 @@ def cmd_invariants(args):
         "Episode metadata must track all diversity dimensions",
         source_file="scripts/generate_funny_shorts_v2.py",
     )
+
+    # ── Silly Songs ──────────────────────────────────────────
+    print("\n  Silly Songs:")
+    gen_silly_path = BASE_DIR / "scripts" / "generate_silly_songs_battlecry.py"
+    if gen_silly_path.exists():
+        gen_silly = gen_silly_path.read_text()
+        check(
+            "Scene generation (Step 0) exists",
+            "def generate_scene" in gen_silly and "SCENE_PROMPT" in gen_silly,
+            "generate_silly_songs_battlecry.py missing scene anchoring (Step 0)",
+            source_file="scripts/generate_silly_songs_battlecry.py",
+        )
+        check(
+            "Scene validation exists",
+            "def validate_scene" in gen_silly and "vague_phrases" in gen_silly,
+            "generate_silly_songs_battlecry.py missing validate_scene",
+            source_file="scripts/generate_silly_songs_battlecry.py",
+        )
+        check(
+            "Chorus consistency check",
+            "chorus_inconsistent" in gen_silly or "CHORUS CONSISTENCY" in gen_silly
+            or "chorus_consistency" in gen_silly,
+            "Validation must check non-final choruses are identical",
+            source_file="scripts/generate_silly_songs_battlecry.py",
+        )
+        check(
+            "Energetic style (no calm/bedtime language)",
+            "impossible to sit still" in gen_silly or "punchy beat" in gen_silly,
+            "Style prompt must be energetic — silly songs are NOT sleep content",
+            source_file="scripts/generate_silly_songs_battlecry.py",
+        )
+        # Ensure no calm language crept back in
+        calm_terms = ["soft and gentle", "bedtime fun", "cozy sleepy", "warm and drowsy"]
+        has_calm = any(t in gen_silly.lower() for t in calm_terms)
+        check(
+            "No calm/sleep language in style prompts",
+            not has_calm,
+            f"Found calm language in silly songs — these are pre-bedtime energy, not sleep",
+            source_file="scripts/generate_silly_songs_battlecry.py",
+        )
+        check(
+            "Retry-with-feedback includes scene",
+            "def retry_with_feedback" in gen_silly and "scene" in gen_silly.split("def retry_with_feedback")[1][:500],
+            "retry_with_feedback must use scene context for targeted fixes",
+            source_file="scripts/generate_silly_songs_battlecry.py",
+        )
+        check(
+            "Batch diversity check",
+            "def validate_batch_diversity" in gen_silly,
+            "Missing validate_batch_diversity — prevents duplicate battle cries in same run",
+            source_file="scripts/generate_silly_songs_battlecry.py",
+        )
+        # Check tempo ranges are energetic (not calm)
+        tempo_match = _re.search(r'"2-5":\s*\((\d+),\s*(\d+)\)', gen_silly)
+        if tempo_match:
+            low = int(tempo_match.group(1))
+            check(
+                "Tempo range is energetic (2-5 low >= 110)",
+                low >= 110,
+                f"Current 2-5 low tempo: {low} BPM — too slow for silly songs",
+                source_file="scripts/generate_silly_songs_battlecry.py",
+            )
+        check(
+            "Cover prompt is purely visual (no text mentions)",
+            "COVER_PROMPT_TEMPLATE" in gen_silly
+            and "text" not in gen_silly.split("COVER_PROMPT_TEMPLATE")[1][:300].lower(),
+            "Cover prompt must never mention text/words/letters",
+            source_file="scripts/generate_silly_songs_battlecry.py",
+        )
+    else:
+        check("Silly songs script exists", False, "scripts/generate_silly_songs_battlecry.py not found")
 
     print(f"\n{'='*60}")
     if failed == 0:
