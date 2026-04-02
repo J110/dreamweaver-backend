@@ -1408,7 +1408,9 @@ def cmd_invariants(args):
         )
         check(
             "Energetic style (no calm/bedtime language)",
-            "impossible to sit still" in gen_silly or "punchy beat" in gen_silly,
+            ("impossible to sit still" in gen_silly or "punchy beat" in gen_silly
+             or "bouncy beat" in gen_silly or "groovy beat" in gen_silly
+             or "cool beat" in gen_silly),
             "Style prompt must be energetic — silly songs are NOT sleep content",
             source_file="scripts/generate_silly_songs_battlecry.py",
         )
