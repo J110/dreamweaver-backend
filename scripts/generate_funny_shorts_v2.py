@@ -1145,17 +1145,34 @@ def assemble_funny_short(audio_segments: list, bed_path: Path,
 # Step 8: Cover Generation (FLUX via Pollinations)
 # ═══════════════════════════════════════════════════════════════════
 
-def generate_cover(title: str, episode_id: str, scene_description: str = "") -> Path | None:
+CHARACTER_VISUALS = {
+    "boomy":  "a round confident cartoon bear",
+    "pip":    "a tiny anxious cartoon bird",
+    "shadow": "a mysterious cartoon owl wearing glasses",
+    "sunny":  "a cheerful smiling cartoon sun character",
+    "melody": "a warm friendly cartoon fox narrator",
+}
+
+
+def generate_cover(title: str, episode_id: str, scene_description: str = "",
+                   characters: list = None) -> Path | None:
     """Generate a cover image via Pollinations.ai FLUX.
 
-    IMPORTANT: Never put the title in the prompt — FLUX will render it as
-    visible text on the image.  Use scene_description for visual details only.
+    CRITICAL: NEVER put the title or any words in the prompt — FLUX renders
+    text as visible letters on the image. Use only visual descriptions.
     """
-    scene = scene_description or title.replace("The ", "").replace("'", "")
+    if not scene_description and characters:
+        # Build a visual scene from characters — NO title, NO words
+        char_visuals = [CHARACTER_VISUALS.get(c, "") for c in characters if c != "melody" and c in CHARACTER_VISUALS]
+        scene_description = " and ".join(char_visuals) if char_visuals else "cartoon animal characters"
+        scene_description += " in a cozy nighttime scene"
+
+    scene = scene_description or "cartoon animal characters in a cozy nighttime bedroom scene"
     prompt = (
         f"Children's book illustration, {scene}, "
         f"cartoon style, gentle warm colors, cozy bedtime feeling, "
-        f"clean simple composition, no background text"
+        f"clean simple composition, "
+        f"absolutely no text, no words, no letters, no writing, no titles, no captions"
     )
     truncated = prompt[:600]
     encoded = quote(truncated, safe="")
@@ -1272,7 +1289,7 @@ def generate_episode(age_group: str, setup: str, characters: list) -> dict | Non
 
     # 6. Generate cover
     print("  [6/6] Generating cover...")
-    cover_path = generate_cover(parsed["title"], episode_id)
+    cover_path = generate_cover(parsed["title"], episode_id, characters=characters)
 
     # Save metadata
     metadata = {
