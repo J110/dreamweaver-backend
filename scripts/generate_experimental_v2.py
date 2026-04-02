@@ -142,12 +142,16 @@ layers, no stated lessons.
 
 === THE REPEATED PHRASE ===
 Create ONE phrase that appears at least 3 times.
-Wrap every instance in [PHRASE] tags:
+Wrap every instance in [PHRASE] tags.
 
-[PHRASE]Not yet, not yet[/PHRASE]
+This phrase must be UNIQUE TO THIS STORY.
+It comes from the story's specific content — the one image
+or moment that defines this story and no other.
 
-The phrase should be under 8 words. By the third time, the
-child is saying it before the narrator.
+Under 8 words. Easy for a child to say out loud.
+
+Test: if you can swap this phrase into a different story
+and it still fits, it's too generic. Make it more specific.
 
 Do NOT repeat any other sentence. Every non-phrase line must
 be unique.

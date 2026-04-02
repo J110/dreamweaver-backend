@@ -452,11 +452,18 @@ ONE character does ONE thing. No subplot, no secondary characters
 
 === THE REPEATED PHRASE ===
 Create ONE phrase that appears at least 3 times.
-Wrap every instance in [PHRASE] tags:
-[PHRASE]Not yet, not yet[/PHRASE]
+Wrap every instance in [PHRASE] tags.
 
-The phrase should be under 8 words. By the third time, the child is
-saying it before the narrator. Do NOT repeat any other sentence.
+This phrase must be UNIQUE TO THIS STORY.
+It comes from the story's specific content — the one image
+or moment that defines this story and no other.
+
+Under 8 words. Easy for a child to say out loud.
+
+Test: if you can swap this phrase into a different story
+and it still fits, it's too generic. Make it more specific.
+
+Do NOT repeat any other sentence.
 Every non-phrase line must be unique.
 
 === DIRECT ADDRESS ===
@@ -615,12 +622,24 @@ from scripts.language_level_config import (
 )
 
 
+def is_phrase_too_similar(new_phrase: str, existing_phrases: list, threshold: float = 0.6) -> tuple:
+    """Reject if the new phrase is too similar to any recent phrase."""
+    from difflib import SequenceMatcher
+    new_lower = new_phrase.lower().strip()
+    for existing in existing_phrases:
+        ratio = SequenceMatcher(None, new_lower, existing.lower().strip()).ratio()
+        if ratio > threshold:
+            return True, f"Too similar to '{existing}'"
+    return False, "OK"
+
+
 def build_generation_prompt(item: Dict, existing_titles: List[str],
                             recent_fingerprints: List[Dict] = None,
                             catalog_gaps: Dict = None,
                             mood: str = None,
                             story_type: str = None,
-                            language_level: str = None) -> str:
+                            language_level: str = None,
+                            recent_phrases: List[str] = None) -> str:
     """Build a complete prompt for generating one content piece."""
 
     content_type = item["type"]
@@ -698,6 +717,12 @@ def build_generation_prompt(item: Dict, existing_titles: List[str],
     if existing_titles:
         titles_str = ", ".join(f'"{t}"' for t in existing_titles[-10:])
         avoid = f"\nTitles already used (yours MUST be different): {titles_str}\n"
+
+    # For V2 short stories: show recent repeated phrases so the LLM avoids them
+    is_v2_story = (content_type == "story" and length in ("SHORT", "MEDIUM"))
+    if is_v2_story and recent_phrases:
+        phrases_str = ", ".join(f'"{p}"' for p in recent_phrases[-10:])
+        avoid += f"\nRepeated phrases already used in other stories (yours MUST be completely different — do NOT reuse or paraphrase any of these): {phrases_str}\n"
 
     # For 0-1 lullabies: show recent syllable patterns so the LLM avoids them
     if content_type == "song" and age_group == "0-1" and recent_fingerprints:
@@ -1086,7 +1111,8 @@ def generate_one(client, item: Dict, existing_titles: List[str],
                  catalog_gaps: Dict = None,
                  mood: str = None,
                  story_type: str = None,
-                 language_level: str = None) -> Optional[Dict]:
+                 language_level: str = None,
+                 recent_phrases: List[str] = None) -> Optional[Dict]:
     """Generate a single content piece via Claude or Groq API."""
 
     # Poems are trickier (stanza structure, word count variability) — more attempts
@@ -1104,7 +1130,8 @@ def generate_one(client, item: Dict, existing_titles: List[str],
                                      catalog_gaps=catalog_gaps,
                                      mood=mood,
                                      story_type=effective_story_type,
-                                     language_level=effective_language_level)
+                                     language_level=effective_language_level,
+                                     recent_phrases=recent_phrases)
 
     # Determine max_tokens based on word count range
     # LONG stories (up to 3000 words) need ~12K+ tokens — raise cap to 16384
@@ -1195,6 +1222,29 @@ def generate_one(client, item: Dict, existing_titles: List[str],
                     phrase_matches = re.findall(r'\[PHRASE\](.*?)\[/PHRASE\]', text, re.DOTALL)
                     if phrase_matches:
                         parsed["repeated_phrase"] = phrase_matches[0].strip()
+
+                # Check phrase diversity against recent phrases
+                new_phrase = parsed.get("repeated_phrase", "")
+                if new_phrase and recent_phrases:
+                    too_similar, reason = is_phrase_too_similar(new_phrase, recent_phrases)
+                    if too_similar:
+                        logger.warning("  Attempt %d: Phrase rejected: %s. Regenerating...",
+                                       attempt + 1, reason)
+                        if attempt < max_retries - 1:
+                            # Rebuild prompt with explicit avoidance of this phrase
+                            reject_phrases = (recent_phrases or []) + [new_phrase]
+                            prompt = build_generation_prompt(
+                                item, existing_titles,
+                                recent_fingerprints=recent_fingerprints,
+                                catalog_gaps=catalog_gaps,
+                                mood=mood,
+                                story_type=effective_story_type,
+                                language_level=effective_language_level,
+                                recent_phrases=reject_phrases,
+                            )
+                            time.sleep(retry_delay)
+                            continue
+                        logger.warning("  Accepting similar phrase on final attempt")
 
             # Validate phase markers for LONG stories
             if item["length"] == "LONG" and item["type"] == "story":
@@ -1796,6 +1846,10 @@ def main():
     success = 0
     failed = 0
 
+    # Collect recent repeated phrases for diversity checking
+    recent_phrases = [s["repeated_phrase"] for s in existing[-20:]
+                      if s.get("repeated_phrase")]
+
     for i, item in enumerate(new_plan):
         logger.info(
             "\n[%d/%d] %s | %s | %s | %s | %s | %s",
@@ -1810,11 +1864,15 @@ def main():
                               catalog_gaps=catalog_gaps,
                               mood=args.mood,
                               story_type=args.story_type,
-                              language_level=args.language_level)
+                              language_level=args.language_level,
+                              recent_phrases=recent_phrases)
 
         if result:
             existing.append(result)
             existing_titles.append(result["title"])
+            # Track repeated phrase for within-batch diversity
+            if result.get("repeated_phrase"):
+                recent_phrases.append(result["repeated_phrase"])
             # Track new fingerprint for within-batch collision checking
             if result.get("diversityFingerprint"):
                 recent_fps.append(result)
