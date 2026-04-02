@@ -205,20 +205,28 @@ to use a weird word or break a sentence into fragments,
 skip that rhyme and find one that flows.
 
 STRUCTURE:
-- 2-3 verses, each 4 lines
-- Chorus between each verse. The chorus is COPY-PASTE identical
-  every time. The ONLY line that can change is the battle cry
-  line if it needs to dissolve in the final chorus. Every other
-  repetition: same words, same order, word for word.
-- Parent responds 2-3 times with a short reaction on the beat
-- A couple of sound effects (*splat*, *crash*, etc.) specific
-  to this scene
+This song must be SHORT. The audio generator produces ~60
+seconds. Your lyrics must fit comfortably in that time with
+room for the melody to breathe.
+
+[verse 1] — 4 lines. Real complaints from this scene.
+[chorus]  — 3-4 lines. The battle cry repeated. Identical every time.
+[verse 2] — 4 lines. Same complaints, pushed further.
+[chorus]  — identical repeat
+[ending]  — 2-3 lines. The chorus dissolving into sleep or surrender.
+
+That's the ENTIRE song. No verse 3. No bridge. No parent
+responses in the lyrics (those are added separately in audio).
+
+Maximum 8 words per line. Maximum 20 lines total.
+Every line must have SPACE to be sung clearly. If the child
+can't understand the words, the song fails.
 
 V1: real things the child says in this moment
-V2: the same situation exaggerated
-V3: the same situation pushed to absurd
+V2: the same situation exaggerated — pushed further
 
-Final chorus trails off into sleep or surrender.
+The CHORUS does the heavy lifting through repetition,
+not the verses through variety.
 
 RHYME FREEDOM:
 Each verse can use its own rhyme pattern. You do NOT need
@@ -226,7 +234,6 @@ to rhyme the same sound across all verses.
 
 V1 can rhyme with -ed/-ight
 V2 can rhyme with -ack/-old
-V3 can rhyme with -un/-oom
 
 The CHORUS is the constant. The verses are free.
 
@@ -245,8 +252,8 @@ I haven't hugged the cat goodnight / I haven't checked the moon is bright"
 Every line is a COMPLETE SENTENCE a child would say out loud. Natural rhymes.
 No fragments. No clever wordplay. Just a child negotiating.
 
-Output with [opening], [verse], and [chorus] tags.
-No title. No markdown code blocks.
+Output with [verse 1], [verse 2], [chorus], and [ending] tags.
+No title. No markdown code blocks. No [parent] sections.
 
 THEN on its own line:
 [COVER: one-sentence visual description of the funniest moment, bold cartoon style, bright colors, energetic]
@@ -387,18 +394,22 @@ def extract_sections(lyrics: str) -> dict[str, list[str]]:
 
 # ── Validation ───────────────────────────────────────────────────────
 
+MAX_LINES = 20
+MAX_WORDS_PER_LINE = 8
+
+
 def validate_silly_song(lyrics: str, battle_cry: str, age_group: str,
                         scene: str = "") -> tuple[bool, list[str], list[dict]]:
-    """Validate essential formula elements only.
+    """Validate essential formula elements + MiniMax length constraints.
 
-    Checks only what matters:
+    Checks:
     - Battle cry appears in chorus
     - Chorus consistency (non-final choruses identical)
     - At least 2 verses
     - Sound effects present
-
-    No word-count, syllable, or line-length limits — those over-constrain
-    the LLM and produce fragments/forced rhymes.
+    - Max 20 lyric lines (fits MiniMax ~60s)
+    - Max 8 words per line (warning, not blocking)
+    - Character count within MiniMax limit
 
     Returns (passed, errors, structured_errors).
     """
@@ -431,12 +442,10 @@ def validate_silly_song(lyrics: str, battle_cry: str, age_group: str,
         errors.append(f"Only {len(verses)} verse(s) (need at least 2)")
         structured.append({"type": "few_verses", "count": len(verses)})
 
-    # 3. SOUND EFFECTS or parent response present
+    # 3. SOUND EFFECTS present
     has_sfx = '*' in lyrics
-    has_response = any(w in lyrics.lower() for w in ['why?', 'what?', 'really?', 'hmm?',
-                                                      'mom:', 'dad:', 'mama:', 'parent:'])
-    if not has_sfx and not has_response:
-        errors.append("No sound effects or parent responses found")
+    if not has_sfx:
+        errors.append("No sound effects found")
         structured.append({"type": "no_sfx"})
 
     # 4. CHORUS CONSISTENCY — non-final choruses must be identical
@@ -451,11 +460,33 @@ def validate_silly_song(lyrics: str, battle_cry: str, age_group: str,
                 errors.append(f"Chorus {i+1} differs from Chorus 1 — must be identical (except final)")
                 structured.append({"type": "chorus_inconsistent", "index": i + 1})
 
+    # 5. LINE COUNT — max 20 lines (MiniMax ~60s constraint)
+    lyric_lines = [l for l in lyrics.split("\n")
+                   if l.strip() and not l.strip().startswith("[")]
+    if len(lyric_lines) > MAX_LINES:
+        errors.append(f"Too many lines ({len(lyric_lines)}, max {MAX_LINES}) — won't fit in 60s")
+        structured.append({"type": "too_many_lines", "count": len(lyric_lines)})
+
+    # 6. WORDS PER LINE — max 8 (warning only, logged but non-blocking)
+    long_lines = []
+    for line in lyric_lines:
+        words = [w for w in line.split() if not w.startswith("*")]
+        if len(words) > MAX_WORDS_PER_LINE:
+            long_lines.append((line.strip()[:50], len(words)))
+    if long_lines:
+        print(f"    ⚠️  {len(long_lines)} line(s) over {MAX_WORDS_PER_LINE} words:")
+        for text, wc in long_lines[:3]:
+            print(f"      {wc}w: {text}...")
+
+    # 7. CHARACTER COUNT for MiniMax
+    check_minimax_length(lyrics)
+
     # Info prints (non-blocking)
     if len(verses) >= 2:
         print(f"    V1: {verses[0][:70]}...")
-        if len(verses) >= 3:
-            print(f"    V3: {verses[-1][:70]}...")
+        if len(verses) >= 2:
+            print(f"    V2: {verses[-1][:70]}...")
+    print(f"    Lines: {len(lyric_lines)}/{MAX_LINES}")
 
     return (len(errors) == 0, errors, structured)
 
@@ -484,14 +515,22 @@ def retry_with_feedback(lyrics: str, structured_errors: list, age_group: str,
     sfx_errors = [e for e in structured_errors if e["type"] == "no_sfx"]
     if sfx_errors:
         feedback_parts.append(
-            "MISSING SOUND EFFECTS / PARENT — add a parent reaction (Mom: \"Why?\") "
-            "and/or a sound effect (*splat*, *crash*) specific to the scene."
+            "MISSING SOUND EFFECTS — add a sound effect (*splat*, *crash*) "
+            "specific to the scene."
         )
 
     verse_errors = [e for e in structured_errors if e["type"] == "few_verses"]
     if verse_errors:
         feedback_parts.append(
             f"NOT ENOUGH VERSES — need at least 2 verses (V1: real, V2: exaggerated)."
+        )
+
+    line_errors = [e for e in structured_errors if e["type"] == "too_many_lines"]
+    if line_errors:
+        count = line_errors[0]["count"]
+        feedback_parts.append(
+            f"TOO MANY LINES — you wrote {count} lines but max is {MAX_LINES}. "
+            f"Cut to 2 verses + 2 choruses + ending. No verse 3. No bridge."
         )
 
     feedback = "\n\n".join(feedback_parts)
@@ -505,7 +544,9 @@ PROBLEMS:
 ORIGINAL LYRICS:
 {lyrics}
 
-Fix the problems. Keep every line as a complete sentence a child
+Fix the problems. The song must be SHORT — max {MAX_LINES} lines total.
+Two verses, two chorus repeats, one ending. No verse 3. No parent lines.
+Max 8 words per line. Keep every line as a complete sentence a child
 would actually say. Natural rhymes only — no forced wordplay.
 
 Output the COMPLETE corrected lyrics with section tags, then [COVER: one-line visual scene].
@@ -540,8 +581,53 @@ def normalize_caps_for_tts(text: str) -> str:
 
 MAX_LYRICS_CHARS = 600
 
+def strip_parent_lines(lyrics: str) -> str:
+    """Remove parent response lines before sending to MiniMax.
+
+    Parent responses ("Mom: Why?") confuse MiniMax's vocal generation —
+    it either skips them, speaks them in the same voice, or garbles them.
+    """
+    lines = lyrics.split("\n")
+    filtered = []
+    in_parent_section = False
+    for line in lines:
+        stripped = line.strip().lower()
+        # Skip [parent] section tags and their content
+        if stripped.startswith("[parent"):
+            in_parent_section = True
+            continue
+        if in_parent_section:
+            if stripped.startswith("["):
+                in_parent_section = False
+                # Fall through to process this new section tag
+            else:
+                continue
+        # Skip inline parent lines
+        if any(stripped.startswith(p) for p in
+               ["mom:", "dad:", "parent:", "*mom", "*dad", "*parent",
+                "(mom", "(dad", "(parent", '"mom', '"dad']):
+            continue
+        filtered.append(line)
+    return "\n".join(filtered)
+
+
+def check_minimax_length(lyrics: str, max_chars: int = MAX_LYRICS_CHARS) -> bool:
+    """Ensure lyrics fit MiniMax's input limit after cleanup."""
+    clean = strip_parent_lines(lyrics)
+    clean = re.sub(r'\[.*?\]', '', clean)  # Remove section tags
+    char_count = len(clean.strip())
+
+    if char_count > max_chars:
+        print(f"  WARNING: Lyrics too long ({char_count} chars, "
+              f"max {max_chars}). Will be truncated by MiniMax.")
+        return False
+    return True
+
+
 def trim_lyrics_for_minimax(lyrics: str) -> str:
-    """Trim lyrics to fit within MiniMax's 600-char limit."""
+    """Strip parent lines, then trim to fit MiniMax's 600-char limit."""
+    lyrics = strip_parent_lines(lyrics)
+
     if len(lyrics) <= MAX_LYRICS_CHARS:
         return lyrics
 

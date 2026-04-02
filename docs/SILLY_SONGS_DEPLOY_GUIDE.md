@@ -234,6 +234,27 @@ python3 -c "from scripts.generate_silly_songs_battlecry import BATTLE_CRIES; [pr
 | `git pull` conflicts on server | `git stash && git pull origin main` |
 | NEVER `sudo git pull` | Changes file ownership to root, breaks pipeline cron job. Fix: `sudo chown -R anmolmohan:anmolmohan /opt/dreamweaver-backend/` |
 
+## Song Structure (MiniMax constraints)
+
+MiniMax generates ~60 seconds of audio. Lyrics must fit within that window.
+
+```
+[verse 1] — 4 lines. Real complaints from this scene.
+[chorus]  — 3-4 lines. Battle cry repeated. Identical every time.
+[verse 2] — 4 lines. Same complaints, pushed further.
+[chorus]  — identical repeat
+[ending]  — 2-3 lines. Dissolving chorus or surrender.
+```
+
+**Hard limits:**
+- Max 20 unique lines total
+- Max 8 words per line
+- Max 600 characters (MiniMax input limit)
+- 2 verses only (no V3)
+- No parent response lines in lyrics (stripped before MiniMax)
+
+**Escalation:** V1 real → V2 exaggerated. The chorus does the heavy lifting through repetition.
+
 ## Quality Checklist
 
 Before deploying lyrics, verify against the benchmark ("Five More Minutes" 2-5):
@@ -241,8 +262,9 @@ Before deploying lyrics, verify against the benchmark ("Five More Minutes" 2-5):
 - [ ] Every line is a complete sentence a child would say out loud
 - [ ] Rhymes are natural — no forced suffixes or fragments
 - [ ] Different rhyme sounds per verse (RHYME FREEDOM)
-- [ ] V1 real → V2 exaggerated → V3 absurd escalation
+- [ ] V1 real → V2 exaggerated escalation
+- [ ] Max 20 lines, max 8 words per line
 - [ ] Non-final choruses are word-for-word identical
 - [ ] Final chorus dissolves into sleep/surrender
-- [ ] Parent responses are warm and realistic
+- [ ] No parent response lines in lyrics (added separately in audio)
 - [ ] Sound effects are specific to the scene
