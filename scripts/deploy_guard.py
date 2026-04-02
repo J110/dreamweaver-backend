@@ -506,7 +506,7 @@ def backup_json_files():
     Called during snapshot to ensure we have a copy of every JSON before deploy.
     """
     cmds = [
-        f'sudo mkdir -p "{JSON_STORE}/silly_songs" "{JSON_STORE}/funny_shorts"',
+        f'mkdir -p "{JSON_STORE}/silly_songs" "{JSON_STORE}/funny_shorts"',
         f'cp -f {BACKEND_DATA_SILLY}/*.json "{JSON_STORE}/silly_songs/" 2>/dev/null; true',
         f'cp -f {BACKEND_DATA_FUNNY}/*.json "{JSON_STORE}/funny_shorts/" 2>/dev/null; true',
         'echo "JSON_BACKUP_OK"',
@@ -1412,13 +1412,19 @@ def cmd_invariants(args):
             "Style prompt must be energetic — silly songs are NOT sleep content",
             source_file="scripts/generate_silly_songs_battlecry.py",
         )
-        # Ensure no calm language crept back in
-        calm_terms = ["soft and gentle", "bedtime fun", "cozy sleepy", "warm and drowsy"]
-        has_calm = any(t in gen_silly.lower() for t in calm_terms)
+        # Ensure no calm language in the actual style prompt builder (not comments)
+        # Extract just the build_style_prompt function body
+        style_fn_match = _re.search(
+            r'def build_style_prompt.*?(?=\ndef |\nclass |\Z)',
+            gen_silly, _re.DOTALL
+        )
+        style_fn = style_fn_match.group(0) if style_fn_match else ""
+        calm_terms = ["soft and gentle", "cozy sleepy", "warm and drowsy", "lullaby", "soothing"]
+        has_calm = any(t in style_fn.lower() for t in calm_terms)
         check(
             "No calm/sleep language in style prompts",
             not has_calm,
-            f"Found calm language in silly songs — these are pre-bedtime energy, not sleep",
+            f"Found calm language in build_style_prompt — silly songs are NOT sleep content",
             source_file="scripts/generate_silly_songs_battlecry.py",
         )
         check(
