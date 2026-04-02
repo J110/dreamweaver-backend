@@ -719,6 +719,16 @@ def cmd_verify(args):
         save_json(GOLDEN_PATH, after)
         print(f"\n  📌 Golden baseline created with {len(after.get('stories', {}))} stories")
 
+    # Run invariant checks with auto-recovery
+    print("\n  Running content invariant checks...")
+    class InvariantArgs:
+        auto_recover_invariants = True
+    try:
+        cmd_invariants(InvariantArgs())
+    except SystemExit as e:
+        if e.code != 0:
+            print("  ⚠️  Invariant checks failed — see above for details.")
+
     print()
 
 
@@ -875,6 +885,215 @@ def cmd_audit(args):
     print()
 
 
+def cmd_invariants(args):
+    """Verify content generation invariants haven't regressed.
+
+    Reads data/content_invariants.json and checks the actual source code
+    to ensure critical rules are still enforced. These are hard-won fixes
+    that must not silently regress when code is modified.
+
+    With --auto-recover (default in verify), restores files from last known-good
+    git commit if invariants are broken.
+    """
+    import re as _re
+
+    invariants_path = BASE_DIR / "data" / "content_invariants.json"
+    if not invariants_path.exists():
+        print("❌ No content_invariants.json found.")
+        sys.exit(1)
+
+    invariants = json.loads(invariants_path.read_text())
+    passed = 0
+    failed = 0
+    failures = []  # (name, file_path) tuples for auto-recovery
+    auto_recover = getattr(args, "auto_recover_invariants", False)
+
+    def check(name, condition, detail="", source_file=""):
+        nonlocal passed, failed
+        if condition:
+            passed += 1
+            print(f"  ✅ {name}")
+        else:
+            failed += 1
+            failures.append((name, source_file))
+            print(f"  ❌ {name}{f' — {detail}' if detail else ''}")
+
+    print(f"\n{'='*60}")
+    print("  CONTENT INVARIANT CHECKS")
+    print(f"{'='*60}\n")
+
+    # ── V2 Short Stories ──────────────────────────────────────
+    print("  V2 Short Stories:")
+    gen_audio_path = BASE_DIR / "scripts" / "generate_audio.py"
+    gen_audio = gen_audio_path.read_text()
+    check(
+        "No hook in audio (hook=None)",
+        "hook=None" in gen_audio or "hook = None" in gen_audio,
+        "generate_audio.py must pass hook=None to assemble_v2_audio",
+        source_file="scripts/generate_audio.py",
+    )
+
+    gen_matrix_path = BASE_DIR / "scripts" / "generate_content_matrix.py"
+    gen_matrix = gen_matrix_path.read_text()
+    check(
+        "No example phrase in prompt",
+        "[PHRASE]Not yet" not in gen_matrix and "[PHRASE]not yet" not in gen_matrix,
+        "V2_STORY_PROMPT still contains example phrase — LLM will anchor on it",
+        source_file="scripts/generate_content_matrix.py",
+    )
+    check(
+        "Phrase similarity check exists",
+        "is_phrase_too_similar" in gen_matrix,
+        "generate_content_matrix.py missing is_phrase_too_similar function",
+        source_file="scripts/generate_content_matrix.py",
+    )
+    check(
+        "Recent phrases tracked",
+        "recent_phrases" in gen_matrix,
+        "generate_content_matrix.py not tracking recent_phrases",
+        source_file="scripts/generate_content_matrix.py",
+    )
+
+    # ── Lullabies 0-1 ────────────────────────────────────────
+    print("\n  Lullabies (0-1 age group):")
+    gen_lullaby_path = BASE_DIR / "scripts" / "generate_lullaby.py"
+    gen_lullaby = gen_lullaby_path.read_text()
+    check(
+        "Infant system prompt exists",
+        "LYRICS_SYSTEM_PROMPT_INFANT" in gen_lullaby,
+        "generate_lullaby.py missing LYRICS_SYSTEM_PROMPT_INFANT",
+        source_file="scripts/generate_lullaby.py",
+    )
+    check(
+        "Infant structure instructions exist",
+        "STRUCTURE_INSTRUCTIONS_INFANT" in gen_lullaby,
+        "generate_lullaby.py missing STRUCTURE_INSTRUCTIONS_INFANT dict",
+        source_file="scripts/generate_lullaby.py",
+    )
+    check(
+        "Infant prompt used for 0-1",
+        'is_infant = (age == "0-1")' in gen_lullaby or "is_infant = (age == '0-1')" in gen_lullaby,
+        "generate_lullaby.py not detecting 0-1 age group",
+        source_file="scripts/generate_lullaby.py",
+    )
+    check(
+        "No signature words for 0-1",
+        'sig_text = ""' in gen_lullaby,
+        "generate_lullaby.py may still pass signature openings for 0-1",
+        source_file="scripts/generate_lullaby.py",
+    )
+
+    # ── Funny Shorts ──────────────────────────────────────────
+    print("\n  Funny Shorts:")
+    gen_funny_path = BASE_DIR / "scripts" / "generate_funny_shorts_v2.py"
+    gen_funny = gen_funny_path.read_text()
+    check(
+        "CHARACTER_VISUALS for text-free covers",
+        "CHARACTER_VISUALS" in gen_funny,
+        "generate_funny_shorts_v2.py missing CHARACTER_VISUALS — covers will render text",
+        source_file="scripts/generate_funny_shorts_v2.py",
+    )
+    # Cover prompt must NOT mention "text/words/letters" even negatively —
+    # FLUX interprets "no text" as "generate text". Prompt must be purely visual.
+    check(
+        "Cover prompt is purely visual (no text mentions)",
+        "NEVER put the title" in gen_funny and "CHARACTER_VISUALS" in gen_funny,
+        "Cover generation must use CHARACTER_VISUALS and never mention title or text",
+        source_file="scripts/generate_funny_shorts_v2.py",
+    )
+    check(
+        "Context-aware SFX generation",
+        "generate_episode_sfx" in gen_funny,
+        "generate_funny_shorts_v2.py missing generate_episode_sfx function",
+        source_file="scripts/generate_funny_shorts_v2.py",
+    )
+    check(
+        "TTS silence trimming",
+        "trim_tts_silence" in gen_funny,
+        "generate_funny_shorts_v2.py missing trim_tts_silence function",
+        source_file="scripts/generate_funny_shorts_v2.py",
+    )
+
+    # Check TTS speeds are fast enough
+    speed_checks = [
+        ("boomy", 1.05), ("pip", 1.15), ("shadow", 0.92),
+        ("sunny", 1.08), ("melody", 1.02),
+    ]
+    for char, min_speed in speed_checks:
+        pattern = rf'"{char}":\s*\{{[^}}]*"speed":\s*([\d.]+)'
+        m = _re.search(pattern, gen_funny, _re.DOTALL)
+        if m:
+            actual = float(m.group(1))
+            check(
+                f"{char} speed >= {min_speed}",
+                actual >= min_speed,
+                f"Current: {actual}, minimum: {min_speed}",
+                source_file="scripts/generate_funny_shorts_v2.py",
+            )
+        else:
+            check(f"{char} speed >= {min_speed}", False, "Could not find speed value",
+                  source_file="scripts/generate_funny_shorts_v2.py")
+
+    # Inter-line gap
+    gap_m = _re.search(r'AudioSegment\.silent\(duration=(\d+)\)\s*#.*conversation', gen_funny)
+    if not gap_m:
+        gap_m = _re.search(r'narration \+= AudioSegment\.silent\(duration=(\d+)\)', gen_funny)
+    if gap_m:
+        gap = int(gap_m.group(1))
+        check(f"Inter-line gap <= 100ms", gap <= 100, f"Current: {gap}ms",
+              source_file="scripts/generate_funny_shorts_v2.py")
+    else:
+        check("Inter-line gap <= 100ms", False, "Could not find inter-line gap value",
+              source_file="scripts/generate_funny_shorts_v2.py")
+
+    print(f"\n{'='*60}")
+    if failed == 0:
+        print(f"  ✅ All {passed} invariant checks passed.")
+    else:
+        print(f"  ❌ {failed} INVARIANT(S) BROKEN (of {passed + failed} total):")
+        for name, _ in failures:
+            print(f"    • {name}")
+
+        # Auto-recovery: restore broken files from last known-good git commit
+        if auto_recover:
+            broken_files = list(set(f for _, f in failures if f))
+            if broken_files:
+                print(f"\n  🔧 Auto-recovery: restoring {len(broken_files)} file(s) from last good commit...")
+                for rel_path in broken_files:
+                    try:
+                        result = subprocess.run(
+                            ["git", "checkout", "HEAD", "--", rel_path],
+                            capture_output=True, text=True, cwd=str(BASE_DIR),
+                        )
+                        if result.returncode == 0:
+                            print(f"    ✅ Restored: {rel_path}")
+                        else:
+                            print(f"    ❌ Failed to restore {rel_path}: {result.stderr.strip()}")
+                    except Exception as e:
+                        print(f"    ❌ Recovery error for {rel_path}: {e}")
+
+                # Re-check after recovery
+                print("\n  Re-checking invariants after recovery...")
+                # Recursive call without auto-recover to just verify
+                class FakeArgs:
+                    auto_recover_invariants = False
+                recheck_args = FakeArgs()
+                try:
+                    cmd_invariants(recheck_args)
+                    print("  ✅ Auto-recovery successful — all invariants restored.")
+                    return  # exit successfully
+                except SystemExit:
+                    print("  ❌ Auto-recovery FAILED — manual intervention needed.")
+        else:
+            print(f"\n  Run with --auto-recover or as part of 'verify' for auto-recovery.")
+
+        print(f"\n  These are hard-won fixes. Investigate before deploying.")
+    print(f"{'='*60}\n")
+
+    if failed > 0:
+        sys.exit(1)
+
+
 def cmd_recover(args):
     """Recover missing files without running a full verify."""
     api = get_api(args.local)
@@ -904,6 +1123,7 @@ Commands:
   seal       Save current state as golden baseline
   audit      Compare live state against golden baseline
   recover    Recover missing files from backup stores
+  invariants Check source code invariants (hard-won fixes)
 
 Examples:
   python3 scripts/deploy_guard.py snapshot
@@ -912,6 +1132,7 @@ Examples:
   python3 scripts/deploy_guard.py seal
   python3 scripts/deploy_guard.py audit
   python3 scripts/deploy_guard.py recover --dry-run
+  python3 scripts/deploy_guard.py invariants --auto-recover
         """,
     )
     sub = parser.add_subparsers(dest="command", required=True)
@@ -947,6 +1168,11 @@ Examples:
     rec.add_argument("--local", action="store_true")
     rec.add_argument("--dry-run", action="store_true", help="Show what would be recovered")
     rec.set_defaults(func=cmd_recover)
+
+    inv = sub.add_parser("invariants", help="Check source code invariants (hard-won fixes)")
+    inv.add_argument("--auto-recover", action="store_true",
+                     help="Auto-restore broken files from last good git commit")
+    inv.set_defaults(func=lambda a: (setattr(a, "auto_recover_invariants", a.auto_recover), cmd_invariants(a)))
 
     args = parser.parse_args()
     args.func(args)

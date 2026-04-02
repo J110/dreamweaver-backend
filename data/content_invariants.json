@@ -1,0 +1,76 @@
+{
+  "_description": "Content generation invariants — verified by deploy_guard.py invariants. DO NOT weaken these rules.",
+  "_updated": "2026-04-02",
+
+  "v2_short_stories": {
+    "no_hook_in_audio": {
+      "rule": "V2 short story audio must NOT include the hook/title as a spoken line",
+      "file": "scripts/generate_audio.py",
+      "check": "hook=None in assemble_v2_audio call",
+      "fixed": "2026-04-02",
+      "symptom": "Extra spoken line at the beginning of every short story audio that doesn't match the text"
+    },
+    "phrase_diversity": {
+      "rule": "Repeated phrases must be unique per story — no example phrases in prompt, similarity check against recent 20",
+      "file": "scripts/generate_content_matrix.py",
+      "check_prompt": "No '[PHRASE]Not yet' example in V2_STORY_PROMPT",
+      "check_code": "is_phrase_too_similar function exists and is called",
+      "fixed": "2026-04-02",
+      "symptom": "Every story using 'not yet, not yet' as the repeated phrase"
+    }
+  },
+
+  "lullabies_0_1": {
+    "nonsense_only": {
+      "rule": "Age 0-1 lullabies must use nonsense syllables only — NO real English words",
+      "file": "scripts/generate_lullaby.py",
+      "check": "LYRICS_SYSTEM_PROMPT_INFANT used when age == '0-1'",
+      "check_code": "STRUCTURE_INSTRUCTIONS_INFANT dict exists with keys heartbeat, permission, shield, rocking",
+      "fixed": "2026-04-02",
+      "symptom": "0-1 age group lullabies getting real English lyrics instead of nonsense syllables"
+    },
+    "no_signature_words": {
+      "rule": "Age 0-1 must NOT use signature openings/closings (they contain real English words)",
+      "file": "scripts/generate_lullaby.py",
+      "check": "sig_text is empty string when age == '0-1'",
+      "fixed": "2026-04-02"
+    }
+  },
+
+  "funny_shorts": {
+    "no_text_on_covers": {
+      "rule": "Funny short covers must NEVER contain text — prompt must be purely visual, NEVER mention 'text/words/letters' even negatively (FLUX interprets 'no text' as 'generate text'). Use CHARACTER_VISUALS, never title.",
+      "file": "scripts/generate_funny_shorts_v2.py",
+      "check": "generate_cover uses CHARACTER_VISUALS for scene; prompt is purely visual; title param exists only for logging",
+      "check_code": "CHARACTER_VISUALS dict exists; prompt does NOT contain 'no text' or 'no words'; NEVER put the title in docstring",
+      "fixed": "2026-04-02",
+      "symptom": "FLUX renders title text visibly on cover images"
+    },
+    "fast_pace": {
+      "rule": "Funny shorts must use comedy-pace TTS speeds and tight inter-line gaps",
+      "file": "scripts/generate_funny_shorts_v2.py",
+      "check_values": {
+        "boomy_speed": ">= 1.05",
+        "pip_speed": ">= 1.15",
+        "shadow_speed": ">= 0.92",
+        "sunny_speed": ">= 1.08",
+        "melody_speed": ">= 1.02",
+        "inter_line_gap_ms": "<= 100"
+      },
+      "fixed": "2026-04-02",
+      "symptom": "Funny shorts sound too slow and lose comedic timing"
+    },
+    "context_aware_sfx": {
+      "rule": "SFX must be generated per-episode with surrounding dialogue context, not static library",
+      "file": "scripts/generate_funny_shorts_v2.py",
+      "check": "generate_episode_sfx function exists and is called in generate_episode",
+      "fixed": "2026-04-02"
+    },
+    "tts_silence_trimming": {
+      "rule": "TTS output must be trimmed of leading/trailing silence",
+      "file": "scripts/generate_funny_shorts_v2.py",
+      "check": "trim_tts_silence called after every generate_tts in generate_funny_short_tts",
+      "fixed": "2026-04-02"
+    }
+  }
+}

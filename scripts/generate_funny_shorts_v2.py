@@ -1158,21 +1158,28 @@ def generate_cover(title: str, episode_id: str, scene_description: str = "",
                    characters: list = None) -> Path | None:
     """Generate a cover image via Pollinations.ai FLUX.
 
-    CRITICAL: NEVER put the title or any words in the prompt — FLUX renders
-    text as visible letters on the image. Use only visual descriptions.
+    CRITICAL: NEVER put the title or any English words in the prompt.
+    FLUX renders ANY word-like token as visible text on the image.
+    Do NOT even say "no text" — that triggers FLUX to think about text.
+    Use purely visual, abstract descriptions only.
     """
     if not scene_description and characters:
         # Build a visual scene from characters — NO title, NO words
         char_visuals = [CHARACTER_VISUALS.get(c, "") for c in characters if c != "melody" and c in CHARACTER_VISUALS]
-        scene_description = " and ".join(char_visuals) if char_visuals else "cartoon animal characters"
-        scene_description += " in a cozy nighttime scene"
+        scene_description = " and ".join(char_visuals) if char_visuals else "cute cartoon animals"
+        scene_description += " in a cozy moonlit bedroom"
 
-    scene = scene_description or "cartoon animal characters in a cozy nighttime bedroom scene"
+    scene = scene_description or "cute cartoon animals snuggled in a cozy moonlit bedroom"
+
+    # FLUX anti-text strategy: DO NOT mention "text/words/letters" at all —
+    # even negatively. Instead, describe ONLY visual elements.
+    # Keep prompt short and purely visual.
     prompt = (
-        f"Children's book illustration, {scene}, "
-        f"cartoon style, gentle warm colors, cozy bedtime feeling, "
-        f"clean simple composition, "
-        f"absolutely no text, no words, no letters, no writing, no titles, no captions"
+        f"Digital painting of {scene}, "
+        f"soft pastel colors, warm glowing nightlight, "
+        f"starry window, plush pillows, dreamy atmosphere, "
+        f"children's picture book style, clean composition, "
+        f"flat color background, minimalist"
     )
     truncated = prompt[:600]
     encoded = quote(truncated, safe="")
@@ -1184,19 +1191,13 @@ def generate_cover(title: str, episode_id: str, scene_description: str = "",
         headers["Authorization"] = f"Bearer {POLLINATIONS_API_KEY}"
 
     try:
+        from PIL import Image
         with httpx.Client(timeout=120) as client:
             resp = client.get(url, headers=headers)
             if resp.status_code == 200 and len(resp.content) > 1000:
                 out_path = EPISODES_DIR / f"{episode_id}_cover.webp"
-                # Pollinations returns PNG, convert to WebP
-                try:
-                    from PIL import Image
-                    img = Image.open(io.BytesIO(resp.content))
-                    img.save(str(out_path), "WEBP", quality=85)
-                except Exception:
-                    # Fallback: save as-is
-                    out_path = EPISODES_DIR / f"{episode_id}_cover.png"
-                    out_path.write_bytes(resp.content)
+                img = Image.open(io.BytesIO(resp.content))
+                img.save(str(out_path), "WEBP", quality=85)
                 print(f"    ✓ Cover: {out_path.name}")
                 return out_path
             else:

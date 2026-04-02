@@ -30,14 +30,11 @@ COVERS_DIR.mkdir(parents=True, exist_ok=True)
 TOGETHER_KEY = os.getenv("TOGETHER_API_KEY", "")
 
 PROMPT_TPL = (
-    "Children's book illustration, bold cartoon style, bright saturated colors, "
-    "simple background, exaggerated funny expressions, playful and energetic, "
-    "square composition, thick outlines, expressive eyes, slightly exaggerated "
-    "proportions, Pixar-meets-picture-book aesthetic. "
-    "Scene: {desc} "
-    "DO NOT make it dreamy, muted, watercolor, or soft. This is comedy, not bedtime. "
-    "ABSOLUTELY NO TEXT, NO WORDS, NO LETTERS, NO NUMBERS anywhere in the image. "
-    "Pure illustration only."
+    "Digital painting of {desc}, "
+    "bold cartoon style, bright saturated colors, simple flat background, "
+    "exaggerated funny expressions, playful and energetic, "
+    "square composition, thick outlines, expressive eyes, "
+    "Pixar-meets-picture-book aesthetic, minimalist, clean"
 )
 
 
@@ -126,7 +123,8 @@ def main():
         return
 
     for p, d, sid, cover_file in missing:
-        desc = d.get("cover_description", d.get("title", "funny cartoon scene"))
+        # NEVER use title — FLUX renders it as visible text on the image
+        desc = d.get("cover_description", "cute cartoon animals with funny expressions")
         prompt = PROMPT_TPL.format(desc=desc)[:600]
         print(f"Generating: {sid}")
 
