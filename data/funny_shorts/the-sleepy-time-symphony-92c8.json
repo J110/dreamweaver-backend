@@ -1,0 +1,36 @@
+{
+  "id": "the-sleepy-time-symphony-92c8",
+  "title": "The Sleepy-Time Symphony",
+  "age_group": "2-5",
+  "comedy_type": "conversation",
+  "format": "conversation",
+  "content_type": "funny_short_v2",
+  "voices": [
+    "high_pitch_cartoon",
+    "young_sweet"
+  ],
+  "voice_combo": [
+    "high_pitch_cartoon",
+    "young_sweet"
+  ],
+  "primary_voice": "high_pitch_cartoon",
+  "characters": [
+    "pip",
+    "sunny",
+    "melody"
+  ],
+  "premise_summary": "",
+  "cover_description": "",
+  "cover_file": "funny_2_5_5fa3b2_cover.webp",
+  "duration_seconds": 82,
+  "script": "[TITLE: The Sleepy-Time Symphony]\n[CHARACTERS: Pip, Sunny, Melody]\n\n[HOST_INTRO]\nMELODY: So tonight, Pip and Sunny wanted to play a quiet lullaby. But I said, \"Let me conduct!\" Oh dear. Here\u2019s how it went.\n\n[/HOST_INTRO]\n\n[THE_CONVERSATION]\nPIP: Melody, that\u2019s not a lullaby.\nMELODY: It\u2019s a *masterpiece*.\nSUNNY: This is fine! This is completely fine!\nPIP: You\u2019re banging pots.\nMELODY: Percussion section.\n[SFX: soft_pop]\nPIP: The owl is awake.\nMELODY: Soloist!\n[SFX: tiny_squeak]\nSUNNY: The squirrels are hiding.\nMELODY: Audience participation.\n[SFX: gentle_rumble]\nPIP: You honked a horn.\nMELODY: Woodwinds.\n[SFX: slide_whistle_up]\nPIP: The bear is growling.\nMELODY: Bass section.\n[SFX: soft_splat]\nPIP: The bear is *here*.\nMELODY: [PAUSE: 600] ...that was supposed to happen.\n[SFX: pillow_thud]\nSUNNY: This is fine. This is *still* fine.\n[SFX: gentle_wind]\n\n[/THE_CONVERSATION]\n\n[THE_END]\nMELODY: And that\u2019s why you should never let me conduct. [BREAK] *giggles* Goodnight, little maestro.\n\n[/THE_END]",
+  "audio_file": "funny_2_5_5fa3b2.mp3",
+  "audio_url": "/audio/funny-shorts/funny_2_5_5fa3b2.mp3",
+  "cover": "/covers/funny-shorts/funny_2_5_5fa3b2_cover.webp",
+  "host_intro": "So tonight, Pip and Sunny wanted to play a quiet lullaby. But I said, \"Let me conduct!\" Oh dear. Here\u2019s how it went.",
+  "host_outro": "And that\u2019s why you should never let me conduct. *giggles* Goodnight, little maestro.",
+  "created_at": "2026-04-02",
+  "play_count": 0,
+  "replay_count": 0,
+  "has_baked_music": true
+}

@@ -1,0 +1,39 @@
+{
+  "id": "the-world-s-best-shadow-puppeteer-7e30",
+  "title": "The World's Best Shadow Puppeteer",
+  "age_group": "6-8",
+  "comedy_type": "conversation",
+  "format": "conversation",
+  "content_type": "funny_short_v2",
+  "voices": [
+    "mysterious_witch",
+    "high_pitch_cartoon",
+    "young_sweet"
+  ],
+  "voice_combo": [
+    "mysterious_witch",
+    "high_pitch_cartoon",
+    "young_sweet"
+  ],
+  "primary_voice": "mysterious_witch",
+  "characters": [
+    "shadow",
+    "sunny",
+    "pip",
+    "melody"
+  ],
+  "premise_summary": "",
+  "cover_description": "",
+  "cover_file": "funny_6_8_1f8ee6_cover.webp",
+  "duration_seconds": 110,
+  "script": "[TITLE: The World's Best Shadow Puppeteer]\n[CHARACTERS: Shadow, Sunny, Pip, Melody]\n\n[HOST_INTRO]\nMELODY: \"So, tonight, Sunny was showing off their shadow puppets. Pip and Shadow wanted to see. You should listen to what happened next.\"\n\n[THE_CONVERSATION]\nSUNNY: \"I am the world's best shadow puppeteer.\"\nPIP: \"Really? Show us a rabbit.\"\nSUNNY: \"Easy. Watch this.\"\n[SFX: soft_ding]\nSHADOW: \"According to my calculations... hmm. That appears to be a potato.\"\nPIP: \"That's not a rabbit. That's a potato.\"\nSUNNY: \"It's a *modern* rabbit. Very avant-garde.\"\nPIP: \"Make it hop then.\"\nSUNNY: \"Oh, it's hopping. Can't you see?\"\n[SFX: gentle_rumble]\nSHADOW: \"It appears to be... dancing.\"\nPIP: \"Rabbits don't dance!\"\nSUNNY: \"This one does. It's a *dancing rabbit*.\"\nPIP: \"Fine. Make a dragon then.\"\nSUNNY: \"No problem. Here comes the dragon.\"\n[SFX: slide_whistle_up]\nSHADOW: \"That is... a very small dragon.\"\nSUNNY: \"It's a *baby* dragon.\"\nPIP: \"Baby dragons don't sneeze!\"\nSUNNY: \"This one does. Achoo! See?\"\n[SFX: soft_splat]\nPIP: \"That was your hand sneezing!\"\nSUNNY: \"The dragon was *possessing* my hand.\"\n[PAUSE: 600]\nSHADOW: \"...hmm. Fascinating.\"\nPIP: \"You can't even make a shadow stay still!\"\nSUNNY: \"I *could* make it stay still. I just *choose* not to.\"\n[SFX: pillow_thud]\nPIP: \"I give up. You're impossible.\"\nSUNNY: \"This is fine! This is completely fine.\"\n[BREAK]\n\n[THE_END]\nMELODY: \"And that's why Sunny's shadow puppets are... *unique*. Goodnight, little dreamer.\"",
+  "audio_file": "funny_6_8_1f8ee6.mp3",
+  "audio_url": "/audio/funny-shorts/funny_6_8_1f8ee6.mp3",
+  "cover": "/covers/funny-shorts/funny_6_8_1f8ee6_cover.webp",
+  "host_intro": "\"So, tonight, Sunny was showing off their shadow puppets. Pip and Shadow wanted to see. You should listen to what happened next.\"",
+  "host_outro": "",
+  "created_at": "2026-04-02",
+  "play_count": 0,
+  "replay_count": 0,
+  "has_baked_music": true
+}

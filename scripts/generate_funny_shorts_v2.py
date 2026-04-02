@@ -36,6 +36,7 @@ if _env_path.exists():
 
 import httpx
 from pydub import AudioSegment
+from pydub.silence import detect_leading_silence
 
 # ── Directories ───────────────────────────────────────────────────
 
@@ -61,7 +62,7 @@ CHARACTER_VOICES = {
         # Confident, sure of himself. Not louder — FASTER. Misplaced confidence.
         "voice_id": "comedic_villain",
         "exaggeration": 0.55,
-        "speed": 0.95,
+        "speed": 1.05,
         "cfg_weight": 0.55,
         "catchphrase": "That was SUPPOSED to happen.",
     },
@@ -69,31 +70,31 @@ CHARACTER_VOICES = {
         # Quick, slightly breathless, exasperated. Fastest character.
         "voice_id": "high_pitch_cartoon",
         "exaggeration": 0.65,
-        "speed": 1.10,
+        "speed": 1.18,
         "cfg_weight": 0.50,
         "catchphrase": "I said this would happen. I SAID.",
     },
     "shadow": {
-        # Measured but not glacial. Precise, over-formal.
+        # THE ONLY slow character. Measured contrast IS his comedy.
         "voice_id": "mysterious_witch",
         "exaggeration": 0.45,
-        "speed": 0.88,
+        "speed": 0.95,
         "cfg_weight": 0.60,
         "catchphrase": "According to my calculations... hmm.",
     },
     "sunny": {
-        # Bright, warm, snappy optimism. Not slow — peppy.
+        # Bright, warm, snappy optimism. Peppy and quick.
         "voice_id": "young_sweet",
         "exaggeration": 0.60,
-        "speed": 1.00,
+        "speed": 1.10,
         "cfg_weight": 0.48,
         "catchphrase": "This is fine! This is completely fine.",
     },
     "melody": {
-        # Narrator/host. Clear, warm, conspiratorial. Slightly faster than story narrators.
+        # Narrator/host. Clear, warm, conspiratorial. Comedy pace.
         "voice_id": "musical_original",
         "exaggeration": 0.50,
-        "speed": 0.95,
+        "speed": 1.05,
         "cfg_weight": 0.55,
         "catchphrase": "And that's when things got... interesting.",
     },
@@ -419,10 +420,12 @@ Pick ONLY from this list — do NOT invent new ones:
 SFX never carry information. They punctuate emotion.
 The episode MUST make complete sense with ALL SFX removed.
 
-PAUSES — keep them SHORT and snappy:
-[PAUSE: 400] — beat between lines
-[PAUSE: 600] — before a punchline (silence that makes it land)
-[PAUSE: 800] — biggest pause, used ONCE max for the peak moment
+PAUSES — comedy pauses are SHORT. The silence is a flash, not a gap.
+The child should barely notice it — just enough for the brain
+to go "wait—" before the punchline hits.
+[PAUSE: 200] — quick beat after a catchphrase
+[PAUSE: 400] — normal beat (setup before a punchline)
+[PAUSE: 600] — the biggest dramatic pause, used ONCE per episode
 
 OUTPUT TAGS:
 
@@ -833,15 +836,123 @@ def generate_tts(text: str, voice_id: str, exaggeration: float,
     raise RuntimeError(f"TTS failed for voice={voice_id}")
 
 
-def generate_funny_short_tts(segments: list) -> list:
+def trim_tts_silence(audio: AudioSegment, silence_threshold=-40, min_silence_ms=50) -> AudioSegment:
+    """Remove leading and trailing silence from TTS output."""
+    start_trim = detect_leading_silence(audio,
+                                         silence_threshold=silence_threshold,
+                                         chunk_size=10)
+    end_trim = detect_leading_silence(audio.reverse(),
+                                       silence_threshold=silence_threshold,
+                                       chunk_size=10)
+    start_trim = max(0, start_trim - min_silence_ms)
+    end_trim = max(0, end_trim - min_silence_ms)
+    trimmed = audio[start_trim:len(audio) - end_trim] if end_trim > 0 else audio[start_trim:]
+    return trimmed if len(trimmed) > 0 else audio
+
+
+# ═══════════════════════════════════════════════════════════════════
+# Context-Aware SFX Generation
+# ═══════════════════════════════════════════════════════════════════
+
+BASE_SFX_SOUNDS = {
+    "tiny_squeak":        "short expressive cartoon squeak",
+    "gentle_rumble":      "low comedic rumble with personality",
+    "pillow_thud":        "soft comedic thud like landing on something soft",
+    "soft_pop":           "cartoon bubble pop with attitude",
+    "soft_ding":          "bright cartoon lightbulb ding",
+    "warm_tada":          "tiny pathetic fanfare trying its best",
+    "soft_splat":         "cartoon squelch with comic timing",
+    "slide_whistle_up":   "classic slide whistle rising",
+    "slide_whistle_down": "classic slide whistle falling sadly",
+    "spring_boing":       "cartoon spring bounce",
+    "single_cricket":     "lone cricket chirp in awkward silence",
+    "gentle_crash":       "soft cartoon tumble sequence",
+    "gear_clink":         "tiny mechanical whirring and clicking",
+    "gentle_wind":        "soft empty breeze of nothingness",
+}
+
+
+def _get_surrounding_text(segments: list, index: int) -> tuple:
+    """Get dialogue text before and after an SFX segment."""
+    prev_line = ""
+    for j in range(index - 1, -1, -1):
+        if segments[j]["type"] in ("dialogue", "narration") and segments[j].get("text", "").strip():
+            prev_line = segments[j]["text"]
+            break
+    next_line = ""
+    for j in range(index + 1, len(segments)):
+        if segments[j]["type"] in ("dialogue", "narration") and segments[j].get("text", "").strip():
+            next_line = segments[j]["text"]
+            break
+    return prev_line, next_line
+
+
+def build_comedy_sfx_prompt(sfx_name: str, line_before: str, line_after: str) -> str:
+    """Build a prompt that describes the COMEDY MOMENT, not just a sound."""
+    base = BASE_SFX_SOUNDS.get(sfx_name, "short cartoon comedy sound")
+    return (
+        f"{base}, "
+        f"this sound plays right after someone says '{line_before[:60]}' "
+        f"and right before someone says '{line_after[:60]}', "
+        f"it's a comedy punchline sound, cartoonish and expressive, "
+        f"warm not loud, full of personality, "
+        f"the kind of sound that makes a child giggle, "
+        f"1-2 seconds, clean ending with short fade"
+    )
+
+
+def trim_and_fade_sfx(audio: AudioSegment, fade_out_ms: int = 200) -> AudioSegment:
+    """Trim silence and apply fade-out to SFX."""
+    start = detect_leading_silence(audio, silence_threshold=-40, chunk_size=10)
+    audio = audio[start:]
+    audio = audio.fade_out(fade_out_ms)
+    return audio
+
+
+def generate_episode_sfx(segments: list) -> dict:
+    """Generate unique SFX for each comedy moment in the episode.
+
+    Returns dict mapping segment index → AudioSegment.
+    """
+    sfx_lookup = {}
+    for i, seg in enumerate(segments):
+        if seg["type"] != "sfx":
+            continue
+
+        sfx_name = seg["description"].strip().lower()
+        prev_line, next_line = _get_surrounding_text(segments, i)
+        prompt = build_comedy_sfx_prompt(sfx_name, prev_line, next_line)
+        print(f"    SFX [{sfx_name}]: {prompt[:80]}...")
+
+        try:
+            audio = generate_cassetteai(
+                prompt, 2,
+                endpoint="cassetteai/sound-effects-generator",
+            )
+            sfx_lookup[i] = trim_and_fade_sfx(audio)
+            print(f"      ✓ {len(sfx_lookup[i])}ms")
+        except Exception as e:
+            print(f"      ✗ FAILED: {e}")
+            # Fallback to static SFX library
+            path = match_sfx(sfx_name)
+            if path:
+                sfx_lookup[i] = AudioSegment.from_file(str(path))
+
+    return sfx_lookup
+
+
+def generate_funny_short_tts(segments: list, episode_sfx: dict = None) -> list:
     """Generate TTS for all segments with per-character params.
 
     Returns list of (seg_type, content, character) tuples.
+    episode_sfx: dict mapping segment index → AudioSegment (context-aware SFX).
     """
+    if episode_sfx is None:
+        episode_sfx = {}
     audio_segments = []
     is_breaking = False  # Tracks [BREAK] → next Melody line uses breaking params
 
-    for seg in segments:
+    for seg_idx, seg in enumerate(segments):
         if seg["type"] == "break_marker":
             is_breaking = True
             continue
@@ -872,6 +983,7 @@ def generate_funny_short_tts(segments: list) -> list:
                 speed=params["speed"],
                 cfg_weight=params["cfg_weight"],
             )
+            audio = trim_tts_silence(audio)
             audio_segments.append(("audio", audio, char))
 
         elif seg["type"] == "narration":
@@ -891,16 +1003,21 @@ def generate_funny_short_tts(segments: list) -> list:
                 speed=params["speed"],
                 cfg_weight=params["cfg_weight"],
             )
+            audio = trim_tts_silence(audio)
             audio_segments.append(("audio", audio, "melody"))
 
         elif seg["type"] == "pause":
             audio_segments.append(("pause", seg["ms"], None))
 
         elif seg["type"] == "sfx":
-            sfx_path = match_sfx(seg["description"])
-            if sfx_path:
-                sfx_audio = AudioSegment.from_file(str(sfx_path))
-                audio_segments.append(("sfx", sfx_audio, None))
+            # Prefer context-aware SFX, fall back to static library
+            if seg_idx in episode_sfx:
+                audio_segments.append(("sfx", episode_sfx[seg_idx], None))
+            else:
+                sfx_path = match_sfx(seg["description"])
+                if sfx_path:
+                    sfx_audio = AudioSegment.from_file(str(sfx_path))
+                    audio_segments.append(("sfx", sfx_audio, None))
 
     # Throwaway TTS call to prevent last-line repeat (Chatterbox quirk)
     try:
@@ -984,7 +1101,7 @@ def assemble_funny_short(audio_segments: list, bed_path: Path,
     for seg_type, content, character in audio_segments:
         if seg_type == "audio":
             narration += content
-            narration += AudioSegment.silent(duration=150)  # Snappy, not leisurely
+            narration += AudioSegment.silent(duration=80)   # Almost overlapping — like real conversation
 
         elif seg_type == "pause":
             punchline_positions.append(len(narration) + content)
@@ -993,7 +1110,7 @@ def assemble_funny_short(audio_segments: list, bed_path: Path,
         elif seg_type == "sfx":
             narration += AudioSegment.silent(duration=100)  # Tiny gap before SFX
             narration += content
-            narration += AudioSegment.silent(duration=200)  # Gap after SFX
+            narration += AudioSegment.silent(duration=200)  # Quick reaction gap
 
     # Gap before outro
     narration += AudioSegment.silent(duration=1000)
@@ -1107,15 +1224,20 @@ def generate_episode(age_group: str, setup: str, characters: list) -> dict | Non
     else:
         print(f"    Comedy bed exists, reusing")
 
-    # 3. Generate TTS for all segments
-    print("  [3/5] Generating TTS...")
-    audio_segments = generate_funny_short_tts(parsed["segments"])
+    # 3a. Generate context-aware SFX for this episode
+    print("  [3/6] Generating context-aware SFX...")
+    episode_sfx = generate_episode_sfx(parsed["segments"])
+    print(f"    {len(episode_sfx)} context-aware SFX generated")
+
+    # 3b. Generate TTS for all segments (SFX replaced by context-aware versions)
+    print("  [4/6] Generating TTS...")
+    audio_segments = generate_funny_short_tts(parsed["segments"], episode_sfx=episode_sfx)
     print(f"    {sum(1 for t, _, _ in audio_segments if t == 'audio')} voice segments, "
           f"{sum(1 for t, _, _ in audio_segments if t == 'sfx')} SFX, "
           f"{sum(1 for t, _, _ in audio_segments if t == 'pause')} pauses")
 
-    # 4. Assemble
-    print("  [4/5] Assembling...")
+    # 5. Assemble
+    print("  [5/6] Assembling...")
     intro_path = OUTPUT_DIR / "show_intro.mp3"
     outro_path = OUTPUT_DIR / "show_outro.mp3"
 
@@ -1148,8 +1270,8 @@ def generate_episode(age_group: str, setup: str, characters: list) -> dict | Non
     print(f"    ✓ {episode_id}.mp3 ({len(with_music) / 1000:.0f}s)")
     print(f"    ✓ {episode_id}_nomusic.mp3 ({len(without_music) / 1000:.0f}s)")
 
-    # 5. Generate cover
-    print("  [5/5] Generating cover...")
+    # 6. Generate cover
+    print("  [6/6] Generating cover...")
     cover_path = generate_cover(parsed["title"], episode_id)
 
     # Save metadata
@@ -1175,10 +1297,78 @@ def generate_episode(age_group: str, setup: str, characters: list) -> dict | Non
     return metadata
 
 
-def generate_all_episodes():
+def generate_fresh_seed(age_group: str) -> dict:
+    """Generate a fresh episode seed via Mistral AI."""
+    import random
+    from mistralai import Mistral
+
+    comedy_types = {
+        "2-5": ["terrible_excuse", "negotiation", "expert_who_isnt"],
+        "6-8": ["expert_who_isnt", "terrible_excuse", "negotiation"],
+        "9-12": ["negotiation", "terrible_excuse", "expert_who_isnt"],
+    }
+    char_pools = {
+        "2-5": [["boomy", "pip", "melody"], ["boomy", "sunny", "melody"], ["pip", "sunny", "melody"]],
+        "6-8": [["shadow", "sunny", "pip", "melody"], ["boomy", "shadow", "melody"], ["shadow", "pip", "melody"]],
+        "9-12": [["boomy", "melody"], ["boomy", "shadow", "melody"], ["shadow", "sunny", "melody"]],
+    }
+
+    comedy_type = random.choice(comedy_types[age_group])
+    characters = random.choice(char_pools[age_group])
+
+    # Load existing episode titles to avoid duplicates
+    existing_titles = []
+    data_dir = BACKEND_DIR / "data" / "funny_shorts"
+    if data_dir.exists():
+        for f in data_dir.glob("*.json"):
+            try:
+                meta = json.loads(f.read_text())
+                existing_titles.append(meta.get("title", ""))
+            except Exception:
+                pass
+
+    avoid = ""
+    if existing_titles:
+        avoid = f"\nExisting episode topics (yours MUST be different): {', '.join(existing_titles[-10:])}\n"
+
+    prompt = (
+        f"Generate a funny bedtime short premise for ages {age_group}.\n"
+        f"Comedy type: {comedy_type}\n"
+        f"Characters: {', '.join(characters)}\n"
+        f"{avoid}\n"
+        f"Write ONLY a 2-3 sentence premise describing the situation and comedy escalation. "
+        f"No script, no dialogue — just the setup. Keep it simple and funny."
+    )
+
+    client = Mistral(api_key=MISTRAL_API_KEY)
+    resp = client.chat.complete(
+        model="mistral-large-latest",
+        messages=[
+            {"role": "system", "content": "You write comedy premises for children's bedtime audio shorts. Short, punchy, one situation."},
+            {"role": "user", "content": prompt},
+        ],
+        temperature=0.95,
+        max_tokens=200,
+    )
+
+    setup = resp.choices[0].message.content.strip()
+    print(f"  Fresh seed [{age_group}]: {setup[:80]}...")
+    return {"setup": setup, "characters": characters, "comedy_type": comedy_type}
+
+
+def generate_all_episodes(fresh: bool = False):
     """Generate 3 test episodes (one per age group)."""
     results = []
-    for age_group, seed in EPISODE_SEEDS.items():
+
+    if fresh:
+        seeds = {}
+        for age in ["2-5", "6-8", "9-12"]:
+            print(f"\n  Generating fresh seed for {age}...")
+            seeds[age] = generate_fresh_seed(age)
+    else:
+        seeds = EPISODE_SEEDS
+
+    for age_group, seed in seeds.items():
         try:
             result = generate_episode(
                 age_group, seed["setup"], seed["characters"],
@@ -1209,6 +1399,8 @@ def main():
                         help="Generate 5 intro/outro candidates")
     parser.add_argument("--episodes", action="store_true",
                         help="Generate 3 test episodes")
+    parser.add_argument("--fresh", action="store_true",
+                        help="Generate fresh episode seeds via Mistral (use with --episodes)")
     parser.add_argument("--all", action="store_true",
                         help="Run all steps in sequence")
     parser.add_argument("--force", action="store_true",
@@ -1235,7 +1427,7 @@ def main():
         print("\n" + "=" * 60)
         print("STEP 3: Generating Test Episodes")
         print("=" * 60)
-        generate_all_episodes()
+        generate_all_episodes(fresh=args.fresh or args.all)
 
     print("\nDone!")
 

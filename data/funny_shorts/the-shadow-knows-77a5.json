@@ -1,0 +1,36 @@
+{
+  "id": "the-shadow-knows-77a5",
+  "title": "The Shadow Knows",
+  "age_group": "9-12",
+  "comedy_type": "conversation",
+  "format": "conversation",
+  "content_type": "funny_short_v2",
+  "voices": [
+    "mysterious_witch",
+    "young_sweet"
+  ],
+  "voice_combo": [
+    "mysterious_witch",
+    "young_sweet"
+  ],
+  "primary_voice": "mysterious_witch",
+  "characters": [
+    "shadow",
+    "sunny",
+    "melody"
+  ],
+  "premise_summary": "",
+  "cover_description": "",
+  "cover_file": "funny_9_12_69648a_cover.webp",
+  "duration_seconds": 131,
+  "script": "[TITLE: The Shadow Knows]\n[CHARACTERS: Shadow, Sunny, Melody]\n\n[HOST_INTRO]\nMELODY: So, Sunny lost their math homework. And Shadow... well, you'll see. This is one of those conversations that just gets weirder. Ready?\n[/HOST_INTRO]\n\n[THE_CONVERSATION]\nSUNNY: My homework is gone! Completely gone!\nSHADOW: According to my calculations... hmm. That is statistically improbable.\nSUNNY: Unless... it was eaten.\nSHADOW: By whom?\nSUNNY: By your shadow! It\u2019s always hungry at night!\n[SFX: tiny_squeak]\nSHADOW: That is not a recognized digestive process.\nSUNNY: But shadows *do* eat things! Like light! And socks!\nSHADOW: Socks are not scientifically proven to be consumed by shadows.\nSUNNY: Then explain my missing left sock from Tuesday!\n[PAUSE: 400]\nSHADOW: ...I may have misplaced it during a dimensional experiment.\nSUNNY: Aha! So you *do* eat things!\nSHADOW: That was an accident. A *regrettable* accident.\nSUNNY: Then you won\u2019t mind if we check your stomach!\n[SFX: gentle_rumble]\nSHADOW: That is not how shadows work.\nSUNNY: But if you *did* eat it, we could get it back!\nSHADOW: How?\nSUNNY: Jumping jacks! Pickle juice! A squirrel to shake you!\n[SFX: slide_whistle_up]\nSHADOW: I refuse to be shaken by a rodent.\nSUNNY: Then admit you ate it!\nSHADOW: ...Fine. I may have *temporarily* stored it.\nSUNNY: Where?!\nSHADOW: In my *shadow dimension stomach*.\n[SFX: soft_pop]\nMELODY: [BREAK] Oh no. No no no.\nSUNNY: That\u2019s amazing! Can we visit?!\nSHADOW: Only if you bring a flashlight. And a snack.\n[SFX: gentle_crash]\nSUNNY: This is fine! This is completely fine!\n[/THE_CONVERSATION]\n\n[THE_END]\nMELODY: And that\u2019s why you should never let Shadow babysit your homework. Goodnight.\n[/THE_END]",
+  "audio_file": "funny_9_12_69648a.mp3",
+  "audio_url": "/audio/funny-shorts/funny_9_12_69648a.mp3",
+  "cover": "/covers/funny-shorts/funny_9_12_69648a_cover.webp",
+  "host_intro": "So, Sunny lost their math homework. And Shadow... well, you'll see. This is one of those conversations that just gets weirder. Ready?",
+  "host_outro": "And that\u2019s why you should never let Shadow babysit your homework. Goodnight.",
+  "created_at": "2026-04-02",
+  "play_count": 0,
+  "replay_count": 0,
+  "has_baked_music": true
+}
