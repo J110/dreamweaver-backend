@@ -652,9 +652,14 @@ ORIGINAL LYRICS:
 {lyrics}
 
 Fix the problems. The song must be SHORT — max {MAX_LINES} lines total.
-Two verses, two chorus repeats, one ending. No verse 3. No parent lines.
-Max 8 words per line. Keep every line as a complete sentence a child
-would actually say. Natural rhymes only — no forced wordplay.
+STRUCTURE: [verse 1] 4 lines, [chorus] 3-4 lines, [verse 2] 4 lines,
+[chorus] identical repeat, [ending] 2-3 lines. That's it.
+No verse 3. No bridge. No parent lines. No extra sections.
+
+Max 9 syllables per line. Use short simple words.
+Do NOT fix syllable count by splitting into more lines —
+keep exactly 4 lines per verse. Rewrite each line shorter instead.
+Natural rhymes only — no forced wordplay.
 
 Output the COMPLETE corrected lyrics with section tags, then [COVER: one-line visual scene].
 No explanations."""
@@ -1212,7 +1217,7 @@ def generate_silly_song(
 
         fixable_types = ("missing_cry", "chorus_inconsistent",
                          "no_sfx", "few_verses", "nonsense_simile",
-                         "too_many_syllables")
+                         "too_many_syllables", "too_many_lines")
         for retry_num in range(max_retries):
             fixable = [e for e in structured if e["type"] in fixable_types]
             if not fixable:
