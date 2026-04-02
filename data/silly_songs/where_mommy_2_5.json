@@ -1,0 +1,18 @@
+{
+  "id": "where_mommy_2_5",
+  "title": "Where'S Mommy",
+  "age_group": "2-5",
+  "lyrics": "[verse 1]\nI want one more cookie now!\nI reached up high\u2014*clink!*\u2014somehow.\nYou said one more, I heard you say.\nI ate that one\u2014now where\u2019s my pay?\n\n[chorus]\nWhere\u2019s Mommy? Where\u2019d she go?\nShe left me here, I don\u2019t know!\n*splat!* The bowl went in the sink.\nWhere\u2019s Mommy? Tell me\u2014quick!\n\n[verse 2]\nI licked the crumbs, they\u2019re all gone too.\nNow what\u2019s a kid like me to do?\nThe chair\u2019s too high, the jar\u2019s too far.\n*crash!* Oops! Now look at that jar!\n\n[chorus]\nWhere\u2019s Mommy? Where\u2019d she go?\nShe left me here, I don\u2019t know!\nWhere\u2019s Mommy? Tell me quick!\nI need her back\u2014this isn\u2019t slick!\n\n[ending]\nWhere\u2019s Mommy\u2026 where\u2019s she gone?\nI\u2019ll wait right here\u2026 yawn\u2026 alone\u2026\nShhh\u2026 night-night\u2026 where\u2019s Mommy?",
+  "style_prompt": "Catchy children's song, ukulele and hand claps, 124 BPM, strong bass, punchy beat, bouncy groovy infectious singalong, impossible to sit still, makes you move",
+  "instruments": "ukulele and hand claps",
+  "tempo": 124,
+  "scene": "The kitchen clock reads 4:17 PM, and you just slid the cookie jar across the counter saying, \"One more, then Mommy\u2019s back in a minute.\" You turn to rinse the mixing bowl in the sink, and from the high chair, crumbs still clinging to his chin, he shouts, \"Where\u2019s Mommy?",
+  "cover_description": "A chubby hand knocks over a cookie jar, crumbs flying everywhere.",
+  "animation_preset": "bounce_rhythmic",
+  "created_at": "2026-04-02",
+  "play_count": 0,
+  "replay_count": 0,
+  "battle_cry_id": "where_mommy",
+  "battle_cry": "Where's Mommy",
+  "generation_method": "battlecry_v3"
+}
