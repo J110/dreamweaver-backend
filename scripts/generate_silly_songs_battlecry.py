@@ -1352,10 +1352,17 @@ Examples:
 
     # ── Legacy modes: --test, --all, --cry ──
     if args.cry:
-        songs_to_gen = [s for s in TEST_SONGS if s["cry_id"] == args.cry]
+        # Look up from full BATTLE_CRIES library first, then fall back to TEST_SONGS
+        if args.cry in BATTLE_CRIES:
+            cry_data = BATTLE_CRIES[args.cry]
+            # Use first eligible age group, or --age if provided
+            age = cry_data["ages"][0]
+            songs_to_gen = [{"cry_id": args.cry, "cry": cry_data["cry"], "age": age}]
+        else:
+            songs_to_gen = [s for s in TEST_SONGS if s["cry_id"] == args.cry]
         if not songs_to_gen:
             print(f"Unknown cry_id: {args.cry}")
-            print(f"Available: {', '.join(s['cry_id'] for s in TEST_SONGS)}")
+            print(f"Available: {', '.join(BATTLE_CRIES.keys())}")
             sys.exit(1)
     elif args.test:
         songs_to_gen = TEST_MODE_SONGS
