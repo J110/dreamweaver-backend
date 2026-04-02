@@ -14,11 +14,13 @@ import argparse
 import io
 import json
 import os
+import random
 import re
 import sys
 import time
 import uuid
 from datetime import datetime, timezone
+from difflib import SequenceMatcher
 from pathlib import Path
 from urllib.parse import quote, urlencode
 
@@ -259,8 +261,111 @@ COMEDY_BED_PROMPT = (
 )
 
 
-# ── Episode Seeds ────────────────────────────────────────────────
+# ── Diversity System ─────────────────────────────────────────────
+# Every episode dimension is tracked and rotated so the LLM can't
+# repeat the same pattern. Pool sizes × recency windows = months
+# of daily episodes before any COMBINATION repeats.
 
+DYNAMICS = [
+    "usual",            # One wrong, one warns
+    "reversal",         # Usually-wrong character is right, nobody believes them
+    "alliance",         # Two characters team up badly
+    "competition",      # Two characters try the same thing, both fail differently
+    "misunderstanding", # Talking about different things without realising
+    "helper",           # Genuine help that makes everything worse
+    "secret",           # One hiding something obvious, badly
+]
+
+DYNAMIC_DESCRIPTIONS = {
+    "usual":            "One character is wrong about something. Another character sees it coming. The wrong character doesn't listen.",
+    "reversal":         "The character who's USUALLY wrong is actually right this time. Nobody believes them because of their reputation. The frustration of being right and ignored.",
+    "alliance":         "Two characters who usually disagree team up. Their alliance is terrible. They make each other worse, not better.",
+    "competition":      "Two characters try to do the same thing. Both fail, but in completely different ways. Neither admits the other did better.",
+    "misunderstanding": "Two characters think they're talking about the same thing but they're not. Every line makes sense to the speaker but is absurd in context.",
+    "helper":           "One character genuinely tries to help another. Every act of help makes things worse. Both mean well. That's what makes it funny.",
+    "secret":           "One character is hiding something obvious. Everyone can clearly tell. The character thinks they're being incredibly subtle.",
+}
+
+CHARACTER_COMBOS = {
+    "2-5": [
+        ["boomy", "pip"],
+        ["boomy", "sunny"],
+        ["pip", "sunny"],
+    ],
+    "6-8": [
+        ["shadow", "sunny", "pip"],
+        ["boomy", "shadow"],
+        ["boomy", "pip", "sunny"],
+        ["shadow", "pip"],
+    ],
+    "9-12": [
+        ["boomy", "melody"],
+        ["boomy", "shadow"],
+        ["shadow", "melody"],
+        ["boomy", "shadow", "sunny"],
+    ],
+}
+
+TOPICS = [
+    "bedtime",       # Sleep, dark, dreams, nightlights
+    "food",          # Eating, cooking, snacks, meals
+    "school",        # Homework, teachers, classes
+    "hygiene",       # Teeth, bath, washing, haircuts
+    "technology",    # Phones, apps, tablets, games
+    "nature",        # Weather, animals, outdoors
+    "household",     # Chores, cleaning, organising
+    "social",        # Friends, siblings, sharing
+    "clothing",      # Getting dressed, fashion, costumes
+    "imagination",   # Inventions, experiments, theories
+]
+
+MELODY_ROLES = [
+    "overheard",     # "I overheard Boomy and Pip talking..."
+    "told",          # "Boomy told me something today..."
+    "witnessed",     # "I was there when this happened..."
+    "warned",        # "I tried to warn them..."
+    "asked",         # "Pip asked me a question today..."
+    "discovered",    # "I found out something about Shadow..."
+]
+
+MELODY_ROLE_DESCRIPTIONS = {
+    "overheard":   "Melody overheard the other characters talking and is sharing what she heard with the child.",
+    "told":        "One of the characters told Melody about what happened, and Melody is passing it along.",
+    "witnessed":   "Melody was there when it happened and is recounting it.",
+    "warned":      "Melody tried to warn the characters beforehand. They didn't listen. She's telling the child what happened next.",
+    "asked":       "One of the characters came to Melody with a question. The conversation went sideways.",
+    "discovered":  "Melody discovered something about one of the characters and is sharing the evidence.",
+}
+
+ENDINGS = [
+    "falls_asleep",      # Character falls asleep mid-conversation
+    "accidentally_right", # The wrong character turns out correct
+    "gives_up",          # Character quietly surrenders
+    "distracted",        # Character gets distracted by something else
+    "agrees",            # Characters accidentally agree
+    "question",          # Ends on an unanswered question
+    "silence",           # Just... silence. Cricket.
+]
+
+ENDING_DESCRIPTIONS = {
+    "falls_asleep":      "One character falls asleep mid-sentence. The other character is still talking. Then they fall asleep too.",
+    "accidentally_right": "The character who was wrong turns out to be accidentally correct in the dumbest way possible.",
+    "gives_up":          "One character quietly gives up. Not dramatically. Just a soft '...fine.' The other character doesn't even notice.",
+    "distracted":        "The argument is interrupted because one character notices something completely unrelated and forgets what they were arguing about.",
+    "agrees":            "Both characters accidentally say the same thing at the same time. Awkward pause. Then they both deny it.",
+    "question":          "The episode ends on a question nobody can answer. Beat of silence. Cricket.",
+    "silence":           "Everyone just... stops talking. The silence is the punchline. Cricket chirps.",
+}
+
+CHARACTER_DESCRIPTIONS = {
+    "boomy":  "Boomy — warm, confident, always certain he's right even when he's completely wrong. Not loud, just sure.",
+    "pip":    "Pip — slightly fast, earnest, always sees the problem coming, always gets talked over.",
+    "shadow": "Shadow — slow, measured, speaks like a professor explaining something with complete confidence. Always wrong.",
+    "sunny":  "Sunny — warm, relentlessly optimistic about clearly terrible situations. Genuinely believes everything is fine.",
+    "melody": "Melody — the narrator. Warm, conspiratorial with the child, occasionally breaks composure.",
+}
+
+# Legacy fallback seeds (used when --fresh is not specified)
 EPISODE_SEEDS = {
     "2-5": {
         "setup": (
@@ -271,7 +376,6 @@ EPISODE_SEEDS = {
             "he's not. His voice gets smaller each time."
         ),
         "characters": ["boomy", "pip", "melody"],
-        "comedy_type": "terrible_excuse",
     },
     "6-8": {
         "setup": (
@@ -281,7 +385,6 @@ EPISODE_SEEDS = {
             "Pip tries to correct them. Nobody listens to Pip."
         ),
         "characters": ["shadow", "sunny", "pip", "melody"],
-        "comedy_type": "expert_who_isnt",
     },
     "9-12": {
         "setup": (
@@ -292,12 +395,83 @@ EPISODE_SEEDS = {
             "The negotiations go badly."
         ),
         "characters": ["boomy", "melody"],
-        "comedy_type": "negotiation",
     },
 }
 
 
+def _load_existing_episodes() -> list:
+    """Load all existing funny short metadata for diversity tracking."""
+    episodes = []
+    data_dir = BACKEND_DIR / "data" / "funny_shorts"
+    if data_dir.exists():
+        for f in sorted(data_dir.glob("*.json"), key=lambda p: p.stat().st_mtime):
+            try:
+                episodes.append(json.loads(f.read_text()))
+            except Exception:
+                pass
+    return episodes
+
+
+def _pick_avoiding_recent(episodes: list, field: str, options: list, recency: int = 3):
+    """Pick a value not used in the last N episodes."""
+    recent = [ep.get(field) for ep in episodes[-recency:]]
+    # For list fields (like character_combo), compare as sorted tuples
+    if options and isinstance(options[0], list):
+        recent_sets = [tuple(sorted(r)) if isinstance(r, list) else r for r in recent]
+        available = [o for o in options if tuple(sorted(o)) not in recent_sets]
+    else:
+        available = [o for o in options if o not in recent]
+    if not available:
+        available = options
+    return random.choice(available)
+
+
+def select_episode_params(existing_episodes: list, age_group: str = None) -> dict:
+    """Select all parameters for next episode, ensuring variety across every dimension.
+
+    Diversity tracking:
+    | Dimension       | Pool | Recency | What It Prevents                        |
+    |-----------------|------|---------|-----------------------------------------|
+    | Dynamic         |  7   |    5    | Same joke structure every night          |
+    | Character combo | 3-4  |    3    | Same two characters every night          |
+    | Topic           | 10   |    5    | Same subject every night                 |
+    | Melody's role   |  6   |    4    | Same "So I heard..." opening every night |
+    | Ending type     |  7   |    4    | Same "fell asleep" ending every night    |
+    | Age group       |  3   |    3    | Same age group every night               |
+    """
+    # Age group rotation
+    if age_group is None:
+        recent_ages = [ep.get("age_group") for ep in existing_episodes[-3:]]
+        age_options = ["2-5", "6-8", "9-12"]
+        age_group = next((a for a in age_options if a not in recent_ages),
+                         random.choice(age_options))
+
+    # Select each dimension avoiding recent repeats
+    # Filter existing episodes to same age group for combo tracking
+    same_age = [ep for ep in existing_episodes if ep.get("age_group") == age_group]
+
+    dynamic = _pick_avoiding_recent(existing_episodes, "dynamic", DYNAMICS, recency=5)
+    combo = _pick_avoiding_recent(same_age, "character_combo", CHARACTER_COMBOS[age_group], recency=3)
+    topic = _pick_avoiding_recent(existing_episodes, "topic", TOPICS, recency=5)
+    melody_role = _pick_avoiding_recent(existing_episodes, "melody_role", MELODY_ROLES, recency=4)
+    ending = _pick_avoiding_recent(existing_episodes, "ending", ENDINGS, recency=4)
+
+    # Melody is always present as narrator
+    characters = combo if "melody" in combo else combo + ["melody"]
+
+    return {
+        "age_group": age_group,
+        "dynamic": dynamic,
+        "characters": characters,
+        "character_combo": combo,
+        "topic": topic,
+        "melody_role": melody_role,
+        "ending": ending,
+    }
+
+
 # ── Content Prompt ───────────────────────────────────────────────
+# The prompt uses {placeholders} filled by diversity params.
 
 FUNNY_SHORT_CONTENT_PROMPT = """Write a funny bedtime short for ages {age_group}.
 
@@ -320,27 +494,35 @@ LENGTH LIMITS (STRICT — do NOT exceed):
 - Ages 6-8: 150-200 words. 75-90 seconds total.
 - Ages 9-12: 180-220 words. 80-95 seconds total.
 
-CHARACTERS AVAILABLE:
-- Boomy: Confident, calm, always wrong. Catchphrase: "That was SUPPOSED to happen."
-- Pip: Slightly fast, always right, never listened to. Catchphrase: "I said this would happen. I SAID."
-- Shadow: Slow, precise, over-formal, scientifically incorrect. Catchphrase: "According to my calculations... hmm."
-- Sunny: Warm, relentlessly optimistic about disasters. Catchphrase: "This is fine! This is completely fine."
-- Melody (narrator): Tells the story to the child. Warm, occasionally breaks composure.
+CHARACTERS IN THIS EPISODE:
+{characters_with_descriptions}
 
-Use 2-3 characters per episode. Not all 5.
+Melody (narrator) is always present. She tells the child what happened.
+Her role this episode: {melody_role_description}
 
-CHARACTER AGE RESTRICTIONS:
-- Ages 2-5: Use ONLY Boomy, Pip, Sunny, Melody.
-  Do NOT use Shadow (too formal for this age).
-- Ages 6-8: Use any characters.
-- Ages 9-12: Use ONLY Boomy, Shadow, Sunny, Melody.
-  Do NOT use Pip (too childish for this age).
+EPISODE DYNAMIC: {dynamic}
+{dynamic_description}
+
+TOPIC: {topic}
+The conversation is about something related to "{topic}".
+
+ENDING: The episode ends with: {ending_description}
+
+CHARACTER CATCHPHRASES (these repeat every episode — use 1-2 per character):
+- Boomy: "That was SUPPOSED to happen."
+- Pip: "I said this would happen. I SAID."
+- Shadow: "According to my calculations... hmm."
+- Sunny: "This is fine! This is completely fine."
+
+Everything else Melody says — intros, outros, child-address
+moments — must be UNIQUE to this episode. Do not reuse
+patterns from other episodes.
 
 STRUCTURE (3 sections, THAT'S IT):
 
 [HOST_INTRO]
 Melody talks to the child. Sets up the situation in 1-2 sentences.
-"So... I overheard Boomy and Pip talking today. You need to hear this."
+Her framing reflects her role: {melody_role_description}
 
 [THE_CONVERSATION]
 The characters talk. That's it. The conversation has a shape:
@@ -352,15 +534,12 @@ The characters talk. That's it. The conversation has a shape:
 - It escalates — each line digs the hole deeper
 - Catchphrases arrive at natural moments of failure
 - It reaches a peak of absurdity
-- It collapses — someone gives up, falls asleep,
-  or accidentally proves themselves wrong
+- It ends: {ending_description}
 
 This should be 60-80% of the episode's runtime.
 
 [THE_END]
 Melody wraps up in 1-2 sentences. Talks to the child. Goodnight.
-"And that's why you should never ask Shadow about the weather.
-Goodnight."
 
 THAT'S IT. Three sections total. No scenes, no plans, no disasters.
 
@@ -578,15 +757,55 @@ def generate_intro_outro_candidates(force: bool = False):
 # Step 3: Script Generation (Mistral)
 # ═══════════════════════════════════════════════════════════════════
 
-def generate_script(age_group: str, setup: str, characters: list) -> str:
-    """Generate a funny short script via Mistral AI."""
+def generate_script(age_group: str, setup: str, characters: list,
+                    params: dict = None) -> str:
+    """Generate a funny short script via Mistral AI.
+
+    Args:
+        age_group: "2-5", "6-8", or "9-12"
+        setup: Episode premise/seed text
+        characters: List of character names
+        params: Diversity params from select_episode_params() — if provided,
+                injects dynamic, topic, melody_role, ending into the prompt.
+    """
     from mistralai import Mistral
 
     if not MISTRAL_API_KEY:
         raise RuntimeError("MISTRAL_API_KEY not set in .env")
 
-    prompt = FUNNY_SHORT_CONTENT_PROMPT.format(age_group=age_group)
-    prompt += f"\n\nEPISODE SEED:\n{setup}\nCharacters: {', '.join(characters)}"
+    # Build character descriptions for this episode
+    chars_with_desc = "\n".join(
+        f"- {CHARACTER_DESCRIPTIONS.get(c, c.title())}"
+        for c in characters if c in CHARACTER_DESCRIPTIONS
+    )
+
+    if params:
+        # Full diversity-aware prompt
+        prompt = FUNNY_SHORT_CONTENT_PROMPT.format(
+            age_group=age_group,
+            characters_with_descriptions=chars_with_desc,
+            melody_role_description=MELODY_ROLE_DESCRIPTIONS.get(
+                params.get("melody_role", "overheard"), "Melody tells the child what happened."),
+            dynamic=params.get("dynamic", "usual"),
+            dynamic_description=DYNAMIC_DESCRIPTIONS.get(
+                params.get("dynamic", "usual"), ""),
+            topic=params.get("topic", "bedtime"),
+            ending_description=ENDING_DESCRIPTIONS.get(
+                params.get("ending", "falls_asleep"), ""),
+        )
+    else:
+        # Legacy mode: minimal prompt (backwards compatibility with EPISODE_SEEDS)
+        prompt = FUNNY_SHORT_CONTENT_PROMPT.format(
+            age_group=age_group,
+            characters_with_descriptions=chars_with_desc,
+            melody_role_description="Melody overheard the other characters talking and is sharing what she heard with the child.",
+            dynamic="usual",
+            dynamic_description=DYNAMIC_DESCRIPTIONS["usual"],
+            topic="bedtime",
+            ending_description=ENDING_DESCRIPTIONS["falls_asleep"],
+        )
+
+    prompt += f"\n\nEPISODE SEED:\n{setup}\nCharacters: {', '.join(c for c in characters if c != 'melody')}"
 
     client = Mistral(api_key=MISTRAL_API_KEY)
     response = client.chat.complete(
@@ -1212,17 +1431,29 @@ def generate_cover(title: str, episode_id: str, scene_description: str = "",
 # Step 9: Generate Episodes
 # ═══════════════════════════════════════════════════════════════════
 
-def generate_episode(age_group: str, setup: str, characters: list) -> dict | None:
-    """Generate one complete funny short episode."""
+def generate_episode(age_group: str, setup: str, characters: list,
+                     params: dict = None) -> dict | None:
+    """Generate one complete funny short episode.
+
+    Args:
+        age_group: "2-5", "6-8", or "9-12"
+        setup: Episode premise/seed text
+        characters: List of character names
+        params: Full diversity params from select_episode_params(). If provided,
+                all dimensions are injected into the prompt and saved in metadata.
+    """
     print(f"\n{'='*60}")
     print(f"Generating funny short for ages {age_group}")
+    if params:
+        print(f"  Dynamic: {params.get('dynamic')} | Topic: {params.get('topic')}")
+        print(f"  Melody: {params.get('melody_role')} | Ending: {params.get('ending')}")
     print(f"{'='*60}")
 
     EPISODES_DIR.mkdir(parents=True, exist_ok=True)
 
     # 1. Generate script
     print("  [1/5] Generating script...")
-    raw_response = generate_script(age_group, setup, characters)
+    raw_response = generate_script(age_group, setup, characters, params=params)
     parsed = parse_funny_short(raw_response)
 
     print(f"  Title: {parsed['title']}")
@@ -1292,13 +1523,18 @@ def generate_episode(age_group: str, setup: str, characters: list) -> dict | Non
     print("  [6/6] Generating cover...")
     cover_path = generate_cover(parsed["title"], episode_id, characters=characters)
 
-    # Save metadata
+    # Save metadata — includes all diversity dimensions for tracking
     metadata = {
         "id": episode_id,
         "title": parsed["title"],
         "content_type": "funny_short_v2",
         "age_group": age_group,
         "characters": characters,
+        "character_combo": params.get("character_combo", characters) if params else characters,
+        "dynamic": params.get("dynamic", "usual") if params else "usual",
+        "topic": params.get("topic", "bedtime") if params else "bedtime",
+        "melody_role": params.get("melody_role", "overheard") if params else "overheard",
+        "ending": params.get("ending", "falls_asleep") if params else "falls_asleep",
         "audio_file": f"{episode_id}.mp3",
         "audio_file_nomusic": f"{episode_id}_nomusic.mp3",
         "cover_file": cover_path.name if cover_path else "",
@@ -1315,24 +1551,22 @@ def generate_episode(age_group: str, setup: str, characters: list) -> dict | Non
     return metadata
 
 
-def generate_fresh_seed(age_group: str) -> dict:
-    """Generate a fresh episode seed via Mistral AI."""
-    import random
+def generate_fresh_seed(params: dict) -> str:
+    """Generate a fresh episode premise via Mistral AI using diversity params.
+
+    Args:
+        params: Full diversity params from select_episode_params()
+
+    Returns:
+        A 2-3 sentence premise string.
+    """
     from mistralai import Mistral
 
-    comedy_types = {
-        "2-5": ["terrible_excuse", "negotiation", "expert_who_isnt"],
-        "6-8": ["expert_who_isnt", "terrible_excuse", "negotiation"],
-        "9-12": ["negotiation", "terrible_excuse", "expert_who_isnt"],
-    }
-    char_pools = {
-        "2-5": [["boomy", "pip", "melody"], ["boomy", "sunny", "melody"], ["pip", "sunny", "melody"]],
-        "6-8": [["shadow", "sunny", "pip", "melody"], ["boomy", "shadow", "melody"], ["shadow", "pip", "melody"]],
-        "9-12": [["boomy", "melody"], ["boomy", "shadow", "melody"], ["shadow", "sunny", "melody"]],
-    }
-
-    comedy_type = random.choice(comedy_types[age_group])
-    characters = random.choice(char_pools[age_group])
+    age_group = params["age_group"]
+    characters = params["characters"]
+    dynamic = params["dynamic"]
+    topic = params["topic"]
+    ending = params["ending"]
 
     # Load existing episode titles to avoid duplicates
     existing_titles = []
@@ -1349,13 +1583,17 @@ def generate_fresh_seed(age_group: str) -> dict:
     if existing_titles:
         avoid = f"\nExisting episode topics (yours MUST be different): {', '.join(existing_titles[-10:])}\n"
 
+    char_names = [c for c in characters if c != "melody"]
     prompt = (
         f"Generate a funny bedtime short premise for ages {age_group}.\n"
-        f"Comedy type: {comedy_type}\n"
-        f"Characters: {', '.join(characters)}\n"
+        f"Characters: {', '.join(char_names)}\n"
+        f"Dynamic: {dynamic} — {DYNAMIC_DESCRIPTIONS.get(dynamic, '')}\n"
+        f"Topic: {topic}\n"
+        f"Ending: {ENDING_DESCRIPTIONS.get(ending, '')}\n"
         f"{avoid}\n"
         f"Write ONLY a 2-3 sentence premise describing the situation and comedy escalation. "
-        f"No script, no dialogue — just the setup. Keep it simple and funny."
+        f"No script, no dialogue — just the setup. Keep it simple and funny. "
+        f"The premise MUST be about {topic} and use the {dynamic} dynamic."
     )
 
     client = Mistral(api_key=MISTRAL_API_KEY)
@@ -1371,32 +1609,128 @@ def generate_fresh_seed(age_group: str) -> dict:
 
     setup = resp.choices[0].message.content.strip()
     print(f"  Fresh seed [{age_group}]: {setup[:80]}...")
-    return {"setup": setup, "characters": characters, "comedy_type": comedy_type}
+    return setup
+
+
+# ── Post-generation variety validation ──────────────────────────
+
+# Lines containing these are SUPPOSED to repeat — skip in similarity checks
+CATCHPHRASES = [
+    "that was supposed to happen",
+    "i said this would happen",
+    "according to my calculations",
+    "this is fine",
+]
+
+
+def extract_melody_lines(script: str) -> list:
+    """Extract all Melody dialogue lines from a script."""
+    lines = []
+    for m in re.finditer(r'MELODY:\s*"?(.+?)"?\s*$', script, re.MULTILINE):
+        line = m.group(1).strip().strip('"')
+        # Skip empty / very short lines
+        if len(line) > 10:
+            lines.append(line)
+    return lines
+
+
+def validate_episode_variety(new_script: str, recent_episodes: list) -> tuple:
+    """Check that non-catchphrase dialogue isn't repeating across episodes.
+
+    Returns:
+        (is_valid, detail_message)
+    """
+    new_melody = extract_melody_lines(new_script)
+    if not new_melody:
+        return True, "No melody lines found to compare"
+
+    for recent in recent_episodes[-10:]:
+        old_script = recent.get("script", "")
+        old_melody = extract_melody_lines(old_script)
+
+        for new_line in new_melody:
+            if any(cp in new_line.lower() for cp in CATCHPHRASES):
+                continue
+
+            for old_line in old_melody:
+                if any(cp in old_line.lower() for cp in CATCHPHRASES):
+                    continue
+
+                sim = SequenceMatcher(
+                    None, new_line.lower(), old_line.lower()
+                ).ratio()
+
+                if sim > 0.5:
+                    return False, (
+                        f"Melody repeat: '{new_line[:50]}' ≈ '{old_line[:50]}' "
+                        f"(sim={sim:.2f}, ep={recent.get('id', '?')})"
+                    )
+
+    return True, "OK"
 
 
 def generate_all_episodes(fresh: bool = False):
-    """Generate 3 test episodes (one per age group)."""
+    """Generate 3 episodes (one per age group) with full diversity tracking."""
     results = []
+    existing = _load_existing_episodes()
 
-    if fresh:
-        seeds = {}
-        for age in ["2-5", "6-8", "9-12"]:
-            print(f"\n  Generating fresh seed for {age}...")
-            seeds[age] = generate_fresh_seed(age)
+    if not fresh:
+        # Legacy mode: use hardcoded EPISODE_SEEDS
+        for age_group, seed in EPISODE_SEEDS.items():
+            try:
+                result = generate_episode(
+                    age_group, seed["setup"], seed["characters"],
+                )
+                if result:
+                    results.append(result)
+            except Exception as e:
+                print(f"  ✗ FAILED for ages {age_group}: {e}")
+                import traceback
+                traceback.print_exc()
     else:
-        seeds = EPISODE_SEEDS
+        # Diversity-tracked mode
+        for age in ["2-5", "6-8", "9-12"]:
+            print(f"\n  Selecting diverse params for {age}...")
+            params = select_episode_params(existing, age_group=age)
 
-    for age_group, seed in seeds.items():
-        try:
-            result = generate_episode(
-                age_group, seed["setup"], seed["characters"],
-            )
-            if result:
-                results.append(result)
-        except Exception as e:
-            print(f"  ✗ FAILED for ages {age_group}: {e}")
-            import traceback
-            traceback.print_exc()
+            print(f"  → Dynamic: {params['dynamic']}, Topic: {params['topic']}")
+            print(f"  → Characters: {params['characters']}")
+            print(f"  → Melody role: {params['melody_role']}, Ending: {params['ending']}")
+
+            print(f"\n  Generating fresh seed for {age}...")
+            setup = generate_fresh_seed(params)
+
+            # Generate episode with diversity params
+            try:
+                result = generate_episode(
+                    age, setup, params["characters"], params=params,
+                )
+                if result:
+                    # Validate variety against existing episodes
+                    is_valid, detail = validate_episode_variety(
+                        result.get("script", ""), existing,
+                    )
+                    if not is_valid:
+                        print(f"  ⚠️  Variety check: {detail}")
+                        print(f"  Regenerating with different params...")
+                        # Change dynamic and topic, try once more
+                        params["dynamic"] = _pick_avoiding_recent(
+                            existing + [result], "dynamic", DYNAMICS, recency=7)
+                        params["topic"] = _pick_avoiding_recent(
+                            existing + [result], "topic", TOPICS, recency=7)
+                        setup = generate_fresh_seed(params)
+                        result = generate_episode(
+                            age, setup, params["characters"], params=params,
+                        )
+
+                    if result:
+                        results.append(result)
+                        # Add to existing so next age group sees it
+                        existing.append(result)
+            except Exception as e:
+                print(f"  ✗ FAILED for ages {age}: {e}")
+                import traceback
+                traceback.print_exc()
 
     print(f"\n{'='*60}")
     print(f"Generated {len(results)}/3 episodes")

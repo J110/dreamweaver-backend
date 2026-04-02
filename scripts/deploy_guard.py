@@ -1046,6 +1046,33 @@ def cmd_invariants(args):
         check("Inter-line gap <= 100ms", False, "Could not find inter-line gap value",
               source_file="scripts/generate_funny_shorts_v2.py")
 
+    # Diversity system
+    check(
+        "Diversity system: DYNAMICS pool",
+        "DYNAMICS = [" in gen_funny and "DYNAMIC_DESCRIPTIONS" in gen_funny,
+        "generate_funny_shorts_v2.py missing DYNAMICS diversity pool",
+        source_file="scripts/generate_funny_shorts_v2.py",
+    )
+    check(
+        "Diversity system: select_episode_params",
+        "def select_episode_params" in gen_funny and "_pick_avoiding_recent" in gen_funny,
+        "generate_funny_shorts_v2.py missing diversity parameter selection",
+        source_file="scripts/generate_funny_shorts_v2.py",
+    )
+    check(
+        "Diversity system: validate_episode_variety",
+        "def validate_episode_variety" in gen_funny,
+        "generate_funny_shorts_v2.py missing post-generation variety validation",
+        source_file="scripts/generate_funny_shorts_v2.py",
+    )
+    check(
+        "Diversity system: metadata tracks dimensions",
+        '"dynamic":' in gen_funny and '"topic":' in gen_funny
+        and '"melody_role":' in gen_funny and '"ending":' in gen_funny,
+        "Episode metadata must track all diversity dimensions",
+        source_file="scripts/generate_funny_shorts_v2.py",
+    )
+
     print(f"\n{'='*60}")
     if failed == 0:
         print(f"  ✅ All {passed} invariant checks passed.")

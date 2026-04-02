@@ -71,6 +71,14 @@
       "file": "scripts/generate_funny_shorts_v2.py",
       "check": "trim_tts_silence called after every generate_tts in generate_funny_short_tts",
       "fixed": "2026-04-02"
+    },
+    "diversity_system": {
+      "rule": "Episodes must use diversity tracking across 6 dimensions: dynamic (7 types, recency 5), character_combo (3-4 per age, recency 3), topic (10 types, recency 5), melody_role (6 types, recency 4), ending (7 types, recency 4), age_group (3, recency 3)",
+      "file": "scripts/generate_funny_shorts_v2.py",
+      "check": "DYNAMICS pool, select_episode_params function, _pick_avoiding_recent function, validate_episode_variety function all exist",
+      "check_code": "Metadata saves dynamic, topic, melody_role, ending, character_combo fields",
+      "fixed": "2026-04-02",
+      "symptom": "Every episode uses the same joke structure, character combo, topic, and ending"
     }
   }
 }
