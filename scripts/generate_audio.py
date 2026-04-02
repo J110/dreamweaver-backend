@@ -2263,7 +2263,6 @@ def generate_v2_story_variant(
         logger.error("  No text for v2 story %s", story_id)
         return None
 
-    hook = story.get("hook", title or "A bedtime story")
     logger.info("  V2 assembly: %s / %s (mood=%s)", title, voice, mood)
 
     # Parse segments from tagged text
@@ -2272,12 +2271,12 @@ def generate_v2_story_variant(
     phrase_count = sum(1 for s in segments if s[0] == "phrase")
     logger.info("  Segments: %d total, %d swells, %d phrases", len(segments), music_count, phrase_count)
 
-    # Assemble with baked-in music
+    # Assemble with baked-in music (no hook — story text is the sole narration)
     with_music, without_music = assemble_v2_audio(
         segments=segments,
         voice=voice,
         mood=mood,
-        hook=hook,
+        hook=None,
     )
 
     # Export
