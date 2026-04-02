@@ -246,6 +246,13 @@ The song should sound like a child TALKING — arguing,
 negotiating, protesting — set to a bouncy beat.
 Not poetry. Not wordplay. Just how kids sound.
 
+SENSE CHECK:
+Every line must make sense as a standalone sentence.
+Read each line by itself. If it doesn't mean anything
+without the line before it ("the apple rolls like a
+sad bridge" means nothing), rewrite it as something
+a child would actually say in this moment.
+
 QUALITY TARGET — this is what good looks like:
 "Mama said it's time for bed / But I've got things to do instead /
 I haven't hugged the cat goodnight / I haven't checked the moon is bright"
@@ -481,6 +488,14 @@ def validate_silly_song(lyrics: str, battle_cry: str, age_group: str,
     # 7. CHARACTER COUNT for MiniMax
     check_minimax_length(lyrics)
 
+    # 8. NONSENSE SIMILE CHECK — flag lines with "like a [abstract noun]"
+    flagged_similes = check_nonsense_similes(lyrics)
+    if flagged_similes:
+        for flag in flagged_similes:
+            print(f"    {flag}")
+        errors.append(f"Nonsense simile(s) detected — rewrite lines that don't make sense alone")
+        structured.append({"type": "nonsense_simile", "lines": flagged_similes})
+
     # Info prints (non-blocking)
     if len(verses) >= 2:
         print(f"    V1: {verses[0][:70]}...")
@@ -531,6 +546,17 @@ def retry_with_feedback(lyrics: str, structured_errors: list, age_group: str,
         feedback_parts.append(
             f"TOO MANY LINES — you wrote {count} lines but max is {MAX_LINES}. "
             f"Cut to 2 verses + 2 choruses + ending. No verse 3. No bridge."
+        )
+
+    simile_errors = [e for e in structured_errors if e["type"] == "nonsense_simile"]
+    if simile_errors:
+        flagged = simile_errors[0].get("lines", [])
+        feedback_parts.append(
+            "NONSENSE SIMILES — these lines contain similes that don't make sense "
+            "when read alone. A child would never say these:\n"
+            + "\n".join(flagged) +
+            "\nRewrite each flagged line as something a real child would say. "
+            "If a rhyme forces a nonsense simile, switch to a different rhyme."
         )
 
     feedback = "\n\n".join(feedback_parts)
@@ -622,6 +648,31 @@ def check_minimax_length(lyrics: str, max_chars: int = MAX_LYRICS_CHARS) -> bool
               f"max {max_chars}). Will be truncated by MiniMax.")
         return False
     return True
+
+
+def check_nonsense_similes(lyrics: str) -> list[str]:
+    """Flag lines with similes that don't make immediate sense.
+
+    Similes ("like a...") are where the LLM hides forced rhymes.
+    Returns list of flagged lines (warnings, non-blocking).
+    """
+    flagged = []
+    for line in lyrics.split("\n"):
+        stripped = line.strip()
+        if not stripped or stripped.startswith("["):
+            continue
+        # Find "like a ..." patterns
+        simile_matches = re.findall(r'like\s+a\s+\w+(?:\s+\w+)?', stripped, re.IGNORECASE)
+        for simile in simile_matches:
+            # Flag abstract/nonsense combinations
+            nonsense_words = {"sad", "happy", "angry", "lonely", "broken",
+                              "empty", "silent", "dark", "lost", "cold",
+                              "bridge", "wall", "cloud", "shadow", "void",
+                              "wind", "stone", "dream", "ghost", "whisper"}
+            words = simile.lower().split()
+            if any(w in nonsense_words for w in words[2:]):
+                flagged.append(f"  SIMILE: \"{stripped}\" — '{simile}' may not make sense")
+    return flagged
 
 
 def trim_lyrics_for_minimax(lyrics: str) -> str:
@@ -822,7 +873,7 @@ BATTLE_CRIES = {
     "i_want_it":       {"cry": "I want it",           "ages": ["2-5"]},
     "pick_me_up":      {"cry": "Pick me up",          "ages": ["2-5"]},
     "mine":            {"cry": "That's mine",         "ages": ["2-5"]},
-    "where_mommy":     {"cry": "Where's Mommy",       "ages": ["2-5"]},
+    "no_bath":         {"cry": "No bath",              "ages": ["2-5"]},
     "not_sleepy":      {"cry": "I'm not sleepy",      "ages": ["2-5"]},
     "hungry":          {"cry": "I'm hungry",          "ages": ["2-5", "6-8"]},
     "carry_me":        {"cry": "Carry me",            "ages": ["2-5"]},
@@ -1079,7 +1130,7 @@ def generate_silly_song(
             print(f"    ✗ {e}")
 
         fixable_types = ("missing_cry", "chorus_inconsistent",
-                         "no_sfx", "few_verses")
+                         "no_sfx", "few_verses", "nonsense_simile")
         for retry_num in range(max_retries):
             fixable = [e for e in structured if e["type"] in fixable_types]
             if not fixable:
