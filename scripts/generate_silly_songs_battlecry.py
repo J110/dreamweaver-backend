@@ -136,6 +136,30 @@ TEMPO_RANGE = {
 }
 
 
+# Age-specific style templates — prioritise vocal CLARITY over speed.
+# Instruments can bounce; the voice doesn't need to race.
+SILLY_SONG_STYLES = {
+    "2-5": (
+        "Catchy children's song, {instruments}, {tempo} BPM, "
+        "bouncy beat, warm clear child vocal, "
+        "sing each word clearly and slowly, "
+        "fun and silly, not rushed"
+    ),
+    "6-8": (
+        "Catchy children's song, {instruments}, {tempo} BPM, "
+        "groovy beat, warm clear vocal, "
+        "every word easy to understand, "
+        "fun and bouncy, not fast"
+    ),
+    "9-12": (
+        "Catchy children's song, {instruments}, {tempo} BPM, "
+        "cool beat, clear confident vocal, "
+        "each line sung clearly not rushed, "
+        "groovy and fun"
+    ),
+}
+
+
 def build_style_prompt(age_group: str, recent_songs: list = None) -> tuple:
     """Build a style prompt with varied instruments and tempo.
 
@@ -155,14 +179,9 @@ def build_style_prompt(age_group: str, recent_songs: list = None) -> tuple:
     lo, hi = TEMPO_RANGE[age_group]
     tempo = random.randint(lo, hi)
 
-    # Energetic style — bouncy, catchy, impossible to sit still
-    # Must stay under 300 chars for MiniMax
-    prompt = (
-        f"Catchy children's song, {instruments}, "
-        f"{tempo} BPM, strong bass, punchy beat, "
-        f"bouncy groovy infectious singalong, "
-        f"impossible to sit still, makes you move"
-    )
+    # Use age-specific style template for vocal clarity
+    template = SILLY_SONG_STYLES.get(age_group, SILLY_SONG_STYLES["6-8"])
+    prompt = template.format(instruments=instruments, tempo=tempo)
 
     if len(prompt) > 295:
         prompt = prompt[:295]
@@ -218,7 +237,24 @@ room for the melody to breathe.
 That's the ENTIRE song. No verse 3. No bridge. No parent
 responses in the lyrics (those are added separately in audio).
 
-Maximum 8 words per line. Maximum 20 lines total.
+Maximum 20 lines total.
+
+SYLLABLE RULE:
+Maximum 9 syllables per line. Not words — SYLLABLES.
+Use short, simple, one-syllable words whenever possible.
+
+"Mama said it's time for bed" = 8 syllables ✓
+"My duck's a pirate he don't take a bath" = 11 syllables ✗
+
+ONE THOUGHT PER LINE:
+Never join two ideas with a dash or comma.
+"My duck's a pirate—he don't take a bath" is TWO thoughts.
+Split them: "My duck's a pirate now" + "He won't take a bath"
+
+Use small words. "Cat" not "dinosaur." "Hot" not "distress."
+"Lost" not "crumpled." The simpler the word, the more
+time the singer gives it, the clearer the child hears it.
+
 Every line must have SPACE to be sung clearly. If the child
 can't understand the words, the song fails.
 
@@ -269,18 +305,41 @@ THEN on its own line:
 # ── Syllable Counter ─────────────────────────────────────────────────
 
 def count_syllables(word: str) -> int:
-    """Rough syllable count for English words."""
-    word = word.lower().strip(".,!?*[]()\"'")
+    """Rough syllable count using vowel groups."""
+    word = word.lower().strip("!?.,*()—–-\"'[]")
     if not word:
         return 0
-    if len(word) <= 2:
-        return 1
-    # Count vowel groups
     count = len(re.findall(r'[aeiouy]+', word))
-    # Silent e
-    if word.endswith('e') and not word.endswith('le'):
+    if word.endswith('e') and count > 1:
         count -= 1
     return max(1, count)
+
+
+def extract_sung_lines(lyrics: str) -> list[str]:
+    """Extract only singable lines (no tags, no empty lines, no sfx-only)."""
+    lines = []
+    for line in lyrics.split("\n"):
+        stripped = line.strip()
+        if not stripped or stripped.startswith("["):
+            continue
+        # Skip lines that are only sound effects
+        if re.match(r'^\*[^*]+\*$', stripped):
+            continue
+        lines.append(stripped)
+    return lines
+
+
+MAX_SYLLABLES_PER_LINE = 9
+
+
+def validate_syllable_density(lyrics: str, max_syllables: int = MAX_SYLLABLES_PER_LINE) -> list[tuple[str, int]]:
+    """Flag lines with too many syllables. Returns list of (line, syllable_count)."""
+    long_lines = []
+    for line in extract_sung_lines(lyrics):
+        total = sum(count_syllables(w) for w in line.split())
+        if total > max_syllables:
+            long_lines.append((line, total))
+    return long_lines
 
 
 # ── LLM Calls ────────────────────────────────────────────────────────
@@ -496,6 +555,15 @@ def validate_silly_song(lyrics: str, battle_cry: str, age_group: str,
         errors.append(f"Nonsense simile(s) detected — rewrite lines that don't make sense alone")
         structured.append({"type": "nonsense_simile", "lines": flagged_similes})
 
+    # 9. SYLLABLE DENSITY — max 9 syllables per line (blocking)
+    long_syllable_lines = validate_syllable_density(lyrics)
+    if long_syllable_lines:
+        print(f"    ⚠️  {len(long_syllable_lines)} line(s) over {MAX_SYLLABLES_PER_LINE} syllables:")
+        for text, syl_count in long_syllable_lines[:5]:
+            print(f"      {syl_count} syl: {text[:60]}...")
+        errors.append(f"Too many syllables — {len(long_syllable_lines)} line(s) over {MAX_SYLLABLES_PER_LINE} syllables")
+        structured.append({"type": "too_many_syllables", "lines": long_syllable_lines})
+
     # Info prints (non-blocking)
     if len(verses) >= 2:
         print(f"    V1: {verses[0][:70]}...")
@@ -557,6 +625,19 @@ def retry_with_feedback(lyrics: str, structured_errors: list, age_group: str,
             + "\n".join(flagged) +
             "\nRewrite each flagged line as something a real child would say. "
             "If a rhyme forces a nonsense simile, switch to a different rhyme."
+        )
+
+    syllable_errors = [e for e in structured_errors if e["type"] == "too_many_syllables"]
+    if syllable_errors:
+        bad_lines = syllable_errors[0].get("lines", [])
+        examples = "\n".join(f"  {syl} syl: \"{text}\"" for text, syl in bad_lines[:5])
+        feedback_parts.append(
+            f"TOO MANY SYLLABLES — max {MAX_SYLLABLES_PER_LINE} syllables per line. "
+            f"These lines are too long to sing clearly:\n{examples}\n"
+            "Use shorter words. 'Cat' not 'dinosaur.' 'Hot' not 'distress.' "
+            "Never join two ideas with a dash or comma — split into two lines. "
+            "'My duck's a pirate—he don't take a bath' is TWO thoughts. "
+            "Split: 'My duck's a pirate now' + 'He won't take a bath.'"
         )
 
     feedback = "\n\n".join(feedback_parts)
@@ -676,34 +757,34 @@ def check_nonsense_similes(lyrics: str) -> list[str]:
 
 
 def trim_lyrics_for_minimax(lyrics: str) -> str:
-    """Strip parent lines, then trim to fit MiniMax's 600-char limit."""
-    lyrics = strip_parent_lines(lyrics)
+    """Legacy wrapper — use prepare_lyrics_for_minimax instead."""
+    return prepare_lyrics_for_minimax(lyrics)
 
-    if len(lyrics) <= MAX_LYRICS_CHARS:
-        return lyrics
 
-    sections = []
-    current = []
-    for line in lyrics.split("\n"):
-        if line.startswith("[") and current:
-            sections.append("\n".join(current))
-            current = [line]
-        else:
-            current.append(line)
-    if current:
-        sections.append("\n".join(current))
+def prepare_lyrics_for_minimax(lyrics: str, max_chars: int = 580) -> str:
+    """Ensure lyrics fit MiniMax limit with margin.
 
-    result = []
-    total = 0
-    for section in sections:
-        new_total = total + len(section) + (1 if result else 0)
-        if new_total <= MAX_LYRICS_CHARS:
-            result.append(section)
-            total = new_total
-        else:
-            break
+    Strips section tags, parent lines, empty lines. Trims from the end
+    (cuts ending/final chorus first) to preserve verses and first chorus.
+    Uses 580 not 600 — leaves margin for MiniMax's own formatting.
+    """
+    # Strip section tags
+    clean = re.sub(r'\[.*?\]', '', lyrics)
+    # Strip parent lines
+    clean = strip_parent_lines(clean)
+    # Strip empty lines, normalize whitespace
+    lines = [l.strip() for l in clean.split('\n') if l.strip()]
+    result = '\n'.join(lines)
 
-    return "\n".join(result)
+    if len(result) > max_chars:
+        # Trim from the end — cut ending/final chorus first
+        # Keep verses and first chorus intact
+        while len(result) > max_chars and lines:
+            lines.pop()
+            result = '\n'.join(lines)
+        print(f"  Trimmed to {len(result)} chars ({max_chars} max)")
+
+    return result
 
 
 def generate_audio_minimax(song: dict, force: bool = False) -> bool:
@@ -725,7 +806,7 @@ def generate_audio_minimax(song: dict, force: bool = False) -> bool:
         # Fallback: build a fresh style prompt
         style, _, _ = build_style_prompt(song["age_group"])
 
-    trimmed = trim_lyrics_for_minimax(lyrics)
+    trimmed = prepare_lyrics_for_minimax(lyrics)
     print(f"    Lyrics: {len(lyrics)} chars -> {len(trimmed)} chars (trimmed for MiniMax)")
     print(f"    Style: {style[:80]}...")
 
@@ -1130,7 +1211,8 @@ def generate_silly_song(
             print(f"    ✗ {e}")
 
         fixable_types = ("missing_cry", "chorus_inconsistent",
-                         "no_sfx", "few_verses", "nonsense_simile")
+                         "no_sfx", "few_verses", "nonsense_simile",
+                         "too_many_syllables")
         for retry_num in range(max_retries):
             fixable = [e for e in structured if e["type"] in fixable_types]
             if not fixable:
