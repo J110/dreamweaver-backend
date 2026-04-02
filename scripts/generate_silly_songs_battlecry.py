@@ -191,147 +191,65 @@ happened last Tuesday."
 2 sentences maximum. Be concrete — name the objects,
 the room, the time of day, what the parent just said."""
 
-RHYME_FAMILY_PROMPT = """
-I'm writing a children's silly song built around the phrase: "{battle_cry}"
-For ages: {age_group}
+LYRICS_PROMPT = """Write a silly song for ages {age_group}.
 
 SCENE: {scene}
-
-STEP 1: Find the KEY RHYME WORD from the battle cry.
-The word that carries the most weight. The word that SOUNDS the funniest
-or has the most rhyme potential.
-
-STEP 2: List 15-20 words that rhyme with the key word.
-Rules:
-- Simple words only. Words a child uses daily.
-- Ages 2-5: maximum 2 syllables per word.
-- Ages 6-8: maximum 3 syllables.
-- Ages 9-12: keep it conversational.
-- Include near-rhymes and slant rhymes — they're often funnier.
-
-STEP 3: For EACH rhyme word, write a short child's complaint, excuse,
-or protest that ENDS with that word.
-
-Every rhyming line must be something the child would say
-or think IN THIS SPECIFIC MOMENT. Not generic complaints.
-Not random situations. Lines that belong in THIS scene
-and would feel wrong in any other scene.
-
-The sentence must sound like something a child SAYS OUT LOUD while
-arguing with a parent. Not something written. Not something clever.
-How a child actually talks.
-
-BAD: "The evening's peaceful slumber calls" (literary, no child says this)
-BAD: "A sockological catastrophe" (adult humor, too clever)
-GOOD: "I had a grape THAT COUNTS right?" (arguing, real child voice)
-GOOD: "I don't even need that stuff" (messy, spoken, real)
-GOOD: "My brain just won't turn off" (simple, relatable, ends with rhyme)
-
-Messy grammar is CORRECT. How kids talk, not how they write.
-"I don't even like that food" YES
-"I find the cuisine unpalatable" NO
-
-Generate at LEAST 15 lines. More is better — we'll pick the best ones.
-
-OUTPUT FORMAT (use these exact labels):
-KEY_WORD: [the word]
-RHYME_FAMILY: [word1, word2, word3, ...]
-LINES:
-1. [line ending with rhyme word 1]
-2. [line ending with rhyme word 2]
-3. [line ending with rhyme word 3]
-...
-"""
-
-LYRICS_ASSEMBLY_PROMPT = """
 BATTLE CRY: "{battle_cry}"
-SCENE: {scene}
-AGE: {age_group}
 
-RHYME PALETTE:
-{rhyme_lines}
+Write it the way a child actually talks. Every line should
+be a complete thought — something a real child has said
+out loud in this exact situation.
 
-=== SCENE LOCK ===
-This song is about ONE moment. Not a list. Not a medley.
-ONE place, ONE night, ONE argument. Every single line
-happens in this scene. If a line could belong in a
-different song about a different situation, it's too generic.
-Cut it and write something that ONLY works here.
+The lines should rhyme naturally. If a rhyme forces you
+to use a weird word or break a sentence into fragments,
+skip that rhyme and find one that flows.
 
-V1: Real details about THIS moment
-V2: The SAME moment exaggerated
-V3: The SAME moment taken to absurd extremes
-NOT three different complaints. The SAME complaint, deeper each time.
+STRUCTURE:
+- 2-3 verses, each 4 lines
+- Chorus between each verse. The chorus is COPY-PASTE identical
+  every time. The ONLY line that can change is the battle cry
+  line if it needs to dissolve in the final chorus. Every other
+  repetition: same words, same order, word for word.
+- Parent responds 2-3 times with a short reaction on the beat
+- A couple of sound effects (*splat*, *crash*, etc.) specific
+  to this scene
 
-=== CHORUS ===
-The chorus is the battle cry repeated with energy.
-3-4 lines maximum.
-IDENTICAL every time it appears — same words, same order.
-The child memorises through repetition. If the chorus
-changes, there's nothing to memorise.
+V1: real things the child says in this moment
+V2: the same situation exaggerated
+V3: the same situation pushed to absurd
 
-The ONLY exception: the FINAL chorus can trail off,
-collapse, or dissolve. The earlier choruses CANNOT change.
+Final chorus trails off into sleep or surrender.
 
-=== PARENT RESPONSES ===
-The parent responds 2-3 times through the song. Their
-response is part of the RHYTHM — short, on the beat,
-1-3 words. Use the SAME parent response each time.
-It becomes a second recurring element the child anticipates.
+RHYME FREEDOM:
+Each verse can use its own rhyme pattern. You do NOT need
+to rhyme the same sound across all verses.
 
-=== OPENING ===
-Every song starts differently. The opening matches
-THIS battle cry's energy. Don't follow the same pattern
-as other songs. Sometimes the child is mid-argument.
-Sometimes the parent speaks first. Sometimes it starts
-with a sound. Sometimes straight into the verse.
+V1 can rhyme with -ed/-ight
+V2 can rhyme with -ack/-old
+V3 can rhyme with -un/-oom
 
-=== LINES ===
-Every line must make sense as a standalone sentence a child
-would actually say IN THIS SCENE. If a line exists only
-because it rhymes but means nothing, replace it with a
-line that rhymes AND means something specific to this moment.
+The CHORUS is the constant. The verses are free.
 
-Lines must FLOW when sung. Not fragments separated by dashes.
-A voice must be able to carry each line smoothly in one breath.
+If you find yourself adding nonsense suffixes to make words
+rhyme ("trim it", "dim it", "fin bit", "din bit"), STOP.
+Switch to a different rhyme sound for that verse. There are
+thousands of rhyme families. Use more than one.
 
-Word limits:
-Ages 2-5: max 6 words per line
-Ages 6-8: max 8 words per line
-Ages 9-12: max 10 words per line
+The song should sound like a child TALKING — arguing,
+negotiating, protesting — set to a bouncy beat.
+Not poetry. Not wordplay. Just how kids sound.
 
-=== ESCALATION ===
-Same scene, three levels:
-V1 — the real version. Things the child actually says.
-V2 — pushed further. Exaggeration of the SAME complaint.
-V3 — absurd. The same complaint taken to impossible extremes.
+QUALITY TARGET — this is what good looks like:
+"Mama said it's time for bed / But I've got things to do instead /
+I haven't hugged the cat goodnight / I haven't checked the moon is bright"
+Every line is a COMPLETE SENTENCE a child would say out loud. Natural rhymes.
+No fragments. No clever wordplay. Just a child negotiating.
 
-For LIE-BASED battle cries (already did, wasn't me, forgot):
-V1 — the basic lie
-V2 — doubling down on the SAME lie
-V3 — the lie becomes elaborate architecture
-Collapse — the truth is embarrassingly obvious
+Output with [opening], [verse], and [chorus] tags.
+No title. No markdown code blocks.
 
-=== SOUND EFFECTS ===
-2-3 sounds that interrupt the argument at funny moments.
-Wrap in asterisks. The sounds must be specific to THIS
-scene. A bath song uses water sounds. A food song uses
-eating sounds. A bedtime song uses sleepy sounds.
-Do not reuse the same sounds across different songs.
-
-=== ENDING ===
-The final chorus dissolves. The child runs out of
-steam. The argument collapses into sleep or distraction
-or accidental agreement. The energy drains naturally —
-the child was fighting hard but the body is done.
-
-=== OUTPUT ===
-Just the lyrics with [opening], [verse], and [chorus] tags.
-Start with the opening.
-No title needed. No markdown code blocks.
-
-THEN, after the lyrics, generate a cover description on its own line:
-[COVER: one-sentence visual description of the funniest moment from YOUR lyrics, bold cartoon style, bright colors, energetic]
+THEN on its own line:
+[COVER: one-sentence visual description of the funniest moment, bold cartoon style, bright colors, energetic]
 """
 
 # ── Syllable Counter ─────────────────────────────────────────────────
@@ -353,21 +271,34 @@ def count_syllables(word: str) -> int:
 
 # ── LLM Calls ────────────────────────────────────────────────────────
 
-def call_mistral(prompt: str, system_msg: str = "", api_key: str = "") -> str:
-    """Call Mistral AI and return the response text."""
+def call_mistral(prompt: str, system_msg: str = "", api_key: str = "",
+                  max_retries: int = 3) -> str:
+    """Call Mistral AI and return the response text. Retries on transient errors."""
     client = Mistral(api_key=api_key)
     messages = []
     if system_msg:
         messages.append({"role": "system", "content": system_msg})
     messages.append({"role": "user", "content": prompt})
 
-    response = client.chat.complete(
-        model="mistral-large-latest",
-        messages=messages,
-        temperature=0.9,  # Higher creativity for songs
-        max_tokens=2000,
-    )
-    return response.choices[0].message.content
+    for attempt in range(max_retries):
+        try:
+            response = client.chat.complete(
+                model="mistral-large-latest",
+                messages=messages,
+                temperature=0.9,  # Higher creativity for songs
+                max_tokens=2000,
+            )
+            return response.choices[0].message.content
+        except Exception as e:
+            if attempt < max_retries - 1 and ("500" in str(e) or "503" in str(e)
+                                               or "unavailable" in str(e).lower()
+                                               or "timeout" in str(e).lower()):
+                wait = 15 * (attempt + 1)
+                print(f"  ⚠️  Mistral API error (attempt {attempt + 1}): {e}")
+                print(f"  Retrying in {wait}s...")
+                time.sleep(wait)
+            else:
+                raise
 
 
 # ── Parsing ──────────────────────────────────────────────────────────
@@ -458,9 +389,19 @@ def extract_sections(lyrics: str) -> dict[str, list[str]]:
 
 def validate_silly_song(lyrics: str, battle_cry: str, age_group: str,
                         scene: str = "") -> tuple[bool, list[str], list[dict]]:
-    """Validate formula elements. Returns (passed, errors, structured_errors)."""
-    lines = [l.strip() for l in lyrics.split('\n')
-             if l.strip() and not l.strip().startswith('[')]
+    """Validate essential formula elements only.
+
+    Checks only what matters:
+    - Battle cry appears in chorus
+    - Chorus consistency (non-final choruses identical)
+    - At least 2 verses
+    - Sound effects present
+
+    No word-count, syllable, or line-length limits — those over-constrain
+    the LLM and produce fragments/forced rhymes.
+
+    Returns (passed, errors, structured_errors).
+    """
     sections = extract_sections(lyrics)
     choruses_raw = sections["choruses"]
     chorus_lines = []
@@ -472,132 +413,66 @@ def validate_silly_song(lyrics: str, battle_cry: str, age_group: str,
     structured = []
 
     # 1. BATTLE CRY in chorus
-    cry_lower = battle_cry.lower()
+    # Normalize smart quotes → ASCII so LLM output matches battle cry strings
+    def _normalize(s):
+        return s.lower().replace("\u2018", "'").replace("\u2019", "'").replace("\u201c", '"').replace("\u201d", '"')
+    cry_lower = _normalize(battle_cry)
     cry_words = [w for w in cry_lower.split() if len(w) > 2]
     cry_in_chorus = any(
-        all(w in l.lower() for w in cry_words)
+        all(w in _normalize(l) for w in cry_words)
         for l in chorus_lines
     )
     if not cry_in_chorus:
         errors.append(f"Battle cry '{battle_cry}' not found in chorus")
         structured.append({"type": "missing_cry", "detail": battle_cry})
 
-    # 2. WORD LENGTH
-    max_syl = {"2-5": 2, "6-8": 3, "9-12": 4}[age_group]
-    long_words = []
-    for line in lines:
-        for word in line.split():
-            clean = word.strip('?!.,*[]()"\'-').lower()
-            if not clean or clean.startswith("*"):
-                continue
-            syl = count_syllables(clean)
-            if syl > max_syl:
-                long_words.append(clean)
-    if long_words:
-        errors.append(f"Words too long for {age_group}: {', '.join(long_words[:5])}")
-        structured.append({"type": "long_words", "words": long_words[:5], "max_syl": max_syl})
-
-    # 3. LINE LENGTH
-    max_words = {"2-5": 7, "6-8": 9, "9-12": 11}[age_group]
-    for line in lines:
-        wc = len(line.split())
-        if wc > max_words:
-            errors.append(f"Line too long ({wc} words): '{line[:50]}...'")
-            structured.append({"type": "line_length", "line": line, "words": wc, "max": max_words})
-
-    # 4. SOUND EFFECTS present
-    has_sfx = '*' in lyrics
-    has_response = any(w in lyrics.lower() for w in ['why?', 'what?', 'really?', 'hmm?'])
-    if not has_sfx:
-        errors.append("No sound effects (*yawn*, *burp*, etc.) found")
-        structured.append({"type": "no_sfx"})
-    if not has_response:
-        errors.append("No call-and-response (why? / what?) found")
-        structured.append({"type": "no_response"})
-
-    # 5. ESCALATION — check we have 3 verses
-    if len(verses) < 3:
-        errors.append(f"Only {len(verses)} verses (need 3 for escalation)")
+    # 2. AT LEAST 2 VERSES
+    if len(verses) < 2:
+        errors.append(f"Only {len(verses)} verse(s) (need at least 2)")
         structured.append({"type": "few_verses", "count": len(verses)})
-    elif len(verses) >= 3:
-        print(f"  MANUAL CHECK: Does V3 escalate beyond V1?")
-        print(f"    V1: {verses[0][:60]}...")
-        print(f"    V3: {verses[2][:60]}...")
 
-    # 6. CHORUS SIMPLICITY
-    if chorus_lines and len(chorus_lines) > 5 * len(choruses_raw):
-        avg_chorus_len = len(chorus_lines) / max(len(choruses_raw), 1)
-        if avg_chorus_len > 5:
-            errors.append(f"Chorus too long: avg {avg_chorus_len:.0f} lines (max 4-5)")
-            structured.append({"type": "chorus_long", "avg": avg_chorus_len})
+    # 3. SOUND EFFECTS or parent response present
+    has_sfx = '*' in lyrics
+    has_response = any(w in lyrics.lower() for w in ['why?', 'what?', 'really?', 'hmm?',
+                                                      'mom:', 'dad:', 'mama:', 'parent:'])
+    if not has_sfx and not has_response:
+        errors.append("No sound effects or parent responses found")
+        structured.append({"type": "no_sfx"})
 
-    # 7. CHORUS CONSISTENCY — non-final choruses must be identical
+    # 4. CHORUS CONSISTENCY — non-final choruses must be identical
+    # Strip embedded parent responses like *(Mom: "Oh really?")* before comparing,
+    # since the LLM often varies these while keeping the actual lyrics identical.
+    def _strip_parent_asides(text):
+        return re.sub(r'\*\([^)]*\)\*', '', text).strip()
     if len(choruses_raw) >= 2:
-        first = choruses_raw[0].strip()
+        first = _strip_parent_asides(choruses_raw[0])
         for i in range(1, len(choruses_raw) - 1):  # skip last (collapse OK)
-            if choruses_raw[i].strip() != first:
+            if _strip_parent_asides(choruses_raw[i]) != first:
                 errors.append(f"Chorus {i+1} differs from Chorus 1 — must be identical (except final)")
                 structured.append({"type": "chorus_inconsistent", "index": i + 1})
 
-    # 8. SCENE COHERENCE (warnings only, don't block)
-    if scene:
-        scene_words = {w.lower() for w in scene.split() if len(w) > 3}
-        for i, verse in enumerate(verses):
-            verse_words = {w.lower().strip('?!.,*') for w in verse.split()}
-            overlap = scene_words & verse_words
-            if len(overlap) < 1:
-                print(f"  WARNING: Verse {i+1} may have drifted from scene")
-
-    # 9. FRAGMENT DETECTION (warnings only)
-    for line in lines:
-        words = line.strip().rstrip('!?.').split()
-        if (len(words) < 3
-                and '*' not in line
-                and 'parent' not in line.lower()
-                and line.strip().lower() not in (battle_cry.lower(), '')):
-            print(f"  WARNING: Fragment line may not sing well: '{line}'")
+    # Info prints (non-blocking)
+    if len(verses) >= 2:
+        print(f"    V1: {verses[0][:70]}...")
+        if len(verses) >= 3:
+            print(f"    V3: {verses[-1][:70]}...")
 
     return (len(errors) == 0, errors, structured)
 
 
 def retry_with_feedback(lyrics: str, structured_errors: list, age_group: str,
                         battle_cry: str, api_key: str, scene: str = "") -> str:
-    """Retry lyrics generation with specific failure feedback + scene anchor.
+    """Retry lyrics generation with specific failure feedback.
 
-    Shows the LLM exactly which lines failed and asks it to fix THOSE lines.
-    LLMs can't count words, but they CAN shorten specific examples.
+    Focuses only on essential fixes: missing battle cry, chorus consistency,
+    missing sound effects/parent responses.
     """
-    max_words = {"2-5": 7, "6-8": 9, "9-12": 11}[age_group]
-
-    # Build specific error feedback
     feedback_parts = []
-
-    line_errors = [e for e in structured_errors if e["type"] == "line_length"]
-    if line_errors:
-        lines_list = "\n".join(
-            f"  TOO LONG: \"{e['line'][:80]}\" ({e['words']} words, max {max_words})"
-            for e in line_errors[:8]
-        )
-        feedback_parts.append(f"LINES TOO LONG — rewrite shorter, keep end rhyme:\n{lines_list}")
-
-    word_errors = [e for e in structured_errors if e["type"] == "long_words"]
-    if word_errors:
-        words = word_errors[0]["words"]
-        feedback_parts.append(
-            f"WORDS TOO COMPLEX for ages {age_group}: {', '.join(words)}\n"
-            f"  Replace with simpler words (1-{word_errors[0]['max_syl']} syllables)."
-        )
 
     cry_errors = [e for e in structured_errors if e["type"] == "missing_cry"]
     if cry_errors:
         feedback_parts.append(
-            f"MISSING BATTLE CRY in chorus — the phrase \"{battle_cry}\" must appear in [chorus]."
-        )
-
-    response_errors = [e for e in structured_errors if e["type"] == "no_response"]
-    if response_errors:
-        feedback_parts.append(
-            "MISSING CALL-AND-RESPONSE — add a parent line like: *parent:* \"Why?\" or \"What?\" or \"Really?\""
+            f"MISSING BATTLE CRY — the phrase \"{battle_cry}\" must appear in [chorus]."
         )
 
     chorus_errors = [e for e in structured_errors if e["type"] == "chorus_inconsistent"]
@@ -606,29 +481,32 @@ def retry_with_feedback(lyrics: str, structured_errors: list, age_group: str,
             "CHORUS INCONSISTENCY — all choruses except the final one must be IDENTICAL (same words, same order)."
         )
 
+    sfx_errors = [e for e in structured_errors if e["type"] == "no_sfx"]
+    if sfx_errors:
+        feedback_parts.append(
+            "MISSING SOUND EFFECTS / PARENT — add a parent reaction (Mom: \"Why?\") "
+            "and/or a sound effect (*splat*, *crash*) specific to the scene."
+        )
+
+    verse_errors = [e for e in structured_errors if e["type"] == "few_verses"]
+    if verse_errors:
+        feedback_parts.append(
+            f"NOT ENOUGH VERSES — need at least 2 verses (V1: real, V2: exaggerated)."
+        )
+
     feedback = "\n\n".join(feedback_parts)
+    scene_line = f"\nSCENE: {scene}\n" if scene else ""
 
-    scene_line = f"\nTHE SCENE (every line must be about this): {scene}\n" if scene else ""
-
-    retry_prompt = f"""These lyrics for "{battle_cry}" (ages {age_group}) have problems.
+    retry_prompt = f"""These lyrics for "{battle_cry}" (ages {age_group}) need fixes.
 {scene_line}
-PROBLEMS FOUND:
+PROBLEMS:
 {feedback}
 
 ORIGINAL LYRICS:
 {lyrics}
 
-Fix the problems. Rules:
-- Every line must belong in the scene described above
-- Choruses must be identical (except the final collapse)
-- Lines must flow when sung — no fragments
-- Max {max_words} words per line
-- If a line only exists to rhyme but means nothing,
-  replace it with a line that rhymes AND fits the scene
-
-Shorter is ALWAYS better for sung lyrics:
-"I don't even need that stuff right now" → "Don't need that stuff"
-"I was going to do it right now" → "Gonna do it now"
+Fix the problems. Keep every line as a complete sentence a child
+would actually say. Natural rhymes only — no forced wordplay.
 
 Output the COMPLETE corrected lyrics with section tags, then [COVER: one-line visual scene].
 No explanations."""
@@ -638,9 +516,8 @@ No explanations."""
     return call_mistral(
         retry_prompt,
         system_msg=(
-            "You are a lyrics editor. Fix the specific problems listed. "
-            "Make lines shorter by cutting filler words. Keep rhymes and fun. "
-            "Every line must belong in the scene. "
+            "You are a children's songwriter. Fix the specific problems listed. "
+            "Write how a child talks — complete sentences, natural rhymes. "
             "Output ONLY the fixed lyrics. No markdown code blocks."
         ),
         api_key=api_key,
@@ -850,25 +727,59 @@ def _load_existing_songs() -> list:
 
 # Full battle cry library (expandable)
 BATTLE_CRIES = {
-    "not_tired":    {"cry": "I'm not tired",     "ages": ["2-5"]},
-    "dont_like_it": {"cry": "I don't like it",   "ages": ["2-5"]},
-    "five_minutes": {"cry": "Five more minutes",  "ages": ["2-5", "6-8"]},
-    "not_fair":     {"cry": "That's not fair",    "ages": ["6-8"]},
-    "but_why":      {"cry": "But why",            "ages": ["6-8"]},
-    "not_my_fault": {"cry": "It's not my fault",  "ages": ["6-8", "9-12"]},
-    "i_forgot":     {"cry": "I forgot",           "ages": ["9-12"]},
-    "in_a_minute":  {"cry": "In a minute",        "ages": ["9-12"]},
-    "already_did":  {"cry": "I already did it",   "ages": ["9-12"]},
-    "dont_wanna":   {"cry": "I don't wanna",      "ages": ["2-5"]},
+    # ── Ages 2-5 ──
+    "not_tired":       {"cry": "I'm not tired",       "ages": ["2-5"]},
+    "dont_like_it":    {"cry": "I don't like it",     "ages": ["2-5"]},
+    "dont_wanna":      {"cry": "I don't wanna",       "ages": ["2-5"]},
+    "five_minutes":    {"cry": "Five more minutes",   "ages": ["2-5", "6-8"]},
+    "no_no_no":        {"cry": "No no no",            "ages": ["2-5"]},
+    "i_want_it":       {"cry": "I want it",           "ages": ["2-5"]},
+    "pick_me_up":      {"cry": "Pick me up",          "ages": ["2-5"]},
+    "mine":            {"cry": "That's mine",         "ages": ["2-5"]},
+    "where_mommy":     {"cry": "Where's Mommy",       "ages": ["2-5"]},
+    "not_sleepy":      {"cry": "I'm not sleepy",      "ages": ["2-5"]},
+    "hungry":          {"cry": "I'm hungry",          "ages": ["2-5", "6-8"]},
+    "carry_me":        {"cry": "Carry me",            "ages": ["2-5"]},
+    # ── Ages 6-8 ──
+    "not_fair":        {"cry": "That's not fair",     "ages": ["6-8"]},
+    "but_why":         {"cry": "But why",             "ages": ["6-8"]},
+    "you_said":        {"cry": "But you said",        "ages": ["6-8", "9-12"]},
+    "cant_find_it":    {"cry": "I can't find it",     "ages": ["6-8", "9-12"]},
+    "one_more":        {"cry": "One more",            "ages": ["6-8", "9-12"]},
+    "too_early":       {"cry": "It's too early",      "ages": ["6-8"]},
+    "dont_want_to":    {"cry": "I don't want to",     "ages": ["6-8"]},
+    "he_started_it":   {"cry": "He started it",       "ages": ["6-8"]},
+    "im_bored":        {"cry": "I'm bored",           "ages": ["6-8"]},
+    "do_i_have_to":    {"cry": "Do I have to",        "ages": ["6-8", "9-12"]},
+    # ── Ages 9-12 ──
+    "not_my_fault":    {"cry": "It's not my fault",   "ages": ["6-8", "9-12"]},
+    "i_forgot":        {"cry": "I forgot",            "ages": ["9-12"]},
+    "in_a_minute":     {"cry": "In a minute",         "ages": ["9-12"]},
+    "already_did":     {"cry": "I already did it",    "ages": ["9-12"]},
+    "almost_done":     {"cry": "I'm almost done",     "ages": ["9-12"]},
+    "wasnt_me":        {"cry": "It wasn't me",        "ages": ["9-12"]},
+    "didnt_hear":      {"cry": "I didn't hear you",   "ages": ["9-12"]},
+    "leave_me_alone":  {"cry": "Leave me alone",      "ages": ["9-12"]},
+    "so_what":         {"cry": "So what",             "ages": ["9-12"]},
+    "whatever":        {"cry": "Whatever",            "ages": ["9-12"]},
+    "im_coming":       {"cry": "I'm coming",          "ages": ["9-12"]},
+    "i_know":          {"cry": "I know",              "ages": ["9-12"]},
+    "i_am_doing_it":   {"cry": "I am doing it",      "ages": ["9-12"]},
 }
 
 
-def select_silly_song_params(existing_songs: list, age_group: str = None) -> dict:
+def select_silly_song_params(existing_songs: list, age_group: str = None,
+                             exclude_cries: set = None) -> dict:
     """Select parameters ensuring variety across songs.
+
+    Args:
+        exclude_cries: Battle cry IDs to hard-exclude (e.g. already in this batch).
 
     Returns dict with: age_group, battle_cry_id, battle_cry, style_prompt,
     instruments, tempo.
     """
+    exclude_cries = exclude_cries or set()
+
     # Age group rotation
     if age_group is None:
         recent_ages = [s.get("age_group") for s in existing_songs[-3:]]
@@ -876,12 +787,20 @@ def select_silly_song_params(existing_songs: list, age_group: str = None) -> dic
         age_group = next((a for a in age_options if a not in recent_ages),
                          random.choice(age_options))
 
-    # Battle cry — not used in last 10 songs for this age
+    # Battle cry — not used in last 10 songs for this age, and not in exclude set
     recent_cries = [s.get("battle_cry_id") for s in existing_songs[-10:]
                     if s.get("age_group") == age_group]
     available_cries = [k for k, v in BATTLE_CRIES.items()
-                       if age_group in v["ages"] and k not in recent_cries]
+                       if age_group in v["ages"]
+                       and k not in recent_cries
+                       and k not in exclude_cries]
     if not available_cries:
+        # Relax recent-use filter but keep batch exclusion
+        available_cries = [k for k, v in BATTLE_CRIES.items()
+                           if age_group in v["ages"]
+                           and k not in exclude_cries]
+    if not available_cries:
+        # All cries for this age are in the batch — last resort, allow any
         available_cries = [k for k, v in BATTLE_CRIES.items()
                            if age_group in v["ages"]]
     cry_id = random.choice(available_cries)
@@ -930,7 +849,11 @@ def validate_scene(scene: str) -> bool:
 
 
 def validate_batch_diversity(new_params: dict, batch_songs: list) -> tuple[bool, str]:
-    """Ensure no duplicate battle cries in the same batch."""
+    """Ensure no duplicate battle cry base ID in the same batch.
+
+    Compares the base cry ID (e.g. "not_my_fault") ignoring age suffix,
+    so "not_my_fault" for 6-8 blocks "not_my_fault" for 9-12.
+    """
     new_cry = new_params.get("battle_cry_id", "")
     for existing in batch_songs:
         existing_cry = existing.get("battle_cry_id", "")
@@ -1023,52 +946,19 @@ def generate_silly_song(
     scene_debug_path = OUTPUT_DIR / f"{song_id}_scene.txt"
     scene_debug_path.write_text(scene)
 
-    # ── STEP 1: Generate rhyme family (with scene) ──
-    print(f"\n  Step 1: Generating rhyme family...")
-    time.sleep(32)
-
     existing_songs = _load_existing_songs()
-    recent_key_words = [s.get("key_word", "").lower() for s in existing_songs[-10:]]
 
-    rhyme_prompt = RHYME_FAMILY_PROMPT.format(
-        battle_cry=battle_cry,
-        age_group=age_group,
-        scene=scene,
-    )
-    rhyme_response = call_mistral(
-        rhyme_prompt,
-        system_msg=(
-            "You are a children's songwriter specializing in rhyme. "
-            "Generate rhyme families and child-voice lines grounded in the scene. "
-            "Output in the exact format requested. No markdown code blocks."
-        ),
-        api_key=api_key,
-    )
-
-    key_word, rhyme_family, rhyme_lines = extract_rhyme_data(rhyme_response)
-    print(f"  Key word: {key_word}")
-    print(f"  Rhyme family: {rhyme_family}")
-    print(f"  Lines generated: {len(rhyme_lines)}")
-
-    if key_word.lower() in recent_key_words:
-        print(f"  ⚠️  Key word '{key_word}' was used recently — rhymes may overlap")
-
-    if len(rhyme_lines) < 8:
-        print(f"  WARNING: Only {len(rhyme_lines)} lines generated, may need more variety")
-
-    # Save rhyme data for debugging
-    rhyme_debug_path = OUTPUT_DIR / f"{song_id}_rhymes.txt"
-    rhyme_debug_path.write_text(rhyme_response)
-
-    # ── STEP 2: Assemble lyrics (with scene) ──
-    print(f"\n  Step 2: Assembling lyrics...")
+    # ── STEP 1: Generate lyrics directly from scene ──
+    # (No separate rhyme palette step — let the LLM find natural rhymes
+    # within each verse instead of pre-generating a palette that forces
+    # everything through one rhyme sound.)
+    print(f"\n  Step 1: Generating lyrics...")
     time.sleep(32)
 
-    lyrics_prompt = LYRICS_ASSEMBLY_PROMPT.format(
+    lyrics_prompt = LYRICS_PROMPT.format(
         age_group=age_group,
         battle_cry=battle_cry,
         scene=scene,
-        rhyme_lines='\n'.join(f"- {l}" for l in rhyme_lines),
     )
 
     lyrics_response = call_mistral(
@@ -1102,8 +992,8 @@ def generate_silly_song(
         for e in errors:
             print(f"    ✗ {e}")
 
-        fixable_types = ("line_length", "long_words", "missing_cry",
-                         "no_response", "chorus_inconsistent")
+        fixable_types = ("missing_cry", "chorus_inconsistent",
+                         "no_sfx", "few_verses")
         for retry_num in range(max_retries):
             fixable = [e for e in structured if e["type"] in fixable_types]
             if not fixable:
@@ -1166,9 +1056,7 @@ def generate_silly_song(
         # Battle cry metadata
         "battle_cry_id": cry_id,
         "battle_cry": battle_cry,
-        "key_word": key_word,
-        "rhyme_family": rhyme_family,
-        "generation_method": "battlecry_v2",
+        "generation_method": "battlecry_v3",
     }
 
     # Save JSON (before audio/cover so we don't lose lyrics on failure)
@@ -1270,6 +1158,14 @@ Examples:
         print(f"  Mode: {'lyrics only' if args.lyrics_only else 'full (lyrics + audio + cover)'}")
         print(f"{'='*60}")
 
+        # Pre-assign age groups: cycle through 2-5, 6-8, 9-12 to guarantee
+        # coverage. This prevents the diversity selector from picking the same
+        # age group twice while missing another entirely.
+        age_cycle = ["2-5", "6-8", "9-12"]
+        assigned_ages = [age_cycle[i % len(age_cycle)] for i in range(count)]
+        random.shuffle(assigned_ages)  # Shuffle so order varies
+        print(f"  Age rotation: {' → '.join(assigned_ages)}")
+
         results = []
         for i in range(count):
             try:
@@ -1277,13 +1173,17 @@ Examples:
                     print(f"\n  Waiting 35s for Mistral rate limit...")
                     time.sleep(35)
 
-                # Select params, ensuring no duplicate battle cries in batch
-                for _attempt in range(5):
-                    params = select_silly_song_params(existing_songs)
-                    ok, reason = validate_batch_diversity(params, results)
-                    if ok:
-                        break
-                    print(f"  Skipping {params['battle_cry_id']}: {reason}")
+                forced_age = assigned_ages[i]
+
+                # Select params with enforced age group, excluding batch duplicates
+                batch_cries = {r.get("battle_cry_id") for r in results}
+                params = select_silly_song_params(
+                    existing_songs, age_group=forced_age, exclude_cries=batch_cries
+                )
+                ok, reason = validate_batch_diversity(params, results)
+                if not ok:
+                    # Should not happen with exclude_cries, but log just in case
+                    print(f"  ⚠️  Batch diversity failed even with exclusions: {reason}")
 
                 print(f"\n  Selected: {params['battle_cry']} (ages {params['age_group']})")
                 print(f"  Instruments: {params['instruments']}")

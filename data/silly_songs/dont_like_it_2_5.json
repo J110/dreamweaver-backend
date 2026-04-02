@@ -1,0 +1,18 @@
+{
+  "id": "dont_like_it_2_5",
+  "title": "I Don'T Like It",
+  "age_group": "2-5",
+  "lyrics": "[opening]\n*Clink!* goes the dinosaur plate\u2014\nI don\u2019t wanna eat it, wait!\nYesterday I liked it fine,\ntoday it\u2019s yucky\u2014*splat!*\u2014in a line!\n\n[verse 1]\nI don\u2019t like the shape today,\nit looks like a lizard, not okay!\nThe ketchup\u2019s too red, it\u2019s scary,\nand the plate\u2019s too blue\u2014it\u2019s hairy!\n\n[chorus]\nI don\u2019t like it! No no no!\nYou can\u2019t make me, here we go!\nMama says, \u201cJust one small bite?\u201d\nI say, \u201cNO!\u201d and hide it\u2014*crash!*\u2014outta sight!\n\n[verse 2]\nWhat if it turns into a T-Rex?\nIt\u2019ll chase me right out the door!\nWhat if it grows a thousand legs?\nI\u2019ll scream and scream forevermore!\n\n[chorus]\nI don\u2019t like it! No no no!\nYou can\u2019t make me, here we go!\nMama says, \u201cJust one small bite?\u201d\nI say, \u201cNO!\u201d and hide it\u2014*crash!*\u2014outta sight!\n\n[verse 3]\nI\u2019ll feed it to the moon instead,\nit\u2019ll bounce up there and turn to bread!\nOr I\u2019ll launch it on a rocket,\nit\u2019ll land in space\u2014*zoom!*\u2014now it\u2019s pocket!\n\n[chorus]\nI don\u2019t like it\u2026 mmm\u2026 okay\u2026\nMaybe just a tiny taste\u2026\n*Yawn*\u2026 the plate\u2019s so sleepy too\u2026\nI\u2019ll eat it\u2026 zzz\u2026 goodnight to you\u2026\n\n[Cover: A tiny kid in pajamas launching a dinosaur nugget like a rocket, ketchup flames behind, parents facepalming in slow-motion shock.",
+  "style_prompt": "Catchy children's song, banjo and shaker, 117 BPM, strong bass, punchy beat, bouncy groovy infectious singalong, impossible to sit still, makes you move",
+  "instruments": "banjo and shaker",
+  "tempo": 117,
+  "scene": "The kitchen clock reads 5:47 PM, and you just slid the blue plastic plate with the dinosaur-shaped chicken nuggets toward her high chair. She shoves it back, lips pursed, and yells, \"I don't like it!\"\u2014even though she ate them yesterday.",
+  "cover_description": "a cartoon child with funny expression in a cozy bedroom",
+  "animation_preset": "bounce_rhythmic",
+  "created_at": "2026-04-02",
+  "play_count": 0,
+  "replay_count": 0,
+  "battle_cry_id": "dont_like_it",
+  "battle_cry": "I don't like it",
+  "generation_method": "battlecry_v3"
+}

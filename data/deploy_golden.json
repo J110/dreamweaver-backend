@@ -1,5 +1,5 @@
 {
-  "captured_at": "2026-03-31T14:57:52.762342",
+  "captured_at": "2026-04-02T12:50:21.931000",
   "api": "https://api.dreamvalley.app",
   "stories": {
     "counting-2-5-4f65": {
@@ -2349,9 +2349,111 @@
       ],
       "cover_url": "/covers/a3945b7b-6b20-4a39-a051-b25dfaec1d8e.svg",
       "mood": "calm"
+    },
+    "shield-0-1-7d05": {
+      "id": "shield-0-1-7d05",
+      "title": "Warm as Light",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/shield-0-1-7d05_female_1.mp3"
+      ],
+      "cover_url": "/covers/shield-0-1-7d05.svg",
+      "mood": "anxious"
+    },
+    "gen-75c00c0bb504": {
+      "id": "gen-75c00c0bb504",
+      "title": "Willa and the Quiet Corner",
+      "type": "poem",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-75c0_male_2.mp3",
+        "/audio/pre-gen/gen-75c0_female_4.mp3"
+      ],
+      "cover_url": "/covers/gen-75c00c0bb504.svg",
+      "mood": "anxious"
+    },
+    "gen-d31a9e0324bc": {
+      "id": "gen-d31a9e0324bc",
+      "title": "Lila and the Whispering Meadow",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-d31a_male_2.mp3",
+        "/audio/pre-gen/gen-d31a_female_2.mp3"
+      ],
+      "cover_url": "/covers/gen-d31a9e0324bc.svg",
+      "mood": "anxious"
+    },
+    "gen-2cfeb691ea27": {
+      "id": "gen-2cfeb691ea27",
+      "title": "Maya and the Waiting Moon",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-2cfe_male_2.mp3",
+        "/audio/pre-gen/gen-2cfe_female_1.mp3"
+      ],
+      "cover_url": "/covers/gen-2cfeb691ea27.svg",
+      "mood": "anxious"
+    },
+    "closing-6-8-d241": {
+      "id": "closing-6-8-d241",
+      "title": "Mira and the Silver Moon",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/closing-6-8-d241_female_1.mp3"
+      ],
+      "cover_url": "/covers/closing-6-8-d241.svg",
+      "mood": "angry"
+    },
+    "gen-7e9925effc29": {
+      "id": "gen-7e9925effc29",
+      "title": "Zara and the Shimmering Storm",
+      "type": "poem",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-7e99_female_4.mp3",
+        "/audio/pre-gen/gen-7e99_female_3.mp3"
+      ],
+      "cover_url": "/covers/gen-7e9925effc29.svg",
+      "mood": "angry"
+    },
+    "gen-9ca6534081d0": {
+      "id": "gen-9ca6534081d0",
+      "title": "Pine and the Wind\u2019s Tantrum",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-9ca6_male_2.mp3",
+        "/audio/pre-gen/gen-9ca6_female_3.mp3"
+      ],
+      "cover_url": "/covers/gen-9ca6534081d0.svg",
+      "mood": "angry"
+    },
+    "gen-b7e9b9603308": {
+      "id": "gen-b7e9b9603308",
+      "title": "Buzz and the Broken Promise",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-b7e9_male_2.mp3",
+        "/audio/pre-gen/gen-b7e9_female_3.mp3"
+      ],
+      "cover_url": "/covers/gen-b7e9b9603308.svg",
+      "mood": "angry"
     }
   },
-  "story_count": 152,
+  "story_count": 160,
   "funny_shorts": {
     "2-5": {
       "the-bouncy-bubble-5b82": {
@@ -2377,6 +2479,18 @@
         "has_audio": true,
         "audio_url": "/audio/funny-shorts/the-wobbly-bridge-eb6c_episode.mp3",
         "cover_url": "/covers/funny-shorts/the-wobbly-bridge-eb6c.svg"
+      },
+      "the-dark-isnt-scary-0a84": {
+        "title": "The Dark Isn't Scary",
+        "has_audio": true,
+        "audio_url": "/audio/funny-shorts/funny_2_5_0a8402.mp3",
+        "cover_url": "/covers/funny-shorts/funny_2_5_0a8402_cover.webp"
+      },
+      "the-sleepy-time-symphony-92c8": {
+        "title": "The Sleepy-Time Symphony",
+        "has_audio": true,
+        "audio_url": "/audio/funny-shorts/funny_2_5_5fa3b2.mp3",
+        "cover_url": "/covers/funny-shorts/funny_2_5_5fa3b2_cover.webp"
       }
     },
     "6-8": {
@@ -2403,6 +2517,18 @@
         "has_audio": true,
         "audio_url": "/audio/funny-shorts/the-great-cake-caper-b8c8_episode.mp3",
         "cover_url": "/covers/funny-shorts/the-great-cake-caper-b8c8.svg"
+      },
+      "the-science-of-rain-b649": {
+        "title": "The Science of Rain",
+        "has_audio": true,
+        "audio_url": "/audio/funny-shorts/funny_6_8_b649d8.mp3",
+        "cover_url": "/covers/funny-shorts/funny_6_8_b649d8_cover.webp"
+      },
+      "the-world-s-best-shadow-puppeteer-7e30": {
+        "title": "The World's Best Shadow Puppeteer",
+        "has_audio": true,
+        "audio_url": "/audio/funny-shorts/funny_6_8_1f8ee6.mp3",
+        "cover_url": "/covers/funny-shorts/funny_6_8_1f8ee6_cover.webp"
       }
     },
     "9-12": {
@@ -2429,6 +2555,18 @@
         "has_audio": true,
         "audio_url": "/audio/funny-shorts/the-very-important-tail-4122_episode.mp3",
         "cover_url": "/covers/funny-shorts/the-very-important-tail-4122.svg"
+      },
+      "the-tooth-truth-d3c6": {
+        "title": "The Tooth Truth",
+        "has_audio": true,
+        "audio_url": "/audio/funny-shorts/funny_9_12_d3c6b0.mp3",
+        "cover_url": "/covers/funny-shorts/funny_9_12_d3c6b0_cover.webp"
+      },
+      "the-shadow-knows-77a5": {
+        "title": "The Shadow Knows",
+        "has_audio": true,
+        "audio_url": "/audio/funny-shorts/funny_9_12_69648a.mp3",
+        "cover_url": "/covers/funny-shorts/funny_9_12_69648a_cover.webp"
       }
     }
   },
