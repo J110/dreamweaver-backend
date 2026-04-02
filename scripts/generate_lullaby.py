@@ -272,6 +272,60 @@ CRITICAL FORMAT RULES:
 
 OUTPUT: Only the lyrics. No commentary, no explanation."""
 
+LYRICS_SYSTEM_PROMPT_INFANT = """You are a lullaby vocalist creating pure sound — voice as instrument, not narrator.
+
+ABSOLUTE RULE: NO REAL WORDS IN ANY LANGUAGE. Not one.
+
+The entire lullaby must be nonsense syllables, vowel sounds, and humming.
+
+Use any combination of:
+- Humming: Mmm, Hmm, Mmmm
+- Open vowels: Aah, Ooh, Eeh, Ooo
+- Soft repeating syllables: La la, Na na, Da da, Ba ba, Sha sha, Lu lu, Noo noo
+- Gentle mouth sounds: Shh, Pff, Tss
+- Whispered breath sounds: Haa, Hoo, Shaa
+
+Be CREATIVE with your nonsense. Invent new soft sounds. Combine syllables in
+unexpected ways. Vary the patterns. Every lullaby should have its OWN nonsense
+vocabulary — don't repeat the same syllables across different lullabies.
+
+CRITICAL FORMAT RULES:
+- Use [verse] tags on their own lines — NO other tags, NO [chorus]
+- Each line: 3-8 syllables of nonsense sounds
+- Write for the VOICE — these will be sung, not read
+- Total: 10-20 lyric lines (excluding [verse] headers)
+- ZERO real English words. Not even "sleep", "night", "baby", "love", or "dream"
+
+OUTPUT: Only the lyrics. No commentary, no explanation."""
+
+# Structure overrides for 0-1 age group — voice as pure texture
+STRUCTURE_INSTRUCTIONS_INFANT = {
+    "heartbeat": (
+        "Continuous, drone-like, minimal variation.\n"
+        "3 verses, each SHORTER than the last.\n"
+        "Mostly sustained hums and open vowels.\n"
+        "Last verse: just 2-3 fading syllables."
+    ),
+    "permission": (
+        "Descending patterns — each verse settles lower in energy.\n"
+        "3 verses of nonsense syllables.\n"
+        "Each verse: 3-4 lines, sounds getting softer and slower.\n"
+        "The pattern of descent IS the permission to let go."
+    ),
+    "shield": (
+        "Steady, repeating, unwavering — like an anchor.\n"
+        "2-3 verses of the same rhythmic nonsense pattern.\n"
+        "Repetition IS safety. The unchanging sound IS the shield.\n"
+        "Slight variations but same core syllable pattern throughout."
+    ),
+    "rocking": (
+        "Lilting, swaying rhythm — gentle back-and-forth.\n"
+        "2-3 verses of nonsense syllables with a rocking 6/8 feel.\n"
+        "Alternating syllable pairs: high-low, high-low.\n"
+        "RHYTHM matters more than anything else."
+    ),
+}
+
 STRUCTURE_INSTRUCTIONS = {
     "heartbeat": (
         "Mostly nonsense syllables: Mmm, La la, Shh, Na na, Hmm.\n"
@@ -524,27 +578,37 @@ def build_style_prompt(lullaby_type: str, instrument: str) -> str:
 def generate_lyrics(lullaby_type: str, age: str, mood: str, imagery: str) -> str:
     """Generate lyrics via Mistral AI."""
     api_key = os.environ.get("MISTRAL_API_KEY")
+    # For 0-1 age group, always fall back to heartbeat (nonsense) lyrics
+    fallback_key = "heartbeat" if age == "0-1" else lullaby_type
     if not api_key:
         print("  WARNING: No MISTRAL_API_KEY — using fallback lyrics")
-        return FALLBACK_LYRICS.get(lullaby_type, FALLBACK_LYRICS["rocking"]), None, None, None, None
+        return FALLBACK_LYRICS.get(fallback_key, FALLBACK_LYRICS["rocking"]), None, None, None, None
 
     try:
         from mistralai import Mistral
     except ImportError:
         print("  WARNING: mistralai not installed — using fallback lyrics")
-        return FALLBACK_LYRICS.get(lullaby_type, FALLBACK_LYRICS["rocking"]), None, None, None, None
+        return FALLBACK_LYRICS.get(fallback_key, FALLBACK_LYRICS["rocking"]), None, None, None, None
 
     type_cfg = LULLABY_TYPES[lullaby_type]
-    structure = STRUCTURE_INSTRUCTIONS[lullaby_type]
+    is_infant = (age == "0-1")
 
-    sig_opening = type_cfg["signature_opening"]
-    sig_closing = type_cfg["signature_closing"]
-    sig_text = ""
-    if sig_opening:
-        sig_text = (
-            f"\nSIGNATURE OPENING (mandatory first sung words): {sig_opening}\n"
-            f"SIGNATURE CLOSING (mandatory last sung words): {sig_closing}"
+    # For 0-1: use infant structure overrides, no signature words (they're real English)
+    if is_infant:
+        structure = STRUCTURE_INSTRUCTIONS_INFANT.get(
+            lullaby_type, STRUCTURE_INSTRUCTIONS_INFANT["rocking"]
         )
+        sig_text = ""
+    else:
+        structure = STRUCTURE_INSTRUCTIONS[lullaby_type]
+        sig_opening = type_cfg["signature_opening"]
+        sig_closing = type_cfg["signature_closing"]
+        sig_text = ""
+        if sig_opening:
+            sig_text = (
+                f"\nSIGNATURE OPENING (mandatory first sung words): {sig_opening}\n"
+                f"SIGNATURE CLOSING (mandatory last sung words): {sig_closing}"
+            )
 
     user_prompt = f"""Write lullaby lyrics.
 
@@ -598,12 +662,13 @@ CHARACTER RULES:
 ABOUT RULES:
 Write 2-3 gentle sentences describing the lullaby for parents. Mention what the lullaby is about, the sleep mechanism, and why it helps children sleep. Example: "A gentle counting lullaby where forest creatures drift off one by one. The predictable, cumulative rhythm soothes active minds into stillness.\" """
 
-    print(f"  Generating lyrics via Mistral...")
+    system_prompt = LYRICS_SYSTEM_PROMPT_INFANT if is_infant else LYRICS_SYSTEM_PROMPT
+    print(f"  Generating lyrics via Mistral...{' (infant/nonsense mode)' if is_infant else ''}")
     client = Mistral(api_key=api_key)
     response = client.chat.complete(
         model="mistral-large-latest",
         messages=[
-            {"role": "system", "content": LYRICS_SYSTEM_PROMPT},
+            {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt},
         ],
         temperature=0.8,
