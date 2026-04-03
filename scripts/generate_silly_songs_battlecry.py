@@ -23,6 +23,7 @@ Usage:
     # Force regenerate even if files exist
     python3 scripts/generate_silly_songs_battlecry.py --test --force
 """
+from __future__ import annotations
 
 import argparse
 import json
@@ -1436,7 +1437,7 @@ def generate_silly_song(
     force: bool = False,
     max_retries: int = 2,
     params: dict = None,
-) -> dict | None:
+):
     """Generate one silly song using the two-step process.
 
     Args:
