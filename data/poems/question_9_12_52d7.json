@@ -1,0 +1,20 @@
+{
+  "id": "question_9_12_52d7",
+  "title": "Why Does the Moon?",
+  "content_type": "poem",
+  "poem_type": "question",
+  "age_group": "9-12",
+  "mood": "curious",
+  "instruments": "guitar and gentle beatbox",
+  "tempo": 108,
+  "poem_text": "Why does the moon wear silver shoes?\nAnd where do all the lost socks choose?\nDo shadows giggle when they play?\nOr hide and never run away?\nCan clouds remember how to cry?\nOr do they just forget and fly?\nWhy do the stars all wink at me?\nAnd what do fireflies agree?\nDoes time get tired of ticking true?\nOr does it dream in colors new?\nIf I could ask the wind one thing...\nWhat would the wind ask me to sing?",
+  "char_count": 406,
+  "line_count": 12,
+  "audio_file": "question_9_12_52d7.mp3",
+  "cover_file": "question_9_12_52d7_cover.webp",
+  "cover_context": "A child lying on grass at dusk, staring up as silver shoes dangle from a crescent moon against a twilight sky.",
+  "style_prompt": "Children's musical poem, guitar and gentle beatbox, 108 BPM, dreamy and wondering, spacious, leaves room to think, clear warm vocal, every word easy to understand",
+  "duration_seconds": 107,
+  "audio_engine": "minimax-music-1.5-replicate",
+  "created_at": "2026-04-03"
+}

@@ -1,0 +1,20 @@
+{
+  "id": "nonsense_6_8_526b",
+  "title": "Zizzle Zing Zoom",
+  "content_type": "poem",
+  "poem_type": "nonsense",
+  "age_group": "6-8",
+  "mood": "wired",
+  "instruments": "piano and light brush drums",
+  "tempo": 111,
+  "poem_text": "Zizzle zing the flim flop light,\nBizzle bop the sparkle bright.\nTizzle top the whirligig,\nFizzle pop the jiggly wig.\nDizzle dash the snickety snap,\nWizzle wham the clippety clap.\nNow the zizzle starts to slow,\nDreamy drowsy, off you go.",
+  "char_count": 236,
+  "line_count": 8,
+  "audio_file": "nonsense_6_8_526b.mp3",
+  "cover_file": "nonsense_6_8_526b_cover.webp",
+  "cover_context": "A swirling galaxy of glowing, bouncing blobs of light and color, like fireflies made of jelly, dancing in a dark room.",
+  "style_prompt": "Children's musical poem, piano and light brush drums, 111 BPM, bouncy and playful, fun energy that channels into rhythm, clear warm vocal, every word easy to understand",
+  "duration_seconds": 36,
+  "audio_engine": "minimax-music-1.5-replicate",
+  "created_at": "2026-04-03"
+}

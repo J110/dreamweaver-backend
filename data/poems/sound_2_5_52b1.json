@@ -1,0 +1,20 @@
+{
+  "id": "sound_2_5_52b1",
+  "title": "Soft Night Sounds",
+  "content_type": "poem",
+  "poem_type": "sound",
+  "age_group": "2-5",
+  "mood": "calm",
+  "instruments": "kalimba and gentle shaker",
+  "tempo": 93,
+  "poem_text": "Drip drop, drip drop slow,\nWhisper low, whisper low.\nPitter pat, pitter pat,\nMoonlight chat, moonlight chat.\nBuzz hum, buzz hum near,\nFirefly cheer, firefly cheer.\nSigh breeze, sigh breeze through,\nDreaming you, dreaming you.",
+  "char_count": 225,
+  "line_count": 8,
+  "audio_file": "sound_2_5_52b1.mp3",
+  "cover_file": "sound_2_5_52b1_cover.webp",
+  "cover_context": "A cozy night scene with fireflies glowing softly over a sleeping child wrapped in a starry blanket.",
+  "style_prompt": "Children's musical poem, kalimba and gentle shaker, 93 BPM, soft and settling, warm steady rhythm, almost a lullaby, clear warm vocal, every word easy to understand",
+  "duration_seconds": 44,
+  "audio_engine": "minimax-music-1.5-replicate",
+  "created_at": "2026-04-03"
+}
