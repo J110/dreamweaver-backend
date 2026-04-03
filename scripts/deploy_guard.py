@@ -42,6 +42,7 @@ Usage:
 
 import argparse
 import json
+import os
 import subprocess
 import sys
 from datetime import datetime
@@ -62,7 +63,14 @@ PROD_FRONTEND = "https://dreamvalley.app"
 LOCAL_FRONTEND = "http://localhost:3000"
 
 # GCP VM SSH command prefix
-SSH_CMD = ["gcloud", "compute", "ssh", "dreamvalley-prod",
+# Try to find gcloud in common locations
+_GCLOUD = "gcloud"
+for _path in ["/opt/homebrew/bin/gcloud", "/usr/local/bin/gcloud", "/usr/bin/gcloud"]:
+    if os.path.exists(_path):
+        _GCLOUD = _path
+        break
+
+SSH_CMD = [_GCLOUD, "compute", "ssh", "dreamvalley-prod",
            "--project=strong-harbor-472607-n4", "--zone=asia-south1-a",
            "--command"]
 
