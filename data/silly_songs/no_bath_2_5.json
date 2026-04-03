@@ -10,9 +10,11 @@
   "cover_description": "A tiny kid in dinosaur pajamas stands in the tub, splashing wildly as a rubber duck with an eye patch yells \"NO BATH!\" from the soap dish, bubbles bursting everywhere.",
   "animation_preset": "bounce_rhythmic",
   "created_at": "2026-04-02",
-  "play_count": 0,
-  "replay_count": 0,
+  "play_count": 3,
+  "replay_count": 1,
   "battle_cry_id": "no_bath",
   "battle_cry": "No bath",
-  "generation_method": "battlecry_v3"
+  "generation_method": "battlecry_v3",
+  "audio_file": "no_bath_2_5.mp3",
+  "cover_file": "no_bath_2_5.webp"
 }

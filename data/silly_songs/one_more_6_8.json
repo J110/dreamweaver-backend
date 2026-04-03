@@ -10,9 +10,11 @@
   "cover_description": "Kid clutches book, LEGO tower wobbles, juice box tips\u2014*plop!*",
   "animation_preset": "bounce_rhythmic",
   "created_at": "2026-04-02",
-  "play_count": 0,
+  "play_count": 4,
   "replay_count": 0,
   "battle_cry_id": "one_more",
   "battle_cry": "One more",
-  "generation_method": "battlecry_v3"
+  "generation_method": "battlecry_v3",
+  "audio_file": "one_more_6_8.mp3",
+  "cover_file": "one_more_6_8.webp"
 }
