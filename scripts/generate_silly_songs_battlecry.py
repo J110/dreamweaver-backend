@@ -1438,6 +1438,8 @@ Examples:
                         help="Skip audio and cover generation")
     parser.add_argument("--mood", choices=["wired", "curious", "calm", "sad", "anxious", "angry"],
                         help="Child mood — filters battle cries and adjusts style/tempo")
+    parser.add_argument("--mood-rotate", action="store_true",
+                        help="Cycle through moods (wired, curious, calm, sad, anxious, angry) across batch")
     parser.add_argument("--force", action="store_true",
                         help="Regenerate even if files exist")
     args = parser.parse_args()
@@ -1462,10 +1464,23 @@ Examples:
         count = args.count
 
         print(f"\n{'='*60}")
+        # Mood rotation: cycle through all moods across the batch
+        mood_cycle = ["wired", "curious", "calm", "sad", "anxious", "angry"]
+        if args.mood_rotate:
+            assigned_moods = [mood_cycle[i % len(mood_cycle)] for i in range(count)]
+            random.shuffle(assigned_moods)
+        elif args.mood:
+            assigned_moods = [args.mood] * count
+        else:
+            assigned_moods = [None] * count
+
+        print(f"\n{'='*60}")
         print(f"  Battle Cry Silly Songs Generator (FRESH / diversity-tracked)")
         print(f"  Songs to generate: {count}")
         print(f"  Existing songs for diversity: {len(existing_songs)}")
-        if args.mood:
+        if args.mood_rotate:
+            print(f"  Mood rotation: {' → '.join(assigned_moods)}")
+        elif args.mood:
             print(f"  Mood: {args.mood}")
         print(f"  Mode: {'lyrics only' if args.lyrics_only else 'full (lyrics + audio + cover)'}")
         print(f"{'='*60}")
@@ -1489,9 +1504,10 @@ Examples:
 
                 # Select params with enforced age group, excluding batch duplicates
                 batch_cries = {r.get("battle_cry_id") for r in results}
+                song_mood = assigned_moods[i]
                 params = select_silly_song_params(
                     existing_songs, age_group=forced_age, exclude_cries=batch_cries,
-                    mood=args.mood,
+                    mood=song_mood,
                 )
                 ok, reason = validate_batch_diversity(params, results)
                 if not ok:
