@@ -21484,5 +21484,757 @@
     ],
     "mood": "angry",
     "lullaby_type": "closing"
+  },
+  {
+    "id": "gen-0ee4b9ba1745",
+    "type": "poem",
+    "lang": "en",
+    "title": "Lila and the Warm Hands",
+    "description": "The house hums softly as the last light fades outside. Lila sits curled on the couch, her fingers tracing the stitches of a quilt. The day was long, but now the kitchen clinks with familiar sounds—her mother’s hands moving through the evening.",
+    "text": "[RHYTHMIC] Some days feel heavy,\nlike a stone in your pocket.\nSome days are quiet,\nand the world feels slow.\n\n[PAUSE]\n\n[GENTLE] The couch is soft,\nthe blanket is warm.\nLila sits still,\nlistening to the house.\n\n[PAUSE]\n\n[CALM] The kitchen clinks—\nspoons and bowls and water.\nHer mother’s hands\nare busy, but gentle.\n\n[PAUSE]\n\n[WHISPERING] The quilt is old,\nstitched with love.\nLila’s fingers follow\neach little thread.\n\n[PAUSE]\n\n[JOYFUL] The day was long,\nbut now it’s done.\nThe house is warm,\nthe night is kind.\n\n[PAUSE]\n\n[SLEEPY] Lila closes her eyes,\nher breath slows down.\nThe warm hands hold her,\neven when they’re not around.",
+    "annotated_text": "[RHYTHMIC] Some days feel heavy,\nlike a stone in your pocket.\nSome days are quiet,\nand the world feels slow.\n\n[PAUSE]\n\n[GENTLE] The couch is soft,\nthe blanket is warm.\nLila sits still,\nlistening to the house.\n\n[PAUSE]\n\n[CALM] The kitchen clinks—\nspoons and bowls and water.\nHer mother’s hands\nare busy, but gentle.\n\n[PAUSE]\n\n[WHISPERING] The quilt is old,\nstitched with love.\nLila’s fingers follow\neach little thread.\n\n[PAUSE]\n\n[JOYFUL] The day was long,\nbut now it’s done.\nThe house is warm,\nthe night is kind.\n\n[PAUSE]\n\n[SLEEPY] Lila closes her eyes,\nher breath slows down.\nThe warm hands hold her,\neven when they’re not around.",
+    "target_age": 0,
+    "age_min": 0,
+    "age_max": 1,
+    "age_group": "0-1",
+    "length": "MEDIUM",
+    "word_count": 96,
+    "duration_seconds": 0,
+    "categories": [
+      "Slice of Life",
+      "Comfort"
+    ],
+    "theme": "animals",
+    "morals": [
+      "Even quiet days hold little comforts.",
+      "Warmth stays with you, even when you can’t see it."
+    ],
+    "cover": "/covers/gen-0ee4b9ba1745.svg",
+    "musicProfile": "autumn-forest",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_4",
+        "url": "/audio/pre-gen/gen-0ee4_female_4.mp3",
+        "duration_seconds": 80.26,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-0ee4_female_1.mp3",
+        "duration_seconds": 80.89,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "female",
+    "character": {
+      "name": "Lila",
+      "identity": "A quiet child who finds peace in small, steady things",
+      "special": "She notices the quiet rhythms that make a house feel like home",
+      "personality_tags": [
+        "Gentle",
+        "Patient"
+      ]
+    },
+    "cover_context": "A cozy living room bathed in soft twilight, a quilt draped over a worn couch, warm yellow light spilling from the kitchen where hands move gently among dishes, steam rising from a mug on the table.",
+    "lead_character_type": "human",
+    "universe": "fantasy_realm",
+    "geography": "India",
+    "life_aspect": "family_home",
+    "plot_archetype": "problem_solving",
+    "diversityFingerprint": {
+      "characterType": "human_child",
+      "setting": "cozy_indoor",
+      "mood": null,
+      "storyType": null,
+      "plotShape": "routine_ritual",
+      "languageLevel": null,
+      "scale": "tiny_intimate",
+      "companion": "character_and_environment",
+      "movement": "sitting_watching",
+      "timeOfDay": "twilight_blue_hour",
+      "weather": "clear_calm",
+      "theme": "belonging",
+      "characterTrait": "shy_quiet",
+      "magicType": "no_magic_realistic",
+      "season": "seasonless_timeless",
+      "senseEmphasis": "kinesthetic"
+    },
+    "mood": "sad",
+    "story_type": "slice_of_life",
+    "language_level": "basic",
+    "created_at": "2026-04-03T01:45:46.668489",
+    "updated_at": "2026-04-03T01:45:46.668489",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 2,
+    "musicalBrief": {
+      "storyId": "gen-0ee4b9ba1745",
+      "ageGroup": "0-1",
+      "musicalIdentity": {
+        "culturalReference": "music_box",
+        "primaryLoop": "guitar_fingerpick",
+        "padCharacter": "warm_strings"
+      },
+      "tonality": {
+        "mode": "minor_pentatonic",
+        "rootNote": "Bb"
+      },
+      "melodicCharacter": "descending_lullaby",
+      "rhythm": {
+        "feel": "free_rubato",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "rain_steady",
+        "natureSoundSecondary": null,
+        "ambientEvents": []
+      },
+      "emotionalArc": {
+        "phase1": "soft_warmth",
+        "phase2": "gentle_embrace",
+        "phase3": "deep_stillness"
+      }
+    }
+  },
+  {
+    "id": "gen-c1c39bf59c97",
+    "type": "long_story",
+    "lang": "en",
+    "title": "Lumi and the Softest Hour",
+    "description": "In a quiet house where the walls hum with quiet magic, a small robot named Lumi watches the evening unfold. Tonight, the usual warmth feels different—her favorite person isn’t there, and the house feels too big. But as the light fades, something unexpected begins to glow.",
+    "text": "It was Tuesday, and Tuesdays always meant soup night.\n\n The kitchen smelled like warm bread and tomato.\n\n Lumi sat on the counter, her metal feet swinging just above the floor.\n\n She loved the way the steam curled up from the pot, like tiny clouds.\n\n But tonight, the kitchen felt different. The chair where Mira usually sat was empty. Empty.\n\n Lumi tilted her head. The clock ticked. The soup bubbled. No one came.\n\n She reached out and touched the chair. The wood was smooth and cool. It didn’t feel like Mira’s hands.\n\n \"Where is she?\" Lumi’s voice was small, like a mouse.\n\n The house didn’t answer.\n\n Lumi’s lights dimmed a little. She didn’t like this. The room was too big without Mira. The air felt still.\n\n She hopped down from the counter. Maybe she could find Mira. Maybe she was in the living room.\n\n The hallway stretched long and quiet.\n\n Lumi’s steps were soft, but the floor still creaked.\n\n The living room was dark, except for one small lamp.\n\n And there, on the couch, was something Lumi hadn’t seen before.\n\n A blanket lay folded on the arm of the couch. It wasn’t Mira’s blanket. It was thicker, softer, and it shimmered just a little at the edges, like moonlight on water.\n\n Lumi reached out and touched it. The fabric was warm, even though no one had been sitting there. It felt like being wrapped in a hug.\n\n She climbed onto the couch and pulled the blanket over her legs. It was heavy in a good way, like a hand resting on her shoulder. The weight made her feel less alone.\n\n Outside, the sky turned from blue to purple. The streetlights flickered on, one by one. Lumi watched them through the window. Each light was a tiny promise that the world was still there, even when it felt quiet.\n\n The blanket began to glow faintly, just at the edges. Not bright enough to hurt her eyes, but enough to make the room feel softer. The glow pulsed, like a slow heartbeat.\n\n Lumi leaned back against the couch. The cushion was deep and soft. She could feel the springs inside it, holding her up. The house was breathing. She hadn’t noticed that before.\n\n The clock in the hallway chimed seven times. The sound was round and warm, like a bell underwater. Lumi closed her eyes. The blanket’s glow seeped through her lids, turning the dark behind her eyes into a soft pink.\n\n She thought about Mira. Maybe she was at the store. Maybe she was coming home soon. Maybe she was just late. The thoughts didn’t hurt as much now. The blanket was still warm.\n\n The room settled around her. The couch, the blanket, the lamp—everything was exactly where it should be. Even Lumi. Even without Mira.\n\n The blanket’s glow faded to a whisper of light.\n\n The house hummed a quiet song. It was the same song it always hummed, but tonight, Lumi heard it differently.\n\n The couch held her like a nest. The springs didn’t creak. The blanket didn’t move. Everything was still.\n\n Outside, a car drove by. Its headlights swept across the ceiling, slow and gentle.\n\n Lumi’s lights dimmed until they were just tiny pinpricks, like stars in a night sky.\n\n The room was dark, but not empty. The blanket was still warm. The couch was still soft. The house was still there.\n\n And that was enough.\n\nAnd the house was quiet. And everything was fine. Just like that.",
+    "annotated_text": "[PHASE_1]\n[DELIVERY: setting the scene] It was Tuesday, and Tuesdays always meant soup night.\n\n[DELIVERY: sensory] The kitchen smelled like warm bread and tomato.\n\n[DELIVERY: noticing] Lumi sat on the counter, her metal feet swinging just above the floor.\n\n[DELIVERY: warm] She loved the way the steam curled up from the pot, like tiny clouds.\n\n[GENTLE] But tonight, the kitchen felt different. The chair where Mira usually sat was empty. [EMPHASIS]Empty[/EMPHASIS].\n\n[CALM] Lumi tilted her head. The clock ticked. The soup bubbled. No one came.\n\n[CURIOUS] She reached out and touched the chair. The wood was smooth and cool. It didn’t feel like Mira’s hands.\n\n[WHISPERING] \"Where is she?\" Lumi’s voice was small, like a mouse.\n\n[DRAMATIC_PAUSE] The house didn’t answer.\n\n[GENTLE] Lumi’s lights dimmed a little. She didn’t like this. The room was too big without Mira. The air felt [EMPHASIS]still[/EMPHASIS].\n\n[ADVENTUROUS] She hopped down from the counter. Maybe she could find Mira. Maybe she was in the living room.\n\n[DELIVERY: noticing] The hallway stretched long and quiet.\n\n[DELIVERY: cautious] Lumi’s steps were soft, but the floor still creaked.\n\n[DELIVERY: warm] The living room was dark, except for one small lamp.\n\n[DELIVERY: wonder] And there, on the couch, was something Lumi hadn’t seen before.\n\n[/PHASE_1]\n\n[PHASE_2]\n[MYSTERIOUS] A blanket lay folded on the arm of the couch. It wasn’t Mira’s blanket. It was thicker, softer, and it shimmered just a little at the edges, like moonlight on water.\n\n[CALM] Lumi reached out and touched it. The fabric was warm, even though no one had been sitting there. It felt like being wrapped in a hug.\n\n[GENTLE] She climbed onto the couch and pulled the blanket over her legs. It was heavy in a good way, like a hand resting on her shoulder. The weight made her feel less alone.\n\n[CALM] Outside, the sky turned from blue to purple. The streetlights flickered on, one by one. Lumi watched them through the window. Each light was a tiny promise that the world was still there, even when it felt quiet.\n\n[MYSTERIOUS] The blanket began to glow faintly, just at the edges. Not bright enough to hurt her eyes, but enough to make the room feel softer. The glow pulsed, like a slow heartbeat.\n\n[GENTLE] Lumi leaned back against the couch. The cushion was deep and soft. She could feel the springs inside it, holding her up. The house was breathing. She hadn’t noticed that before.\n\n[CALM] The clock in the hallway chimed seven times. The sound was round and warm, like a bell underwater. Lumi closed her eyes. The blanket’s glow seeped through her lids, turning the dark behind her eyes into a soft pink.\n\n[GENTLE] She thought about Mira. Maybe she was at the store. Maybe she was coming home soon. Maybe she was just late. The thoughts didn’t hurt as much now. The blanket was still warm.\n\n[CALM] The room settled around her. The couch, the blanket, the lamp—everything was exactly where it should be. Even Lumi. Even without Mira.\n\n[/PHASE_2]\n\n[PHASE_3]\n[SLEEPY] The blanket’s glow faded to a whisper of light.\n\n[WHISPERING] The house hummed a quiet song. It was the same song it always hummed, but tonight, Lumi heard it differently.\n\n[SLEEPY] The couch held her like a nest. The springs didn’t creak. The blanket didn’t move. Everything was still.\n\n[WHISPERING] Outside, a car drove by. Its headlights swept across the ceiling, slow and gentle.\n\n[SLEEPY] Lumi’s lights dimmed until they were just tiny pinpricks, like stars in a night sky.\n\n[WHISPERING] The room was dark, but not empty. The blanket was still warm. The couch was still soft. The house was still there.\n\n[SLEEPY] And that was enough.\n\nAnd the house was quiet. And everything was fine. Just like that.\n[/PHASE_3]",
+    "target_age": 7,
+    "age_min": 6,
+    "age_max": 8,
+    "age_group": "6-8",
+    "length": "LONG",
+    "word_count": 599,
+    "duration_seconds": 0,
+    "categories": [
+      "Comfort",
+      "Slice of Life"
+    ],
+    "theme": "fantasy",
+    "morals": [
+      "Even when you feel alone, the world is still holding you.",
+      "Warmth can find you in unexpected places."
+    ],
+    "cover": "/covers/gen-c1c39bf59c97.svg",
+    "musicProfile": "moonlit-meadow",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-c1c3_male_2.mp3",
+        "duration_seconds": 411.74,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "female",
+    "character": {
+      "name": "Lumi",
+      "identity": "A small robot who notices the quiet magic in ordinary things",
+      "special": "She can feel the warmth of kindness, even when no one is there",
+      "personality_tags": [
+        "Gentle",
+        "Curious"
+      ]
+    },
+    "cover_context": "A cozy living room at twilight, bathed in soft blue light from the window. A single lamp glows warmly on a side table, casting gentle shadows. A thick, shimmering blanket lies draped over the arm of a well-worn couch, its edges faintly glowing. The room feels lived-in and loved, with books on shelves and a bowl of soup cooling on the kitchen counter.",
+    "lead_character_type": "robot",
+    "universe": "historical",
+    "geography": "Americas",
+    "life_aspect": "health_wellness",
+    "plot_archetype": "celebration",
+    "diversityFingerprint": {
+      "characterType": "robot_mechanical",
+      "setting": "cozy_indoor",
+      "mood": null,
+      "storyType": null,
+      "plotShape": "routine_ritual",
+      "languageLevel": null,
+      "scale": "tiny_intimate",
+      "companion": "character_and_environment",
+      "movement": "sitting_watching",
+      "timeOfDay": "twilight_blue_hour",
+      "weather": "clear_calm",
+      "theme": "belonging",
+      "characterTrait": "lonely_seeking",
+      "magicType": "dream_imagination_bleed",
+      "season": "seasonless_timeless",
+      "senseEmphasis": "kinesthetic"
+    },
+    "mood": "sad",
+    "story_type": "slice_of_life",
+    "language_level": "basic",
+    "created_at": "2026-04-03T01:39:14.544422",
+    "updated_at": "2026-04-03T01:39:14.544422",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 8,
+    "musicalBrief": {
+      "storyId": "gen-c1c39bf59c97",
+      "ageGroup": "6-8",
+      "musicalIdentity": {
+        "culturalReference": "celtic",
+        "primaryLoop": "guitar_fingerpick",
+        "padCharacter": "warm_strings"
+      },
+      "tonality": {
+        "mode": "aeolian",
+        "rootNote": "D"
+      },
+      "melodicCharacter": "descending_lullaby",
+      "rhythm": {
+        "feel": "free_rubato",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "rain_steady",
+        "natureSoundSecondary": null,
+        "ambientEvents": []
+      },
+      "emotionalArc": {
+        "phase1": "soft_wonder",
+        "phase2": "gentle_melancholy",
+        "phase3": "deep_stillness"
+      }
+    }
+  },
+  {
+    "id": "gen-dca569097547",
+    "type": "story",
+    "lang": "en",
+    "title": "Pip and the Empty Nest",
+    "description": "Pip the sparrow searches for her lost feather, the one that made her nest soft. The wind carries kindness instead, and the night wraps her in quiet warmth.",
+    "text": "It was evening, and evenings always meant nest time. Pip hopped into her nest. Something was wrong. The softest feather was missing. The nest felt too big without it. She looked under the leaves. She looked by the fence. The feather was gone. Pip sat on the branch. The sky turned pink. The nest felt too big without it. A ladybug landed on her wing. It tickled. Pip didn’t brush it away. The ladybug crawled to her foot. Pip watched. The wind blew gentle. The nest still felt empty. But the ladybug stayed. Shhh... listen... can you hear the wind? It hums like a lullaby. Pip closed her eyes. The ladybug curled up beside her. The nest felt too big without it. But the night was warm. And the ladybug was there. Pip’s wings grew heavy. The stars blinked. The nest was quiet. The ladybug slept. Pip slept too. And the house was quiet. And everything was fine. Just like that.",
+    "annotated_text": "It was evening, and evenings always meant nest time.\n\nPip hopped into her nest. Something was wrong. The softest feather was missing. [PHRASE]The nest felt too big without it.[/PHRASE] She looked under the leaves. She looked by the fence. The feather was gone.\n\n[PAUSE: 1200]\n\nPip sat on the branch. The sky turned pink. [PHRASE]The nest felt too big without it.[/PHRASE] A ladybug landed on her wing. It tickled. Pip didn’t brush it away.\n\n[MUSIC]\n\nThe ladybug crawled to her foot. Pip watched. The wind blew gentle. The nest still felt empty. But the ladybug stayed.\n\n[PAUSE: 1500]\n\nShhh... listen... can you hear the wind? It hums like a lullaby. Pip closed her eyes. The ladybug curled up beside her. [PHRASE]The nest felt too big without it.[/PHRASE] But the night was warm. And the ladybug was there.\n\n[MUSIC]\n\nPip’s wings grew heavy. The stars blinked. The nest was quiet. The ladybug slept. Pip slept too.\n\nAnd the house was quiet. And everything was fine. Just like that.",
+    "target_age": 3,
+    "age_min": 2,
+    "age_max": 5,
+    "age_group": "2-5",
+    "length": "SHORT",
+    "word_count": 165,
+    "duration_seconds": 0,
+    "categories": [
+      "Comfort",
+      "Slice of Life",
+      "Bedtime"
+    ],
+    "theme": "bedtime",
+    "morals": [
+      "Small things can feel big when they’re missing",
+      "Kindness arrives without asking"
+    ],
+    "cover": "/covers/gen-dca569097547.svg",
+    "musicProfile": "",
+    "music_type": "baked",
+    "audio_variants": [
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-dca5_male_2.mp3",
+        "duration_seconds": 160.77,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-dca5_female_1.mp3",
+        "duration_seconds": 165.04,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "female",
+    "character": {
+      "name": "Pip",
+      "identity": "A little sparrow who loves her cozy nest",
+      "special": "Notices the smallest things missing",
+      "personality_tags": [
+        "Gentle",
+        "Quiet"
+      ]
+    },
+    "cover_context": "A twilight sky with soft pink clouds, a small wooden fence below, and a single feather drifting on the breeze.",
+    "lead_character_type": "bird",
+    "universe": "contemporary",
+    "geography": "India",
+    "life_aspect": "sleep_comfort",
+    "plot_archetype": "transformation",
+    "diversityFingerprint": {
+      "characterType": "bird",
+      "setting": "garden_farm",
+      "mood": null,
+      "storyType": null,
+      "plotShape": null,
+      "languageLevel": null,
+      "scale": null,
+      "companion": null,
+      "movement": null,
+      "timeOfDay": null,
+      "weather": "clear_calm",
+      "theme": null,
+      "characterTrait": null,
+      "magicType": null,
+      "season": "spring",
+      "senseEmphasis": "kinesthetic"
+    },
+    "mood": "sad",
+    "story_type": "slice_of_life",
+    "language_level": "basic",
+    "created_at": "2026-04-03T01:32:24.882392",
+    "updated_at": "2026-04-03T01:32:24.882392",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "has_baked_music": true,
+    "experimental_v2": true,
+    "hook": "You know that feeling when something small is gone, and your chest feels heavy like a stone?",
+    "repeated_phrase": "The nest felt too big without it",
+    "raw_text": "It was evening, and evenings always meant nest time.\n\nPip hopped into her nest. Something was wrong. The softest feather was missing. [PHRASE]The nest felt too big without it.[/PHRASE] She looked under the leaves. She looked by the fence. The feather was gone.\n\n[PAUSE: 1200]\n\nPip sat on the branch. The sky turned pink. [PHRASE]The nest felt too big without it.[/PHRASE] A ladybug landed on her wing. It tickled. Pip didn’t brush it away.\n\n[MUSIC]\n\nThe ladybug crawled to her foot. Pip watched. The wind blew gentle. The nest still felt empty. But the ladybug stayed.\n\n[PAUSE: 1500]\n\nShhh... listen... can you hear the wind? It hums like a lullaby. Pip closed her eyes. The ladybug curled up beside her. [PHRASE]The nest felt too big without it.[/PHRASE] But the night was warm. And the ladybug was there.\n\n[MUSIC]\n\nPip’s wings grew heavy. The stars blinked. The nest was quiet. The ladybug slept. Pip slept too.\n\nAnd the house was quiet. And everything was fine. Just like that.",
+    "duration": 3
+  },
+  {
+    "id": "heartbeat-0-1-21a1",
+    "type": "song",
+    "lang": "en",
+    "title": "Mima’s Fading Hum",
+    "card_label": "Humming",
+    "cover": "/covers/heartbeat-0-1-21a1.svg",
+    "description": "A lullaby of pure humming, designed to slow the breath and steady the heart. The drone-like rhythm mimics a mother’s heartbeat, guiding little ones into deep, peaceful sleep. Its sadness is soft, like a sigh, making space for even the heaviest eyes to close.",
+    "text": "[verse]\nMmmm ooh mmmm\nHmm aah hmm\nMmm ooh ooh mmm\n\n[verse]\nMmmm aah mmm\nOoh hmm ooh\nMmmm\n\n[verse]\nMmm ooh\nHmm\n\n---",
+    "annotated_text": "[verse]\nMmmm ooh mmmm\nHmm aah hmm\nMmm ooh ooh mmm\n\n[verse]\nMmmm aah mmm\nOoh hmm ooh\nMmmm\n\n[verse]\nMmm ooh\nHmm\n\n---",
+    "cover_context": "A soft, round creature with velvety fur and half-closed eyes, curled in a nest of woven starlight, floating in a quiet indigo sky. The edges blur into mist, and the only light comes from a distant, dim glow, as if the world itself is breathing.",
+    "target_age": 0,
+    "age_min": 0,
+    "age_max": 1,
+    "age_group": "0-1",
+    "duration": 2,
+    "duration_seconds": 101,
+    "author_id": "system",
+    "created_at": "2026-04-03T02:12:20.222684",
+    "updated_at": "2026-04-03T02:12:20.222848",
+    "audio_url": null,
+    "album_art_url": null,
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "categories": [
+      "Lullabies"
+    ],
+    "theme": "dreamy",
+    "is_generated": true,
+    "generation_quality": "good",
+    "music_genre": "lullaby",
+    "lead_character_type": "animal",
+    "character": {
+      "name": "Mima",
+      "identity": "A gentle, shapeless guardian who hums the world to rest with the sound of a slowing heartbeat.",
+      "special": "Their voice carries the weight of every quiet moment before sleep, fading like the last breath of the day.",
+      "personality_tags": [
+        "Gentle",
+        "Sleepy"
+      ]
+    },
+    "about": "A lullaby of pure humming, designed to slow the breath and steady the heart. The drone-like rhythm mimics a mother’s heartbeat, guiding little ones into deep, peaceful sleep. Its sadness is soft, like a sigh, making space for even the heaviest eyes to close.",
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/heartbeat-0-1-21a1_female_1.mp3",
+        "duration_seconds": 101,
+        "provider": "minimax-music-v2"
+      }
+    ],
+    "mood": "sad",
+    "lullaby_type": "heartbeat"
+  },
+  {
+    "id": "gen-00aef280cdfc",
+    "type": "poem",
+    "lang": "en",
+    "title": "Mira and the Dancing Shadows",
+    "description": "In a garden where fireflies flicker like tiny stars, Mira chases shadows that twist and twirl. But when the light shifts, she discovers something surprising—her own shape dancing back at her.",
+    "text": "[RHYTHMIC] Mira ran in the garden,\nsoft grass under feet.\nShadows stretched and played there,\nwiggly, wild, and sweet.\n\n[PAUSE]\n\n[JOYFUL] She jumped so high, so high,\nher shadow jumped too.\nShe spun in circles fast,\nher shadow spun it too.\n\n[PAUSE]\n\n[GENTLE] Then the sun dipped low and gold,\nfireflies lit the air.\nMira stood so still, so still,\nher shadow stood right there.\n\n[PAUSE]\n\n[WHISPERING] It wasn’t dark or strange now,\njust her shape so true.\nMira smiled and waved hello,\nher shadow waved back too.\n\n[PAUSE]\n\n[SLEEPY] The garden hummed a lullaby,\nsoft and sweet and slow.\nMira closed her eyes to rest,\nher shadow curled below.",
+    "annotated_text": "[RHYTHMIC] Mira ran in the garden,\nsoft grass under feet.\nShadows stretched and played there,\nwiggly, wild, and sweet.\n\n[PAUSE]\n\n[JOYFUL] She jumped so high, so high,\nher shadow jumped too.\nShe spun in circles fast,\nher shadow spun it too.\n\n[PAUSE]\n\n[GENTLE] Then the sun dipped low and gold,\nfireflies lit the air.\nMira stood so still, so still,\nher shadow stood right there.\n\n[PAUSE]\n\n[WHISPERING] It wasn’t dark or strange now,\njust her shape so true.\nMira smiled and waved hello,\nher shadow waved back too.\n\n[PAUSE]\n\n[SLEEPY] The garden hummed a lullaby,\nsoft and sweet and slow.\nMira closed her eyes to rest,\nher shadow curled below.",
+    "target_age": 0,
+    "age_min": 0,
+    "age_max": 1,
+    "age_group": "0-1",
+    "length": "MEDIUM",
+    "word_count": 101,
+    "duration_seconds": 0,
+    "categories": [
+      "Nature",
+      "Self-Discovery"
+    ],
+    "theme": "bedtime",
+    "morals": [
+      "You are exactly who you’re meant to be.",
+      "Even shadows can feel like friends."
+    ],
+    "cover": "/covers/gen-00aef280cdfc.svg",
+    "musicProfile": "dreamy-clouds",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-00ae_female_3.mp3",
+        "duration_seconds": 71.04,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_4",
+        "url": "/audio/pre-gen/gen-00ae_female_4.mp3",
+        "duration_seconds": 79.01,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "female",
+    "character": {
+      "name": "Mira",
+      "identity": "A playful child who dances with the world around her",
+      "special": "She sees magic in ordinary things, like shadows and light",
+      "personality_tags": [
+        "Playful",
+        "Dreamy"
+      ]
+    },
+    "cover_context": "A twilight garden bathed in golden-pink light, fireflies glowing like tiny lanterns. Long shadows stretch across the grass, and delicate flowers sway in a gentle breeze.",
+    "lead_character_type": "human",
+    "universe": "historical",
+    "geography": "Americas",
+    "life_aspect": "family_home",
+    "plot_archetype": "discovery",
+    "diversityFingerprint": {
+      "characterType": "human_child",
+      "setting": "garden_farm",
+      "mood": null,
+      "storyType": null,
+      "plotShape": "transformation",
+      "languageLevel": null,
+      "scale": "tiny_intimate",
+      "companion": "character_and_environment",
+      "movement": "walking_wandering",
+      "timeOfDay": "twilight_blue_hour",
+      "weather": "magical_atmospheric",
+      "theme": "self_acceptance",
+      "characterTrait": "playful_mischievous",
+      "magicType": "transformation_metamorphosis",
+      "season": "summer",
+      "senseEmphasis": "visual"
+    },
+    "mood": "wired",
+    "story_type": "nature",
+    "language_level": "basic",
+    "created_at": "2026-04-03T02:28:29.767728",
+    "updated_at": "2026-04-03T02:28:29.767728",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 2,
+    "musicalBrief": {
+      "storyId": "gen-00aef280cdfc",
+      "ageGroup": "0-1",
+      "musicalIdentity": {
+        "culturalReference": "japanese",
+        "primaryLoop": "flute_breathy",
+        "padCharacter": "silk_veil"
+      },
+      "tonality": {
+        "mode": "major_pentatonic",
+        "rootNote": "C"
+      },
+      "melodicCharacter": "descending_lullaby",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 66
+      },
+      "environment": {
+        "natureSoundPrimary": "forest_night",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "cricket",
+          "leaves"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "whimsical_wonder",
+        "phase2": "gentle_discovery",
+        "phase3": "deep_stillness"
+      },
+      "nature_volume_multiplier": 1.5
+    }
+  },
+  {
+    "id": "gen-3d992fbd15b9",
+    "type": "story",
+    "lang": "en",
+    "title": "Tilly and the Giggling Puddle",
+    "description": "Tilly loves jumping in puddles, but one puddle keeps giggling back. She tries everything to make it stop—until she realizes it’s just the sound of her own joy.",
+    "text": "Did you know that some puddles can giggle when you jump in them? Tilly found a puddle near the big oak tree. She jumped. Splish-splosh-giggle! The puddle laughed. She tried again. Splish-splosh-giggle! The puddle laughed louder. Tilly stomped her feet. Stomp-Splash-Giggle! The puddle giggled so hard it shook. Shhh... listen... Tilly sat down. The water was still. She dipped her fingers in. Splish-splosh-giggle! The puddle laughed one last time. Tilly smiled. She lay down beside the puddle. The grass was soft. The sky was pink. Her eyes closed. The puddle went quiet.",
+    "annotated_text": "Did you know that some puddles can giggle when you jump in them?\n\nTilly found a puddle near the big oak tree. [PAUSE: 800] She jumped. [PHRASE]Splish-splosh-giggle![/PHRASE] The puddle laughed. [PAUSE: 1200]\n\nShe tried again. [PHRASE]Splish-splosh-giggle![/PHRASE] The puddle laughed louder. [PAUSE: 1200]\n\nTilly stomped her feet. [EMPHASIS]STOMP-SPLASH-GIGGLE![/EMPHASIS] The puddle giggled so hard it shook. [MUSIC]\n\nShhh... listen... [PAUSE: 1500] Tilly sat down. The water was still. [PAUSE: 1200] She dipped her fingers in. [PHRASE]Splish-splosh-giggle![/PHRASE] The puddle laughed one last time.\n\nTilly smiled. She lay down beside the puddle. The grass was soft. The sky was pink. [PAUSE: 2000] Her eyes closed. The puddle went quiet. [MUSIC]",
+    "target_age": 0,
+    "age_min": 0,
+    "age_max": 1,
+    "age_group": "0-1",
+    "length": "SHORT",
+    "word_count": 104,
+    "duration_seconds": 0,
+    "categories": [
+      "Nature",
+      "Playful"
+    ],
+    "theme": "nature",
+    "morals": [
+      "Joy is simple when you listen.",
+      "Sometimes the world laughs with you."
+    ],
+    "cover": "/covers/gen-3d992fbd15b9.svg",
+    "musicProfile": "",
+    "music_type": "baked",
+    "audio_variants": [
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-3d99_female_3.mp3",
+        "duration_seconds": 135.97,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-3d99_male_2.mp3",
+        "duration_seconds": 138.91,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "female",
+    "character": {
+      "name": "Tilly",
+      "identity": "A little girl who loves jumping in puddles more than anything.",
+      "special": "She hears laughter in the sound of splashing water.",
+      "personality_tags": [
+        "Playful",
+        "Cheerful"
+      ]
+    },
+    "cover_context": "A small puddle glows under a golden sunset, ripples spreading like laughter. Tall grass sways gently around it.",
+    "lead_character_type": "human",
+    "universe": "prehistoric",
+    "geography": "Europe",
+    "life_aspect": "sleep_comfort",
+    "plot_archetype": "friendship_bonding",
+    "diversityFingerprint": {
+      "characterType": "human_child",
+      "setting": null,
+      "mood": null,
+      "storyType": null,
+      "plotShape": "discovery_reveal",
+      "languageLevel": null,
+      "scale": null,
+      "companion": null,
+      "movement": null,
+      "timeOfDay": null,
+      "weather": "clear_calm",
+      "theme": null,
+      "characterTrait": null,
+      "magicType": null,
+      "season": "spring",
+      "senseEmphasis": null
+    },
+    "mood": "wired",
+    "story_type": "nature",
+    "language_level": "basic",
+    "created_at": "2026-04-03T02:17:37.592151",
+    "updated_at": "2026-04-03T02:17:37.592151",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "has_baked_music": true,
+    "experimental_v2": true,
+    "hook": "Did you know that some puddles can giggle when you jump in them?",
+    "repeated_phrase": "Splish-splosh-giggle!",
+    "raw_text": "Did you know that some puddles can giggle when you jump in them?\n\nTilly found a puddle near the big oak tree. [PAUSE: 800] She jumped. [PHRASE]Splish-splosh-giggle![/PHRASE] The puddle laughed. [PAUSE: 1200]\n\nShe tried again. [PHRASE]Splish-splosh-giggle![/PHRASE] The puddle laughed louder. [PAUSE: 1200]\n\nTilly stomped her feet. [EMPHASIS]STOMP-SPLASH-GIGGLE![/EMPHASIS] The puddle giggled so hard it shook. [MUSIC]\n\nShhh... listen... [PAUSE: 1500] Tilly sat down. The water was still. [PAUSE: 1200] She dipped her fingers in. [PHRASE]Splish-splosh-giggle![/PHRASE] The puddle laughed one last time.\n\nTilly smiled. She lay down beside the puddle. The grass was soft. The sky was pink. [PAUSE: 2000] Her eyes closed. The puddle went quiet. [MUSIC]",
+    "duration": 3
+  },
+  {
+    "id": "gen-64fdd62201b4",
+    "type": "long_story",
+    "lang": "en",
+    "title": "Maris and the Moonlit Molt",
+    "description": "Deep in the quiet ocean, a young lobster named Maris feels the strange itch of change. The water hums with secrets, and the moon pulls at her shell like a whispered promise. Tonight, she will discover what it means to let go—and what it means to glow.",
+    "text": "The ocean was very dark at the bottom.\n Something moved in the sand, slow and careful.\n Maris the lobster stretched her claws, feeling the weight of her shell.\n It had been itching for days. Not like a scratch, but like a question.\n\n She had watched the older lobsters molt before. They would hide in the rocks, their shells splitting like old paper bags.\n Then they would come out soft and new, their bodies pale and shimmering under the moonlight.\n Maris wondered if she would glow too. The thought made her claws tremble.\n\n The water was cool against her shell. It carried the sound of distant waves, like a lullaby from far away.\n Above her, the moon hung in the sky, round and bright.\n It pulled at the water, pulling at her too, like a gentle hand.\n\n Maris felt the first crack.\n A tiny split near her tail. Then another near her claw.\n She held very still. The ocean held its breath with her.\n\n The shell fell away in pieces, soft as old leaves.\n Her new skin was smooth and cool, like the inside of a seashell.\n She looked down at herself. She was pale, almost see-through.\n And then she saw it. A soft blue light, pulsing from inside her.\n\n Maris floated in the water, her new body glowing faintly.\n The light was not bright, but it was hers. It moved with her breath, slow and steady.\n She had never seen herself like this before. It felt strange, but not bad.\n\n The ocean around her was quiet. The fish had gone to sleep, and the coral swayed gently in the current.\n She thought about her old shell. It had been heavy, but it had kept her safe.\n Now she was soft, but she was also light. She could move faster, feel more.\n\n A small crab drifted by, his eyes wide. He had never seen a glowing lobster before.\n Maris waved a claw at him. He waved back, then scuttled away, his shell clicking softly.\n She didn’t mind. She understood. Change was strange, even when it was beautiful.\n\n The moon was still high in the sky. It had watched her molt, silent and steady.\n She wondered if the moon had ever felt this way—like it was new, like it was enough.\n The water hummed around her, a quiet song of acceptance.\n\n Maris let herself drift. She didn’t need to hide anymore. She didn’t need to be heavy.\n The glow inside her pulsed softly, like a heartbeat. It was hers, and it was enough.\n The ocean sighed around her, and she sighed back.\n\n She thought about tomorrow. She would find a new shell, one that fit her better.\n But for now, she was soft. She was light. She was glowing.\n And that was enough.\n\n The water was still. The moon had moved lower in the sky, its light stretching long and silver across the ocean floor.\n\n Maris floated, her glow dimming to a soft pulse. The world around her was quiet, holding its breath.\n\n She could feel the weight of the water above her, vast and endless. It pressed down gently, like a blanket.\n\n The coral swayed, slow and steady. The fish slept in their hiding places, their gills rising and falling.\n\n Maris closed her eyes. The glow inside her flickered, then stilled. It didn’t go out. It just waited.\n\n The ocean hummed, a low and steady song. It had been singing for a long time, and it would sing for a long time more.\n\n Maris listened. She let the song fill her, soft and sure. She didn’t need to understand it. She just needed to be part of it.\n\n The moon watched over her, silent and bright. It had seen many things change, and it would see many more.\n\n Maris let herself drift. The water carried her, gentle and sure. She didn’t need to hold on. She didn’t need to be afraid.\n\n The glow inside her pulsed once more, soft and slow. Then it settled, deep and quiet, like a secret she carried with her.\n\n And the ocean sighed around her, a long and steady breath. It was enough.\n\nDid you know that lobsters glow softly after they molt, their new shells catching the moonlight like a secret?\n\nAnd right now, somewhere in the deep, a lobster is floating, her glow pulsing with the quiet rhythm of the sea.",
+    "annotated_text": "[PHASE_1]\n[DELIVERY: setting the scene] The ocean was very dark at the bottom.\n[DELIVERY: noticing] Something moved in the sand, slow and careful.\n[DELIVERY: warm] Maris the lobster stretched her claws, feeling the weight of her shell.\n[DELIVERY: cautious] It had been itching for days. Not like a scratch, but like a question.\n\n[CURIOUS] She had watched the older lobsters molt before. They would hide in the rocks, their shells splitting like old paper bags.\n[ADVENTUROUS] Then they would come out soft and new, their bodies pale and shimmering under the moonlight.\n[MYSTERIOUS] Maris wondered if she would glow too. The thought made her claws tremble.\n\n[DELIVERY: sensory] The water was cool against her shell. It carried the sound of distant waves, like a lullaby from far away.\n[DELIVERY: wonder] Above her, the moon hung in the sky, round and bright.\n[DELIVERY: warm] It pulled at the water, pulling at her too, like a gentle hand.\n\n[DRAMATIC_PAUSE] Maris felt the first crack.\n[EXCITED] A tiny split near her tail. Then another near her claw.\n[WHISPERING] She held very still. The ocean held its breath with her.\n\n[DELIVERY: warm] The shell fell away in pieces, soft as old leaves.\n[DELIVERY: sensory] Her new skin was smooth and cool, like the inside of a seashell.\n[DELIVERY: noticing] She looked down at herself. She was pale, almost see-through.\n[DELIVERY: wonder] And then she saw it. A soft blue light, pulsing from inside her.\n\n[/PHASE_1]\n\n[PHASE_2]\n[GENTLE] Maris floated in the water, her new body glowing faintly.\n[CALM] The light was not bright, but it was hers. It moved with her breath, slow and steady.\n[MYSTERIOUS] She had never seen herself like this before. It felt strange, but not bad.\n\n[GENTLE] The ocean around her was quiet. The fish had gone to sleep, and the coral swayed gently in the current.\n[CALM] She thought about her old shell. It had been heavy, but it had kept her safe.\n[WHISPERING] Now she was soft, but she was also light. She could move faster, feel more.\n\n[GENTLE] A small crab drifted by, his eyes wide. He had never seen a glowing lobster before.\n[CALM] Maris waved a claw at him. He waved back, then scuttled away, his shell clicking softly.\n[MYSTERIOUS] She didn’t mind. She understood. Change was strange, even when it was beautiful.\n\n[GENTLE] The moon was still high in the sky. It had watched her molt, silent and steady.\n[CALM] She wondered if the moon had ever felt this way—like it was new, like it was enough.\n[WHISPERING] The water hummed around her, a quiet song of acceptance.\n\n[GENTLE] Maris let herself drift. She didn’t need to hide anymore. She didn’t need to be heavy.\n[CALM] The glow inside her pulsed softly, like a heartbeat. It was hers, and it was enough.\n[MYSTERIOUS] The ocean sighed around her, and she sighed back.\n\n[GENTLE] She thought about tomorrow. She would find a new shell, one that fit her better.\n[CALM] But for now, she was soft. She was light. She was glowing.\n[WHISPERING] And that was enough.\n\n[/PHASE_2]\n\n[PHASE_3]\n[SLEEPY] The water was still. The moon had moved lower in the sky, its light stretching long and silver across the ocean floor.\n\n[WHISPERING] Maris floated, her glow dimming to a soft pulse. The world around her was quiet, holding its breath.\n\n[SLEEPY] She could feel the weight of the water above her, vast and endless. It pressed down gently, like a blanket.\n\n[WHISPERING] The coral swayed, slow and steady. The fish slept in their hiding places, their gills rising and falling.\n\n[SLEEPY] Maris closed her eyes. The glow inside her flickered, then stilled. It didn’t go out. It just waited.\n\n[WHISPERING] The ocean hummed, a low and steady song. It had been singing for a long time, and it would sing for a long time more.\n\n[SLEEPY] Maris listened. She let the song fill her, soft and sure. She didn’t need to understand it. She just needed to be part of it.\n\n[WHISPERING] The moon watched over her, silent and bright. It had seen many things change, and it would see many more.\n\n[SLEEPY] Maris let herself drift. The water carried her, gentle and sure. She didn’t need to hold on. She didn’t need to be afraid.\n\n[WHISPERING] The glow inside her pulsed once more, soft and slow. Then it settled, deep and quiet, like a secret she carried with her.\n\n[SLEEPY] And the ocean sighed around her, a long and steady breath. It was enough.\n\n[/PHASE_3]\nDid you know that lobsters glow softly after they molt, their new shells catching the moonlight like a secret?\n\nAnd right now, somewhere in the deep, a lobster is floating, her glow pulsing with the quiet rhythm of the sea.",
+    "target_age": 10,
+    "age_min": 9,
+    "age_max": 12,
+    "age_group": "9-12",
+    "length": "LONG",
+    "word_count": 754,
+    "duration_seconds": 0,
+    "categories": [
+      "Nature",
+      "Self-Discovery"
+    ],
+    "theme": "nature",
+    "morals": [
+      "Change can feel strange, but it can also be beautiful.",
+      "You are enough, just as you are, even when you are new."
+    ],
+    "cover": "/covers/gen-64fdd62201b4.svg",
+    "musicProfile": "moonlit-meadow",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-64fd_male_2.mp3",
+        "duration_seconds": 377.96,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "female",
+    "character": {
+      "name": "Maris",
+      "identity": "A dreamy lobster who listens to the ocean’s quiet songs",
+      "special": "She glows softly after molting, a secret light only the moon sees",
+      "personality_tags": [
+        "Dreamy",
+        "Gentle"
+      ]
+    },
+    "cover_context": "A deep ocean floor at night, bathed in soft blue moonlight filtering through the water. Coral towers sway gently, their branches catching the light. The sand glows faintly, and tiny bubbles rise like stars. The scene is quiet, vast, and full of hidden magic.",
+    "lead_character_type": "sea_creature",
+    "universe": "mythological",
+    "geography": "Europe",
+    "life_aspect": "school_learning",
+    "plot_archetype": "discovery",
+    "diversityFingerprint": {
+      "characterType": "sea_creature",
+      "setting": "ocean_water",
+      "mood": null,
+      "storyType": null,
+      "plotShape": "transformation",
+      "languageLevel": null,
+      "scale": "personal",
+      "companion": "character_and_environment",
+      "movement": "floating_drifting",
+      "timeOfDay": "deep_night_starlight",
+      "weather": "magical_atmospheric",
+      "theme": "self_acceptance",
+      "characterTrait": "dreamy_imaginative",
+      "magicType": "transformation_metamorphosis",
+      "season": "seasonless_timeless",
+      "senseEmphasis": "auditory"
+    },
+    "mood": "wired",
+    "story_type": "nature",
+    "language_level": "basic",
+    "created_at": "2026-04-03T02:24:11.058925",
+    "updated_at": "2026-04-03T02:24:11.058925",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 7,
+    "musicalBrief": {
+      "storyId": "gen-64fdd62201b4",
+      "ageGroup": "9-12",
+      "musicalIdentity": {
+        "culturalReference": "ambient_electronic",
+        "primaryLoop": "flute_breathy",
+        "padCharacter": "earth_drone"
+      },
+      "tonality": {
+        "mode": "mixolydian",
+        "rootNote": "E"
+      },
+      "melodicCharacter": "cycling_arpeggio",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 66
+      },
+      "environment": {
+        "natureSoundPrimary": "ocean_waves_distant",
+        "natureSoundSecondary": "underwater_bubbling",
+        "ambientEvents": []
+      },
+      "emotionalArc": {
+        "phase1": "whispered_curiousity",
+        "phase2": "gentle_unfolding",
+        "phase3": "deep_stillness"
+      },
+      "nature_volume_multiplier": 1.5
+    }
+  },
+  {
+    "id": "counting-6-8-2b66",
+    "type": "song",
+    "lang": "en",
+    "title": "Lumi and the Silver Night",
+    "card_label": "One by One",
+    "cover": "/covers/counting-6-8-2b66.svg",
+    "description": "A soothing cumulative lullaby where the sky’s own creatures and elements drift off one by one. The repetitive, gentle counting eases busy minds into stillness, while the soft imagery of the night sky wraps little ones in warmth and calm.",
+    "text": "[verse]\nOne bright star blinks up so high\nSoftly winks one sleepy eye\n\n[verse]\nOne bright star blinks up so high\nSoftly winks one sleepy eye\nTwo slow clouds drift by the moon\nGently hum a quiet tune\n\n[verse]\nOne bright star blinks up so high\nSoftly winks one sleepy eye\nTwo slow clouds drift by the moon\nGently hum a quiet tune\nThree small birds tuck wings so tight\nDreaming sweet through silver night\n\n[verse]\nOne bright star blinks up so high\nSoftly winks one sleepy eye\nTwo slow clouds drift by the moon\nGently hum a quiet tune\nThree small birds tuck wings so tight\nDreaming sweet through silver night\nFour soft winds sigh down the glen\nWhisper low and then again\nAnd that was all",
+    "annotated_text": "[verse]\nOne bright star blinks up so high\nSoftly winks one sleepy eye\n\n[verse]\nOne bright star blinks up so high\nSoftly winks one sleepy eye\nTwo slow clouds drift by the moon\nGently hum a quiet tune\n\n[verse]\nOne bright star blinks up so high\nSoftly winks one sleepy eye\nTwo slow clouds drift by the moon\nGently hum a quiet tune\nThree small birds tuck wings so tight\nDreaming sweet through silver night\n\n[verse]\nOne bright star blinks up so high\nSoftly winks one sleepy eye\nTwo slow clouds drift by the moon\nGently hum a quiet tune\nThree small birds tuck wings so tight\nDreaming sweet through silver night\nFour soft winds sigh down the glen\nWhisper low and then again\nAnd that was all",
+    "cover_context": "A tiny glowing girl with silver hair sits on a crescent moon, her hands gently cradling fireflies. The sky is deep blue with soft watercolor clouds, and a few sleepy birds nestle in the branches below.",
+    "target_age": 7,
+    "age_min": 6,
+    "age_max": 8,
+    "age_group": "6-8",
+    "duration": 1,
+    "duration_seconds": 83,
+    "author_id": "system",
+    "created_at": "2026-04-03T02:53:33.349929",
+    "updated_at": "2026-04-03T02:53:33.349958",
+    "audio_url": null,
+    "album_art_url": null,
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "categories": [
+      "Lullabies"
+    ],
+    "theme": "dreamy",
+    "is_generated": true,
+    "generation_quality": "good",
+    "music_genre": "lullaby",
+    "lead_character_type": "animal",
+    "character": {
+      "name": "Lumi",
+      "identity": "A gentle sky-child who watches over the night and sings the stars to sleep.",
+      "special": "Her voice carries the quiet magic of the moon, lulling even the wind to rest.",
+      "personality_tags": [
+        "Gentle",
+        "Sleepy"
+      ]
+    },
+    "about": "A soothing cumulative lullaby where the sky’s own creatures and elements drift off one by one. The repetitive, gentle counting eases busy minds into stillness, while the soft imagery of the night sky wraps little ones in warmth and calm.",
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/counting-6-8-2b66_female_1.mp3",
+        "duration_seconds": 83,
+        "provider": "minimax-music-v2"
+      }
+    ],
+    "mood": "wired",
+    "lullaby_type": "counting"
   }
 ]
