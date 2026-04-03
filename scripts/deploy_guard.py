@@ -78,8 +78,11 @@ FRONTEND_AUDIO = "/opt/dreamweaver-web/public/audio/pre-gen"
 BACKEND_COVERS_FUNNY = "/opt/dreamweaver-backend/public/covers/funny-shorts"
 BACKEND_COVERS_SILLY = "/opt/dreamweaver-backend/public/covers/silly-songs"
 BACKEND_AUDIO_SILLY = "/opt/dreamweaver-backend/public/audio/silly-songs"
+BACKEND_AUDIO_POEMS = "/opt/dreamweaver-backend/public/audio/poems"
+BACKEND_COVERS_POEMS = "/opt/dreamweaver-backend/public/covers/poems"
 BACKEND_DATA_SILLY = "/opt/dreamweaver-backend/data/silly_songs"
 BACKEND_DATA_FUNNY = "/opt/dreamweaver-backend/data/funny_shorts"
+BACKEND_DATA_POEMS = "/opt/dreamweaver-backend/data/poems"
 
 
 def get_api(use_local: bool = False) -> str:
@@ -181,6 +184,25 @@ def capture_state(api: str) -> dict:
         except Exception:
             state["silly_songs"][age] = {}
 
+    # 4. Poems (per age group)
+    state["poems"] = {}
+    for age in ["2-5", "6-8", "9-12"]:
+        try:
+            resp = client.get(f"{api}/api/v1/poems", params={"age_group": age})
+            data = resp.json()
+            items = data.get("data", {}).get("items", [])
+            state["poems"][age] = {
+                item["id"]: {
+                    "title": item.get("title"),
+                    "has_audio": bool(item.get("audio_file")),
+                    "audio_url": f"/audio/poems/{item['audio_file']}" if item.get("audio_file") else "",
+                    "cover_url": f"/covers/poems/{item['cover_file']}" if item.get("cover_file") else "",
+                }
+                for item in items
+            }
+        except Exception:
+            state["poems"][age] = {}
+
     return state
 
 
@@ -231,6 +253,18 @@ def verify_files(state: dict, frontend: str, api: str) -> tuple[list[str], list[
                 filename = s["cover_url"].split("/")[-1]
                 urls_to_check.append((frontend, s["cover_url"], f"silly song cover ({age}): {sid}",
                                       {"type": "silly_song_cover", "url_path": s["cover_url"], "filename": filename}))
+
+    # Poems — audio served by backend API, covers by frontend nginx
+    for age, items in state.get("poems", {}).items():
+        for pid, p in items.items():
+            if p.get("audio_url"):
+                filename = p["audio_url"].split("/")[-1]
+                urls_to_check.append((api, p["audio_url"], f"poem audio ({age}): {pid}",
+                                      {"type": "poem_audio", "url_path": p["audio_url"], "filename": filename}))
+            if p.get("cover_url"):
+                filename = p["cover_url"].split("/")[-1]
+                urls_to_check.append((frontend, p["cover_url"], f"poem cover ({age}): {pid}",
+                                      {"type": "poem_cover", "url_path": p["cover_url"], "filename": filename}))
 
     if not urls_to_check:
         return issues, recoverable
@@ -323,6 +357,12 @@ def auto_recover(recoverable: list[dict], dry_run: bool = False) -> tuple[int, i
                 f'cp "{COVER_STORE}/{filename}" "{BACKEND_COVERS_SILLY}/{filename}" && echo "RECOVERED: {filename}"; '
                 f'else echo "NOT_IN_STORE: {filename}"; fi'
             )
+        elif ftype == "poem_audio":
+            # Poem audio: no dedicated store, will fall through to git restore
+            recover_commands.append(f'echo "NOT_IN_STORE: {filename}"')
+        elif ftype == "poem_cover":
+            # Poem covers: no dedicated store, will fall through to git restore
+            recover_commands.append(f'echo "NOT_IN_STORE: {filename}"')
 
     if not recover_commands:
         return 0, 0
@@ -392,13 +432,24 @@ def _git_restore_recover(filenames: list[str], recoverable: list[dict]) -> int:
     frontend_paths = []
     for fname in filenames:
         ftype = file_types.get(fname, "")
-        if ftype in ("funny_short_cover", "funny_short_audio", "silly_song_cover", "silly_song_audio"):
+        if ftype in ("funny_short_cover", "funny_short_audio", "silly_song_cover", "silly_song_audio",
+                     "poem_cover", "poem_audio"):
             # These are in the backend repo
             if "cover" in ftype:
-                subdir = "funny-shorts" if "funny" in ftype else "silly-songs"
+                if "funny" in ftype:
+                    subdir = "funny-shorts"
+                elif "silly" in ftype:
+                    subdir = "silly-songs"
+                else:
+                    subdir = "poems"
                 backend_paths.append(f"public/covers/{subdir}/{fname}")
             else:
-                subdir = "funny-shorts" if "funny" in ftype else "silly-songs"
+                if "funny" in ftype:
+                    subdir = "funny-shorts"
+                elif "silly" in ftype:
+                    subdir = "silly-songs"
+                else:
+                    subdir = "poems"
                 backend_paths.append(f"public/audio/{subdir}/{fname}")
         elif ftype in ("story_audio",):
             frontend_paths.append(f"public/audio/pre-gen/{fname}")
@@ -491,6 +542,7 @@ def _backup_to_store(recoverable: list[dict]):
                 f'[ -f "{BACKEND_AUDIO_SILLY}/{filename}" ] && '
                 f'cp "{BACKEND_AUDIO_SILLY}/{filename}" "{AUDIO_STORE_SILLY}/{filename}" 2>/dev/null'
             )
+        # Poems: no dedicated store yet — rely on git restore
 
     if backup_cmds:
         script = " ; ".join(backup_cmds)
@@ -506,9 +558,10 @@ def backup_json_files():
     Called during snapshot to ensure we have a copy of every JSON before deploy.
     """
     cmds = [
-        f'mkdir -p "{JSON_STORE}/silly_songs" "{JSON_STORE}/funny_shorts"',
+        f'mkdir -p "{JSON_STORE}/silly_songs" "{JSON_STORE}/funny_shorts" "{JSON_STORE}/poems"',
         f'cp -f {BACKEND_DATA_SILLY}/*.json "{JSON_STORE}/silly_songs/" 2>/dev/null; true',
         f'cp -f {BACKEND_DATA_FUNNY}/*.json "{JSON_STORE}/funny_shorts/" 2>/dev/null; true',
+        f'cp -f {BACKEND_DATA_POEMS}/*.json "{JSON_STORE}/poems/" 2>/dev/null; true',
         'echo "JSON_BACKUP_OK"',
     ]
     script = " && ".join(cmds)
@@ -520,7 +573,8 @@ def backup_json_files():
             # Count backed-up files
             count_cmd = (
                 f'ls "{JSON_STORE}/silly_songs/"*.json 2>/dev/null | wc -l; '
-                f'ls "{JSON_STORE}/funny_shorts/"*.json 2>/dev/null | wc -l'
+                f'ls "{JSON_STORE}/funny_shorts/"*.json 2>/dev/null | wc -l; '
+                f'ls "{JSON_STORE}/poems/"*.json 2>/dev/null | wc -l'
             )
             count_result = subprocess.run(
                 SSH_CMD + [count_cmd], capture_output=True, text=True, timeout=15
@@ -528,7 +582,8 @@ def backup_json_files():
             counts = count_result.stdout.strip().split("\n")
             silly = int(counts[0].strip()) if counts else 0
             funny = int(counts[1].strip()) if len(counts) > 1 else 0
-            print(f"  📦 JSON backup: {silly} silly songs, {funny} funny shorts → {JSON_STORE}/")
+            poems_count = int(counts[2].strip()) if len(counts) > 2 else 0
+            print(f"  📦 JSON backup: {silly} silly songs, {funny} funny shorts, {poems_count} poems → {JSON_STORE}/")
             return True
         else:
             print(f"  ⚠️  JSON backup may have failed: {result.stderr[:200]}")
@@ -558,7 +613,12 @@ def recover_json_files(missing_items: list[dict]) -> tuple[int, int]:
         cat = item["category"]
         item_id = item["item_id"]
         store_dir = f"{JSON_STORE}/{cat}"
-        data_dir = BACKEND_DATA_SILLY if cat == "silly_songs" else BACKEND_DATA_FUNNY
+        if cat == "silly_songs":
+            data_dir = BACKEND_DATA_SILLY
+        elif cat == "funny_shorts":
+            data_dir = BACKEND_DATA_FUNNY
+        else:
+            data_dir = BACKEND_DATA_POEMS
 
         # Try exact match first, then glob for ID prefix
         recover_cmds.append(
@@ -618,7 +678,7 @@ def verify_new_items_serving(added_items: list[dict], frontend: str, api: str) -
         label = f"{cat} ({item.get('age_group', '')}): {item_id}" if item.get("age_group") else f"{cat}: {item_id}"
 
         # Determine base URL based on category
-        audio_base = api if cat in ("funny_short", "silly_song") else frontend
+        audio_base = api if cat in ("funny_short", "silly_song", "poem") else frontend
         cover_base = frontend
 
         # Check audio
@@ -750,6 +810,30 @@ def diff_states(before: dict, after: dict) -> dict:
             elif b.get("audio_url") != a.get("audio_url") and a.get("audio_url"):
                 updated.append(f"  ✏️  UPDATED silly song ({age}): {sid} — new audio")
 
+    # ── Poems per age group ──
+    for age in ["2-5", "6-8", "9-12"]:
+        before_poems = set(before.get("poems", {}).get(age, {}).keys())
+        after_poems = set(after.get("poems", {}).get(age, {}).keys())
+
+        for pid in sorted(after_poems - before_poems):
+            p = after["poems"][age][pid]
+            added.append(f"  ADDED poem ({age}): {pid}")
+            added_items.append({
+                "category": "poem", "item_id": pid, "age_group": age,
+                "audio_url": p.get("audio_url", ""),
+                "cover_url": p.get("cover_url", ""),
+            })
+
+        for pid in sorted(before_poems - after_poems):
+            removed.append(f"  ❌ REMOVED poem ({age}): {pid}")
+            removed_items.append({"category": "poems", "item_id": pid, "age_group": age})
+
+        for pid in before_poems & after_poems:
+            b = before["poems"][age][pid]
+            a = after["poems"][age][pid]
+            if b.get("has_audio") and not a.get("has_audio"):
+                degraded.append(f"  ❌ LOST AUDIO poem ({age}): {pid}")
+
     return {
         "added": added,
         "removed": removed,
@@ -788,8 +872,8 @@ def merge_golden(golden: dict, current: dict) -> dict:
 
     merged["story_count"] = len(merged.get("stories", {}))
 
-    # Funny shorts & silly songs: same union logic
-    for category in ["funny_shorts", "silly_songs"]:
+    # Funny shorts, silly songs & poems: same union logic
+    for category in ["funny_shorts", "silly_songs", "poems"]:
         for age in ["2-5", "6-8", "9-12"]:
             current_items = current.get(category, {}).get(age, {})
             for item_id, item in current_items.items():
@@ -831,6 +915,14 @@ def print_state_summary(state: dict, label: str = "Current"):
         with_audio = sum(1 for d in items.values() if d.get("has_audio"))
         status = "✅" if with_audio == count else f"❌ {count - with_audio} without audio"
         print(f"    {age}: {count} songs, {with_audio} with audio {status}")
+
+    print(f"\n  POEMS")
+    for age in ["2-5", "6-8", "9-12"]:
+        items = state.get("poems", {}).get(age, {})
+        count = len(items)
+        with_audio = sum(1 for d in items.values() if d.get("has_audio"))
+        status = "✅" if with_audio == count else f"❌ {count - with_audio} without audio"
+        print(f"    {age}: {count} poems, {with_audio} with audio {status}")
 
 
 def save_json(path: Path, state: dict):
@@ -997,9 +1089,9 @@ def cmd_verify(args):
         merged = merge_golden(golden, after)
         save_json(GOLDEN_PATH, merged)
         new_stories = len(merged.get("stories", {})) - len(golden.get("stories", {}))
-        # Count new silly songs + funny shorts
+        # Count new silly songs + funny shorts + poems
         new_other = 0
-        for cat in ["silly_songs", "funny_shorts"]:
+        for cat in ["silly_songs", "funny_shorts", "poems"]:
             for age in ["2-5", "6-8", "9-12"]:
                 new_other += len(merged.get(cat, {}).get(age, {})) - len(golden.get(cat, {}).get(age, {}))
         total_new = new_stories + new_other
@@ -1062,6 +1154,13 @@ def cmd_check(args):
         for sid, s in items.items():
             if not s.get("has_audio"):
                 issues.append(f"  ❌ Silly song without audio ({age}): {sid}")
+
+    # Check poems (expect >=0 per group, but if any exist they must have audio)
+    for age in ["2-5", "6-8", "9-12"]:
+        items = state.get("poems", {}).get(age, {})
+        for pid, p in items.items():
+            if not p.get("has_audio"):
+                issues.append(f"  ❌ Poem without audio ({age}): {pid}")
 
     print(f"\n{'='*60}")
     if not issues:
