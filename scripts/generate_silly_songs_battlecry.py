@@ -106,24 +106,24 @@ TEST_MODE_SONGS = [
 
 INSTRUMENT_POOLS = {
     "2-5": [
-        "ukulele and hand claps",
-        "kalimba and stomps",
-        "acoustic guitar and finger snaps",
-        "xylophone and tambourine",
-        "banjo and shaker",
+        "ukulele, bass, and hand claps",
+        "kalimba, bass, and stomps",
+        "acoustic guitar, bass, and finger snaps",
+        "xylophone, bass, and tambourine",
+        "banjo, bass, and shaker",
     ],
     "6-8": [
-        "guitar and drums",
-        "piano and claps",
-        "ukulele and cajón",
-        "acoustic guitar and beatbox",
-        "mandolin and tambourine",
+        "guitar, bass, and drums",
+        "piano, bass, and claps",
+        "ukulele, bass, and cajón",
+        "acoustic guitar, bass, and beatbox",
+        "mandolin, bass, and tambourine",
     ],
     "9-12": [
-        "acoustic guitar and snare",
-        "piano and drums",
+        "acoustic guitar, bass, and snare",
+        "piano, bass, and drums",
         "ukulele and groovy bass",
-        "guitar and beatbox",
+        "guitar, bass, and beatbox",
         "keys and funky bass",
     ],
 }
@@ -167,14 +167,16 @@ MOOD_TO_BATTLE_CRIES = {
     ],
 }
 
-# Mood affects the energy description in the style prompt
+# Mood affects the energy description in the style prompt.
+# CRITICAL: Every mood MUST sound like a real song with groove/beat/bass.
+# Never thin, spacious, or ambient — these are singalong anthems.
 SONG_MOOD_ENERGY = {
-    "wired":   "super bouncy, high energy, impossible to sit still",
-    "curious": "bouncy but thoughtful, groove with space to think",
-    "calm":    "gentle bounce, warm and easy, swaying not jumping",
-    "sad":     "soft bounce, tender, warm not heavy, comforting rhythm",
-    "anxious": "steady predictable bounce, reassuring, safe groove",
-    "angry":   "strong groove, firm rhythm, satisfying stomp energy",
+    "wired":   "super bouncy, high energy, strong groove",
+    "curious": "groovy and melodic, catchy hook, warm rhythm",
+    "calm":    "warm swaying groove, gentle but full, cozy beat",
+    "sad":     "soft steady groove, warm bass, tender melody",
+    "anxious": "steady reassuring groove, predictable strong beat",
+    "angry":   "firm punchy groove, satisfying stomp, strong rhythm",
 }
 
 # Mood adjusts tempo (offset from base range)
@@ -187,6 +189,105 @@ SONG_MOOD_TEMPO_OFFSET = {
     "angry":   +2,
 }
 
+# ── Song Categories ─────────────────────────────────────────────────
+# Three categories of silly songs, each with its own anthem library.
+# "battle_cry" = protest anthems (existing), "celebration" = joy anthems,
+# "observation" = wonder anthems.
+
+CELEBRATIONS = {
+    # ── Ages 2-5 ──
+    "ice_cream":        {"anthem": "Ice cream!",              "ages": ["2-5"]},
+    "puddles":          {"anthem": "Puddles!",                "ages": ["2-5"]},
+    "my_birthday":      {"anthem": "It's my birthday!",      "ages": ["2-5"]},
+    "pyjama_day":       {"anthem": "Pyjama day!",            "ages": ["2-5"]},
+    "bubbles":          {"anthem": "Bubbles!",               "ages": ["2-5"]},
+    # ── Ages 6-8 ──
+    "snow_day":         {"anthem": "Snow day!",              "ages": ["6-8"]},
+    "no_school":        {"anthem": "No school tomorrow!",    "ages": ["6-8"]},
+    "pizza_night":      {"anthem": "Pizza night!",           "ages": ["6-8"]},
+    "sleepover":        {"anthem": "Sleepover!",             "ages": ["6-8"]},
+    "new_pet":          {"anthem": "We got a pet!",          "ages": ["6-8"]},
+    # ── Ages 9-12 ──
+    "last_day":         {"anthem": "Last day of school!",    "ages": ["9-12"]},
+    "staying_up":       {"anthem": "I can stay up late!",    "ages": ["9-12"]},
+    "road_trip":        {"anthem": "Road trip!",             "ages": ["9-12"]},
+    "new_game":         {"anthem": "New game!",              "ages": ["9-12"]},
+    "weekend":          {"anthem": "It's the weekend!",      "ages": ["9-12"]},
+}
+
+OBSERVATIONS = {
+    # ── Ages 2-5 ──
+    "where_socks":      {"anthem": "Where do socks go?",         "ages": ["2-5"]},
+    "why_dark":         {"anthem": "Why is it dark?",            "ages": ["2-5"]},
+    "moon_follow":      {"anthem": "The moon follows me!",       "ages": ["2-5"]},
+    "belly_button":     {"anthem": "What's my belly button for?","ages": ["2-5"]},
+    "cat_talk":         {"anthem": "What do cats say?",          "ages": ["2-5"]},
+    # ── Ages 6-8 ──
+    "grownups_weird":   {"anthem": "Grown-ups are weird",        "ages": ["6-8"]},
+    "dogs_dream":       {"anthem": "Do dogs dream?",             "ages": ["6-8"]},
+    "broccoli_tree":    {"anthem": "Broccoli looks like trees",  "ages": ["6-8"]},
+    "time_slow":        {"anthem": "Why is time so slow?",       "ages": ["6-8"]},
+    "upside_down":      {"anthem": "What if we walked on ceilings?", "ages": ["6-8"]},
+    # ── Ages 9-12 ──
+    "homework_why":     {"anthem": "Who invented homework?",     "ages": ["9-12"]},
+    "adulting":         {"anthem": "Adults make no sense",       "ages": ["9-12"]},
+    "wifi_down":        {"anthem": "The WiFi is down",           "ages": ["9-12"]},
+    "alarm_clock":      {"anthem": "Who invented alarm clocks?", "ages": ["9-12"]},
+    "monday_exists":    {"anthem": "Why does Monday exist?",     "ages": ["9-12"]},
+}
+
+MOOD_TO_CELEBRATIONS = {
+    "wired":   ["ice_cream", "puddles", "snow_day", "no_school", "pizza_night",
+                "sleepover", "staying_up", "new_game", "weekend"],
+    "curious": ["my_birthday", "bubbles", "new_pet", "road_trip", "snow_day",
+                "last_day"],
+    "calm":    ["pyjama_day", "bubbles", "pizza_night", "sleepover", "weekend",
+                "road_trip"],
+    "sad":     ["ice_cream", "my_birthday", "pyjama_day", "pizza_night",
+                "new_pet", "new_game"],
+    "anxious": ["pyjama_day", "bubbles", "pizza_night", "sleepover",
+                "road_trip", "weekend"],
+    "angry":   ["ice_cream", "snow_day", "no_school", "staying_up",
+                "last_day", "new_game"],
+}
+
+MOOD_TO_OBSERVATIONS = {
+    "wired":   ["where_socks", "belly_button", "grownups_weird", "upside_down",
+                "homework_why", "wifi_down", "monday_exists"],
+    "curious": ["why_dark", "moon_follow", "cat_talk", "dogs_dream",
+                "broccoli_tree", "time_slow", "adulting", "alarm_clock"],
+    "calm":    ["moon_follow", "cat_talk", "dogs_dream", "broccoli_tree",
+                "time_slow", "where_socks"],
+    "sad":     ["where_socks", "why_dark", "dogs_dream", "time_slow",
+                "adulting"],
+    "anxious": ["moon_follow", "belly_button", "dogs_dream", "time_slow",
+                "broccoli_tree"],
+    "angry":   ["grownups_weird", "homework_why", "adulting", "wifi_down",
+                "alarm_clock", "monday_exists"],
+}
+
+# Category-specific additions to the lyrics prompt
+CATEGORY_PROMPT_ADDITION = {
+    "battle_cry": (
+        "The child is PROTESTING — they don't want to do what they're told. "
+        "The song should feel like a tiny revolution, cheeky and defiant, "
+        "but always lovable. The battle cry is their rallying call."
+    ),
+    "celebration": (
+        "The child is CELEBRATING — something amazing just happened or is about to. "
+        "The song should feel like pure joy bursting out, "
+        "excitement that's so big it needs a song. "
+        "By the ending, the celebration winds down into cozy sleepy warmth."
+    ),
+    "observation": (
+        "The child is WONDERING — they've noticed something weird about the world. "
+        "The song should feel like a funny philosophical discovery, "
+        "the kind of thought that makes a kid stare at the ceiling. "
+        "By the ending, the wondering dissolves into drowsy curiosity."
+    ),
+}
+
+# CATEGORY_ANTHEMS is defined after BATTLE_CRIES (which is further down in the file)
 
 # Age-specific style templates — prioritise vocal CLARITY over speed.
 # Instruments can bounce; the voice doesn't need to race.
@@ -240,13 +341,17 @@ def build_style_prompt(age_group: str, recent_songs: list = None,
         # Mood-aware style: use mood energy instead of age template
         energy = SONG_MOOD_ENERGY[mood]
         prompt = (
-            f"Catchy children's song, {instruments}, {tempo} BPM, "
-            f"{energy}, clear warm vocal, every word easy to understand"
+            f"Catchy children's song, full musical production, "
+            f"{instruments}, {tempo} BPM, "
+            f"{energy}, clear warm vocal, strong singalong chorus, "
+            f"every word easy to understand"
         )
     else:
         # Use age-specific style template for vocal clarity
         template = SILLY_SONG_STYLES.get(age_group, SILLY_SONG_STYLES["6-8"])
         prompt = template.format(instruments=instruments, tempo=tempo)
+        prompt = prompt.replace("Catchy children's song, ",
+                                "Catchy children's song, full musical production, ")
 
     if len(prompt) > 295:
         prompt = prompt[:295]
@@ -259,10 +364,11 @@ def build_style_prompt(age_group: str, recent_songs: list = None,
 
 # ── LLM Prompts ──────────────────────────────────────────────────────
 
-SCENE_PROMPT = """Battle cry: "{battle_cry}"
+SCENE_PROMPTS = {
+    "battle_cry": """Battle cry: "{anthem}"
 Age group: {age_group}
 
-Describe the EXACT MOMENT this child says "{battle_cry}."
+Describe the EXACT MOMENT this child says "{anthem}."
 
 Where are they? Who are they talking to? What just happened
 one second before they said it?
@@ -273,12 +379,49 @@ Specific enough that any parent reading it thinks "that
 happened last Tuesday."
 
 2 sentences maximum. Be concrete — name the objects,
-the room, the time of day, what the parent just said."""
+the room, the time of day, what the parent just said.""",
 
-LYRICS_PROMPT = """Write a silly song for ages {age_group}.
+    "celebration": """Celebration: "{anthem}"
+Age group: {age_group}
+
+Describe the EXACT MOMENT this child shouts "{anthem}."
+
+Where are they? What just happened one second before?
+Who are they with? What are they doing with their body
+(jumping, spinning, hugging)?
+
+This must be ONE specific joyful moment that every child in
+this age group has lived. Specific enough that any parent
+thinks "oh yeah, THAT face."
+
+2 sentences maximum. Be concrete — name the objects,
+the room, the time of day.""",
+
+    "observation": """Observation: "{anthem}"
+Age group: {age_group}
+
+Describe the EXACT MOMENT this child says "{anthem}."
+
+Where are they? What are they staring at? What made them
+suddenly notice this weird thing about the world?
+
+This must be ONE specific moment of wonder that every child
+in this age group has lived. The kind of thought that makes
+a kid stop walking and stare.
+
+2 sentences maximum. Be concrete — name the objects,
+the room, the time of day.""",
+}
+
+# Keep backward compat alias
+SCENE_PROMPT = SCENE_PROMPTS["battle_cry"]
+
+LYRICS_PROMPT_BASE = """Write a silly song for ages {age_group}.
 
 SCENE: {scene}
-BATTLE CRY: "{battle_cry}"
+{anthem_label}: "{anthem}"
+
+{category_addition}
 
 Write it the way a child actually talks. Every line should
 be a complete thought — something a real child has said
@@ -293,11 +436,11 @@ This song must be SHORT. The audio generator produces ~60
 seconds. Your lyrics must fit comfortably in that time with
 room for the melody to breathe.
 
-[verse 1] — 4 lines. Real complaints from this scene.
-[chorus]  — 3-4 lines. The battle cry repeated. Identical every time.
-[verse 2] — 4 lines. Same complaints, pushed further.
+[verse 1] — 4 lines. {v1_guide}
+[chorus]  — 3-4 lines. The {anthem_label_lower} repeated. Identical every time.
+[verse 2] — 4 lines. {v2_guide}
 [chorus]  — identical repeat
-[ending]  — 2-3 lines. The chorus dissolving into sleep or surrender.
+[ending]  — 2-3 lines. {ending_guide}
 
 That's the ENTIRE song. No verse 3. No bridge. No parent
 responses in the lyrics (those are added separately in audio).
@@ -323,9 +466,6 @@ time the singer gives it, the clearer the child hears it.
 Every line must have SPACE to be sung clearly. If the child
 can't understand the words, the song fails.
 
-V1: real things the child says in this moment
-V2: the same situation exaggerated — pushed further
-
 The CHORUS does the heavy lifting through repetition,
 not the verses through variety.
 
@@ -343,22 +483,14 @@ rhyme ("trim it", "dim it", "fin bit", "din bit"), STOP.
 Switch to a different rhyme sound for that verse. There are
 thousands of rhyme families. Use more than one.
 
-The song should sound like a child TALKING — arguing,
-negotiating, protesting — set to a bouncy beat.
+The song should sound like a child TALKING set to a bouncy beat.
 Not poetry. Not wordplay. Just how kids sound.
 
 SENSE CHECK:
 Every line must make sense as a standalone sentence.
 Read each line by itself. If it doesn't mean anything
-without the line before it ("the apple rolls like a
-sad bridge" means nothing), rewrite it as something
+without the line before it, rewrite it as something
 a child would actually say in this moment.
-
-QUALITY TARGET — this is what good looks like:
-"Mama said it's time for bed / But I've got things to do instead /
-I haven't hugged the cat goodnight / I haven't checked the moon is bright"
-Every line is a COMPLETE SENTENCE a child would say out loud. Natural rhymes.
-No fragments. No clever wordplay. Just a child negotiating.
 
 Output with [verse 1], [verse 2], [chorus], and [ending] tags.
 No title. No markdown code blocks. No [parent] sections.
@@ -366,6 +498,75 @@ No title. No markdown code blocks. No [parent] sections.
 THEN on its own line:
 [COVER: one-sentence visual description of the funniest moment, bold cartoon style, bright colors, energetic]
 """
+
+# Category-specific verse/ending guides for the lyrics prompt template
+CATEGORY_LYRICS_GUIDES = {
+    "battle_cry": {
+        "anthem_label": "BATTLE CRY",
+        "v1_guide": "Real complaints from this scene.",
+        "v2_guide": "Same complaints, pushed further — exaggerated.",
+        "ending_guide": "The chorus dissolving into sleep or surrender.",
+    },
+    "celebration": {
+        "anthem_label": "CELEBRATION",
+        "v1_guide": "Real excited things the child says or does in this moment.",
+        "v2_guide": "The excitement pushed further — wilder, funnier.",
+        "ending_guide": "The celebration winding down into cozy sleepy warmth.",
+    },
+    "observation": {
+        "anthem_label": "OBSERVATION",
+        "v1_guide": "Real wondering thoughts — what the child notices.",
+        "v2_guide": "The wondering pushed further — funnier, more absurd.",
+        "ending_guide": "The wondering dissolving into drowsy curiosity.",
+    },
+}
+
+# Category-specific system messages for lyrics generation
+CATEGORY_SYSTEM_MSGS = {
+    "battle_cry": (
+        "You are a children's songwriter. Write fun, bouncy, catchy songs "
+        "that children sing along to. The voice is a child's voice — "
+        "cheeky, energetic, protesting. "
+        "Output ONLY the lyrics with section tags, then a [COVER:] tag. "
+        "No explanations, no markdown code blocks."
+    ),
+    "celebration": (
+        "You are a children's songwriter. Write fun, bouncy, catchy songs "
+        "that children sing along to. The voice is a child's voice — "
+        "bursting with joy, excited, celebrating. "
+        "Output ONLY the lyrics with section tags, then a [COVER:] tag. "
+        "No explanations, no markdown code blocks."
+    ),
+    "observation": (
+        "You are a children's songwriter. Write fun, bouncy, catchy songs "
+        "that children sing along to. The voice is a child's voice — "
+        "curious, amused, wondering about the world. "
+        "Output ONLY the lyrics with section tags, then a [COVER:] tag. "
+        "No explanations, no markdown code blocks."
+    ),
+}
+
+# Category-specific system messages for scene generation
+CATEGORY_SCENE_SYSTEM_MSGS = {
+    "battle_cry": (
+        "You describe specific moments from childhood. "
+        "Be concrete — name the room, the objects, the time of day. "
+        "2 sentences maximum. No abstractions."
+    ),
+    "celebration": (
+        "You describe specific joyful moments from childhood. "
+        "Be concrete — name the room, the objects, the time of day. "
+        "Capture the explosion of happiness. 2 sentences maximum."
+    ),
+    "observation": (
+        "You describe specific moments of childhood wonder. "
+        "Be concrete — name what the child is staring at, where they are. "
+        "Capture that frozen moment of 'wait... what?' 2 sentences maximum."
+    ),
+}
+
+# Backward compat alias
+LYRICS_PROMPT = LYRICS_PROMPT_BASE
 
 # ── Syllable Counter ─────────────────────────────────────────────────
 
@@ -1055,17 +1256,27 @@ BATTLE_CRIES = {
     "i_am_doing_it":   {"cry": "I am doing it",      "ages": ["9-12"]},
 }
 
+# Map category to anthem dict and mood mapping
+CATEGORY_ANTHEMS = {
+    "battle_cry":   (BATTLE_CRIES,   MOOD_TO_BATTLE_CRIES),
+    "celebration":  (CELEBRATIONS,    MOOD_TO_CELEBRATIONS),
+    "observation":  (OBSERVATIONS,    MOOD_TO_OBSERVATIONS),
+}
+
 
 def select_silly_song_params(existing_songs: list, age_group: str = None,
                              exclude_cries: set = None,
-                             mood: str = None) -> dict:
+                             mood: str = None,
+                             category: str = None) -> dict:
     """Select parameters ensuring variety across songs.
 
     Args:
-        exclude_cries: Battle cry IDs to hard-exclude (e.g. already in this batch).
-        mood: Child mood — filters battle cries and adjusts style/tempo.
+        exclude_cries: Anthem IDs to hard-exclude (e.g. already in this batch).
+        mood: Child mood — filters anthems and adjusts style/tempo.
+        category: Force a specific category ("battle_cry", "celebration",
+                  "observation"). If None, auto-rotates.
 
-    Returns dict with: age_group, battle_cry_id, battle_cry, style_prompt,
+    Returns dict with: age_group, category, anthem_id, anthem, style_prompt,
     instruments, tempo, mood.
     """
     exclude_cries = exclude_cries or set()
@@ -1077,35 +1288,51 @@ def select_silly_song_params(existing_songs: list, age_group: str = None,
         age_group = next((a for a in age_options if a not in recent_ages),
                          random.choice(age_options))
 
-    # Filter battle cries by mood first (if mood given)
-    if mood and mood in MOOD_TO_BATTLE_CRIES:
-        mood_cries = MOOD_TO_BATTLE_CRIES[mood]
-        eligible_for_age = [k for k in mood_cries
-                            if k in BATTLE_CRIES and age_group in BATTLE_CRIES[k]["ages"]]
+    # Category rotation: pick one not used in last 3 songs
+    if category is None:
+        recent_cats = [s.get("category", "battle_cry") for s in existing_songs[-3:]]
+        cat_options = ["battle_cry", "celebration", "observation"]
+        category = next((c for c in cat_options if c not in recent_cats),
+                        random.choice(cat_options))
+
+    # Get the right anthem dict and mood mapping for this category
+    anthem_dict, mood_mapping = CATEGORY_ANTHEMS[category]
+
+    # Filter anthems by mood first (if mood given)
+    if mood and mood in mood_mapping:
+        mood_anthems = mood_mapping[mood]
+        eligible_for_age = [k for k in mood_anthems
+                            if k in anthem_dict and age_group in anthem_dict[k]["ages"]]
     else:
-        eligible_for_age = [k for k, v in BATTLE_CRIES.items()
+        eligible_for_age = [k for k, v in anthem_dict.items()
                             if age_group in v["ages"]]
 
-    # Battle cry — not used in last 10 songs for this age, and not in exclude set
-    recent_cries = [s.get("battle_cry_id") for s in existing_songs[-10:]
-                    if s.get("age_group") == age_group]
-    available_cries = [k for k in eligible_for_age
-                       if k not in recent_cries
-                       and k not in exclude_cries]
-    if not available_cries:
+    # Anthem — not used in last 10 songs for this age, and not in exclude set
+    # Check both anthem_id (new) and battle_cry_id (old) fields
+    recent_anthems = [s.get("anthem_id") or s.get("battle_cry_id")
+                      for s in existing_songs[-10:]
+                      if s.get("age_group") == age_group]
+    available = [k for k in eligible_for_age
+                 if k not in recent_anthems
+                 and k not in exclude_cries]
+    if not available:
         # Relax recent-use filter but keep batch exclusion
-        available_cries = [k for k in eligible_for_age
-                           if k not in exclude_cries]
-    if not available_cries:
-        # No mood-matched cries available — fall back to all cries for this age
-        available_cries = [k for k, v in BATTLE_CRIES.items()
-                           if age_group in v["ages"]
-                           and k not in exclude_cries]
-    if not available_cries:
+        available = [k for k in eligible_for_age
+                     if k not in exclude_cries]
+    if not available:
+        # No mood-matched anthems available — fall back to all for this age
+        available = [k for k, v in anthem_dict.items()
+                     if age_group in v["ages"]
+                     and k not in exclude_cries]
+    if not available:
         # Last resort
-        available_cries = [k for k, v in BATTLE_CRIES.items()
-                           if age_group in v["ages"]]
-    cry_id = random.choice(available_cries)
+        available = [k for k, v in anthem_dict.items()
+                     if age_group in v["ages"]]
+    anthem_id = random.choice(available)
+
+    # Get the anthem text (battle cries use "cry", celebrations/observations use "anthem")
+    anthem_data = anthem_dict[anthem_id]
+    anthem_text = anthem_data.get("anthem") or anthem_data.get("cry", "")
 
     # Style prompt with varied instruments/tempo, mood-adjusted
     style_prompt, instruments, tempo = build_style_prompt(
@@ -1114,26 +1341,32 @@ def select_silly_song_params(existing_songs: list, age_group: str = None,
 
     return {
         "age_group": age_group,
+        "category": category,
         "mood": mood or "wired",  # default mood for silly songs
-        "battle_cry_id": cry_id,
-        "battle_cry": BATTLE_CRIES[cry_id]["cry"],
+        "anthem_id": anthem_id,
+        "anthem": anthem_text,
+        # Backward compat fields
+        "battle_cry_id": anthem_id,
+        "battle_cry": anthem_text,
         "style_prompt": style_prompt,
         "instruments": instruments,
         "tempo": tempo,
     }
 
 
-def generate_scene(battle_cry: str, age_group: str, api_key: str) -> str:
+def generate_scene(battle_cry: str, age_group: str, api_key: str,
+                   category: str = "battle_cry") -> str:
     """Step 0: Generate a concrete scene that anchors the entire song."""
-    prompt = SCENE_PROMPT.format(battle_cry=battle_cry, age_group=age_group)
+    scene_template = SCENE_PROMPTS.get(category, SCENE_PROMPTS["battle_cry"])
+    prompt = scene_template.format(anthem=battle_cry, age_group=age_group)
+
+    system_msg = CATEGORY_SCENE_SYSTEM_MSGS.get(
+        category, CATEGORY_SCENE_SYSTEM_MSGS["battle_cry"]
+    )
 
     response = call_mistral(
         prompt,
-        system_msg=(
-            "You describe specific moments from childhood. "
-            "Be concrete — name the room, the objects, the time of day. "
-            "2 sentences maximum. No abstractions."
-        ),
+        system_msg=system_msg,
         api_key=api_key,
     )
     scene = response.strip().strip('"')
@@ -1154,16 +1387,16 @@ def validate_scene(scene: str) -> bool:
 
 
 def validate_batch_diversity(new_params: dict, batch_songs: list) -> tuple[bool, str]:
-    """Ensure no duplicate battle cry base ID in the same batch.
+    """Ensure no duplicate anthem ID in the same batch.
 
-    Compares the base cry ID (e.g. "not_my_fault") ignoring age suffix,
+    Compares anthem_id (or battle_cry_id for backward compat),
     so "not_my_fault" for 6-8 blocks "not_my_fault" for 9-12.
     """
-    new_cry = new_params.get("battle_cry_id", "")
+    new_id = new_params.get("anthem_id") or new_params.get("battle_cry_id", "")
     for existing in batch_songs:
-        existing_cry = existing.get("battle_cry_id", "")
-        if new_cry == existing_cry:
-            return False, f"Duplicate battle cry: {new_cry}"
+        existing_id = existing.get("anthem_id") or existing.get("battle_cry_id", "")
+        if new_id == existing_id:
+            return False, f"Duplicate anthem: {new_id}"
     return True, "OK"
 
 
@@ -1204,23 +1437,25 @@ def generate_silly_song(
     max_retries: int = 2,
     params: dict = None,
 ) -> dict | None:
-    """Generate one silly song using the two-step battle cry process.
+    """Generate one silly song using the two-step process.
 
     Args:
-        cry_id: Battle cry identifier
-        battle_cry: The actual phrase ("I'm not tired")
+        cry_id: Anthem identifier (battle cry, celebration, or observation)
+        battle_cry: The actual phrase ("I'm not tired", "Snow day!", etc.)
         age_group: "2-5", "6-8", or "9-12"
         api_key: Mistral API key
         lyrics_only: Skip audio/cover generation
         force: Regenerate even if exists
         max_retries: Max lyrics retry attempts
         params: Diversity params from select_silly_song_params(). If provided,
-                style_prompt, instruments, tempo are taken from params.
+                style_prompt, instruments, tempo, category are taken from params.
     """
+    category = (params or {}).get("category", "battle_cry")
 
     song_id = f"{cry_id}_{age_group.replace('-', '_')}"
     print(f"\n{'='*60}")
     print(f"  Generating: \"{battle_cry}\" (ages {age_group})")
+    print(f"  Category: {category}")
     print(f"  Song ID: {song_id}")
     if params:
         print(f"  Instruments: {params.get('instruments')}")
@@ -1238,7 +1473,7 @@ def generate_silly_song(
     print(f"\n  Step 0: Generating scene...")
     scene = ""
     for scene_attempt in range(3):
-        scene = generate_scene(battle_cry, age_group, api_key)
+        scene = generate_scene(battle_cry, age_group, api_key, category=category)
         print(f"  Scene: {scene}")
         if validate_scene(scene):
             break
@@ -1260,21 +1495,25 @@ def generate_silly_song(
     print(f"\n  Step 1: Generating lyrics...")
     time.sleep(32)
 
-    lyrics_prompt = LYRICS_PROMPT.format(
+    # Build category-aware lyrics prompt
+    guides = CATEGORY_LYRICS_GUIDES.get(category, CATEGORY_LYRICS_GUIDES["battle_cry"])
+    category_addition = CATEGORY_PROMPT_ADDITION.get(category, "")
+    lyrics_prompt = LYRICS_PROMPT_BASE.format(
         age_group=age_group,
-        battle_cry=battle_cry,
+        anthem=battle_cry,
+        anthem_label=guides["anthem_label"],
+        anthem_label_lower=guides["anthem_label"].lower(),
+        category_addition=category_addition,
+        v1_guide=guides["v1_guide"],
+        v2_guide=guides["v2_guide"],
+        ending_guide=guides["ending_guide"],
         scene=scene,
     )
 
+    system_msg = CATEGORY_SYSTEM_MSGS.get(category, CATEGORY_SYSTEM_MSGS["battle_cry"])
     lyrics_response = call_mistral(
         lyrics_prompt,
-        system_msg=(
-            "You are a children's songwriter. Write fun, bouncy, catchy songs "
-            "that children sing along to. The voice is a child's voice — "
-            "cheeky, energetic, protesting. "
-            "Output ONLY the lyrics with section tags, then a [COVER:] tag. "
-            "No explanations, no markdown code blocks."
-        ),
+        system_msg=system_msg,
         api_key=api_key,
     )
 
@@ -1350,6 +1589,7 @@ def generate_silly_song(
         "id": song_id,
         "title": battle_cry.title(),
         "age_group": age_group,
+        "category": category,
         "mood": mood,
         "lyrics": lyrics_normalized,
         "style_prompt": style_prompt,
@@ -1361,10 +1601,13 @@ def generate_silly_song(
         "created_at": date.today().isoformat(),
         "play_count": 0,
         "replay_count": 0,
-        # Battle cry metadata
+        # Anthem metadata (category-generic)
+        "anthem_id": cry_id,
+        "anthem": battle_cry,
+        # Backward compat
         "battle_cry_id": cry_id,
         "battle_cry": battle_cry,
-        "generation_method": "battlecry_v3",
+        "generation_method": "battlecry_v4",
     }
 
     # Save JSON (before audio/cover so we don't lose lyrics on failure)
@@ -1437,9 +1680,11 @@ Examples:
     parser.add_argument("--lyrics-only", action="store_true",
                         help="Skip audio and cover generation")
     parser.add_argument("--mood", choices=["wired", "curious", "calm", "sad", "anxious", "angry"],
-                        help="Child mood — filters battle cries and adjusts style/tempo")
+                        help="Child mood — filters anthems and adjusts style/tempo")
     parser.add_argument("--mood-rotate", action="store_true",
                         help="Cycle through moods (wired, curious, calm, sad, anxious, angry) across batch")
+    parser.add_argument("--category", choices=["battle_cry", "celebration", "observation"],
+                        help="Song category. If omitted in --fresh mode, auto-rotates.")
     parser.add_argument("--force", action="store_true",
                         help="Regenerate even if files exist")
     args = parser.parse_args()
@@ -1474,10 +1719,19 @@ Examples:
         else:
             assigned_moods = [None] * count
 
+        # Category rotation: cycle through all 3 categories
+        cat_cycle = ["battle_cry", "celebration", "observation"]
+        if args.category:
+            assigned_cats = [args.category] * count
+        else:
+            assigned_cats = [cat_cycle[i % len(cat_cycle)] for i in range(count)]
+            random.shuffle(assigned_cats)
+
         print(f"\n{'='*60}")
-        print(f"  Battle Cry Silly Songs Generator (FRESH / diversity-tracked)")
+        print(f"  Silly Songs Generator (FRESH / diversity-tracked)")
         print(f"  Songs to generate: {count}")
         print(f"  Existing songs for diversity: {len(existing_songs)}")
+        print(f"  Category rotation: {' → '.join(assigned_cats)}")
         if args.mood_rotate:
             print(f"  Mood rotation: {' → '.join(assigned_moods)}")
         elif args.mood:
@@ -1503,18 +1757,19 @@ Examples:
                 forced_age = assigned_ages[i]
 
                 # Select params with enforced age group, excluding batch duplicates
-                batch_cries = {r.get("battle_cry_id") for r in results}
+                batch_cries = {r.get("anthem_id") or r.get("battle_cry_id") for r in results}
                 song_mood = assigned_moods[i]
+                song_cat = assigned_cats[i]
                 params = select_silly_song_params(
                     existing_songs, age_group=forced_age, exclude_cries=batch_cries,
-                    mood=song_mood,
+                    mood=song_mood, category=song_cat,
                 )
                 ok, reason = validate_batch_diversity(params, results)
                 if not ok:
                     # Should not happen with exclude_cries, but log just in case
                     print(f"  ⚠️  Batch diversity failed even with exclusions: {reason}")
 
-                print(f"\n  Selected: {params['battle_cry']} (ages {params['age_group']}, mood: {params.get('mood', 'wired')})")
+                print(f"\n  Selected: {params['anthem']} (ages {params['age_group']}, {params['category']}, mood: {params.get('mood', 'wired')})")
                 print(f"  Instruments: {params['instruments']}")
                 print(f"  Tempo: {params['tempo']} BPM")
 
