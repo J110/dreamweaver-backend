@@ -2148,8 +2148,8 @@ def main():
     )
     parser.add_argument("--count-stories", type=int, default=1,
                         help="Number of stories to generate (default: 1)")
-    parser.add_argument("--count-poems", type=int, default=1,
-                        help="Number of poems to generate (default: 1)")
+    parser.add_argument("--count-poems", type=int, default=0,
+                        help="Number of poems to generate (default: 0, poems removed from content)")
     parser.add_argument("--count-lullabies", type=int, default=1,
                         help="Number of lullabies to generate (default: 1)")
     parser.add_argument("--count-long-stories", type=int, default=1,
@@ -2177,7 +2177,7 @@ def main():
     parser.add_argument("--age", default=None,
                         help="Force specific age group (e.g. 6-8) for --mood runs")
     parser.add_argument("--type", dest="content_type",
-                        choices=["story", "long_story", "poem", "song", "all"],
+                        choices=["story", "long_story", "song", "all"],
                         default=None,
                         help="Content type to generate (shorthand, used with --mood)")
 
@@ -2189,13 +2189,10 @@ def main():
             args.count_stories = max(args.count_stories, 1)
         elif args.content_type == "long_story":
             args.count_long_stories = max(args.count_long_stories, 1)
-        elif args.content_type == "poem":
-            args.count_poems = max(args.count_poems, 1)
         elif args.content_type == "song":
             args.count_lullabies = max(args.count_lullabies, 1)
         elif args.content_type == "all":
             args.count_stories = max(args.count_stories, 1)
-            args.count_poems = max(args.count_poems, 1)
             args.count_lullabies = max(args.count_lullabies, 1)
 
     logger.info("╔══════════════════════════════════════════════╗")

@@ -1604,7 +1604,7 @@ def main():
                         default=None, help="Target language complexity level for content generation")
     parser.add_argument("--age", help="Force specific age group (e.g. 6-8) for --mood runs")
     parser.add_argument("--type", dest="content_type",
-                        choices=["story", "long_story", "poem", "song", "all"],
+                        choices=["story", "long_story", "song", "all"],
                         default=None,
                         help="Content type to generate (shorthand for --count-* flags, used with --mood)")
     args = parser.parse_args()
@@ -1615,13 +1615,10 @@ def main():
             args.count_stories = max(args.count_stories, 1)
         elif args.content_type == "long_story":
             args.count_long_stories = max(args.count_long_stories, 1)
-        elif args.content_type == "poem":
-            args.count_poems = max(args.count_poems, 1)
         elif args.content_type == "song":
             args.count_lullabies = max(args.count_lullabies, 1)
         elif args.content_type == "all":
             args.count_stories = max(args.count_stories, 1)
-            args.count_poems = max(args.count_poems, 1)
             # Only add lullaby if mood allows it
             if args.mood and "song" in VALID_MOOD_TYPES.get(args.mood, []):
                 args.count_lullabies = max(args.count_lullabies, 1)
