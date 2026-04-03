@@ -135,6 +135,58 @@ TEMPO_RANGE = {
     "9-12": (108, 118),
 }
 
+# ── Mood mapping ─────────────────────────────────────────────────────
+# Which battle cries fit which child mood. A wired child needs energy
+# channeled; a sad child needs their feeling acknowledged.
+MOOD_TO_BATTLE_CRIES = {
+    "wired": [
+        "not_tired", "five_minutes", "one_more", "no_no_no",
+        "dont_wanna", "in_a_minute", "almost_done",
+        "i_am_doing_it", "not_sleepy", "im_coming",
+    ],
+    "curious": [
+        "but_why", "do_i_have_to", "cant_find_it",
+        "i_forgot", "five_minutes", "one_more",
+    ],
+    "calm": [
+        "five_minutes", "one_more", "im_coming",
+        "almost_done", "in_a_minute", "not_sleepy",
+    ],
+    "sad": [
+        "dont_want_to", "dont_like_it", "carry_me",
+        "dont_wanna", "pick_me_up", "i_want_it",
+    ],
+    "anxious": [
+        "dont_wanna", "carry_me", "no_no_no",
+        "dont_want_to", "pick_me_up", "dont_like_it",
+    ],
+    "angry": [
+        "not_fair", "not_my_fault", "wasnt_me",
+        "he_started_it", "you_said", "leave_me_alone",
+        "so_what", "whatever", "mine",
+    ],
+}
+
+# Mood affects the energy description in the style prompt
+SONG_MOOD_ENERGY = {
+    "wired":   "super bouncy, high energy, impossible to sit still",
+    "curious": "bouncy but thoughtful, groove with space to think",
+    "calm":    "gentle bounce, warm and easy, swaying not jumping",
+    "sad":     "soft bounce, tender, warm not heavy, comforting rhythm",
+    "anxious": "steady predictable bounce, reassuring, safe groove",
+    "angry":   "strong groove, firm rhythm, satisfying stomp energy",
+}
+
+# Mood adjusts tempo (offset from base range)
+SONG_MOOD_TEMPO_OFFSET = {
+    "wired":   +4,
+    "curious":  0,
+    "calm":    -6,
+    "sad":     -8,
+    "anxious": -4,
+    "angry":   +2,
+}
+
 
 # Age-specific style templates — prioritise vocal CLARITY over speed.
 # Instruments can bounce; the voice doesn't need to race.
@@ -160,8 +212,12 @@ SILLY_SONG_STYLES = {
 }
 
 
-def build_style_prompt(age_group: str, recent_songs: list = None) -> tuple:
+def build_style_prompt(age_group: str, recent_songs: list = None,
+                       mood: str = None) -> tuple:
     """Build a style prompt with varied instruments and tempo.
+
+    Args:
+        mood: Child mood — adjusts energy description and tempo offset.
 
     Returns: (style_prompt, instruments, tempo)
     """
@@ -175,13 +231,22 @@ def build_style_prompt(age_group: str, recent_songs: list = None) -> tuple:
         available = INSTRUMENT_POOLS[age_group]
     instruments = random.choice(available)
 
-    # Pick tempo within range
+    # Pick tempo within range, adjusted by mood
     lo, hi = TEMPO_RANGE[age_group]
-    tempo = random.randint(lo, hi)
+    offset = SONG_MOOD_TEMPO_OFFSET.get(mood, 0) if mood else 0
+    tempo = random.randint(lo + offset, hi + offset)
 
-    # Use age-specific style template for vocal clarity
-    template = SILLY_SONG_STYLES.get(age_group, SILLY_SONG_STYLES["6-8"])
-    prompt = template.format(instruments=instruments, tempo=tempo)
+    if mood and mood in SONG_MOOD_ENERGY:
+        # Mood-aware style: use mood energy instead of age template
+        energy = SONG_MOOD_ENERGY[mood]
+        prompt = (
+            f"Catchy children's song, {instruments}, {tempo} BPM, "
+            f"{energy}, clear warm vocal, every word easy to understand"
+        )
+    else:
+        # Use age-specific style template for vocal clarity
+        template = SILLY_SONG_STYLES.get(age_group, SILLY_SONG_STYLES["6-8"])
+        prompt = template.format(instruments=instruments, tempo=tempo)
 
     if len(prompt) > 295:
         prompt = prompt[:295]
@@ -992,14 +1057,16 @@ BATTLE_CRIES = {
 
 
 def select_silly_song_params(existing_songs: list, age_group: str = None,
-                             exclude_cries: set = None) -> dict:
+                             exclude_cries: set = None,
+                             mood: str = None) -> dict:
     """Select parameters ensuring variety across songs.
 
     Args:
         exclude_cries: Battle cry IDs to hard-exclude (e.g. already in this batch).
+        mood: Child mood — filters battle cries and adjusts style/tempo.
 
     Returns dict with: age_group, battle_cry_id, battle_cry, style_prompt,
-    instruments, tempo.
+    instruments, tempo, mood.
     """
     exclude_cries = exclude_cries or set()
 
@@ -1010,29 +1077,44 @@ def select_silly_song_params(existing_songs: list, age_group: str = None,
         age_group = next((a for a in age_options if a not in recent_ages),
                          random.choice(age_options))
 
+    # Filter battle cries by mood first (if mood given)
+    if mood and mood in MOOD_TO_BATTLE_CRIES:
+        mood_cries = MOOD_TO_BATTLE_CRIES[mood]
+        eligible_for_age = [k for k in mood_cries
+                            if k in BATTLE_CRIES and age_group in BATTLE_CRIES[k]["ages"]]
+    else:
+        eligible_for_age = [k for k, v in BATTLE_CRIES.items()
+                            if age_group in v["ages"]]
+
     # Battle cry — not used in last 10 songs for this age, and not in exclude set
     recent_cries = [s.get("battle_cry_id") for s in existing_songs[-10:]
                     if s.get("age_group") == age_group]
-    available_cries = [k for k, v in BATTLE_CRIES.items()
-                       if age_group in v["ages"]
-                       and k not in recent_cries
+    available_cries = [k for k in eligible_for_age
+                       if k not in recent_cries
                        and k not in exclude_cries]
     if not available_cries:
         # Relax recent-use filter but keep batch exclusion
+        available_cries = [k for k in eligible_for_age
+                           if k not in exclude_cries]
+    if not available_cries:
+        # No mood-matched cries available — fall back to all cries for this age
         available_cries = [k for k, v in BATTLE_CRIES.items()
                            if age_group in v["ages"]
                            and k not in exclude_cries]
     if not available_cries:
-        # All cries for this age are in the batch — last resort, allow any
+        # Last resort
         available_cries = [k for k, v in BATTLE_CRIES.items()
                            if age_group in v["ages"]]
     cry_id = random.choice(available_cries)
 
-    # Style prompt with varied instruments/tempo
-    style_prompt, instruments, tempo = build_style_prompt(age_group, existing_songs)
+    # Style prompt with varied instruments/tempo, mood-adjusted
+    style_prompt, instruments, tempo = build_style_prompt(
+        age_group, existing_songs, mood=mood
+    )
 
     return {
         "age_group": age_group,
+        "mood": mood or "wired",  # default mood for silly songs
         "battle_cry_id": cry_id,
         "battle_cry": BATTLE_CRIES[cry_id]["cry"],
         "style_prompt": style_prompt,
@@ -1263,10 +1345,12 @@ def generate_silly_song(
         style_prompt, instruments, tempo = build_style_prompt(age_group, existing_songs)
 
     # ── Build song metadata (all diversity dimensions tracked) ──
+    mood = params.get("mood", "wired") if params else "wired"
     song = {
         "id": song_id,
         "title": battle_cry.title(),
         "age_group": age_group,
+        "mood": mood,
         "lyrics": lyrics_normalized,
         "style_prompt": style_prompt,
         "instruments": instruments,
@@ -1352,6 +1436,8 @@ Examples:
     parser.add_argument("--cry", help="Generate a specific battle cry by ID")
     parser.add_argument("--lyrics-only", action="store_true",
                         help="Skip audio and cover generation")
+    parser.add_argument("--mood", choices=["wired", "curious", "calm", "sad", "anxious", "angry"],
+                        help="Child mood — filters battle cries and adjusts style/tempo")
     parser.add_argument("--force", action="store_true",
                         help="Regenerate even if files exist")
     args = parser.parse_args()
@@ -1379,6 +1465,8 @@ Examples:
         print(f"  Battle Cry Silly Songs Generator (FRESH / diversity-tracked)")
         print(f"  Songs to generate: {count}")
         print(f"  Existing songs for diversity: {len(existing_songs)}")
+        if args.mood:
+            print(f"  Mood: {args.mood}")
         print(f"  Mode: {'lyrics only' if args.lyrics_only else 'full (lyrics + audio + cover)'}")
         print(f"{'='*60}")
 
@@ -1402,14 +1490,15 @@ Examples:
                 # Select params with enforced age group, excluding batch duplicates
                 batch_cries = {r.get("battle_cry_id") for r in results}
                 params = select_silly_song_params(
-                    existing_songs, age_group=forced_age, exclude_cries=batch_cries
+                    existing_songs, age_group=forced_age, exclude_cries=batch_cries,
+                    mood=args.mood,
                 )
                 ok, reason = validate_batch_diversity(params, results)
                 if not ok:
                     # Should not happen with exclude_cries, but log just in case
                     print(f"  ⚠️  Batch diversity failed even with exclusions: {reason}")
 
-                print(f"\n  Selected: {params['battle_cry']} (ages {params['age_group']})")
+                print(f"\n  Selected: {params['battle_cry']} (ages {params['age_group']}, mood: {params.get('mood', 'wired')})")
                 print(f"  Instruments: {params['instruments']}")
                 print(f"  Tempo: {params['tempo']} BPM")
 
