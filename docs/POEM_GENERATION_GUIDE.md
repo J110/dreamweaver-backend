@@ -202,6 +202,13 @@ This prevents issues like two "question" poems both being titled "Why Does the M
 - Use "abstract minimal art, soft watercolor, dreamy, children book illustration"
 - Each poem type gets a distinct visual mood
 
+**Child safety rules (CRITICAL):**
+- Always include "no hands no people no faces" in prompts
+- Avoid any imagery that could depict danger, distress, or harm (drowning, falling, fire, etc.)
+- Water scenes: use "seen from above" or "abstract patterns" — never show bodies/hands in water
+- Prefer abstract, pattern-based, or nature-from-a-distance compositions
+- Review generated covers before publishing — AI image models can produce unintended unsafe imagery
+
 ---
 
 ## Cost Per Run

@@ -171,19 +171,22 @@ COVER_PROMPTS = {
     "sound": (
         "Abstract minimal art, soft shapes suggesting sound waves and ripples, "
         "gentle gradients in warm blues and oranges, playful splashes of color, "
-        "no text no characters no faces, children's book illustration style, "
+        "no text no hands no people no characters no faces, "
+        "children's book illustration style, safe and calming, "
         "the visual equivalent of onomatopoeia"
     ),
     "nonsense": (
         "Abstract minimal art, swirling colorful shapes that feel like made-up words, "
         "gentle gradients in purple and teal, bouncy organic forms, "
-        "no text no characters no faces, children's book illustration style, "
+        "no text no hands no people no characters no faces, "
+        "children's book illustration style, safe and calming, "
         "the visual equivalent of mouth feel and rhythm"
     ),
     "question": (
         "Abstract minimal art, floating question-mark-like shapes in soft light, "
         "gentle gradients in deep blue and gold, curious playful atmosphere, "
-        "no text no characters no faces, children's book illustration style, "
+        "no text no hands no people no characters no faces, "
+        "children's book illustration style, safe and calming, "
         "the visual equivalent of wonder and absurd questions"
     ),
 }
