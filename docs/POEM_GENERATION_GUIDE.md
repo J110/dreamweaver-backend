@@ -164,6 +164,19 @@ For production serving, copy to `data/poems/` (JSON) for the API.
 
 ---
 
+## Diversity Check (Anti-Duplication)
+
+The generation script automatically loads all existing poems from `data/poems/` and appends an anti-duplication section to the Mistral prompt. For each poem type being generated, it lists existing poems' titles and opening lines, instructing the model to use completely different subjects, titles, and imagery.
+
+This prevents issues like two "question" poems both being titled "Why Does the Moon?" with identical opening lines.
+
+**How it works:**
+- `load_existing_poems()` reads all `data/poems/*.json`
+- `build_anti_duplication_prompt()` filters to same `poem_type` and builds a "DO NOT DUPLICATE" section
+- Appended to the generation prompt before every Mistral call
+
+---
+
 ## Publishing to Before Bed
 
 1. Generate poems: `python3 scripts/generate_experimental_poems.py --mood-test`

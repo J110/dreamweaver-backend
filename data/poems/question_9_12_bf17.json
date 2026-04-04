@@ -1,0 +1,20 @@
+{
+  "id": "question_9_12_bf17",
+  "title": "How Does the Sea?",
+  "content_type": "poem",
+  "poem_type": "question",
+  "age_group": "9-12",
+  "mood": "curious",
+  "instruments": "guitar and gentle beatbox",
+  "tempo": 111,
+  "poem_text": "How does the sea keep all its waves in line?\nWhy do the tides forget to cross the line?\n\nWho taught the fish to swim in perfect rows?\nWhy do the shells hum lullabies nobody knows?\n\nWhere do the bubbles go when they pop at night?\nDo they sneak in dreams and turn the dark to light?\n\nHow many raindrops fit inside a cloud?\nWhy does the thunder laugh so soft and loud?\n\nWho counts the grains of sand before we sleep?\nDo they whisper secrets only stars can keep?",
+  "char_count": 458,
+  "line_count": 14,
+  "audio_file": "question_9_12_bf17.mp3",
+  "cover_file": "question_9_12_bf17_cover.webp",
+  "cover_context": "A child's hand dips into glowing ocean water at dusk, ripples swirling with tiny golden fish and floating bubbles.",
+  "style_prompt": "Children's musical poem, guitar and gentle beatbox, 111 BPM, dreamy and wondering, spacious, leaves room to think, clear warm vocal, every word easy to understand",
+  "duration_seconds": 82,
+  "audio_engine": "minimax-music-v2-fal",
+  "created_at": "2026-04-04"
+}

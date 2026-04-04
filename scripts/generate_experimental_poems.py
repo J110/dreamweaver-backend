@@ -38,6 +38,39 @@ BASE_DIR = Path(__file__).resolve().parents[1]
 OUTPUT_DIR = BASE_DIR / "seed_output" / "poems_test"
 AUDIO_DIR = BASE_DIR / "public" / "audio" / "poems"
 COVER_DIR = BASE_DIR / "public" / "covers" / "poems"
+DATA_DIR = BASE_DIR / "data" / "poems"
+
+
+def load_existing_poems() -> list:
+    """Load all existing poem metadata from data/poems/ for diversity checks."""
+    poems = []
+    if not DATA_DIR.exists():
+        return poems
+    for f in DATA_DIR.glob("*.json"):
+        try:
+            poems.append(json.loads(f.read_text()))
+        except Exception:
+            continue
+    return poems
+
+
+def build_anti_duplication_prompt(poem_type: str, age_group: str) -> str:
+    """Build prompt section listing existing poems to avoid duplication."""
+    existing = load_existing_poems()
+    same_type = [p for p in existing if p.get("poem_type") == poem_type]
+    if not same_type:
+        return ""
+
+    lines = ["\n\nCRITICAL — DO NOT DUPLICATE existing poems:"]
+    for p in same_type:
+        title = p.get("title", "?")
+        first_line = (p.get("poem_text", "") or "").split("\n")[0][:60]
+        lines.append(f'- "{title}" starts with: "{first_line}"')
+    lines.append(
+        "\nYour poem MUST have a completely different title, subject, "
+        "and opening line. Do NOT reuse any imagery or phrases from above."
+    )
+    return "\n".join(lines)
 
 # ═════════════════════════════════════════════════════════════════════
 # POEM DEFINITIONS (from spec)
@@ -406,6 +439,9 @@ def generate_poem_text(age_group: str, poem_type: str, mood: str,
             mood=mood,
             mood_energy=mood_energy,
         )
+
+        # Add anti-duplication context from existing poems
+        prompt += build_anti_duplication_prompt(poem_type, age_group)
 
         if attempt > 0:
             prompt += f"\n\nPREVIOUS ATTEMPT HAD ISSUES:\n"
