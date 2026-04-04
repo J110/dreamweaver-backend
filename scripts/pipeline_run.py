@@ -1594,13 +1594,13 @@ def step_sync(args, state: dict) -> bool:
                 if not store_dest.exists() or svg.stat().st_size != store_dest.stat().st_size:
                     shutil.copy2(svg, store_dest)
                     covers_backed_up += 1
-        # Also back up funny-shorts covers from backend repo
+        # Also back up funny-shorts covers from backend repo (svg + webp)
         backend_covers_funny = BASE_DIR / "public" / "covers" / "funny-shorts"
         if backend_covers_funny.exists():
-            for svg in backend_covers_funny.glob("*.svg"):
-                store_dest = COVER_STORE / f"funny-shorts--{svg.name}"
-                if not store_dest.exists() or svg.stat().st_size != store_dest.stat().st_size:
-                    shutil.copy2(svg, store_dest)
+            for cover in list(backend_covers_funny.glob("*.svg")) + list(backend_covers_funny.glob("*.webp")):
+                store_dest = COVER_STORE / f"funny-shorts--{cover.name}"
+                if not store_dest.exists() or cover.stat().st_size != store_dest.stat().st_size:
+                    shutil.copy2(cover, store_dest)
                     covers_backed_up += 1
         # Also back up from backend experimental covers
         exp_covers = SEED_OUTPUT / "covers_experimental"
@@ -1626,17 +1626,17 @@ def step_sync(args, state: dict) -> bool:
             if covers_recovered:
                 logger.info("  Recovered %d cover files from persistent store", covers_recovered)
 
-        # ── Recover missing funny-shorts covers from persistent store ──
+        # ── Recover missing funny-shorts covers from persistent store (svg + webp) ──
         backend_covers_funny = BASE_DIR / "public" / "covers" / "funny-shorts"
         backend_covers_funny.mkdir(parents=True, exist_ok=True)
         funny_recovered = 0
         if COVER_STORE.exists():
-            for svg in COVER_STORE.glob("funny-shorts--*.svg"):
-                # Store name is "funny-shorts--{original.svg}", strip prefix
-                original_name = svg.name.replace("funny-shorts--", "", 1)
+            for cover in COVER_STORE.glob("funny-shorts--*"):
+                # Store name is "funny-shorts--{original}", strip prefix
+                original_name = cover.name.replace("funny-shorts--", "", 1)
                 dest = backend_covers_funny / original_name
                 if not dest.exists():
-                    shutil.copy2(svg, dest)
+                    shutil.copy2(cover, dest)
                     funny_recovered += 1
             if funny_recovered:
                 logger.info("  Recovered %d funny-shorts cover files from persistent store", funny_recovered)

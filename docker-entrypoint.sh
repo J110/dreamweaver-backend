@@ -8,10 +8,10 @@ SILLY_COVERS="/app/public/covers/silly-songs"
 
 mkdir -p "$FUNNY_COVERS" "$SILLY_COVERS"
 
-# Recover funny-shorts covers
+# Recover funny-shorts covers (svg + webp)
 recovered=0
 if [ -d "$COVER_STORE" ]; then
-    for f in "$COVER_STORE"/funny-shorts--*.svg; do
+    for f in "$COVER_STORE"/funny-shorts--*; do
         [ -f "$f" ] || continue
         name="${f##*/}"
         original="${name#funny-shorts--}"
@@ -24,9 +24,9 @@ if [ -d "$COVER_STORE" ]; then
         echo "Recovered $recovered funny-shorts cover(s) from persistent store"
     fi
 
-    # Recover silly-songs covers
+    # Recover silly-songs covers (svg + webp)
     silly_recovered=0
-    for f in "$COVER_STORE"/silly-songs--*.svg; do
+    for f in "$COVER_STORE"/silly-songs--*; do
         [ -f "$f" ] || continue
         name="${f##*/}"
         original="${name#silly-songs--}"
