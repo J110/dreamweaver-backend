@@ -21,6 +21,7 @@ services:
       - ./public:/app/public
       - /opt/dreamweaver-web/public:/opt/dreamweaver-web/public:ro
       - /opt/audio-store:/opt/audio-store
+      - /opt/cover-store:/opt/cover-store
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]

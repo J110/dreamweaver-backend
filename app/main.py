@@ -225,6 +225,11 @@ silly_songs_covers_dir = Path("public/covers/silly-songs")
 silly_songs_covers_dir.mkdir(parents=True, exist_ok=True)
 app.mount("/covers/silly-songs", StaticFiles(directory=str(silly_songs_covers_dir)), name="silly-songs-covers")
 
+# Mount funny-shorts covers (public/covers/funny-shorts/)
+funny_shorts_covers_dir = Path("public/covers/funny-shorts")
+funny_shorts_covers_dir.mkdir(parents=True, exist_ok=True)
+app.mount("/covers/funny-shorts", StaticFiles(directory=str(funny_shorts_covers_dir)), name="funny-shorts-covers")
+
 
 @app.get(
     "/health",

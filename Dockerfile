@@ -40,13 +40,17 @@ ENV PATH="/opt/venv/bin:$PATH"
 # Copy application code
 COPY app/ ./app/
 COPY .env.example ./.env.example
+COPY docker-entrypoint.sh ./docker-entrypoint.sh
 
-# Create cache directories
-RUN mkdir -p cache/tts cache/album_art cache/background_music
+# Create cache directories and cover directories
+RUN mkdir -p cache/tts cache/album_art cache/background_music \
+    public/covers/funny-shorts public/covers/silly-songs
 
 # Create non-root user
 RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
 USER appuser
+
+ENTRYPOINT ["./docker-entrypoint.sh"]
 
 # Expose port
 EXPOSE 8000
