@@ -1,0 +1,20 @@
+{
+  "id": "question_9_12_b68f",
+  "title": "Why Does the Moon?",
+  "content_type": "poem",
+  "poem_type": "question",
+  "age_group": "9-12",
+  "mood": "curious",
+  "instruments": "acoustic guitar and lo-fi beat",
+  "tempo": 105,
+  "poem_text": "Why does the moon wear silver shoes?\nAnd where do all the firefly blues?\nHow do the stars know how to shine?\nAnd why’s the sky not made of pine?\n\nCan clouds get tired of floating high?\nDo raindrops ever wonder why?\nIf shadows had a secret name,\nWould they play hide-and-seek the same?\n\nDoes the wind keep a diary too?\nAnd what’s the color of a shoe\nWhen no one’s looking—tell me true?\nWhat do *you* think the dark might do?",
+  "char_count": 423,
+  "line_count": 14,
+  "audio_file": "question_9_12_b68f.mp3",
+  "cover_file": "question_9_12_b68f_cover.webp",
+  "cover_context": "A child lying in bed, gazing out the window at a glowing moon and fireflies, while shadows dance on the walls.",
+  "style_prompt": "Children's musical poem, acoustic guitar and lo-fi beat, 105 BPM, dreamy and wondering, spacious, leaves room to think, clear warm vocal, every word easy to understand",
+  "duration_seconds": 79,
+  "audio_engine": "minimax-music-v2-fal",
+  "created_at": "2026-04-04"
+}

@@ -1,0 +1,20 @@
+{
+  "id": "sound_2_5_b65c",
+  "title": "Soft Night Sounds",
+  "content_type": "poem",
+  "poem_type": "sound",
+  "age_group": "2-5",
+  "mood": "calm",
+  "instruments": "music box and light tambourine",
+  "tempo": 90,
+  "poem_text": "Drip drop soft on the pane,\nPitter patter like rain.\nHush now, wind through the trees,\nWhispering on the breeze.\nCricket chirp in the grass,\nRustle rustle as we pass.\nOwl hoots low, far away,\nNight sings soft—time to stay.",
+  "char_count": 222,
+  "line_count": 8,
+  "audio_file": "sound_2_5_b65c.mp3",
+  "cover_file": "sound_2_5_b65c_cover.webp",
+  "cover_context": "A cozy bedroom window glows with moonlight, raindrops sliding down the glass while fireflies flicker in the quiet night.",
+  "style_prompt": "Children's musical poem, music box and light tambourine, 90 BPM, soft and settling, warm steady rhythm, almost a lullaby, clear warm vocal, every word easy to understand",
+  "duration_seconds": 39,
+  "audio_engine": "minimax-music-v2-fal",
+  "created_at": "2026-04-04"
+}

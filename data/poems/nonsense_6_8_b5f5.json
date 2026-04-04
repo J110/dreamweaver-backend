@@ -1,0 +1,20 @@
+{
+  "id": "nonsense_6_8_b5f5",
+  "title": "Zippy Zingers",
+  "content_type": "poem",
+  "poem_type": "nonsense",
+  "age_group": "6-8",
+  "mood": "wired",
+  "instruments": "piano and light brush drums",
+  "tempo": 116,
+  "poem_text": "Flibber flatch the zingy zooms,\nBouncy wouncy in the glooms.\n\nSnickery snack the tickle-tocks,\nDizzy lizzy on the socks.\n\nJumple jump the flippy flaps,\nZappy zappy in the caps.\n\nWibble wob the sleepy snores,\nDreamy creamy through the doors.",
+  "char_count": 240,
+  "line_count": 11,
+  "audio_file": "nonsense_6_8_b5f5.mp3",
+  "cover_file": "nonsense_6_8_b5f5_cover.webp",
+  "cover_context": "A glowing, swirly room where words float like bubbles in the air.",
+  "style_prompt": "Children's musical poem, piano and light brush drums, 116 BPM, bouncy and playful, fun energy that channels into rhythm, clear warm vocal, every word easy to understand",
+  "duration_seconds": 38,
+  "audio_engine": "minimax-music-v2-fal",
+  "created_at": "2026-04-04"
+}
