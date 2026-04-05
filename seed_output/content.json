@@ -15236,5 +15236,271 @@
     ],
     "mood": "curious",
     "lullaby_type": "permission"
+  },
+  {
+    "id": "gen-30999f1d21bc",
+    "type": "story",
+    "lang": "en",
+    "title": "Glim and the First Firefly",
+    "description": "A tiny glass lantern, lost in a dark forest, searches for light. When he finds something even brighter, the world changes forever. A quiet myth of how fireflies began to shine.",
+    "text": "Long ago, before fireflies lit the summer nights... Glim was a small glass lantern. He hung from a hook in a quiet house. Every evening, someone lit his candle. The flame inside danced and flickered. But one night, the door blew open. A gust of wind carried Glim away. He landed in a dark forest. The trees were tall. The air was still. Glim felt scared. Then he heard a sound. A soft hum, like a tiny song. Glim rolled toward it. There, on a leaf, sat a little beetle. His shell was dark. His wings were folded. He did not glow. The flame inside danced and flickered. Glim wondered. How could a beetle have fire? Can you guess what happened? The beetle looked at Glim. \"I wish I could shine,\" he said. \"Like you.\" Glim felt warm. He wanted to help. \"Maybe you can,\" he whispered. \"Let me show you.\" Glim rolled closer. The beetle crawled inside. The glass was smooth. The candle was low. But the beetle felt something. A tiny spark. A quiet hum. The flame inside danced and flickered. Then—oh! The beetle glowed. Not bright. Not bold. Just a soft, golden light. Like a secret. Like a whisper. The beetle gasped. \"I can shine!\" he said. Glim felt happy. The forest felt less dark. The beetle flew out. He landed on a branch. His light was small. But it was there. Other beetles saw. They gathered close. They wanted to glow too. Glim rolled from leaf to leaf. He let them all crawl inside. One by one, they lit up. The forest was no longer dark. Tiny lights floated everywhere. Soft. Golden. Alive. Glim watched. He felt tired. The candle burned low. The flame grew quiet. The beetles glowed on. Glim closed his eyes. The glass was cool. The night was still. The beetles hummed their tiny song. The lights danced. The flame inside rested. The forest glowed.",
+    "annotated_text": "Long ago, before fireflies lit the summer nights...\n\nGlim was a small glass lantern. He hung from a hook in a quiet house. Every evening, someone lit his candle. [PHRASE]The flame inside danced and flickered.[/PHRASE] But one night, the door blew open. A gust of wind carried Glim away.\n\n[MUSIC]\n\nHe landed in a dark forest. The trees were tall. The air was still. Glim felt scared. [PAUSE: 1200] Then he heard a sound. A soft hum, like a tiny song. Glim rolled toward it.\n\n[PAUSE: 800]\n\nThere, on a leaf, sat a little beetle. His shell was dark. His wings were folded. He did not glow. [PHRASE]The flame inside danced and flickered.[/PHRASE] Glim wondered. How could a beetle have fire?\n\nCan you guess what happened?\n\nThe beetle looked at Glim. \"I wish I could shine,\" he said. \"Like you.\" Glim felt warm. He wanted to help. \"Maybe you can,\" he whispered. \"Let me show you.\"\n\n[MUSIC]\n\nGlim rolled closer. The beetle crawled inside. The glass was smooth. The candle was low. But the beetle felt something. A tiny spark. A quiet hum. [PHRASE]The flame inside danced and flickered.[/PHRASE]\n\n[PAUSE: 1500]\n\nThen—oh! The beetle glowed. Not bright. Not bold. Just a soft, golden light. Like a secret. Like a whisper. The beetle gasped. \"I can shine!\" he said. Glim felt happy. The forest felt less dark.\n\n[MUSIC]\n\nThe beetle flew out. He landed on a branch. His light was small. But it was there. Other beetles saw. They gathered close. They wanted to glow too. Glim rolled from leaf to leaf. He let them all crawl inside. One by one, they lit up.\n\n[PAUSE: 2000]\n\nThe forest was no longer dark. Tiny lights floated everywhere. Soft. Golden. Alive. Glim watched. He felt tired. The candle burned low. The flame grew quiet. The beetles glowed on.\n\n[PAUSE: 1200]\n\nGlim closed his eyes. The glass was cool. The night was still. The beetles hummed their tiny song. The lights danced.\n\nThe flame inside rested.\n\nThe forest glowed.",
+    "target_age": 7,
+    "age_min": 6,
+    "age_max": 8,
+    "age_group": "6-8",
+    "length": "MEDIUM",
+    "word_count": 332,
+    "duration_seconds": 0,
+    "categories": [
+      "Mythological",
+      "Nature Story"
+    ],
+    "theme": "fantasy",
+    "morals": [
+      "Even the smallest light can change the world.",
+      "Sharing what you have makes it brighter."
+    ],
+    "cover": "/covers/gen-30999f1d21bc.svg",
+    "musicProfile": "",
+    "music_type": "baked",
+    "audio_variants": [
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-3099_male_2.mp3",
+        "duration_seconds": 252.93,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_4",
+        "url": "/audio/pre-gen/gen-3099_female_4.mp3",
+        "duration_seconds": 277.31,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "male",
+    "character": {
+      "name": "Glim",
+      "identity": "A small glass lantern who carries light wherever he goes.",
+      "special": "His candle flame can spark light in others.",
+      "personality_tags": [
+        "Gentle",
+        "Kind"
+      ]
+    },
+    "cover_context": "A dark forest at twilight, filled with tiny golden lights floating between the trees. The air is still, and the first stars appear above.",
+    "lead_character_type": "object",
+    "universe": "historical",
+    "geography": "Africa",
+    "life_aspect": "health_wellness",
+    "plot_archetype": "celebration",
+    "diversityFingerprint": {
+      "characterType": "object_alive",
+      "setting": "forest_woodland",
+      "mood": null,
+      "storyType": null,
+      "plotShape": "discovery_reveal",
+      "languageLevel": null,
+      "scale": null,
+      "companion": "solo",
+      "movement": null,
+      "timeOfDay": "deep_night_starlight",
+      "weather": "clear_calm",
+      "theme": null,
+      "characterTrait": null,
+      "magicType": null,
+      "season": "summer",
+      "senseEmphasis": null
+    },
+    "mood": "curious",
+    "story_type": "mythological",
+    "language_level": "basic",
+    "created_at": "2026-04-05T01:34:58.343012",
+    "updated_at": "2026-04-05T01:34:58.343012",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "has_baked_music": true,
+    "experimental_v2": true,
+    "hook": "Have you ever wondered how fireflies learned to glow?",
+    "repeated_phrase": "The flame inside danced and flickered.",
+    "raw_text": "Long ago, before fireflies lit the summer nights...\n\nGlim was a small glass lantern. He hung from a hook in a quiet house. Every evening, someone lit his candle. [PHRASE]The flame inside danced and flickered.[/PHRASE] But one night, the door blew open. A gust of wind carried Glim away.\n\n[MUSIC]\n\nHe landed in a dark forest. The trees were tall. The air was still. Glim felt scared. [PAUSE: 1200] Then he heard a sound. A soft hum, like a tiny song. Glim rolled toward it.\n\n[PAUSE: 800]\n\nThere, on a leaf, sat a little beetle. His shell was dark. His wings were folded. He did not glow. [PHRASE]The flame inside danced and flickered.[/PHRASE] Glim wondered. How could a beetle have fire?\n\nCan you guess what happened?\n\nThe beetle looked at Glim. \"I wish I could shine,\" he said. \"Like you.\" Glim felt warm. He wanted to help. \"Maybe you can,\" he whispered. \"Let me show you.\"\n\n[MUSIC]\n\nGlim rolled closer. The beetle crawled inside. The glass was smooth. The candle was low. But the beetle felt something. A tiny spark. A quiet hum. [PHRASE]The flame inside danced and flickered.[/PHRASE]\n\n[PAUSE: 1500]\n\nThen—oh! The beetle glowed. Not bright. Not bold. Just a soft, golden light. Like a secret. Like a whisper. The beetle gasped. \"I can shine!\" he said. Glim felt happy. The forest felt less dark.\n\n[MUSIC]\n\nThe beetle flew out. He landed on a branch. His light was small. But it was there. Other beetles saw. They gathered close. They wanted to glow too. Glim rolled from leaf to leaf. He let them all crawl inside. One by one, they lit up.\n\n[PAUSE: 2000]\n\nThe forest was no longer dark. Tiny lights floated everywhere. Soft. Golden. Alive. Glim watched. He felt tired. The candle burned low. The flame grew quiet. The beetles glowed on.\n\n[PAUSE: 1200]\n\nGlim closed his eyes. The glass was cool. The night was still. The beetles hummed their tiny song. The lights danced.\n\nThe flame inside rested.\n\nThe forest glowed.",
+    "duration": 5
+  },
+  {
+    "id": "gen-65cb7d5ac114",
+    "type": "long_story",
+    "lang": "en",
+    "title": "Tessa and the First Dewdrop River",
+    "description": "Deep in the quiet grasslands, where the world grows small and the stars shine close, a tiny tree frog named Tessa hears a sound she has never heard before—a soft, musical trickle. Drawn by curiosity, she follows it into a hidden world where the ground glows and the air hums with magic. What she discovers will change the night forever.",
+    "text": "Long ago, before the first dewdrop river flowed, the world was quiet at night.\n The grass stood tall and still, and the stars blinked like tiny eyes.\n But one evening, something new happened.\n A soft sound began, like water moving over smooth stones.\n\n Tessa the tree frog lifted her head. She had lived in the grass all her life.\n She knew every rustle, every chirp, every shadow.\n But this sound was different. It was new.\n She hopped from her leaf and followed it.\n\n The sound led her to a place she had never seen.\n The grass bent to make a tiny path, and the air smelled sweet.\n The ground was soft under her feet, like walking on clouds.\n And there, at the end of the path, was a sight that made her heart beat fast.\n\n A small stream of water glowed silver in the dark.\n It moved without wind, without rain, without anyone to guide it.\n Tessa sat down on a pebble. She watched the water flow.\n It made a sound like a lullaby, soft and slow.\n\nThe water was not like any water Tessa had seen before. It did not come from the sky or the earth. It came from the leaves above her, from the tips of the grass, from the wings of sleeping moths. Tiny drops of light gathered together, and as they touched, they turned into liquid silver. The stream grew wider and brighter, and soon it was not just a trickle but a river, small but strong, moving through the grass like a ribbon of moonlight.\n\nTessa followed the river as it wound its way through the miniature world. It passed under mushrooms that glowed faintly pink, and over stones that sparkled like scattered stars. The air around her hummed with a quiet energy, as if the world itself was breathing. She felt safe here, as if the river was an old friend she had just met. The water did not rush or roar. It moved with purpose, but gently, as if it knew exactly where it was going.\n\nAs she walked, Tessa noticed something strange. The river was not just water. It carried tiny seeds and petals, bits of stardust and whispers of the wind. It gathered them as it flowed, and wherever it touched, new things grew. A patch of moss turned greener. A withered leaf unfurled. A sleeping flower opened its eyes to the night. The river was not just moving through the world—it was making the world new.\n\nTessa sat down on a smooth stone beside the river. She dipped her toes into the water. It was cool and soft, like touching a cloud. She watched as the river carried a single glowing dewdrop past her, and she wondered where it would go. Would it travel to the end of the grasslands? Would it meet the ocean? Or would it simply disappear into the morning light? She did not know, but she felt no need to rush. The night was long, and the river was patient.\n\n The river slowed as the night grew deeper. Its silver light dimmed to a soft glow, like the last embers of a fire.\n Tessa curled up on the stone, her body warm and heavy. The sound of the water wrapped around her like a blanket.\n She listened to the gentle trickle, the quiet hum of the world at rest.\n\n The stars above her blinked slowly, as if they too were growing tired. The grass swayed in a breeze that carried the scent of earth and flowers.\n Tessa closed her eyes. She felt the cool touch of the river against her skin, the softness of the stone beneath her.\n\n And ever since then, the dewdrop river flows every night.",
+    "annotated_text": "[PHASE_1]\n[DELIVERY: WONDER] Long ago, before the first dewdrop river flowed, the world was quiet at night.\n[DELIVERY: SENSORY] The grass stood tall and still, and the stars blinked like tiny eyes.\n[DELIVERY: TENSION] But one evening, something new happened.\n[DELIVERY: WARMTH] A soft sound began, like water moving over smooth stones.\n\n[CURIOUS] Tessa the tree frog lifted her head. She had lived in the grass all her life.\n[CURIOUS] She knew every rustle, every chirp, every shadow.\n[MYSTERIOUS] But this sound was different. It was [EMPHASIS]new[/EMPHASIS].\n[ADVENTUROUS] She hopped from her leaf and followed it.\n\n[DELIVERY: NARRATIVE] The sound led her to a place she had never seen.\n[DELIVERY: WONDER] The grass bent to make a tiny path, and the air smelled sweet.\n[DELIVERY: SENSORY] The ground was soft under her feet, like walking on clouds.\n[DELIVERY: WARMTH] And there, at the end of the path, was a sight that made her heart beat fast.\n\n[EXCITED] A small stream of water glowed silver in the dark.\n[JOYFUL] It moved without wind, without rain, without anyone to guide it.\n[CURIOUS] Tessa sat down on a pebble. She watched the water flow.\n[GENTLE] It made a sound like a lullaby, soft and slow.\n\n[/PHASE_1]\n\n[PHASE_2]\nThe water was not like any water Tessa had seen before. It did not come from the sky or the earth. It came from the leaves above her, from the tips of the grass, from the wings of sleeping moths. Tiny drops of light gathered together, and as they touched, they turned into liquid silver. The stream grew wider and brighter, and soon it was not just a trickle but a river, small but strong, moving through the grass like a ribbon of moonlight.\n\nTessa followed the river as it wound its way through the miniature world. It passed under mushrooms that glowed faintly pink, and over stones that sparkled like scattered stars. The air around her hummed with a quiet energy, as if the world itself was breathing. She felt safe here, as if the river was an old friend she had just met. The water did not rush or roar. It moved with purpose, but gently, as if it knew exactly where it was going.\n\nAs she walked, Tessa noticed something strange. The river was not just water. It carried tiny seeds and petals, bits of stardust and whispers of the wind. It gathered them as it flowed, and wherever it touched, new things grew. A patch of moss turned greener. A withered leaf unfurled. A sleeping flower opened its eyes to the night. The river was not just moving through the world—it was making the world new.\n\nTessa sat down on a smooth stone beside the river. She dipped her toes into the water. It was cool and soft, like touching a cloud. She watched as the river carried a single glowing dewdrop past her, and she wondered where it would go. Would it travel to the end of the grasslands? Would it meet the ocean? Or would it simply disappear into the morning light? She did not know, but she felt no need to rush. The night was long, and the river was patient.\n\n[/PHASE_2]\n\n[PHASE_3]\n[SLEEPY] The river slowed as the night grew deeper. Its silver light dimmed to a soft glow, like the last embers of a fire.\n[SLEEPY] Tessa curled up on the stone, her body warm and heavy. The sound of the water wrapped around her like a blanket.\n[WHISPERING] She listened to the gentle trickle, the quiet hum of the world at rest.\n\n[SLEEPY] The stars above her blinked slowly, as if they too were growing tired. The grass swayed in a breeze that carried the scent of earth and flowers.\n[SLEEPY] Tessa closed her eyes. She felt the cool touch of the river against her skin, the softness of the stone beneath her.\n\n[WHISPERING] And ever since then, the dewdrop river flows every night.\n[/PHASE_3]",
+    "target_age": 7,
+    "age_min": 6,
+    "age_max": 8,
+    "age_group": "6-8",
+    "length": "LONG",
+    "word_count": 642,
+    "duration_seconds": 0,
+    "categories": [
+      "Nature Stories",
+      "Adventure Stories"
+    ],
+    "theme": "adventure",
+    "morals": [
+      "Curiosity can lead you to beautiful, unexpected places.",
+      "Even the smallest things can change the world in big ways."
+    ],
+    "cover": "/covers/gen-65cb7d5ac114.svg",
+    "musicProfile": "autumn-forest",
+    "music_type": "ambient",
+    "audio_variants": [
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-65cb_male_2.mp3",
+        "duration_seconds": 304.89,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_4",
+        "url": "/audio/pre-gen/gen-65cb_female_4.mp3",
+        "duration_seconds": 345.1,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "female",
+    "character": {
+      "name": "Tessa",
+      "identity": "A dreamy little frog who listens to the secrets of the night",
+      "special": "She can hear the quietest sounds and see the smallest lights",
+      "personality_tags": [
+        "Curious",
+        "Gentle"
+      ]
+    },
+    "cover_context": "A miniature world at night, where blades of grass tower like trees and mushrooms glow softly pink. A silver river of glowing dewdrops winds through the landscape, reflecting the stars above. The air shimmers with tiny lights, and the scene is bathed in deep blue twilight.",
+    "lead_character_type": "animal",
+    "universe": "contemporary",
+    "geography": "Europe",
+    "life_aspect": "health_wellness",
+    "plot_archetype": "celebration",
+    "diversityFingerprint": {
+      "characterType": "reptile_amphibian",
+      "setting": "miniature_world",
+      "mood": null,
+      "storyType": null,
+      "plotShape": "discovery_reveal",
+      "languageLevel": null,
+      "scale": "tiny_intimate",
+      "companion": "solo",
+      "movement": "walking_wandering",
+      "timeOfDay": "deep_night_starlight",
+      "weather": "magical_atmospheric",
+      "theme": "curiosity_wonder",
+      "characterTrait": "dreamy_imaginative",
+      "magicType": "glowing_bioluminescent",
+      "season": "seasonless_timeless",
+      "senseEmphasis": "visual"
+    },
+    "mood": "curious",
+    "story_type": "mythological",
+    "language_level": "basic",
+    "created_at": "2026-04-05T01:41:29.213867",
+    "updated_at": "2026-04-05T01:41:29.213867",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "duration": 6,
+    "musicalBrief": {
+      "storyId": "gen-65cb7d5ac114",
+      "ageGroup": "6-8",
+      "musicalIdentity": {
+        "culturalReference": "indian",
+        "primaryLoop": "dulcimer_gentle",
+        "padCharacter": "starfield"
+      },
+      "tonality": {
+        "mode": "minor_pentatonic",
+        "rootNote": "A"
+      },
+      "melodicCharacter": "cycling_arpeggio",
+      "rhythm": {
+        "feel": "gentle_pulse",
+        "baseTempo": 62
+      },
+      "environment": {
+        "natureSoundPrimary": "forest_night",
+        "natureSoundSecondary": "distant_stream",
+        "ambientEvents": [
+          "waterDrop",
+          "cricket"
+        ]
+      },
+      "emotionalArc": {
+        "phase1": "whispering_curiosity",
+        "phase2": "glowing_wonder",
+        "phase3": "deep_stillness"
+      }
+    }
+  },
+  {
+    "id": "permission-6-8-c3a8",
+    "type": "song",
+    "lang": "en",
+    "title": "Mara and the Sleeping Birds",
+    "card_label": "The World Sleeps",
+    "cover": "/covers/permission-6-8-c3a8.svg",
+    "description": "A soothing lullaby that mirrors the world’s bedtime, showing children how birds, trees, and even the moon settle down for sleep. The gentle repetition of nature’s quiet rhythm helps little ones feel safe and ready to drift off, knowing the whole world is resting beside them.",
+    "text": "The world is going to sleep now\nSee the sparrow fold her wing\nTuck her beak beneath her feathers\nSoftly hums the evening’s hymn\n\nHear the robin on the bough now\nClose his eyes so bright and round\nDreaming of the morning berries\nWhile the dusk wraps all around\n\nWatch the swallow dip and glide now\nSettle in her nest so deep\nWarm and safe with all her fledglings\nAs the world begins to sleep\n\n[chorus]\nYou can close your eyes now, darling\nRest your head and drift away\nAll the birds are tucked in dreaming\nAnd the night will sing you stay\n\n[verse]\nFeel the breeze that rocks the willow\nWhisper low a lullaby\nDancing leaves will rock you gently\nTill the stars all wink goodnight\n\n[chorus]\nYou can close your eyes now, darling\nRest your head and drift away\nAll the birds are tucked in dreaming\nAnd the night will sing you stay\n\n[verse]\nSee the moon pull up the blanket\nMade of silver, soft and wide\nTuck the hills and tuck the valleys\nAs the earth turns to her side\n\n[chorus]\nYou can close your eyes now, darling\nRest your head and drift away\nAll the birds are tucked in dreaming\nAnd the night will sing you stay\n\nand so can you",
+    "annotated_text": "The world is going to sleep now\nSee the sparrow fold her wing\nTuck her beak beneath her feathers\nSoftly hums the evening’s hymn\n\nHear the robin on the bough now\nClose his eyes so bright and round\nDreaming of the morning berries\nWhile the dusk wraps all around\n\nWatch the swallow dip and glide now\nSettle in her nest so deep\nWarm and safe with all her fledglings\nAs the world begins to sleep\n\n[chorus]\nYou can close your eyes now, darling\nRest your head and drift away\nAll the birds are tucked in dreaming\nAnd the night will sing you stay\n\n[verse]\nFeel the breeze that rocks the willow\nWhisper low a lullaby\nDancing leaves will rock you gently\nTill the stars all wink goodnight\n\n[chorus]\nYou can close your eyes now, darling\nRest your head and drift away\nAll the birds are tucked in dreaming\nAnd the night will sing you stay\n\n[verse]\nSee the moon pull up the blanket\nMade of silver, soft and wide\nTuck the hills and tuck the valleys\nAs the earth turns to her side\n\n[chorus]\nYou can close your eyes now, darling\nRest your head and drift away\nAll the birds are tucked in dreaming\nAnd the night will sing you stay\n\nand so can you",
+    "cover_context": "A gentle girl named Mara sits by a moonlit window, watching soft watercolor birds—sparrows, robins, and swallows—tucked into nests in a willow tree. The scene glows with warm golden light, fireflies flicker in the air, and the night sky is painted in deep blues and purples.",
+    "target_age": 7,
+    "age_min": 6,
+    "age_max": 8,
+    "age_group": "6-8",
+    "duration": 3,
+    "duration_seconds": 159,
+    "author_id": "system",
+    "created_at": "2026-04-05T02:08:11.014524",
+    "updated_at": "2026-04-05T02:08:11.014636",
+    "audio_url": null,
+    "album_art_url": null,
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "categories": [
+      "Lullabies"
+    ],
+    "theme": "dreamy",
+    "is_generated": true,
+    "generation_quality": "good",
+    "music_genre": "lullaby",
+    "lead_character_type": "animal",
+    "character": {
+      "name": "Mara",
+      "identity": "A kind-hearted girl who watches over the world as it falls asleep.",
+      "special": "She notices every little creature and whispers them to rest with her song.",
+      "personality_tags": [
+        "Gentle",
+        "Sleepy"
+      ]
+    },
+    "about": "A soothing lullaby that mirrors the world’s bedtime, showing children how birds, trees, and even the moon settle down for sleep. The gentle repetition of nature’s quiet rhythm helps little ones feel safe and ready to drift off, knowing the whole world is resting beside them.",
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/permission-6-8-c3a8_female_1.mp3",
+        "duration_seconds": 159,
+        "provider": "minimax-music-v2"
+      }
+    ],
+    "mood": "curious",
+    "lullaby_type": "permission"
   }
 ]
