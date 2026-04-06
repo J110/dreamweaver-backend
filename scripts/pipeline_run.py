@@ -451,26 +451,61 @@ def step_generate(args, state: dict) -> bool:
     # Build the generation command using --count-stories/--count-poems for fresh daily content.
     # Lullabies are now generated separately in step_lullabies (MiniMax via fal.ai),
     # so --count-lullabies is always 0 here to stop ACE-Step song generation.
+    # Pass mood: explicit --mood flag takes priority, otherwise auto-selected
+    effective_mood = args.mood or state.get("auto_mood")
+    if effective_mood:
+        state["effective_mood"] = effective_mood
+    # Pass story type: explicit --story-type flag takes priority, otherwise auto-selected
+    effective_story_type = getattr(args, 'story_type', None) or state.get("auto_story_type")
+    if effective_story_type:
+        state["effective_story_type"] = effective_story_type
+
+    # ── Long stories: use new episode format (v2) ──
+    # generate_long_story_episode.py handles text + TTS + song + assembly + publish in one go.
+    # We run it BEFORE regular story generation so its ID is captured.
+    episode_ids = []
+    if count_long_stories > 0 and not args.dry_run:
+        for i in range(count_long_stories):
+            logger.info("  Generating long story episode %d/%d (v2 format)...", i + 1, count_long_stories)
+            episode_output = SEED_OUTPUT / f"episode_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+            episode_cmd = [
+                sys.executable, str(SCRIPTS_DIR / "generate_long_story_episode.py"),
+                "--randomize", "--publish",
+                "--mood", effective_mood or "curious",
+                "--age-group", args.age or "6-8",
+                "--output-dir", str(episode_output),
+            ]
+            ep_ok, ep_stdout, _, ep_elapsed = run_command(
+                episode_cmd, f"Long Story Episode {i+1}", timeout=3600
+            )
+            if ep_ok and ep_stdout:
+                # Extract published ID from stdout
+                for line in ep_stdout.split("\n"):
+                    if "PUBLISHED_ID=" in line:
+                        pub_id = line.split("PUBLISHED_ID=")[1].strip()
+                        episode_ids.append(pub_id)
+                        logger.info("  Long story episode published: %s", pub_id)
+            else:
+                logger.error("  Long story episode generation failed")
+                state.setdefault("audio_failures", []).append(f"episode_{i+1}")
+            if i < count_long_stories - 1:
+                time.sleep(31)  # Mistral rate limit: 2 req/min
+
+    # ── Regular stories + poems: use content matrix ──
     cmd = [
         sys.executable, str(SCRIPTS_DIR / "generate_content_matrix.py"),
         "--api", "mistral",
         "--count-stories", str(count_stories),
         "--count-poems", str(count_poems),
         "--count-lullabies", "0",
-        "--count-long-stories", str(count_long_stories),
+        "--count-long-stories", "0",  # Long stories now use episode format above
     ]
     if args.lang:
         cmd += ["--lang", args.lang]
-    # Pass mood: explicit --mood flag takes priority, otherwise auto-selected
-    effective_mood = args.mood or state.get("auto_mood")
     if effective_mood:
         cmd += ["--mood", effective_mood]
-        state["effective_mood"] = effective_mood
-    # Pass story type: explicit --story-type flag takes priority, otherwise auto-selected
-    effective_story_type = getattr(args, 'story_type', None) or state.get("auto_story_type")
     if effective_story_type:
         cmd += ["--story-type", effective_story_type]
-        state["effective_story_type"] = effective_story_type
     if args.age:
         cmd += ["--age", args.age]
     if args.language_level:
@@ -483,9 +518,15 @@ def step_generate(args, state: dict) -> bool:
     if not ok:
         return False
 
-    # Find newly generated IDs
+    # Find newly generated IDs (from content matrix)
     new_ids = get_new_story_ids(before_ids)
-    logger.info("  New items generated: %d", len(new_ids))
+    # Include episode IDs (already in content.json via --publish)
+    for eid in episode_ids:
+        if eid not in new_ids:
+            new_ids.append(eid)
+    state["episode_ids"] = episode_ids  # Track so audio step can skip them
+    logger.info("  New items generated: %d (%d episodes + %d from matrix)",
+                len(new_ids), len(episode_ids), len(new_ids) - len(episode_ids))
 
     # Log story vs poem vs lullaby breakdown and store per-type counts
     if new_ids and CONTENT_EXPANDED_PATH.exists():
@@ -505,7 +546,8 @@ def step_generate(args, state: dict) -> bool:
             pass
 
     # Validate generation count — retry missing content types on partial failure
-    expected = args.count_stories + args.count_long_stories + args.count_poems + args.count_lullabies
+    # Long stories are handled by episode generator above, not content matrix
+    expected = args.count_stories + args.count_poems + args.count_lullabies + len(episode_ids)
     actual = len(new_ids)
     if actual < expected and not args.dry_run:
         logger.warning("  PARTIAL GENERATION: expected %d items but only got %d", expected, actual)
@@ -523,11 +565,11 @@ def step_generate(args, state: dict) -> bool:
                 pass
 
         missing_stories = max(0, args.count_stories - generated_types.get("story", 0))
-        missing_long = max(0, args.count_long_stories - generated_types.get("long_story", 0))
+        missing_long = 0  # Long stories use episode generator, not content matrix
         missing_poems = max(0, args.count_poems - generated_types.get("poem", 0))
         # Lullabies are generated by step_lullabies (MiniMax), NOT generate_content_matrix (ACE-Step)
         missing_lullabies = 0
-        total_missing = missing_stories + missing_long + missing_poems
+        total_missing = missing_stories + missing_poems
 
         if total_missing > 0:
             logger.info("  RETRY: Attempting to generate %d missing items "
@@ -757,6 +799,15 @@ def step_audio(args, state: dict) -> bool:
                 story_types[item.get("id", "")] = item.get("type", "story")
         except Exception:
             pass
+
+    # Skip episode IDs — they already have baked audio from generate_long_story_episode.py
+    episode_ids = set(state.get("episode_ids", []))
+    if episode_ids:
+        skipped = [sid for sid in new_ids if sid in episode_ids]
+        new_ids = [sid for sid in new_ids if sid not in episode_ids]
+        if skipped:
+            logger.info("  Skipping %d episode(s) with baked audio: %s",
+                        len(skipped), [s[:8] for s in skipped])
 
     # Generate audio for each new story
     audio_total_seconds = 0
