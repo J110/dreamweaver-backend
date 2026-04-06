@@ -278,7 +278,7 @@ CATEGORY_PROMPT_ADDITION = {
         "The child is CELEBRATING — something amazing just happened or is about to. "
         "The song should feel like pure joy bursting out, "
         "excitement that's so big it needs a song. "
-        "By the ending, the celebration winds down into cozy sleepy warmth."
+        "By the ending, the celebration winds down into a happy tired glow."
     ),
     "observation": (
         "The child is WONDERING — they've noticed something weird about the world. "
@@ -512,7 +512,7 @@ CATEGORY_LYRICS_GUIDES = {
         "anthem_label": "CELEBRATION",
         "v1_guide": "Real excited things the child says or does in this moment.",
         "v2_guide": "The excitement pushed further — wilder, funnier.",
-        "ending_guide": "The celebration winding down into cozy sleepy warmth.",
+        "ending_guide": "The celebration winding down into a happy tired glow.",
     },
     "observation": {
         "anthem_label": "OBSERVATION",
