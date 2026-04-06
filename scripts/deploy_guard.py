@@ -968,7 +968,14 @@ def cmd_snapshot(args):
 
 
 def cmd_verify(args):
-    """Compare current state against snapshot AND golden, check files, auto-recover."""
+    """Compare current state against snapshot AND golden, check files, auto-recover.
+
+    POLICY: Every warning is a BLOCKER. If ANY issue remains unresolved after
+    auto-recovery, verify exits non-zero. No "pre-existing" or "informational"
+    exceptions — if deploy guard reports it, it must be fixed before deploy is complete.
+    """
+    unresolved = []  # Collects all issues that remain after recovery attempts
+
     before = load_json(SNAPSHOT_PATH)
     if not before:
         print("⚠️  No snapshot found. Using golden baseline as reference.")
@@ -1035,16 +1042,20 @@ def cmd_verify(args):
                 if still_removed == 0:
                     print("  ✅ All removed items restored!")
                 else:
-                    print(f"  ⚠️  {still_removed} item(s) still missing after JSON recovery")
+                    msg = f"{still_removed} item(s) still missing after JSON recovery"
+                    print(f"  ❌ {msg}")
+                    unresolved.append(msg)
 
         # ── Verify new items are fully serving ──
         if changes["added_items"] and not args.skip_files:
             new_issues = verify_new_items_serving(changes["added_items"], frontend, api)
             if new_issues:
                 print(f"\n{'='*60}")
-                print(f"  ⚠️  {len(new_issues)} new item(s) NOT fully serving:")
+                msg = f"{len(new_issues)} new item(s) NOT fully serving"
+                print(f"  ❌ {msg}:")
                 for issue in new_issues:
                     print(issue)
+                unresolved.append(msg)
                 print(f"{'='*60}")
             else:
                 print(f"\n  ✅ All new items fully serving (audio + cover reachable).")
@@ -1055,10 +1066,9 @@ def cmd_verify(args):
         golden_removed = golden_changes["removed"]
         if golden_removed:
             print(f"\n{'='*60}")
-            print(f"  ⚠️  {len(golden_removed)} item(s) missing vs GOLDEN BASELINE:")
+            print(f"  ❌ {len(golden_removed)} item(s) missing vs GOLDEN BASELINE:")
             for c in golden_removed:
                 print(c)
-            print(f"  These items existed in the golden baseline but are now missing.")
 
             # Auto-recover from JSON store
             if golden_changes["removed_items"] and not args.no_recover and not args.local:
@@ -1066,6 +1076,19 @@ def cmd_verify(args):
                 if json_recovered > 0:
                     print(f"  ♻️  Recovered {json_recovered} JSON(s) from golden baseline check.")
                     after = capture_state(api)
+                    # Re-check if items are still missing
+                    golden_changes2 = diff_states(golden, after)
+                    still_missing = len(golden_changes2["removed"])
+                    if still_missing > 0:
+                        msg = f"{still_missing} item(s) still missing vs golden baseline after recovery"
+                        print(f"  ❌ {msg}")
+                        unresolved.append(msg)
+                else:
+                    msg = f"{len(golden_removed)} item(s) missing vs golden baseline — recovery found nothing"
+                    unresolved.append(msg)
+            elif golden_changes["removed_items"]:
+                msg = f"{len(golden_removed)} item(s) missing vs golden baseline"
+                unresolved.append(msg)
             print(f"{'='*60}")
 
     # ── File reachability check ──
@@ -1075,7 +1098,7 @@ def cmd_verify(args):
         if not file_issues:
             print("  ✅ All files reachable.")
         else:
-            print(f"  ⚠️  {len(file_issues)} file(s) missing or broken:")
+            print(f"  ❌ {len(file_issues)} file(s) missing or broken:")
             print()
             for issue in file_issues:
                 print(issue)
@@ -1091,7 +1114,16 @@ def cmd_verify(args):
                     if still_missing == 0:
                         print("  ✅ All files now reachable!")
                     else:
-                        print(f"  ⚠️  {still_missing} file(s) still missing after recovery")
+                        msg = f"{still_missing} file(s) still missing after recovery"
+                        print(f"  ❌ {msg}")
+                        unresolved.append(msg)
+                elif not_found > 0:
+                    msg = f"{not_found} file(s) not found in any backup store"
+                    print(f"  ❌ {msg}")
+                    unresolved.append(msg)
+            else:
+                msg = f"{len(file_issues)} file(s) missing or broken (no recovery available)"
+                unresolved.append(msg)
         print(f"{'='*60}")
 
     # ── Update golden baseline: merge new content ──
@@ -1116,17 +1148,50 @@ def cmd_verify(args):
     print("\n  Running content invariant checks...")
     class InvariantArgs:
         auto_recover_invariants = True
+    invariants_ok = True
     try:
         cmd_invariants(InvariantArgs())
     except SystemExit as e:
         if e.code != 0:
-            print("  ⚠️  Invariant checks failed — see above for details.")
+            invariants_ok = False
+            msg = "Content invariant checks FAILED after auto-recovery"
+            print(f"  ❌ {msg}")
+            unresolved.append(msg)
+
+    # ── Also track removals and degradations from diff ──
+    if reference:
+        if changes.get("removed"):
+            # Check if they were recovered above — if not, they're still an issue
+            if not (changes.get("removed_items") and not args.no_recover and not args.local):
+                msg = f"{len(changes['removed'])} content removal(s) detected"
+                unresolved.append(msg)
+        if changes.get("degraded"):
+            msg = f"{len(changes['degraded'])} content degradation(s) detected"
+            unresolved.append(msg)
 
     # ── Back up current JSON files (so they're available for next recovery) ──
     if not args.local:
         backup_json_files()
 
+    # ── FINAL VERDICT ──
     print()
+    if unresolved:
+        print(f"{'='*60}")
+        print(f"  🚫 DEPLOY BLOCKED — {len(unresolved)} unresolved issue(s):")
+        print()
+        for i, issue in enumerate(unresolved, 1):
+            print(f"    {i}. {issue}")
+        print()
+        print(f"  Fix ALL issues above and re-run: python3 scripts/deploy_guard.py verify")
+        print(f"  Deploy is NOT complete until verify exits cleanly.")
+        print(f"{'='*60}")
+        print()
+        sys.exit(1)
+    else:
+        print(f"{'='*60}")
+        print(f"  ✅ DEPLOY VERIFIED — all checks passed, zero issues.")
+        print(f"{'='*60}")
+        print()
 
 
 def cmd_check(args):
