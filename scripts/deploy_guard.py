@@ -45,6 +45,7 @@ import json
 import os
 import subprocess
 import sys
+import time
 from datetime import datetime
 from pathlib import Path
 
@@ -967,6 +968,130 @@ def cmd_snapshot(args):
     print(f"\n  ✅ Run your deploy now, then run: python3 scripts/deploy_guard.py verify\n")
 
 
+def check_radio_health():
+    """Check radio system health: process, state file, content availability.
+
+    Returns a list of issue strings (empty = all healthy).
+    """
+    issues = []
+
+    print(f"\n{'='*60}")
+    print("  RADIO HEALTH CHECK")
+    print(f"{'='*60}\n")
+
+    # 1. Radio process alive?
+    try:
+        result = subprocess.run(
+            ["pgrep", "-f", "radio_controller.py"],
+            capture_output=True, text=True,
+        )
+        if result.returncode == 0 and result.stdout.strip():
+            pids = result.stdout.strip().split("\n")
+            print(f"  ✅ Radio process running (PID: {', '.join(pids)})")
+        else:
+            msg = "Radio process NOT running (radio_controller.py not found)"
+            print(f"  ❌ {msg}")
+            issues.append(msg)
+    except Exception as e:
+        msg = f"Could not check radio process: {e}"
+        print(f"  ❌ {msg}")
+        issues.append(msg)
+
+    # 2. Radio state file intact?
+    state_path = BASE_DIR / "radio" / "radio_state.json"
+    if state_path.exists():
+        try:
+            state = json.loads(state_path.read_text())
+            played = len(state.get("play_history", []))
+            flow_idx = state.get("flow_index", 0)
+            print(f"  ✅ Radio state file OK (history: {played} tracks, flow index: {flow_idx})")
+        except (json.JSONDecodeError, Exception) as e:
+            msg = f"Radio state file CORRUPT: {e}"
+            print(f"  ❌ {msg}")
+            issues.append(msg)
+    else:
+        print(f"  ⚠️  Radio state file not found (will be created on next start)")
+
+    # 3. Content availability — run radio's load logic to check playable tracks
+    #    We import load_all_content from radio_controller to reuse its exact logic
+    try:
+        radio_script = BASE_DIR / "scripts" / "radio_controller.py"
+        result = subprocess.run(
+            [sys.executable, str(radio_script), "--list-content"],
+            capture_output=True, text=True, timeout=30,
+            cwd=str(BASE_DIR),
+        )
+        output = result.stdout + result.stderr
+
+        # Parse total playable tracks from output
+        import re as _re
+        total_match = _re.search(r"Total playable tracks:\s*(\d+)", output)
+        if total_match:
+            total = int(total_match.group(1))
+            print(f"  ✅ Radio content loaded: {total} playable tracks")
+
+            # Check each content type in flow pattern is represented
+            required_types = {"story", "long_story", "silly_song", "funny_short", "poem", "lullaby"}
+            missing_types = []
+            for ct in required_types:
+                # Look for "type: N" lines in the output
+                ct_match = _re.search(rf"^\s*{ct}:\s*(\d+)", output, _re.MULTILINE)
+                if ct_match:
+                    count = int(ct_match.group(1))
+                    if count == 0:
+                        missing_types.append(ct)
+                else:
+                    missing_types.append(ct)
+
+            if missing_types:
+                msg = f"Radio missing content types: {', '.join(sorted(missing_types))}"
+                print(f"  ❌ {msg}")
+                issues.append(msg)
+            else:
+                print(f"  ✅ All content types available for radio")
+        elif result.returncode != 0:
+            msg = f"Radio content check failed (exit {result.returncode})"
+            print(f"  ❌ {msg}")
+            issues.append(msg)
+        else:
+            print(f"  ⚠️  Could not parse radio content output")
+    except subprocess.TimeoutExpired:
+        msg = "Radio content check timed out (API may be down)"
+        print(f"  ❌ {msg}")
+        issues.append(msg)
+    except Exception as e:
+        msg = f"Radio content check error: {e}"
+        print(f"  ❌ {msg}")
+        issues.append(msg)
+
+    # 4. Recent log file exists and has activity?
+    log_dir = BASE_DIR / "radio" / "logs"
+    if log_dir.exists():
+        log_files = sorted(log_dir.glob("radio_*.log"), reverse=True)
+        if log_files:
+            latest = log_files[0]
+            age_hours = (time.time() - latest.stat().st_mtime) / 3600
+            if age_hours < 24:
+                print(f"  ✅ Radio log active: {latest.name} ({age_hours:.1f}h ago)")
+            else:
+                msg = f"Radio log stale: {latest.name} last modified {age_hours:.0f}h ago"
+                print(f"  ❌ {msg}")
+                issues.append(msg)
+        else:
+            print(f"  ⚠️  No radio log files found")
+    else:
+        print(f"  ⚠️  Radio log directory not found")
+
+    print(f"\n{'='*60}")
+    if not issues:
+        print(f"  ✅ Radio health: all checks passed.")
+    else:
+        print(f"  ❌ Radio health: {len(issues)} issue(s) found")
+    print(f"{'='*60}")
+
+    return issues
+
+
 def cmd_verify(args):
     """Compare current state against snapshot AND golden, check files, auto-recover.
 
@@ -1168,6 +1293,13 @@ def cmd_verify(args):
         if changes.get("degraded"):
             msg = f"{len(changes['degraded'])} content degradation(s) detected"
             unresolved.append(msg)
+
+    # ── Radio health checks ──
+    if not args.local:
+        radio_issues = check_radio_health()
+        if radio_issues:
+            for msg in radio_issues:
+                unresolved.append(msg)
 
     # ── Back up current JSON files (so they're available for next recovery) ──
     if not args.local:
