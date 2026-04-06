@@ -1635,6 +1635,30 @@ def step_sync(args, state: dict) -> bool:
             if recovered:
                 logger.info("  Recovered %d audio files from persistent store (repo re-clone detected)", recovered)
 
+        # ── Sync non-story audio (funny-shorts, silly-songs, poems, lullabies) to web public ──
+        # Radio reads from web public dir; backend may have files web doesn't
+        for audio_subdir in ["funny-shorts", "silly-songs", "poems", "lullabies"]:
+            backend_sub = BASE_DIR / "public" / "audio" / audio_subdir
+            web_sub = WEB_DIR / "public" / "audio" / audio_subdir
+            if not backend_sub.exists():
+                continue
+            web_sub.mkdir(parents=True, exist_ok=True)
+            synced = 0
+            for mp3 in backend_sub.glob("*.mp3"):
+                dest = web_sub / mp3.name
+                if not dest.exists():
+                    shutil.copy2(mp3, dest)
+                    synced += 1
+            # Also back up to persistent store
+            store_sub = Path(f"/opt/audio-store/{audio_subdir}")
+            store_sub.mkdir(parents=True, exist_ok=True)
+            for mp3 in web_sub.glob("*.mp3"):
+                store_dest = store_sub / mp3.name
+                if not store_dest.exists():
+                    shutil.copy2(mp3, store_dest)
+            if synced:
+                logger.info("  Synced %d %s audio files to web public", synced, audio_subdir)
+
         # ── Back up ALL covers to persistent store (survives repo re-clones, Docker rebuilds) ──
         web_covers_dir = WEB_DIR / "public" / "covers"
         COVER_STORE.mkdir(parents=True, exist_ok=True)

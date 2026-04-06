@@ -1064,7 +1064,47 @@ def check_radio_health():
         print(f"  ❌ {msg}")
         issues.append(msg)
 
-    # 4. Recent log file exists and has activity?
+    # 4. Audio parity — backend audio dirs mirrored to web public for radio
+    web_public = Path("/opt/dreamweaver-web/public/audio")
+    backend_public = Path("/opt/dreamweaver-backend/public/audio")
+    audio_subdirs = ["funny-shorts", "silly-songs", "poems", "lullabies"]
+    parity_issues = []
+    if web_public.exists() and backend_public.exists():
+        for subdir in audio_subdirs:
+            backend_dir = backend_public / subdir
+            web_dir = web_public / subdir
+            if not backend_dir.exists():
+                continue
+            backend_files = {f.name for f in backend_dir.glob("*.mp3")}
+            web_files = {f.name for f in web_dir.glob("*.mp3")} if web_dir.exists() else set()
+            missing = backend_files - web_files
+            if missing:
+                # Auto-fix: copy missing files
+                web_dir.mkdir(parents=True, exist_ok=True)
+                import shutil
+                fixed = 0
+                for fname in missing:
+                    try:
+                        shutil.copy2(backend_dir / fname, web_dir / fname)
+                        fixed += 1
+                    except Exception:
+                        pass
+                if fixed == len(missing):
+                    print(f"  ✅ {subdir}: auto-synced {fixed} audio file(s) to web public")
+                else:
+                    still_missing = len(missing) - fixed
+                    msg = f"{subdir}: {still_missing} audio file(s) missing from web public after sync"
+                    print(f"  ❌ {msg}")
+                    parity_issues.append(msg)
+            else:
+                print(f"  ✅ {subdir}: audio parity OK ({len(backend_files)} files)")
+        if parity_issues:
+            for msg in parity_issues:
+                issues.append(msg)
+    else:
+        print(f"  ⚠️  Audio directories not found (web: {web_public.exists()}, backend: {backend_public.exists()})")
+
+    # 5. Recent log file exists and has activity?
     log_dir = BASE_DIR / "radio" / "logs"
     if log_dir.exists():
         log_files = sorted(log_dir.glob("radio_*.log"), reverse=True)
