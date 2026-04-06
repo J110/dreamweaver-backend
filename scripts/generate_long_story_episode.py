@@ -56,58 +56,261 @@ MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY", "nkMwV9APQAsY4KALXMk3CaGLV1a5RPBa
 client = Mistral(api_key=MISTRAL_API_KEY)
 MODEL = "mistral-large-latest"
 
-# ── Word count targets ──
+# ── Word count targets (v2 — higher for richer episodes) ──
 
 LONG_STORY_WORD_COUNTS = {
     "2-5": {
-        "phase_1": (200, 300),
-        "phase_2": (200, 350),
-        "phase_3": (150, 250),
-        "total": (550, 900),
+        "phase_1": (250, 400),
+        "phase_2": (250, 400),
+        "phase_3": (200, 300),
+        "total": (700, 1100),
+        "phase_3_min_sentences": 50,
     },
     "6-8": {
-        "phase_1": (250, 400),
+        "phase_1": (350, 500),
         "phase_2": (300, 450),
-        "phase_3": (200, 300),
-        "total": (750, 1150),
+        "phase_3": (250, 350),
+        "total": (900, 1300),
+        "phase_3_min_sentences": 60,
     },
     "9-12": {
-        "phase_1": (300, 500),
+        "phase_1": (400, 600),
         "phase_2": (350, 500),
-        "phase_3": (250, 400),
-        "total": (900, 1400),
+        "phase_3": (300, 400),
+        "total": (1050, 1500),
+        "phase_3_min_sentences": 70,
     },
 }
 
-# ── Character instructions ──
+# ═══════════════════════════════════════════════════════════════
+#  V2 Story Worlds — rich, specific places worth visiting
+# ═══════════════════════════════════════════════════════════════
+
+STORY_WORLDS = {
+    "library": {
+        "concept": "A place where stories/dreams/memories/songs are stored as physical objects",
+        "sleep_connection": "The stored things need rest, just like the child",
+    },
+    "workshop": {
+        "concept": "A place where sleep/dreams/stars/clouds are MADE by someone",
+        "sleep_connection": "The child sees sleep being crafted with care — it's valuable, not boring",
+    },
+    "transport": {
+        "concept": "A vehicle that travels somewhere magical — a train, a boat, a balloon",
+        "sleep_connection": "The journey itself is the settling — the rocking, the rhythm, the arrival",
+    },
+    "garden": {
+        "concept": "A growing place where dreams/thoughts/feelings are plants or weather",
+        "sleep_connection": "Things bloom at night, things settle into soil, seasonal cycles of rest",
+    },
+    "observatory": {
+        "concept": "A place for watching — stars, dreams, the night sky, sleeping animals",
+        "sleep_connection": "Watching is passive — the child shifts from doing to observing to resting",
+    },
+    "kitchen": {
+        "concept": "A place where sleep/calm/warmth is cooked or brewed or baked",
+        "sleep_connection": "The recipe requires stillness, slow stirring, patient waiting",
+    },
+    "post_office": {
+        "concept": "A place that delivers dreams/lullabies/goodnight messages to children",
+        "sleep_connection": "Tonight's delivery is for the listener — the story is their dream arriving",
+    },
+    "museum": {
+        "concept": "A place where the quietest/oldest/most peaceful things are kept",
+        "sleep_connection": "The exhibits get quieter the deeper you go — silence is the final exhibit",
+    },
+    "lighthouse": {
+        "concept": "A place that guides sleepy travellers/dreams/stars home",
+        "sleep_connection": "The light dims when everything is safely home — then the keeper rests",
+    },
+    "theater": {
+        "concept": "A place where the night performs — stars act, the moon directs, clouds are the curtain",
+        "sleep_connection": "The final act is silence, the curtain closes, the audience sleeps",
+    },
+}
+
+# ═══════════════════════════════════════════════════════════════
+#  V2 Mysteries — the hook that resolves into sleep
+# ═══════════════════════════════════════════════════════════════
+
+MYSTERY_TYPES = {
+    "something_missing": {
+        "setup": "Something important has disappeared or gone quiet",
+        "sleep_resolution": "It went to rest. It was tired. It needed to sleep, just like you.",
+    },
+    "something_broken": {
+        "setup": "Something that usually works has stopped working",
+        "sleep_resolution": "It wasn't broken. It was doing something new — settling, dreaming, recharging.",
+    },
+    "something_arriving": {
+        "setup": "Something is coming but nobody knows what it is",
+        "sleep_resolution": "It was sleep itself arriving. Or a dream. Or the quiet. It was always coming for the child.",
+    },
+    "something_lost": {
+        "setup": "The character is looking for something specific",
+        "sleep_resolution": "They find it in the quietest place. The search ends in stillness.",
+    },
+    "something_strange": {
+        "setup": "Something is happening that doesn't make sense",
+        "sleep_resolution": "It makes perfect sense once you're still enough to understand. Stillness is the answer.",
+    },
+    "someone_needs_help": {
+        "setup": "A creature or person needs the character's help",
+        "sleep_resolution": "What they needed was company while they fell asleep. The help was presence, not action.",
+    },
+}
+
+# ═══════════════════════════════════════════════════════════════
+#  V2 Breathing Mechanics — disguised relaxation exercises
+# ═══════════════════════════════════════════════════════════════
+
+BREATHING_MECHANICS = {
+    "lantern": "A light source that glows brighter when you breathe slowly and dims when you rush",
+    "door": "A door/gate/passage that only opens when the air around it is completely still",
+    "creature": "A shy creature that comes closer when you're quiet and still, retreats when you rush",
+    "flower": "A flower/plant that blooms when you breathe on it gently, closes when the air is rough",
+    "path": "A path that only appears when you walk slowly — rushing makes it fade",
+    "instrument": "A musical object that plays by itself when the room is calm enough",
+    "water": "Water that becomes clear and still when you breathe calmly, cloudy when you're restless",
+    "cloud": "A cloud that lowers/softens/glows when the world below it is quiet",
+    "key": "A key that only turns when held with completely relaxed hands",
+    "ink": "Words/images that only appear on a page when the reader is perfectly still",
+}
+
+# ═══════════════════════════════════════════════════════════════
+#  V2 Mood Mapping — worlds, mysteries, and energy per mood
+# ═══════════════════════════════════════════════════════════════
+
+MOOD_TO_WORLDS = {
+    "wired":   ["transport", "workshop", "theater", "post_office"],
+    "curious": ["library", "observatory", "museum", "lighthouse"],
+    "calm":    ["garden", "kitchen", "lighthouse", "library"],
+    "sad":     ["post_office", "garden", "lighthouse", "kitchen"],
+    "anxious": ["kitchen", "workshop", "lighthouse", "garden"],
+    "angry":   ["workshop", "theater", "transport", "observatory"],
+}
+
+MOOD_TO_MYSTERIES = {
+    "wired":   ["something_arriving", "something_strange", "something_missing"],
+    "curious": ["something_missing", "something_strange", "something_lost"],
+    "calm":    ["someone_needs_help", "something_arriving", "something_lost"],
+    "sad":     ["someone_needs_help", "something_lost", "something_missing"],
+    "anxious": ["something_broken", "someone_needs_help", "something_arriving"],
+    "angry":   ["something_broken", "something_strange", "something_missing"],
+}
+
+MOOD_TO_STORY_ENERGY = {
+    "wired": (
+        "Phase 1 should be MORE engaging than usual — this child "
+        "has excess energy that needs to be captured before it can "
+        "be settled. The premise should be exciting enough to compete "
+        "with whatever the child would rather be doing. The descent "
+        "in Phase 2 should feel like the adventure naturally winding "
+        "down, not like the story getting boring."
+    ),
+    "curious": (
+        "Phase 1 feeds the wondering — the mystery should be genuinely "
+        "interesting. The child should WANT to solve it. Phase 2 is "
+        "where the answers come, and each answer is quieter than the "
+        "question. Curiosity satisfied becomes peace."
+    ),
+    "calm": (
+        "Phase 1 can be gentler — this child is already receptive. "
+        "The world should be warm and inviting from the start. "
+        "The mystery is soft — not urgent, just gently interesting. "
+        "The descent is smooth because the child is already halfway there."
+    ),
+    "sad": (
+        "Phase 1 should acknowledge the feeling without naming it. "
+        "The character feels something too — not sadness exactly, "
+        "but a quiet longing. The world is tender. The mystery is "
+        "about finding warmth. The resolution is being held, being "
+        "safe, being not-alone."
+    ),
+    "anxious": (
+        "Phase 1 must feel SAFE from the very first line. The world "
+        "has rules that protect. The character has tools that work. "
+        "The mystery is not scary — it's about something that stopped "
+        "working and needs gentle fixing. Everything will be okay. "
+        "The breathing mechanic is especially important for this mood — "
+        "give the child a tangible way to participate in making "
+        "things better through calm."
+    ),
+    "angry": (
+        "Phase 1 acknowledges that something isn't right. The world "
+        "has a problem that MATTERS. The character's frustration is "
+        "valid. But the solution isn't fighting — it's understanding. "
+        "Phase 2 is where the anger transforms into something quieter. "
+        "The resolution is releasing, not winning."
+    ),
+}
+
+# ═══════════════════════════════════════════════════════════════
+#  V2 Character System — child protagonist, mentors, companions
+# ═══════════════════════════════════════════════════════════════
+
+PROTAGONIST_TYPES = {
+    "2-5": {
+        "age_range": "4-5 years old",
+        "traits": "Small, brave in a wobbly way, talks to everything, asks obvious questions that are actually profound",
+    },
+    "6-8": {
+        "age_range": "7-9 years old",
+        "traits": "Curious, capable, wants to prove they can handle it, secretly worried but pushes through",
+    },
+    "9-12": {
+        "age_range": "10-12 years old",
+        "traits": "Thoughtful, independent, notices things adults miss, feels deeply but doesn't always show it",
+    },
+}
+
+MENTOR_TYPES = [
+    "elderly keeper or librarian — moves slowly, speaks calmly, knows everything but explains nothing directly",
+    "a creature who has been here forever — owl, whale, old tree, ancient tortoise — wise through patience",
+    "an object that is alive — a lantern, a book, a clock, a compass — guides without words",
+    "a slightly older child who has done this before — reassuring through shared experience",
+]
+
+COMPANION_TYPES = [
+    "a tiny creature — mouse, moth, firefly, ladybug — brave despite size",
+    "a nervous object — a cup, a key, a letter — alive and worried",
+    "a sleepy creature who is already half-asleep — models the behaviour the child should follow",
+    "an echo or shadow — always there, never intrusive, comforting presence",
+]
+
+# ── Character instructions (v2: child protagonist + mentor/companion) ──
 
 CHARACTER_INSTRUCTIONS = {
     1: (
-        "This is a solo journey. The character talks:\n"
+        "This is a solo journey. The child protagonist talks:\n"
         "- To themselves: thinking out loud\n"
         "- To the world around them: the trees, the wind, the moon\n"
-        "- To the child: 1-2 moments of direct address\n\n"
-        "A solo character is NOT silent. Their voice is their company."
+        "- To the child listener: 1-2 moments of direct address\n\n"
+        "A solo character is NOT silent. Their voice is their company.\n"
+        "The breathing mechanic is their tool — they use it alone."
     ),
     2: (
-        "Two characters. They travel together or meet along the way.\n"
-        "Their conversations are SHORT — 1-2 lines each, back and forth.\n"
+        "Two characters: the child protagonist and ONE other (a mentor or companion).\n\n"
+        "MENTOR: {mentor_description}\n"
+        "OR COMPANION: {companion_description}\n\n"
+        "Choose one. Their conversations are SHORT — 1-2 lines each, back and forth.\n"
         "Not monologues. Quick exchanges that reveal personality.\n\n"
         "The second character should have a DIFFERENT personality \n"
-        "from the main character. If the main character is wise, \n"
-        "the second might be small or curious or nervous.\n\n"
-        "By mid-Phase 2, the second character falls asleep. \n"
-        "The main character is alone again. Then they sleep too."
+        "from the child. They help the child understand the breathing mechanic.\n\n"
+        "By mid-Phase 2, the second character falls asleep or grows quiet.\n"
+        "The child is alone again. Then they sleep too."
     ),
     3: (
-        "Three characters. The main character meets them along the way.\n"
+        "Three characters: the child protagonist, a MENTOR, and a COMPANION.\n\n"
+        "MENTOR: {mentor_description}\n"
+        "COMPANION: {companion_description}\n\n"
         "Conversations are SHORT — quick back-and-forth, never more \n"
         "than 2 lines per character in a row.\n\n"
         "Each character has a DISTINCT personality. No two alike.\n\n"
         "In Phase 2, they fall asleep one by one:\n"
-        "- The most energetic character sleeps first (surprising)\n"
-        "- Then the second\n"
-        "- The main character is last\n"
+        "- The companion sleeps first (they were already half-asleep)\n"
+        "- Then the mentor grows quiet\n"
+        "- The child is last\n"
         "The child watches each one fall asleep. This normalises it."
     ),
 }
@@ -161,6 +364,7 @@ LONG_STORY_TTS = {
     "phase_2":         {"exaggeration": 0.35, "speed": 0.78, "cfg_weight": 0.40},
     "phase_3":         {"exaggeration": 0.25, "speed": 0.72, "cfg_weight": 0.35},
     "whisper":         {"exaggeration": 0.15, "speed": 0.68, "cfg_weight": 0.30},
+    "breathing":       {"exaggeration": 0.35, "speed": 0.75, "cfg_weight": 0.40},
 }
 
 # ── Mood song style (for future MiniMax integration) ──
@@ -218,23 +422,57 @@ LONG_STORY_EPISODE_PROMPT = """
 Write a bedtime story episode for ages {age_group}.
 Mood: {mood}
 
-SETTING: {setting}, {time_of_day}, {weather}
-MAIN CHARACTER: a {character_type}, personality: {character_personality}
-NUMBER OF CHARACTERS: {character_count}
-JOURNEY: {journey_type}
+=== THE WORLD ===
+Create a magical place based on this concept:
+{world_concept}
 
-This is an EPISODE — a complete experience with a song
-woven into the middle. The child looks forward to these
-because there's always a song hidden inside.
+The world must be SPECIFIC and VIVID. Not "a magical place"
+but a place with a NAME, with rules, with details that make
+a child think "I want to go there."
+
+The world's connection to sleep: {world_sleep}
+
+=== THE MYSTERY ===
+Type: {mystery_setup}
+
+The child needs a REASON to keep listening. Something is
+wrong or missing or unknown. The character needs to find out.
+
+CRITICAL — THE RESOLUTION: {mystery_resolution}
+The answer to the mystery is ALWAYS rest, sleep, peace, quiet.
+The mystery delivers the child TO sleep. The plot doesn't
+fight the sleep goal — it serves it.
+
+=== THE BREATHING MECHANIC ===
+Include this in the story: {breathing_description}
+
+This object or ability appears in Phase 1 and is used
+throughout the story. The character must breathe slowly
+and calmly to make it work. Describe the breathing:
+"In through the nose, slow and deep... out through the mouth,
+soft as a whisper."
+
+The child listening will unconsciously mirror this.
+This is a sleep technique disguised as a story element.
+Include 2-3 breathing moments across the story.
+
+=== THE CHARACTER ===
+The main character is a CHILD: {protagonist_description}
+They should feel like the LISTENER — similar age,
+similar feelings, someone the child becomes, not observes.
+
+Invent a name. Not a common Western name every time —
+draw from diverse cultures. The name should feel warm
+when spoken aloud.
+
+{character_instructions}
 
 === CHARACTERS ===
 
 Your story has {character_count} characters.
 
 The main character always speaks. Tag their dialogue:
-OWL: "I think the sound came from over there."
-
-{character_instructions}
+MIRA: "I think the sound came from over there."
 
 Even a solo character talks — to themselves, to the moon,
 to the wind, to the child. They are never silent.
@@ -267,15 +505,14 @@ Never mix them in the same line. If a character speaks,
 that line MUST start with their NAME in uppercase,
 followed by a colon, then the quoted dialogue. Nothing else.
 
+=== MOOD ===
+{mood_energy}
+
 === REPEATED PHRASE ===
 
-Create ONE phrase, under 6 words, that appears in all
-three phases. The feeling of the phrase: {repeated_phrase_feeling}
-
-Mark every instance with [PHRASE] tags.
-Phase 1: spoken normally as part of the story
-Phase 2: spoken once, quieter, like a memory
-Phase 3: barely whispered, the last echo
+Create ONE phrase, under 6 words, feeling: {repeated_phrase_feeling}
+Mark every instance with [PHRASE] tags. Must be unique to THIS story.
+Appears in all three phases, getting quieter each time.
 
 The phrase must be UNIQUE. Not generic ("not yet" or
 "almost there"). Specific to THIS story, THIS character,
@@ -285,14 +522,15 @@ make it more specific.
 === STRUCTURE ===
 
 [INTRO]
-The narrator talks directly to the child. 2-3 sentences.
-Warm, inviting, conspiratorial. Tonight we're going
-somewhere. Don't mention the song — let it arrive.
+The narrator talks to the child directly. 2-3 sentences.
+Describe the world in one vivid image that makes the child
+want to be there.
 
 [PHASE_1] — {phase_1_words} words
-The journey begins. The character moves through the world.
-Other characters are met (if {character_count} > 1).
-Conversations happen. The world feels ALIVE.
+The character enters the world. Discovers the mystery.
+Gets the breathing mechanic. Meets companion(s).
+Dialogue between characters (tagged: NAME: "line").
+The breathing mechanic is used at least once.
 
 Simple words only. Nothing a {age_group} year old wouldn't
 understand or use themselves.
@@ -301,8 +539,9 @@ Ages {age_group} Phase 1 rules:
 - Maximum 12 words per sentence
 - Dialogue between characters (short exchanges,
   not monologues — 1-2 lines each, back and forth)
-- The journey has forward momentum — the character
-  is going somewhere, following something
+- The mystery is discovered — the character finds
+  something wrong/missing/strange
+- The breathing mechanic appears and is used once
 - The repeated phrase appears naturally, spoken by
   the main character
 - Include [PAUSE: 800] tags at moments of discovery
@@ -312,35 +551,42 @@ Ages {age_group} Phase 1 rules:
 - End Phase 1 with the song transition
 
 SONG TRANSITION (at the end of Phase 1):
-Write 2-3 sentences where the story naturally transitions
-into a musical moment. The character hears something.
-The world starts humming. A melody arrives from somewhere.
+The world itself starts producing music — the character
+hears it. Write 2-3 transition sentences.
 Do not announce "now here's a song." Let it emerge.
 
 Then output:
-[SONG_SEED: one sentence describing what the song should
-be about, using this story's specific world and character]
+[SONG_SEED: one sentence about what the song should be about]
 
 Then write 2-3 sentences for AFTER the song returns.
 The narrator comes back SOFTER. The world has changed.
-It's quieter now. The other characters (if any) are
-getting drowsy. Mark this: [POST_SONG]
+It's quieter now. The mystery is beginning to resolve.
+Mark this: [POST_SONG]
 
 [PHASE_2] — {phase_2_words} words
-The journey slows. Nothing new happens. The character
-is still in the world but the writing shifts from
-WHAT'S HAPPENING to WHAT IT FEELS LIKE.
+The mystery resolves. The answer is rest/sleep/peace.
+The character UNDERSTANDS — the things weren't lost,
+they were resting. The world wasn't broken, it was settling.
+
+The breathing mechanic is used again — and now it's
+easier, because the character (and the child) are calmer.
+
+Companion characters fall asleep during this phase.
+The child watches them settle. This normalises sleep.
+
+Shift from plot to sensation. What does the air feel like?
+What does the warmth feel like? Sentences get longer,
+connected with "and." Unhurried.
 
 Ages {age_group} Phase 2 rules:
 - NO new characters introduced
-- NO new plot events
+- NO new plot events after the mystery resolves
 - Dialogue STOPS by the middle of Phase 2
   (characters are getting sleepy — they stop talking)
 - If there are other characters, they fall asleep
   DURING Phase 2. The child watches them sleep.
-  "Owl tucked his head under his wing. Already dreaming."
-- Sentences get longer — connected with "and"
-  Not complex, just unhurried
+- The breathing mechanic works easily now — the character
+  barely has to try
 - Sensory writing: air, light, ground, sounds far away,
   temperature, textures
 - The repeated phrase appears once, quieter:
@@ -354,29 +600,24 @@ Ages {age_group} Phase 2 rules:
 - Maximum 15 words per sentence (they flow, not rush)
 
 [PHASE_3] — {phase_3_words} words
-Language dissolves. The main character sits or lies down.
-Closes eyes. The world gets quiet.
+The character sits or lies down. Everything is still.
+The breathing mechanic dims/stops/settles — its job is done.
+The world around the character mirrors sleep: lights dim,
+sounds fade, warmth wraps around.
 
 Phase 3 is {phase_3_words} words. This is NOT short.
 It is MANY short sentences, not FEW short sentences.
+{phase_3_min_sentences}+ sentences of 3-5 words each.
 
-Sentences are short but there are LOTS of them.
-60-80 sentences of 3-5 words each.
-
-The repetition is the point. The same kinds of images
-described again and again in slightly different words.
-The child's brain receives wave after wave of
-"warm, still, soft, quiet" with nothing to hold onto.
+Write in waves of repetition: the same kinds of images
+described again and again. Warm. Still. Soft. Quiet.
+The child's brain receives wave after wave with nothing
+to hold onto.
 
 Start with 6-word sentences.
 By the middle, 4-word sentences.
 By the end, 2-3 word sentences.
 The final lines are single words or silence.
-
-This phase should feel LONG when read — like it goes
-on and on and on in the gentlest way. That length
-is what makes it work. The child cannot stay awake
-through 80 tiny waves of stillness.
 
 Ages {age_group} Phase 3 rules:
 - NO characters speaking. They're all asleep.
@@ -385,14 +626,11 @@ Ages {age_group} Phase 3 rules:
   feeling: warmth, stillness, heaviness, softness
 - The repeated phrase one final time, barely there:
   [PHRASE]...[/PHRASE]
-- Include [PAUSE: 3000] every 10-15 sentences
 - Mark the final 3-4 lines: [WHISPER]...[/WHISPER]
 - The story doesn't end. It just stops.
   No moral. No conclusion. No "the end."
   Just... stillness. Then nothing.
 - End with one word. Or silence.
-- Sleep invitation is ENVIRONMENTAL: the world goes
-  quiet, not "close your eyes"
 
 === WORD COUNTS (CRITICAL — you MUST hit these) ===
 
@@ -450,7 +688,8 @@ A child just heard this bedtime story:
 
 "{phase_1_excerpt}"
 
-The main character is {character_name}, a {character_type}.
+The main character is {character_name}, a child exploring a world
+based on: {world_concept}
 The repeated phrase in the story is: "{repeated_phrase}"
 The mood is: {mood}
 The song seed from the story: "{song_seed}"
@@ -483,20 +722,35 @@ def build_long_story_prompt(params):
     """Build the full story generation prompt."""
     age = params["age_group"]
     wc = LONG_STORY_WORD_COUNTS[age]
-    char_instructions = CHARACTER_INSTRUCTIONS[params["character_count"]]
+    char_count = params["character_count"]
+
+    # Build character instructions with mentor/companion descriptions
+    char_template = CHARACTER_INSTRUCTIONS[char_count]
+    if char_count >= 2:
+        mentor_desc = params.get("mentor_description", random.choice(MENTOR_TYPES))
+        companion_desc = params.get("companion_description", random.choice(COMPANION_TYPES))
+        char_instructions = char_template.format(
+            mentor_description=mentor_desc,
+            companion_description=companion_desc,
+        )
+    else:
+        char_instructions = char_template
+
+    protagonist = PROTAGONIST_TYPES[age]
 
     return LONG_STORY_EPISODE_PROMPT.format(
         age_group=age,
         mood=params["mood"],
-        setting=params["setting"],
-        character_type=params["character_type"],
-        character_personality=params["character_personality"],
-        character_count=params["character_count"],
-        journey_type=params["journey_type"].replace("_", " "),
-        time_of_day=params["time_of_day"].replace("_", " "),
-        weather=params["weather"].replace("_", " "),
-        repeated_phrase_feeling=params["repeated_phrase_feeling"],
+        world_concept=params["world_concept"],
+        world_sleep=params["world_sleep"],
+        mystery_setup=params["mystery_setup"],
+        mystery_resolution=params["mystery_resolution"],
+        breathing_description=params["breathing_description"],
+        protagonist_description=protagonist["traits"],
+        character_count=char_count,
         character_instructions=char_instructions,
+        mood_energy=params["mood_energy"],
+        repeated_phrase_feeling=params["repeated_phrase_feeling"],
         phase_1_words=f"{wc['phase_1'][0]}-{wc['phase_1'][1]}",
         phase_2_words=f"{wc['phase_2'][0]}-{wc['phase_2'][1]}",
         phase_3_words=f"{wc['phase_3'][0]}-{wc['phase_3'][1]}",
@@ -505,6 +759,7 @@ def build_long_story_prompt(params):
         phase_2_min=wc['phase_2'][0],
         phase_3_min=wc['phase_3'][0],
         total_min=wc['total'][0],
+        phase_3_min_sentences=wc['phase_3_min_sentences'],
     )
 
 
@@ -719,7 +974,7 @@ def generate_story_song_lyrics(parsed_story, params):
     prompt = STORY_SONG_LYRICS_PROMPT.format(
         phase_1_excerpt=phase_1_excerpt,
         character_name=main_char["name"],
-        character_type=params["character_type"],
+        world_concept=params.get("world_concept", params.get("setting", "")),
         repeated_phrase=parsed_story["repeated_phrase"],
         mood=params["mood"],
         song_seed=parsed_story["song_seed"],
@@ -1357,7 +1612,7 @@ def generate_cover(params, output_path):
 # ═══════════════════════════════════════════════════════════════
 
 def validate_story(parsed, params):
-    """Validate the parsed story meets spec requirements."""
+    """Validate the parsed story meets v2 spec requirements."""
     issues = []
     age = params["age_group"]
     wc_targets = LONG_STORY_WORD_COUNTS[age]
@@ -1409,6 +1664,27 @@ def validate_story(parsed, params):
     if pause_count < 4:
         issues.append(f"WARN: Only {pause_count} [PAUSE:] tags (expected 4+)")
 
+    # V2: Breathing mechanic present in the story
+    full_text = parsed.get("raw", "")
+    breathing_keywords = ["breath", "breathe", "breathing", "inhale", "exhale",
+                          "in through", "out through", "slow breath"]
+    has_breathing = any(kw in full_text.lower() for kw in breathing_keywords)
+    if not has_breathing:
+        issues.append("WARN: No breathing mechanic found in the story")
+
+    # V2: Phase 3 sentence count (should have many short sentences)
+    if parsed["phase_3"]:
+        p3_clean = re.sub(r'\[.*?\]', '', parsed["phase_3"])
+        p3_sentences = [s.strip() for s in re.split(r'[.!?]+', p3_clean) if s.strip()]
+        min_sentences = wc_targets.get("phase_3_min_sentences", 50)
+        if len(p3_sentences) < min_sentences * 0.6:  # allow some tolerance
+            issues.append(f"WARN: Phase 3 has {len(p3_sentences)} sentences (target {min_sentences}+)")
+
+    # V2: [BREATHE] tags present (need 4+ across story)
+    breathe_count = len(re.findall(r'\[BREATHE\]', full_text))
+    if breathe_count < 3:
+        issues.append(f"WARN: Only {breathe_count} [BREATHE] tags (need 4+)")
+
     return issues
 
 
@@ -1416,30 +1692,84 @@ def validate_story(parsed, params):
 #  Publish: integrate episode into content.json
 # ═══════════════════════════════════════════════════════════════
 
-SETTINGS = ["forest", "meadow", "ocean", "cave", "garden", "mountain", "riverbank", "desert_oasis"]
-CHARACTER_TYPES = ["owl", "rabbit", "bear", "fox", "deer", "mouse", "hedgehog", "firefly", "turtle"]
-PERSONALITIES = ["wise", "curious", "gentle", "brave", "dreamy", "playful", "calm", "shy"]
-JOURNEY_TYPES = ["following_a_sound", "finding_a_light", "chasing_a_shadow", "seeking_a_friend",
-                 "discovering_a_path", "returning_home", "collecting_stars", "waiting_for_dawn"]
-TIMES_OF_DAY = ["dusk", "evening", "late_night", "twilight"]
-WEATHER_OPTIONS = ["light_mist", "clear_starry", "gentle_rain", "soft_snow", "warm_breeze"]
-PHRASE_FEELINGS = ["listen", "gentle", "safe", "still", "warm", "soft"]
+PHRASE_FEELINGS = [
+    "listen", "almost", "not_yet", "just_a_little",
+    "quiet_now", "still_here", "keep_going", "its_okay",
+    "do_you_see", "right_here", "come_along", "one_more",
+]
+
+# Diversity recency settings
+DIVERSITY_RECENCY = {
+    "world_type": 5,
+    "mystery_type": 4,
+    "breathing_mechanic": 6,
+    "repeated_phrase_feeling": 6,
+}
+
+
+def _pick_avoiding_recent(existing_stories, key, pool, recency=5):
+    """Pick from pool avoiding recently used values."""
+    if not existing_stories:
+        return random.choice(pool)
+    recent = [s.get(key) for s in existing_stories[-recency:] if s.get(key)]
+    available = [v for v in pool if v not in recent]
+    if not available:
+        available = pool  # all exhausted, reset
+    return random.choice(available)
+
+
+def _load_existing_long_stories():
+    """Load existing long stories from content.json for diversity tracking."""
+    content_path = BASE_DIR / "seed_output" / "content.json"
+    if not content_path.exists():
+        return []
+    try:
+        with open(content_path) as f:
+            content = json.load(f)
+        return [item for item in content
+                if item.get("type") == "long_story"
+                and item.get("episode_format") == "v2"]
+    except Exception:
+        return []
 
 
 def randomize_params(mood="curious", age_group="6-8"):
-    """Generate random diverse episode parameters."""
+    """Generate diverse episode parameters using v2 world/mystery/breathing system."""
+    existing = _load_existing_long_stories()
+
+    # Filter by mood
+    eligible_worlds = MOOD_TO_WORLDS.get(mood, list(STORY_WORLDS.keys()))
+    eligible_mysteries = MOOD_TO_MYSTERIES.get(mood, list(MYSTERY_TYPES.keys()))
+
+    world_type = _pick_avoiding_recent(existing, "world_type", eligible_worlds, recency=5)
+    mystery_type = _pick_avoiding_recent(existing, "mystery_type", eligible_mysteries, recency=4)
+    breathing = _pick_avoiding_recent(
+        existing, "breathing_mechanic", list(BREATHING_MECHANICS.keys()), recency=6)
+    phrase_feeling = _pick_avoiding_recent(
+        existing, "repeated_phrase_feeling", PHRASE_FEELINGS, recency=6)
+
+    character_count = random.choice([1, 2, 2, 2, 3])
+
+    # Pick mentor/companion types for multi-character stories
+    mentor_desc = random.choice(MENTOR_TYPES)
+    companion_desc = random.choice(COMPANION_TYPES)
+
     return {
         "mood": mood,
         "age_group": age_group,
-        "setting": random.choice(SETTINGS),
-        "character_type": random.choice(CHARACTER_TYPES),
-        "character_personality": random.choice(PERSONALITIES),
-        "character_count": random.choice([1, 2, 2, 2, 3]),  # 2 is most common
-        "journey_type": random.choice(JOURNEY_TYPES),
-        "time_of_day": random.choice(TIMES_OF_DAY),
-        "weather": random.choice(WEATHER_OPTIONS),
-        "repeated_phrase_feeling": random.choice(PHRASE_FEELINGS),
-        "song_position": "late",
+        "world_type": world_type,
+        "world_concept": STORY_WORLDS[world_type]["concept"],
+        "world_sleep": STORY_WORLDS[world_type]["sleep_connection"],
+        "mystery_type": mystery_type,
+        "mystery_setup": MYSTERY_TYPES[mystery_type]["setup"],
+        "mystery_resolution": MYSTERY_TYPES[mystery_type]["sleep_resolution"],
+        "breathing_mechanic": breathing,
+        "breathing_description": BREATHING_MECHANICS[breathing],
+        "mood_energy": MOOD_TO_STORY_ENERGY[mood],
+        "character_count": character_count,
+        "mentor_description": mentor_desc,
+        "companion_description": companion_desc,
+        "repeated_phrase_feeling": phrase_feeling,
     }
 
 
@@ -1491,26 +1821,31 @@ def publish_episode(output_dir, params, metadata, duration_seconds):
     # Build character card
     characters = metadata.get("characters", [])
     main_char = characters[0] if characters else {"name": "Unknown", "personality": "", "voice_style": ""}
+    world_type = params.get("world_type", "")
+    world_concept = params.get("world_concept", "")
+    mystery_type = params.get("mystery_type", "")
+    breathing_mechanic = params.get("breathing_mechanic", "")
+
     char_card = {
         "name": main_char["name"],
-        "identity": f"A {params.get('character_personality', '')} {params.get('character_type', '')} who explores the {params.get('setting', '')}",
-        "special": f"Guides the listener through a {params.get('journey_type', '').replace('_', ' ')} adventure",
+        "identity": f"A child who discovers a {world_type} — {world_concept}",
+        "special": f"Uses a {breathing_mechanic} to solve the mystery",
         "personality_tags": [main_char.get("personality", "").capitalize(), main_char.get("voice_style", "").capitalize()],
     }
 
     now = datetime.utcnow().isoformat()
 
-    # Build title from characters and setting
+    # Build title from characters and world
     char_names = [c["name"] for c in characters]
     title_name = " and ".join(char_names[:2]) if len(char_names) > 1 else char_names[0] if char_names else "Unknown"
-    journey_word = params.get("journey_type", "adventure").replace("_", " ").split("_")[-1]
+    world_label = world_type.replace("_", " ").capitalize()
 
     entry = {
         "id": story_id,
         "type": "long_story",
         "lang": "en",
-        "title": metadata.get("title", f"{title_name}'s {params.get('setting', 'forest').capitalize()} {journey_word.capitalize()}"),
-        "description": metadata.get("description", f"A bedtime story episode featuring {title_name} in the {params.get('setting', 'forest')}."),
+        "title": metadata.get("title", f"{title_name} and the {world_label}"),
+        "description": metadata.get("description", f"A bedtime story episode where {title_name} discovers a magical {world_type}."),
         "text": clean_text,
         "annotated_text": full_raw,
         "lullaby_lyrics": metadata.get("song_lyrics", ""),
@@ -1522,7 +1857,7 @@ def publish_episode(output_dir, params, metadata, duration_seconds):
         "word_count": metadata.get("word_counts", {}).get("total", 0),
         "duration_seconds": int(duration_seconds),
         "duration": int(duration_seconds / 60),
-        "categories": ["Bedtime", params.get("setting", "Forest").capitalize()],
+        "categories": ["Bedtime", world_label],
         "theme": "bedtime",
         "morals": [],
         "cover": cover_field,
@@ -1544,7 +1879,10 @@ def publish_episode(output_dir, params, metadata, duration_seconds):
         "has_baked_music": True,
         "experimental_v2": True,
         "episode_format": "v2",
-        "lead_character_type": params.get("character_type", ""),
+        "world_type": world_type,
+        "mystery_type": mystery_type,
+        "breathing_mechanic": breathing_mechanic,
+        "lead_character_type": "child",
         "characters": characters,
         "repeated_phrase": metadata.get("repeated_phrase", ""),
         "voice_map": metadata.get("voice_map", {}),
@@ -1578,17 +1916,16 @@ def publish_episode(output_dir, params, metadata, duration_seconds):
 # ═══════════════════════════════════════════════════════════════
 
 def main():
-    parser = argparse.ArgumentParser(description="Generate experimental long story episode")
+    parser = argparse.ArgumentParser(description="Generate long story v2 episode")
     parser.add_argument("--mood", default="curious", choices=list(MOOD_SONG_ARC.keys()))
     parser.add_argument("--age-group", default="6-8", choices=["2-5", "6-8", "9-12"])
-    parser.add_argument("--setting", default="forest")
-    parser.add_argument("--character-type", default="owl")
-    parser.add_argument("--character-personality", default="wise")
+    parser.add_argument("--world-type", default=None, choices=list(STORY_WORLDS.keys()),
+                        help="Story world type (default: auto-select by mood)")
+    parser.add_argument("--mystery-type", default=None, choices=list(MYSTERY_TYPES.keys()),
+                        help="Mystery type (default: auto-select by mood)")
+    parser.add_argument("--breathing-mechanic", default=None, choices=list(BREATHING_MECHANICS.keys()),
+                        help="Breathing mechanic (default: auto-select)")
     parser.add_argument("--character-count", type=int, default=2, choices=[1, 2, 3])
-    parser.add_argument("--journey-type", default="following_a_sound")
-    parser.add_argument("--time-of-day", default="dusk")
-    parser.add_argument("--weather", default="light_mist")
-    parser.add_argument("--repeated-phrase-feeling", default="listen")
     parser.add_argument("--output-dir", default=None)
     parser.add_argument("--dry-run", action="store_true", help="Print prompt only")
     parser.add_argument("--text-only", action="store_true", help="Skip audio/cover generation")
@@ -1597,33 +1934,43 @@ def main():
     parser.add_argument("--publish", action="store_true",
                         help="Add finished episode to content.json and copy files")
     parser.add_argument("--randomize", action="store_true",
-                        help="Randomize setting/character/journey for diversity (pipeline mode)")
+                        help="Auto-select all params for diversity (pipeline mode)")
     args = parser.parse_args()
 
     if args.randomize:
         params = randomize_params(mood=args.mood, age_group=args.age_group)
-        print(f"  Randomized: {params['character_type']} in {params['setting']}, "
-              f"{params['journey_type']}, {params['time_of_day']}, {params['weather']}")
+        print(f"  Randomized: world={params['world_type']}, mystery={params['mystery_type']}, "
+              f"breathing={params['breathing_mechanic']}, chars={params['character_count']}")
     else:
+        # Build params from explicit args or defaults
+        mood = args.mood
+        age_group = args.age_group
+        world_type = args.world_type or random.choice(MOOD_TO_WORLDS.get(mood, list(STORY_WORLDS.keys())))
+        mystery_type = args.mystery_type or random.choice(MOOD_TO_MYSTERIES.get(mood, list(MYSTERY_TYPES.keys())))
+        breathing = args.breathing_mechanic or random.choice(list(BREATHING_MECHANICS.keys()))
         params = {
-            "mood": args.mood,
-            "age_group": args.age_group,
-            "setting": args.setting,
-            "character_type": args.character_type,
-            "character_personality": args.character_personality,
+            "mood": mood,
+            "age_group": age_group,
+            "world_type": world_type,
+            "world_concept": STORY_WORLDS[world_type]["concept"],
+            "world_sleep": STORY_WORLDS[world_type]["sleep_connection"],
+            "mystery_type": mystery_type,
+            "mystery_setup": MYSTERY_TYPES[mystery_type]["setup"],
+            "mystery_resolution": MYSTERY_TYPES[mystery_type]["sleep_resolution"],
+            "breathing_mechanic": breathing,
+            "breathing_description": BREATHING_MECHANICS[breathing],
+            "mood_energy": MOOD_TO_STORY_ENERGY[mood],
             "character_count": args.character_count,
-            "journey_type": args.journey_type,
-            "time_of_day": args.time_of_day,
-            "weather": args.weather,
-            "repeated_phrase_feeling": args.repeated_phrase_feeling,
-            "song_position": "late",
+            "mentor_description": random.choice(MENTOR_TYPES),
+            "companion_description": random.choice(COMPANION_TYPES),
+            "repeated_phrase_feeling": random.choice(PHRASE_FEELINGS),
         }
 
     output_dir = args.output_dir or str(BASE_DIR.parent / "output" / "long_story_test")
     os.makedirs(output_dir, exist_ok=True)
 
     print("=" * 50)
-    print("EXPERIMENTAL LONG STORY EPISODE GENERATOR")
+    print("LONG STORY V2 — RICH EPISODES")
     print("=" * 50)
 
     # ══════════════════════════════════════════════════════════
@@ -1663,10 +2010,10 @@ def main():
     else:
         print(f"  Mood: {params['mood']}")
         print(f"  Age: {params['age_group']}")
-        print(f"  Setting: {params['setting']}, {params['time_of_day']}, {params['weather']}")
-        print(f"  Character: {params['character_type']} ({params['character_personality']})")
+        print(f"  World: {params['world_type']} — {params['world_concept']}")
+        print(f"  Mystery: {params['mystery_type']} — {params['mystery_setup']}")
+        print(f"  Breathing: {params['breathing_mechanic']}")
         print(f"  Characters: {params['character_count']}")
-        print(f"  Journey: {params['journey_type']}")
         print()
 
         prompt = build_long_story_prompt(params)
@@ -1679,15 +2026,18 @@ def main():
 
         story_system = (
             "You are a world-class children's bedtime story writer. "
-            "You write LONG, detailed, immersive stories. "
+            "You create immersive worlds with mysteries that resolve into sleep. "
+            "Every story has a breathing mechanic — a story object that rewards calm breathing. "
+            "The main character is always a CHILD the listener becomes, not observes. "
             "You ALWAYS hit the word count targets given in the prompt — "
-            "never shorter. If the prompt says 250-400 words for a phase, "
-            "you write at least 250 words for that phase. "
+            "never shorter. If the prompt says 350-500 words for a phase, "
+            "you write at least 350 words for that phase. "
+            "Phase 3 must have MANY short sentences (50-70+), not few. "
             "You use plain text only — NO markdown bold (**), NO italic (*), "
             "NO horizontal rules (---). Only use the tags specified in the prompt."
         )
         print("1. Generating story text via Mistral...")
-        raw_response = call_mistral(prompt, max_tokens=6000, temperature=0.85,
+        raw_response = call_mistral(prompt, max_tokens=8000, temperature=0.85,
                                     system_prompt=story_system)
 
         raw_path = os.path.join(output_dir, "story_raw.txt")
@@ -1757,16 +2107,15 @@ def main():
         print("6. Saving metadata...")
         metadata = {
             "content_type": "long_story",
+            "episode_format": "v2",
             "experimental": True,
             "age_group": params["age_group"],
             "mood": params["mood"],
-            "setting": params["setting"],
-            "character_type": params["character_type"],
-            "character_personality": params["character_personality"],
+            "world_type": params.get("world_type", ""),
+            "world_concept": params.get("world_concept", ""),
+            "mystery_type": params.get("mystery_type", ""),
+            "breathing_mechanic": params.get("breathing_mechanic", ""),
             "character_count": params["character_count"],
-            "journey_type": params["journey_type"],
-            "time_of_day": params["time_of_day"],
-            "weather": params["weather"],
             "characters": parsed["characters"],
             "repeated_phrase": parsed["repeated_phrase"],
             "song_seed": parsed["song_seed"],
@@ -1809,7 +2158,8 @@ def main():
     else:
         print("7. Generating song audio via MiniMax on Replicate...")
         try:
-            generate_song_audio(song_lyrics, params["mood"], params["setting"],
+            generate_song_audio(song_lyrics, params["mood"],
+                                params.get("world_type", params.get("setting", "")),
                                 song_audio_path)
         except Exception as e:
             print(f"   Song audio FAILED: {e}")
