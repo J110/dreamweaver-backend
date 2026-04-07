@@ -2106,10 +2106,14 @@ def preflight_checks(args) -> bool:
 
     # 5. Git pull to ensure we have the latest content.json (with language_level classifications etc.)
     logger.info("  Pulling latest backend changes...")
+    # Stash dirty runtime files (analytics.db, tokens.json, etc.) so pull --rebase works
+    run_command(["git", "stash", "--quiet"], "Preflight: git stash", timeout=30)
     pull_ok, _, pull_stderr, _ = run_command(
         ["git", "pull", "--rebase", "origin", "main"],
         "Preflight: git pull", timeout=60
     )
+    # Pop stash (even if pull failed — restore local runtime data)
+    run_command(["git", "stash", "pop", "--quiet"], "Preflight: git stash pop", timeout=30)
     if pull_ok:
         logger.info("  Git pull: OK (content.json up to date)")
     else:
