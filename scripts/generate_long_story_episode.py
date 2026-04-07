@@ -1555,8 +1555,8 @@ def generate_cover(params, output_path):
 
     prompt = (
         f"Children's bedtime illustration, watercolor style, "
-        f"a {params['character_type']} in a {params['setting']}, "
-        f"{params['time_of_day']}, {params['weather']}, "
+        f"a {params.get('character_type', 'a child')} in {params.get('setting', params.get('world_concept', 'a magical place'))}, "
+        f"{params.get('time_of_day', 'night')}, {params.get('weather', 'starlit sky')}, "
         f"warm colors, dreamy atmosphere, soft lighting, "
         f"gentle and peaceful, bedtime feeling, no text, no words"
     )

@@ -1,0 +1,135 @@
+[CHARACTER: Mira, curious, brave]
+[CHARACTER: Lumi, nervous, small]
+
+[INTRO]
+Close your eyes and imagine a sky where clouds are not just floating—they are being woven. High above the world, on a platform of silver threads, sits the Dreamloom. This is where sleep is made, stitch by stitch, from the softest wool of twilight. Tonight, the loom hums louder than ever, and something new is coming. No one knows what it is. But Mira is about to find out.
+[/INTRO]
+
+[PHASE_1]
+Mira balanced on the edge of the Dreamloom’s wooden deck. Below her, stars blinked like tiny lanterns being lit one by one. The air smelled of warm milk and honey. She had come to watch the cloud-weavers at work, but something felt different tonight. The usual hum of the loom was uneven, like a song with missing notes.
+
+MIRA: "Did you hear that?"
+LUMI: "Hear what?"
+MIRA: "The loom. It’s stuttering."
+
+Lumi was a small cup, no bigger than Mira’s palm, made of chipped blue porcelain. She trembled in Mira’s hands. Her voice was high and wobbly.
+
+LUMI: "Maybe it’s broken."
+MIRA: "Or maybe it’s making something new."
+
+Mira stepped closer to the loom. The threads shimmered, shifting from pink to gold to silver. But one thread was different. It was dark, like ink spilled in water, and it pulsed with a slow, heavy rhythm. Mira reached out to touch it.
+
+LUMI: "Don’t! What if it’s dangerous?"
+MIRA: "It’s just a thread. [PHRASE]I can handle it.[/PHRASE]"
+
+Her fingers brushed the dark thread. A shiver ran up her arm. The thread was cold, but not like ice—more like the quiet before a storm. The water in Lumi’s cup sloshed, cloudy and restless.
+
+LUMI: "Look! The water!"
+MIRA: "It’s all murky. Why?"
+
+Mira remembered what the cloud-weavers had taught her. When the water in your cup turns cloudy, it means your breath is too quick, too sharp. She took a deep breath in through her nose, slow and deep. Then she let it out through her mouth, soft as a whisper. The water in Lumi’s cup settled. The ripples smoothed. The cloudiness faded, leaving the water clear as glass.
+
+LUMI: "Oh! It worked!"
+MIRA: "See? [PHRASE]I can handle it.[/PHRASE]"
+
+But then the loom groaned. A deep, creaking sound, like a door opening very far away. The dark thread trembled. Mira’s breath hitched. The water in Lumi’s cup turned cloudy again.
+
+MIRA: "Something’s coming."
+LUMI: "Something bad?"
+MIRA: "Something... unknown."
+
+The deck beneath them began to vibrate. The stars below flickered, as if someone was blowing on them. Mira’s heart pounded. She pressed her hands to her chest and breathed. In through the nose, slow and deep. Out through the mouth, soft as a whisper. The water in Lumi’s cup cleared. The vibration stilled.
+
+[PAUSE: 800]
+[BREATHE]
+
+Then, the music started. It wasn’t a song, not really. It was the sound of the loom weaving itself, the threads humming as they stretched and curled. The air filled with a melody that was both new and familiar, like a lullaby you’ve known your whole life but only just remembered.
+
+[SONG_SEED: A melody like threads being woven, rising and falling with the rhythm of breathing, soft and deep and slow.]
+[/PHASE_1]
+
+[POST_SONG]
+The music wrapped around Mira like a blanket. The dark thread no longer pulsed. The loom’s hum settled into a steady, soothing rhythm. The stars below glowed brighter, as if they were smiling. Something was still coming. But now, it didn’t feel unknown. It felt like a promise.
+[/POST_SONG]
+
+[PHASE_2]
+Mira sat down on the deck, her legs crossed beneath her. Lumi nestled into the crook of her arm, the water in her cup perfectly still. The air smelled sweeter now, like lavender and warm bread. The dark thread on the loom had stopped trembling. It swayed gently, as if it was being rocked to sleep.
+
+MIRA: "Do you feel that?"
+LUMI: "Feel what?"
+MIRA: "The air. It’s softer."
+
+Lumi didn’t answer. Her edges had blurred, like a drawing smudged with a thumb. Mira watched as Lumi’s blue porcelain faded into the color of the deck, her shape melting into the wood. The cup was still there, but she wasn’t awake anymore. She was dreaming.
+
+[PAUSE: 1500]
+[BREATHE]
+
+Mira’s eyelids grew heavy. She lay back on the deck, her head cradled in her hands. The stars above twinkled in patterns she almost recognized. The loom’s hum was a lullaby now, steady and sure. She breathed in through her nose, slow and deep. Out through her mouth, soft as a whisper. The water in Lumi’s cup didn’t ripple. It didn’t need to. Mira’s breath was calm.
+
+The dark thread on the loom began to glow. Not bright, not harsh—just a gentle, golden light, like the first hint of sunrise. It curled around itself, weaving into a shape Mira couldn’t quite see. But she didn’t need to see it. She could feel it. It was warm. It was soft. It was coming for her.
+
+[PHRASE]...I can handle it...[/PHRASE]
+
+The deck beneath her felt like a cloud. The air wrapped around her like a hug. The stars blinked slower, softer. The loom’s hum faded into the background, like a song you know so well you don’t even hear it anymore.
+
+[PAUSE: 1500]
+[BREATHE]
+
+Mira’s fingers uncurled. Her arms fell to her sides. The dark thread on the loom wove itself into a blanket, a pillow, a nest. It settled over her, light as a sigh. The stars above dimmed, one by one, tucking themselves into the sky like children into bed.
+
+[PAUSE: 1500]
+[BREATHE]
+[/PHASE_2]
+
+[PHASE_3]
+The deck is warm.
+Mira is still.
+The loom hums low.
+
+Her breath is slow.
+Her hands are soft.
+The thread glows gold.
+
+No more words.
+No more thoughts.
+Just the hum.
+
+The air is sweet.
+The stars blink slow.
+The deck is soft.
+
+Her eyes close.
+The thread wraps.
+The glow fades.
+
+Warm.
+Still.
+Quiet.
+
+The hum softens.
+The stars rest.
+The air stills.
+
+[PHRASE]...I can...[/PHRASE]
+
+The deck rises.
+The thread settles.
+The glow dims.
+
+Her breath slows.
+Her hands relax.
+The hum fades.
+
+Warm.
+Still.
+Soft.
+
+The stars sleep.
+The loom rests.
+The thread dreams.
+
+[WHISPER]Her breath... slow... deep...[/WHISPER]
+[WHISPER]The thread... wraps... tight...[/WHISPER]
+[WHISPER]The glow... fades...[/WHISPER]
+[WHISPER]...sleep...[/WHISPER]
+[/PHASE_3]

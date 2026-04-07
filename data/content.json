@@ -5839,8 +5839,8 @@
     "life_aspect": "school_learning",
     "plot_archetype": "problem_solving",
     "created_at": "2026-03-01T01:30:32.532542",
-    "updated_at": "2026-03-01T01:30:32.532542",
-    "view_count": 0,
+    "updated_at": "2026-04-07T03:47:55.473899",
+    "view_count": 1,
     "like_count": 0,
     "save_count": 0,
     "duration": 4,
@@ -5944,7 +5944,7 @@
     "mood": "calm",
     "story_type": "folk_tale",
     "language_level": "advanced",
-    "is_saved": true
+    "is_saved": false
   },
   {
     "id": "gen-6772aca6a7cc",
@@ -10974,8 +10974,8 @@
     },
     "mood": "curious",
     "created_at": "2026-03-15T01:38:30.249369",
-    "updated_at": "2026-03-27T00:10:20.813813",
-    "view_count": 5,
+    "updated_at": "2026-04-07T04:45:20.818965",
+    "view_count": 6,
     "like_count": 0,
     "save_count": 0,
     "duration": 9,
@@ -17380,7 +17380,20 @@
     "cover": "/covers/gen-7e85423bfca3.svg",
     "musicProfile": "cosmic-voyage",
     "music_type": "ambient",
-    "audio_variants": [],
+    "audio_variants": [
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-7e85_male_2.mp3",
+        "duration_seconds": 411.97,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-7e85_female_2.mp3",
+        "duration_seconds": 442.64,
+        "provider": "chatterbox"
+      }
+    ],
     "author_id": "system",
     "is_generated": true,
     "generation_quality": "pending_review",
@@ -17422,8 +17435,8 @@
     "story_type": "fable",
     "language_level": "basic",
     "created_at": "2026-04-06T01:39:14.232625",
-    "updated_at": "2026-04-07T03:38:08.066929",
-    "view_count": 2,
+    "updated_at": "2026-04-07T04:09:40.578648",
+    "view_count": 7,
     "like_count": 0,
     "save_count": 0,
     "duration": 8,
@@ -17684,7 +17697,7 @@
     "mood": "wired",
     "story_type": "fable",
     "language_level": "basic",
-    "created_at": "2026-04-07T02:33:18.759775",
+    "created_at": "2026-04-07T04:55:17",
     "updated_at": "2026-04-07T03:35:36.557503",
     "view_count": 2,
     "like_count": 0,
@@ -17695,7 +17708,8 @@
     "repeated_phrase": "The gears inside stayed quiet",
     "raw_text": "One day, Jasper said to the cricket on his windowsill \u2014\n\n[PAUSE: 1200]\n\n\"Why don\u2019t you tick when I watch you?\"\n\nThe cricket said nothing. Its brass wings gleamed in the lamplight.\n\n[MUSIC]\n\nJasper leaned closer. The cricket\u2019s legs were still. Not even a twitch.\n\n[PHRASE]The gears inside stayed quiet.[/PHRASE]\n\n[PAUSE: 800]\n\nHe turned away to sharpen his pencil. Behind him, a soft *tick-tick-tick* began.\n\n[PAUSE: 1500]\n\nJasper spun around. The cricket\u2019s legs were moving now, slow and steady.\n\n[PHRASE]The gears inside stayed quiet.[/PHRASE]\n\n[PAUSE: 1200]\n\n\"Between you and me,\" Jasper whispered, \"are you shy?\"\n\nThe cricket didn\u2019t answer. But when Jasper pretended to read his book, the ticking grew louder.\n\n[MUSIC]\n\nHe tried not blinking. The cricket froze. He tried humming. The cricket stopped. He tried holding his breath. The cricket ticked faster.\n\n[PHRASE]The gears inside stayed quiet.[/PHRASE]\n\n[PAUSE: 2000]\n\nThen Jasper had an idea. He closed his eyes and listened.\n\nThe ticking didn\u2019t stop.\n\n[PAUSE: 1200]\n\nWhen he opened his eyes, the cricket was still moving. Its brass wings shimmered.\n\n[PAUSE: 1500]\n\nJasper smiled. The cricket ticked on, steady as a heartbeat.\n\n[MUSIC]\n\nThe lamplight warmed the desk. The ticking softened.\n\nThe cricket\u2019s legs slowed.\n\n[PHRASE]The gears inside stayed quiet.[/PHRASE]\n\nJasper\u2019s eyelids grew heavy.\n\nThe cricket\u2019s wings stilled.\n\nThe room went quiet.\n\nAnd Jasper found his answer.",
     "duration": 4,
-    "is_saved": false
+    "is_saved": false,
+    "addedAt": "2026-04-07T04:55:17"
   },
   {
     "id": "shield-0-1-73db",
@@ -17715,7 +17729,7 @@
     "duration": 1,
     "duration_seconds": 36,
     "author_id": "system",
-    "created_at": "2026-04-07T03:04:50.597295",
+    "created_at": "2026-04-07T04:55:17",
     "updated_at": "2026-04-07T03:04:50.597322",
     "audio_url": null,
     "album_art_url": null,
@@ -17749,6 +17763,91 @@
       }
     ],
     "mood": "anxious",
-    "lullaby_type": "shield"
+    "lullaby_type": "shield",
+    "addedAt": "2026-04-07T04:55:17"
+  },
+  {
+    "id": "gen-2e9b43edbe06",
+    "type": "long_story",
+    "lang": "en",
+    "title": "Mira and Lumi and the Workshop",
+    "description": "A bedtime story episode where Mira and Lumi discovers a magical workshop.",
+    "text": "Close your eyes and imagine a sky where clouds are not just floating\u2014they are being woven. High above the world, on a platform of silver threads, sits the Dreamloom. This is where sleep is made, stitch by stitch, from the softest wool of twilight. Tonight, the loom hums louder than ever, and something new is coming. No one knows what it is. But Mira is about to find out.\n\nMira balanced on the edge of the Dreamloom\u2019s wooden deck. Below her, stars blinked like tiny lanterns being lit one by one. The air smelled of warm milk and honey. She had come to watch the cloud-weavers at work, but something felt different tonight. The usual hum of the loom was uneven, like a song with missing notes.\n\nMIRA: \"Did you hear that?\"\nLUMI: \"Hear what?\"\nMIRA: \"The loom. It\u2019s stuttering.\"\n\nLumi was a small cup, no bigger than Mira\u2019s palm, made of chipped blue porcelain. She trembled in Mira\u2019s hands. Her voice was high and wobbly.\n\nLUMI: \"Maybe it\u2019s broken.\"\nMIRA: \"Or maybe it\u2019s making something new.\"\n\nMira stepped closer to the loom. The threads shimmered, shifting from pink to gold to silver. But one thread was different. It was dark, like ink spilled in water, and it pulsed with a slow, heavy rhythm. Mira reached out to touch it.\n\nLUMI: \"Don\u2019t! What if it\u2019s dangerous?\"\nMIRA: \"It\u2019s just a thread. I can handle it.\"\n\nHer fingers brushed the dark thread. A shiver ran up her arm. The thread was cold, but not like ice\u2014more like the quiet before a storm. The water in Lumi\u2019s cup sloshed, cloudy and restless.\n\nLUMI: \"Look! The water!\"\nMIRA: \"It\u2019s all murky. Why?\"\n\nMira remembered what the cloud-weavers had taught her. When the water in your cup turns cloudy, it means your breath is too quick, too sharp. She took a deep breath in through her nose, slow and deep. Then she let it out through her mouth, soft as a whisper. The water in Lumi\u2019s cup settled. The ripples smoothed. The cloudiness faded, leaving the water clear as glass.\n\nLUMI: \"Oh! It worked!\"\nMIRA: \"See? I can handle it.\"\n\nBut then the loom groaned. A deep, creaking sound, like a door opening very far away. The dark thread trembled. Mira\u2019s breath hitched. The water in Lumi\u2019s cup turned cloudy again.\n\nMIRA: \"Something\u2019s coming.\"\nLUMI: \"Something bad?\"\nMIRA: \"Something... unknown.\"\n\nThe deck beneath them began to vibrate. The stars below flickered, as if someone was blowing on them. Mira\u2019s heart pounded. She pressed her hands to her chest and breathed. In through the nose, slow and deep. Out through the mouth, soft as a whisper. The water in Lumi\u2019s cup cleared. The vibration stilled.\n\nThen, the music started. It wasn\u2019t a song, not really. It was the sound of the loom weaving itself, the threads humming as they stretched and curled. The air filled with a melody that was both new and familiar, like a lullaby you\u2019ve known your whole life but only just remembered.\n\nThe music wrapped around Mira like a blanket. The dark thread no longer pulsed. The loom\u2019s hum settled into a steady, soothing rhythm. The stars below glowed brighter, as if they were smiling. Something was still coming. But now, it didn\u2019t feel unknown. It felt like a promise.\n\nMira sat down on the deck, her legs crossed beneath her. Lumi nestled into the crook of her arm, the water in her cup perfectly still. The air smelled sweeter now, like lavender and warm bread. The dark thread on the loom had stopped trembling. It swayed gently, as if it was being rocked to sleep.\n\nMIRA: \"Do you feel that?\"\nLUMI: \"Feel what?\"\nMIRA: \"The air. It\u2019s softer.\"\n\nLumi didn\u2019t answer. Her edges had blurred, like a drawing smudged with a thumb. Mira watched as Lumi\u2019s blue porcelain faded into the color of the deck, her shape melting into the wood. The cup was still there, but she wasn\u2019t awake anymore. She was dreaming.\n\nMira\u2019s eyelids grew heavy. She lay back on the deck, her head cradled in her hands. The stars above twinkled in patterns she almost recognized. The loom\u2019s hum was a lullaby now, steady and sure. She breathed in through her nose, slow and deep. Out through her mouth, soft as a whisper. The water in Lumi\u2019s cup didn\u2019t ripple. It didn\u2019t need to. Mira\u2019s breath was calm.\n\nThe dark thread on the loom began to glow. Not bright, not harsh\u2014just a gentle, golden light, like the first hint of sunrise. It curled around itself, weaving into a shape Mira couldn\u2019t quite see. But she didn\u2019t need to see it. She could feel it. It was warm. It was soft. It was coming for her.\n\n...I can handle it...\n\nThe deck beneath her felt like a cloud. The air wrapped around her like a hug. The stars blinked slower, softer. The loom\u2019s hum faded into the background, like a song you know so well you don\u2019t even hear it anymore.\n\nMira\u2019s fingers uncurled. Her arms fell to her sides. The dark thread on the loom wove itself into a blanket, a pillow, a nest. It settled over her, light as a sigh. The stars above dimmed, one by one, tucking themselves into the sky like children into bed.\n\nThe deck is warm.\nMira is still.\nThe loom hums low.\n\nHer breath is slow.\nHer hands are soft.\nThe thread glows gold.\n\nNo more words.\nNo more thoughts.\nJust the hum.\n\nThe air is sweet.\nThe stars blink slow.\nThe deck is soft.\n\nHer eyes close.\nThe thread wraps.\nThe glow fades.\n\nWarm.\nStill.\nQuiet.\n\nThe hum softens.\nThe stars rest.\nThe air stills.\n\n...I can...\n\nThe deck rises.\nThe thread settles.\nThe glow dims.\n\nHer breath slows.\nHer hands relax.\nThe hum fades.\n\nWarm.\nStill.\nSoft.\n\nThe stars sleep.\nThe loom rests.\nThe thread dreams.\n\nHer breath... slow... deep...\nThe thread... wraps... tight...\nThe glow... fades...\n...sleep...",
+    "annotated_text": "Close your eyes and imagine a sky where clouds are not just floating\u2014they are being woven. High above the world, on a platform of silver threads, sits the Dreamloom. This is where sleep is made, stitch by stitch, from the softest wool of twilight. Tonight, the loom hums louder than ever, and something new is coming. No one knows what it is. But Mira is about to find out.\n\nMira balanced on the edge of the Dreamloom\u2019s wooden deck. Below her, stars blinked like tiny lanterns being lit one by one. The air smelled of warm milk and honey. She had come to watch the cloud-weavers at work, but something felt different tonight. The usual hum of the loom was uneven, like a song with missing notes.\n\nMIRA: \"Did you hear that?\"\nLUMI: \"Hear what?\"\nMIRA: \"The loom. It\u2019s stuttering.\"\n\nLumi was a small cup, no bigger than Mira\u2019s palm, made of chipped blue porcelain. She trembled in Mira\u2019s hands. Her voice was high and wobbly.\n\nLUMI: \"Maybe it\u2019s broken.\"\nMIRA: \"Or maybe it\u2019s making something new.\"\n\nMira stepped closer to the loom. The threads shimmered, shifting from pink to gold to silver. But one thread was different. It was dark, like ink spilled in water, and it pulsed with a slow, heavy rhythm. Mira reached out to touch it.\n\nLUMI: \"Don\u2019t! What if it\u2019s dangerous?\"\nMIRA: \"It\u2019s just a thread. [PHRASE]I can handle it.[/PHRASE]\"\n\nHer fingers brushed the dark thread. A shiver ran up her arm. The thread was cold, but not like ice\u2014more like the quiet before a storm. The water in Lumi\u2019s cup sloshed, cloudy and restless.\n\nLUMI: \"Look! The water!\"\nMIRA: \"It\u2019s all murky. Why?\"\n\nMira remembered what the cloud-weavers had taught her. When the water in your cup turns cloudy, it means your breath is too quick, too sharp. She took a deep breath in through her nose, slow and deep. Then she let it out through her mouth, soft as a whisper. The water in Lumi\u2019s cup settled. The ripples smoothed. The cloudiness faded, leaving the water clear as glass.\n\nLUMI: \"Oh! It worked!\"\nMIRA: \"See? [PHRASE]I can handle it.[/PHRASE]\"\n\nBut then the loom groaned. A deep, creaking sound, like a door opening very far away. The dark thread trembled. Mira\u2019s breath hitched. The water in Lumi\u2019s cup turned cloudy again.\n\nMIRA: \"Something\u2019s coming.\"\nLUMI: \"Something bad?\"\nMIRA: \"Something... unknown.\"\n\nThe deck beneath them began to vibrate. The stars below flickered, as if someone was blowing on them. Mira\u2019s heart pounded. She pressed her hands to her chest and breathed. In through the nose, slow and deep. Out through the mouth, soft as a whisper. The water in Lumi\u2019s cup cleared. The vibration stilled.\n\n[PAUSE: 800]\n[BREATHE]\n\nThen, the music started. It wasn\u2019t a song, not really. It was the sound of the loom weaving itself, the threads humming as they stretched and curled. The air filled with a melody that was both new and familiar, like a lullaby you\u2019ve known your whole life but only just remembered.\n\n[SONG_SEED: A melody like threads being woven, rising and falling with the rhythm of breathing, soft and deep and slow.]\n\nThe music wrapped around Mira like a blanket. The dark thread no longer pulsed. The loom\u2019s hum settled into a steady, soothing rhythm. The stars below glowed brighter, as if they were smiling. Something was still coming. But now, it didn\u2019t feel unknown. It felt like a promise.\n\nMira sat down on the deck, her legs crossed beneath her. Lumi nestled into the crook of her arm, the water in her cup perfectly still. The air smelled sweeter now, like lavender and warm bread. The dark thread on the loom had stopped trembling. It swayed gently, as if it was being rocked to sleep.\n\nMIRA: \"Do you feel that?\"\nLUMI: \"Feel what?\"\nMIRA: \"The air. It\u2019s softer.\"\n\nLumi didn\u2019t answer. Her edges had blurred, like a drawing smudged with a thumb. Mira watched as Lumi\u2019s blue porcelain faded into the color of the deck, her shape melting into the wood. The cup was still there, but she wasn\u2019t awake anymore. She was dreaming.\n\n[PAUSE: 1500]\n[BREATHE]\n\nMira\u2019s eyelids grew heavy. She lay back on the deck, her head cradled in her hands. The stars above twinkled in patterns she almost recognized. The loom\u2019s hum was a lullaby now, steady and sure. She breathed in through her nose, slow and deep. Out through her mouth, soft as a whisper. The water in Lumi\u2019s cup didn\u2019t ripple. It didn\u2019t need to. Mira\u2019s breath was calm.\n\nThe dark thread on the loom began to glow. Not bright, not harsh\u2014just a gentle, golden light, like the first hint of sunrise. It curled around itself, weaving into a shape Mira couldn\u2019t quite see. But she didn\u2019t need to see it. She could feel it. It was warm. It was soft. It was coming for her.\n\n[PHRASE]...I can handle it...[/PHRASE]\n\nThe deck beneath her felt like a cloud. The air wrapped around her like a hug. The stars blinked slower, softer. The loom\u2019s hum faded into the background, like a song you know so well you don\u2019t even hear it anymore.\n\n[PAUSE: 1500]\n[BREATHE]\n\nMira\u2019s fingers uncurled. Her arms fell to her sides. The dark thread on the loom wove itself into a blanket, a pillow, a nest. It settled over her, light as a sigh. The stars above dimmed, one by one, tucking themselves into the sky like children into bed.\n\n[PAUSE: 1500]\n[BREATHE]\n\nThe deck is warm.\nMira is still.\nThe loom hums low.\n\nHer breath is slow.\nHer hands are soft.\nThe thread glows gold.\n\nNo more words.\nNo more thoughts.\nJust the hum.\n\nThe air is sweet.\nThe stars blink slow.\nThe deck is soft.\n\nHer eyes close.\nThe thread wraps.\nThe glow fades.\n\nWarm.\nStill.\nQuiet.\n\nThe hum softens.\nThe stars rest.\nThe air stills.\n\n[PHRASE]...I can...[/PHRASE]\n\nThe deck rises.\nThe thread settles.\nThe glow dims.\n\nHer breath slows.\nHer hands relax.\nThe hum fades.\n\nWarm.\nStill.\nSoft.\n\nThe stars sleep.\nThe loom rests.\nThe thread dreams.\n\n[WHISPER]Her breath... slow... deep...[/WHISPER]\n[WHISPER]The thread... wraps... tight...[/WHISPER]\n[WHISPER]The glow... fades...[/WHISPER]\n[WHISPER]...sleep...[/WHISPER]",
+    "lullaby_lyrics": "Soft threads hum and sway,\nMira listens, night and day.\nStars blink low, the deck will dip\u2014\n*I can handle it.*\n\nLumi trembles, blue and bright,\nwhispers lost in woven light.\nStill the loom, the air stands still\u2014\n*I can handle it.*\n\nOne last breath, the song unwinds,\nsoft as milk, as honeyed winds.",
+    "target_age": 7,
+    "age_min": 6,
+    "age_max": 8,
+    "age_group": "6-8",
+    "length": "LONG",
+    "word_count": 990,
+    "duration_seconds": 835,
+    "duration": 13,
+    "categories": [
+      "Bedtime",
+      "Workshop"
+    ],
+    "theme": "bedtime",
+    "morals": [],
+    "cover": "/covers/gen-2e9b43edbe06.webp",
+    "musicProfile": null,
+    "musicParams": null,
+    "musicalBrief": null,
+    "music_type": "baked",
+    "audio_variants": [
+      {
+        "voice": "mixed",
+        "url": "/audio/pre-gen/2e9b43ed_mixed.mp3",
+        "duration_seconds": 835.58,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "experimental_v2",
+    "has_baked_music": true,
+    "experimental_v2": true,
+    "episode_format": "v2",
+    "world_type": "workshop",
+    "mystery_type": "something_arriving",
+    "breathing_mechanic": "water",
+    "lead_character_type": "child",
+    "characters": [
+      {
+        "name": "Mira",
+        "personality": "curious",
+        "voice_style": "brave"
+      },
+      {
+        "name": "Lumi",
+        "personality": "nervous",
+        "voice_style": "small"
+      }
+    ],
+    "repeated_phrase": "I can handle it.",
+    "voice_map": {
+      "Mira": "male_1",
+      "Lumi": "male_2"
+    },
+    "narrator_voice": "female_1",
+    "mood": "wired",
+    "created_at": "2026-04-07T04:55:17",
+    "updated_at": "2026-04-07T04:55:42.046664",
+    "view_count": 1,
+    "like_count": 0,
+    "save_count": 0,
+    "character": {
+      "name": "Mira",
+      "identity": "A child who discovers a workshop \u2014 A place where sleep/dreams/stars/clouds are MADE by someone",
+      "special": "Uses a water to solve the mystery",
+      "personality_tags": [
+        "Curious",
+        "Brave"
+      ]
+    },
+    "is_saved": false,
+    "story_type": "nature",
+    "language_level": "intermediate",
+    "addedAt": "2026-04-07T04:55:17"
   }
 ]
