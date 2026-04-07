@@ -1690,6 +1690,17 @@ def step_sync(args, state: dict) -> bool:
         if covers_backed_up:
             logger.info("  Backed up %d cover files to persistent store", covers_backed_up)
 
+        # ── Sync content-type covers to cover-store subdirs (nginx serves from these) ──
+        for subdir in ["funny-shorts", "silly-songs", "lullabies"]:
+            src_dir = BASE_DIR / "public" / "covers" / subdir
+            store_subdir = COVER_STORE / subdir
+            store_subdir.mkdir(parents=True, exist_ok=True)
+            if src_dir.exists():
+                for f in list(src_dir.glob("*.svg")) + list(src_dir.glob("*.webp")):
+                    dest = store_subdir / f.name
+                    if not dest.exists() or f.stat().st_size != dest.stat().st_size:
+                        shutil.copy2(f, dest)
+
         # ── Recover missing covers from persistent store ──
         covers_recovered = 0
         if COVER_STORE.exists() and web_covers_dir.exists():
