@@ -365,6 +365,7 @@ LONG_STORY_TTS = {
     "phase_3":         {"exaggeration": 0.25, "speed": 0.72, "cfg_weight": 0.35},
     "whisper":         {"exaggeration": 0.15, "speed": 0.68, "cfg_weight": 0.30},
     "breathing":       {"exaggeration": 0.35, "speed": 0.75, "cfg_weight": 0.40},
+    "breathe_guide":   {"exaggeration": 0.30, "speed": 0.70, "cfg_weight": 0.38},
 }
 
 # ── Mood song style (for future MiniMax integration) ──
@@ -481,10 +482,15 @@ The narrator DESCRIBES. Characters LIVE. They sound
 different because they ARE different.
 
 For each character, output a tag at the top of the story:
-[CHARACTER: Name, personality_word, voice_style]
+[CHARACTER: Name, personality_word, voice_style, gender]
 
 voice_style is one of: confident, gentle, small, wise,
 nervous, curious, stubborn, dreamy, brave, quiet
+
+gender is: female, male, or neutral
+Female characters MUST have gender=female. Male characters
+MUST have gender=male. Non-human or ambiguous characters
+use gender=neutral.
 
 === DIALOGUE FORMAT (CRITICAL) ===
 
@@ -541,7 +547,13 @@ Ages {age_group} Phase 1 rules:
   not monologues — 1-2 lines each, back and forth)
 - The mystery is discovered — the character finds
   something wrong/missing/strange
-- The breathing mechanic appears and is used once
+- The breathing mechanic appears and is used once.
+  When the character uses it, wrap the breathing
+  description in [BREATHE_GUIDE] tags, then follow
+  with [BREATHE]:
+  [BREATHE_GUIDE]She breathed in, slow and deep.
+  Then out, soft as a whisper.[/BREATHE_GUIDE]
+  [BREATHE]
 - The repeated phrase appears naturally, spoken by
   the main character
 - Include [PAUSE: 800] tags at moments of discovery
@@ -586,7 +598,11 @@ Ages {age_group} Phase 2 rules:
 - If there are other characters, they fall asleep
   DURING Phase 2. The child watches them sleep.
 - The breathing mechanic works easily now — the character
-  barely has to try
+  barely has to try. Use [BREATHE_GUIDE] once more here,
+  followed by [BREATHE]:
+  [BREATHE_GUIDE]In through the nose, out through the mouth.
+  Slow. Steady.[/BREATHE_GUIDE]
+  [BREATHE]
 - Sensory writing: air, light, ground, sounds far away,
   temperature, textures
 - The repeated phrase appears once, quieter:
@@ -647,7 +663,8 @@ no horizontal rules (---). Just plain text with the tags.
 
 Available tags:
 [PHRASE]...[/PHRASE], [PAUSE: ms], [WHISPER]...[/WHISPER],
-[SONG_SEED: ...], [BREATHE], [CHARACTER: ...],
+[SONG_SEED: ...], [BREATHE], [BREATHE_GUIDE]...[/BREATHE_GUIDE],
+[CHARACTER: ...],
 [INTRO], [/INTRO], [PHASE_1], [/PHASE_1], [POST_SONG],
 [/POST_SONG], [PHASE_2], [/PHASE_2], [PHASE_3], [/PHASE_3]
 
@@ -655,10 +672,23 @@ Available tags:
 narration pauses and the background music swells. Use it at
 natural resting points — never mid-sentence.
 
+[BREATHE_GUIDE] wraps lines where the character uses the
+breathing mechanic. The narrator SLOWS DOWN and gets SOFTER,
+demonstrating the breath. Followed by silence where the child
+breathes along. Example:
+
+[BREATHE_GUIDE]She breathed in through her nose, slow and deep.
+Then out through her mouth, soft as a whisper.[/BREATHE_GUIDE]
+
+Use [BREATHE_GUIDE] 2-3 times across the story — once in
+Phase 1 when the breathing mechanic is first used, once in
+Phase 2 when it becomes easier. Always place a [BREATHE] tag
+immediately AFTER a [BREATHE_GUIDE] block.
+
 === OUTPUT FORMAT ===
 
-[CHARACTER: Name1, personality, voice_style]
-[CHARACTER: Name2, personality, voice_style] (if applicable)
+[CHARACTER: Name1, personality, voice_style, gender]
+[CHARACTER: Name2, personality, voice_style, gender] (if applicable)
 
 [INTRO]
 ...narrator text...
@@ -802,14 +832,19 @@ def extract_section(text, tag):
 def parse_long_story(raw_response):
     raw_response = clean_markdown(raw_response)
     """Parse the complete long story into components."""
-    # Extract character definitions
+    # Extract character definitions (with optional gender field)
     characters = []
-    for match in re.finditer(r'\[CHARACTER:\s*(.+?),\s*(.+?),\s*(.+?)\]', raw_response):
-        characters.append({
+    for match in re.finditer(r'\[CHARACTER:\s*(.+?),\s*(.+?),\s*(.+?)(?:,\s*(.+?))?\]', raw_response):
+        char = {
             "name": match.group(1).strip(),
             "personality": match.group(2).strip(),
             "voice_style": match.group(3).strip(),
-        })
+        }
+        if match.group(4):
+            char["gender"] = match.group(4).strip().lower()
+        else:
+            char["gender"] = "neutral"
+        characters.append(char)
 
     # Extract sections
     intro = extract_section(raw_response, "INTRO")
@@ -1007,27 +1042,46 @@ def validate_song_relevance(song_lyrics, story_text, character_name):
 def assign_voices(characters, mood):
     """Assign distinct voices to narrator and each character.
 
-    Ensures maximum contrast: if narrator is female, first character
-    gets a male voice (and vice versa). Characters alternate genders
-    for audible distinction.
+    Respects character gender: female characters get female voices,
+    male characters get male voices, neutral characters get whichever
+    provides best contrast. Within each gender pool, avoids reusing
+    the narrator voice and maximises variety.
     """
     narrator_voice = MOOD_NARRATOR_VOICE[mood]
-    narrator_is_female = narrator_voice.startswith("female")
 
-    # Separate into gendered pools for maximum contrast
     males = [v for v in ALL_VOICES if v.startswith("male")]
     females = [v for v in ALL_VOICES if v.startswith("female") and v != narrator_voice]
+    # Fallback: if all female voices are used by narrator, include it last
+    if not females:
+        females = [v for v in ALL_VOICES if v.startswith("female")]
 
-    # Alternate: if narrator is female, first char gets male, etc.
-    if narrator_is_female:
-        contrast_pool = males + females
-    else:
-        contrast_pool = females + males
+    male_idx = 0
+    female_idx = 0
+    narrator_is_female = narrator_voice.startswith("female")
 
     voice_map = {}
-    for i, char in enumerate(characters):
+    for char in characters:
+        gender = char.get("gender", "neutral")
+
+        if gender == "female":
+            pool, idx = females, female_idx
+            voice = pool[idx % len(pool)]
+            female_idx += 1
+        elif gender == "male":
+            pool, idx = males, male_idx
+            voice = pool[idx % len(pool)]
+            male_idx += 1
+        else:
+            # Neutral: pick whichever gender contrasts with narrator
+            if narrator_is_female:
+                voice = males[male_idx % len(males)]
+                male_idx += 1
+            else:
+                voice = females[female_idx % len(females)]
+                female_idx += 1
+
         voice_map[char["name"]] = {
-            "voice": contrast_pool[i % len(contrast_pool)],
+            "voice": voice,
             "style": char["voice_style"],
         }
 
@@ -1136,6 +1190,13 @@ def trim_tts_silence(audio, silence_thresh=-50, min_silence_len=300):
 
 def parse_section_into_segments(text):
     """Parse story section into narrator, dialogue, phrase, whisper, pause segments."""
+    # Pre-process: collapse multi-line [BREATHE_GUIDE] blocks into single lines
+    text = re.sub(
+        r'\[BREATHE_GUIDE\](.*?)\[/BREATHE_GUIDE\]',
+        lambda m: '[BREATHE_GUIDE]' + m.group(1).replace('\n', ' ') + '[/BREATHE_GUIDE]',
+        text, flags=re.DOTALL,
+    )
+
     segments = []
     for line in text.split('\n'):
         line = line.strip()
@@ -1157,6 +1218,13 @@ def parse_section_into_segments(text):
         # Breathe tags — bed swell moments
         if line.strip() == "[BREATHE]":
             segments.append({"type": "breathe"})
+            continue
+
+        # Breathe guide tags — narrator demonstrates breathing (slow + soft)
+        if "[BREATHE_GUIDE]" in line:
+            content = line.replace("[BREATHE_GUIDE]", "").replace("[/BREATHE_GUIDE]", "").strip()
+            if content:
+                segments.append({"type": "breathe_guide", "text": content})
             continue
 
         # Whisper tags
@@ -1336,6 +1404,15 @@ def generate_section_tts(section_text, phase_key, narrator_voice, voice_map):
             audio = trim_tts_silence(audio)
             audio_chunks.append(("audio", audio))
 
+        elif seg["type"] == "breathe_guide":
+            text = f"... {seg['text']}"
+            audio = generate_tts(text, voice=narrator_voice,
+                                 **LONG_STORY_TTS["breathe_guide"])
+            audio = trim_tts_silence(audio)
+            audio_chunks.append(("audio", audio))
+            # 3s silence after — the child breathes here
+            audio_chunks.append(("breathe_guide_pause", 3000))
+
         elif seg["type"] == "breathe":
             audio_chunks.append(("breathe", None))
 
@@ -1363,7 +1440,8 @@ def stitch_chunks(chunks, gap_ms=300):
     """Stitch audio chunks with gaps and pauses.
 
     Returns (audio, breathe_positions) where breathe_positions is a list
-    of ms offsets where [BREATHE] tags occurred in the narration.
+    of ms offsets where [BREATHE] or [BREATHE_GUIDE] pauses occurred.
+    Both trigger the same bed swell behaviour.
     """
     output = AudioSegment.empty()
     breathe_positions = []
@@ -1377,6 +1455,11 @@ def stitch_chunks(chunks, gap_ms=300):
             # Record position, insert 5s silence for the breathing moment
             breathe_positions.append(len(output))
             output += AudioSegment.silent(duration=5000)
+        elif chunk_type == "breathe_guide_pause":
+            # 3s silence after the narrator demonstrates breathing.
+            # Bed swells here — the child hears music and breathes.
+            breathe_positions.append(len(output))
+            output += AudioSegment.silent(duration=content)
     return output, breathe_positions
 
 
@@ -1815,7 +1898,7 @@ def publish_episode(output_dir, params, metadata, duration_seconds):
     sections = metadata.get("sections", {})
     raw_parts = [sections.get(s, "") for s in ["intro", "phase_1", "post_song", "phase_2", "phase_3"]]
     full_raw = "\n\n".join(p for p in raw_parts if p)
-    clean_text = re.sub(r'\[/?(?:INTRO|PHASE_\d|POST_SONG|PHRASE|PAUSE[^]]*|SONG_SEED[^]]*|WHISPER|BREATHE|CHARACTER[^]]*)\]', '', full_raw)
+    clean_text = re.sub(r'\[/?(?:INTRO|PHASE_\d|POST_SONG|PHRASE|PAUSE[^]]*|SONG_SEED[^]]*|WHISPER|BREATHE|BREATHE_GUIDE|CHARACTER[^]]*)\]', '', full_raw)
     clean_text = re.sub(r'\n{3,}', '\n\n', clean_text).strip()
 
     # Build character card
