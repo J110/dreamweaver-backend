@@ -1,0 +1,37 @@
+{
+  "id": "warning-2-5-1348",
+  "title": "Mira and the Dreaming Ships",
+  "content_type": "lullaby",
+  "lullaby_type": "warning",
+  "card_label": "Dream Catcher",
+  "card_subtitle": "The dreams are waiting",
+  "age_group": "2-5",
+  "mood": "curious",
+  "language": "en",
+  "instrument": "woodwind",
+  "imagery": "ships",
+  "audio_file": "warning-2-5-1348.mp3",
+  "cover_file": "warning-2-5-1348_cover.svg",
+  "cover_prompt": "A small, round-faced girl with curly hair peeking from under a quilt, watching soft-glowing ships with tiny sails float past her moonlit window. The room is warm with golden light, and the ships leave trails of stardust as they drift by.",
+  "duration_seconds": 101,
+  "lyrics": "The dreams are out tonight\nSailing soft on silver light\nLittle ships with sails so wide\nSearching for the sleepy side\n\nOne will knock upon your pane\nWhisper low and call your name\nIf you peek, it slips away\nBetter wait for break of day\n\n[chorus]\nClose your eyes and they will come\nDrifting in on whispered hum\nDreaming ships will sail your way\nIf you close your eyes and stay\n\nOne just tapped your window bright\nTold of seas of golden light\nBut you turned to see it glow\nNow it’s gone—oh, don’t you know?\n\n[chorus]\nClose your eyes and they will come\nDrifting in on whispered hum\nDreaming ships will sail your way\nIf you close your eyes and stay\n\nBetter close your eyes",
+  "style_prompt": "Playful mysterious lullaby, warm female vocal, soft woodwind and low flute, 64 BPM, mischievous, conspiratorial, whimsical, fairy tale energy, like sharing a secret, mysterious but gentle, storytelling melody, soft woodwind accompaniment",
+  "engine": "minimax-music-v2-fal",
+  "fingerprint": {
+    "lullabyType": "warning",
+    "instrument": "woodwind",
+    "imagery": "ships",
+    "mood": "curious"
+  },
+  "created_at": "2026-04-06",
+  "character": {
+    "name": "Mira",
+    "identity": "A curious little girl who learns that dreams come to those who wait with closed eyes.",
+    "special": "She almost catches a dream but realizes patience brings the sweetest sleep.",
+    "personality_tags": [
+      "Gentle",
+      "Sleepy"
+    ]
+  },
+  "about": "A playful lullaby about dream ships sailing in the night, waiting to visit children who close their eyes. The gentle \"fear of missing out\" on dreams encourages little ones to drift off before the magic slips away. The soothing repetition and soft imagery help quiet busy minds."
+}

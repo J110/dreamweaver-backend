@@ -1,0 +1,70 @@
+{
+  "generated_at": "2026-03-23T02:43:34.098113",
+  "summary": {
+    "total": 2,
+    "passed": 1,
+    "warned": 1,
+    "failed": 0,
+    "avg_fidelity": 0.7091,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-bf9047771318",
+      "title": "Blip and the Glowing Friendship Festival",
+      "median_duration": 611.35,
+      "variants": [
+        {
+          "voice": "female_3",
+          "duration_seconds": 631.95,
+          "verdict": "WARN",
+          "reasons": [
+            "marginal_fidelity (0.70)"
+          ],
+          "text_fidelity_combined": 0.6968,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 3.4,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.6898,
+            "ratio": 0.1967,
+            "word_overlap": 0.8811,
+            "word_order_score": 0.937,
+            "combined": 0.6968
+          },
+          "transcript_snippet": "Blip was a small, round alien with three wobbly legs and a habit of sneezing sparkles. His home, the planet Glimmerglow, was a place where colors didn't just sit still. They floated, swirled, and sometimes even... ...Splashed right out of the sky. Today was no different, except for one tiny problem."
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 590.75,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.7214,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 3.4,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.7701,
+            "ratio": 0.2107,
+            "word_overlap": 0.828,
+            "word_order_score": 0.888,
+            "combined": 0.7214
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Blip and the Glowing Friendship Festival",
+      "story_id": "gen-bf9047771318",
+      "voice": "female_3",
+      "verdict": "WARN",
+      "reasons": [
+        "marginal_fidelity (0.70)"
+      ],
+      "fidelity": 0.6968,
+      "quality_avg": 5.0
+    }
+  ]
+}

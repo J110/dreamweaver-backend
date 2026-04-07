@@ -1,0 +1,55 @@
+{
+  "generated_at": "2026-04-04T02:02:51.123768",
+  "summary": {
+    "total": 2,
+    "passed": 2,
+    "warned": 0,
+    "failed": 0,
+    "avg_fidelity": 0.7681,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-69a79bb17da1",
+      "title": "Bibo and the Gentle Rain Song",
+      "median_duration": 136.65,
+      "variants": [
+        {
+          "voice": "female_1",
+          "duration_seconds": 142.81,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.7241,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 4.5,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.6961,
+            "ratio": 0.6168,
+            "word_overlap": 0.7524,
+            "word_order_score": 0.8333,
+            "combined": 0.7241
+          }
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 130.49,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.8122,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 4.5,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.8824,
+            "ratio": 0.534,
+            "word_overlap": 0.7767,
+            "word_order_score": 0.8529,
+            "combined": 0.8122
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": []
+}

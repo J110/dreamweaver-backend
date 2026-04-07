@@ -1,0 +1,27 @@
+{
+  "id": "rocking-0-1-df2e",
+  "title": "Silver Stream",
+  "content_type": "lullaby",
+  "lullaby_type": "rocking",
+  "card_label": "Rock-a-bye",
+  "card_subtitle": "A classic cradle song",
+  "age_group": "0-1",
+  "mood": "wired",
+  "language": "en",
+  "instrument": "piano",
+  "imagery": "starlight",
+  "audio_file": "rocking-0-1-df2e.mp3",
+  "cover_file": "rocking-0-1-df2e_cover.svg",
+  "cover_prompt": "a single gentle curved line of warm gold on deep muted blue, blurred at the edges like a distant wave, floating in vast negative space",
+  "duration_seconds": 109,
+  "lyrics": "[verse]\nRock-a-bye, rock-a-bye\nMoonlight paints the sky so wide\nStarlight hums a silver tune\nGentle waves will rock you soon\n\n[verse]\nUp we sail on dreams so deep\nSoft the clouds will guard your sleep\nWaves will sway and stars will gleam\nRock you safe in silver stream\n\n[chorus]\nRock-a-bye, sweet starlight sway\nLullaby will guide your way\nRock-a-bye, drift far away\n\n[verse]\nNight will wrap you warm and tight\nClose your eyes and feel the light\nStarlight sings a soft goodnight\nRock-a-bye, rock-a-bye\n\n[chorus]\nRock-a-bye, sweet starlight sway\nLullaby will guide your way\nRock-a-bye, drift far away\n\nRock-a-bye, goodnight",
+  "style_prompt": "Traditional cradle song, warm maternal female vocal, harp arpeggios, 6/8 time signature, 64 BPM, swaying rocking rhythm, gentle lilting motion, the feeling of being carried and rocked, celtic lullaby influence, repetitive swinging pattern, soft piano accompaniment",
+  "engine": "minimax-music-v2-fal",
+  "fingerprint": {
+    "lullabyType": "rocking",
+    "instrument": "piano",
+    "imagery": "starlight",
+    "mood": "wired"
+  },
+  "created_at": "2026-03-30"
+}

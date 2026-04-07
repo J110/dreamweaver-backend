@@ -1,0 +1,55 @@
+{
+  "generated_at": "2026-03-28T02:07:28.568387",
+  "summary": {
+    "total": 2,
+    "passed": 2,
+    "warned": 0,
+    "failed": 0,
+    "avg_fidelity": 0.7944,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-728f2c9e4615",
+      "title": "Zorv and the Clockwork Tide",
+      "median_duration": 685.46,
+      "variants": [
+        {
+          "voice": "male_2",
+          "duration_seconds": 651.66,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.8694,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 4.9,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9874,
+            "ratio": 0.3514,
+            "word_overlap": 0.8971,
+            "word_order_score": 0.9334,
+            "combined": 0.8694
+          }
+        },
+        {
+          "voice": "female_1",
+          "duration_seconds": 719.27,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.7194,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 4.9,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.7843,
+            "ratio": 0.0293,
+            "word_overlap": 0.8995,
+            "word_order_score": 0.9317,
+            "combined": 0.7194
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": []
+}

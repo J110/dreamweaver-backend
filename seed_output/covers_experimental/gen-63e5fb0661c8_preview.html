@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cover Preview: Sparka and the Glowing Puddle</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #111;
+    color: #ccc;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    min-height: 100vh;
+  }
+  h1 { color: #FFE4B5; margin-bottom: 8px; font-size: 1.4em; }
+  .subtitle { color: #888; margin-bottom: 30px; font-size: 0.9em; }
+  .cover-container {
+    position: relative;
+    width: 512px;
+    height: 512px;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  }
+  .cover-bg {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+  .cover-overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+  }
+  .info {
+    margin-top: 30px;
+    max-width: 600px;
+    background: #1a1a1a;
+    border-radius: 12px;
+    padding: 20px;
+    font-size: 0.85em;
+    line-height: 1.6;
+  }
+  .info h3 { color: #FFE4B5; margin-bottom: 10px; }
+  .info dt { color: #aaa; float: left; width: 120px; }
+  .info dd { margin-left: 130px; margin-bottom: 6px; }
+  .prompt { margin-top: 15px; padding: 12px; background: #222; border-radius: 8px; font-size: 0.8em; word-break: break-word; }
+  .controls {
+    margin-top: 20px;
+    display: flex;
+    gap: 12px;
+  }
+  button {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1px solid #444;
+    background: #222;
+    color: #ccc;
+    cursor: pointer;
+    font-size: 0.85em;
+  }
+  button:hover { background: #333; }
+  .phase-label { color: #FFE4B5; margin-top: 10px; text-align: center; font-size: 0.9em; }
+</style>
+</head>
+<body>
+  <h1>Sparka and the Glowing Puddle</h1>
+  <p class="subtitle">Experimental Cover Preview — 2-Layer Architecture</p>
+
+  <div class="cover-container" id="coverContainer">
+    <img class="cover-bg" src="gen-63e5fb0661c8_background.webp" alt="Background" />
+    <object class="cover-overlay" data="gen-63e5fb0661c8_overlay.svg" type="image/svg+xml"></object>
+  </div>
+
+  <div class="controls">
+    <button onclick="toggleOverlay()">Toggle Overlay</button>
+    <button onclick="simulatePhase('capture')">Phase 1: Capture</button>
+    <button onclick="simulatePhase('descent')">Phase 2: Descent</button>
+    <button onclick="simulatePhase('sleep')">Phase 3: Sleep</button>
+  </div>
+  <div class="phase-label" id="phaseLabel">Resting State</div>
+
+  <div class="info">
+    <h3>Diversity Axes</h3>
+    <dl>
+      <dt>World:</dt><dd>Tropical Lagoon</dd>
+      <dt>Palette:</dt><dd>Ember Warm</dd>
+      <dt>Composition:</dt><dd>Overhead Canopy</dd>
+      <dt>Character:</dt><dd>Mythical Gentle</dd>
+      <dt>Light:</dt><dd>Ambient</dd>
+      <dt>Texture:</dt><dd>Watercolor Soft</dd>
+      <dt>Time:</dt><dd>Early Night</dd>
+    </dl>
+    <div class="prompt">
+      <strong>FLUX Prompt:</strong><br>large dragon who asks too many questions but forgets to listen character centered in frame, friendly expression, children's book illustration, Visible paper grain style, playful and whimsical atmosphere, bright eyes, sense of fun and gentle mischief, warm humor, minimal, clean, two subjects facing each other, graphic, a forest clearing at night, atmospheric warm turquoise, palm silhouettes, sunset water, looking up through trees/clouds/stars, no shadows, fog/overcast/underwater diffusion, everything soft and even, most calming, firelight, hearth, autumn palette, first stars, deep blue sky, some light on horizon, cinematic concept art, atmospheric landscape, matte painting quality, sophisticated color grading, film still aesthetic, warm inviting mood, no text, soft atmospheric depth, sleep-safe muted colors
+    </div>
+  </div>
+
+  <script>
+    let overlayVisible = true;
+    function toggleOverlay() {
+      const overlay = document.querySelector('.cover-overlay');
+      overlayVisible = !overlayVisible;
+      overlay.style.display = overlayVisible ? 'block' : 'none';
+    }
+
+    function simulatePhase(phase) {
+      const bg = document.querySelector('.cover-bg');
+      const overlay = document.querySelector('.cover-overlay');
+      const label = document.getElementById('phaseLabel');
+
+      if (phase === 'capture') {
+        bg.style.filter = 'brightness(1) saturate(1)';
+        overlay.style.opacity = '1';
+        label.textContent = 'Phase 1: Capture — Full brightness';
+      } else if (phase === 'descent') {
+        bg.style.filter = 'brightness(0.85) saturate(0.8) sepia(0.1)';
+        overlay.style.opacity = '0.8';
+        label.textContent = 'Phase 2: Descent — Dimming';
+      } else if (phase === 'sleep') {
+        bg.style.filter = 'brightness(0.5) saturate(0.5) sepia(0.2)';
+        overlay.style.opacity = '0.5';
+        label.textContent = 'Phase 3: Sleep — Near dark';
+      }
+    }
+  </script>
+</body>
+</html>

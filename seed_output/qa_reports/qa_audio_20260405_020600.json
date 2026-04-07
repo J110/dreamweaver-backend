@@ -1,0 +1,84 @@
+{
+  "generated_at": "2026-04-05T02:06:00.080860",
+  "summary": {
+    "total": 2,
+    "passed": 0,
+    "warned": 2,
+    "failed": 0,
+    "avg_fidelity": 0.5592,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-65cb7d5ac114",
+      "title": "Tessa and the First Dewdrop River",
+      "median_duration": 325.0,
+      "variants": [
+        {
+          "voice": "male_2",
+          "duration_seconds": 304.89,
+          "verdict": "WARN",
+          "reasons": [
+            "marginal_fidelity (0.56)"
+          ],
+          "text_fidelity_combined": 0.5635,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 6.2,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.226,
+            "ratio": 0.7695,
+            "word_overlap": 0.9436,
+            "word_order_score": 0.9628,
+            "combined": 0.5635
+          },
+          "transcript_snippet": "Long ago, before the first dewdrop river flowed, the world was quiet at night. The grass stood tall and still and the stars blinked like tiny eyes. But one evening something new happened. A soft sound began, like water moving over smooth stones. Tessa. The tree frog lifted her head. She had lived in"
+        },
+        {
+          "voice": "female_4",
+          "duration_seconds": 345.1,
+          "verdict": "WARN",
+          "reasons": [
+            "marginal_fidelity (0.55)"
+          ],
+          "text_fidelity_combined": 0.5549,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 6.2,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.2229,
+            "ratio": 0.7342,
+            "word_overlap": 0.9262,
+            "word_order_score": 0.9628,
+            "combined": 0.5549
+          },
+          "transcript_snippet": "Long ago, before the first dewdrop river flowed, the world was quiet at night. The grass stood tall and still, and the stars blinked like tiny eyes. But one evening, something new happened. A soft sound began, like water moving over smooth stones. Tessa, the tree frog lifted her head. She had lived "
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Tessa and the First Dewdrop River",
+      "story_id": "gen-65cb7d5ac114",
+      "voice": "male_2",
+      "verdict": "WARN",
+      "reasons": [
+        "marginal_fidelity (0.56)"
+      ],
+      "fidelity": 0.5635,
+      "quality_avg": 5.0
+    },
+    {
+      "story": "Tessa and the First Dewdrop River",
+      "story_id": "gen-65cb7d5ac114",
+      "voice": "female_4",
+      "verdict": "WARN",
+      "reasons": [
+        "marginal_fidelity (0.55)"
+      ],
+      "fidelity": 0.5549,
+      "quality_avg": 5.0
+    }
+  ]
+}

@@ -1,0 +1,111 @@
+{
+  "summary": {
+    "total": 2,
+    "passed": 0,
+    "warned": 2,
+    "failed": 0
+  },
+  "stories": [
+    {
+      "story_id": "gen-ccc1075c5943",
+      "title": "Tink and the Whispering Fireflies",
+      "median_duration": 244.9,
+      "variants": [
+        {
+          "voice": "female_2",
+          "duration_seconds": 244.91,
+          "verdict": "WARN",
+          "reasons": [
+            "no gaps between phrases (continuous audio)"
+          ],
+          "text_fidelity_combined": 0,
+          "quality_average": 0.756,
+          "duration_outlier": false,
+          "lullaby_qa": {
+            "dimensions": {
+              "duration_accuracy": {
+                "score": 1.0,
+                "actual": 239.9,
+                "target": 240,
+                "deviation_pct": 0.0
+              },
+              "volume_consistency": {
+                "score": 0.915,
+                "variance": 2.5,
+                "range_db": 5.4
+              },
+              "loudness": {
+                "score": 0.515,
+                "avg_dbfs": -14.7
+              },
+              "sparsity": {
+                "score": 0.3,
+                "quiet_ratio": 0.0
+              },
+              "spectral_softness": {
+                "score": 0.803,
+                "high_freq_ratio": 0.0395
+              },
+              "no_peaks": {
+                "score": 1.0,
+                "spike_count": 0
+              }
+            },
+            "quality_avg": 0.756,
+            "warnings": [
+              "no gaps between phrases (continuous audio)"
+            ]
+          }
+        },
+        {
+          "voice": "female_3",
+          "duration_seconds": 244.91,
+          "verdict": "WARN",
+          "reasons": [
+            "too loud: avg -12 dBFS (target ~-22)",
+            "no gaps between phrases (continuous audio)"
+          ],
+          "text_fidelity_combined": 0,
+          "quality_average": 0.75,
+          "duration_outlier": false,
+          "lullaby_qa": {
+            "dimensions": {
+              "duration_accuracy": {
+                "score": 1.0,
+                "actual": 239.9,
+                "target": 240,
+                "deviation_pct": 0.0
+              },
+              "volume_consistency": {
+                "score": 0.885,
+                "variance": 3.5,
+                "range_db": 6.2
+              },
+              "loudness": {
+                "score": 0.363,
+                "avg_dbfs": -12.4
+              },
+              "sparsity": {
+                "score": 0.3,
+                "quiet_ratio": 0.0
+              },
+              "spectral_softness": {
+                "score": 0.954,
+                "high_freq_ratio": 0.0091
+              },
+              "no_peaks": {
+                "score": 1.0,
+                "spike_count": 0
+              }
+            },
+            "quality_avg": 0.75,
+            "warnings": [
+              "too loud: avg -12 dBFS (target ~-22)",
+              "no gaps between phrases (continuous audio)"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

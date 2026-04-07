@@ -1,0 +1,70 @@
+{
+  "generated_at": "2026-03-29T02:29:15.370539",
+  "summary": {
+    "total": 2,
+    "passed": 1,
+    "warned": 1,
+    "failed": 0,
+    "avg_fidelity": 0.8025,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-ddc206bb4926",
+      "title": "Thistle and the Scent of Snow",
+      "median_duration": 537.88,
+      "variants": [
+        {
+          "voice": "male_2",
+          "duration_seconds": 516.93,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9672,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 3.9,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.994,
+            "ratio": 0.9649,
+            "word_overlap": 0.9258,
+            "word_order_score": 0.9315,
+            "combined": 0.9672
+          }
+        },
+        {
+          "voice": "female_2",
+          "duration_seconds": 558.82,
+          "verdict": "WARN",
+          "reasons": [
+            "marginal_fidelity (0.64)"
+          ],
+          "text_fidelity_combined": 0.6378,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 3.9,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.3397,
+            "ratio": 0.9631,
+            "word_overlap": 0.9186,
+            "word_order_score": 0.9266,
+            "combined": 0.6378
+          },
+          "transcript_snippet": "Did you know that some thistles wait years to bloom? Thorn had been waiting for three summers, and he was getting tired of it. The other plants on the mountain slope had long since unfurled their petals, their colours bright against the rocky earth. The wild lavender released its sweet, sleepy scent"
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Thistle and the Scent of Snow",
+      "story_id": "gen-ddc206bb4926",
+      "voice": "female_2",
+      "verdict": "WARN",
+      "reasons": [
+        "marginal_fidelity (0.64)"
+      ],
+      "fidelity": 0.6378,
+      "quality_avg": 5.0
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "generated_at": "2026-04-02T02:18:25.501198",
+  "summary": {
+    "total": 2,
+    "passed": 0,
+    "warned": 2,
+    "failed": 0,
+    "avg_fidelity": 0.6169,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-9ca6534081d0",
+      "title": "Pine and the Wind’s Tantrum",
+      "median_duration": 256.33,
+      "variants": [
+        {
+          "voice": "male_2",
+          "duration_seconds": 259.51,
+          "verdict": "WARN",
+          "reasons": [
+            "marginal_fidelity (0.64)"
+          ],
+          "text_fidelity_combined": 0.6413,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 1.2,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.4849,
+            "ratio": 0.5892,
+            "word_overlap": 0.8545,
+            "word_order_score": 0.9002,
+            "combined": 0.6413
+          },
+          "transcript_snippet": "Did you know that some trees hold on tight when the wind comes? High up on the mountain, the air smelled like cold rocks and pine. A little pine tree stood there, small but strong. Her needles were green and sharp, and she loved every single one. The wind blew one afternoon. It tugged at the pine's "
+        },
+        {
+          "voice": "female_3",
+          "duration_seconds": 253.16,
+          "verdict": "WARN",
+          "reasons": [
+            "marginal_fidelity (0.59)"
+          ],
+          "text_fidelity_combined": 0.5926,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 1.2,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.4084,
+            "ratio": 0.5485,
+            "word_overlap": 0.8287,
+            "word_order_score": 0.8933,
+            "combined": 0.5926
+          },
+          "transcript_snippet": "Did you know that some trees hold on tight when the wind comes? High up on the mountain, the air smelled like cold rocks and pine. A little pine tree stood there, small but strong. Her needles were green and sharp, and she loved every single one. The wind blew one afternoon. It tugged at the pine's "
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Pine and the Wind’s Tantrum",
+      "story_id": "gen-9ca6534081d0",
+      "voice": "male_2",
+      "verdict": "WARN",
+      "reasons": [
+        "marginal_fidelity (0.64)"
+      ],
+      "fidelity": 0.6413,
+      "quality_avg": 5.0
+    },
+    {
+      "story": "Pine and the Wind’s Tantrum",
+      "story_id": "gen-9ca6534081d0",
+      "voice": "female_3",
+      "verdict": "WARN",
+      "reasons": [
+        "marginal_fidelity (0.59)"
+      ],
+      "fidelity": 0.5926,
+      "quality_avg": 5.0
+    }
+  ]
+}

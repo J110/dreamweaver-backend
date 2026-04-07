@@ -1,22 +1,21 @@
 {
-  "generatedAt": "2026-03-13T10:30:52.821295+00:00",
+  "generatedAt": "2026-04-07T03:04:56.942394+00:00",
   "catalog": {
-    "total": 106,
+    "total": 143,
     "byType": {
-      "long_story": 12,
-      "poem": 39,
-      "song": 19,
-      "story": 36
+      "long_story": 35,
+      "song": 46,
+      "story": 62
     },
     "byAge": {
-      "0-1": 17,
-      "2-5": 44,
-      "6-8": 23,
+      "0-1": 34,
+      "2-5": 55,
+      "6-8": 32,
       "9-12": 22
     },
-    "withFingerprint": 21,
-    "withMood": 106,
-    "withCover": 106,
+    "withFingerprint": 76,
+    "withMood": 143,
+    "withCover": 143,
     "withAudio": 0
   },
   "mood": {
@@ -40,28 +39,28 @@
     },
     "distribution": {
       "wired": {
-        "count": 8,
-        "pct": 7.5
+        "count": 25,
+        "pct": 17.5
       },
       "curious": {
-        "count": 37,
-        "pct": 34.9
+        "count": 35,
+        "pct": 24.5
       },
       "calm": {
-        "count": 59,
-        "pct": 55.7
+        "count": 57,
+        "pct": 39.9
       },
       "sad": {
-        "count": 2,
-        "pct": 1.9
+        "count": 11,
+        "pct": 7.7
       },
       "anxious": {
-        "count": 0,
-        "pct": 0.0
+        "count": 10,
+        "pct": 7.0
       },
       "angry": {
-        "count": 0,
-        "pct": 0.0
+        "count": 5,
+        "pct": 3.5
       },
       "none": {
         "count": 0,
@@ -70,50 +69,65 @@
     },
     "byType": {
       "long_story": {
-        "calm": 5,
-        "curious": 7
-      },
-      "poem": {
-        "calm": 18,
-        "wired": 4,
-        "curious": 17
+        "calm": 8,
+        "curious": 14,
+        "wired": 6,
+        "anxious": 3,
+        "sad": 3,
+        "angry": 1
       },
       "song": {
-        "calm": 18,
-        "curious": 1
+        "calm": 26,
+        "curious": 5,
+        "anxious": 4,
+        "angry": 2,
+        "sad": 3,
+        "wired": 6
       },
       "story": {
-        "calm": 18,
-        "sad": 2,
-        "wired": 4,
-        "curious": 12
+        "calm": 23,
+        "sad": 5,
+        "wired": 13,
+        "curious": 16,
+        "anxious": 3,
+        "angry": 2
       }
     },
     "byAge": {
       "0-1": {
-        "wired": 1,
-        "calm": 16
+        "wired": 6,
+        "calm": 21,
+        "anxious": 4,
+        "sad": 1,
+        "curious": 2
       },
       "2-5": {
         "calm": 32,
-        "sad": 1,
-        "wired": 2,
-        "curious": 9
+        "sad": 6,
+        "curious": 7,
+        "anxious": 2,
+        "angry": 2,
+        "wired": 6
       },
       "6-8": {
-        "wired": 5,
-        "curious": 10,
-        "calm": 8
+        "wired": 8,
+        "curious": 15,
+        "calm": 2,
+        "anxious": 2,
+        "angry": 3,
+        "sad": 2
       },
       "9-12": {
-        "curious": 18,
-        "calm": 3,
-        "sad": 1
+        "curious": 11,
+        "sad": 2,
+        "calm": 2,
+        "wired": 5,
+        "anxious": 2
       }
     }
   },
   "content": {
-    "totalFingerprinted": 106,
+    "totalFingerprinted": 143,
     "dimensions": {
       "characterType": {
         "weight": 10,
@@ -133,20 +147,20 @@
           "robot_mechanical"
         ],
         "distribution": {
-          "land_mammal": 5,
-          "bird": 3,
-          "sea_creature": 3,
-          "insect": 6,
-          "reptile_amphibian": 3,
-          "human_child": 17,
-          "mythical_creature": 3,
-          "object_alive": 7,
-          "plant_tree": 3,
-          "celestial_weather": 9,
-          "robot_mechanical": 3
+          "land_mammal": 12,
+          "bird": 9,
+          "sea_creature": 9,
+          "insect": 8,
+          "reptile_amphibian": 5,
+          "human_child": 27,
+          "mythical_creature": 7,
+          "object_alive": 10,
+          "plant_tree": 4,
+          "celestial_weather": 16,
+          "robot_mechanical": 5
         },
         "coverage": 1.0,
-        "tagged": 62
+        "tagged": 112
       },
       "setting": {
         "weight": 10,
@@ -170,24 +184,70 @@
           "miniature_world"
         ],
         "distribution": {
-          "forest_woodland": 2,
-          "ocean_water": 1,
-          "sky_space": 2,
-          "mountain_highland": 2,
-          "meadow_field": 1,
-          "desert_arid": 1,
-          "arctic_polar": 2,
-          "cozy_indoor": 1,
-          "village_town": 1,
-          "city_urban": 1,
-          "underground_cave": 1,
-          "garden_farm": 1,
+          "forest_woodland": 4,
+          "ocean_water": 7,
+          "sky_space": 8,
+          "mountain_highland": 4,
+          "meadow_field": 6,
+          "desert_arid": 3,
+          "arctic_polar": 3,
+          "cozy_indoor": 3,
+          "village_town": 5,
+          "city_urban": 3,
+          "underground_cave": 4,
+          "garden_farm": 11,
           "island_tropical": 3,
-          "imaginary_surreal": 1,
-          "miniature_world": 1
+          "imaginary_surreal": 4,
+          "miniature_world": 3
         },
         "coverage": 1.0,
-        "tagged": 21
+        "tagged": 71
+      },
+      "mood": {
+        "weight": 8,
+        "tier": 1,
+        "hardRule": true,
+        "values": [
+          "wired",
+          "curious",
+          "calm",
+          "sad",
+          "anxious",
+          "angry"
+        ],
+        "distribution": {
+          "wired": 7,
+          "curious": 21,
+          "calm": 33,
+          "sad": 3,
+          "anxious": 2,
+          "angry": 1
+        },
+        "coverage": 1.0,
+        "tagged": 67
+      },
+      "storyType": {
+        "weight": 10,
+        "tier": 1,
+        "hardRule": true,
+        "values": [
+          "folk_tale",
+          "mythological",
+          "fable",
+          "nature",
+          "slice_of_life",
+          "dream"
+        ],
+        "distribution": {
+          "folk_tale": 0,
+          "mythological": 0,
+          "fable": 0,
+          "nature": 0,
+          "slice_of_life": 0,
+          "dream": 0
+        },
+        "coverage": 0.0,
+        "tagged": 0
       },
       "plotShape": {
         "weight": 3,
@@ -206,19 +266,36 @@
           "cyclical_seasonal"
         ],
         "distribution": {
-          "journey_destination": 9,
-          "discovery_reveal": 16,
-          "lost_and_found": 3,
-          "helping_someone": 7,
-          "building_growing": 3,
-          "transformation": 10,
-          "gathering_reunion": 4,
-          "pure_observation": 4,
-          "routine_ritual": 3,
-          "cyclical_seasonal": 3
+          "journey_destination": 7,
+          "discovery_reveal": 22,
+          "lost_and_found": 7,
+          "helping_someone": 6,
+          "building_growing": 6,
+          "transformation": 12,
+          "gathering_reunion": 9,
+          "pure_observation": 9,
+          "routine_ritual": 17,
+          "cyclical_seasonal": 8
         },
         "coverage": 1.0,
-        "tagged": 62
+        "tagged": 103
+      },
+      "languageLevel": {
+        "weight": 5,
+        "tier": 2,
+        "hardRule": false,
+        "values": [
+          "basic",
+          "intermediate",
+          "advanced"
+        ],
+        "distribution": {
+          "basic": 0,
+          "intermediate": 0,
+          "advanced": 0
+        },
+        "coverage": 0.0,
+        "tagged": 0
       },
       "scale": {
         "weight": 5,
@@ -232,14 +309,14 @@
           "epic_vast"
         ],
         "distribution": {
-          "tiny_intimate": 12,
-          "personal": 0,
-          "local_adventure": 8,
+          "tiny_intimate": 38,
+          "personal": 8,
+          "local_adventure": 19,
           "journey": 0,
-          "epic_vast": 1
+          "epic_vast": 4
         },
-        "coverage": 0.6,
-        "tagged": 21
+        "coverage": 0.8,
+        "tagged": 69
       },
       "companion": {
         "weight": 4,
@@ -253,14 +330,14 @@
           "character_and_environment"
         ],
         "distribution": {
-          "solo": 0,
-          "duo": 2,
-          "group_community": 2,
-          "meets_stranger": 3,
-          "character_and_environment": 14
+          "solo": 8,
+          "duo": 11,
+          "group_community": 9,
+          "meets_stranger": 10,
+          "character_and_environment": 29
         },
-        "coverage": 0.8,
-        "tagged": 21
+        "coverage": 1.0,
+        "tagged": 67
       },
       "movement": {
         "weight": 4,
@@ -275,15 +352,15 @@
           "building_making"
         ],
         "distribution": {
-          "sleeping_resting": 1,
-          "sitting_watching": 1,
-          "floating_drifting": 12,
-          "walking_wandering": 4,
-          "flying_swimming": 2,
-          "building_making": 1
+          "sleeping_resting": 2,
+          "sitting_watching": 8,
+          "floating_drifting": 38,
+          "walking_wandering": 9,
+          "flying_swimming": 9,
+          "building_making": 2
         },
         "coverage": 1.0,
-        "tagged": 21
+        "tagged": 68
       },
       "timeOfDay": {
         "weight": 4,
@@ -297,14 +374,14 @@
           "timeless"
         ],
         "distribution": {
-          "sunset_golden_hour": 0,
-          "twilight_blue_hour": 6,
-          "deep_night_starlight": 8,
-          "late_afternoon": 4,
-          "timeless": 3
+          "sunset_golden_hour": 1,
+          "twilight_blue_hour": 22,
+          "deep_night_starlight": 28,
+          "late_afternoon": 11,
+          "timeless": 9
         },
-        "coverage": 0.8,
-        "tagged": 21
+        "coverage": 1.0,
+        "tagged": 71
       },
       "weather": {
         "weight": 4,
@@ -321,17 +398,17 @@
           "magical_atmospheric"
         ],
         "distribution": {
-          "clear_calm": 0,
-          "gentle_rain": 0,
+          "clear_calm": 12,
+          "gentle_rain": 1,
           "misty_foggy": 1,
-          "snowy": 0,
-          "warm_breeze": 5,
+          "snowy": 1,
+          "warm_breeze": 15,
           "overcast_grey": 0,
           "stormy_distant": 0,
-          "magical_atmospheric": 15
+          "magical_atmospheric": 45
         },
-        "coverage": 0.38,
-        "tagged": 21
+        "coverage": 0.75,
+        "tagged": 75
       },
       "theme": {
         "weight": 3,
@@ -352,21 +429,21 @@
           "rest_stillness"
         ],
         "distribution": {
-          "curiosity_wonder": 50,
-          "courage": 9,
-          "kindness": 4,
-          "friendship": 10,
+          "curiosity_wonder": 38,
+          "courage": 10,
+          "kindness": 3,
+          "friendship": 7,
           "patience": 0,
-          "creativity": 1,
-          "belonging": 11,
+          "creativity": 0,
+          "belonging": 31,
           "gratitude": 0,
-          "letting_go": 0,
-          "self_acceptance": 1,
-          "gentleness": 0,
-          "rest_stillness": 18
+          "letting_go": 5,
+          "self_acceptance": 4,
+          "gentleness": 5,
+          "rest_stillness": 30
         },
-        "coverage": 0.67,
-        "tagged": 104
+        "coverage": 0.75,
+        "tagged": 133
       },
       "characterTrait": {
         "weight": 3,
@@ -385,19 +462,19 @@
           "playful_mischievous"
         ],
         "distribution": {
-          "shy_quiet": 1,
-          "bold_adventurous": 0,
-          "dreamy_imaginative": 10,
-          "kind_nurturing": 4,
-          "clumsy_silly": 0,
-          "wise_old_soul": 1,
-          "anxious_worried": 1,
-          "stubborn_determined": 0,
-          "lonely_seeking": 1,
-          "playful_mischievous": 2
+          "shy_quiet": 5,
+          "bold_adventurous": 3,
+          "dreamy_imaginative": 20,
+          "kind_nurturing": 11,
+          "clumsy_silly": 7,
+          "wise_old_soul": 3,
+          "anxious_worried": 6,
+          "stubborn_determined": 3,
+          "lonely_seeking": 7,
+          "playful_mischievous": 1
         },
-        "coverage": 0.7,
-        "tagged": 20
+        "coverage": 1.0,
+        "tagged": 66
       },
       "magicType": {
         "weight": 3,
@@ -416,19 +493,19 @@
           "no_magic_realistic"
         ],
         "distribution": {
-          "glowing_bioluminescent": 4,
-          "talking_sentient_world": 3,
-          "transformation_metamorphosis": 3,
-          "miniaturization": 1,
-          "music_sound_magic": 3,
-          "weather_magic": 1,
-          "dream_imagination_bleed": 4,
-          "time_magic": 0,
-          "color_magic": 2,
-          "no_magic_realistic": 0
+          "glowing_bioluminescent": 19,
+          "talking_sentient_world": 6,
+          "transformation_metamorphosis": 4,
+          "miniaturization": 5,
+          "music_sound_magic": 6,
+          "weather_magic": 4,
+          "dream_imagination_bleed": 6,
+          "time_magic": 6,
+          "color_magic": 6,
+          "no_magic_realistic": 5
         },
-        "coverage": 0.8,
-        "tagged": 21
+        "coverage": 1.0,
+        "tagged": 67
       },
       "season": {
         "weight": 2,
@@ -443,15 +520,15 @@
           "seasonless_timeless"
         ],
         "distribution": {
-          "spring": 1,
-          "summer": 5,
-          "autumn": 3,
-          "winter": 3,
-          "seasonal_transition": 1,
-          "seasonless_timeless": 8
+          "spring": 5,
+          "summer": 17,
+          "autumn": 7,
+          "winter": 4,
+          "seasonal_transition": 4,
+          "seasonless_timeless": 36
         },
         "coverage": 1.0,
-        "tagged": 21
+        "tagged": 73
       },
       "senseEmphasis": {
         "weight": 2,
@@ -465,56 +542,46 @@
           "kinesthetic"
         ],
         "distribution": {
-          "visual": 8,
-          "auditory": 9,
-          "tactile": 3,
-          "olfactory": 1,
-          "kinesthetic": 0
+          "visual": 20,
+          "auditory": 21,
+          "tactile": 12,
+          "olfactory": 8,
+          "kinesthetic": 8
         },
-        "coverage": 0.8,
-        "tagged": 21
+        "coverage": 1.0,
+        "tagged": 69
       }
     },
     "gaps": {
+      "storyType": [
+        "folk_tale",
+        "mythological",
+        "fable",
+        "nature",
+        "slice_of_life",
+        "dream"
+      ],
+      "languageLevel": [
+        "basic",
+        "intermediate",
+        "advanced"
+      ],
       "scale": [
-        "personal",
         "journey"
       ],
-      "companion": [
-        "solo"
-      ],
-      "timeOfDay": [
-        "sunset_golden_hour"
-      ],
       "weather": [
-        "clear_calm",
-        "gentle_rain",
-        "snowy",
         "overcast_grey",
         "stormy_distant"
       ],
       "theme": [
         "patience",
-        "gratitude",
-        "letting_go",
-        "gentleness"
-      ],
-      "characterTrait": [
-        "bold_adventurous",
-        "clumsy_silly",
-        "stubborn_determined"
-      ],
-      "magicType": [
-        "time_magic",
-        "no_magic_realistic"
-      ],
-      "senseEmphasis": [
-        "kinesthetic"
+        "creativity",
+        "gratitude"
       ]
     }
   },
   "covers": {
-    "historyCount": 11,
+    "historyCount": 49,
     "axes": {
       "world_setting": {
         "values": [
@@ -532,20 +599,20 @@
           "floating_islands"
         ],
         "distribution": {
-          "deep_ocean": 1,
-          "cloud_kingdom": 0,
-          "enchanted_forest": 1,
-          "snow_landscape": 3,
-          "desert_night": 1,
-          "cozy_interior": 0,
-          "mountain_meadow": 0,
-          "space_cosmos": 1,
-          "tropical_lagoon": 0,
-          "underground_cave": 2,
-          "ancient_library": 2,
-          "floating_islands": 0
+          "deep_ocean": 2,
+          "cloud_kingdom": 4,
+          "enchanted_forest": 7,
+          "snow_landscape": 7,
+          "desert_night": 3,
+          "cozy_interior": 3,
+          "mountain_meadow": 4,
+          "space_cosmos": 3,
+          "tropical_lagoon": 3,
+          "underground_cave": 4,
+          "ancient_library": 5,
+          "floating_islands": 4
         },
-        "coverage": 0.58
+        "coverage": 1.0
       },
       "palette": {
         "values": [
@@ -557,12 +624,12 @@
           "berry_dusk"
         ],
         "distribution": {
-          "ember_warm": 2,
-          "twilight_cool": 2,
-          "forest_deep": 1,
-          "golden_hour": 1,
-          "moonstone": 1,
-          "berry_dusk": 4
+          "ember_warm": 8,
+          "twilight_cool": 6,
+          "forest_deep": 10,
+          "golden_hour": 7,
+          "moonstone": 8,
+          "berry_dusk": 10
         },
         "coverage": 1.0
       },
@@ -575,11 +642,11 @@
           "circular_nest"
         ],
         "distribution": {
-          "vast_landscape": 2,
-          "intimate_closeup": 2,
-          "overhead_canopy": 2,
-          "winding_path": 3,
-          "circular_nest": 2
+          "vast_landscape": 11,
+          "intimate_closeup": 14,
+          "overhead_canopy": 9,
+          "winding_path": 6,
+          "circular_nest": 9
         },
         "coverage": 1.0
       },
@@ -600,21 +667,21 @@
           "no_character"
         ],
         "distribution": {
-          "human_child": 2,
-          "small_mammal": 1,
-          "aquatic_creature": 0,
-          "bird": 0,
-          "insect": 1,
+          "human_child": 10,
+          "small_mammal": 5,
+          "aquatic_creature": 2,
+          "bird": 5,
+          "insect": 2,
           "plant": 0,
-          "celestial": 3,
-          "atmospheric": 3,
-          "mythical_gentle": 0,
+          "celestial": 8,
+          "atmospheric": 8,
+          "mythical_gentle": 2,
           "object": 1,
-          "robot_mech": 0,
-          "nature_spirit": 0,
+          "robot_mech": 3,
+          "nature_spirit": 3,
           "no_character": 0
         },
-        "coverage": 0.46
+        "coverage": 0.85
       },
       "light": {
         "values": [
@@ -624,12 +691,12 @@
           "ambient"
         ],
         "distribution": {
-          "above": 0,
-          "backlit": 0,
-          "below": 5,
-          "ambient": 6
+          "above": 8,
+          "backlit": 11,
+          "below": 14,
+          "ambient": 16
         },
-        "coverage": 0.5
+        "coverage": 1.0
       },
       "texture": {
         "values": [
@@ -639,10 +706,10 @@
           "paper_cutout"
         ],
         "distribution": {
-          "watercolor_soft": 2,
-          "soft_pastel": 3,
-          "digital_painterly": 3,
-          "paper_cutout": 3
+          "watercolor_soft": 12,
+          "soft_pastel": 15,
+          "digital_painterly": 7,
+          "paper_cutout": 15
         },
         "coverage": 1.0
       },
@@ -654,27 +721,29 @@
           "timeless_indoor"
         ],
         "distribution": {
-          "early_night": 1,
-          "deep_night": 5,
-          "eternal_dusk": 2,
-          "timeless_indoor": 3
+          "early_night": 7,
+          "deep_night": 13,
+          "eternal_dusk": 14,
+          "timeless_indoor": 15
         },
         "coverage": 1.0
       }
     },
     "leadCharacterType": {
-      "human": 22,
-      "animal": 7,
-      "object": 7,
-      "celestial": 6,
-      "insect": 5,
-      "sea_creature": 3,
+      "human": 32,
+      "animal": 17,
+      "object": 10,
+      "celestial": 10,
+      "bird": 7,
+      "sea_creature": 7,
+      "insect": 7,
+      "mythical": 7,
+      "alien": 6,
+      "atmospheric": 4,
+      "robot": 4,
       "plant": 3,
-      "atmospheric": 3,
-      "robot": 3,
-      "mythical": 2,
-      "bird": 1,
-      "jellyfish (sea creature)": 1
+      "jellyfish (sea creature)": 1,
+      "owl": 1
     }
   }
 }

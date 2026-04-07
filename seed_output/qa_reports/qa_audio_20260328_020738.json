@@ -1,0 +1,55 @@
+{
+  "generated_at": "2026-03-28T02:07:38.104961",
+  "summary": {
+    "total": 2,
+    "passed": 2,
+    "warned": 0,
+    "failed": 0,
+    "avg_fidelity": 0.862,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-7b207c25a434",
+      "title": "Tuck and the Ticking Clover",
+      "median_duration": 123.03,
+      "variants": [
+        {
+          "voice": "male_2",
+          "duration_seconds": 118.46,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.865,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 3.7,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9943,
+            "ratio": 0.2456,
+            "word_overlap": 0.9358,
+            "word_order_score": 0.9497,
+            "combined": 0.865
+          }
+        },
+        {
+          "voice": "female_1",
+          "duration_seconds": 127.6,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.859,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 3.7,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9943,
+            "ratio": 0.2352,
+            "word_overlap": 0.9189,
+            "word_order_score": 0.9389,
+            "combined": 0.859
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": []
+}

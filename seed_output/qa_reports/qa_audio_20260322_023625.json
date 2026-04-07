@@ -1,0 +1,55 @@
+{
+  "generated_at": "2026-03-22T02:36:25.224799",
+  "summary": {
+    "total": 2,
+    "passed": 2,
+    "warned": 0,
+    "failed": 0,
+    "avg_fidelity": 0.8155,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-4277697b337e",
+      "title": "Zizzle and the Snickering Stardust",
+      "median_duration": 129.15,
+      "variants": [
+        {
+          "voice": "male_2",
+          "duration_seconds": 125.78,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9213,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 2.6,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9716,
+            "ratio": 0.7855,
+            "word_overlap": 0.8652,
+            "word_order_score": 0.9245,
+            "combined": 0.9213
+          }
+        },
+        {
+          "voice": "female_3",
+          "duration_seconds": 132.52,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.7097,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 2.6,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.545,
+            "ratio": 0.7895,
+            "word_overlap": 0.8768,
+            "word_order_score": 0.9245,
+            "combined": 0.7097
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": []
+}

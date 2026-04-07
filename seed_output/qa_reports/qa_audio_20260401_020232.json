@@ -1,0 +1,70 @@
+{
+  "generated_at": "2026-04-01T02:02:32.148288",
+  "summary": {
+    "total": 2,
+    "passed": 1,
+    "warned": 1,
+    "failed": 0,
+    "avg_fidelity": 0.6313,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-2cfeb691ea27",
+      "title": "Maya and the Waiting Moon",
+      "median_duration": 159.48,
+      "variants": [
+        {
+          "voice": "male_2",
+          "duration_seconds": 157.46,
+          "verdict": "WARN",
+          "reasons": [
+            "marginal_fidelity (0.53)"
+          ],
+          "text_fidelity_combined": 0.5329,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 1.3,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.4167,
+            "ratio": 0.2401,
+            "word_overlap": 0.8161,
+            "word_order_score": 0.8278,
+            "combined": 0.5329
+          },
+          "transcript_snippet": "What if the moon forgot to rise? It was evening, and evenings always meant the moon would rise. Maya sat in bed. The room was dark. The window was empty. Hi. Not yet. Not yet. Not yet. She listened. The house creaked. A car hummed outside. Ticked.Her hands felt tight. Her breath felt quick. What is "
+        },
+        {
+          "voice": "female_1",
+          "duration_seconds": 161.5,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.7296,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 1.3,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.7847,
+            "ratio": 0.2066,
+            "word_overlap": 0.8571,
+            "word_order_score": 0.8819,
+            "combined": 0.7296
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Maya and the Waiting Moon",
+      "story_id": "gen-2cfeb691ea27",
+      "voice": "male_2",
+      "verdict": "WARN",
+      "reasons": [
+        "marginal_fidelity (0.53)"
+      ],
+      "fidelity": 0.5329,
+      "quality_avg": 5.0
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "generated_at": "2026-03-26T02:35:26.905940",
+  "summary": {
+    "total": 2,
+    "passed": 2,
+    "warned": 0,
+    "failed": 0,
+    "avg_fidelity": 0.9187,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-c70d75db83fc",
+      "title": "Leo and the Pocket-Sized Planet",
+      "median_duration": 109.5,
+      "variants": [
+        {
+          "voice": "female_2",
+          "duration_seconds": 98.41,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9132,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 10.1,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.994,
+            "ratio": 0.8399,
+            "word_overlap": 0.8,
+            "word_order_score": 0.8409,
+            "combined": 0.9132
+          }
+        },
+        {
+          "voice": "female_4",
+          "duration_seconds": 120.58,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9242,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 10.1,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.994,
+            "ratio": 0.8938,
+            "word_overlap": 0.8145,
+            "word_order_score": 0.8466,
+            "combined": 0.9242
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": []
+}

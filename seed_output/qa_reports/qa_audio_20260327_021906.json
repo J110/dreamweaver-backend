@@ -1,0 +1,55 @@
+{
+  "generated_at": "2026-03-27T02:19:06.014489",
+  "summary": {
+    "total": 2,
+    "passed": 2,
+    "warned": 0,
+    "failed": 0,
+    "avg_fidelity": 0.7308,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-abc9935e9a8c",
+      "title": "Bramble and the Tiny Tea Party",
+      "median_duration": 70.69,
+      "variants": [
+        {
+          "voice": "female_3",
+          "duration_seconds": 65.88,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.7308,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 6.8,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.5702,
+            "ratio": 0.8701,
+            "word_overlap": 0.87,
+            "word_order_score": 0.9127,
+            "combined": 0.7308
+          }
+        },
+        {
+          "voice": "female_4",
+          "duration_seconds": 75.5,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.7308,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 6.8,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.5702,
+            "ratio": 0.8701,
+            "word_overlap": 0.87,
+            "word_order_score": 0.9127,
+            "combined": 0.7308
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": []
+}

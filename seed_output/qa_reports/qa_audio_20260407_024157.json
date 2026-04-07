@@ -1,0 +1,55 @@
+{
+  "generated_at": "2026-04-07T02:41:57.112926",
+  "summary": {
+    "total": 2,
+    "passed": 2,
+    "warned": 0,
+    "failed": 0,
+    "avg_fidelity": 0.7772,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-0e1314bb90d8",
+      "title": "Jasper and the Clockwork Cricket",
+      "median_duration": 198.4,
+      "variants": [
+        {
+          "voice": "female_3",
+          "duration_seconds": 194.28,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.7776,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 2.1,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.7366,
+            "ratio": 0.8859,
+            "word_overlap": 0.8448,
+            "word_order_score": 0.7679,
+            "combined": 0.7776
+          }
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 202.52,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.7767,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 2.1,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.7366,
+            "ratio": 0.8845,
+            "word_overlap": 0.8376,
+            "word_order_score": 0.7679,
+            "combined": 0.7767
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": []
+}

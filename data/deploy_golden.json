@@ -1,5 +1,5 @@
 {
-  "captured_at": "2026-04-02T12:50:21.931000",
+  "captured_at": "2026-04-06T13:35:39.383631",
   "api": "https://api.dreamvalley.app",
   "stories": {
     "counting-2-5-4f65": {
@@ -1724,9 +1724,206 @@
       ],
       "cover_url": "/covers/gen-b7e9b9603308.svg",
       "mood": "angry"
+    },
+    "gen-5cb2c4b14302": {
+      "id": "gen-5cb2c4b14302",
+      "title": "Hoot and the Mist Song",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/5cb2c4b1_mixed.mp3"
+      ],
+      "cover_url": "/covers/gen-5cb2c4b14302.webp",
+      "mood": "curious"
+    },
+    "warning-2-5-1348": {
+      "id": "warning-2-5-1348",
+      "title": "Mira and the Dreaming Ships",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/warning-2-5-1348_female_1.mp3"
+      ],
+      "cover_url": "/covers/warning-2-5-1348.svg",
+      "mood": "curious"
+    },
+    "gen-7e85423bfca3": {
+      "id": "gen-7e85423bfca3",
+      "title": "Cirrus and the Starlight Threads",
+      "type": "long_story",
+      "has_audio": false,
+      "has_cover": true,
+      "audio_urls": [],
+      "cover_url": "/covers/gen-7e85423bfca3.svg",
+      "mood": "curious"
+    },
+    "gen-720fff357423": {
+      "id": "gen-720fff357423",
+      "title": "Pippa and the Tiny Tidepool",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-720f_female_4.mp3",
+        "/audio/pre-gen/gen-720f_male_2.mp3"
+      ],
+      "cover_url": "/covers/gen-720fff357423.svg",
+      "mood": "curious"
+    },
+    "permission-6-8-c3a8": {
+      "id": "permission-6-8-c3a8",
+      "title": "Mara and the Sleeping Birds",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/permission-6-8-c3a8_female_1.mp3"
+      ],
+      "cover_url": "/covers/permission-6-8-c3a8.svg",
+      "mood": "curious"
+    },
+    "gen-65cb7d5ac114": {
+      "id": "gen-65cb7d5ac114",
+      "title": "Tessa and the First Dewdrop River",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-65cb_male_2.mp3",
+        "/audio/pre-gen/gen-65cb_female_4.mp3"
+      ],
+      "cover_url": "/covers/gen-65cb7d5ac114.svg",
+      "mood": "curious"
+    },
+    "gen-30999f1d21bc": {
+      "id": "gen-30999f1d21bc",
+      "title": "Glim and the First Firefly",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-3099_male_2.mp3",
+        "/audio/pre-gen/gen-3099_female_4.mp3"
+      ],
+      "cover_url": "/covers/gen-30999f1d21bc.svg",
+      "mood": "curious"
+    },
+    "permission-0-1-7170": {
+      "id": "permission-0-1-7170",
+      "title": "Lulu and the Moonhush",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/permission-0-1-7170_female_1.mp3"
+      ],
+      "cover_url": "/covers/permission-0-1-7170.svg",
+      "mood": "curious"
+    },
+    "gen-69a79bb17da1": {
+      "id": "gen-69a79bb17da1",
+      "title": "Bibo and the Gentle Rain Song",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-69a7_female_1.mp3",
+        "/audio/pre-gen/gen-69a7_male_2.mp3"
+      ],
+      "cover_url": "/covers/gen-69a79bb17da1.svg",
+      "mood": "calm"
+    },
+    "gen-ccec86ba6b87": {
+      "id": "gen-ccec86ba6b87",
+      "title": "Mira and the Whispering Vines",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-ccec_male_2.mp3",
+        "/audio/pre-gen/gen-ccec_female_4.mp3"
+      ],
+      "cover_url": "/covers/gen-ccec86ba6b87.svg",
+      "mood": "curious"
+    },
+    "counting-6-8-2b66": {
+      "id": "counting-6-8-2b66",
+      "title": "Lumi and the Silver Night",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/counting-6-8-2b66_female_1.mp3"
+      ],
+      "cover_url": "/covers/counting-6-8-2b66.svg",
+      "mood": "wired"
+    },
+    "gen-64fdd62201b4": {
+      "id": "gen-64fdd62201b4",
+      "title": "Maris and the Moonlit Molt",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-64fd_male_2.mp3"
+      ],
+      "cover_url": "/covers/gen-64fdd62201b4.svg",
+      "mood": "wired"
+    },
+    "gen-3d992fbd15b9": {
+      "id": "gen-3d992fbd15b9",
+      "title": "Tilly and the Giggling Puddle",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-3d99_female_3.mp3",
+        "/audio/pre-gen/gen-3d99_male_2.mp3"
+      ],
+      "cover_url": "/covers/gen-3d992fbd15b9.svg",
+      "mood": "wired"
+    },
+    "heartbeat-0-1-21a1": {
+      "id": "heartbeat-0-1-21a1",
+      "title": "Mima\u2019s Fading Hum",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/heartbeat-0-1-21a1_female_1.mp3"
+      ],
+      "cover_url": "/covers/heartbeat-0-1-21a1.svg",
+      "mood": "sad"
+    },
+    "gen-c1c39bf59c97": {
+      "id": "gen-c1c39bf59c97",
+      "title": "Lumi and the Softest Hour",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-c1c3_male_2.mp3"
+      ],
+      "cover_url": "/covers/gen-c1c39bf59c97.svg",
+      "mood": "sad"
+    },
+    "gen-dca569097547": {
+      "id": "gen-dca569097547",
+      "title": "Pip and the Empty Nest",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-dca5_male_2.mp3",
+        "/audio/pre-gen/gen-dca5_female_1.mp3"
+      ],
+      "cover_url": "/covers/gen-dca569097547.svg",
+      "mood": "sad"
     }
   },
-  "story_count": 116,
+  "story_count": 132,
   "funny_shorts": {
     "2-5": {
       "the-bouncy-bubble-5b82": {
@@ -1862,6 +2059,30 @@
         "has_audio": true,
         "audio_url": "/audio/silly-songs/five-more-minutes.mp3",
         "cover_url": "/covers/silly-songs/five-more-minutes.webp"
+      },
+      "five_minutes_2_5": {
+        "title": "Five More Minutes",
+        "has_audio": true,
+        "audio_url": "/audio/silly-songs/five_minutes_2_5.mp3",
+        "cover_url": "/covers/silly-songs/five_minutes_2_5.webp"
+      },
+      "my_birthday_2_5": {
+        "title": "It'S My Birthday!",
+        "has_audio": true,
+        "audio_url": "/audio/silly-songs/my_birthday_2_5.mp3",
+        "cover_url": "/covers/silly-songs/my_birthday_2_5.webp"
+      },
+      "not_sleepy_2_5": {
+        "title": "I'M Not Sleepy",
+        "has_audio": true,
+        "audio_url": "/audio/silly-songs/not_sleepy_2_5.mp3",
+        "cover_url": "/covers/silly-songs/not_sleepy_2_5.webp"
+      },
+      "no_bath_2_5": {
+        "title": "No Bath",
+        "has_audio": true,
+        "audio_url": "/audio/silly-songs/no_bath_2_5.mp3",
+        "cover_url": "/covers/silly-songs/no_bath_2_5.webp"
       }
     },
     "6-8": {
@@ -1882,6 +2103,30 @@
         "has_audio": true,
         "audio_url": "/audio/silly-songs/vegetables-plotting.mp3",
         "cover_url": "/covers/silly-songs/vegetables-plotting.webp"
+      },
+      "five_minutes_6_8": {
+        "title": "Five More Minutes",
+        "has_audio": true,
+        "audio_url": "/audio/silly-songs/five_minutes_6_8.mp3",
+        "cover_url": "/covers/silly-songs/five_minutes_6_8.webp"
+      },
+      "grownups_weird_6_8": {
+        "title": "Grown-Ups Are Weird",
+        "has_audio": true,
+        "audio_url": "/audio/silly-songs/grownups_weird_6_8.mp3",
+        "cover_url": "/covers/silly-songs/grownups_weird_6_8.webp"
+      },
+      "not_my_fault_6_8": {
+        "title": "It'S Not My Fault",
+        "has_audio": true,
+        "audio_url": "/audio/silly-songs/not_my_fault_6_8.mp3",
+        "cover_url": "/covers/silly-songs/not_my_fault_6_8.webp"
+      },
+      "one_more_6_8": {
+        "title": "One More",
+        "has_audio": true,
+        "audio_url": "/audio/silly-songs/one_more_6_8.mp3",
+        "cover_url": "/covers/silly-songs/one_more_6_8.webp"
       }
     },
     "9-12": {
@@ -1902,6 +2147,62 @@
         "has_audio": true,
         "audio_url": "/audio/silly-songs/homework-ate-itself.mp3",
         "cover_url": "/covers/silly-songs/homework-ate-itself.webp"
+      },
+      "in_a_minute_9_12": {
+        "title": "In A Minute",
+        "has_audio": true,
+        "audio_url": "/audio/silly-songs/in_a_minute_9_12.mp3",
+        "cover_url": "/covers/silly-songs/in_a_minute_9_12.webp"
+      },
+      "one_more_9_12": {
+        "title": "One More",
+        "has_audio": true,
+        "audio_url": "/audio/silly-songs/one_more_9_12.mp3",
+        "cover_url": "/covers/silly-songs/one_more_9_12.webp"
+      }
+    }
+  },
+  "poems": {
+    "2-5": {
+      "sound_2_5_b65c": {
+        "title": "Soft Night Sounds",
+        "has_audio": true,
+        "audio_url": "/audio/poems/sound_2_5_b65c.mp3",
+        "cover_url": "/covers/poems/sound_2_5_b65c_cover.webp"
+      },
+      "sound_2_5_52b1": {
+        "title": "Soft Night Sounds",
+        "has_audio": true,
+        "audio_url": "/audio/poems/sound_2_5_52b1.mp3",
+        "cover_url": "/covers/poems/sound_2_5_52b1_cover.webp"
+      }
+    },
+    "6-8": {
+      "nonsense_6_8_b5f5": {
+        "title": "Zippy Zingers",
+        "has_audio": true,
+        "audio_url": "/audio/poems/nonsense_6_8_b5f5.mp3",
+        "cover_url": "/covers/poems/nonsense_6_8_b5f5_cover.webp"
+      },
+      "nonsense_6_8_526b": {
+        "title": "Zizzle Zing Zoom",
+        "has_audio": true,
+        "audio_url": "/audio/poems/nonsense_6_8_526b.mp3",
+        "cover_url": "/covers/poems/nonsense_6_8_526b_cover.webp"
+      }
+    },
+    "9-12": {
+      "question_9_12_bf17": {
+        "title": "How Does the Sea?",
+        "has_audio": true,
+        "audio_url": "/audio/poems/question_9_12_bf17.mp3",
+        "cover_url": "/covers/poems/question_9_12_bf17_cover.webp"
+      },
+      "question_9_12_52d7": {
+        "title": "Why Does the Moon?",
+        "has_audio": true,
+        "audio_url": "/audio/poems/question_9_12_52d7.mp3",
+        "cover_url": "/covers/poems/question_9_12_52d7_cover.webp"
       }
     }
   }

@@ -1,0 +1,84 @@
+{
+  "generated_at": "2026-04-03T02:51:07.270295",
+  "summary": {
+    "total": 2,
+    "passed": 0,
+    "warned": 2,
+    "failed": 0,
+    "avg_fidelity": 0.6145,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-3d992fbd15b9",
+      "title": "Tilly and the Giggling Puddle",
+      "median_duration": 137.44,
+      "variants": [
+        {
+          "voice": "female_3",
+          "duration_seconds": 135.97,
+          "verdict": "WARN",
+          "reasons": [
+            "marginal_fidelity (0.70)"
+          ],
+          "text_fidelity_combined": 0.6998,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 1.1,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.7458,
+            "ratio": 0.3275,
+            "word_overlap": 0.7867,
+            "word_order_score": 0.7966,
+            "combined": 0.6998
+          },
+          "transcript_snippet": "Did you know that some puddles can giggle when you jump in them? Tilly found a puddle near the big oak tree. She jumped. Splish-splosh-giggle. The bull laughed. She tried again. Just splish-splosh giggle. The puddle laughed louder. Tilly stomped her feet. Stomp, splash, giggle. The puddle giggled so"
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 138.91,
+          "verdict": "WARN",
+          "reasons": [
+            "marginal_fidelity (0.53)"
+          ],
+          "text_fidelity_combined": 0.5292,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 1.1,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.4237,
+            "ratio": 0.3149,
+            "word_overlap": 0.7733,
+            "word_order_score": 0.7712,
+            "combined": 0.5292
+          },
+          "transcript_snippet": "Did you know that some puddles can giggle when you jump in them? Tilly found a puddle near the big oak tree. Oh, splish, splosh, giggle. The puddle laughed. He tried again. Oh, splish, splosh, giggle. The puddle laughed louder. Tilly stomped her feet. Stomp, splash, giggle. The puddle giggled so har"
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Tilly and the Giggling Puddle",
+      "story_id": "gen-3d992fbd15b9",
+      "voice": "female_3",
+      "verdict": "WARN",
+      "reasons": [
+        "marginal_fidelity (0.70)"
+      ],
+      "fidelity": 0.6998,
+      "quality_avg": 5.0
+    },
+    {
+      "story": "Tilly and the Giggling Puddle",
+      "story_id": "gen-3d992fbd15b9",
+      "voice": "male_2",
+      "verdict": "WARN",
+      "reasons": [
+        "marginal_fidelity (0.53)"
+      ],
+      "fidelity": 0.5292,
+      "quality_avg": 5.0
+    }
+  ]
+}

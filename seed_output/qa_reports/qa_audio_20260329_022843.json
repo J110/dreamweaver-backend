@@ -1,0 +1,55 @@
+{
+  "generated_at": "2026-03-29T02:28:43.310976",
+  "summary": {
+    "total": 2,
+    "passed": 2,
+    "warned": 0,
+    "failed": 0,
+    "avg_fidelity": 0.9427,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-335a82df63a6",
+      "title": "Mira and the Frogs Who Forgot the Rain",
+      "median_duration": 117.49,
+      "variants": [
+        {
+          "voice": "female_2",
+          "duration_seconds": 114.46,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9137,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 2.6,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.901,
+            "ratio": 0.9223,
+            "word_overlap": 0.8936,
+            "word_order_score": 0.942,
+            "combined": 0.9137
+          }
+        },
+        {
+          "voice": "female_4",
+          "duration_seconds": 120.52,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9718,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 2.6,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 1.0,
+            "ratio": 0.9624,
+            "word_overlap": 0.9071,
+            "word_order_score": 0.9469,
+            "combined": 0.9718
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": []
+}

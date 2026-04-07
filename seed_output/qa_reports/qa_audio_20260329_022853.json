@@ -1,0 +1,55 @@
+{
+  "generated_at": "2026-03-29T02:28:53.885284",
+  "summary": {
+    "total": 2,
+    "passed": 2,
+    "warned": 0,
+    "failed": 0,
+    "avg_fidelity": 0.9525,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-598cca276eeb",
+      "title": "Pip and the Glowing Tidepool",
+      "median_duration": 135.14,
+      "variants": [
+        {
+          "voice": "female_3",
+          "duration_seconds": 129.74,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9539,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 4.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9805,
+            "ratio": 0.9108,
+            "word_overlap": 0.896,
+            "word_order_score": 0.9498,
+            "combined": 0.9539
+          }
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 140.54,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9511,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 4.0,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9805,
+            "ratio": 0.9058,
+            "word_overlap": 0.8851,
+            "word_order_score": 0.9459,
+            "combined": 0.9511
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": []
+}

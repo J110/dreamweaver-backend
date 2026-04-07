@@ -1,0 +1,27 @@
+{
+  "id": "counting-2-5-4f65",
+  "title": "One Sleepy Owl",
+  "content_type": "lullaby",
+  "lullaby_type": "counting",
+  "card_label": "One by One",
+  "card_subtitle": "Counting things to sleep",
+  "age_group": "2-5",
+  "mood": "wired",
+  "language": "en",
+  "instrument": "music_box",
+  "imagery": "forest_animals",
+  "audio_file": "counting-2-5-4f65.mp3",
+  "cover_file": "counting-2-5-4f65_cover.svg",
+  "cover_prompt": "four tiny dots in a diagonal line, each dimmer than the last, on deep muted blue",
+  "duration_seconds": 47,
+  "lyrics": "[verse]\nOne sleepy owl blinks slow\nIn the pine where breezes blow\n\n[verse]\nOne sleepy owl blinks slow\nTwo soft foxes curl below\n\n[verse]\nOne sleepy owl blinks slow\nTwo soft foxes curl below\nThree little deer lie low\n\n[verse]\nOne sleepy owl blinks slow\nTwo soft foxes curl below\nThree little deer lie low\nFour baby rabbits row by row\nAnd that was all",
+  "style_prompt": "Children's counting lullaby, clear sweet female vocal, xylophone and music box, 66 BPM, simple repetitive melody, same tune every line, cumulative nursery rhyme structure, bright but soft, childlike, extremely predictable rhythm, music box accompaniment",
+  "engine": "minimax-music-v2-fal",
+  "fingerprint": {
+    "lullabyType": "counting",
+    "instrument": "music_box",
+    "imagery": "forest_animals",
+    "mood": "wired"
+  },
+  "created_at": "2026-03-31"
+}

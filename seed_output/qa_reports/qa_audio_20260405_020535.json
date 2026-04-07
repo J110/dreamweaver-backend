@@ -1,0 +1,55 @@
+{
+  "generated_at": "2026-04-05T02:05:35.075226",
+  "summary": {
+    "total": 2,
+    "passed": 2,
+    "warned": 0,
+    "failed": 0,
+    "avg_fidelity": 0.8981,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-30999f1d21bc",
+      "title": "Glim and the First Firefly",
+      "median_duration": 265.12,
+      "variants": [
+        {
+          "voice": "male_2",
+          "duration_seconds": 252.93,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.8989,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 4.6,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.944,
+            "ratio": 0.648,
+            "word_overlap": 0.9371,
+            "word_order_score": 0.944,
+            "combined": 0.8989
+          }
+        },
+        {
+          "voice": "female_4",
+          "duration_seconds": 277.31,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.8973,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 4.6,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.941,
+            "ratio": 0.6484,
+            "word_overlap": 0.943,
+            "word_order_score": 0.941,
+            "combined": 0.8973
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": []
+}

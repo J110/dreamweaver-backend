@@ -1,0 +1,55 @@
+{
+  "generated_at": "2026-03-27T02:18:58.071911",
+  "summary": {
+    "total": 2,
+    "passed": 2,
+    "warned": 0,
+    "failed": 0,
+    "avg_fidelity": 0.8445,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-6134b0c7424e",
+      "title": "Stella and the Shrinking Starbeam",
+      "median_duration": 121.4,
+      "variants": [
+        {
+          "voice": "female_3",
+          "duration_seconds": 119.12,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.844,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 1.9,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9915,
+            "ratio": 0.1745,
+            "word_overlap": 0.8873,
+            "word_order_score": 0.9336,
+            "combined": 0.844
+          }
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 123.68,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.8451,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 1.9,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9915,
+            "ratio": 0.1749,
+            "word_overlap": 0.8873,
+            "word_order_score": 0.9375,
+            "combined": 0.8451
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": []
+}

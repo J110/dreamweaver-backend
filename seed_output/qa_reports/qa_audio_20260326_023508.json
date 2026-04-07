@@ -1,0 +1,55 @@
+{
+  "generated_at": "2026-03-26T02:35:08.953426",
+  "summary": {
+    "total": 2,
+    "passed": 2,
+    "warned": 0,
+    "failed": 0,
+    "avg_fidelity": 0.8864,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-4503353a9444",
+      "title": "Theo and the Tiny Thundercloud",
+      "median_duration": 171.17,
+      "variants": [
+        {
+          "voice": "female_2",
+          "duration_seconds": 180.03,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.8253,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 5.2,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.982,
+            "ratio": 0.1305,
+            "word_overlap": 0.8806,
+            "word_order_score": 0.9067,
+            "combined": 0.8253
+          }
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 162.3,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9475,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 5.2,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.988,
+            "ratio": 0.9009,
+            "word_overlap": 0.8945,
+            "word_order_score": 0.9155,
+            "combined": 0.9475
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": []
+}

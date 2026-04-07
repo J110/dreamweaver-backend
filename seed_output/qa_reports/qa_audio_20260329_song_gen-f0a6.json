@@ -1,0 +1,111 @@
+{
+  "summary": {
+    "total": 2,
+    "passed": 0,
+    "warned": 2,
+    "failed": 0
+  },
+  "stories": [
+    {
+      "story_id": "gen-f0a6e4aab827",
+      "title": "Finn and the Scent of the Tide",
+      "median_duration": 184.9,
+      "variants": [
+        {
+          "voice": "female_1",
+          "duration_seconds": 184.91,
+          "verdict": "WARN",
+          "reasons": [
+            "no gaps between phrases (continuous audio)"
+          ],
+          "text_fidelity_combined": 0,
+          "quality_average": 0.752,
+          "duration_outlier": false,
+          "lullaby_qa": {
+            "dimensions": {
+              "duration_accuracy": {
+                "score": 0.999,
+                "actual": 179.9,
+                "target": 180,
+                "deviation_pct": 0.1
+              },
+              "volume_consistency": {
+                "score": 0.681,
+                "variance": 9.6,
+                "range_db": 11.3
+              },
+              "loudness": {
+                "score": 0.576,
+                "avg_dbfs": -15.6
+              },
+              "sparsity": {
+                "score": 0.3,
+                "quiet_ratio": 0.025
+              },
+              "spectral_softness": {
+                "score": 0.953,
+                "high_freq_ratio": 0.0094
+              },
+              "no_peaks": {
+                "score": 1.0,
+                "spike_count": 0
+              }
+            },
+            "quality_avg": 0.752,
+            "warnings": [
+              "no gaps between phrases (continuous audio)"
+            ]
+          }
+        },
+        {
+          "voice": "male_1",
+          "duration_seconds": 184.91,
+          "verdict": "WARN",
+          "reasons": [
+            "too loud: avg -11 dBFS (target ~-22)",
+            "no gaps between phrases (continuous audio)"
+          ],
+          "text_fidelity_combined": 0,
+          "quality_average": 0.725,
+          "duration_outlier": false,
+          "lullaby_qa": {
+            "dimensions": {
+              "duration_accuracy": {
+                "score": 0.999,
+                "actual": 179.9,
+                "target": 180,
+                "deviation_pct": 0.1
+              },
+              "volume_consistency": {
+                "score": 0.841,
+                "variance": 4.8,
+                "range_db": 6.5
+              },
+              "loudness": {
+                "score": 0.279,
+                "avg_dbfs": -11.2
+              },
+              "sparsity": {
+                "score": 0.3,
+                "quiet_ratio": 0.0
+              },
+              "spectral_softness": {
+                "score": 0.93,
+                "high_freq_ratio": 0.0139
+              },
+              "no_peaks": {
+                "score": 1.0,
+                "spike_count": 0
+              }
+            },
+            "quality_avg": 0.725,
+            "warnings": [
+              "too loud: avg -11 dBFS (target ~-22)",
+              "no gaps between phrases (continuous audio)"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

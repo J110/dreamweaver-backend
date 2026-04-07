@@ -1,0 +1,84 @@
+{
+  "generated_at": "2026-04-03T02:09:28.685697",
+  "summary": {
+    "total": 2,
+    "passed": 0,
+    "warned": 1,
+    "failed": 1,
+    "avg_fidelity": 0.4882,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-c1c39bf59c97",
+      "title": "Lumi and the Softest Hour",
+      "median_duration": 427.11,
+      "variants": [
+        {
+          "voice": "male_2",
+          "duration_seconds": 411.74,
+          "verdict": "WARN",
+          "reasons": [
+            "marginal_fidelity (0.52)"
+          ],
+          "text_fidelity_combined": 0.5248,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 3.6,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.2637,
+            "ratio": 0.4885,
+            "word_overlap": 0.883,
+            "word_order_score": 0.9254,
+            "combined": 0.5248
+          },
+          "transcript_snippet": "It was Tuesday, and Tuesdays always meant soup night. The kitchen smelled like warm bread and tomato. Lumi sat on the counter, her metal feet swinging just above the floor. She loved the way the steam curled up from the pot, like tiny clouds. But tonight the kitchen felt different. The chair where M"
+        },
+        {
+          "voice": "female_1",
+          "duration_seconds": 442.48,
+          "verdict": "FAIL",
+          "reasons": [
+            "low_fidelity (0.45)"
+          ],
+          "text_fidelity_combined": 0.4516,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 3.6,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.2637,
+            "ratio": 0.0168,
+            "word_overlap": 0.8759,
+            "word_order_score": 0.9187,
+            "combined": 0.4516
+          },
+          "transcript_snippet": "It was Tuesday, and Tuesdays always meant soup night. The kitchen smelled like warm bread and tomato. Lumi sat on the counter, her metal feet swinging just above the floor. She loved the way the steam curled up from the pot, like tiny clouds. But tonight, the kitchen felt different.The chair where M"
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Lumi and the Softest Hour",
+      "story_id": "gen-c1c39bf59c97",
+      "voice": "male_2",
+      "verdict": "WARN",
+      "reasons": [
+        "marginal_fidelity (0.52)"
+      ],
+      "fidelity": 0.5248,
+      "quality_avg": 5.0
+    },
+    {
+      "story": "Lumi and the Softest Hour",
+      "story_id": "gen-c1c39bf59c97",
+      "voice": "female_1",
+      "verdict": "FAIL",
+      "reasons": [
+        "low_fidelity (0.45)"
+      ],
+      "fidelity": 0.4516,
+      "quality_avg": 5.0
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "generated_at": "2026-03-26T02:35:19.132739",
+  "summary": {
+    "total": 2,
+    "passed": 1,
+    "warned": 1,
+    "failed": 0,
+    "avg_fidelity": 0.7374,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-6ee81a76343f",
+      "title": "Barnaby and the Shrinking Moonbeam",
+      "median_duration": 174.88,
+      "variants": [
+        {
+          "voice": "female_3",
+          "duration_seconds": 181.16,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.8377,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 3.6,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9459,
+            "ratio": 0.2876,
+            "word_overlap": 0.8814,
+            "word_order_score": 0.9339,
+            "combined": 0.8377
+          }
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 168.61,
+          "verdict": "WARN",
+          "reasons": [
+            "marginal_fidelity (0.64)"
+          ],
+          "text_fidelity_combined": 0.6372,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 3.6,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.5195,
+            "ratio": 0.3773,
+            "word_overlap": 0.8814,
+            "word_order_score": 0.9309,
+            "combined": 0.6372
+          },
+          "transcript_snippet": "One day, Barnaby the Hedgehog said to the old wooden fence post, Have you ever noticed how the moonbeam looks like a golden ribbon tonight? The fence post creaked softly, which Barnaby took as a yes. He waddled closer, heeeeee, and stretched out a paw. The moment his toes touched the light, they shr"
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Barnaby and the Shrinking Moonbeam",
+      "story_id": "gen-6ee81a76343f",
+      "voice": "male_2",
+      "verdict": "WARN",
+      "reasons": [
+        "marginal_fidelity (0.64)"
+      ],
+      "fidelity": 0.6372,
+      "quality_avg": 5.0
+    }
+  ]
+}

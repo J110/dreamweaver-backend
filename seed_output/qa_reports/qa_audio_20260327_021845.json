@@ -1,0 +1,70 @@
+{
+  "generated_at": "2026-03-27T02:18:45.767677",
+  "summary": {
+    "total": 2,
+    "passed": 1,
+    "warned": 1,
+    "failed": 0,
+    "avg_fidelity": 0.7013,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-3324b5de2c64",
+      "title": "Pip and the Pocket-Sized Picnic",
+      "median_duration": 685.12,
+      "variants": [
+        {
+          "voice": "male_2",
+          "duration_seconds": 706.54,
+          "verdict": "WARN",
+          "reasons": [
+            "marginal_fidelity (0.55)"
+          ],
+          "text_fidelity_combined": 0.554,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 3.1,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.4025,
+            "ratio": 0.2166,
+            "word_overlap": 0.89,
+            "word_order_score": 0.9252,
+            "combined": 0.554
+          },
+          "transcript_snippet": "One day Pip the Beetle said to the bakery doorknob, I bet you've seen the most. Look at you, delicious. Things in all the village, like cinnamon swirls taller than my antennae and honey cakes as big as my whole shell. The doorknob, being a doorknob, said nothing, but Pip didn't mind. She was used to"
+        },
+        {
+          "voice": "female_3",
+          "duration_seconds": 663.7,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.8485,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 3.1,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.8182,
+            "ratio": 0.7928,
+            "word_overlap": 0.8996,
+            "word_order_score": 0.9223,
+            "combined": 0.8485
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Pip and the Pocket-Sized Picnic",
+      "story_id": "gen-3324b5de2c64",
+      "voice": "male_2",
+      "verdict": "WARN",
+      "reasons": [
+        "marginal_fidelity (0.55)"
+      ],
+      "fidelity": 0.554,
+      "quality_avg": 5.0
+    }
+  ]
+}

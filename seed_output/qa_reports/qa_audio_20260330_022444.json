@@ -1,0 +1,55 @@
+{
+  "generated_at": "2026-03-30T02:24:44.459252",
+  "summary": {
+    "total": 2,
+    "passed": 2,
+    "warned": 0,
+    "failed": 0,
+    "avg_fidelity": 0.9521,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-dae76a0d146d",
+      "title": "Basil and the Scent of Patience",
+      "median_duration": 103.56,
+      "variants": [
+        {
+          "voice": "male_2",
+          "duration_seconds": 106.61,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9544,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 2.9,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9888,
+            "ratio": 0.9003,
+            "word_overlap": 0.8871,
+            "word_order_score": 0.9451,
+            "combined": 0.9544
+          }
+        },
+        {
+          "voice": "female_3",
+          "duration_seconds": 100.52,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9497,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 2.9,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9888,
+            "ratio": 0.8956,
+            "word_overlap": 0.873,
+            "word_order_score": 0.9348,
+            "combined": 0.9497
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": []
+}

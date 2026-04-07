@@ -1,0 +1,84 @@
+{
+  "generated_at": "2026-04-06T01:57:57.623457",
+  "summary": {
+    "total": 2,
+    "passed": 0,
+    "warned": 0,
+    "failed": 2,
+    "avg_fidelity": 0.4559,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-7e85423bfca3",
+      "title": "Cirrus and the Starlight Threads",
+      "median_duration": 427.31,
+      "variants": [
+        {
+          "voice": "male_2",
+          "duration_seconds": 411.97,
+          "verdict": "FAIL",
+          "reasons": [
+            "low_fidelity (0.45)"
+          ],
+          "text_fidelity_combined": 0.4546,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 3.6,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.25,
+            "ratio": 0.045,
+            "word_overlap": 0.9167,
+            "word_order_score": 0.9246,
+            "combined": 0.4546
+          },
+          "transcript_snippet": "The sky was a dark bowl above the tiny valley. Cyrus floated there, small and soft, watching the stars. The stars were not still. They moved in slow circles, like dancers. Cyrus loved the way their light made the air shimmer. One star near the edge seemed different. It was brighter, and its light st"
+        },
+        {
+          "voice": "female_2",
+          "duration_seconds": 442.64,
+          "verdict": "FAIL",
+          "reasons": [
+            "low_fidelity (0.46)"
+          ],
+          "text_fidelity_combined": 0.4573,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 3.6,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.2462,
+            "ratio": 0.0666,
+            "word_overlap": 0.9236,
+            "word_order_score": 0.9271,
+            "combined": 0.4573
+          },
+          "transcript_snippet": "The sky was a dark bowl above the tiny valley. Cyrus floated there, small and soft, watching the stars. The stars were not still. They moved in slow circles, like dancers. Cyrus loved the way their light made the air shimmer. One star near the edge seemed different. It was brighter, and its light st"
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Cirrus and the Starlight Threads",
+      "story_id": "gen-7e85423bfca3",
+      "voice": "male_2",
+      "verdict": "FAIL",
+      "reasons": [
+        "low_fidelity (0.45)"
+      ],
+      "fidelity": 0.4546,
+      "quality_avg": 5.0
+    },
+    {
+      "story": "Cirrus and the Starlight Threads",
+      "story_id": "gen-7e85423bfca3",
+      "voice": "female_2",
+      "verdict": "FAIL",
+      "reasons": [
+        "low_fidelity (0.46)"
+      ],
+      "fidelity": 0.4573,
+      "quality_avg": 5.0
+    }
+  ]
+}

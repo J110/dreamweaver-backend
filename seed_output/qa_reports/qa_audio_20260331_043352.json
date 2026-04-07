@@ -1,0 +1,84 @@
+{
+  "generated_at": "2026-03-31T04:33:52.965090",
+  "summary": {
+    "total": 2,
+    "passed": 0,
+    "warned": 2,
+    "failed": 0,
+    "avg_fidelity": 0.6452,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-63e5fb0661c8",
+      "title": "Sparka and the Glowing Puddle",
+      "median_duration": 207.25,
+      "variants": [
+        {
+          "voice": "male_2",
+          "duration_seconds": 214.48,
+          "verdict": "WARN",
+          "reasons": [
+            "marginal_fidelity (0.64)"
+          ],
+          "text_fidelity_combined": 0.6418,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 3.5,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.5132,
+            "ratio": 0.6556,
+            "word_overlap": 0.8309,
+            "word_order_score": 0.8151,
+            "combined": 0.6418
+          },
+          "transcript_snippet": "What if a puddle could answer every question you ever had? One day, Sparka the dragon said to the puddle, Why do you blow only at night? The puddle shimmered. A quiet ripple spread across its surface. Not yet, not yet, the puddle whispered. Hi, not yet, not yet, not yet, Sparka tilted her head. The "
+        },
+        {
+          "voice": "female_3",
+          "duration_seconds": 200.03,
+          "verdict": "WARN",
+          "reasons": [
+            "marginal_fidelity (0.65)"
+          ],
+          "text_fidelity_combined": 0.6486,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 3.5,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.5132,
+            "ratio": 0.634,
+            "word_overlap": 0.837,
+            "word_order_score": 0.8528,
+            "combined": 0.6486
+          },
+          "transcript_snippet": "What if a puddle could answer every question you ever had? One day, Spark of the Dragon said to the puddle, Why do you glow only at night? The puddle shimmered. A quiet ripple spread across its surface. Not yet, not yet, the puddle whispered. Not yet, not yet. Sparka tilted her head. The puddle had "
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Sparka and the Glowing Puddle",
+      "story_id": "gen-63e5fb0661c8",
+      "voice": "male_2",
+      "verdict": "WARN",
+      "reasons": [
+        "marginal_fidelity (0.64)"
+      ],
+      "fidelity": 0.6418,
+      "quality_avg": 5.0
+    },
+    {
+      "story": "Sparka and the Glowing Puddle",
+      "story_id": "gen-63e5fb0661c8",
+      "voice": "female_3",
+      "verdict": "WARN",
+      "reasons": [
+        "marginal_fidelity (0.65)"
+      ],
+      "fidelity": 0.6486,
+      "quality_avg": 5.0
+    }
+  ]
+}

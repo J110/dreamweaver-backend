@@ -1,0 +1,530 @@
+<!-- axes: {"world_setting":"mountain_meadow","palette":"twilight_cool","composition":"circular_nest","character":"object","light":"ambient","texture":"digital_painterly","time":"early_night"} -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <image id="bg" width="512" height="512" href="data:image/webp;base64,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"/>
+    <filter id="blur-grass"><feGaussianBlur stdDeviation="12"/></filter>
+    <filter id="char-blur-grass"><feGaussianBlur stdDeviation="20"/></filter>
+    <mask id="mask-grass">
+      <path d="M0,226 Q156.6,264 304.2,238 Q304.2,238 512,264 L512,512 L0,512 Z" fill="white" filter="url(#blur-grass)"/>
+      <ellipse cx="256" cy="256" rx="92" ry="112" fill="black" filter="url(#char-blur-grass)"/>
+    </mask>
+    <filter id="blur-sky_main"><feGaussianBlur stdDeviation="15"/></filter>
+    <filter id="char-blur-sky_main"><feGaussianBlur stdDeviation="20"/></filter>
+    <mask id="mask-sky_main">
+      <path d="M0,0 L512,0 L512,187 Q381.0,158 251.0,199 Q138.0,165 0,183 Z" fill="white" filter="url(#blur-sky_main)"/>
+      <ellipse cx="256" cy="256" rx="92" ry="112" fill="black" filter="url(#char-blur-sky_main)"/>
+    </mask>
+    <filter id="blur-fog_meadow"><feGaussianBlur stdDeviation="25"/></filter>
+    <filter id="char-blur-fog_meadow"><feGaussianBlur stdDeviation="20"/></filter>
+    <mask id="mask-fog_meadow">
+      <path d="M0,294 Q134.0,302 248.0,325 Q393.0,302 512,314 L512,419 L0,420 Z" fill="white" filter="url(#blur-fog_meadow)"/>
+      <ellipse cx="256" cy="256" rx="92" ry="112" fill="black" filter="url(#char-blur-fog_meadow)"/>
+    </mask>
+    <filter id="veg-sway-grass" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.016 0.028" numOctaves="2" result="wind-noise" seed="398">
+        <animate attributeName="baseFrequency" values="0.016 0.028; 0.019 0.025; 0.013 0.031; 0.018 0.027; 0.016 0.028" dur="8s" begin="0.9s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+      </feTurbulence>
+      <feDisplacementMap in="SourceGraphic" in2="wind-noise" scale="6" xChannelSelector="R" yChannelSelector="B">
+        <animate attributeName="scale" values="5;7;4;7;5;8;5" dur="10s" begin="0.9s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+      </feDisplacementMap>
+    </filter>
+    <filter id="cloud-drift-sky_main" x="-10%" y="-5%" width="120%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.009 0.015" numOctaves="2" result="cloud-noise" seed="26">
+        <animate attributeName="baseFrequency" values="0.009 0.015; 0.011 0.013; 0.007 0.017; 0.010 0.014; 0.009 0.015" dur="26s" repeatCount="indefinite" calcMode="spline" keySplines="0.3 0 0.7 1;0.3 0 0.7 1;0.3 0 0.7 1;0.3 0 0.7 1"/>
+      </feTurbulence>
+      <feDisplacementMap in="SourceGraphic" in2="cloud-noise" scale="7" xChannelSelector="R" yChannelSelector="G">
+        <animate attributeName="scale" values="5;9;5;8;5" dur="44s" repeatCount="indefinite"/>
+      </feDisplacementMap>
+    </filter>
+    <filter id="fog-drift-fog_meadow" x="-15%" y="-5%" width="130%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.007 0.012" numOctaves="2" result="fog-noise" seed="974">
+        <animate attributeName="baseFrequency" values="0.007 0.012; 0.008 0.011; 0.006 0.013; 0.007 0.012; 0.007 0.012" dur="23s" repeatCount="indefinite" calcMode="spline" keySplines="0.3 0 0.7 1;0.3 0 0.7 1;0.3 0 0.7 1;0.3 0 0.7 1"/>
+      </feTurbulence>
+      <feDisplacementMap in="SourceGraphic" in2="fog-noise" scale="7" xChannelSelector="R" yChannelSelector="G">
+        <animate attributeName="scale" values="6;8;5;8;6" dur="38s" repeatCount="indefinite"/>
+      </feDisplacementMap>
+    </filter>
+  </defs>
+
+  <!-- Layer 1: Static background -->
+  <use href="#bg"/>
+
+  <!-- Layer 2: Cinemagraph filtered regions (3 filters, 6 octaves) -->
+  <g mask="url(#mask-grass)">
+    <use href="#bg" filter="url(#veg-sway-grass)"/>
+  </g>
+  <g mask="url(#mask-sky_main)">
+    <use href="#bg" filter="url(#cloud-drift-sky_main)"/>
+      <animateTransform attributeName="transform" type="translate" values="0,0; 10,0; 0,0; -5,0; 0,0" dur="53s" repeatCount="indefinite" calcMode="spline" keySplines="0.3 0 0.7 1;0.3 0 0.7 1;0.3 0 0.7 1;0.3 0 0.7 1"/>
+  </g>
+  <g mask="url(#mask-fog_meadow)">
+    <use href="#bg" filter="url(#fog-drift-fog_meadow)"/>
+      <animateTransform attributeName="transform" type="translate" values="0,0; 12,1; 0,0; -6,-1; 0,0" dur="28s" repeatCount="indefinite" calcMode="spline" keySplines="0.3 0 0.7 1;0.3 0 0.7 1;0.3 0 0.7 1;0.3 0 0.7 1"/>
+  </g>
+
+  <!-- Layer 3: Full SMIL overlay (12-20 elements, 3 depth layers) -->
+
+  <defs>
+    <radialGradient id="vignetteGrad">
+      <stop offset="40%" stop-color="transparent"/>
+      <stop offset="100%" stop-color="#0a0520" stop-opacity="0.75"/>
+    </radialGradient>
+    <filter id="softBlur">
+      <feGaussianBlur stdDeviation="2"/>
+    </filter>
+  </defs>
+<!-- F3: Breathing Pacer (Forest) -->
+<g id="breath-pacer">
+  <radialGradient id="breathG473">
+    <stop offset="0%" stop-color="#FFD54F" stop-opacity="0.70"/>
+    <stop offset="30%" stop-color="#FFD54F" stop-opacity="0.35"/>
+    <stop offset="70%" stop-color="#FFD54F" stop-opacity="0.10"/>
+    <stop offset="100%" stop-color="#FFD54F" stop-opacity="0"/>
+  </radialGradient>
+  <circle cx="50%" cy="70%" r="50" fill="url(#breathG473)">
+    <animate attributeName="r" values="44;55;44" dur="5s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+    <animate attributeName="opacity" values="0.50;0.75;0.50" dur="5s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+  </circle>
+</g>
+<!-- A4: Aurora -->
+<g id="aurora-425">
+  <defs>  <radialGradient id="aur-g425-0"><stop offset="0%" stop-color="#C8B0A0" stop-opacity="0.6"/><stop offset="50%" stop-color="#C8B0A0" stop-opacity="0.3"/><stop offset="100%" stop-color="#C8B0A0" stop-opacity="0"/></radialGradient>  <radialGradient id="aur-g425-1"><stop offset="0%" stop-color="#D4B8A0" stop-opacity="0.6"/><stop offset="50%" stop-color="#D4B8A0" stop-opacity="0.3"/><stop offset="100%" stop-color="#D4B8A0" stop-opacity="0"/></radialGradient>  <radialGradient id="aur-g425-2"><stop offset="0%" stop-color="#C8B0A0" stop-opacity="0.6"/><stop offset="50%" stop-color="#C8B0A0" stop-opacity="0.3"/><stop offset="100%" stop-color="#C8B0A0" stop-opacity="0"/></radialGradient></defs>
+  <ellipse cx="52%" cy="18%" rx="126" ry="22" fill="url(#aur-g425-0)" opacity="0.16">
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; 14,5; -7,3; 8,-3; 0,0" dur="31s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+    <animate attributeName="opacity" values="0.16;0.22;0.18;0.24;0.16"
+      dur="23s" repeatCount="indefinite"/>
+    <animate attributeName="ry" values="19;27;18;25;19"
+      dur="23s" repeatCount="indefinite"/>
+  </ellipse>
+  <ellipse cx="51%" cy="12%" rx="129" ry="24" fill="url(#aur-g425-1)" opacity="0.15">
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; 17,3; -9,1; 4,-2; 0,0" dur="31s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+    <animate attributeName="opacity" values="0.15;0.21;0.17;0.23;0.15"
+      dur="31s" repeatCount="indefinite"/>
+    <animate attributeName="ry" values="21;29;20;27;21"
+      dur="19s" repeatCount="indefinite"/>
+  </ellipse>
+  <ellipse cx="51%" cy="23%" rx="157" ry="18" fill="url(#aur-g425-2)" opacity="0.10">
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; 10,2; -5,3; 3,-1; 0,0" dur="31s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+    <animate attributeName="opacity" values="0.10;0.16;0.12;0.18;0.10"
+      dur="23s" repeatCount="indefinite"/>
+    <animate attributeName="ry" values="15;23;14;21;15"
+      dur="19s" repeatCount="indefinite"/>
+  </ellipse>
+</g>
+<!-- B1: Drifting Fog -->
+<g id="fog-433">
+  <defs>  <radialGradient id="fog-g433-0"><stop offset="0%" stop-color="#F5E6D3" stop-opacity="0.5"/><stop offset="40%" stop-color="#F5E6D3" stop-opacity="0.25"/><stop offset="100%" stop-color="#F5E6D3" stop-opacity="0"/></radialGradient>  <radialGradient id="fog-g433-1"><stop offset="0%" stop-color="#D4C8B8" stop-opacity="0.5"/><stop offset="40%" stop-color="#D4C8B8" stop-opacity="0.25"/><stop offset="100%" stop-color="#D4C8B8" stop-opacity="0"/></radialGradient>  <radialGradient id="fog-g433-2"><stop offset="0%" stop-color="#E8D8C4" stop-opacity="0.5"/><stop offset="40%" stop-color="#E8D8C4" stop-opacity="0.25"/><stop offset="100%" stop-color="#E8D8C4" stop-opacity="0"/></radialGradient></defs>
+  <ellipse cx="35%" cy="57%" rx="232" ry="45" fill="url(#fog-g433-0)" opacity="0.07">
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; 83,3; 166,0; 83,-3; 0,0"
+      dur="41s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+    <animate attributeName="opacity" values="0.07;0.10;0.08;0.12;0.07"
+      dur="31s" repeatCount="indefinite"/>
+  </ellipse>
+  <ellipse cx="33%" cy="82%" rx="267" ry="27" fill="url(#fog-g433-1)" opacity="0.09">
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; -67,3; -134,0; -67,-3; 0,0"
+      dur="31s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+    <animate attributeName="opacity" values="0.09;0.12;0.10;0.14;0.09"
+      dur="37s" repeatCount="indefinite"/>
+  </ellipse>
+  <ellipse cx="37%" cy="64%" rx="165" ry="37" fill="url(#fog-g433-2)" opacity="0.09">
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; 98,3; 196,0; 98,-3; 0,0"
+      dur="43s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+    <animate attributeName="opacity" values="0.09;0.12;0.10;0.14;0.09"
+      dur="37s" repeatCount="indefinite"/>
+  </ellipse>
+</g>
+<!-- A1: Twinkling Stars -->
+<g id="stars">
+  <circle cx="88%" cy="8%" r="1.8" fill="#FFF5E0">
+    <animate attributeName="opacity" values="0;0;0.33;0.23;0"
+      dur="5.9s" begin="6.6s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+  </circle>
+  <circle cx="54%" cy="17%" r="1.7" fill="#FFEFD5">
+    <animate attributeName="opacity" values="0;0;0.58;0.41;0"
+      dur="6.8s" begin="5.3s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+  </circle>
+  <circle cx="25%" cy="15%" r="1.9" fill="#FFF5E0">
+    <animate attributeName="opacity" values="0;0;0.47;0.33;0"
+      dur="7.3s" begin="9.4s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+  </circle>
+  <circle cx="5%" cy="8%" r="1.8" fill="#FFEFD5">
+    <animate attributeName="opacity" values="0;0;0.38;0.27;0"
+      dur="7.0s" begin="4.4s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+  </circle>
+  <circle cx="76%" cy="37%" r="3.0" fill="#FFEFD5">
+    <animate attributeName="opacity" values="0;0;0.38;0.27;0"
+      dur="5.3s" begin="5.2s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+  </circle>
+</g>
+<!-- G2: Wind Through Grass -->
+<g id="grass-wind" opacity="0.25">
+  <line x1="10.0%" y1="95%" x2="10.0%" y2="86%" stroke="#1A0F05" stroke-width="0.7"
+    stroke-linecap="round">
+    <animateTransform attributeName="transform" type="rotate"
+      values="0,10.0%,95%; 4,10.0%,95%; 0,10.0%,95%; -3,10.0%,95%; 0,10.0%,95%"
+      dur="6.2s" begin="0.0s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+  </line>
+  <line x1="18.0%" y1="95%" x2="18.0%" y2="90%" stroke="#1A0F05" stroke-width="0.9"
+    stroke-linecap="round">
+    <animateTransform attributeName="transform" type="rotate"
+      values="0,18.0%,95%; 4,18.0%,95%; 0,18.0%,95%; -3,18.0%,95%; 0,18.0%,95%"
+      dur="6.2s" begin="0.5s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+  </line>
+  <line x1="26.0%" y1="95%" x2="26.0%" y2="90%" stroke="#1A0F05" stroke-width="0.7"
+    stroke-linecap="round">
+    <animateTransform attributeName="transform" type="rotate"
+      values="0,26.0%,95%; 4,26.0%,95%; 0,26.0%,95%; -3,26.0%,95%; 0,26.0%,95%"
+      dur="6.2s" begin="1.0s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+  </line>
+  <line x1="34.0%" y1="95%" x2="34.0%" y2="88%" stroke="#1A0F05" stroke-width="0.8"
+    stroke-linecap="round">
+    <animateTransform attributeName="transform" type="rotate"
+      values="0,34.0%,95%; 4,34.0%,95%; 0,34.0%,95%; -3,34.0%,95%; 0,34.0%,95%"
+      dur="6.2s" begin="1.6s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+  </line>
+  <line x1="42.0%" y1="95%" x2="42.0%" y2="86%" stroke="#1A0F05" stroke-width="0.8"
+    stroke-linecap="round">
+    <animateTransform attributeName="transform" type="rotate"
+      values="0,42.0%,95%; 4,42.0%,95%; 0,42.0%,95%; -3,42.0%,95%; 0,42.0%,95%"
+      dur="6.2s" begin="2.1s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+  </line>
+  <line x1="50.0%" y1="95%" x2="50.0%" y2="90%" stroke="#1A0F05" stroke-width="0.8"
+    stroke-linecap="round">
+    <animateTransform attributeName="transform" type="rotate"
+      values="0,50.0%,95%; 4,50.0%,95%; 0,50.0%,95%; -3,50.0%,95%; 0,50.0%,95%"
+      dur="6.2s" begin="2.6s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+  </line>
+  <line x1="58.0%" y1="95%" x2="58.0%" y2="87%" stroke="#1A0F05" stroke-width="0.7"
+    stroke-linecap="round">
+    <animateTransform attributeName="transform" type="rotate"
+      values="0,58.0%,95%; 4,58.0%,95%; 0,58.0%,95%; -3,58.0%,95%; 0,58.0%,95%"
+      dur="6.2s" begin="3.1s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+  </line>
+  <line x1="66.0%" y1="95%" x2="66.0%" y2="86%" stroke="#1A0F05" stroke-width="0.8"
+    stroke-linecap="round">
+    <animateTransform attributeName="transform" type="rotate"
+      values="0,66.0%,95%; 4,66.0%,95%; 0,66.0%,95%; -3,66.0%,95%; 0,66.0%,95%"
+      dur="6.2s" begin="3.6s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+  </line>
+  <line x1="74.0%" y1="95%" x2="74.0%" y2="85%" stroke="#1A0F05" stroke-width="0.9"
+    stroke-linecap="round">
+    <animateTransform attributeName="transform" type="rotate"
+      values="0,74.0%,95%; 4,74.0%,95%; 0,74.0%,95%; -3,74.0%,95%; 0,74.0%,95%"
+      dur="6.2s" begin="4.2s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+  </line>
+  <line x1="82.0%" y1="95%" x2="82.0%" y2="90%" stroke="#1A0F05" stroke-width="0.6"
+    stroke-linecap="round">
+    <animateTransform attributeName="transform" type="rotate"
+      values="0,82.0%,95%; 4,82.0%,95%; 0,82.0%,95%; -3,82.0%,95%; 0,82.0%,95%"
+      dur="6.2s" begin="4.7s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+  </line>
+</g>
+<!-- B4: Dust Motes -->
+<g id="dust-motes-135">
+  <circle cx="0" cy="0" r="1.4" fill="#FFE082" opacity="0">
+    <animateMotion dur="19s" repeatCount="indefinite" begin="5.0s"
+      path="M242,130 C251,118 238,123 233,121 S250,123 239,124"/>
+    <animate attributeName="opacity" values="0;0.31;0.15;0.31;0.12;0"
+      dur="19s" repeatCount="indefinite" begin="5.0s"/>
+  </circle>
+  <circle cx="0" cy="0" r="1.5" fill="#FFE082" opacity="0">
+    <animateMotion dur="19s" repeatCount="indefinite" begin="0.4s"
+      path="M160,259 C167,270 172,248 145,261 S162,258 152,262"/>
+    <animate attributeName="opacity" values="0;0.36;0.18;0.36;0.14;0"
+      dur="19s" repeatCount="indefinite" begin="0.4s"/>
+  </circle>
+  <circle cx="0" cy="0" r="1.7" fill="#FFE082" opacity="0">
+    <animateMotion dur="17s" repeatCount="indefinite" begin="4.2s"
+      path="M276,300 C266,311 290,293 265,309 S263,300 261,292"/>
+    <animate attributeName="opacity" values="0;0.50;0.25;0.50;0.20;0"
+      dur="17s" repeatCount="indefinite" begin="4.2s"/>
+  </circle>
+  <circle cx="0" cy="0" r="1.2" fill="#FFE082" opacity="0">
+    <animateMotion dur="19s" repeatCount="indefinite" begin="0.0s"
+      path="M344,145 C356,139 345,140 347,138 S358,146 345,152"/>
+    <animate attributeName="opacity" values="0;0.52;0.26;0.52;0.21;0"
+      dur="19s" repeatCount="indefinite" begin="0.0s"/>
+  </circle>
+  <circle cx="0" cy="0" r="1.5" fill="#FFE082" opacity="0">
+    <animateMotion dur="11s" repeatCount="indefinite" begin="2.5s"
+      path="M203,122 C212,128 192,131 203,128 S215,118 195,127"/>
+    <animate attributeName="opacity" values="0;0.37;0.18;0.37;0.15;0"
+      dur="11s" repeatCount="indefinite" begin="2.5s"/>
+  </circle>
+  <circle cx="0" cy="0" r="1.5" fill="#FFE082" opacity="0">
+    <animateMotion dur="17s" repeatCount="indefinite" begin="1.1s"
+      path="M133,172 C142,181 127,181 122,163 S132,178 131,181"/>
+    <animate attributeName="opacity" values="0;0.53;0.27;0.53;0.21;0"
+      dur="17s" repeatCount="indefinite" begin="1.1s"/>
+  </circle>
+  <circle cx="0" cy="0" r="1.7" fill="#FFE082" opacity="0">
+    <animateMotion dur="19s" repeatCount="indefinite" begin="1.5s"
+      path="M149,157 C141,154 143,167 152,158 S156,167 135,154"/>
+    <animate attributeName="opacity" values="0;0.41;0.20;0.41;0.16;0"
+      dur="19s" repeatCount="indefinite" begin="1.5s"/>
+  </circle>
+  <circle cx="0" cy="0" r="1.3" fill="#FFE082" opacity="0">
+    <animateMotion dur="11s" repeatCount="indefinite" begin="5.7s"
+      path="M184,154 C190,155 194,147 189,144 S172,163 169,154"/>
+    <animate attributeName="opacity" values="0;0.31;0.15;0.31;0.12;0"
+      dur="11s" repeatCount="indefinite" begin="5.7s"/>
+  </circle>
+</g>
+<!-- C3: Closing Flowers -->
+<g id="flower-0" transform="translate(61%, 91%)">
+    <ellipse cx="6" cy="-3" rx="10" ry="5" fill="#C890A8" opacity="0.15"
+      transform="rotate(-30,6,-3)">
+      <animateTransform attributeName="transform" type="rotate"
+        values="-30,6,-3; -18,6,-3; -5,6,-3"
+        dur="881s" repeatCount="1" fill="freeze"
+        calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+    </ellipse>
+    <ellipse cx="2" cy="-6" rx="10" ry="5" fill="#C890A8" opacity="0.15"
+      transform="rotate(30,2,-6)">
+      <animateTransform attributeName="transform" type="rotate"
+        values="30,2,-6; 42,2,-6; 55,2,-6"
+        dur="881s" repeatCount="1" fill="freeze"
+        calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+    </ellipse>
+    <ellipse cx="-6" cy="-6" rx="10" ry="5" fill="#C890A8" opacity="0.15"
+      transform="rotate(90,-6,-6)">
+      <animateTransform attributeName="transform" type="rotate"
+        values="90,-6,-6; 102,-6,-6; 115,-6,-6"
+        dur="881s" repeatCount="1" fill="freeze"
+        calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+    </ellipse>
+    <ellipse cx="1" cy="-4" rx="10" ry="5" fill="#C890A8" opacity="0.15"
+      transform="rotate(150,1,-4)">
+      <animateTransform attributeName="transform" type="rotate"
+        values="150,1,-4; 162,1,-4; 175,1,-4"
+        dur="881s" repeatCount="1" fill="freeze"
+        calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+    </ellipse>
+    <ellipse cx="8" cy="-6" rx="10" ry="5" fill="#C890A8" opacity="0.15"
+      transform="rotate(210,8,-6)">
+      <animateTransform attributeName="transform" type="rotate"
+        values="210,8,-6; 222,8,-6; 235,8,-6"
+        dur="881s" repeatCount="1" fill="freeze"
+        calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+    </ellipse>
+    <ellipse cx="-5" cy="-2" rx="10" ry="5" fill="#C890A8" opacity="0.15"
+      transform="rotate(270,-5,-2)">
+      <animateTransform attributeName="transform" type="rotate"
+        values="270,-5,-2; 282,-5,-2; 295,-5,-2"
+        dur="881s" repeatCount="1" fill="freeze"
+        calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+    </ellipse>
+  <circle cx="0" cy="0" r="4" fill="#FFBA60" opacity="0.3">
+    <animate attributeName="opacity" values="0.2;0.35;0.2" dur="11s" repeatCount="indefinite"/>
+    <animate attributeName="r" values="3.5;4.5;3.5" dur="11s" repeatCount="indefinite"/>
+  </circle>
+</g>
+<g id="flower-1" transform="translate(27%, 89%)">
+    <ellipse cx="-4" cy="-6" rx="10" ry="5" fill="#C8A080" opacity="0.15"
+      transform="rotate(-30,-4,-6)">
+      <animateTransform attributeName="transform" type="rotate"
+        values="-30,-4,-6; -18,-4,-6; -5,-4,-6"
+        dur="406s" repeatCount="1" fill="freeze"
+        calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+    </ellipse>
+    <ellipse cx="-7" cy="-3" rx="10" ry="5" fill="#C8A080" opacity="0.15"
+      transform="rotate(42,-7,-3)">
+      <animateTransform attributeName="transform" type="rotate"
+        values="42,-7,-3; 54,-7,-3; 67,-7,-3"
+        dur="406s" repeatCount="1" fill="freeze"
+        calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+    </ellipse>
+    <ellipse cx="-9" cy="-4" rx="10" ry="5" fill="#C8A080" opacity="0.15"
+      transform="rotate(114,-9,-4)">
+      <animateTransform attributeName="transform" type="rotate"
+        values="114,-9,-4; 126,-9,-4; 139,-9,-4"
+        dur="406s" repeatCount="1" fill="freeze"
+        calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+    </ellipse>
+    <ellipse cx="-9" cy="-4" rx="10" ry="5" fill="#C8A080" opacity="0.15"
+      transform="rotate(186,-9,-4)">
+      <animateTransform attributeName="transform" type="rotate"
+        values="186,-9,-4; 198,-9,-4; 211,-9,-4"
+        dur="406s" repeatCount="1" fill="freeze"
+        calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+    </ellipse>
+    <ellipse cx="1" cy="-3" rx="10" ry="5" fill="#C8A080" opacity="0.15"
+      transform="rotate(258,1,-3)">
+      <animateTransform attributeName="transform" type="rotate"
+        values="258,1,-3; 270,1,-3; 283,1,-3"
+        dur="406s" repeatCount="1" fill="freeze"
+        calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+    </ellipse>
+  <circle cx="0" cy="0" r="4" fill="#FFBA60" opacity="0.3">
+    <animate attributeName="opacity" values="0.2;0.35;0.2" dur="7s" repeatCount="indefinite"/>
+    <animate attributeName="r" values="3.5;4.5;3.5" dur="7s" repeatCount="indefinite"/>
+  </circle>
+</g>
+<!-- C2: Falling Leaves -->
+<g id="falling-leaves">
+  <ellipse cx="0" cy="0" rx="5" ry="3" fill="#C4956A" opacity="0.38">
+    <animateMotion dur="18.7s" repeatCount="indefinite" begin="1.6s"
+      path="M83,-20 C82,54 123,128 57,194 S123,269 79,356"/>
+    <animateTransform attributeName="transform" type="rotate"
+      values="-49;-38;-14;2;-22;-40;30" dur="18.7s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0;0.38;0.43;0.38;0.33;0"
+      dur="18.7s" repeatCount="indefinite"/>
+  </ellipse>
+  <ellipse cx="0" cy="0" rx="5" ry="3" fill="#C4956A" opacity="0.28">
+    <animateMotion dur="19.1s" repeatCount="indefinite" begin="3.4s"
+      path="M141,-20 C132,61 114,130 172,199 S174,285 102,350"/>
+    <animateTransform attributeName="transform" type="rotate"
+      values="24;-47;-7;16;0;-7;46" dur="19.1s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0;0.28;0.33;0.28;0.23;0"
+      dur="19.1s" repeatCount="indefinite"/>
+  </ellipse>
+  <ellipse cx="0" cy="0" rx="5" ry="3" fill="#C8A060" opacity="0.49">
+    <animateMotion dur="16.5s" repeatCount="indefinite" begin="4.1s"
+      path="M362,-20 C346,55 357,128 398,214 S398,297 362,365"/>
+    <animateTransform attributeName="transform" type="rotate"
+      values="-26;25;-31;39;-59;-6;9" dur="16.5s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0;0.49;0.54;0.49;0.44;0"
+      dur="16.5s" repeatCount="indefinite"/>
+  </ellipse>
+</g>
+<!-- C1: Swaying Branches -->
+<g id="branch-right" transform-origin="0% 30%">
+  <path d="M512,85 Q498,55 501,25" stroke="#4A3828" stroke-width="2" fill="none" opacity="0.27"/>
+  <ellipse cx="495" cy="43" rx="12" ry="6" fill="#4A3828" opacity="0.19"
+    transform="rotate(-22,495,43)"/>
+  <animateTransform attributeName="transform" type="rotate"
+    values="0,512,85; 4,512,85; 0,512,85; -3,512,85; 0,512,85"
+    dur="7.9s" repeatCount="indefinite"
+    calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+</g>
+<!-- B1: Drifting Fog -->
+<g id="fog-507">
+  <defs>  <radialGradient id="fog-g507-0"><stop offset="0%" stop-color="#E8D8C4" stop-opacity="0.5"/><stop offset="40%" stop-color="#E8D8C4" stop-opacity="0.25"/><stop offset="100%" stop-color="#E8D8C4" stop-opacity="0"/></radialGradient>  <radialGradient id="fog-g507-1"><stop offset="0%" stop-color="#EDE0D0" stop-opacity="0.5"/><stop offset="40%" stop-color="#EDE0D0" stop-opacity="0.25"/><stop offset="100%" stop-color="#EDE0D0" stop-opacity="0"/></radialGradient>  <radialGradient id="fog-g507-2"><stop offset="0%" stop-color="#F5E6D3" stop-opacity="0.5"/><stop offset="40%" stop-color="#F5E6D3" stop-opacity="0.25"/><stop offset="100%" stop-color="#F5E6D3" stop-opacity="0"/></radialGradient></defs>
+  <ellipse cx="58%" cy="76%" rx="183" ry="35" fill="url(#fog-g507-0)" opacity="0.09">
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; 63,3; 126,0; 63,-3; 0,0"
+      dur="47s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+    <animate attributeName="opacity" values="0.09;0.12;0.10;0.14;0.09"
+      dur="37s" repeatCount="indefinite"/>
+  </ellipse>
+  <ellipse cx="70%" cy="75%" rx="254" ry="25" fill="url(#fog-g507-1)" opacity="0.09">
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; -51,3; -102,0; -51,-3; 0,0"
+      dur="43s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+    <animate attributeName="opacity" values="0.09;0.12;0.10;0.14;0.09"
+      dur="43s" repeatCount="indefinite"/>
+  </ellipse>
+  <ellipse cx="61%" cy="65%" rx="226" ry="49" fill="url(#fog-g507-2)" opacity="0.11">
+    <animateTransform attributeName="transform" type="translate"
+      values="0,0; 72,3; 144,0; 72,-3; 0,0"
+      dur="41s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+    <animate attributeName="opacity" values="0.11;0.14;0.12;0.15;0.11"
+      dur="47s" repeatCount="indefinite"/>
+  </ellipse>
+</g>
+<!-- D2: Sleeping Butterfly -->
+<g id="butterfly-0" transform="translate(28%, 69%)">
+  <ellipse cx="-5" cy="0" rx="5" ry="3" fill="#A08060" opacity="0.21"
+    transform="rotate(-11,-5,0)">
+    <animateTransform attributeName="transform" type="rotate"
+      values="-11,-5,0; -31,-5,0; -11,-5,0"
+      dur="13s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+  </ellipse>
+  <ellipse cx="5" cy="0" rx="5" ry="3" fill="#A08060" opacity="0.21"
+    transform="rotate(11,5,0)">
+    <animateTransform attributeName="transform" type="rotate"
+      values="11,5,0; 31,5,0; 11,5,0"
+      dur="13s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+  </ellipse>
+  <ellipse cx="0" cy="0" rx="1.5" ry="4" fill="#8B7355" opacity="0.24"/>
+</g>
+<g id="butterfly-1" transform="translate(71%, 67%)">
+  <ellipse cx="-5" cy="0" rx="4" ry="2" fill="#A08060" opacity="0.24"
+    transform="rotate(-11,-5,0)">
+    <animateTransform attributeName="transform" type="rotate"
+      values="-11,-5,0; -21,-5,0; -11,-5,0"
+      dur="13s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+  </ellipse>
+  <ellipse cx="5" cy="0" rx="4" ry="2" fill="#A08060" opacity="0.24"
+    transform="rotate(11,5,0)">
+    <animateTransform attributeName="transform" type="rotate"
+      values="11,5,0; 21,5,0; 11,5,0"
+      dur="13s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/>
+  </ellipse>
+  <ellipse cx="0" cy="0" rx="1.5" ry="4" fill="#8B7355" opacity="0.27"/>
+</g>
+<!-- D4: Cricket -->
+<g id="cricket-0" transform="translate(56%, 88%)" opacity="0.09">
+  <ellipse cx="0" cy="0" rx="4" ry="1.5" fill="#1A0F05"/>
+  <line x1="2" y1="1" x2="6" y2="4" stroke="#1A0F05" stroke-width="0.5">
+    <animateTransform attributeName="transform" type="rotate"
+      values="0,2,1; 0,2,1; 0,2,1; 0,2,1; 0,2,1; 0,2,1; 0,2,1; 6,2,1; 0,2,1; 0,2,1"
+      dur="23s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+  </line>
+  <line x1="-3" y1="-1" x2="-7" y2="-4" stroke="#1A0F05" stroke-width="0.3">
+    <animateTransform attributeName="transform" type="rotate"
+      values="0,-3,-1; 3,-3,-1; 0,-3,-1; -3,-3,-1; 0,-3,-1"
+      dur="19s" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+  </line>
+</g>
+<!-- A2: Shooting Star -->
+<g id="shooting-star" opacity="0">
+  <line x1="0" y1="0" x2="-20" y2="-8" stroke="#FFBA60" stroke-width="1.5"
+    stroke-linecap="round" opacity="0.5"/>
+  <circle cx="0" cy="0" r="2" fill="#FFF5E0" opacity="0.6"/>
+  <circle cx="0" cy="0" r="5" fill="#FFBA60" opacity="0.15"/>
+  <animateMotion dur="5.9s" begin="54s" repeatCount="indefinite"
+    path="M-25,7 Q151,60 347,96"
+    calcMode="spline" keySplines="0.2 0 0.8 1"/>
+  <animate attributeName="opacity" values="0;0;0.5;0.5;0;0;0;0;0;0;0;0;0"
+    dur="54s" begin="0s" repeatCount="indefinite"
+    calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+</g>
+<!-- Vignette: bottom_light -->
+<linearGradient id="vigLG913" x1="0" y1="0" x2="0" y2="1">
+  <stop offset="0%" stop-color="#0a0520" stop-opacity="0"/>
+  <stop offset="70%" stop-color="#0a0520" stop-opacity="0"/>
+  <stop offset="100%" stop-color="#0a0520" stop-opacity="0.40"/>
+</linearGradient>
+<rect width="512" height="512" fill="url(#vigLG913)" opacity="0.63"/>
+
+
+</svg>

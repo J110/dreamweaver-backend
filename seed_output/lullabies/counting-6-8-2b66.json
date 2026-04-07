@@ -1,0 +1,37 @@
+{
+  "id": "counting-6-8-2b66",
+  "title": "Lumi and the Silver Night",
+  "content_type": "lullaby",
+  "lullaby_type": "counting",
+  "card_label": "One by One",
+  "card_subtitle": "Counting things to sleep",
+  "age_group": "6-8",
+  "mood": "wired",
+  "language": "en",
+  "instrument": "xylophone",
+  "imagery": "sky",
+  "audio_file": "counting-6-8-2b66.mp3",
+  "cover_file": "counting-6-8-2b66_cover.svg",
+  "cover_prompt": "A tiny glowing girl with silver hair sits on a crescent moon, her hands gently cradling fireflies. The sky is deep blue with soft watercolor clouds, and a few sleepy birds nestle in the branches below.",
+  "duration_seconds": 83,
+  "lyrics": "[verse]\nOne bright star blinks up so high\nSoftly winks one sleepy eye\n\n[verse]\nOne bright star blinks up so high\nSoftly winks one sleepy eye\nTwo slow clouds drift by the moon\nGently hum a quiet tune\n\n[verse]\nOne bright star blinks up so high\nSoftly winks one sleepy eye\nTwo slow clouds drift by the moon\nGently hum a quiet tune\nThree small birds tuck wings so tight\nDreaming sweet through silver night\n\n[verse]\nOne bright star blinks up so high\nSoftly winks one sleepy eye\nTwo slow clouds drift by the moon\nGently hum a quiet tune\nThree small birds tuck wings so tight\nDreaming sweet through silver night\nFour soft winds sigh down the glen\nWhisper low and then again\nAnd that was all",
+  "style_prompt": "Children's counting lullaby, clear sweet female vocal, xylophone and music box, 66 BPM, simple repetitive melody, same tune every line, cumulative nursery rhyme structure, bright but soft, childlike, extremely predictable rhythm, xylophone accompaniment",
+  "engine": "minimax-music-v2-fal",
+  "fingerprint": {
+    "lullabyType": "counting",
+    "instrument": "xylophone",
+    "imagery": "sky",
+    "mood": "wired"
+  },
+  "created_at": "2026-04-03",
+  "character": {
+    "name": "Lumi",
+    "identity": "A gentle sky-child who watches over the night and sings the stars to sleep.",
+    "special": "Her voice carries the quiet magic of the moon, lulling even the wind to rest.",
+    "personality_tags": [
+      "Gentle",
+      "Sleepy"
+    ]
+  },
+  "about": "A soothing cumulative lullaby where the sky’s own creatures and elements drift off one by one. The repetitive, gentle counting eases busy minds into stillness, while the soft imagery of the night sky wraps little ones in warmth and calm."
+}

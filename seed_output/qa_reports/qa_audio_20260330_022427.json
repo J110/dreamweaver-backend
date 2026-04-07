@@ -1,0 +1,84 @@
+{
+  "generated_at": "2026-03-30T02:24:27.444506",
+  "summary": {
+    "total": 2,
+    "passed": 0,
+    "warned": 2,
+    "failed": 0,
+    "avg_fidelity": 0.5995,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-5fd06ef3ecaf",
+      "title": "Bubbles and the Tide’s Lullaby",
+      "median_duration": 195.91,
+      "variants": [
+        {
+          "voice": "female_3",
+          "duration_seconds": 192.26,
+          "verdict": "WARN",
+          "reasons": [
+            "marginal_fidelity (0.59)"
+          ],
+          "text_fidelity_combined": 0.5926,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 1.9,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.4171,
+            "ratio": 0.4355,
+            "word_overlap": 0.8545,
+            "word_order_score": 0.9332,
+            "combined": 0.5926
+          },
+          "transcript_snippet": "Did you know that waves have bedtimes too? Bubbles was the silliest little wave in the whole ocean. While the other waves curled up quietly near the shore, he bounced and splashed and made splish, splosh, sounds just to hear his own echo. Again! Again! He giggled, leaping over a sleepy crab who only"
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 199.56,
+          "verdict": "WARN",
+          "reasons": [
+            "marginal_fidelity (0.61)"
+          ],
+          "text_fidelity_combined": 0.6063,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 1.9,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.4198,
+            "ratio": 0.4985,
+            "word_overlap": 0.863,
+            "word_order_score": 0.9412,
+            "combined": 0.6063
+          },
+          "transcript_snippet": "Did you know that waves have bedtimes too? Bubbles was the silliest little wave in the whole ocean. While the other waves curled up quietly near the shore, he bounced and splashed and made. Xish! Splosh! Sounds just to hear his own echo. Again! Again! He giggled, leaping over a sleepy crab who only "
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Bubbles and the Tide’s Lullaby",
+      "story_id": "gen-5fd06ef3ecaf",
+      "voice": "female_3",
+      "verdict": "WARN",
+      "reasons": [
+        "marginal_fidelity (0.59)"
+      ],
+      "fidelity": 0.5926,
+      "quality_avg": 5.0
+    },
+    {
+      "story": "Bubbles and the Tide’s Lullaby",
+      "story_id": "gen-5fd06ef3ecaf",
+      "voice": "male_2",
+      "verdict": "WARN",
+      "reasons": [
+        "marginal_fidelity (0.61)"
+      ],
+      "fidelity": 0.6063,
+      "quality_avg": 5.0
+    }
+  ]
+}

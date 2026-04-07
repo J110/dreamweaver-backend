@@ -1,0 +1,37 @@
+{
+  "id": "shield-0-1-7d05",
+  "title": "Warm as Light",
+  "content_type": "lullaby",
+  "lullaby_type": "shield",
+  "card_label": "You Are Safe",
+  "card_subtitle": "A song about being protected",
+  "age_group": "0-1",
+  "mood": "anxious",
+  "language": "en",
+  "instrument": "piano",
+  "imagery": "warmth",
+  "audio_file": "shield-0-1-7d05.mp3",
+  "cover_file": "shield-0-1-7d05_cover.svg",
+  "cover_prompt": "A small child curled in a rocking chair, wrapped in a golden blanket that glows softly like moonlight, while a gentle figure with outstretched arms stands beside them, their silhouette warm and steady against a starry night sky",
+  "duration_seconds": 58,
+  "lyrics": "[verse]\nI am here, you’re wrapped so tight\nSoft as moon, warm as light\nStars won’t fade, the night is kind\nI hold your dreams inside my mind\n\n[chorus]\nI am here\nI am here\nI am here\n\n[verse]\nDark won’t stay, the dawn will rise\nClose your eyes, no need for cries\nEvery breath, my voice will keep\nSafe and sound, so soft, so deep\n\n[chorus]\nI am here\nI am here\nI am here\n\nI am still here",
+  "style_prompt": "Protective lullaby, warm female vocal, low register, simple piano chords, 62 BPM, steady, certain, grounded, reassuring, no vibrato, direct delivery, like a spoken promise set to a simple melody, minimal melodic movement, unwavering, soft piano accompaniment",
+  "engine": "minimax-music-v2-fal",
+  "fingerprint": {
+    "lullabyType": "shield",
+    "instrument": "piano",
+    "imagery": "warmth",
+    "mood": "anxious"
+  },
+  "created_at": "2026-04-01",
+  "character": {
+    "name": "Mara",
+    "identity": "A quiet guardian who sings the night into stillness",
+    "special": "Her voice carries the warmth of sunlight, even in the darkest hours",
+    "personality_tags": [
+      "Gentle",
+      "Sleepy"
+    ]
+  },
+  "about": "A reassuring lullaby that wraps little ones in safety and warmth. The repeating promise of presence calms anxious hearts, reminding children they are never alone. Gentle declarations of protection help ease bedtime fears into peaceful sleep."
+}

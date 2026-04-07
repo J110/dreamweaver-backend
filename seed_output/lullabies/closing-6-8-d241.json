@@ -1,0 +1,37 @@
+{
+  "id": "closing-6-8-d241",
+  "title": "Mira and the Silver Moon",
+  "content_type": "lullaby",
+  "lullaby_type": "closing",
+  "card_label": "Day Is Done",
+  "card_subtitle": "Wrapping up today",
+  "age_group": "6-8",
+  "mood": "angry",
+  "language": "en",
+  "instrument": "guitar",
+  "imagery": "home",
+  "audio_file": "closing-6-8-d241.mp3",
+  "cover_file": "closing-6-8-d241_cover.svg",
+  "cover_prompt": "A small girl with tousled hair curled under a patchwork quilt, her clenched fists slowly relaxing as a soft silver moonbeam spills through her bedroom window onto her pillow. The room glows with warm amber light, and a stuffed rabbit watches over her from the foot of the bed.",
+  "duration_seconds": 90,
+  "lyrics": "[verse]\nWhat a day, what a day\nShoes are off, lights are low\nPajamas soft as clouds\nWhy’d you shout, why’d you go\n\n[verse]\nYou pushed me, I pushed back\nBlocks all crashed to the floor\nWords like rocks, sharp and loud\nI don’t want to hear more\n\n[chorus]\nThe day is done, the day is done\nClose your eyes, just breathe slow\nThe day is done, the day is done\nLet the dark softly glow\n\n[verse]\nNow the blanket wraps you tight\nMoon peeks in, silver bright\nHands unclench, heart unwinds\nSafe and warm here tonight\n\n[chorus]\nThe day is done, the day is done\nClose your eyes, just breathe slow\nThe day is done, the day is done\nLet the dark softly glow\n\n[verse]\nNo more fights, no more noise\nJust the hum of the house\nWhisper soft, kiss your cheek\nLove still lingers like mouse\n\n[chorus]\nThe day is done, the day is done\nClose your eyes, just breathe slow\nThe day is done, the day is done\nLet the dark softly glow\n\nand the day is done",
+  "style_prompt": "Intimate domestic lullaby, warm female vocal, soft acoustic guitar, 64 BPM, cozy, familiar, conversational, almost speaking melodically, not performative, kitchen-to-bedroom energy, end of day warmth, fingerpicked acoustic guitar accompaniment",
+  "engine": "minimax-music-v2-fal",
+  "fingerprint": {
+    "lullabyType": "closing",
+    "instrument": "guitar",
+    "imagery": "home",
+    "mood": "angry"
+  },
+  "created_at": "2026-04-02",
+  "character": {
+    "name": "Mira",
+    "identity": "A spirited little girl learning to let go of the day’s frustrations.",
+    "special": "She carries the weight of her emotions but finds peace in the quiet of home.",
+    "personality_tags": [
+      "Gentle",
+      "Sleepy"
+    ]
+  },
+  "about": "A soothing lullaby for children who struggle to release anger at bedtime. The repeating chorus acts as a gentle mantra, helping little ones close the day with calm and security. The imagery of home and warmth reassures them that love remains, even after tough moments."
+}

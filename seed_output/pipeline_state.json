@@ -1,28 +1,97 @@
 {
-  "started_at": "2026-03-24T18:14:21.813772",
+  "started_at": "2026-04-07T01:30:01.969285",
   "args": {
     "count_stories": 1,
     "count_poems": 0,
-    "count_lullabies": 0,
-    "count_long_stories": 0,
+    "count_lullabies": 1,
+    "count_long_stories": 1,
     "lang": "en",
-    "dry_run": true,
+    "dry_run": false,
     "skip_publish": false,
     "skip_deploy_prod": false,
     "resume": false,
-    "step": "generate",
-    "mood": "anxious",
+    "step": null,
+    "mood": "wired",
     "story_type": "fable",
+    "language_level": null,
     "age": null,
     "content_type": null
   },
-  "mood": "anxious",
+  "mood": "wired",
   "story_type": "fable",
-  "last_step": "generate",
-  "effective_mood": "anxious",
+  "last_step": "clips",
+  "effective_mood": "wired",
   "effective_story_type": "fable",
-  "generated_ids": [],
+  "audio_failures": [
+    "episode_1"
+  ],
+  "episode_ids": [],
+  "generated_stories": 1,
+  "generated_poems": 0,
+  "generated_lullabies": 1,
+  "generation_warning": "Expected 2, got 1",
+  "generated_ids": [
+    "gen-0e1314bb90d8",
+    "gen-7e85423bfca3",
+    "shield-0-1-73db"
+  ],
+  "fingerprint_count": 1,
   "step_generate": "done",
-  "status": "completed",
-  "completed_at": "2026-03-24T18:14:23.279134"
+  "recovered_audio_ids": [
+    "gen-7e85423bfca3"
+  ],
+  "audio_elapsed_seconds": 457.0559952259064,
+  "step_audio": "done",
+  "qa_passed": [
+    "gen-0e1314bb90d8"
+  ],
+  "qa_failed": [
+    "gen-7e85423bfca3"
+  ],
+  "qa_failed_variants": [
+    {
+      "story_id": "gen-7e85423bfca3",
+      "voice": "male_2",
+      "reasons": [
+        "low_fidelity (0.45)"
+      ]
+    },
+    {
+      "story_id": "gen-7e85423bfca3",
+      "voice": "female_2",
+      "reasons": [
+        "low_fidelity (0.46)"
+      ]
+    }
+  ],
+  "step_qa": "done",
+  "recovered_enrich_ids": [
+    "gen-63e5fb0661c8",
+    "gen-ef0e1730cfeb",
+    "gen-2cfeb691ea27",
+    "gen-b7e9b9603308",
+    "gen-dca569097547",
+    "gen-3d992fbd15b9",
+    "gen-ccec86ba6b87",
+    "gen-30999f1d21bc",
+    "gen-720fff357423",
+    "gen-5cb2c4b14302"
+  ],
+  "step_enrich": "done",
+  "step_mood": "done",
+  "covers_flux": [
+    "gen-0e1314bb90d8",
+    "gen-7e85423bfca3"
+  ],
+  "covers_fallback": [],
+  "covers_generated": [
+    "gen-0e1314bb90d8",
+    "gen-7e85423bfca3"
+  ],
+  "covers_failed": [],
+  "step_covers": "done",
+  "step_lullabies": "done",
+  "status": "failed_at_lullabies",
+  "lullaby_elapsed_seconds": 118.73518204689026,
+  "step_sync": "done"
 }

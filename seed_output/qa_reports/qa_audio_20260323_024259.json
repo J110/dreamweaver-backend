@@ -1,0 +1,55 @@
+{
+  "generated_at": "2026-03-23T02:42:59.835971",
+  "summary": {
+    "total": 2,
+    "passed": 2,
+    "warned": 0,
+    "failed": 0,
+    "avg_fidelity": 0.8193,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-11c8a5d4ff16",
+      "title": "Flutterby and the Upside-Down Rainbow",
+      "median_duration": 108.69,
+      "variants": [
+        {
+          "voice": "female_3",
+          "duration_seconds": 115.81,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.846,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 6.6,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9548,
+            "ratio": 0.4391,
+            "word_overlap": 0.797,
+            "word_order_score": 0.8922,
+            "combined": 0.846
+          }
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 101.56,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.7926,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 6.6,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.8342,
+            "ratio": 0.4367,
+            "word_overlap": 0.814,
+            "word_order_score": 0.9146,
+            "combined": 0.7926
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": []
+}

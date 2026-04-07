@@ -1,0 +1,55 @@
+{
+  "generated_at": "2026-03-24T02:43:14.695044",
+  "summary": {
+    "total": 2,
+    "passed": 2,
+    "warned": 0,
+    "failed": 0,
+    "avg_fidelity": 0.7305,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-7a8ee4b38802",
+      "title": "Pippa and the Dancing Pumpkin Patch",
+      "median_duration": 333.86,
+      "variants": [
+        {
+          "voice": "female_3",
+          "duration_seconds": 350.73,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.7309,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 5.1,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.5782,
+            "ratio": 0.7603,
+            "word_overlap": 0.9062,
+            "word_order_score": 0.9483,
+            "combined": 0.7309
+          }
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 316.98,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.73,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 5.1,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.5769,
+            "ratio": 0.7599,
+            "word_overlap": 0.9148,
+            "word_order_score": 0.9442,
+            "combined": 0.73
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": []
+}

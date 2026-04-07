@@ -1,0 +1,27 @@
+{
+  "id": "counting-6-8-2d84",
+  "title": "Four Small Snails",
+  "content_type": "lullaby",
+  "lullaby_type": "counting",
+  "card_label": "One by One",
+  "card_subtitle": "Counting things to sleep",
+  "age_group": "6-8",
+  "mood": "wired",
+  "language": "en",
+  "instrument": "music_box",
+  "imagery": "garden",
+  "audio_file": "counting-6-8-2d84.mp3",
+  "cover_file": "counting-6-8-2d84_cover.svg",
+  "cover_prompt": "a diagonal line of four tiny golden dots on deep blue, each dot dimmer than the last, like fading lanterns in a dark garden",
+  "duration_seconds": 33,
+  "lyrics": "[verse]\nOne bright bee hums in the clover\nSoftly curled where petals cover\n\n[verse]\nOne bright bee hums in the clover\nTwo green frogs on a lily hover\n\n[verse]\nOne bright bee hums in the clover\nTwo green frogs on a lily hover\nThree white moths drift through the air\n\n[verse]\nOne bright bee hums in the clover\nTwo green frogs on a lily hover\nThree white moths drift through the air\nFour small snails on the path creep there\nAnd that was all",
+  "style_prompt": "Children's counting lullaby, clear sweet female vocal, xylophone and music box, 66 BPM, simple repetitive melody, same tune every line, cumulative nursery rhyme structure, bright but soft, childlike, extremely predictable rhythm, music box accompaniment",
+  "engine": "minimax-music-v2-fal",
+  "fingerprint": {
+    "lullabyType": "counting",
+    "instrument": "music_box",
+    "imagery": "garden",
+    "mood": "wired"
+  },
+  "created_at": "2026-03-31"
+}

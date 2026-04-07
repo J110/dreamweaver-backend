@@ -1,0 +1,37 @@
+{
+  "id": "heartbeat-0-1-21a1",
+  "title": "Mima’s Fading Hum",
+  "content_type": "lullaby",
+  "lullaby_type": "heartbeat",
+  "card_label": "Humming",
+  "card_subtitle": "Just a gentle hum",
+  "age_group": "0-1",
+  "mood": "sad",
+  "language": "en",
+  "instrument": "acapella",
+  "imagery": "none",
+  "audio_file": "heartbeat-0-1-21a1.mp3",
+  "cover_file": "heartbeat-0-1-21a1_cover.svg",
+  "cover_prompt": "A soft, round creature with velvety fur and half-closed eyes, curled in a nest of woven starlight, floating in a quiet indigo sky. The edges blur into mist, and the only light comes from a distant, dim glow, as if the world itself is breathing.",
+  "duration_seconds": 101,
+  "lyrics": "[verse]\nMmmm ooh mmmm\nHmm aah hmm\nMmm ooh ooh mmm\n\n[verse]\nMmmm aah mmm\nOoh hmm ooh\nMmmm\n\n[verse]\nMmm ooh\nHmm\n\n---",
+  "style_prompt": "Solo female vocal lullaby, humming only, no instruments, no melody variation, sustained warm tones, 58 BPM, extremely intimate, breathy, mouth-closed humming, monotone drone, like breathing set to pitch, meditative, hypnotic, no percussion, pure voice",
+  "engine": "minimax-music-v2-fal",
+  "fingerprint": {
+    "lullabyType": "heartbeat",
+    "instrument": "acapella",
+    "imagery": "none",
+    "mood": "sad"
+  },
+  "created_at": "2026-04-03",
+  "character": {
+    "name": "Mima",
+    "identity": "A gentle, shapeless guardian who hums the world to rest with the sound of a slowing heartbeat.",
+    "special": "Their voice carries the weight of every quiet moment before sleep, fading like the last breath of the day.",
+    "personality_tags": [
+      "Gentle",
+      "Sleepy"
+    ]
+  },
+  "about": "A lullaby of pure humming, designed to slow the breath and steady the heart. The drone-like rhythm mimics a mother’s heartbeat, guiding little ones into deep, peaceful sleep. Its sadness is soft, like a sigh, making space for even the heaviest eyes to close."
+}

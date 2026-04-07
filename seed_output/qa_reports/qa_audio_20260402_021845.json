@@ -1,0 +1,55 @@
+{
+  "generated_at": "2026-04-02T02:18:45.827909",
+  "summary": {
+    "total": 2,
+    "passed": 2,
+    "warned": 0,
+    "failed": 0,
+    "avg_fidelity": 0.8484,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-b7e9b9603308",
+      "title": "Buzz and the Broken Promise",
+      "median_duration": 260.45,
+      "variants": [
+        {
+          "voice": "male_2",
+          "duration_seconds": 271.2,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.8441,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 4.1,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9539,
+            "ratio": 0.4731,
+            "word_overlap": 0.9,
+            "word_order_score": 0.8248,
+            "combined": 0.8441
+          }
+        },
+        {
+          "voice": "female_3",
+          "duration_seconds": 249.7,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.8527,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 4.1,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9539,
+            "ratio": 0.482,
+            "word_overlap": 0.9091,
+            "word_order_score": 0.85,
+            "combined": 0.8527
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": []
+}

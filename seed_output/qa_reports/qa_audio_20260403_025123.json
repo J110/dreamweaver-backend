@@ -1,0 +1,84 @@
+{
+  "generated_at": "2026-04-03T02:51:23.735077",
+  "summary": {
+    "total": 2,
+    "passed": 0,
+    "warned": 1,
+    "failed": 1,
+    "avg_fidelity": 0.4674,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-64fdd62201b4",
+      "title": "Maris and the Moonlit Molt",
+      "median_duration": 396.25,
+      "variants": [
+        {
+          "voice": "male_2",
+          "duration_seconds": 377.96,
+          "verdict": "WARN",
+          "reasons": [
+            "marginal_fidelity (0.52)"
+          ],
+          "text_fidelity_combined": 0.5211,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 4.6,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.2266,
+            "ratio": 0.6435,
+            "word_overlap": 0.8893,
+            "word_order_score": 0.8893,
+            "combined": 0.5211
+          },
+          "transcript_snippet": "The ocean was very dark at the bottom. Something moved in the sand, slow and careful. Maris! The lobster stretched her claws, feeling the weight of her shell. It had been itching for days. Not like a scratch, but like a question. She had watched the older lobsters molt before. They would hide in the"
+        },
+        {
+          "voice": "female_2",
+          "duration_seconds": 414.55,
+          "verdict": "FAIL",
+          "reasons": [
+            "low_fidelity (0.41)"
+          ],
+          "text_fidelity_combined": 0.4136,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 4.6,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.2016,
+            "ratio": 0.0146,
+            "word_overlap": 0.8828,
+            "word_order_score": 0.8893,
+            "combined": 0.4136
+          },
+          "transcript_snippet": "The ocean was very dark at the bottom. Something moved in the sand, slow and careful. Maris? The lobster stretched her claws, feeling the weight of her shell. It had been itching for days. Not like a scratch, but like a question. She had watched the older lobsters molt before. They would hide in the"
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Maris and the Moonlit Molt",
+      "story_id": "gen-64fdd62201b4",
+      "voice": "male_2",
+      "verdict": "WARN",
+      "reasons": [
+        "marginal_fidelity (0.52)"
+      ],
+      "fidelity": 0.5211,
+      "quality_avg": 5.0
+    },
+    {
+      "story": "Maris and the Moonlit Molt",
+      "story_id": "gen-64fdd62201b4",
+      "voice": "female_2",
+      "verdict": "FAIL",
+      "reasons": [
+        "low_fidelity (0.41)"
+      ],
+      "fidelity": 0.4136,
+      "quality_avg": 5.0
+    }
+  ]
+}

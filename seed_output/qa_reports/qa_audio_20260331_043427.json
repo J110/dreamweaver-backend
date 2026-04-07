@@ -1,0 +1,84 @@
+{
+  "generated_at": "2026-03-31T04:34:27.968050",
+  "summary": {
+    "total": 2,
+    "passed": 0,
+    "warned": 2,
+    "failed": 0,
+    "avg_fidelity": 0.6099,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-f16e100e357b",
+      "title": "Finn and the Glowing Moss Council",
+      "median_duration": 289.35,
+      "variants": [
+        {
+          "voice": "male_2",
+          "duration_seconds": 281.15,
+          "verdict": "WARN",
+          "reasons": [
+            "marginal_fidelity (0.62)"
+          ],
+          "text_fidelity_combined": 0.6173,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 2.8,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.5235,
+            "ratio": 0.2827,
+            "word_overlap": 0.8523,
+            "word_order_score": 0.9116,
+            "combined": 0.6173
+          },
+          "transcript_snippet": "Delivery, setting the scene. The tunnel sloped downward, cool and dark. Delivery, noticing? Finn's claws clicked on wet stone. Delivery, cautious. He had never gone this far before. Delivery, wonder. Then he smelled it, something sweet like rain on warm earth. Delivery! Warm! The air hummed just a l"
+        },
+        {
+          "voice": "female_2",
+          "duration_seconds": 297.54,
+          "verdict": "WARN",
+          "reasons": [
+            "marginal_fidelity (0.60)"
+          ],
+          "text_fidelity_combined": 0.6024,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 2.8,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.5235,
+            "ratio": 0.1916,
+            "word_overlap": 0.8403,
+            "word_order_score": 0.9113,
+            "combined": 0.6024
+          },
+          "transcript_snippet": "Delivery, setting the scene. The tunnel sloped downward, cool and dark. Delivery, noticing. Finn's claws clicked on wet stone. Delivery, cautious. He had never gone this far before. Delivery, wonder. Then he smelled it, something sweet like rain on warm earth. Delivery, warm! The air hummed just a l"
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Finn and the Glowing Moss Council",
+      "story_id": "gen-f16e100e357b",
+      "voice": "male_2",
+      "verdict": "WARN",
+      "reasons": [
+        "marginal_fidelity (0.62)"
+      ],
+      "fidelity": 0.6173,
+      "quality_avg": 5.0
+    },
+    {
+      "story": "Finn and the Glowing Moss Council",
+      "story_id": "gen-f16e100e357b",
+      "voice": "female_2",
+      "verdict": "WARN",
+      "reasons": [
+        "marginal_fidelity (0.60)"
+      ],
+      "fidelity": 0.6024,
+      "quality_avg": 5.0
+    }
+  ]
+}

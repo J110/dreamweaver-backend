@@ -1,0 +1,55 @@
+{
+  "generated_at": "2026-03-31T02:11:26.116037",
+  "summary": {
+    "total": 2,
+    "passed": 2,
+    "warned": 0,
+    "failed": 0,
+    "avg_fidelity": 0.7822,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-e0da96b38fe5",
+      "title": "Stella and the Sniffing Comet",
+      "median_duration": 220.75,
+      "variants": [
+        {
+          "voice": "male_2",
+          "duration_seconds": 226.61,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.7772,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 2.7,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9203,
+            "ratio": 0.2679,
+            "word_overlap": 0.8,
+            "word_order_score": 0.7873,
+            "combined": 0.7772
+          }
+        },
+        {
+          "voice": "female_3",
+          "duration_seconds": 214.9,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.7871,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 2.7,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9203,
+            "ratio": 0.271,
+            "word_overlap": 0.8165,
+            "word_order_score": 0.8185,
+            "combined": 0.7871
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": []
+}

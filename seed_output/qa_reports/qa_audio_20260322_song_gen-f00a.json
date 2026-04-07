@@ -1,0 +1,115 @@
+{
+  "summary": {
+    "total": 2,
+    "passed": 0,
+    "warned": 1,
+    "failed": 1
+  },
+  "stories": [
+    {
+      "story_id": "gen-f00a3b8874a3",
+      "title": "Breezy and the Scented Tide",
+      "median_duration": 184.9,
+      "variants": [
+        {
+          "voice": "female_1",
+          "duration_seconds": 184.91,
+          "verdict": "WARN",
+          "reasons": [
+            "too loud: avg -13 dBFS (target ~-22)",
+            "no gaps between phrases (continuous audio)"
+          ],
+          "text_fidelity_combined": 0,
+          "quality_average": 0.76,
+          "duration_outlier": false,
+          "lullaby_qa": {
+            "dimensions": {
+              "duration_accuracy": {
+                "score": 0.999,
+                "actual": 179.9,
+                "target": 180,
+                "deviation_pct": 0.1
+              },
+              "volume_consistency": {
+                "score": 0.948,
+                "variance": 1.6,
+                "range_db": 3.4
+              },
+              "loudness": {
+                "score": 0.414,
+                "avg_dbfs": -13.2
+              },
+              "sparsity": {
+                "score": 0.3,
+                "quiet_ratio": 0.0
+              },
+              "spectral_softness": {
+                "score": 0.897,
+                "high_freq_ratio": 0.0206
+              },
+              "no_peaks": {
+                "score": 1.0,
+                "spike_count": 0
+              }
+            },
+            "quality_avg": 0.76,
+            "warnings": [
+              "too loud: avg -13 dBFS (target ~-22)",
+              "no gaps between phrases (continuous audio)"
+            ]
+          }
+        },
+        {
+          "voice": "male_1",
+          "duration_seconds": 184.91,
+          "verdict": "FAIL",
+          "reasons": [
+            "dynamic range 14dB (max 8dB recommended)",
+            "too loud: avg -13 dBFS (target ~-22)",
+            "no gaps between phrases (continuous audio)"
+          ],
+          "text_fidelity_combined": 0,
+          "quality_average": 0.693,
+          "duration_outlier": false,
+          "lullaby_qa": {
+            "dimensions": {
+              "duration_accuracy": {
+                "score": 0.999,
+                "actual": 179.9,
+                "target": 180,
+                "deviation_pct": 0.1
+              },
+              "volume_consistency": {
+                "score": 0.501,
+                "variance": 15.0,
+                "range_db": 13.8
+              },
+              "loudness": {
+                "score": 0.43,
+                "avg_dbfs": -13.4
+              },
+              "sparsity": {
+                "score": 0.3,
+                "quiet_ratio": 0.025
+              },
+              "spectral_softness": {
+                "score": 0.926,
+                "high_freq_ratio": 0.0147
+              },
+              "no_peaks": {
+                "score": 1.0,
+                "spike_count": 0
+              }
+            },
+            "quality_avg": 0.693,
+            "warnings": [
+              "dynamic range 14dB (max 8dB recommended)",
+              "too loud: avg -13 dBFS (target ~-22)",
+              "no gaps between phrases (continuous audio)"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

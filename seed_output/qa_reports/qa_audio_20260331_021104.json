@@ -1,0 +1,70 @@
+{
+  "generated_at": "2026-03-31T02:11:04.785432",
+  "summary": {
+    "total": 2,
+    "passed": 1,
+    "warned": 1,
+    "failed": 0,
+    "avg_fidelity": 0.7342,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-1ccdc4522075",
+      "title": "Bramble and the Sniffly Sunset",
+      "median_duration": 414.18,
+      "variants": [
+        {
+          "voice": "female_3",
+          "duration_seconds": 406.17,
+          "verdict": "WARN",
+          "reasons": [
+            "marginal_fidelity (0.62)"
+          ],
+          "text_fidelity_combined": 0.6205,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 1.9,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.4148,
+            "ratio": 0.6637,
+            "word_overlap": 0.8583,
+            "word_order_score": 0.911,
+            "combined": 0.6205
+          },
+          "transcript_snippet": "Delivery, setting the scene. The garden was warm in the late afternoon. Delivery, sensory! The air smelled like honey and fresh grass. Delivery, noticing! A small dragon named Bramble sat on a smooth rock. Delivery, warm! His scales were green, and his wings were still too small to fly. Bramble wigg"
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 422.18,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.8478,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 1.9,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9799,
+            "ratio": 0.2663,
+            "word_overlap": 0.8607,
+            "word_order_score": 0.9273,
+            "combined": 0.8478
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Bramble and the Sniffly Sunset",
+      "story_id": "gen-1ccdc4522075",
+      "voice": "female_3",
+      "verdict": "WARN",
+      "reasons": [
+        "marginal_fidelity (0.62)"
+      ],
+      "fidelity": 0.6205,
+      "quality_avg": 5.0
+    }
+  ]
+}

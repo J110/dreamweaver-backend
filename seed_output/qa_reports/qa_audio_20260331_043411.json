@@ -1,0 +1,70 @@
+{
+  "generated_at": "2026-03-31T04:34:11.910118",
+  "summary": {
+    "total": 2,
+    "passed": 1,
+    "warned": 1,
+    "failed": 0,
+    "avg_fidelity": 0.6196,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-ef0e1730cfeb",
+      "title": "Toby and the Sniffly Cloud",
+      "median_duration": 190.22,
+      "variants": [
+        {
+          "voice": "female_3",
+          "duration_seconds": 184.97,
+          "verdict": "WARN",
+          "reasons": [
+            "marginal_fidelity (0.52)"
+          ],
+          "text_fidelity_combined": 0.5215,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 2.8,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.4474,
+            "ratio": 0.1861,
+            "word_overlap": 0.7521,
+            "word_order_score": 0.7789,
+            "combined": 0.5215
+          },
+          "transcript_snippet": "What if a cloud was afraid of rain? One day, Toby said to a little cloud, Why are you shivering up here? The cloud whispered. I don't want to fall. Toby tilted his head. But clouds are made to rain. The cloud shook. What if I splashed too hard?Toby patted the cloud's fluffy edge. Close your eyes. Th"
+        },
+        {
+          "voice": "male_2",
+          "duration_seconds": 195.47,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.7176,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 2.8,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.8211,
+            "ratio": 0.2141,
+            "word_overlap": 0.7759,
+            "word_order_score": 0.7895,
+            "combined": 0.7176
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Toby and the Sniffly Cloud",
+      "story_id": "gen-ef0e1730cfeb",
+      "voice": "female_3",
+      "verdict": "WARN",
+      "reasons": [
+        "marginal_fidelity (0.52)"
+      ],
+      "fidelity": 0.5215,
+      "quality_avg": 5.0
+    }
+  ]
+}

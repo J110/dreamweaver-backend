@@ -1,0 +1,70 @@
+{
+  "generated_at": "2026-03-25T02:34:06.867647",
+  "summary": {
+    "total": 2,
+    "passed": 1,
+    "warned": 1,
+    "failed": 0,
+    "avg_fidelity": 0.8006,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-aa2f853f44d4",
+      "title": "Mira and the Ice That Listened",
+      "median_duration": 893.1,
+      "variants": [
+        {
+          "voice": "male_2",
+          "duration_seconds": 888.91,
+          "verdict": "WARN",
+          "reasons": [
+            "marginal_fidelity (0.66)"
+          ],
+          "text_fidelity_combined": 0.6641,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.5,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.4514,
+            "ratio": 0.7388,
+            "word_overlap": 0.9137,
+            "word_order_score": 0.9448,
+            "combined": 0.6641
+          },
+          "transcript_snippet": "The Arctic Ocean was never truly quiet. Even in the deepest hours of winter when the sun had vanished for months, the ice groaned like an old man stretching and the water murmured against the frozen shore. Mira, a young narwhal with a spiraled tusk no longer than her flipper, floated just beneath th"
+        },
+        {
+          "voice": "female_2",
+          "duration_seconds": 897.28,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.9371,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 0.5,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9946,
+            "ratio": 0.7595,
+            "word_overlap": 0.9,
+            "word_order_score": 0.9434,
+            "combined": 0.9371
+          }
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Mira and the Ice That Listened",
+      "story_id": "gen-aa2f853f44d4",
+      "voice": "male_2",
+      "verdict": "WARN",
+      "reasons": [
+        "marginal_fidelity (0.66)"
+      ],
+      "fidelity": 0.6641,
+      "quality_avg": 5.0
+    }
+  ]
+}

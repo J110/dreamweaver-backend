@@ -1,0 +1,84 @@
+{
+  "generated_at": "2026-04-01T02:02:57.050744",
+  "summary": {
+    "total": 2,
+    "passed": 0,
+    "warned": 2,
+    "failed": 0,
+    "avg_fidelity": 0.5153,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-d31a9e0324bc",
+      "title": "Lila and the Whispering Meadow",
+      "median_duration": 445.56,
+      "variants": [
+        {
+          "voice": "male_2",
+          "duration_seconds": 432.57,
+          "verdict": "WARN",
+          "reasons": [
+            "marginal_fidelity (0.51)"
+          ],
+          "text_fidelity_combined": 0.5147,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 2.9,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.2455,
+            "ratio": 0.4559,
+            "word_overlap": 0.8947,
+            "word_order_score": 0.9362,
+            "combined": 0.5147
+          },
+          "transcript_snippet": "The meadow was quiet at twilight. The air smelled like warm grass and clover. Lila stood very still, her leaves rustling softly. She listened to the crickets begin their song. It was evening, and evenings always brought the same sounds. The fireflies flickered on and off like tiny stars. Lila wished"
+        },
+        {
+          "voice": "female_2",
+          "duration_seconds": 458.56,
+          "verdict": "WARN",
+          "reasons": [
+            "marginal_fidelity (0.52)"
+          ],
+          "text_fidelity_combined": 0.516,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 2.9,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.2455,
+            "ratio": 0.4647,
+            "word_overlap": 0.8947,
+            "word_order_score": 0.9362,
+            "combined": 0.516
+          },
+          "transcript_snippet": "The meadow was quiet at twilight. The air smelled like warm grass and clover. Lila stood very still, her leaves rustling softly. She listened to the crickets begin their song. It was evening, and evenings always brought the same sounds. The fireflies flickered on and off like tiny stars. Leela wishe"
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Lila and the Whispering Meadow",
+      "story_id": "gen-d31a9e0324bc",
+      "voice": "male_2",
+      "verdict": "WARN",
+      "reasons": [
+        "marginal_fidelity (0.51)"
+      ],
+      "fidelity": 0.5147,
+      "quality_avg": 5.0
+    },
+    {
+      "story": "Lila and the Whispering Meadow",
+      "story_id": "gen-d31a9e0324bc",
+      "voice": "female_2",
+      "verdict": "WARN",
+      "reasons": [
+        "marginal_fidelity (0.52)"
+      ],
+      "fidelity": 0.516,
+      "quality_avg": 5.0
+    }
+  ]
+}

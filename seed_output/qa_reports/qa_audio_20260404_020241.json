@@ -1,0 +1,70 @@
+{
+  "generated_at": "2026-04-04T02:02:41.748157",
+  "summary": {
+    "total": 2,
+    "passed": 1,
+    "warned": 1,
+    "failed": 0,
+    "avg_fidelity": 0.7664,
+    "avg_quality": null
+  },
+  "stories": [
+    {
+      "story_id": "gen-ccec86ba6b87",
+      "title": "Mira and the Whispering Vines",
+      "median_duration": 219.41,
+      "variants": [
+        {
+          "voice": "male_2",
+          "duration_seconds": 207.15,
+          "verdict": "PASS",
+          "reasons": [],
+          "text_fidelity_combined": 0.8431,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 5.6,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.9405,
+            "ratio": 0.3141,
+            "word_overlap": 0.9248,
+            "word_order_score": 0.9331,
+            "combined": 0.8431
+          }
+        },
+        {
+          "voice": "female_4",
+          "duration_seconds": 231.66,
+          "verdict": "WARN",
+          "reasons": [
+            "marginal_fidelity (0.69)"
+          ],
+          "text_fidelity_combined": 0.6898,
+          "quality_average": 5.0,
+          "duration_outlier": false,
+          "duration_deviation_pct": 5.6,
+          "text_fidelity": {
+            "fuzzy_word_coverage": 0.632,
+            "ratio": 0.3125,
+            "word_overlap": 0.9179,
+            "word_order_score": 0.9405,
+            "combined": 0.6898
+          },
+          "transcript_snippet": "Long ago, before vines knew how to climb, there was a girl named Mira. She lived where the trees grew tall and the air felt warm like a blanket. Every morning she walked barefoot on the soft earth. Uh, coochles. Ka, ka, ka, ka, ka, ka, ka, ka, ka, ka. The vines hummed just for her. One day, Mira hea"
+        }
+      ]
+    }
+  ],
+  "failures_summary": [
+    {
+      "story": "Mira and the Whispering Vines",
+      "story_id": "gen-ccec86ba6b87",
+      "voice": "female_4",
+      "verdict": "WARN",
+      "reasons": [
+        "marginal_fidelity (0.69)"
+      ],
+      "fidelity": 0.6898,
+      "quality_avg": 5.0
+    }
+  ]
+}
