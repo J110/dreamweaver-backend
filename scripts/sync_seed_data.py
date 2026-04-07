@@ -417,6 +417,8 @@ def add_new_entries(seed_js: str, stories: list, lang_filter: str = "en") -> tup
         # Find the closing of the en array before `hi: [`
         # Handles both `},],\n  hi: [` and `},\n  ],\n  hi: [` formats
         en_close = re.search(r'(\},?\s*)\],?\s*\n\s*hi:\s*\[', seed_js)
+        if not en_close:
+            en_close = re.search(r'(\},?\s*)\],?\s*\n\};', seed_js)
         if en_close:
             insert_pos = en_close.start() + len(en_close.group(1))
             new_entries_js = ""
