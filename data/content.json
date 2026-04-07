@@ -17422,8 +17422,8 @@
     "story_type": "fable",
     "language_level": "basic",
     "created_at": "2026-04-06T01:39:14.232625",
-    "updated_at": "2026-04-06T01:39:14.232625",
-    "view_count": 0,
+    "updated_at": "2026-04-07T03:38:08.066929",
+    "view_count": 2,
     "like_count": 0,
     "save_count": 0,
     "duration": 8,
@@ -17455,7 +17455,8 @@
         "phase3": "deep_stillness"
       },
       "density": "sparse"
-    }
+    },
+    "is_saved": false
   },
   {
     "id": "warning-2-5-1348",
@@ -17684,8 +17685,8 @@
     "story_type": "fable",
     "language_level": "basic",
     "created_at": "2026-04-07T02:33:18.759775",
-    "updated_at": "2026-04-07T02:33:18.759775",
-    "view_count": 0,
+    "updated_at": "2026-04-07T03:35:36.557503",
+    "view_count": 2,
     "like_count": 0,
     "save_count": 0,
     "has_baked_music": true,
@@ -17693,7 +17694,8 @@
     "hook": "Did you know some crickets don\u2019t chirp with their legs?",
     "repeated_phrase": "The gears inside stayed quiet",
     "raw_text": "One day, Jasper said to the cricket on his windowsill \u2014\n\n[PAUSE: 1200]\n\n\"Why don\u2019t you tick when I watch you?\"\n\nThe cricket said nothing. Its brass wings gleamed in the lamplight.\n\n[MUSIC]\n\nJasper leaned closer. The cricket\u2019s legs were still. Not even a twitch.\n\n[PHRASE]The gears inside stayed quiet.[/PHRASE]\n\n[PAUSE: 800]\n\nHe turned away to sharpen his pencil. Behind him, a soft *tick-tick-tick* began.\n\n[PAUSE: 1500]\n\nJasper spun around. The cricket\u2019s legs were moving now, slow and steady.\n\n[PHRASE]The gears inside stayed quiet.[/PHRASE]\n\n[PAUSE: 1200]\n\n\"Between you and me,\" Jasper whispered, \"are you shy?\"\n\nThe cricket didn\u2019t answer. But when Jasper pretended to read his book, the ticking grew louder.\n\n[MUSIC]\n\nHe tried not blinking. The cricket froze. He tried humming. The cricket stopped. He tried holding his breath. The cricket ticked faster.\n\n[PHRASE]The gears inside stayed quiet.[/PHRASE]\n\n[PAUSE: 2000]\n\nThen Jasper had an idea. He closed his eyes and listened.\n\nThe ticking didn\u2019t stop.\n\n[PAUSE: 1200]\n\nWhen he opened his eyes, the cricket was still moving. Its brass wings shimmered.\n\n[PAUSE: 1500]\n\nJasper smiled. The cricket ticked on, steady as a heartbeat.\n\n[MUSIC]\n\nThe lamplight warmed the desk. The ticking softened.\n\nThe cricket\u2019s legs slowed.\n\n[PHRASE]The gears inside stayed quiet.[/PHRASE]\n\nJasper\u2019s eyelids grew heavy.\n\nThe cricket\u2019s wings stilled.\n\nThe room went quiet.\n\nAnd Jasper found his answer.",
-    "duration": 4
+    "duration": 4,
+    "is_saved": false
   },
   {
     "id": "shield-0-1-73db",

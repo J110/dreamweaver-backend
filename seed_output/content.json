@@ -15623,7 +15623,20 @@
     "cover": "/covers/gen-7e85423bfca3.svg",
     "musicProfile": "cosmic-voyage",
     "music_type": "ambient",
-    "audio_variants": [],
+    "audio_variants": [
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-7e85_male_2.mp3",
+        "duration_seconds": 411.97,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_2",
+        "url": "/audio/pre-gen/gen-7e85_female_2.mp3",
+        "duration_seconds": 442.64,
+        "provider": "chatterbox"
+      }
+    ],
     "author_id": "system",
     "is_generated": true,
     "generation_quality": "pending_review",
