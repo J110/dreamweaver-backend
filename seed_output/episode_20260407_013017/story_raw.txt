@@ -1,135 +1,175 @@
 [CHARACTER: Mira, curious, brave]
-[CHARACTER: Lumi, nervous, small]
+[CHARACTER: Tuku, wise, gentle]
+[CHARACTER: Lumi, quiet, shimmering]
 
 [INTRO]
-Close your eyes and imagine a sky where clouds are not just floating—they are being woven. High above the world, on a platform of silver threads, sits the Dreamloom. This is where sleep is made, stitch by stitch, from the softest wool of twilight. Tonight, the loom hums louder than ever, and something new is coming. No one knows what it is. But Mira is about to find out.
+Close your eyes and listen. Can you hear the hum of the dream weaver's loom? It's a place where every goodnight wish is spun into silver threads, where lullabies drift like fireflies, and where your very own dream is being packed into a little glowing box just for you. Tonight, the box is ready. Tonight, it's coming to find you.
 [/INTRO]
 
 [PHASE_1]
-Mira balanced on the edge of the Dreamloom’s wooden deck. Below her, stars blinked like tiny lanterns being lit one by one. The air smelled of warm milk and honey. She had come to watch the cloud-weavers at work, but something felt different tonight. The usual hum of the loom was uneven, like a song with missing notes.
+The air smells like warm milk and honey. Mira stands in the middle of the dream weaver's loom, her bare feet sinking into plush moss that glows faintly blue. Above her, the sky is a tapestry of shifting colors — pinks, purples, and golds — like a sunset that never ends. But something is different tonight.
 
-MIRA: "Did you hear that?"
-LUMI: "Hear what?"
-MIRA: "The loom. It’s stuttering."
+MIRA: "Tuku, did you hear that?"
+TUKU: "Hear what, little dreamer?"
+MIRA: "A sound. Like... like a box being wrapped."
 
-Lumi was a small cup, no bigger than Mira’s palm, made of chipped blue porcelain. She trembled in Mira’s hands. Her voice was high and wobbly.
+Tuku is a giant tortoise, his shell etched with ancient patterns that tell stories of every child who's ever slept. He blinks slowly, his eyes soft and knowing.
 
-LUMI: "Maybe it’s broken."
-MIRA: "Or maybe it’s making something new."
+TUKU: "Perhaps it is your dream, arriving."
+MIRA: "But where is it? I don't see anything."
 
-Mira stepped closer to the loom. The threads shimmered, shifting from pink to gold to silver. But one thread was different. It was dark, like ink spilled in water, and it pulsed with a slow, heavy rhythm. Mira reached out to touch it.
+Mira turns in a circle, her heart beating fast. The loom is usually alive with the chatter of dream spinners and the rustle of paper wings. But tonight, everything is still. Too still.
 
-LUMI: "Don’t! What if it’s dangerous?"
-MIRA: "It’s just a thread. [PHRASE]I can handle it.[/PHRASE]"
+MIRA: "It's too quiet. Something's wrong."
+LUMI: "Maybe it's hiding."
 
-Her fingers brushed the dark thread. A shiver ran up her arm. The thread was cold, but not like ice—more like the quiet before a storm. The water in Lumi’s cup sloshed, cloudy and restless.
+Lumi is Mira's shadow — but not like the dark kind. Lumi is made of moonlight, shifting and shimmering beside her, always just a whisper away. Lumi doesn't speak often, but when she does, it's like a secret meant only for Mira.
 
-LUMI: "Look! The water!"
-MIRA: "It’s all murky. Why?"
+MIRA: "Hiding? Why would my dream hide?"
+LUMI: "Not hiding. Waiting."
 
-Mira remembered what the cloud-weavers had taught her. When the water in your cup turns cloudy, it means your breath is too quick, too sharp. She took a deep breath in through her nose, slow and deep. Then she let it out through her mouth, soft as a whisper. The water in Lumi’s cup settled. The ripples smoothed. The cloudiness faded, leaving the water clear as glass.
+Tuku lowers his head, and Mira notices something strange. The patterns on his shell are flickering, like candle flames. Some of the lines are missing.
 
-LUMI: "Oh! It worked!"
-MIRA: "See? [PHRASE]I can handle it.[/PHRASE]"
+MIRA: "Tuku, your shell — it's breaking."
+TUKU: "Not breaking. Breathing."
 
-But then the loom groaned. A deep, creaking sound, like a door opening very far away. The dark thread trembled. Mira’s breath hitched. The water in Lumi’s cup turned cloudy again.
+He gestures with his nose toward a small, silver key lying on the moss. It wasn't there a moment ago.
 
-MIRA: "Something’s coming."
-LUMI: "Something bad?"
-MIRA: "Something... unknown."
+TUKU: "Pick it up. But breathe first."
 
-The deck beneath them began to vibrate. The stars below flickered, as if someone was blowing on them. Mira’s heart pounded. She pressed her hands to her chest and breathed. In through the nose, slow and deep. Out through the mouth, soft as a whisper. The water in Lumi’s cup cleared. The vibration stilled.
+Mira hesitates, then remembers what her mother taught her. In through the nose, slow and deep. Out through the mouth, soft as a whisper. She does it once, twice. The key begins to glow.
 
 [PAUSE: 800]
 [BREATHE]
 
-Then, the music started. It wasn’t a song, not really. It was the sound of the loom weaving itself, the threads humming as they stretched and curled. The air filled with a melody that was both new and familiar, like a lullaby you’ve known your whole life but only just remembered.
+TUKU: "It's warm. [PHRASE]That's your breath, waking it up.[/PHRASE]"
 
-[SONG_SEED: A melody like threads being woven, rising and falling with the rhythm of breathing, soft and deep and slow.]
+The key fits perfectly into a tiny lock on Tuku's shell. When Mira turns it, the missing lines reappear, brighter than before. A soft chime rings out, and the air hums with a new sound — like a box being tied with ribbon.
+
+TUKU: "Mira. The dream is coming. It's almost here."
+
+The moss beneath Mira's feet begins to vibrate. Tiny lights flicker in the distance, like fireflies dancing in a line. But they're not fireflies. There's something else.
+
+MIRA: "Tuku, what are those?"
+TUKU: "Dream carriers. They've been searching for you."
+
+The lights grow brighter, pulsing in time with Mira's heartbeat. The hum of the loom swells into a melody, soft and sweet. Like a lullaby sung by a hundred voices, the world itself is singing. The music wraps around Mira, warm and gentle. She closes her eyes and lets it carry her for a moment. When she opens them, the lights are closer. So close she can almost touch them.
+
+[SONG_SEED: A lullaby about a child waiting for their dream to find them, like fireflies leading the way home.]
 [/PHASE_1]
 
 [POST_SONG]
-The music wrapped around Mira like a blanket. The dark thread no longer pulsed. The loom’s hum settled into a steady, soothing rhythm. The stars below glowed brighter, as if they were smiling. Something was still coming. But now, it didn’t feel unknown. It felt like a promise.
+The melody fades, but the warmth remains. The dream weaver's loom is quieter now, as if it's holding its breath. The fireflies have settled into a soft glow around Mira's feet, and the air smells like lavender and sleep. Something is changing. Something is arriving.
 [/POST_SONG]
 
 [PHASE_2]
-Mira sat down on the deck, her legs crossed beneath her. Lumi nestled into the crook of her arm, the water in her cup perfectly still. The air smelled sweeter now, like lavender and warm bread. The dark thread on the loom had stopped trembling. It swayed gently, as if it was being rocked to sleep.
+Mira sits down on the moss, her legs crossed. The glow from the fireflies is soothing, like a nightlight made of stars. Lumi curls up beside her, her moonlight edges flickering softly.
 
-MIRA: "Do you feel that?"
-LUMI: "Feel what?"
-MIRA: "The air. It’s softer."
+LUMI: "I'm sleepy."
+MIRA: "Already? But the dream isn't here yet."
 
-Lumi didn’t answer. Her edges had blurred, like a drawing smudged with a thumb. Mira watched as Lumi’s blue porcelain faded into the color of the deck, her shape melting into the wood. The cup was still there, but she wasn’t awake anymore. She was dreaming.
+Lumi doesn't answer. Her glow dims, then stills — like a candle being blown out. Mira watches her, waiting for her to move, but Lumi is perfectly still. Mira reaches out and touches her. Lumi's light is warm, but she doesn't stir.
+
+MIRA: "Tuku, is Lumi okay?"
+TUKU: "She's resting. Dreams need quiet to arrive."
+
+Mira looks at Tuku. His eyes are half closed, his breathing slow and steady. The patterns on his shell are shifting again, but this time they're fading, like ink in water.
+
+MIRA: "Tuku?"
+
+His voice is softer now, like he's speaking from far away.
+
+MIRA: "Are you going to sleep too?"
+TUKU: "Soon. But not yet."
 
 [PAUSE: 1500]
 [BREATHE]
 
-Mira’s eyelids grew heavy. She lay back on the deck, her head cradled in her hands. The stars above twinkled in patterns she almost recognized. The loom’s hum was a lullaby now, steady and sure. She breathed in through her nose, slow and deep. Out through her mouth, soft as a whisper. The water in Lumi’s cup didn’t ripple. It didn’t need to. Mira’s breath was calm.
+Mira nods, even though she's not sure he can see her. She takes a deep breath — in through her nose, out through her mouth. The key in her hand glows faintly, pulsing like a heartbeat. The fireflies around her feet are still, their light steady and calm. The air is warmer now, like a blanket fresh from the dryer.
 
-The dark thread on the loom began to glow. Not bright, not harsh—just a gentle, golden light, like the first hint of sunrise. It curled around itself, weaving into a shape Mira couldn’t quite see. But she didn’t need to see it. She could feel it. It was warm. It was soft. It was coming for her.
+Mira lies back on the moss, her head cradled in her hands. The sky above her is shifting again, but slower this time, like it's stretching before a nap. The colors are softer — blues and grays, like twilight.
 
-[PHRASE]...I can handle it...[/PHRASE]
+[PHRASE]The dream is coming. The dream is coming.[/PHRASE]
 
-The deck beneath her felt like a cloud. The air wrapped around her like a hug. The stars blinked slower, softer. The loom’s hum faded into the background, like a song you know so well you don’t even hear it anymore.
+She whispers it to herself, her voice barely there. The key in her hand grows heavier. But not in a bad way. It's like it's settling into her palm, becoming part of her. She closes her fingers around it and feels something new — a quiet, a stillness, a knowing.
+
+The fireflies around her begin to dim, fading into the moss. The hum of the loom is gone, replaced by a sound like distant waves, or maybe the rhythm of her own breath. In through the nose, out through the mouth. Slow. Steady.
 
 [PAUSE: 1500]
 [BREATHE]
 
-Mira’s fingers uncurled. Her arms fell to her sides. The dark thread on the loom wove itself into a blanket, a pillow, a nest. It settled over her, light as a sigh. The stars above dimmed, one by one, tucking themselves into the sky like children into bed.
+Mira's eyelids grow heavy. She blinks once, twice, and then they stay closed. The warmth of the moss seeps into her back, her arms, her legs. It's like being wrapped in a hug from the world itself.
+
+She can still hear the waves, but they're softer now, like a whisper. Tuku's breathing is deep and slow beside her. She can feel it, like a gentle tide pulling her further into the quiet.
+
+The key in her hand is no longer glowing. It's just a key now, warm and still. She lets it go, and it sinks into the moss without a sound.
+
+The last thing Mira feels is the air on her skin, cool and soft, like a kiss goodnight. The last thing she hears is the quiet — the stillness — the peace. It's not a sound, not really. It's the absence of sound, the space between breaths, the moment before sleep.
 
 [PAUSE: 1500]
 [BREATHE]
 [/PHASE_2]
 
 [PHASE_3]
-The deck is warm.
-Mira is still.
-The loom hums low.
+Mira is lying down.
+The moss is soft.
+The air is warm.
+
+No one speaks.
+No one moves.
+Everything is still.
+
+The sky is gray.
+The fireflies are gone.
+Only the quiet remains.
 
 Her breath is slow.
-Her hands are soft.
-The thread glows gold.
+In through her nose.
+Out through her mouth.
 
-No more words.
-No more thoughts.
-Just the hum.
+The moss holds her.
+The world holds her.
 
-The air is sweet.
-The stars blink slow.
-The deck is soft.
+Tuku is asleep.
+Lumi is asleep.
+Mira is almost there.
 
-Her eyes close.
-The thread wraps.
-The glow fades.
+Her eyes are closed.
+Her hands are still.
+Her heart is quiet.
 
-Warm.
-Still.
-Quiet.
+The air is soft.
+The night is soft.
+The dream is soft.
 
-The hum softens.
-The stars rest.
-The air stills.
+No sound.
+No light.
+No need.
 
-[PHRASE]...I can...[/PHRASE]
+Just warmth.
+Just stillness.
+Just peace.
 
-The deck rises.
-The thread settles.
-The glow dims.
+The moss cradles her.
+The night wraps her.
+The sleep finds her.
 
-Her breath slows.
-Her hands relax.
-The hum fades.
+[PHRASE]The dream is coming...[/PHRASE]
 
-Warm.
-Still.
-Soft.
+Her breath is slow.
+Her body is heavy.
+Her mind is quiet.
 
-The stars sleep.
-The loom rests.
-The thread dreams.
+Calm.
 
-[WHISPER]Her breath... slow... deep...[/WHISPER]
-[WHISPER]The thread... wraps... tight...[/WHISPER]
-[WHISPER]The glow... fades...[/WHISPER]
-[WHISPER]...sleep...[/WHISPER]
+No thoughts.
+No words.
+No time.
+
+Just the moss.
+Just the air.
+Just the quiet.
+
+[WHISPER]Sleep comes... quiet... warm...[/WHISPER]
+[WHISPER]Warm... still... quiet...[/WHISPER]
 [/PHASE_3]
