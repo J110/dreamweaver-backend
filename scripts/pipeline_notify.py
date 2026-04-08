@@ -153,6 +153,7 @@ def _build_html(state: dict, log_file: str = "", elapsed: float = 0) -> str:
     bb = state.get("before_bed", {})
     if bb:
         bb_age = bb.get("age", "?")
+        bb_mood = bb.get("mood", "?")
         bb_items = []
         if bb.get("funny_short"):
             bb_items.append(f'<li style="color:#22c55e;">😂 Funny Short: {bb["funny_short"]}</li>')
@@ -167,7 +168,7 @@ def _build_html(state: dict, log_file: str = "", elapsed: float = 0) -> str:
         else:
             bb_items.append('<li style="color:#ef4444;">✨ Musical Poem: failed</li>')
         bb_list = "".join(bb_items)
-        before_bed_html = f"<h3>🌙 Before Bed (Ages {bb_age})</h3><ul style='list-style:none;padding-left:0;'>{bb_list}</ul>"
+        before_bed_html = f"<h3>🌙 Before Bed (Ages {bb_age}, {bb_mood})</h3><ul style='list-style:none;padding-left:0;'>{bb_list}</ul>"
 
     # Log tail on failure
     log_html = ""

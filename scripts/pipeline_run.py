@@ -1555,6 +1555,26 @@ def _pick_before_bed_age() -> str:
     return ages[day % 3]
 
 
+# Before-bed mood weights — biased towards fun/energetic since this is
+# pre-sleep entertainment content (funny shorts, silly songs, poems).
+# Stories use a separate deficit-based mood selector.
+_BEFORE_BED_MOOD_WEIGHTS = {
+    "wired":   35,   # high energy, bouncy — natural fit for silly songs
+    "curious": 30,   # groovy, catchy — great for observation songs & question poems
+    "calm":    15,   # warm, cozy — good for settling-down poems
+    "angry":   10,   # punchy, firm — protest anthems ("not fair!")
+    "sad":      5,   # tender, gentle — occasional soft variety
+    "anxious":  5,   # reassuring, steady — occasional cozy variety
+}
+
+
+def _pick_before_bed_mood() -> str:
+    """Pick a mood for before-bed content, weighted towards energetic/fun."""
+    moods = list(_BEFORE_BED_MOOD_WEIGHTS.keys())
+    weights = list(_BEFORE_BED_MOOD_WEIGHTS.values())
+    return random.choices(moods, weights=weights, k=1)[0]
+
+
 def step_before_bed(args, state: dict) -> bool:
     """Generate 1 funny short + 1 silly song + 1 musical poem for today's age group."""
     logger.info("\n╔══════════════════════════════════════╗")
@@ -1563,16 +1583,20 @@ def step_before_bed(args, state: dict) -> bool:
 
     if args.dry_run:
         age = _pick_before_bed_age()
-        logger.info("  [DRY RUN] Would generate 1 funny short + 1 silly song + 1 poem for ages %s", age)
+        mood = _pick_before_bed_mood()
+        logger.info("  [DRY RUN] Would generate for ages %s, mood %s: 1 funny short + 1 silly song + 1 poem", age, mood)
         state["step_before_bed"] = "dry_run"
         save_state(state)
         return True
 
     age = _pick_before_bed_age()
-    mood = state.get("mood") or args.mood or "wired"
+    # Before-bed uses its own mood selection — independent from story mood.
+    # Funny shorts don't use mood. Songs & poems each handle all 6 moods
+    # with appropriate energy/tempo adjustments.
+    mood = _pick_before_bed_mood()
     logger.info("  Today's age group: %s  |  Mood: %s", age, mood)
 
-    before_bed_results = {"age": age, "funny_short": None, "silly_song": None, "poem": None}
+    before_bed_results = {"age": age, "mood": mood, "funny_short": None, "silly_song": None, "poem": None}
     all_ok = True
 
     # ── 1. Funny Short (script → TTS → mix) ──────────────────────────
