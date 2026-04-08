@@ -148,6 +148,27 @@ def _build_html(state: dict, log_file: str = "", elapsed: float = 0) -> str:
             covers_items += f'<li style="color:#ef4444;">❌ {t} <span style="color:#9ca3af;">(no cover)</span></li>'
         covers_html = f"<h3>🎨 Cover Status</h3><ul style='list-style:none;padding-left:0;'>{covers_items}</ul>"
 
+    # Before Bed section
+    before_bed_html = ""
+    bb = state.get("before_bed", {})
+    if bb:
+        bb_age = bb.get("age", "?")
+        bb_items = []
+        if bb.get("funny_short"):
+            bb_items.append(f'<li style="color:#22c55e;">😂 Funny Short: {bb["funny_short"]}</li>')
+        else:
+            bb_items.append('<li style="color:#ef4444;">😂 Funny Short: failed</li>')
+        if bb.get("silly_song"):
+            bb_items.append(f'<li style="color:#22c55e;">🎵 Silly Song: {bb["silly_song"]}</li>')
+        else:
+            bb_items.append('<li style="color:#ef4444;">🎵 Silly Song: failed</li>')
+        if bb.get("poem"):
+            bb_items.append(f'<li style="color:#22c55e;">✨ Musical Poem: {bb["poem"]}</li>')
+        else:
+            bb_items.append('<li style="color:#ef4444;">✨ Musical Poem: failed</li>')
+        bb_list = "".join(bb_items)
+        before_bed_html = f"<h3>🌙 Before Bed (Ages {bb_age})</h3><ul style='list-style:none;padding-left:0;'>{bb_list}</ul>"
+
     # Log tail on failure
     log_html = ""
     if not is_success and log_file:
@@ -171,6 +192,7 @@ def _build_html(state: dict, log_file: str = "", elapsed: float = 0) -> str:
         </table>
         {titles_html}
         {covers_html}
+        {before_bed_html}
         {log_html}
         <hr style="border:none;border-top:1px solid #e5e7eb;margin:16px 0;" />
         <p style="font-size:12px;color:#9ca3af;">
