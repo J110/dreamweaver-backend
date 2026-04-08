@@ -250,15 +250,31 @@ FUNNY_INTRO_CANDIDATES = [
 
 # ── Comedy Bed ───────────────────────────────────────────────────
 
-COMEDY_BED_PROMPT = (
+COMEDY_BED_BASE_PROMPT = (
     "2 minute gentle comedy underscore for a children's bedtime story, "
     "soft pizzicato and light playful percussion, warm and quiet, "
     "mischievous but not chaotic, like background music in a Pixar short, "
     "keeps a gentle bouncy pulse throughout, 95 BPM, "
     "NOT loud NOT intense NOT dramatic, "
     "the musical equivalent of a warm cheeky smile, "
-    "soft enough to speak over easily"
+    "soft enough to speak over easily, "
 )
+
+# Keep old name for backward compat (legacy callers)
+COMEDY_BED_PROMPT = COMEDY_BED_BASE_PROMPT
+
+
+def generate_comedy_bed(mood: str = None, duration: int = 120) -> AudioSegment:
+    """Generate a mood-specific comedy bed via CassetteAI.
+
+    Each episode gets its own bed that matches the child's emotional state:
+    - anxious → steady, reassuring, predictable underscore
+    - wired → light, bouncy, playful underscore
+    - sad → tender, warm, kind underscore
+    """
+    mood_desc = COMEDY_BED_MOOD.get(mood, "") if mood else ""
+    prompt = COMEDY_BED_BASE_PROMPT + mood_desc
+    return generate_cassetteai(prompt, duration)
 
 
 # ── Diversity System ─────────────────────────────────────────────
@@ -365,6 +381,58 @@ CHARACTER_DESCRIPTIONS = {
     "melody": "Melody — the narrator. Warm, conspiratorial with the child, occasionally breaks composure.",
 }
 
+
+# ── Mood Mapping ────────────────────────────────────────────────
+# Mood filters narrow the eligible pools BEFORE diversity rotation.
+# An anxious child gets safe, predictable dynamics — not chaos.
+# A wired child gets energy-channelling topics. Mood → therapeutic comedy.
+
+MOOD_TO_TOPICS = {
+    "wired":   ["technology", "imagination", "food", "social"],
+    "curious": ["nature", "imagination", "school", "technology"],
+    "calm":    ["household", "food", "nature", "clothing"],
+    "sad":     ["social", "food", "household", "clothing"],
+    "anxious": ["household", "nature", "food", "bedtime"],
+    "angry":   ["social", "school", "technology", "household"],
+}
+
+MOOD_TO_DYNAMICS = {
+    "wired":   ["competition", "usual", "alliance"],
+    "curious": ["misunderstanding", "secret", "helper"],
+    "calm":    ["helper", "misunderstanding", "secret"],
+    "sad":     ["helper", "reversal", "secret"],
+    "anxious": ["reversal", "helper", "usual"],
+    "angry":   ["usual", "competition", "alliance"],
+}
+
+MOOD_COMEDY_NEED = {
+    "wired":   "channels their energy into laughter, tires them out gently",
+    "curious": "feeds their wondering with absurd explanations",
+    "calm":    "keeps the warmth going, gentle smiles not big laughs",
+    "sad":     "shows kindness through humor, characters caring badly but sincerely",
+    "anxious": "feels predictable and safe, no surprises, comedy in the familiar",
+    "angry":   "validates the feeling then releases it, frustration becomes funny",
+}
+
+MOOD_CHARACTER_PREFERENCE = {
+    "wired":   "boomy",
+    "curious": "shadow",
+    "calm":    "sunny",
+    "sad":     "pip",
+    "anxious": "sunny",
+    "angry":   "boomy",
+}
+
+COMEDY_BED_MOOD = {
+    "wired":   "light bouncy comedy underscore, playful and mischievous",
+    "curious": "gentle wondering comedy underscore, light and spacious",
+    "calm":    "warm soft comedy underscore, cozy mischief",
+    "sad":     "tender gentle comedy underscore, warm and kind",
+    "anxious": "steady reassuring comedy underscore, predictable and safe",
+    "angry":   "firm grounding comedy underscore, solid rhythm settling",
+}
+
+
 # Legacy fallback seeds (used when --fresh is not specified)
 EPISODE_SEEDS = {
     "2-5": {
@@ -426,18 +494,24 @@ def _pick_avoiding_recent(episodes: list, field: str, options: list, recency: in
     return random.choice(available)
 
 
-def select_episode_params(existing_episodes: list, age_group: str = None) -> dict:
+def select_episode_params(existing_episodes: list, age_group: str = None,
+                          mood: str = None) -> dict:
     """Select all parameters for next episode, ensuring variety across every dimension.
 
+    When mood is provided, topics and dynamics are filtered to mood-appropriate
+    pools BEFORE applying recency checks. This ensures an anxious child never
+    gets a chaotic "competition" dynamic, and a sad child gets warm topics.
+
     Diversity tracking:
-    | Dimension       | Pool | Recency | What It Prevents                        |
-    |-----------------|------|---------|-----------------------------------------|
-    | Dynamic         |  7   |    5    | Same joke structure every night          |
-    | Character combo | 3-4  |    3    | Same two characters every night          |
-    | Topic           | 10   |    5    | Same subject every night                 |
-    | Melody's role   |  6   |    4    | Same "So I heard..." opening every night |
-    | Ending type     |  7   |    4    | Same "fell asleep" ending every night    |
-    | Age group       |  3   |    3    | Same age group every night               |
+    | Dimension       | Pool     | Recency | What It Prevents                        |
+    |-----------------|----------|---------|-----------------------------------------|
+    | Dynamic         | 3-7      |    5    | Same joke structure every night          |
+    | Character combo | 3-4      |    3    | Same two characters every night          |
+    | Topic           | 4-10     |    5    | Same subject every night                 |
+    | Melody's role   |  6       |    4    | Same "So I heard..." opening every night |
+    | Ending type     |  7       |    4    | Same "fell asleep" ending every night    |
+    | Age group       |  3       |    3    | Same age group every night               |
+    | Mood            | passed in|    —    | Filters topics + dynamics therapeutically |
     """
     # Age group rotation
     if age_group is None:
@@ -446,13 +520,34 @@ def select_episode_params(existing_episodes: list, age_group: str = None) -> dic
         age_group = next((a for a in age_options if a not in recent_ages),
                          random.choice(age_options))
 
-    # Select each dimension avoiding recent repeats
     # Filter existing episodes to same age group for combo tracking
     same_age = [ep for ep in existing_episodes if ep.get("age_group") == age_group]
 
-    dynamic = _pick_avoiding_recent(existing_episodes, "dynamic", DYNAMICS, recency=5)
+    # ── Mood-filtered pools ──────────────────────────────────────
+    # Narrow topics and dynamics by mood BEFORE diversity rotation.
+    eligible_topics = MOOD_TO_TOPICS.get(mood, TOPICS) if mood else TOPICS
+    eligible_dynamics = MOOD_TO_DYNAMICS.get(mood, DYNAMICS) if mood else DYNAMICS
+
+    dynamic = _pick_avoiding_recent(existing_episodes, "dynamic", eligible_dynamics, recency=5)
+    topic = _pick_avoiding_recent(existing_episodes, "topic", eligible_topics, recency=5)
+
+    # Character combo — prefer mood-preferred character when possible
     combo = _pick_avoiding_recent(same_age, "character_combo", CHARACTER_COMBOS[age_group], recency=3)
-    topic = _pick_avoiding_recent(existing_episodes, "topic", TOPICS, recency=5)
+    if mood:
+        preferred = MOOD_CHARACTER_PREFERENCE.get(mood)
+        if preferred:
+            # Check if preferred character appears in ANY combo for this age group
+            all_chars = {c for combo_list in CHARACTER_COMBOS[age_group] for c in combo_list}
+            if preferred in all_chars and preferred not in combo:
+                # Try to find a combo that includes the preferred character
+                preferred_combos = [
+                    cb for cb in CHARACTER_COMBOS[age_group] if preferred in cb
+                ]
+                if preferred_combos:
+                    combo = _pick_avoiding_recent(
+                        same_age, "character_combo", preferred_combos, recency=3,
+                    )
+
     melody_role = _pick_avoiding_recent(existing_episodes, "melody_role", MELODY_ROLES, recency=4)
     ending = _pick_avoiding_recent(existing_episodes, "ending", ENDINGS, recency=4)
 
@@ -461,6 +556,7 @@ def select_episode_params(existing_episodes: list, age_group: str = None) -> dic
 
     return {
         "age_group": age_group,
+        "mood": mood,
         "dynamic": dynamic,
         "characters": characters,
         "character_combo": combo,
@@ -506,6 +602,10 @@ EPISODE DYNAMIC: {dynamic}
 TOPIC: {topic}
 The conversation is about something related to "{topic}".
 
+MOOD: {mood}
+This episode is for a child feeling {mood}.
+The comedy should: {mood_comedy_need}
+
 ENDING: The episode ends with: {ending_description}
 
 CHARACTER CATCHPHRASES (these repeat every episode — use 1-2 per character):
@@ -513,6 +613,7 @@ CHARACTER CATCHPHRASES (these repeat every episode — use 1-2 per character):
 - Pip: "I said this would happen. I SAID."
 - Shadow: "According to my calculations... hmm."
 - Sunny: "This is fine! This is completely fine."
+- Melody: "And that's when things got... interesting."
 
 Everything else Melody says — intros, outros, child-address
 moments — must be UNIQUE to this episode. Do not reuse
@@ -595,6 +696,10 @@ Pick ONLY from this list — do NOT invent new ones:
 - [SFX: pillow_thud] — giving up
 - [SFX: slide_whistle_up] — escalating absurdity
 - [SFX: gear_clink] — brain working (incorrectly)
+- [SFX: record_scratch] — sudden realization
+- [SFX: sad_trombone] — comedy fail moment
+- [SFX: deflate] — confidence slowly leaking out
+- [SFX: blink_blink] — stunned silence, two cartoon blinks
 
 SFX never carry information. They punctuate emotion.
 The episode MUST make complete sense with ALL SFX removed.
@@ -780,7 +885,8 @@ def generate_script(age_group: str, setup: str, characters: list,
     )
 
     if params:
-        # Full diversity-aware prompt
+        # Full diversity-aware prompt with mood
+        ep_mood = params.get("mood", "calm")
         prompt = FUNNY_SHORT_CONTENT_PROMPT.format(
             age_group=age_group,
             characters_with_descriptions=chars_with_desc,
@@ -790,6 +896,8 @@ def generate_script(age_group: str, setup: str, characters: list,
             dynamic_description=DYNAMIC_DESCRIPTIONS.get(
                 params.get("dynamic", "usual"), ""),
             topic=params.get("topic", "bedtime"),
+            mood=ep_mood,
+            mood_comedy_need=MOOD_COMEDY_NEED.get(ep_mood, "gentle smiles, warm comedy"),
             ending_description=ENDING_DESCRIPTIONS.get(
                 params.get("ending", "falls_asleep"), ""),
         )
@@ -802,6 +910,8 @@ def generate_script(age_group: str, setup: str, characters: list,
             dynamic="usual",
             dynamic_description=DYNAMIC_DESCRIPTIONS["usual"],
             topic="bedtime",
+            mood="calm",
+            mood_comedy_need=MOOD_COMEDY_NEED["calm"],
             ending_description=ENDING_DESCRIPTIONS["falls_asleep"],
         )
 
@@ -1088,6 +1198,10 @@ BASE_SFX_SOUNDS = {
     "gentle_crash":       "soft cartoon tumble sequence",
     "gear_clink":         "tiny mechanical whirring and clicking",
     "gentle_wind":        "soft empty breeze of nothingness",
+    "record_scratch":     "vinyl record scratch stop, sudden halt",
+    "sad_trombone":       "wah wah wah comedy fail trombone",
+    "deflate":            "slow cartoon deflating, air leaking out",
+    "blink_blink":        "two cartoon blink sounds in stunned silence",
 }
 
 
@@ -1442,17 +1556,21 @@ def generate_episode(age_group: str, setup: str, characters: list,
         params: Full diversity params from select_episode_params(). If provided,
                 all dimensions are injected into the prompt and saved in metadata.
     """
+    ep_mood = params.get("mood") if params else None
+
     print(f"\n{'='*60}")
     print(f"Generating funny short for ages {age_group}")
     if params:
         print(f"  Dynamic: {params.get('dynamic')} | Topic: {params.get('topic')}")
         print(f"  Melody: {params.get('melody_role')} | Ending: {params.get('ending')}")
+        if ep_mood:
+            print(f"  Mood: {ep_mood}")
     print(f"{'='*60}")
 
     EPISODES_DIR.mkdir(parents=True, exist_ok=True)
 
     # 1. Generate script
-    print("  [1/5] Generating script...")
+    print("  [1/6] Generating script...")
     raw_response = generate_script(age_group, setup, characters, params=params)
     parsed = parse_funny_short(raw_response)
 
@@ -1460,18 +1578,16 @@ def generate_episode(age_group: str, setup: str, characters: list,
     print(f"  Characters: {parsed['characters']}")
     print(f"  Segments: {len(parsed['segments'])}")
 
-    # 2. Generate comedy bed
-    print("  [2/5] Generating comedy bed...")
-    bed_path = EPISODES_DIR / f"bed_{age_group}.wav"
-    if not bed_path.exists():
-        try:
-            bed = generate_cassetteai(COMEDY_BED_PROMPT, 120)
-            bed.export(str(bed_path), format="wav")
-            print(f"    ✓ Comedy bed: {len(bed) / 1000:.0f}s")
-        except Exception as e:
-            print(f"    ✗ Comedy bed failed: {e}")
-    else:
-        print(f"    Comedy bed exists, reusing")
+    # 2. Generate mood-specific comedy bed (unique per episode)
+    print(f"  [2/6] Generating comedy bed (mood={ep_mood or 'generic'})...")
+    bed_path = EPISODES_DIR / f"bed_{age_group}_{ep_mood or 'generic'}_{uuid.uuid4().hex[:4]}.wav"
+    try:
+        bed = generate_comedy_bed(mood=ep_mood)
+        bed.export(str(bed_path), format="wav")
+        print(f"    ✓ Comedy bed: {len(bed) / 1000:.0f}s")
+    except Exception as e:
+        print(f"    ✗ Comedy bed failed: {e}")
+        bed_path = Path("/dev/null")  # Assembly handles missing bed gracefully
 
     # 3a. Generate context-aware SFX for this episode
     print("  [3/6] Generating context-aware SFX...")
@@ -1523,12 +1639,13 @@ def generate_episode(age_group: str, setup: str, characters: list,
     print("  [6/6] Generating cover...")
     cover_path = generate_cover(parsed["title"], episode_id, characters=characters)
 
-    # Save metadata — includes all diversity dimensions for tracking
+    # Save metadata — includes all diversity dimensions + mood for tracking
     metadata = {
         "id": episode_id,
         "title": parsed["title"],
         "content_type": "funny_short_v2",
         "age_group": age_group,
+        "mood": ep_mood or "calm",
         "characters": characters,
         "character_combo": params.get("character_combo", characters) if params else characters,
         "dynamic": params.get("dynamic", "usual") if params else "usual",
@@ -1538,6 +1655,7 @@ def generate_episode(age_group: str, setup: str, characters: list,
         "audio_file": f"{episode_id}.mp3",
         "audio_file_nomusic": f"{episode_id}_nomusic.mp3",
         "cover_file": cover_path.name if cover_path else "",
+        "sfx_count": len(episode_sfx),
         "duration_seconds": int(len(with_music) / 1000),
         "script": raw_response,
         "created_at": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
@@ -1669,8 +1787,14 @@ def validate_episode_variety(new_script: str, recent_episodes: list) -> tuple:
     return True, "OK"
 
 
-def generate_all_episodes(fresh: bool = False):
-    """Generate 3 episodes (one per age group) with full diversity tracking."""
+def generate_all_episodes(fresh: bool = False, mood: str = None):
+    """Generate 3 episodes (one per age group) with full diversity tracking.
+
+    Args:
+        fresh: Use Mistral to generate fresh seeds (vs hardcoded EPISODE_SEEDS).
+        mood: Child's current mood — filters topics, dynamics, and character
+              preference therapeutically. If None, no mood filtering is applied.
+    """
     results = []
     existing = _load_existing_episodes()
 
@@ -1688,14 +1812,16 @@ def generate_all_episodes(fresh: bool = False):
                 import traceback
                 traceback.print_exc()
     else:
-        # Diversity-tracked mode
+        # Diversity-tracked mode with mood filtering
         for age in ["2-5", "6-8", "9-12"]:
-            print(f"\n  Selecting diverse params for {age}...")
-            params = select_episode_params(existing, age_group=age)
+            print(f"\n  Selecting diverse params for {age} (mood={mood or 'none'})...")
+            params = select_episode_params(existing, age_group=age, mood=mood)
 
             print(f"  → Dynamic: {params['dynamic']}, Topic: {params['topic']}")
             print(f"  → Characters: {params['characters']}")
             print(f"  → Melody role: {params['melody_role']}, Ending: {params['ending']}")
+            if mood:
+                print(f"  → Mood: {mood} → {MOOD_COMEDY_NEED.get(mood, '')}")
 
             print(f"\n  Generating fresh seed for {age}...")
             setup = generate_fresh_seed(params)
@@ -1713,11 +1839,13 @@ def generate_all_episodes(fresh: bool = False):
                     if not is_valid:
                         print(f"  ⚠️  Variety check: {detail}")
                         print(f"  Regenerating with different params...")
-                        # Change dynamic and topic, try once more
+                        # Change dynamic and topic (still mood-filtered), try once more
+                        eligible_dynamics = MOOD_TO_DYNAMICS.get(mood, DYNAMICS) if mood else DYNAMICS
+                        eligible_topics = MOOD_TO_TOPICS.get(mood, TOPICS) if mood else TOPICS
                         params["dynamic"] = _pick_avoiding_recent(
-                            existing + [result], "dynamic", DYNAMICS, recency=7)
+                            existing + [result], "dynamic", eligible_dynamics, recency=7)
                         params["topic"] = _pick_avoiding_recent(
-                            existing + [result], "topic", TOPICS, recency=7)
+                            existing + [result], "topic", eligible_topics, recency=7)
                         setup = generate_fresh_seed(params)
                         result = generate_episode(
                             age, setup, params["characters"], params=params,
@@ -1742,17 +1870,23 @@ def generate_all_episodes(fresh: bool = False):
 # ═══════════════════════════════════════════════════════════════════
 
 def main():
+    valid_moods = list(MOOD_TO_TOPICS.keys())
+
     parser = argparse.ArgumentParser(
         description="Generate v2 funny short test episodes (calm comedy redesign)"
     )
     parser.add_argument("--sfx", action="store_true",
-                        help="Generate SFX library (14 files)")
+                        help="Generate SFX library (18 files)")
     parser.add_argument("--intro-outro", action="store_true",
                         help="Generate 5 intro/outro candidates")
     parser.add_argument("--episodes", action="store_true",
                         help="Generate 3 test episodes")
     parser.add_argument("--fresh", action="store_true",
                         help="Generate fresh episode seeds via Mistral (use with --episodes)")
+    parser.add_argument("--mood", choices=valid_moods, default=None,
+                        help="Child's mood — filters topics, dynamics, characters, "
+                             "and comedy bed to be therapeutically appropriate. "
+                             f"Choices: {', '.join(valid_moods)}")
     parser.add_argument("--all", action="store_true",
                         help="Run all steps in sequence")
     parser.add_argument("--force", action="store_true",
@@ -1762,6 +1896,9 @@ def main():
     if not any([args.sfx, args.intro_outro, args.episodes, args.all]):
         parser.print_help()
         sys.exit(1)
+
+    if args.mood:
+        print(f"\n🎭 Mood: {args.mood} → {MOOD_COMEDY_NEED.get(args.mood, '')}")
 
     if args.all or args.sfx:
         print("\n" + "=" * 60)
@@ -1779,7 +1916,7 @@ def main():
         print("\n" + "=" * 60)
         print("STEP 3: Generating Test Episodes")
         print("=" * 60)
-        generate_all_episodes(fresh=args.fresh or args.all)
+        generate_all_episodes(fresh=args.fresh or args.all, mood=args.mood)
 
     print("\nDone!")
 
