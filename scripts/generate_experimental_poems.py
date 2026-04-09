@@ -822,6 +822,12 @@ def generate_poem(age_group: str, poem_type: str, mood: str = "calm",
     meta_path.write_text(json.dumps(meta, indent=2, ensure_ascii=False))
     print(f"  ✓ Saved: {meta_path.name}")
 
+    # Also write to data/poems/ so the API can serve it immediately
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    data_path = DATA_DIR / f"{poem_id}.json"
+    data_path.write_text(json.dumps(meta, indent=2, ensure_ascii=False))
+    print(f"  ✓ Published: {data_path.name}")
+
     return meta
 
 
