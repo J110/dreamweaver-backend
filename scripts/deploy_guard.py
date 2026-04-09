@@ -968,9 +968,19 @@ def cmd_snapshot(args):
     print(f"\n  ✅ Run your deploy now, then run: python3 scripts/deploy_guard.py verify\n")
 
 
-def check_radio_health():
-    """Check radio system health: process, state file, content availability.
+def _ssh_run(cmd, timeout=30):
+    """Run a command on the GCP server via SSH. Returns (stdout, returncode)."""
+    result = subprocess.run(
+        SSH_CMD + [cmd],
+        capture_output=True, text=True, timeout=timeout,
+    )
+    return result.stdout.strip(), result.returncode
 
+
+def check_radio_health():
+    """Check radio system health on the GCP server via SSH.
+
+    All checks run remotely because the radio process lives on the server.
     Returns a list of issue strings (empty = all healthy).
     """
     issues = []
@@ -979,14 +989,11 @@ def check_radio_health():
     print("  RADIO HEALTH CHECK")
     print(f"{'='*60}\n")
 
-    # 1. Radio process alive?
+    # 1. Radio process alive? (check on server via SSH)
     try:
-        result = subprocess.run(
-            ["pgrep", "-f", "radio_controller.py"],
-            capture_output=True, text=True,
-        )
-        if result.returncode == 0 and result.stdout.strip():
-            pids = result.stdout.strip().split("\n")
+        out, rc = _ssh_run("pgrep -f radio_controller.py")
+        if rc == 0 and out:
+            pids = out.split("\n")
             print(f"  ✅ Radio process running (PID: {', '.join(pids)})")
         else:
             msg = "Radio process NOT running (radio_controller.py not found)"
@@ -997,48 +1004,46 @@ def check_radio_health():
         print(f"  ❌ {msg}")
         issues.append(msg)
 
-    # 2. Radio state file intact?
-    state_path = BASE_DIR / "radio" / "radio_state.json"
-    if state_path.exists():
-        try:
-            state = json.loads(state_path.read_text())
-            played = len(state.get("play_history", []))
-            flow_idx = state.get("flow_index", 0)
+    # 2. Radio state file intact? (check on server via SSH)
+    try:
+        out, rc = _ssh_run(
+            "python3 -c \""
+            "import json; "
+            "d = json.load(open('/opt/dreamweaver-backend/radio/radio_state.json')); "
+            "print(len(d.get('play_history', [])), d.get('flow_index', 0))"
+            "\""
+        )
+        if rc == 0 and out:
+            parts = out.split()
+            played, flow_idx = parts[0], parts[1]
             print(f"  ✅ Radio state file OK (history: {played} tracks, flow index: {flow_idx})")
-        except (json.JSONDecodeError, Exception) as e:
-            msg = f"Radio state file CORRUPT: {e}"
+        else:
+            msg = "Radio state file missing or corrupt"
             print(f"  ❌ {msg}")
             issues.append(msg)
-    else:
-        print(f"  ⚠️  Radio state file not found (will be created on next start)")
+    except Exception as e:
+        msg = f"Could not check radio state: {e}"
+        print(f"  ❌ {msg}")
+        issues.append(msg)
 
-    # 3. Content availability — run radio's load logic to check playable tracks
-    #    We import load_all_content from radio_controller to reuse its exact logic
+    # 3. Content availability — run radio's --list-content on the server
     try:
-        radio_script = BASE_DIR / "scripts" / "radio_controller.py"
-        result = subprocess.run(
-            [sys.executable, str(radio_script), "--list-content"],
-            capture_output=True, text=True, timeout=30,
-            cwd=str(BASE_DIR),
+        out, rc = _ssh_run(
+            "cd /opt/dreamweaver-backend && python3 scripts/radio_controller.py --list-content 2>&1",
+            timeout=45,
         )
-        output = result.stdout + result.stderr
-
-        # Parse total playable tracks from output
         import re as _re
-        total_match = _re.search(r"Total playable tracks:\s*(\d+)", output)
+        total_match = _re.search(r"Total playable tracks:\s*(\d+)", out)
         if total_match:
             total = int(total_match.group(1))
             print(f"  ✅ Radio content loaded: {total} playable tracks")
 
-            # Check each content type in flow pattern is represented
             required_types = {"story", "long_story", "silly_song", "funny_short", "poem", "lullaby"}
             missing_types = []
             for ct in required_types:
-                # Look for "type: N" lines in the output
-                ct_match = _re.search(rf"^\s*{ct}:\s*(\d+)", output, _re.MULTILINE)
+                ct_match = _re.search(rf"^\s*{ct}:\s*(\d+)", out, _re.MULTILINE)
                 if ct_match:
-                    count = int(ct_match.group(1))
-                    if count == 0:
+                    if int(ct_match.group(1)) == 0:
                         missing_types.append(ct)
                 else:
                     missing_types.append(ct)
@@ -1049,8 +1054,8 @@ def check_radio_health():
                 issues.append(msg)
             else:
                 print(f"  ✅ All content types available for radio")
-        elif result.returncode != 0:
-            msg = f"Radio content check failed (exit {result.returncode})"
+        elif rc != 0:
+            msg = f"Radio content check failed (exit {rc})"
             print(f"  ❌ {msg}")
             issues.append(msg)
         else:
@@ -1064,63 +1069,68 @@ def check_radio_health():
         print(f"  ❌ {msg}")
         issues.append(msg)
 
-    # 4. Audio parity — backend audio dirs mirrored to web public for radio
-    web_public = Path("/opt/dreamweaver-web/public/audio")
-    backend_public = Path("/opt/dreamweaver-backend/public/audio")
-    audio_subdirs = ["funny-shorts", "silly-songs", "poems", "lullabies"]
-    parity_issues = []
-    if web_public.exists() and backend_public.exists():
-        for subdir in audio_subdirs:
-            backend_dir = backend_public / subdir
-            web_dir = web_public / subdir
-            if not backend_dir.exists():
-                continue
-            backend_files = {f.name for f in backend_dir.glob("*.mp3")}
-            web_files = {f.name for f in web_dir.glob("*.mp3")} if web_dir.exists() else set()
-            missing = backend_files - web_files
-            if missing:
-                # Auto-fix: copy missing files
-                web_dir.mkdir(parents=True, exist_ok=True)
-                import shutil
-                fixed = 0
-                for fname in missing:
-                    try:
-                        shutil.copy2(backend_dir / fname, web_dir / fname)
-                        fixed += 1
-                    except Exception:
-                        pass
-                if fixed == len(missing):
-                    print(f"  ✅ {subdir}: auto-synced {fixed} audio file(s) to web public")
-                else:
-                    still_missing = len(missing) - fixed
-                    msg = f"{subdir}: {still_missing} audio file(s) missing from web public after sync"
-                    print(f"  ❌ {msg}")
-                    parity_issues.append(msg)
-            else:
-                print(f"  ✅ {subdir}: audio parity OK ({len(backend_files)} files)")
-        if parity_issues:
-            for msg in parity_issues:
-                issues.append(msg)
-    else:
-        print(f"  ⚠️  Audio directories not found (web: {web_public.exists()}, backend: {backend_public.exists()})")
+    # 4. Audio parity — check on server that backend audio is mirrored to web public
+    try:
+        out, rc = _ssh_run(
+            "for d in funny-shorts silly-songs poems lullabies; do "
+            "  b=/opt/dreamweaver-backend/public/audio/$d; "
+            "  w=/opt/dreamweaver-web/public/audio/$d; "
+            "  if [ -d \"$b\" ]; then "
+            "    bc=$(ls \"$b\"/*.mp3 2>/dev/null | wc -l); "
+            "    wc=$(ls \"$w\"/*.mp3 2>/dev/null | wc -l); "
+            "    missing=$(comm -23 <(ls \"$b\"/*.mp3 2>/dev/null | xargs -n1 basename | sort) "
+            "                       <(ls \"$w\"/*.mp3 2>/dev/null | xargs -n1 basename | sort) | wc -l); "
+            "    echo \"$d:$bc:$wc:$missing\"; "
+            "  fi; "
+            "done"
+        )
+        if rc == 0 and out:
+            for line in out.strip().split("\n"):
+                parts = line.strip().split(":")
+                if len(parts) == 4:
+                    subdir, bc, wc, missing = parts[0], parts[1], parts[2], int(parts[3])
+                    if missing > 0:
+                        # Auto-fix via SSH
+                        _ssh_run(
+                            f"for f in $(comm -23 "
+                            f"<(ls /opt/dreamweaver-backend/public/audio/{subdir}/*.mp3 2>/dev/null | xargs -n1 basename | sort) "
+                            f"<(ls /opt/dreamweaver-web/public/audio/{subdir}/*.mp3 2>/dev/null | xargs -n1 basename | sort)); do "
+                            f"cp /opt/dreamweaver-backend/public/audio/{subdir}/$f /opt/dreamweaver-web/public/audio/{subdir}/; done",
+                            timeout=30,
+                        )
+                        print(f"  ✅ {subdir}: auto-synced {missing} audio file(s) to web public")
+                    else:
+                        print(f"  ✅ {subdir}: audio parity OK ({bc.strip()} files)")
+    except Exception as e:
+        msg = f"Audio parity check error: {e}"
+        print(f"  ❌ {msg}")
+        issues.append(msg)
 
-    # 5. Recent log file exists and has activity?
-    log_dir = BASE_DIR / "radio" / "logs"
-    if log_dir.exists():
-        log_files = sorted(log_dir.glob("radio_*.log"), reverse=True)
-        if log_files:
-            latest = log_files[0]
-            age_hours = (time.time() - latest.stat().st_mtime) / 3600
+    # 5. Recent log file exists and has activity? (check on server)
+    try:
+        out, rc = _ssh_run(
+            "ls -t /opt/dreamweaver-backend/radio/logs/radio_*.log 2>/dev/null | head -1 | "
+            "xargs -I{} python3 -c \""
+            "import os, time; "
+            "p='{}'; "
+            "age_h = (time.time() - os.path.getmtime(p)) / 3600; "
+            "print(f'{os.path.basename(p)} {age_h:.1f}')\""
+        )
+        if rc == 0 and out:
+            parts = out.split()
+            log_name, age_hours = parts[0], float(parts[1])
             if age_hours < 24:
-                print(f"  ✅ Radio log active: {latest.name} ({age_hours:.1f}h ago)")
+                print(f"  ✅ Radio log active: {log_name} ({age_hours:.1f}h ago)")
             else:
-                msg = f"Radio log stale: {latest.name} last modified {age_hours:.0f}h ago"
+                msg = f"Radio log stale: {log_name} last modified {age_hours:.0f}h ago"
                 print(f"  ❌ {msg}")
                 issues.append(msg)
         else:
-            print(f"  ⚠️  No radio log files found")
-    else:
-        print(f"  ⚠️  Radio log directory not found")
+            print(f"  ⚠️  No radio log files found on server")
+    except Exception as e:
+        msg = f"Could not check radio logs: {e}"
+        print(f"  ❌ {msg}")
+        issues.append(msg)
 
     print(f"\n{'='*60}")
     if not issues:
