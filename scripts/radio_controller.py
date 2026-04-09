@@ -185,6 +185,10 @@ def load_funny_shorts(logger):
 
     for item in items:
         audio_url = item.get("audio_url", "")
+        if not audio_url:
+            audio_file = item.get("audio_file", "")
+            if audio_file:
+                audio_url = f"/audio/funny-shorts/{audio_file}"
         audio_path = resolve_disk_path(audio_url)
         if not audio_path:
             continue
