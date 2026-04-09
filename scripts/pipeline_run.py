@@ -1344,6 +1344,29 @@ def step_covers(args, state: dict) -> bool:
     save_state(state)
     logger.info("  Covers: %d FLUX, %d Mistral fallback, %d failed",
                 len(covers_flux), len(covers_fallback), len(covers_failed))
+
+    # ── Generate cover variants (v2/v3/v4) for visual descent system ──
+    # Only for successfully generated FLUX covers (stories/lullabies).
+    # Runs PIL processing — zero cost, <1 second per cover.
+    all_cover_ids = covers_flux + covers_fallback
+    if all_cover_ids:
+        logger.info("  Generating cover variants for %d covers...", len(all_cover_ids))
+        variant_cmd = [
+            sys.executable, str(SCRIPTS_DIR / "generate_cover_variants.py"),
+            "--ids",
+        ] + all_cover_ids
+        v_ok, v_stdout, v_stderr, v_elapsed = run_command(
+            variant_cmd, "Cover variants (PIL)", timeout=120
+        )
+        if v_ok:
+            logger.info("  ✅ Cover variants generated (%.1fs)", v_elapsed)
+        else:
+            logger.warning("  ⚠️ Cover variant generation failed (non-fatal): %s",
+                           (v_stderr or "")[:200])
+        if v_stdout:
+            for line in v_stdout.strip().split("\n")[-3:]:
+                logger.info("    %s", line)
+
     return True
 
 

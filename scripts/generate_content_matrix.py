@@ -706,9 +706,16 @@ def build_generation_prompt(item: Dict, existing_titles: List[str],
     if item.get("lead_gender") and item["lead_gender"] != "neutral":
         gender_line = f"- Lead character gender: {item['lead_gender']}"
 
+    # Character name — enforce the pre-selected name from CHARACTER_BANK
+    char_name_line = ""
+    char_name = item.get("character_name", "")
+    if char_name:
+        char_name_line = f"- Lead character name: {char_name} (you MUST use this exact name for the main character)"
+
     diversity = f"""
 {char_type_guidance}
 {gender_line}
+{char_name_line}
 {diversity_block}
 """
 
@@ -717,6 +724,17 @@ def build_generation_prompt(item: Dict, existing_titles: List[str],
     if existing_titles:
         titles_str = ", ".join(f'"{t}"' for t in existing_titles[-10:])
         avoid = f"\nTitles already used (yours MUST be different): {titles_str}\n"
+
+    # Character name anti-duplication — tell the AI which names were recently used
+    if recent_fingerprints:
+        recent_names = set()
+        for fp in recent_fingerprints[-10:]:
+            name = fp.get("character_name", "")
+            if name:
+                recent_names.add(name)
+        if recent_names and char_name not in recent_names:
+            names_str = ", ".join(sorted(recent_names))
+            avoid += f"\nCharacter names recently used (do NOT reuse): {names_str}\n"
 
     # For V2 short stories: show recent repeated phrases so the LLM avoids them
     is_v2_story = (content_type == "story" and length in ("SHORT", "MEDIUM"))
@@ -1336,6 +1354,7 @@ def generate_one(client, item: Dict, existing_titles: List[str],
                 "character": parsed.get("character", {"name": "", "identity": "", "special": "", "personality_tags": []}),
                 "cover_context": parsed.get("cover_context", ""),
                 "lead_character_type": item.get("lead_character_type", "human"),
+                "character_name": item.get("character_name", ""),
                 "universe": item["universe"],
                 "geography": item["geography"],
                 "life_aspect": item["life_aspect"],
