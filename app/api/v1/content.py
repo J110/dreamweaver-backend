@@ -42,7 +42,7 @@ HARDCODED_CATEGORIES = [
 async def list_content(
     content_type: Optional[str] = Query(None),
     category: Optional[str] = Query(None),
-    lang: Optional[str] = Query(None, description="Filter by language: 'en' or 'hi'"),
+    lang: Optional[str] = Query("en", description="Filter by language: 'en' or 'hi'"),
     language_level: Optional[str] = Query(None, description="Filter by language level: 'basic', 'intermediate', or 'advanced'"),
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
