@@ -16562,5 +16562,217 @@
     ],
     "mood": "sad",
     "lullaby_type": "heartbeat"
+  },
+  {
+    "id": "gen-b08733b50cb5",
+    "type": "long_story",
+    "lang": "en",
+    "title": "Mira and Tiko and the Observatory",
+    "description": "A bedtime story episode where Mira and Tiko discovers a magical observatory.",
+    "text": "Close your eyes and imagine a hill where the grass glows silver under the moon. At the very top, there’s a circle of smooth stones, each one warm to the touch, like they’ve been kissed by sunlight all day. This is the Watching Hill, where the night sky leans down to whisper secrets, and if you listen very closely, you can hear the dreams of sleeping animals rustling in the dark.\n\nMira stepped onto the Watching Hill, her bare feet sinking into the soft grass. The air smelled like honey and dew. Above her, the stars weren’t just dots of light—they were tiny lanterns, flickering as if someone was blowing on them gently.\n\nMIRA: \"Where did that sound come from?\"\n\nA soft rustling came from the center of the stone circle. Mira tiptoed closer. There, curled between two stones, was a tiny moth with wings like folded paper. Its antennae twitched.\n\nTIKO: \"You’re new here.\"\n\nMIRA: \"You can talk?\"\n\nTIKO: \"Only at night. And only if you listen with your heart.\"\n\nMira knelt down. The moth’s wings shimmered, but something was wrong. One of the lantern-stars above them had gone out. Not dim—gone. Like someone had blown it away.\n\nMIRA: \"The star is missing.\"\n\nTIKO: \"Not missing. Sleeping. Stars rest too, you know.\"\n\nMIRA: \"But how do we wake it?\"\n\nTIKO: \"We don’t. We wait. And we breathe.\"\n\nBeside Mira, a small flower with petals like moonlight trembled. Tiko fluttered closer.\n\nTIKO: \"Watch. Breathe on it like this.\"\n\nMira breathed in through her nose, slow and deep. Then out through her mouth, soft as a whisper.\n\nThe flower’s petals unfurled, glowing brighter for a moment. Tiko nodded.\n\nTIKO: \"Good. Now try again. Gently.\"\n\nMira did. The flower bloomed wider, and the air around them hummed.\n\nMIRA: \"Almost... there?\"\n\nTIKO: \"Almost what?\"\n\nMIRA: \"Almost... the star.\"\n\nTiko didn’t answer. Instead, he fluttered to a nearby stone and curled up, his wings folding like a blanket.\n\nThe wind picked up, carrying a melody. It wasn’t a song—it was the sound of the hill itself, sighing. The stones hummed. The grass swayed. Even the missing star seemed to hum along, though it was still dark.\n\nThe song faded, leaving the hill quieter than before. The air felt warmer, like the stones were holding onto the music. Mira sat down, her fingers brushing the glowing grass. The missing star still wasn’t there. But maybe... maybe it didn’t need to be.\n\nMira leaned back against a stone. The warmth seeped into her shoulders. Tiko was already asleep, his tiny body rising and falling with each breath. She watched him, and something inside her settled too.\n\nThe flower beside her still glowed, but softer now. Mira breathed on it again, just to see.\n\nIn through the nose, out through the mouth. Slow. Steady.\n\nThe petals trembled, then stilled. The glow didn’t fade—it just... rested. Like it was enough.\n\nMIRA: \"Almost... the star.\"\n\nThe words came out quieter this time. Not a question. Not a wish. Just a whisper.\n\nAbove her, the sky wasn’t empty. It was full—of dark, of quiet, of waiting. The stars that were still awake pulsed softly, like they were breathing too. Mira’s eyelids grew heavy. She didn’t fight it.\n\nThe grass beneath her felt like a blanket. The air smelled like sleep. Tiko’s wings rose and fell, rose and fell. Mira’s own breath slowed to match his.\n\nThe missing star wasn’t gone. It was just... resting. Like the hill. Like the moth. Like her.\n\nThe warmth wrapped around her like arms. The stones hummed, but softer now. The world was settling.\n\nMira’s fingers loosened their grip on the grass. Her shoulders melted into the stone. The flower’s glow dimmed, then dimmed again, until it was just a whisper of light.\n\n...\n\nMira’s eyes closed.\n\nThe hill was still.\n\nThe stones were warm.\n\nThe grass was soft.\n\nTiko slept.\n\nThe flower slept.\n\nThe missing star slept.\n\nEverything slept.\n\nHer breath slowed.\n\nHer hands relaxed.\n\nHer shoulders sank.\n\nThe air was still.\n\nThe night was quiet.\n\nNo sounds.\n\nNo movements.\n\nJust breath.\n\nJust warmth.\n\nJust stillness.\n\nThe stones hummed.\n\nThe grass glowed.\n\nThe moth dreamed.\n\nMira dreamed.\n\nAlmost...\n\nThe star...\n\nResting.\n\nSoft.\n\nWarm.\n\nStill.\n\nQuiet.\n\nSleep.\n\nbreathing...\nwarm...\nstill...\n...",
+    "annotated_text": "Close your eyes and imagine a hill where the grass glows silver under the moon. At the very top, there’s a circle of smooth stones, each one warm to the touch, like they’ve been kissed by sunlight all day. This is the Watching Hill, where the night sky leans down to whisper secrets, and if you listen very closely, you can hear the dreams of sleeping animals rustling in the dark.\n\nMira stepped onto the Watching Hill, her bare feet sinking into the soft grass. The air smelled like honey and dew. Above her, the stars weren’t just dots of light—they were tiny lanterns, flickering as if someone was blowing on them gently.\n\nMIRA: \"Where did that sound come from?\"\n\nA soft rustling came from the center of the stone circle. Mira tiptoed closer. There, curled between two stones, was a tiny moth with wings like folded paper. Its antennae twitched.\n\nTIKO: \"You’re new here.\"\n\nMIRA: \"You can talk?\"\n\nTIKO: \"Only at night. And only if you listen with your heart.\"\n\nMira knelt down. The moth’s wings shimmered, but something was wrong. One of the lantern-stars above them had gone out. Not dim—gone. Like someone had blown it away.\n\nMIRA: \"The star is missing.\"\n\nTIKO: \"Not missing. Sleeping. Stars rest too, you know.\"\n\nMIRA: \"But how do we wake it?\"\n\nTIKO: \"We don’t. We wait. And we breathe.\"\n\nBeside Mira, a small flower with petals like moonlight trembled. Tiko fluttered closer.\n\nTIKO: \"Watch. Breathe on it like this.\"\n\n[BREATHE_GUIDE]Mira breathed in through her nose, slow and deep. Then out through her mouth, soft as a whisper.[/BREATHE_GUIDE]\n[BREATHE]\n\nThe flower’s petals unfurled, glowing brighter for a moment. Tiko nodded.\n\nTIKO: \"Good. Now try again. Gently.\"\n\nMira did. The flower bloomed wider, and the air around them hummed.\n\nMIRA: \"Almost... there?\"\n\nTIKO: \"Almost what?\"\n\nMIRA: \"Almost... the star.\"\n\nTiko didn’t answer. Instead, he fluttered to a nearby stone and curled up, his wings folding like a blanket.\n\nThe wind picked up, carrying a melody. It wasn’t a song—it was the sound of the hill itself, sighing. The stones hummed. The grass swayed. Even the missing star seemed to hum along, though it was still dark.\n\n[SONG_SEED: A melody made of starlight and moth wings, soft as breathing, rising and falling like the tide of sleep.]\n\nThe song faded, leaving the hill quieter than before. The air felt warmer, like the stones were holding onto the music. Mira sat down, her fingers brushing the glowing grass. The missing star still wasn’t there. But maybe... maybe it didn’t need to be.\n\nMira leaned back against a stone. The warmth seeped into her shoulders. Tiko was already asleep, his tiny body rising and falling with each breath. She watched him, and something inside her settled too.\n\nThe flower beside her still glowed, but softer now. Mira breathed on it again, just to see.\n\n[BREATHE_GUIDE]In through the nose, out through the mouth. Slow. Steady.[/BREATHE_GUIDE]\n[BREATHE]\n\nThe petals trembled, then stilled. The glow didn’t fade—it just... rested. Like it was enough.\n\nMIRA: \"Almost... the star.\"\n\nThe words came out quieter this time. Not a question. Not a wish. Just a whisper.\n\nAbove her, the sky wasn’t empty. It was full—of dark, of quiet, of waiting. The stars that were still awake pulsed softly, like they were breathing too. Mira’s eyelids grew heavy. She didn’t fight it.\n\nThe grass beneath her felt like a blanket. The air smelled like sleep. Tiko’s wings rose and fell, rose and fell. Mira’s own breath slowed to match his.\n\n[PAUSE: 1500]\n\nThe missing star wasn’t gone. It was just... resting. Like the hill. Like the moth. Like her.\n\n[BREATHE]\n\nThe warmth wrapped around her like arms. The stones hummed, but softer now. The world was settling.\n\n[BREATHE]\n\nMira’s fingers loosened their grip on the grass. Her shoulders melted into the stone. The flower’s glow dimmed, then dimmed again, until it was just a whisper of light.\n\n[PHRASE]...[/PHRASE]\n\n[BREATHE]\n\nMira’s eyes closed.\n\nThe hill was still.\n\nThe stones were warm.\n\nThe grass was soft.\n\nTiko slept.\n\nThe flower slept.\n\nThe missing star slept.\n\nEverything slept.\n\nHer breath slowed.\n\nHer hands relaxed.\n\nHer shoulders sank.\n\nThe air was still.\n\nThe night was quiet.\n\nNo sounds.\n\nNo movements.\n\nJust breath.\n\nJust warmth.\n\nJust stillness.\n\nThe stones hummed.\n\nThe grass glowed.\n\nThe moth dreamed.\n\nMira dreamed.\n\nAlmost...\n\nThe star...\n\nResting.\n\nSoft.\n\nWarm.\n\nStill.\n\nQuiet.\n\nSleep.\n\n[WHISPER]breathing...[/WHISPER]\n[WHISPER]warm...[/WHISPER]\n[WHISPER]still...[/WHISPER]\n[WHISPER]...[/WHISPER]",
+    "lullaby_lyrics": "Soft grass hums beneath your toes,\nstars like lanterns, soft they glow.\n\nMira listens, still and bright,\nmoth wings whisper through the night.\n\nWhere the stones hold secrets deep,\ndreams like honey drift to sleep...\n\nHush now, little watching eyes,\nnight will sing you to the skies.",
+    "target_age": 7,
+    "age_min": 6,
+    "age_max": 8,
+    "age_group": "6-8",
+    "length": "LONG",
+    "word_count": 706,
+    "duration_seconds": 146,
+    "duration": 2,
+    "categories": [
+      "Bedtime",
+      "Observatory"
+    ],
+    "theme": "bedtime",
+    "morals": [],
+    "cover": "/covers/gen-b08733b50cb5.svg",
+    "musicProfile": null,
+    "musicParams": null,
+    "musicalBrief": null,
+    "music_type": "baked",
+    "audio_variants": [],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "experimental_v2",
+    "has_baked_music": true,
+    "experimental_v2": true,
+    "episode_format": "v2",
+    "world_type": "observatory",
+    "mystery_type": "something_lost",
+    "breathing_mechanic": "flower",
+    "lead_character_type": "child",
+    "characters": [
+      {
+        "name": "Mira",
+        "personality": "curious",
+        "voice_style": "gentle",
+        "gender": "female"
+      },
+      {
+        "name": "Tiko",
+        "personality": "brave",
+        "voice_style": "small",
+        "gender": "neutral"
+      }
+    ],
+    "repeated_phrase": "...",
+    "voice_map": {
+      "Mira": "female_1",
+      "Tiko": "male_1"
+    },
+    "narrator_voice": "female_2",
+    "mood": "curious",
+    "created_at": "2026-04-10T02:05:09.633722",
+    "updated_at": "2026-04-10T02:05:09.633722",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "character": {
+      "name": "Mira",
+      "identity": "A child who discovers a observatory — A place for watching — stars, dreams, the night sky, sleeping animals",
+      "special": "Uses a flower to solve the mystery",
+      "personality_tags": [
+        "Curious",
+        "Gentle"
+      ]
+    },
+    "is_saved": false,
+    "story_type": "nature",
+    "language_level": "intermediate"
+  },
+  {
+    "id": "gen-87842a65b675",
+    "type": "story",
+    "lang": "en",
+    "title": "Aria and the Glowing Hollow Tree",
+    "description": "Deep in the whispering woods, a boy named Aria finds a hidden tree that hums with tiny golden lights. What happens when he steps inside changes the forest forever.",
+    "text": "Long ago, before fireflies filled the summer air... Aria walked through the quiet woods. The trees stood tall around him. His feet crunched on dry leaves. Then he saw it. A tree unlike any other. Its trunk was wide and hollow. The bark shimmered like wet stone. Aria stopped. He had never seen a tree like this. Inside the hollow, something glowed. Soft. Golden. Like tiny stars trapped in glass. Aria leaned closer. Can you guess what he heard? A hum. A quiet, singing hum. Aria stepped inside. The bark shimmered like wet stone. The air felt warm. The hum grew louder. Tiny lights swirled around him. They landed on his hands. His arms. His face. They tickled. Like raindrops made of light. The lights lifted. They floated outside. Aria followed. The bark shimmered like wet stone. The lights danced above the grass. They flickered. Bright. Dim. Bright again. Between you and me, Aria didn’t want to leave. The lights spread. They filled the trees. The bushes. The whole forest. Aria sat down. He watched. The lights flickered. Bright. Dim. Bright. The hum softened. The air grew cool. Aria closed his eyes. The lights kept dancing. The hum kept singing. The tree stood quiet. The forest was never dark again.",
+    "annotated_text": "Long ago, before fireflies filled the summer air...\n\nAria walked through the quiet woods. [PAUSE: 800] The trees stood tall around him. [PAUSE: 800] His feet crunched on dry leaves. [MUSIC]\n\nThen he saw it. A tree unlike any other. Its trunk was wide and hollow. [PHRASE]The bark shimmered like wet stone.[/PHRASE] Aria stopped. [PAUSE: 1200] He had never seen a tree like this. [MUSIC]\n\nInside the hollow, something glowed. Soft. Golden. Like tiny stars trapped in glass. Aria leaned closer. [PAUSE: 1500] Can you guess what he heard? A hum. A quiet, singing hum. [MUSIC]\n\nAria stepped inside. [PHRASE]The bark shimmered like wet stone.[/PHRASE] The air felt warm. The hum grew louder. Tiny lights swirled around him. They landed on his hands. His arms. His face. [PAUSE: 2000] They tickled. Like raindrops made of light. [MUSIC]\n\nThe lights lifted. They floated outside. Aria followed. [PHRASE]The bark shimmered like wet stone.[/PHRASE] The lights danced above the grass. They flickered. Bright. Dim. Bright again. [PAUSE: 1500] Between you and me, Aria didn’t want to leave. [MUSIC]\n\nThe lights spread. They filled the trees. The bushes. The whole forest. Aria sat down. He watched. The lights flickered. Bright. Dim. Bright. [PAUSE: 1200] The hum softened. The air grew cool. [MUSIC]\n\nAria closed his eyes. The lights kept dancing. The hum kept singing. The tree stood quiet. [PAUSE: 2000] The forest was never dark again.",
+    "target_age": 7,
+    "age_min": 6,
+    "age_max": 8,
+    "age_group": "6-8",
+    "length": "SHORT",
+    "word_count": 226,
+    "duration_seconds": 0,
+    "categories": [
+      "Nature",
+      "Adventure"
+    ],
+    "theme": "fantasy",
+    "morals": [
+      "Curiosity can light up the world",
+      "Small wonders can change everything"
+    ],
+    "cover": "/covers/gen-87842a65b675.svg",
+    "musicProfile": "",
+    "music_type": "baked",
+    "audio_variants": [],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "male",
+    "character": {
+      "name": "Aria",
+      "identity": "A boy who loved exploring the quiet woods near his home",
+      "special": "He could hear the hum of hidden magic in the world",
+      "personality_tags": [
+        "Curious",
+        "Gentle"
+      ]
+    },
+    "cover_context": "A towering hollow tree with golden light spilling from its open trunk, tiny fireflies swirling above a moonlit forest floor.",
+    "lead_character_type": "human",
+    "character_name": "Aria",
+    "universe": "historical",
+    "geography": "India",
+    "life_aspect": "friendship",
+    "plot_archetype": "quest_journey",
+    "diversityFingerprint": {
+      "characterType": "human_child",
+      "setting": "forest_woodland",
+      "mood": null,
+      "storyType": null,
+      "plotShape": "discovery_reveal",
+      "languageLevel": null,
+      "scale": null,
+      "companion": null,
+      "movement": "sitting_watching",
+      "timeOfDay": "twilight_blue_hour",
+      "weather": "clear_calm",
+      "theme": "curiosity_wonder",
+      "characterTrait": null,
+      "magicType": null,
+      "season": "summer",
+      "senseEmphasis": null
+    },
+    "mood": "curious",
+    "story_type": "mythological",
+    "language_level": "basic",
+    "created_at": "2026-04-10T02:07:15.144940",
+    "updated_at": "2026-04-10T02:07:15.144940",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "has_baked_music": true,
+    "experimental_v2": true,
+    "hook": "Have you ever wondered how fireflies learned to light up the night?",
+    "repeated_phrase": "The bark shimmered like wet stone",
+    "raw_text": "Long ago, before fireflies filled the summer air...\n\nAria walked through the quiet woods. [PAUSE: 800] The trees stood tall around him. [PAUSE: 800] His feet crunched on dry leaves. [MUSIC]\n\nThen he saw it. A tree unlike any other. Its trunk was wide and hollow. [PHRASE]The bark shimmered like wet stone.[/PHRASE] Aria stopped. [PAUSE: 1200] He had never seen a tree like this. [MUSIC]\n\nInside the hollow, something glowed. Soft. Golden. Like tiny stars trapped in glass. Aria leaned closer. [PAUSE: 1500] Can you guess what he heard? A hum. A quiet, singing hum. [MUSIC]\n\nAria stepped inside. [PHRASE]The bark shimmered like wet stone.[/PHRASE] The air felt warm. The hum grew louder. Tiny lights swirled around him. They landed on his hands. His arms. His face. [PAUSE: 2000] They tickled. Like raindrops made of light. [MUSIC]\n\nThe lights lifted. They floated outside. Aria followed. [PHRASE]The bark shimmered like wet stone.[/PHRASE] The lights danced above the grass. They flickered. Bright. Dim. Bright again. [PAUSE: 1500] Between you and me, Aria didn’t want to leave. [MUSIC]\n\nThe lights spread. They filled the trees. The bushes. The whole forest. Aria sat down. He watched. The lights flickered. Bright. Dim. Bright. [PAUSE: 1200] The hum softened. The air grew cool. [MUSIC]\n\nAria closed his eyes. The lights kept dancing. The hum kept singing. The tree stood quiet. [PAUSE: 2000] The forest was never dark again."
+  },
+  {
+    "id": "permission-0-1-5b9d",
+    "type": "song",
+    "lang": "en",
+    "title": "Lulu and the Moonhush",
+    "card_label": "The World Sleeps",
+    "cover": "/covers/permission-0-1-5b9d.svg",
+    "description": "A lullaby of descending echoes, mirroring the way the world softens as night deepens. The gentle, repetitive sounds mimic the rhythm of breathing and the quiet settling of nature, guiding little ones into sleep as the moon watches over them. The slower the song, the deeper the rest.",
+    "text": "[verse]\nMmm ooh la lu\nShaa noo naa haa\nTss pff mmm ooh\nLu lu shh shh\n\n[verse]\nHaa noo laa mmm\nOoh shaa lu lu\nPff tss mmm haa\nShh shh noo noo\n\n[verse]\nMmm lu shaa mmm\nOoh haa lu lu\nTss pff shh shh\nMmm mmm noo noo\n\n---",
+    "annotated_text": "[verse]\nMmm ooh la lu\nShaa noo naa haa\nTss pff mmm ooh\nLu lu shh shh\n\n[verse]\nHaa noo laa mmm\nOoh shaa lu lu\nPff tss mmm haa\nShh shh noo noo\n\n[verse]\nMmm lu shaa mmm\nOoh haa lu lu\nTss pff shh shh\nMmm mmm noo noo\n\n---",
+    "cover_context": "A tiny, round creature with soft silver fur curled in a crescent moon's glow, floating just above a quiet forest canopy. The sky is deep indigo, dotted with faintly twinkling stars, and the moon casts a gentle, dreamy light over the scene. The creature's eyes are half-closed, breathing softly as the night hums around it.",
+    "target_age": 0,
+    "age_min": 0,
+    "age_max": 1,
+    "age_group": "0-1",
+    "duration": 1,
+    "duration_seconds": 46,
+    "author_id": "system",
+    "created_at": "2026-04-10T02:10:26.058107",
+    "updated_at": "2026-04-10T02:10:26.058250",
+    "audio_url": null,
+    "album_art_url": null,
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "categories": [
+      "Lullabies"
+    ],
+    "theme": "dreamy",
+    "is_generated": true,
+    "generation_quality": "good",
+    "music_genre": "lullaby",
+    "lead_character_type": "animal",
+    "character": {
+      "name": "Lulu",
+      "identity": "A small, silver-furred dreamweaver who hums the night into stillness.",
+      "special": "Whispers the moon’s quiet to the world below, so every creature can hear the hush.",
+      "personality_tags": [
+        "Gentle",
+        "Sleepy"
+      ]
+    },
+    "about": "A lullaby of descending echoes, mirroring the way the world softens as night deepens. The gentle, repetitive sounds mimic the rhythm of breathing and the quiet settling of nature, guiding little ones into sleep as the moon watches over them. The slower the song, the deeper the rest.",
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/permission-0-1-5b9d_female_1.mp3",
+        "duration_seconds": 46,
+        "provider": "minimax-music-v2"
+      }
+    ],
+    "mood": "curious",
+    "lullaby_type": "permission"
   }
 ]
