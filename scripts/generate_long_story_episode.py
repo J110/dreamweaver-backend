@@ -264,6 +264,157 @@ PROTAGONIST_TYPES = {
     },
 }
 
+# ═══════════════════════════════════════════════════════════════
+#  Lead Character Type — diversity axis (matches CONTENT_GENERATION_GUIDELINES.md §2.3)
+# ═══════════════════════════════════════════════════════════════
+#
+# The full guideline matrix has 12 types. Animal is intentionally over-weighted
+# (~35%) per product decision: bedtime stories about animals consistently rank
+# best with kids, and the previous v2 randomizer was hardcoded to "child" which
+# made every story a human protagonist. The remaining weight is split across
+# the other guideline buckets so the catalog still rotates broadly.
+
+LEAD_CHARACTER_TYPES = [
+    # (type, weight) — weights sum to 100. Animal block totals 35%.
+    ("animal",       20),  # land mammals: fox, deer, hare, otter
+    ("bird",          8),  # owl, robin, swan, cuckoo
+    ("sea_creature",  7),  # whale calf, seahorse, dolphin
+    ("human",        25),  # the old default — still common but no longer mandatory
+    ("insect",        5),  # firefly, bee, ladybug
+    ("plant",         5),  # sapling, sunflower, fern
+    ("celestial",     6),  # star, moon, comet
+    ("atmospheric",   5),  # cloud, raindrop, snowflake, breeze
+    ("mythical",      6),  # gentle dragon, unicorn, phoenix
+    ("object",        5),  # lantern, music box, kite
+    ("alien",         4),  # friendly visitor from another world
+    ("robot",         4),  # garden bot, repair bot, toy robot
+]
+
+# How to describe each protagonist type to Mistral. The key on the right is
+# the "traits" string that replaces the old child-only PROTAGONIST_TYPES traits.
+PROTAGONIST_DESCRIPTIONS = {
+    "human": {
+        "label": "child",
+        "voice_hint": "Uses normal child language: short, direct, full of wonder.",
+        "traits_by_age": {
+            "2-5": "A small human child. Wobbly-brave, talks to everything, asks profound questions.",
+            "6-8": "A human child, curious and capable. Wants to handle it, secretly worried but pushes through.",
+            "9-12": "A thoughtful human child. Independent, notices what adults miss, feels deeply.",
+        },
+    },
+    "animal": {
+        "label": "young animal",
+        "voice_hint": "Speaks in plain, gentle words. The animal-ness shows through what it notices — smells, sounds, paw-feel of the ground — not through baby-talk.",
+        "traits_by_age": {
+            "2-5": "A small young animal (fox kit, hare, otter pup, deer fawn). Curious about its own world. Snuffles, twitches, hops.",
+            "6-8": "A young animal — a tiger cub, a wolf pup, a tortoise, a deer. Brave in its own animal way. Knows the forest better than people.",
+            "9-12": "A young animal close to growing up. Already wise about its own habitat. Notices what humans never see.",
+        },
+    },
+    "bird": {
+        "label": "young bird",
+        "voice_hint": "Light, lifted phrasing. Notices wind, height, the look of things from above.",
+        "traits_by_age": {
+            "2-5": "A small fledgling — owlet, sparrow chick, baby robin. New to the sky.",
+            "6-8": "A young bird learning the night — owl, swallow, swan, hummingbird.",
+            "9-12": "A wise young bird. Sees patterns in the wind and stars.",
+        },
+    },
+    "sea_creature": {
+        "label": "young sea creature",
+        "voice_hint": "Slow, drifting cadence. Mentions currents, salt, the muffled sound of being underwater.",
+        "traits_by_age": {
+            "2-5": "A baby sea creature — seahorse, dolphin calf, otter pup. Soft-bellied and curious.",
+            "6-8": "A young whale calf, dolphin, or sea turtle. Learning the deep.",
+            "9-12": "A thoughtful young sea creature. Knows the songs of the ocean.",
+        },
+    },
+    "insect": {
+        "label": "tiny creature",
+        "voice_hint": "Tiny-scale wonder — dewdrops are lakes, leaves are continents.",
+        "traits_by_age": {
+            "2-5": "A tiny bug — firefly, bee, ladybug, caterpillar. The world is enormous around them.",
+            "6-8": "A small insect — moth, dragonfly, ant — brave despite their size.",
+            "9-12": "A wise small creature who knows the secret ground-level world.",
+        },
+    },
+    "plant": {
+        "label": "young plant",
+        "voice_hint": "Rooted, patient, slow. Time moves in seasons, not minutes.",
+        "traits_by_age": {
+            "2-5": "A tiny sapling, sprout, or flower bud. Just beginning to grow.",
+            "6-8": "A young tree, vine, or flowering plant. Learning to bend in the wind.",
+            "9-12": "An older sapling or wise herb. Has seen many seasons already.",
+        },
+    },
+    "celestial": {
+        "label": "small celestial being",
+        "voice_hint": "Quiet, vast, slightly ancient. Talks about light, distance, gravity, time.",
+        "traits_by_age": {
+            "2-5": "A tiny star, baby moon, or small comet. New to the sky.",
+            "6-8": "A young star, planet, or comet. Learning to shine for sleeping things below.",
+            "9-12": "A thoughtful small celestial body. Watches over the world without being seen.",
+        },
+    },
+    "atmospheric": {
+        "label": "weather spirit",
+        "voice_hint": "Drifting, soft, weatherlike. The character moves how their element moves.",
+        "traits_by_age": {
+            "2-5": "A small cloud, raindrop, or snowflake. Just learning to fall, drift, or float.",
+            "6-8": "A young breeze, mist, or rain shower. Travels and touches things gently.",
+            "9-12": "A wise wind, fog, or storm-child. Carries memories from far places.",
+        },
+    },
+    "mythical": {
+        "label": "young mythical creature",
+        "voice_hint": "Warm, magical, never scary. The mythical-ness should feel cosy, not powerful.",
+        "traits_by_age": {
+            "2-5": "A tiny gentle dragon, unicorn foal, or pocket-sized phoenix.",
+            "6-8": "A young friendly dragon, kelpie, unicorn, or fairy.",
+            "9-12": "A thoughtful young mythical being. Magic is normal to them, ordinary things are wondrous.",
+        },
+    },
+    "object": {
+        "label": "small living object",
+        "voice_hint": "The object's purpose shapes its voice — a lantern thinks in light, a teacup in warmth.",
+        "traits_by_age": {
+            "2-5": "A small living object — a lantern, a teacup, a kite, a music box. Just discovered it can think.",
+            "6-8": "A friendly living object — a music box, a compass, a toy boat — that has been awake for years.",
+            "9-12": "A wise living object — an old lantern, an heirloom locket — that remembers many bedtimes.",
+        },
+    },
+    "alien": {
+        "label": "young alien visitor",
+        "voice_hint": "Friendly outsider perspective. Earth things — pillows, mothers' voices, blankets — are wondrous.",
+        "traits_by_age": {
+            "2-5": "A tiny friendly alien visitor. Never scary. Soft, glowing, curious.",
+            "6-8": "A young alien who has come to visit Earth and learn how children sleep.",
+            "9-12": "A thoughtful young space traveller, learning Earth's bedtimes for their own world.",
+        },
+    },
+    "robot": {
+        "label": "small friendly robot",
+        "voice_hint": "Gentle and a little literal. Learning how to be soft.",
+        "traits_by_age": {
+            "2-5": "A tiny friendly robot — a garden bot, a toy robot, a repair bot. Round and warm.",
+            "6-8": "A young helpful robot. Learning the difference between fixing and resting.",
+            "9-12": "A thoughtful older robot, slightly worn, that has spent a long time learning calm.",
+        },
+    },
+}
+
+# Cultural / geographic axis for the protagonist's name. Matches the
+# guideline's 7 buckets — used as a soft hint to Mistral, not enforced.
+NAME_CULTURES = [
+    ("India",         "Names like Arjun, Priya, Ananya, Dev, Meera, Kavya, Ishaan"),
+    ("East Asia",     "Names like Mei, Hana, Kenji, Li, Suki, Haruto, Yuna"),
+    ("Africa",        "Names like Amara, Kofi, Zuri, Nia, Jabari, Sefu, Ayana"),
+    ("Europe",        "Names like Elara, Finn, Astrid, Luca, Ingrid, Soren, Maeve"),
+    ("Americas",      "Names like Diego, Luna, Nayeli, Rio, Maya, Ines, Mateo"),
+    ("Arctic/Polar",  "Names like Nayak, Siku, Kaya, Nanook, Aput, Tuktu"),
+    ("Ocean/Islands", "Names like Coral, Moana, Kai, Reef, Isla, Tane, Lani"),
+]
+
 MENTOR_TYPES = [
     "elderly keeper or librarian — moves slowly, speaks calmly, knows everything but explains nothing directly",
     "a creature who has been here forever — owl, whale, old tree, ancient tortoise — wise through patience",
@@ -458,13 +609,25 @@ This is a sleep technique disguised as a story element.
 Include 2-3 breathing moments across the story.
 
 === THE CHARACTER ===
-The main character is a CHILD: {protagonist_description}
-They should feel like the LISTENER — similar age,
-similar feelings, someone the child becomes, not observes.
+The main character is a {protagonist_label}: {protagonist_description}
+{protagonist_voice_hint}
 
-Invent a name. Not a common Western name every time —
-draw from diverse cultures. The name should feel warm
-when spoken aloud.
+The main character is NOT necessarily a human child. Stay true
+to the protagonist type above — if they are a fox, they are a
+fox throughout. Do not turn them into a child halfway through.
+A non-human protagonist still has feelings the listener can
+share — wonder, tiredness, comfort — but they live in their
+own body and their own world.
+
+The listener should feel like they ARE this character, even if
+the character is an owl or a cloud or a small robot. Use the
+character's senses, not a child's.
+
+Invent a name. {name_culture_hint}
+Avoid generic Western names. The name should feel warm when
+spoken aloud and should NOT match any of these recently used
+names:
+{recent_names_to_avoid}
 
 {character_instructions}
 
@@ -472,8 +635,9 @@ when spoken aloud.
 
 Your story has {character_count} characters.
 
-The main character always speaks. Tag their dialogue:
-MIRA: "I think the sound came from over there."
+The main character always speaks. Tag their dialogue with their
+name in UPPERCASE followed by a colon, like this:
+{example_name}: "I think the sound came from over there."
 
 Even a solo character talks — to themselves, to the moon,
 to the wind, to the child. They are never silent.
@@ -766,7 +930,32 @@ def build_long_story_prompt(params):
     else:
         char_instructions = char_template
 
-    protagonist = PROTAGONIST_TYPES[age]
+    # Resolve protagonist description from the picked lead_character_type.
+    # Falls back to "human" if a randomizer wasn't used (e.g. explicit-arg path).
+    lead_type = params.get("lead_character_type", "human")
+    proto_def = PROTAGONIST_DESCRIPTIONS.get(lead_type, PROTAGONIST_DESCRIPTIONS["human"])
+    proto_traits = proto_def["traits_by_age"].get(age, proto_def["traits_by_age"]["6-8"])
+    proto_label = proto_def["label"]
+    proto_voice_hint = proto_def["voice_hint"]
+
+    # Cultural name hint (soft suggestion to Mistral)
+    name_culture_hint = params.get(
+        "name_culture_hint",
+        "Draw from diverse cultures — not always Western names.",
+    )
+
+    # Recent character names to avoid (the fix for the "Mira every day" bug)
+    recent_names = params.get("recent_character_names") or []
+    if recent_names:
+        recent_names_block = "  - " + "\n  - ".join(recent_names)
+    else:
+        recent_names_block = "  (no recent names — pick freely)"
+
+    # Pick a neutral example name for the dialogue-tag illustration that
+    # doesn't anchor Mistral on any specific character. Avoid the recent list.
+    EXAMPLE_NAMES = ["AYO", "REN", "TALA", "INES", "KAI", "NIKO", "ZARA", "ELI"]
+    example_pool = [n for n in EXAMPLE_NAMES if n.title() not in recent_names] or EXAMPLE_NAMES
+    example_name = random.choice(example_pool)
 
     return LONG_STORY_EPISODE_PROMPT.format(
         age_group=age,
@@ -776,7 +965,12 @@ def build_long_story_prompt(params):
         mystery_setup=params["mystery_setup"],
         mystery_resolution=params["mystery_resolution"],
         breathing_description=params["breathing_description"],
-        protagonist_description=protagonist["traits"],
+        protagonist_label=proto_label,
+        protagonist_description=proto_traits,
+        protagonist_voice_hint=proto_voice_hint,
+        name_culture_hint=name_culture_hint,
+        recent_names_to_avoid=recent_names_block,
+        example_name=example_name,
         character_count=char_count,
         character_instructions=char_instructions,
         mood_energy=params["mood_energy"],
@@ -1816,9 +2010,44 @@ def _load_existing_long_stories():
         return []
 
 
-def randomize_params(mood="curious", age_group="6-8"):
-    """Generate diverse episode parameters using v2 world/mystery/breathing system."""
+def _weighted_pick_avoiding_recent(existing_stories, key, weighted_pool, recency=6):
+    """Like _pick_avoiding_recent, but pool is a list of (value, weight) tuples.
+
+    Picks weighted-randomly from the values that haven't been used in the last
+    `recency` stories. If everything recent, falls back to the full pool.
+    """
+    recent = [s.get(key) for s in existing_stories[-recency:] if s.get(key)] if existing_stories else []
+    available = [(v, w) for (v, w) in weighted_pool if v not in recent]
+    if not available:
+        available = weighted_pool
+    values = [v for v, _ in available]
+    weights = [w for _, w in available]
+    return random.choices(values, weights=weights, k=1)[0]
+
+
+def _recent_character_names(existing_stories, recency=10):
+    """Return up to `recency` recently used character names from past long stories."""
+    names = []
+    for story in existing_stories[-recency:]:
+        for char in (story.get("characters") or []):
+            n = (char.get("name") or "").strip()
+            if n and n not in names:
+                names.append(n)
+    return names
+
+
+def randomize_params(mood="curious", age_group=None):
+    """Generate diverse episode parameters using v2 world/mystery/breathing system.
+
+    age_group=None lets the randomizer rotate across {2-5, 6-8, 9-12} avoiding
+    the most recently used. Pass an explicit value to pin it.
+    """
     existing = _load_existing_long_stories()
+
+    # Rotate age group when not pinned (pipeline used to hardcode 6-8)
+    if age_group is None:
+        age_group = _pick_avoiding_recent(
+            existing, "age_group", ["2-5", "6-8", "9-12"], recency=2)
 
     # Filter by mood
     eligible_worlds = MOOD_TO_WORLDS.get(mood, list(STORY_WORLDS.keys()))
@@ -1830,6 +2059,17 @@ def randomize_params(mood="curious", age_group="6-8"):
         existing, "breathing_mechanic", list(BREATHING_MECHANICS.keys()), recency=6)
     phrase_feeling = _pick_avoiding_recent(
         existing, "repeated_phrase_feeling", PHRASE_FEELINGS, recency=6)
+
+    # NEW: lead character type — weighted, animal-heavy, avoiding the last 4
+    lead_character_type = _weighted_pick_avoiding_recent(
+        existing, "lead_character_type", LEAD_CHARACTER_TYPES, recency=4)
+
+    # NEW: cultural/geographic name hint — soft suggestion to Mistral
+    name_culture, name_culture_hint = random.choice(NAME_CULTURES)
+
+    # NEW: pull recently used character names so the prompt can tell Mistral
+    # to avoid them. This is what was missing — "Mira" for 4 days in a row.
+    recent_names = _recent_character_names(existing, recency=10)
 
     character_count = random.choice([1, 2, 2, 2, 3])
 
@@ -1853,6 +2093,10 @@ def randomize_params(mood="curious", age_group="6-8"):
         "mentor_description": mentor_desc,
         "companion_description": companion_desc,
         "repeated_phrase_feeling": phrase_feeling,
+        "lead_character_type": lead_character_type,
+        "name_culture": name_culture,
+        "name_culture_hint": name_culture_hint,
+        "recent_character_names": recent_names,
     }
 
 
@@ -1908,10 +2152,13 @@ def publish_episode(output_dir, params, metadata, duration_seconds):
     world_concept = params.get("world_concept", "")
     mystery_type = params.get("mystery_type", "")
     breathing_mechanic = params.get("breathing_mechanic", "")
+    lead_character_type = params.get("lead_character_type", "human")
+    proto_def = PROTAGONIST_DESCRIPTIONS.get(lead_character_type, PROTAGONIST_DESCRIPTIONS["human"])
+    proto_label = proto_def["label"]
 
     char_card = {
         "name": main_char["name"],
-        "identity": f"A child who discovers a {world_type} — {world_concept}",
+        "identity": f"A {proto_label} who discovers a {world_type} — {world_concept}",
         "special": f"Uses a {breathing_mechanic} to solve the mystery",
         "personality_tags": [main_char.get("personality", "").capitalize(), main_char.get("voice_style", "").capitalize()],
     }
@@ -1965,7 +2212,8 @@ def publish_episode(output_dir, params, metadata, duration_seconds):
         "world_type": world_type,
         "mystery_type": mystery_type,
         "breathing_mechanic": breathing_mechanic,
-        "lead_character_type": "child",
+        "lead_character_type": lead_character_type,
+        "name_culture": params.get("name_culture", ""),
         "characters": characters,
         "repeated_phrase": metadata.get("repeated_phrase", ""),
         "voice_map": metadata.get("voice_map", {}),
@@ -2001,13 +2249,17 @@ def publish_episode(output_dir, params, metadata, duration_seconds):
 def main():
     parser = argparse.ArgumentParser(description="Generate long story v2 episode")
     parser.add_argument("--mood", default="curious", choices=list(MOOD_SONG_ARC.keys()))
-    parser.add_argument("--age-group", default="6-8", choices=["2-5", "6-8", "9-12"])
+    parser.add_argument("--age-group", default=None, choices=["2-5", "6-8", "9-12"],
+                        help="Age group (default: auto-rotate when --randomize, else 6-8)")
     parser.add_argument("--world-type", default=None, choices=list(STORY_WORLDS.keys()),
                         help="Story world type (default: auto-select by mood)")
     parser.add_argument("--mystery-type", default=None, choices=list(MYSTERY_TYPES.keys()),
                         help="Mystery type (default: auto-select by mood)")
     parser.add_argument("--breathing-mechanic", default=None, choices=list(BREATHING_MECHANICS.keys()),
                         help="Breathing mechanic (default: auto-select)")
+    parser.add_argument("--character-type", default=None,
+                        choices=[t for t, _ in LEAD_CHARACTER_TYPES],
+                        help="Lead character type (default: auto-rotate when --randomize, else weighted random)")
     parser.add_argument("--character-count", type=int, default=2, choices=[1, 2, 3])
     parser.add_argument("--output-dir", default=None)
     parser.add_argument("--dry-run", action="store_true", help="Print prompt only")
@@ -2021,16 +2273,30 @@ def main():
     args = parser.parse_args()
 
     if args.randomize:
+        # age_group=None lets the randomizer rotate; explicit --age-group pins it
         params = randomize_params(mood=args.mood, age_group=args.age_group)
-        print(f"  Randomized: world={params['world_type']}, mystery={params['mystery_type']}, "
-              f"breathing={params['breathing_mechanic']}, chars={params['character_count']}")
+        # Allow --character-type to override the randomizer's pick
+        if args.character_type:
+            params["lead_character_type"] = args.character_type
+        print(f"  Randomized: age={params['age_group']}, world={params['world_type']}, mystery={params['mystery_type']}, "
+              f"breathing={params['breathing_mechanic']}, lead={params['lead_character_type']}, "
+              f"culture={params.get('name_culture','?')}, chars={params['character_count']}")
     else:
         # Build params from explicit args or defaults
         mood = args.mood
-        age_group = args.age_group
+        age_group = args.age_group or "6-8"
         world_type = args.world_type or random.choice(MOOD_TO_WORLDS.get(mood, list(STORY_WORLDS.keys())))
         mystery_type = args.mystery_type or random.choice(MOOD_TO_MYSTERIES.get(mood, list(MYSTERY_TYPES.keys())))
         breathing = args.breathing_mechanic or random.choice(list(BREATHING_MECHANICS.keys()))
+        # Lead character type: explicit flag, else weighted random across the matrix
+        if args.character_type:
+            lead_character_type = args.character_type
+        else:
+            lct_values = [v for v, _ in LEAD_CHARACTER_TYPES]
+            lct_weights = [w for _, w in LEAD_CHARACTER_TYPES]
+            lead_character_type = random.choices(lct_values, weights=lct_weights, k=1)[0]
+        name_culture, name_culture_hint = random.choice(NAME_CULTURES)
+        recent_names = _recent_character_names(_load_existing_long_stories(), recency=10)
         params = {
             "mood": mood,
             "age_group": age_group,
@@ -2047,6 +2313,10 @@ def main():
             "mentor_description": random.choice(MENTOR_TYPES),
             "companion_description": random.choice(COMPANION_TYPES),
             "repeated_phrase_feeling": random.choice(PHRASE_FEELINGS),
+            "lead_character_type": lead_character_type,
+            "name_culture": name_culture,
+            "name_culture_hint": name_culture_hint,
+            "recent_character_names": recent_names,
         }
 
     output_dir = args.output_dir or str(BASE_DIR.parent / "output" / "long_story_test")
@@ -2111,7 +2381,9 @@ def main():
             "You are a world-class children's bedtime story writer. "
             "You create immersive worlds with mysteries that resolve into sleep. "
             "Every story has a breathing mechanic — a story object that rewards calm breathing. "
-            "The main character is always a CHILD the listener becomes, not observes. "
+            "The main character is whatever the prompt specifies — sometimes a child, "
+            "sometimes an animal, bird, plant, robot, or other being. The listener BECOMES "
+            "this character; they do not observe it from outside. Stay true to the species. "
             "You ALWAYS hit the word count targets given in the prompt — "
             "never shorter. If the prompt says 350-500 words for a phase, "
             "you write at least 350 words for that phase. "

@@ -34,6 +34,16 @@ from datetime import datetime, timezone
 API_BASE = "https://api.dreamvalley.app/api/v1"
 WEB_PUBLIC = "/opt/dreamweaver-web/public"
 
+# nginx serves several /covers/ subpaths from outside the web public dir
+# (cover-store survives repo re-clones). Mirror those aliases here so the
+# radio's on-disk lookups match what the browser actually fetches.
+NGINX_ALIASES = [
+    ("/covers/funny-shorts/", "/opt/cover-store/funny-shorts/"),
+    ("/covers/lullabies/",    "/opt/cover-store/lullabies/"),
+    ("/covers/silly-songs/",  "/opt/cover-store/silly-songs/"),
+    ("/covers/poems/",        "/opt/dreamweaver-backend/public/covers/poems/"),
+]
+
 STATE_FILE = "radio/radio_state.json"
 LOG_DIR = "radio/logs"
 
@@ -113,9 +123,16 @@ def api_fetch(endpoint):
 
 def resolve_disk_path(url_path):
     """Convert a URL path like /audio/pre-gen/x.mp3 to absolute disk path.
-    Returns the path only if the file exists on disk."""
+    Checks nginx alias targets first (cover-store, etc.), then falls back to
+    the web public dir. Returns the path only if the file exists on disk."""
     if not url_path:
         return None
+    for prefix, disk_root in NGINX_ALIASES:
+        if url_path.startswith(prefix):
+            aliased = os.path.join(disk_root, url_path[len(prefix):])
+            if os.path.exists(aliased):
+                return aliased
+            break
     fp = os.path.join(WEB_PUBLIC, url_path.lstrip("/"))
     return fp if os.path.exists(fp) else None
 
@@ -193,7 +210,17 @@ def load_funny_shorts(logger):
         if not audio_path:
             continue
 
+        # Try `cover` first (set by generate_funny_shorts_v2.py), then fall
+        # back to `cover_file` (set by mix_funny_short.py — bare filename, no
+        # leading path). nginx serves /covers/funny-shorts/ from cover-store.
         cover_path = resolve_disk_path(item.get("cover"))
+        if not cover_path:
+            cover_file = item.get("cover_file", "")
+            if cover_file:
+                if cover_file.startswith("/"):
+                    cover_path = resolve_disk_path(cover_file)
+                else:
+                    cover_path = resolve_disk_path(f"/covers/funny-shorts/{cover_file}")
 
         tracks.append({
             "id": item.get("id", ""),

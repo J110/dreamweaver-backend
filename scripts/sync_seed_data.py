@@ -1,8 +1,17 @@
 """Sync content.json → seedData.js.
 
 Two operations:
-  1. UPDATE: Refresh audio_variants for existing entries (match by title).
-  2. ADD:    Append brand-new stories/poems that don't exist yet in seedData.js.
+  1. UPDATE: Refresh audio_variants/cover/addedAt/etc. for entries that already
+             exist in seedData.js. Matched STRICTLY by id, never by title.
+  2. ADD:    Append brand-new stories/poems whose id is not yet in seedData.js.
+
+Why id-only matching: the pipeline historically matched by title, which caused
+a hybrid-entry bug — when a new lullaby had the same title as an existing seed
+entry but a fresh id, the script overwrote the old entry's cover/audio/addedAt
+in place while preserving the OLD id. The frontend then merged this corrupted
+seed entry into the API item via title fallback, surfacing stale dates and
+broken audio paths. Always match by id; let same-titled new items be added as
+fresh entries (the homepage dedupes by id).
 
 Usage:
     python3 scripts/sync_seed_data.py
@@ -141,14 +150,66 @@ def _build_new_entry_js(story: dict) -> str:
     return entry
 
 
-def update_existing(seed_js: str, stories: list) -> tuple:
-    """Update audio_variants and duration for stories that already exist in seedData.js.
-    Returns (updated_seed_js, update_count).
+def _find_entry_bounds(seed_js: str, story_id: str):
+    """Locate the seedData.js entry for a given story id.
+
+    Returns (start, end) into seed_js for the entry slice (the substring
+    starting at the entry's `id:` line up to — but not including — the next
+    entry's opening `{` or the end of the array). Returns None if no entry
+    with that id exists.
+
+    The entry boundary is `\\n    {` which is the indentation pattern used
+    inside both the en: and hi: arrays.
     """
-    title_map = {}
+    pattern = re.compile(r'id:\s*"' + re.escape(story_id) + r'"')
+    m = pattern.search(seed_js)
+    if not m:
+        return None
+    start = m.start()
+    # Find the next entry boundary (opening of next entry) or array close
+    next_open = seed_js.find('\n    {', m.end())
+    if next_open == -1:
+        next_open = len(seed_js)
+    return (start, next_open)
+
+
+def _replace_in_entry(seed_js: str, bounds, pattern: str, replacement: str) -> str:
+    """Replace a pattern, but only within the given entry bounds."""
+    start, end = bounds
+    entry = seed_js[start:end]
+    new_entry = re.sub(pattern, replacement, entry, count=1)
+    if new_entry == entry:
+        return seed_js
+    return seed_js[:start] + new_entry + seed_js[end:]
+
+
+def _entry_has_field(seed_js: str, bounds, field_pattern: str) -> bool:
+    start, end = bounds
+    return re.search(field_pattern, seed_js[start:end]) is not None
+
+
+def update_existing(seed_js: str, stories: list) -> tuple:
+    """Refresh fields on entries that already exist in seedData.js, matched by id.
+    Returns (updated_seed_js, update_count).
+
+    Never matches by title — see module docstring for the hybrid-entry bug.
+    """
+    replacements = 0
+
     for story in stories:
-        title = story["title"]
+        story_id = story.get("id")
+        if not story_id:
+            continue
         variants = story.get("audio_variants", [])
+        if not variants:
+            continue
+
+        bounds = _find_entry_bounds(seed_js, story_id)
+        if bounds is None:
+            # Not in seedData.js — add_new_entries() will handle it.
+            continue
+
+        title = story.get("title", story_id)
         duration = story.get("duration")
         cover = story.get("cover")
         character = story.get("character")
@@ -157,247 +218,189 @@ def update_existing(seed_js: str, stories: list) -> tuple:
         added_at = (story.get("addedAt") or story.get("created_at", ""))[:10] or None
         mood = story.get("mood")
         story_type = story.get("story_type")
-        if variants:
-            title_map[title] = {"variants": variants, "duration": duration, "cover": cover, "character": character, "musicalBrief": musical_brief, "addedAt": added_at, "type": content_type, "mood": mood, "story_type": story_type}
 
-    replacements = 0
-
-    for title, info in title_map.items():
-        variants = info["variants"]
-        duration = info["duration"]
-        if not variants:
-            continue
-
+        # ── audio_variants (always replace) ──
         av_block = "audio_variants: " + _build_audio_variants_js(variants) + ","
-        escaped_title = re.escape(title)
-
-        pattern = (
-            r'(title:\s*"' + escaped_title + r'".*?)'
-            r'audio_variants:\s*\[.*?\],'
+        seed_js_after = _replace_in_entry(
+            seed_js, bounds,
+            r'audio_variants:\s*\[.*?\],',
+            av_block.replace('\\', r'\\'),
         )
-
-        match = re.search(pattern, seed_js, re.DOTALL)
-        if match:
-            old_full = match.group(0)
-            prefix_part = match.group(1)
-            new_full = prefix_part + av_block
-            seed_js = seed_js.replace(old_full, new_full)
+        if seed_js_after != seed_js:
+            seed_js = seed_js_after
+            # Recompute bounds — substitution can shift offsets
+            bounds = _find_entry_bounds(seed_js, story_id)
             replacements += 1
             print(f"  Updated: {title} ({len(variants)} variants)")
 
-        # Also update duration if available
-        if duration is not None:
-            dur_pattern = (
-                r'(title:\s*"' + escaped_title + r'".*?)'
-                r'duration:\s*\d+,'
+        # ── duration ──
+        if duration is not None and bounds:
+            seed_js_after = _replace_in_entry(
+                seed_js, bounds,
+                r'duration:\s*\d+,',
+                f"duration: {duration},",
             )
-            dur_match = re.search(dur_pattern, seed_js, re.DOTALL)
-            if dur_match:
-                old_dur = dur_match.group(0)
-                dur_prefix = dur_match.group(1)
-                new_dur = dur_prefix + f"duration: {duration},"
-                seed_js = seed_js.replace(old_dur, new_dur)
+            if seed_js_after != seed_js:
+                seed_js = seed_js_after
+                bounds = _find_entry_bounds(seed_js, story_id)
 
-        # Also update cover path if it changed (e.g., from WebP to SVG)
-        cover = info.get("cover")
-        if cover:
-            cover_pattern = (
-                r'(title:\s*"' + escaped_title + r'".*?)'
-                r'cover:\s*"[^"]*",'
+        # ── cover ──
+        if cover and bounds:
+            seed_js_after = _replace_in_entry(
+                seed_js, bounds,
+                r'cover:\s*"[^"]*",',
+                f'cover: "{cover}",',
             )
-            cover_match = re.search(cover_pattern, seed_js, re.DOTALL)
-            if cover_match:
-                old_cover_full = cover_match.group(0)
-                cover_prefix = cover_match.group(1)
-                new_cover_full = cover_prefix + f'cover: "{cover}",'
-                if old_cover_full != new_cover_full:
-                    seed_js = seed_js.replace(old_cover_full, new_cover_full)
+            if seed_js_after != seed_js:
+                seed_js = seed_js_after
+                bounds = _find_entry_bounds(seed_js, story_id)
 
-        # Also update content type (e.g., story → long_story)
-        content_type = info.get("type")
-        if content_type:
-            type_pattern = (
-                r'(id:\s*"[^"]*",\s*\n\s*)'
-                r'type:\s*"[^"]*",'
+        # ── type ──
+        if content_type and bounds:
+            seed_js_after = _replace_in_entry(
+                seed_js, bounds,
+                r'type:\s*"[^"]*",',
+                f'type: "{content_type}",',
             )
-            # Find the entry by title context to avoid replacing wrong entries
-            entry_start_pattern = r'(id:\s*"[^"]*",\s*\n\s*type:\s*")[^"]*(",\s*\n\s*title:\s*"' + re.escape(title) + r'")'
-            type_match = re.search(entry_start_pattern, seed_js, re.DOTALL)
-            if type_match and type_match.group(1):
-                old_type = type_match.group(0)
-                new_type = type_match.group(1) + content_type + type_match.group(2)
-                if old_type != new_type:
-                    seed_js = seed_js.replace(old_type, new_type)
+            if seed_js_after != seed_js:
+                seed_js = seed_js_after
+                bounds = _find_entry_bounds(seed_js, story_id)
 
-        # Also update character card for About tab
-        character = info.get("character")
-        if character and character.get("name"):
-            char_json = json.dumps(character, ensure_ascii=False)
-            # Check if character field already exists for this entry
-            char_existing_pattern = (
-                r'(title:\s*"' + escaped_title + r'".*?)'
-                r'character:\s*\{[^}]*\},'
+        # ── addedAt ──
+        if added_at and bounds:
+            seed_js_after = _replace_in_entry(
+                seed_js, bounds,
+                r'addedAt:\s*"[^"]*",',
+                f'addedAt: "{added_at}",',
             )
-            char_match = re.search(char_existing_pattern, seed_js, re.DOTALL)
-            if char_match:
-                old_char = char_match.group(0)
-                char_prefix = char_match.group(1)
-                new_char = char_prefix + f"character: {char_json},"
-                seed_js = seed_js.replace(old_char, new_char)
-            else:
-                # Insert character field after cover line (handles both "..." and COVERS.xxx formats)
-                insert_pattern = (
-                    r'(title:\s*"' + escaped_title + r'".*?'
-                    r'cover:\s*(?:"[^"]*"|COVERS\.\w+),)'
+            if seed_js_after != seed_js:
+                seed_js = seed_js_after
+                bounds = _find_entry_bounds(seed_js, story_id)
+
+        # ── mood ──
+        if mood and bounds:
+            if _entry_has_field(seed_js, bounds, r'mood:\s*"[^"]*",'):
+                seed_js_after = _replace_in_entry(
+                    seed_js, bounds,
+                    r'mood:\s*"[^"]*",',
+                    f'mood: "{mood}",',
                 )
-                insert_match = re.search(insert_pattern, seed_js, re.DOTALL)
-                if insert_match:
-                    old_block = insert_match.group(0)
-                    new_block = old_block + f"\n      character: {char_json},"
-                    seed_js = seed_js.replace(old_block, new_block, 1)
-
-        # Also update addedAt if explicitly set in content.json
-        explicit_added = info.get("addedAt")
-        if explicit_added:
-            added_pattern = (
-                r'(title:\s*"' + escaped_title + r'".*?)'
-                r'addedAt:\s*"[^"]*",'
-            )
-            added_match = re.search(added_pattern, seed_js, re.DOTALL)
-            if added_match:
-                old_added = added_match.group(0)
-                added_prefix = added_match.group(1)
-                new_added = added_prefix + f'addedAt: "{explicit_added}",'
-                if old_added != new_added:
-                    seed_js = seed_js.replace(old_added, new_added)
-
-        # Also update mood field (entry-bounded to avoid cross-entry matching)
-        mood = info.get("mood")
-        if mood:
-            # Normalize smart quotes for matching
-            norm_title = title.replace('\u2018', "'").replace('\u2019', "'")
-            # Find title position (try both original and normalized)
-            title_pat = re.search(r'title:\s*"' + re.escape(title) + r'"', seed_js)
-            if not title_pat and norm_title != title:
-                title_pat = re.search(r'title:\s*"' + re.escape(norm_title) + r'"', seed_js)
-            if title_pat:
-                search_start = title_pat.start()
-                # Entry boundary: next entry starts with '\n    {'
-                next_entry = seed_js.find('\n    {', search_start + 1)
-                if next_entry == -1:
-                    next_entry = len(seed_js)
-                entry_slice = seed_js[search_start:next_entry]
-
-                mood_in_entry = re.search(r'mood:\s*"[^"]*",', entry_slice)
-                if mood_in_entry:
-                    # Update existing mood
-                    abs_pos = search_start + mood_in_entry.start()
-                    old_mood = mood_in_entry.group(0)
-                    new_mood = f'mood: "{mood}",'
-                    if old_mood != new_mood:
-                        seed_js = seed_js[:abs_pos] + new_mood + seed_js[abs_pos + len(old_mood):]
+            else:
+                # Insert after addedAt within the entry
+                start, end = bounds
+                entry = seed_js[start:end]
+                added_in_entry = re.search(r'addedAt:\s*"[^"]*",', entry)
+                if added_in_entry:
+                    abs_pos = start + added_in_entry.end()
+                    seed_js_after = seed_js[:abs_pos] + f'\n      mood: "{mood}",' + seed_js[abs_pos:]
                 else:
-                    # Insert after addedAt line
-                    added_in_entry = re.search(r'addedAt:\s*"[^"]*",', entry_slice)
-                    if added_in_entry:
-                        abs_pos = search_start + added_in_entry.end()
-                        seed_js = seed_js[:abs_pos] + f'\n      mood: "{mood}",' + seed_js[abs_pos:]
+                    seed_js_after = seed_js
+            if seed_js_after != seed_js:
+                seed_js = seed_js_after
+                bounds = _find_entry_bounds(seed_js, story_id)
 
-        # Also update story_type field (same pattern as mood)
-        story_type = info.get("story_type")
-        if story_type:
-            norm_title = title.replace('\u2018', "'").replace('\u2019', "'")
-            title_pat = re.search(r'title:\s*"' + re.escape(title) + r'"', seed_js)
-            if not title_pat and norm_title != title:
-                title_pat = re.search(r'title:\s*"' + re.escape(norm_title) + r'"', seed_js)
-            if title_pat:
-                search_start = title_pat.start()
-                next_entry = seed_js.find('\n    {', search_start + 1)
-                if next_entry == -1:
-                    next_entry = len(seed_js)
-                entry_slice = seed_js[search_start:next_entry]
-
-                st_in_entry = re.search(r'story_type:\s*"[^"]*",', entry_slice)
-                if st_in_entry:
-                    abs_pos = search_start + st_in_entry.start()
-                    old_st = st_in_entry.group(0)
-                    new_st = f'story_type: "{story_type}",'
-                    if old_st != new_st:
-                        seed_js = seed_js[:abs_pos] + new_st + seed_js[abs_pos + len(old_st):]
+        # ── story_type ──
+        if story_type and bounds:
+            if _entry_has_field(seed_js, bounds, r'story_type:\s*"[^"]*",'):
+                seed_js_after = _replace_in_entry(
+                    seed_js, bounds,
+                    r'story_type:\s*"[^"]*",',
+                    f'story_type: "{story_type}",',
+                )
+            else:
+                start, end = bounds
+                entry = seed_js[start:end]
+                anchor = re.search(r'mood:\s*"[^"]*",', entry) or re.search(r'addedAt:\s*"[^"]*",', entry)
+                if anchor:
+                    abs_pos = start + anchor.end()
+                    seed_js_after = seed_js[:abs_pos] + f'\n      story_type: "{story_type}",' + seed_js[abs_pos:]
                 else:
-                    # Insert after mood line, or after addedAt if no mood
-                    mood_in_entry = re.search(r'mood:\s*"[^"]*",', entry_slice)
-                    if mood_in_entry:
-                        abs_pos = search_start + mood_in_entry.end()
-                        seed_js = seed_js[:abs_pos] + f'\n      story_type: "{story_type}",' + seed_js[abs_pos:]
-                    else:
-                        added_in_entry = re.search(r'addedAt:\s*"[^"]*",', entry_slice)
-                        if added_in_entry:
-                            abs_pos = search_start + added_in_entry.end()
-                            seed_js = seed_js[:abs_pos] + f'\n      story_type: "{story_type}",' + seed_js[abs_pos:]
+                    seed_js_after = seed_js
+            if seed_js_after != seed_js:
+                seed_js = seed_js_after
+                bounds = _find_entry_bounds(seed_js, story_id)
 
-        # Also update musicalBrief (v3 music system)
-        musical_brief = info.get("musicalBrief")
-        if musical_brief:
+        # ── character (replace if exists, else insert after cover line) ──
+        if character and character.get("name") and bounds:
+            char_json = json.dumps(character, ensure_ascii=False)
+            if _entry_has_field(seed_js, bounds, r'character:\s*\{[^}]*\},'):
+                seed_js_after = _replace_in_entry(
+                    seed_js, bounds,
+                    r'character:\s*\{[^}]*\},',
+                    f"character: {char_json},",
+                )
+            else:
+                start, end = bounds
+                entry = seed_js[start:end]
+                anchor = re.search(r'cover:\s*(?:"[^"]*"|COVERS\.\w+),', entry)
+                if anchor:
+                    abs_pos = start + anchor.end()
+                    seed_js_after = seed_js[:abs_pos] + f"\n      character: {char_json}," + seed_js[abs_pos:]
+                else:
+                    seed_js_after = seed_js
+            if seed_js_after != seed_js:
+                seed_js = seed_js_after
+                bounds = _find_entry_bounds(seed_js, story_id)
+
+        # ── musicalBrief (replace whole line if present, else insert after musicParams) ──
+        if musical_brief and bounds:
             mb_json = json.dumps(musical_brief, ensure_ascii=False)
-            # Find musicalBrief using brace-counting (regex can't handle nested JSON)
-            mb_key = "musicalBrief: {"
-            title_pat = re.search(r'title:\s*"' + escaped_title + r'"', seed_js)
-            if title_pat:
-                search_start = title_pat.start()
-                mb_pos = seed_js.find(mb_key, search_start)
-                # Only match if within the same entry (before next entry's "id:")
-                next_id = seed_js.find('\n    {', search_start + 1)
-                if mb_pos != -1 and (next_id == -1 or mb_pos < next_id):
-                    # Replace entire line content from musicalBrief: to newline
-                    # This handles corrupted entries with trailing duplicated fragments
-                    line_end = seed_js.find('\n', mb_pos)
-                    if line_end == -1:
-                        line_end = len(seed_js)
-                    old_mb = seed_js[mb_pos:line_end]
-                    new_mb = f"musicalBrief: {mb_json},"
-                    if old_mb != new_mb:
-                        seed_js = seed_js[:mb_pos] + new_mb + seed_js[line_end:]
-                else:
-                    # Insert musicalBrief after musicParams line
-                    mp_key = "musicParams: {"
-                    mp_pos = seed_js.find(mp_key, search_start)
-                    if mp_pos != -1 and (next_id == -1 or mp_pos < next_id):
-                        brace_start = mp_pos + len(mp_key) - 1
-                        depth = 0
-                        end = brace_start
-                        for i in range(brace_start, len(seed_js)):
-                            if seed_js[i] == '{':
-                                depth += 1
-                            elif seed_js[i] == '}':
-                                depth -= 1
+            start, end = bounds
+            entry = seed_js[start:end]
+            mb_pos_rel = entry.find("musicalBrief: {")
+            if mb_pos_rel != -1:
+                line_end_rel = entry.find('\n', mb_pos_rel)
+                if line_end_rel == -1:
+                    line_end_rel = len(entry)
+                abs_pos = start + mb_pos_rel
+                old_line = seed_js[abs_pos:start + line_end_rel]
+                new_line = f"musicalBrief: {mb_json},"
+                if old_line != new_line:
+                    seed_js = seed_js[:abs_pos] + new_line + seed_js[start + line_end_rel:]
+                    bounds = _find_entry_bounds(seed_js, story_id)
+            else:
+                # Insert after the musicParams object literal
+                mp_pos_rel = entry.find("musicParams: {")
+                if mp_pos_rel != -1:
+                    brace_start = start + mp_pos_rel + len("musicParams: ") + 0  # points at '{'
+                    # Find matching closing brace
+                    depth = 0
+                    closing = brace_start
+                    for i in range(brace_start, len(seed_js)):
+                        ch = seed_js[i]
+                        if ch == '{':
+                            depth += 1
+                        elif ch == '}':
+                            depth -= 1
                             if depth == 0:
-                                end = i
+                                closing = i
                                 break
-                        if end + 1 < len(seed_js) and seed_js[end + 1] == ',':
-                            end += 1
-                        insert_point = end + 1
-                        seed_js = seed_js[:insert_point] + f"\n      musicalBrief: {mb_json}," + seed_js[insert_point:]
+                    insert_point = closing + 1
+                    if insert_point < len(seed_js) and seed_js[insert_point] == ',':
+                        insert_point += 1
+                    seed_js = seed_js[:insert_point] + f"\n      musicalBrief: {mb_json}," + seed_js[insert_point:]
+                    bounds = _find_entry_bounds(seed_js, story_id)
 
     return seed_js, replacements
 
 
 def add_new_entries(seed_js: str, stories: list, lang_filter: str = "en") -> tuple:
-    """Add stories that don't exist in seedData.js yet.
+    """Add stories that don't exist in seedData.js yet (matched by id).
     Returns (updated_seed_js, add_count).
 
     Args:
         lang_filter: Only add entries for this language ("en", "hi", or "all").
     """
-    # Collect all titles already in seedData.js
-    existing_titles = set(re.findall(r'title:\s*"([^"]+)"', seed_js))
+    # Collect all ids already in seedData.js. Match by id, not title — same-titled
+    # entries with different ids must be added as separate rows.
+    existing_ids = set(re.findall(r'id:\s*"([^"]+)"', seed_js))
 
     # Group new stories by language
     new_en = []
     new_hi = []
     for story in stories:
-        title = story["title"]
-        if title in existing_titles:
+        sid = story.get("id")
+        if not sid or sid in existing_ids:
             continue
         # Only add stories that have audio_variants (ready to publish)
         if not story.get("audio_variants"):

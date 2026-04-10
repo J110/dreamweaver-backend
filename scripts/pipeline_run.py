@@ -472,9 +472,12 @@ def step_generate(args, state: dict) -> bool:
                 sys.executable, str(SCRIPTS_DIR / "generate_long_story_episode.py"),
                 "--randomize", "--publish",
                 "--mood", effective_mood or "curious",
-                "--age-group", args.age or "6-8",
                 "--output-dir", str(episode_output),
             ]
+            # Only pin age-group when the operator explicitly passed --age.
+            # Otherwise let randomize_params rotate across {2-5, 6-8, 9-12}.
+            if args.age:
+                episode_cmd += ["--age-group", args.age]
             ep_ok, ep_stdout, _, ep_elapsed = run_command(
                 episode_cmd, f"Long Story Episode {i+1}", timeout=3600
             )
@@ -1744,11 +1747,61 @@ def step_before_bed(args, state: dict) -> bool:
     return True  # Non-fatal — don't block the rest of the pipeline
 
 
+def _drop_no_audio_from_content(state: dict) -> list:
+    """Pre-publish gate: remove this run's items from content.json that have no audio.
+
+    Some content sources (e.g. generate_long_story_episode.py --publish) append
+    to content.json regardless of whether TTS actually produced sound, and the
+    short-story path leaves items in place even when generate_audio.py aborts at
+    Chatterbox warmup. Either way, headless items break the homepage. Strip them
+    here, log loudly, and surface them on state["dropped_no_audio"] so the
+    notification email reports the failure.
+
+    Returns the list of dropped story ids.
+    """
+    if not CONTENT_PATH.exists():
+        return []
+    new_ids = set(state.get("generated_ids", []) or [])
+    if not new_ids:
+        return []
+    try:
+        content = json.loads(CONTENT_PATH.read_text())
+    except Exception as e:
+        logger.warning("  Pre-publish gate: could not read content.json (%s)", e)
+        return []
+
+    dropped_ids = []
+    dropped_titles = []
+    kept = []
+    for item in content:
+        sid = item.get("id")
+        if sid in new_ids and not item.get("audio_variants"):
+            dropped_ids.append(sid)
+            dropped_titles.append(item.get("title", sid))
+            continue
+        kept.append(item)
+
+    if dropped_ids:
+        logger.error("  Pre-publish gate: dropping %d item(s) with no audio:", len(dropped_ids))
+        for t, sid in zip(dropped_titles, dropped_ids):
+            logger.error("    - %s (%s)", t, sid[:12])
+        CONTENT_PATH.write_text(json.dumps(content_filtered := kept, indent=2, ensure_ascii=False))
+        # Also remove from generated_ids so downstream sync/publish ignore them
+        state["generated_ids"] = [sid for sid in state.get("generated_ids", []) if sid not in dropped_ids]
+        state.setdefault("dropped_no_audio", []).extend(dropped_ids)
+        state["dropped_no_audio_titles"] = (state.get("dropped_no_audio_titles", []) + dropped_titles)
+        save_state(state)
+    return dropped_ids
+
+
 def step_sync(args, state: dict) -> bool:
     """Step 7: Sync content.json → seedData.js for the web frontend."""
     logger.info("\n╔══════════════════════════════════════╗")
     logger.info("║  STEP 6: SYNC SEED DATA              ║")
     logger.info("╚══════════════════════════════════════╝")
+
+    # Pre-publish gate — strip headless content before it reaches seedData.js
+    _drop_no_audio_from_content(state)
 
     if not WEB_DIR.exists():
         logger.warning("  dreamweaver-web not found at %s — skipping sync", WEB_DIR)
@@ -2440,6 +2493,11 @@ def print_summary(state: dict, total_elapsed: float):
                 state.get("generated_stories", 0),
                 state.get("generated_poems", 0),
                 state.get("generated_lullabies", 0))
+    dropped = state.get("dropped_no_audio", [])
+    if dropped:
+        logger.warning("  ⚠️  Dropped %d item(s) with no audio: %s",
+                       len(dropped),
+                       ", ".join(state.get("dropped_no_audio_titles", [])[:5]))
     logger.info("  Audio gen:  %s", state.get("step_audio", "not run"))
     logger.info("  QA passed:  %d", len(state.get("qa_passed", [])))
     logger.info("  QA failed:  %d", len(state.get("qa_failed", [])))
