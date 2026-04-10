@@ -1331,7 +1331,7 @@ CHATTERBOX_URL = "https://mohan-32314--dreamweaver-chatterbox-tts.modal.run"
 
 
 def generate_tts(text, voice, exaggeration=0.45, cfg_weight=0.5, speed=0.85,
-                 is_phrase=False, timeout=60):
+                 is_phrase=False, timeout=180):
     """Generate TTS audio via Chatterbox Modal endpoint.
 
     timeout: Per-attempt timeout in seconds (default 60). Prevents hangs
