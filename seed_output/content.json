@@ -16579,19 +16579,26 @@
     "length": "LONG",
     "word_count": 706,
     "duration_seconds": 146,
-    "duration": 2,
+    "duration": 10,
     "categories": [
       "Bedtime",
       "Observatory"
     ],
     "theme": "bedtime",
     "morals": [],
-    "cover": "/covers/gen-b08733b50cb5.svg",
+    "cover": "/covers/gen-b08733b50cb5.webp",
     "musicProfile": null,
     "musicParams": null,
     "musicalBrief": null,
     "music_type": "baked",
-    "audio_variants": [],
+    "audio_variants": [
+      {
+        "voice": "mixed",
+        "url": "/audio/pre-gen/b08733b5_mixed.mp3",
+        "duration_seconds": 606,
+        "provider": "chatterbox-mixed-v2"
+      }
+    ],
     "author_id": "system",
     "is_generated": true,
     "generation_quality": "experimental_v2",
@@ -16655,7 +16662,7 @@
     "age_group": "6-8",
     "length": "SHORT",
     "word_count": 226,
-    "duration_seconds": 0,
+    "duration_seconds": 244.05,
     "categories": [
       "Nature",
       "Adventure"
@@ -16668,7 +16675,20 @@
     "cover": "/covers/gen-87842a65b675.svg",
     "musicProfile": "",
     "music_type": "baked",
-    "audio_variants": [],
+    "audio_variants": [
+      {
+        "voice": "female_4",
+        "url": "/audio/pre-gen/gen-87842a65b675_female_4.mp3",
+        "duration_seconds": 252.75,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-87842a65b675_male_2.mp3",
+        "duration_seconds": 235.34,
+        "provider": "chatterbox"
+      }
+    ],
     "author_id": "system",
     "is_generated": true,
     "generation_quality": "pending_review",
@@ -16719,7 +16739,8 @@
     "experimental_v2": true,
     "hook": "Have you ever wondered how fireflies learned to light up the night?",
     "repeated_phrase": "The bark shimmered like wet stone",
-    "raw_text": "Long ago, before fireflies filled the summer air...\n\nAria walked through the quiet woods. [PAUSE: 800] The trees stood tall around him. [PAUSE: 800] His feet crunched on dry leaves. [MUSIC]\n\nThen he saw it. A tree unlike any other. Its trunk was wide and hollow. [PHRASE]The bark shimmered like wet stone.[/PHRASE] Aria stopped. [PAUSE: 1200] He had never seen a tree like this. [MUSIC]\n\nInside the hollow, something glowed. Soft. Golden. Like tiny stars trapped in glass. Aria leaned closer. [PAUSE: 1500] Can you guess what he heard? A hum. A quiet, singing hum. [MUSIC]\n\nAria stepped inside. [PHRASE]The bark shimmered like wet stone.[/PHRASE] The air felt warm. The hum grew louder. Tiny lights swirled around him. They landed on his hands. His arms. His face. [PAUSE: 2000] They tickled. Like raindrops made of light. [MUSIC]\n\nThe lights lifted. They floated outside. Aria followed. [PHRASE]The bark shimmered like wet stone.[/PHRASE] The lights danced above the grass. They flickered. Bright. Dim. Bright again. [PAUSE: 1500] Between you and me, Aria didn’t want to leave. [MUSIC]\n\nThe lights spread. They filled the trees. The bushes. The whole forest. Aria sat down. He watched. The lights flickered. Bright. Dim. Bright. [PAUSE: 1200] The hum softened. The air grew cool. [MUSIC]\n\nAria closed his eyes. The lights kept dancing. The hum kept singing. The tree stood quiet. [PAUSE: 2000] The forest was never dark again."
+    "raw_text": "Long ago, before fireflies filled the summer air...\n\nAria walked through the quiet woods. [PAUSE: 800] The trees stood tall around him. [PAUSE: 800] His feet crunched on dry leaves. [MUSIC]\n\nThen he saw it. A tree unlike any other. Its trunk was wide and hollow. [PHRASE]The bark shimmered like wet stone.[/PHRASE] Aria stopped. [PAUSE: 1200] He had never seen a tree like this. [MUSIC]\n\nInside the hollow, something glowed. Soft. Golden. Like tiny stars trapped in glass. Aria leaned closer. [PAUSE: 1500] Can you guess what he heard? A hum. A quiet, singing hum. [MUSIC]\n\nAria stepped inside. [PHRASE]The bark shimmered like wet stone.[/PHRASE] The air felt warm. The hum grew louder. Tiny lights swirled around him. They landed on his hands. His arms. His face. [PAUSE: 2000] They tickled. Like raindrops made of light. [MUSIC]\n\nThe lights lifted. They floated outside. Aria followed. [PHRASE]The bark shimmered like wet stone.[/PHRASE] The lights danced above the grass. They flickered. Bright. Dim. Bright again. [PAUSE: 1500] Between you and me, Aria didn’t want to leave. [MUSIC]\n\nThe lights spread. They filled the trees. The bushes. The whole forest. Aria sat down. He watched. The lights flickered. Bright. Dim. Bright. [PAUSE: 1200] The hum softened. The air grew cool. [MUSIC]\n\nAria closed his eyes. The lights kept dancing. The hum kept singing. The tree stood quiet. [PAUSE: 2000] The forest was never dark again.",
+    "duration": 5
   },
   {
     "id": "permission-0-1-5b9d",
@@ -16774,5 +16795,239 @@
     ],
     "mood": "curious",
     "lullaby_type": "permission"
+  },
+  {
+    "id": "gen-466919aaf983",
+    "type": "long_story",
+    "lang": "en",
+    "title": "Ren and Chime and the Transport",
+    "description": "A bedtime story episode where Ren and Chime discovers a magical transport.",
+    "text": "Close your eyes and imagine a train that never stops, not even at night. Its wheels hum a lullaby on silver tracks, and every carriage glows with golden light. This is the Moonbeam Express, and tonight, it’s waiting just for you. All aboard, little sprout—your seat is the softest patch of moss, right by the window.\n\nThe Moonbeam Express shudders to life beneath you. Ren, the tiny sprout, stretches toward the ceiling of the carriage. The walls are made of woven vines, and the air smells like rain on warm stones.\n\nREN: \"Did you hear that?\"\nA soft ding echoes from somewhere above. Ren tilts their head. The sound is too high, too bright—like a bell made of starlight.\n\nCHIME: \"Oh! Oh no!\"\nA small silver bell, no bigger than a pebble, trembles on a leaf near Ren’s roots. Its voice is wobbly, its edges flickering like candlelight.\n\nREN: \"Are you lost?\"\nCHIME: \"I’m supposed to ring when the train is calm! But I can’t—it’s too loud in here!\"\nThe carriage hums with chatter—whispers from the fireflies, giggles from the wind through the windows. Ren blinks. The train is loud. But how can a train be calm?\n\nCHIME: \"Try breathing with me. Like this—\"\nRen breathed in through their leaves, slow and deep. Then out through their roots, soft as a whisper.\n\nThe air around Ren stills. The fireflies pause. Even the wind holds its breath.\n\nCHIME: \"There! Do you see it?\"\nWords shimmer on the window, but only when Ren isn’t looking too hard. Close your eyes to see. Ren gasps.\n\nREN: \"Come along, Chime!\"\nCome along, come along!\nThe bell flutters onto Ren’s leaf, and together, they lean toward the window. The words glow brighter now. The train is calm when you are.\n\nThe carriage begins to hum a new song. Not the chatter of before, but a melody like raindrops on petals. The fireflies dim their lights, swaying in time. The wind curls into a lullaby.\n\nThe Moonbeam Express glides smoother now, as if the tracks have turned to silk. The golden light in the carriage softens, painting everything in honeyed shadows. Ren’s leaves feel heavier, warmer. The mystery isn’t gone—it’s just resting, like the world is supposed to.\n\nThe fireflies drift lower, their glow pulsing like slow heartbeats. One by one, they tuck themselves into the vines, their light fading to embers. The wind’s song stretches longer between notes, as if it’s forgetting the words.\n\nCHIME: \"I think... I think I can ring now.\"\nThe bell’s edges steady. Its voice is softer, sweeter. Ding. The sound lingers in the air like a held breath.\n\nREN: \"It’s working!\"\nIn through the nose, out through the mouth. Slow. Steady.\n\nThe train sways, gentle as a cradle. The tracks beneath Ren’s roots hum a deeper note, one that vibrates through the soil and into their bones. The words on the window glow again: The train is calm when you are.\n\nCHIME: \"I’m getting sleepy...\"\nThe bell’s voice slurs. Its flicker dims, then stills. Ren watches as Chime’s light settles into a soft pulse, like a heartbeat slowing down.\n\n...come along...\nThe air smells like warm milk and lavender. The golden light in the carriage turns to amber, then to rose, then to the color of twilight. Ren’s leaves droop, heavy with the weight of the quiet. The train doesn’t need to move fast anymore. It’s already where it’s supposed to be.\n\nThe last firefly blinks out. The wind’s song fades into a sigh. The words on the window dissolve into the glass, leaving only the reflection of Ren’s sleepy face, half-hidden in the shadows.\n\nThe train rocks.\nThe air is still.\nNo more chatter.\nNo more hurry.\n\nRen’s leaves rest.\nChime’s light dims.\nThe fireflies sleep.\nThe wind is quiet.\n\nThe tracks hum low.\nThe carriage glows soft.\nThe world is warm.\nThe train is calm.\n\nNo need to move.\nNo need to speak.\nThe night is long.\nThe night is kind.\n\nLeaves feel heavy.\nRoots feel deep.\nThe air is sweet.\nThe train breathes.\n\nGolden light fades.\nShadows stretch.\nEverything slows.\nEverything rests.\n\nCome along.\nCome along.\nCome...\n\nThe bell is quiet.\nThe train is still.\nThe sprout is home.\n\nSoft...\nStill...\nSleep...\n\nDark.",
+    "annotated_text": "Close your eyes and imagine a train that never stops, not even at night. Its wheels hum a lullaby on silver tracks, and every carriage glows with golden light. This is the Moonbeam Express, and tonight, it’s waiting just for you. All aboard, little sprout—your seat is the softest patch of moss, right by the window.\n\nThe Moonbeam Express shudders to life beneath you. Ren, the tiny sprout, stretches toward the ceiling of the carriage. The walls are made of woven vines, and the air smells like rain on warm stones.\n\nREN: \"Did you hear that?\"\nA soft ding echoes from somewhere above. Ren tilts their head. The sound is too high, too bright—like a bell made of starlight.\n\nCHIME: \"Oh! Oh no!\"\nA small silver bell, no bigger than a pebble, trembles on a leaf near Ren’s roots. Its voice is wobbly, its edges flickering like candlelight.\n\nREN: \"Are you lost?\"\nCHIME: \"I’m supposed to ring when the train is calm! But I can’t—it’s too loud in here!\"\nThe carriage hums with chatter—whispers from the fireflies, giggles from the wind through the windows. Ren blinks. The train is loud. But how can a train be calm?\n\nCHIME: \"Try breathing with me. Like this—\"\n[BREATHE_GUIDE]Ren breathed in through their leaves, slow and deep. Then out through their roots, soft as a whisper.[/BREATHE_GUIDE]\n[BREATHE]\nThe air around Ren stills. The fireflies pause. Even the wind holds its breath.\n\nCHIME: \"There! Do you see it?\"\nWords shimmer on the window, but only when Ren isn’t looking too hard. Close your eyes to see. Ren gasps.\n\nREN: \"Come along, Chime!\"\n[PHRASE]Come along, come along![/PHRASE]\nThe bell flutters onto Ren’s leaf, and together, they lean toward the window. The words glow brighter now. The train is calm when you are.\n\nThe carriage begins to hum a new song. Not the chatter of before, but a melody like raindrops on petals. The fireflies dim their lights, swaying in time. The wind curls into a lullaby.\n\n[SONG_SEED: A song about a train that only moves when you’re still, with chimes that ring when the world is quiet enough to hear them.]\n\nThe Moonbeam Express glides smoother now, as if the tracks have turned to silk. The golden light in the carriage softens, painting everything in honeyed shadows. Ren’s leaves feel heavier, warmer. The mystery isn’t gone—it’s just resting, like the world is supposed to.\n\nThe fireflies drift lower, their glow pulsing like slow heartbeats. One by one, they tuck themselves into the vines, their light fading to embers. The wind’s song stretches longer between notes, as if it’s forgetting the words.\n\nCHIME: \"I think... I think I can ring now.\"\nThe bell’s edges steady. Its voice is softer, sweeter. Ding. The sound lingers in the air like a held breath.\n\nREN: \"It’s working!\"\n[BREATHE_GUIDE]In through the nose, out through the mouth. Slow. Steady.[/BREATHE_GUIDE]\n[BREATHE]\nThe train sways, gentle as a cradle. The tracks beneath Ren’s roots hum a deeper note, one that vibrates through the soil and into their bones. The words on the window glow again: The train is calm when you are.\n\nCHIME: \"I’m getting sleepy...\"\nThe bell’s voice slurs. Its flicker dims, then stills. Ren watches as Chime’s light settles into a soft pulse, like a heartbeat slowing down.\n\n[PHRASE]...come along...[/PHRASE]\nThe air smells like warm milk and lavender. The golden light in the carriage turns to amber, then to rose, then to the color of twilight. Ren’s leaves droop, heavy with the weight of the quiet. The train doesn’t need to move fast anymore. It’s already where it’s supposed to be.\n\n[BREATHE]\nThe last firefly blinks out. The wind’s song fades into a sigh. The words on the window dissolve into the glass, leaving only the reflection of Ren’s sleepy face, half-hidden in the shadows.\n\nThe train rocks.\nThe air is still.\nNo more chatter.\nNo more hurry.\n\nRen’s leaves rest.\nChime’s light dims.\nThe fireflies sleep.\nThe wind is quiet.\n\nThe tracks hum low.\nThe carriage glows soft.\nThe world is warm.\nThe train is calm.\n\nNo need to move.\nNo need to speak.\nThe night is long.\nThe night is kind.\n\nLeaves feel heavy.\nRoots feel deep.\nThe air is sweet.\nThe train breathes.\n\nGolden light fades.\nShadows stretch.\nEverything slows.\nEverything rests.\n\nCome along.\nCome along.\nCome...\n\nThe bell is quiet.\nThe train is still.\nThe sprout is home.\n\n[WHISPER]Soft...[/WHISPER]\n[WHISPER]Still...[/WHISPER]\n[WHISPER]Sleep...[/WHISPER]\n\nDark.",
+    "lullaby_lyrics": "Vines hum soft and low,\nRen’s roots rise slow.\nDing like starlight’s glow—\ncome along, come along!\n\nStill now, don’t you stir,\ntrain moves when you blur.\nChime fades, soft and sure—\ncome along, come along.",
+    "target_age": 3,
+    "age_min": 2,
+    "age_max": 5,
+    "age_group": "2-5",
+    "length": "LONG",
+    "word_count": 706,
+    "duration_seconds": 561,
+    "duration": 9,
+    "categories": [
+      "Bedtime",
+      "Transport"
+    ],
+    "theme": "bedtime",
+    "morals": [],
+    "cover": "/covers/gen-466919aaf983.svg",
+    "musicProfile": null,
+    "musicParams": null,
+    "musicalBrief": null,
+    "music_type": "baked",
+    "audio_variants": [
+      {
+        "voice": "mixed",
+        "url": "/audio/pre-gen/466919aa_mixed.mp3",
+        "duration_seconds": 561.02,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "experimental_v2",
+    "has_baked_music": true,
+    "experimental_v2": true,
+    "episode_format": "v2",
+    "world_type": "transport",
+    "mystery_type": "something_strange",
+    "breathing_mechanic": "ink",
+    "lead_character_type": "plant",
+    "name_culture": "East Asia",
+    "characters": [
+      {
+        "name": "Ren",
+        "personality": "curious",
+        "voice_style": "gentle",
+        "gender": "neutral"
+      },
+      {
+        "name": "Chime",
+        "personality": "nervous",
+        "voice_style": "small",
+        "gender": "neutral"
+      }
+    ],
+    "repeated_phrase": "Come along, come along!",
+    "voice_map": {
+      "Ren": "male_1",
+      "Chime": "male_2"
+    },
+    "narrator_voice": "female_1",
+    "mood": "wired",
+    "created_at": "2026-04-11T01:54:42.333638",
+    "updated_at": "2026-04-11T01:54:42.333638",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "character": {
+      "name": "Ren",
+      "identity": "A young plant who discovers a transport — A vehicle that travels somewhere magical — a train, a boat, a balloon",
+      "special": "Uses a ink to solve the mystery",
+      "personality_tags": [
+        "Curious",
+        "Gentle"
+      ]
+    },
+    "is_saved": false,
+    "story_type": "nature",
+    "language_level": "intermediate"
+  },
+  {
+    "id": "gen-01ab2fc9907f",
+    "type": "story",
+    "lang": "en",
+    "title": "Leo and the Slippery Slide Cloud",
+    "description": "Leo the lizard loves climbing, but today she finds a cloud that won’t stay still. Every time she steps on it, she slides—right into something soft, warm, and giggly. What’s at the bottom of the slippery sky?",
+    "text": "One day, Leo the lizard said to the cloud— Watch your toes, it’s slippery! She took one step. Her foot went whoosh. She landed in a pile of fluffy cotton candy. Leo climbed up again. Watch your toes, it’s slippery! She took two steps. Her feet went splat. She landed in a bowl of warm pudding. Shhh... listen... can you hear the giggle? Leo climbed up one more time. Watch your toes, it’s slippery! She took three steps. Her whole body went slide. She landed in a nest of soft blankets. The cloud sighed. \"I just wanted to play.\" Leo curled up. The blankets smelled like sunshine. The cloud stopped wiggling. The sky turned pink. Leo closed her eyes. The cloud tucked her in. The stars blinked once. And Leo found her answer.",
+    "annotated_text": "One day, Leo the lizard said to the cloud—\n\n[PHRASE]Watch your toes, it’s slippery![/PHRASE]\n\nShe took one step. Her foot went whoosh. She landed in a pile of fluffy cotton candy.\n\n[PAUSE: 800]\n\nLeo climbed up again. [PHRASE]Watch your toes, it’s slippery![/PHRASE] She took two steps. Her feet went splat. She landed in a bowl of warm pudding.\n\n[MUSIC]\n\nShhh... listen... can you hear the giggle?\n\nLeo climbed up one more time. [PHRASE]Watch your toes, it’s slippery![/PHRASE] She took three steps. Her whole body went slide. She landed in a nest of soft blankets.\n\n[PAUSE: 1200]\n\nThe cloud sighed. \"I just wanted to play.\"\n\nLeo curled up. The blankets smelled like sunshine. The cloud stopped wiggling. The sky turned pink.\n\n[MUSIC]\n\nLeo closed her eyes. The cloud tucked her in. The stars blinked once.\n\nAnd Leo found her answer.",
+    "target_age": 3,
+    "age_min": 2,
+    "age_max": 5,
+    "age_group": "2-5",
+    "length": "SHORT",
+    "word_count": 137,
+    "duration_seconds": 0,
+    "categories": [
+      "Fable",
+      "Bedtime"
+    ],
+    "theme": "adventure",
+    "morals": [
+      "Sometimes the best adventures end with a cozy place to rest.",
+      "Even slippery things can lead you somewhere warm."
+    ],
+    "cover": "/covers/gen-01ab2fc9907f.svg",
+    "musicProfile": "",
+    "music_type": "baked",
+    "audio_variants": [
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-01ab_male_2.mp3",
+        "duration_seconds": 145.76,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-01ab_female_3.mp3",
+        "duration_seconds": 142.53,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "female",
+    "character": {
+      "name": "Leo",
+      "identity": "A tiny lizard who loves climbing but keeps sliding down clouds.",
+      "special": "She turns every fall into a soft landing.",
+      "personality_tags": [
+        "Playful",
+        "Gentle"
+      ]
+    },
+    "cover_context": "A wispy cloud hovers just above a nest of blankets and cotton candy, glowing pink in the twilight. The sky is dotted with early stars.",
+    "lead_character_type": "human",
+    "character_name": "Leo",
+    "universe": "prehistoric",
+    "geography": "Arctic/Polar",
+    "life_aspect": "sleep_comfort",
+    "plot_archetype": "friendship_bonding",
+    "diversityFingerprint": {
+      "characterType": "reptile_amphibian",
+      "setting": "sky_space",
+      "mood": null,
+      "storyType": null,
+      "plotShape": null,
+      "languageLevel": null,
+      "scale": "tiny_intimate",
+      "companion": null,
+      "movement": null,
+      "timeOfDay": null,
+      "weather": "clear_calm",
+      "theme": "rest_stillness",
+      "characterTrait": null,
+      "magicType": null,
+      "season": "summer",
+      "senseEmphasis": null
+    },
+    "mood": "wired",
+    "story_type": "fable",
+    "language_level": "basic",
+    "created_at": "2026-04-11T01:56:34.801491",
+    "updated_at": "2026-04-11T01:56:34.801491",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "has_baked_music": true,
+    "experimental_v2": true,
+    "hook": "Did you know clouds can be as slippery as soap?",
+    "repeated_phrase": "Watch your toes, it’s slippery!",
+    "raw_text": "One day, Leo the lizard said to the cloud—\n\n[PHRASE]Watch your toes, it’s slippery![/PHRASE]\n\nShe took one step. Her foot went whoosh. She landed in a pile of fluffy cotton candy.\n\n[PAUSE: 800]\n\nLeo climbed up again. [PHRASE]Watch your toes, it’s slippery![/PHRASE] She took two steps. Her feet went splat. She landed in a bowl of warm pudding.\n\n[MUSIC]\n\nShhh... listen... can you hear the giggle?\n\nLeo climbed up one more time. [PHRASE]Watch your toes, it’s slippery![/PHRASE] She took three steps. Her whole body went slide. She landed in a nest of soft blankets.\n\n[PAUSE: 1200]\n\nThe cloud sighed. \"I just wanted to play.\"\n\nLeo curled up. The blankets smelled like sunshine. The cloud stopped wiggling. The sky turned pink.\n\n[MUSIC]\n\nLeo closed her eyes. The cloud tucked her in. The stars blinked once.\n\nAnd Leo found her answer.",
+    "duration": 3
+  },
+  {
+    "id": "counting-6-8-abe7",
+    "type": "song",
+    "lang": "en",
+    "title": "Mara’s Moonlit Count",
+    "card_label": "One by One",
+    "cover": "/covers/counting-6-8-abe7.svg",
+    "description": "A gentle cumulative lullaby where forest friends settle down one by one under Mara’s watchful eye. The repeating, rhythmic counting softly slows busy minds, helping little listeners drift into sleep with each verse.",
+    "text": "[verse]\nOne fox curls up so tight\nSoft paws tucked out of sight\n\n[verse]\nOne fox curls up so tight\nSoft paws tucked out of sight\nTwo deer lie down so slow\nEars drowsy, heads bowed low\n\n[verse]\nOne fox curls up so tight\nSoft paws tucked out of sight\nTwo deer lie down so slow\nEars drowsy, heads bowed low\nThree rabbits close their eyes\nNoses twitch in moonlit skies\n\n[verse]\nOne fox curls up so tight\nSoft paws tucked out of sight\nTwo deer lie down so slow\nEars drowsy, heads bowed low\nThree rabbits close their eyes\nNoses twitch in moonlit skies\nFour owls rest on a limb\nWings folded, soft and dim\nAnd that was all",
+    "annotated_text": "[verse]\nOne fox curls up so tight\nSoft paws tucked out of sight\n\n[verse]\nOne fox curls up so tight\nSoft paws tucked out of sight\nTwo deer lie down so slow\nEars drowsy, heads bowed low\n\n[verse]\nOne fox curls up so tight\nSoft paws tucked out of sight\nTwo deer lie down so slow\nEars drowsy, heads bowed low\nThree rabbits close their eyes\nNoses twitch in moonlit skies\n\n[verse]\nOne fox curls up so tight\nSoft paws tucked out of sight\nTwo deer lie down so slow\nEars drowsy, heads bowed low\nThree rabbits close their eyes\nNoses twitch in moonlit skies\nFour owls rest on a limb\nWings folded, soft and dim\nAnd that was all",
+    "cover_context": "A small silver fox with a fluffy tail curled around her nose, nestled in a mossy forest glade under a soft glowing moon. Nearby, two deer rest with gentle eyes half-closed, three tiny rabbits snuggle together, and four round owls perch on a low branch, all bathed in warm, dreamy watercolor light.",
+    "target_age": 7,
+    "age_min": 6,
+    "age_max": 8,
+    "age_group": "6-8",
+    "duration": 2,
+    "duration_seconds": 90,
+    "author_id": "system",
+    "created_at": "2026-04-11T02:04:25.380455",
+    "updated_at": "2026-04-11T02:04:25.382315",
+    "audio_url": null,
+    "album_art_url": null,
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "categories": [
+      "Lullabies"
+    ],
+    "theme": "dreamy",
+    "is_generated": true,
+    "generation_quality": "good",
+    "music_genre": "lullaby",
+    "lead_character_type": "animal",
+    "character": {
+      "name": "Mara",
+      "identity": "A wise little fox who watches over the forest as the animals drift to sleep.",
+      "special": "She knows the quietest way to guide every creature into peaceful dreams.",
+      "personality_tags": [
+        "Gentle",
+        "Sleepy"
+      ]
+    },
+    "about": "A gentle cumulative lullaby where forest friends settle down one by one under Mara’s watchful eye. The repeating, rhythmic counting softly slows busy minds, helping little listeners drift into sleep with each verse.",
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/counting-6-8-abe7_female_1.mp3",
+        "duration_seconds": 90,
+        "provider": "minimax-music-v2"
+      }
+    ],
+    "mood": "wired",
+    "lullaby_type": "counting"
   }
 ]
