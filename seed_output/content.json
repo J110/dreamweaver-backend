@@ -17271,5 +17271,239 @@
     ],
     "mood": "angry",
     "lullaby_type": "closing"
+  },
+  {
+    "id": "gen-7573f233b6ea",
+    "type": "long_story",
+    "lang": "en",
+    "title": "Kavya and Dodi and the Library",
+    "description": "A bedtime story episode where Kavya and Dodi discovers a magical library.",
+    "text": "Close your eyes and imagine a library where every book is a dream. Not words on pages, but glowing orbs that hum when you touch them. The shelves stretch taller than the tallest trees, and the floor is made of soft moss that sighs when you walk. This is the Whisper Vault, where every story ever dreamed is kept safe—until it’s time to rest.\n\nYou are Kavya, a tiny silver moth with wings like moonlit lace. Your antennae twitch as you flutter through the Whisper Vault, where stories sleep in glass jars. The air smells like old paper and honey. You’re searching for something—something important—but you can’t remember what.\n\nKAVYA: \"I know it’s here somewhere.\"\n\nYour wings brush against a jar, and a soft melody spills out. It’s the sound of rain on leaves, but it fades too soon. You press your ear to the glass, but the story inside is already curling up, falling asleep.\n\nKAVYA: \"Not yet. Not yet, little dream.\"\n\nA shadow flutters beside you. It’s Dodi, a lantern with a flickering flame inside. Their light is warm, like a hug from the sun.\n\nDODI: \"You’re looking for the missing song.\"\n\nKAVYA: \"Yes! Do you know where it is?\"\n\nDODI: \"The quietest place. But the door only opens when the air is still.\"\n\nKavya tilts her head. A door made of woven vines blocks the path ahead. It doesn’t creak or groan—it breathes. In and out. In and out.\n\nDODI: \"Try breathing with it.\"\n\nKavya takes a deep breath. Her wings still.\n\nIn through the nose, slow and deep. Out through the mouth, soft as a whisper.\n\nThe door shivers. The vines untangle just enough for Kavya to slip through. Beyond it, the air is thicker, softer. The jars here glow faintly, like fireflies at dusk.\n\nKAVYA: \"It’s so quiet here.\"\n\nDodi’s flame dims, as if listening.\n\nDODI: \"The stories are resting.\"\n\nA jar near Kavya’s feet hums weakly. Inside, a tiny melody flickers—just a note, then silence. Then another. It’s the song she’s been searching for.\n\nKAVYA: \"There it is!\"\n\nBut the song isn’t finished. It’s waiting. For what?\n\nThe world around Kavya begins to hum. The jars on the shelves vibrate, their melodies weaving together. The floor trembles, and the moss beneath her feet sighs a lullaby.\n\nThe music lingers in the air, but softer now. The jars glow dimmer, their songs curling into sleep. Kavya’s wings feel heavy, as if the melody is tucking her in.\n\nKavya lands beside the jar with the missing song. The melody inside is slow, like a heartbeat. She presses her tiny paws against the glass.\n\nKAVYA: \"Why are you hiding?\"\n\nDodi’s flame flickers low.\n\nDODI: \"It’s not hiding. It’s resting.\"\n\nKavya watches the song inside the jar. It rises and falls, like breathing. In. Out. In. Out.\n\nIn through the nose, out through the mouth. Slow. Steady.\n\nThe song inside the jar grows softer. The melody stretches, like a yawn. Kavya’s wings droop. The air around her is warm, like a blanket.\n\nDodi’s flame dims to a tiny spark. Their voice is a whisper.\n\nDODI: \"Stories need sleep too.\"\n\nKavya nods. She understands now. The song wasn’t lost. It was waiting. For quiet. For rest.\n\nThe jars around her hum softly, their melodies blending into one long sigh. The moss beneath her feet is warm, like a bed. She curls her wings around herself.\n\nKAVYA: \"Not yet, little dream...\"\n\nBut the words are slow, tired. The song in the jar is almost asleep. Kavya’s eyelids feel heavy. She yawns, and the sound is swallowed by the quiet.\n\nThe last note of the song fades. The jars stop humming. The air is still. The only sound is Kavya’s breath, slow and steady.\n\nThe warmth wraps around her. The moss cradles her. The quiet holds her.\n\nDodi’s flame goes out. Their light is gone, but the warmth remains. Kavya’s wings rise and fall with her breath. In. Out. In. Out.\n\nThe jars are dark.\nThe songs are still.\nThe air is soft.\n\nKavya’s wings feel heavy.\nHer breath is slow.\nHer eyes are closed.\n\nThe moss is warm.\nThe quiet is deep.\nThe world is sleeping.\n\nNo more searching.\nNo more questions.\nJust rest.\n\nThe song is quiet.\nThe song is safe.\nThe song is home.\n\nKavya’s breath slows.\nHer wings relax.\nHer body sinks.\n\nThe moss holds her.\nThe quiet wraps her.\nThe dark cradles her.\n\nNo more words.\nNo more light.\nJust stillness.\n\n...not yet...\n\nThe warmth lingers.\nThe quiet hums.\nThe sleep comes.\n\nsoft... still... quiet...\nsleep",
+    "annotated_text": "Close your eyes and imagine a library where every book is a dream. Not words on pages, but glowing orbs that hum when you touch them. The shelves stretch taller than the tallest trees, and the floor is made of soft moss that sighs when you walk. This is the Whisper Vault, where every story ever dreamed is kept safe—until it’s time to rest.\n\nYou are Kavya, a tiny silver moth with wings like moonlit lace. Your antennae twitch as you flutter through the Whisper Vault, where stories sleep in glass jars. The air smells like old paper and honey. You’re searching for something—something important—but you can’t remember what.\n\nKAVYA: \"I know it’s here somewhere.\"\n\nYour wings brush against a jar, and a soft melody spills out. It’s the sound of rain on leaves, but it fades too soon. You press your ear to the glass, but the story inside is already curling up, falling asleep.\n\nKAVYA: \"Not yet. [PHRASE]Not yet, little dream.[/PHRASE]\"\n\nA shadow flutters beside you. It’s Dodi, a lantern with a flickering flame inside. Their light is warm, like a hug from the sun.\n\nDODI: \"You’re looking for the missing song.\"\n\nKAVYA: \"Yes! Do you know where it is?\"\n\nDODI: \"The quietest place. But the door only opens when the air is still.\"\n\nKavya tilts her head. A door made of woven vines blocks the path ahead. It doesn’t creak or groan—it breathes. In and out. In and out.\n\nDODI: \"Try breathing with it.\"\n\nKavya takes a deep breath. Her wings still.\n\n[BREATHE_GUIDE]In through the nose, slow and deep. Out through the mouth, soft as a whisper.[/BREATHE_GUIDE]\n[BREATHE]\n\nThe door shivers. The vines untangle just enough for Kavya to slip through. Beyond it, the air is thicker, softer. The jars here glow faintly, like fireflies at dusk.\n\nKAVYA: \"It’s so quiet here.\"\n\nDodi’s flame dims, as if listening.\n\nDODI: \"The stories are resting.\"\n\nA jar near Kavya’s feet hums weakly. Inside, a tiny melody flickers—just a note, then silence. Then another. It’s the song she’s been searching for.\n\nKAVYA: \"There it is!\"\n\nBut the song isn’t finished. It’s waiting. For what?\n\nThe world around Kavya begins to hum. The jars on the shelves vibrate, their melodies weaving together. The floor trembles, and the moss beneath her feet sighs a lullaby.\n\n[SONG_SEED: A lullaby of floating notes, like fireflies rising into the dark, each one softer than the last.]\n\nThe music lingers in the air, but softer now. The jars glow dimmer, their songs curling into sleep. Kavya’s wings feel heavy, as if the melody is tucking her in.\n\nKavya lands beside the jar with the missing song. The melody inside is slow, like a heartbeat. She presses her tiny paws against the glass.\n\nKAVYA: \"Why are you hiding?\"\n\nDodi’s flame flickers low.\n\nDODI: \"It’s not hiding. It’s resting.\"\n\nKavya watches the song inside the jar. It rises and falls, like breathing. In. Out. In. Out.\n\n[BREATHE_GUIDE]In through the nose, out through the mouth. Slow. Steady.[/BREATHE_GUIDE]\n[BREATHE]\n\nThe song inside the jar grows softer. The melody stretches, like a yawn. Kavya’s wings droop. The air around her is warm, like a blanket.\n\nDodi’s flame dims to a tiny spark. Their voice is a whisper.\n\nDODI: \"Stories need sleep too.\"\n\nKavya nods. She understands now. The song wasn’t lost. It was waiting. For quiet. For rest.\n\nThe jars around her hum softly, their melodies blending into one long sigh. The moss beneath her feet is warm, like a bed. She curls her wings around herself.\n\nKAVYA: \"[PHRASE]Not yet, little dream...[/PHRASE]\"\n\nBut the words are slow, tired. The song in the jar is almost asleep. Kavya’s eyelids feel heavy. She yawns, and the sound is swallowed by the quiet.\n\n[PAUSE: 1500]\nThe last note of the song fades. The jars stop humming. The air is still. The only sound is Kavya’s breath, slow and steady.\n\n[BREATHE]\nThe warmth wraps around her. The moss cradles her. The quiet holds her.\n\n[PAUSE: 1500]\nDodi’s flame goes out. Their light is gone, but the warmth remains. Kavya’s wings rise and fall with her breath. In. Out. In. Out.\n\n[BREATHE]\n\nThe jars are dark.\nThe songs are still.\nThe air is soft.\n\nKavya’s wings feel heavy.\nHer breath is slow.\nHer eyes are closed.\n\nThe moss is warm.\nThe quiet is deep.\nThe world is sleeping.\n\nNo more searching.\nNo more questions.\nJust rest.\n\nThe song is quiet.\nThe song is safe.\nThe song is home.\n\nKavya’s breath slows.\nHer wings relax.\nHer body sinks.\n\nThe moss holds her.\nThe quiet wraps her.\nThe dark cradles her.\n\nNo more words.\nNo more light.\nJust stillness.\n\n[PHRASE]...not yet...[/PHRASE]\n\nThe warmth lingers.\nThe quiet hums.\nThe sleep comes.\n\n[WHISPER]soft... still... quiet...[/WHISPER]\nsleep",
+    "lullaby_lyrics": "Soft wings hum in silver light,\nKavya searches through the night.\n\nJars glow with stories old,\nwhispers warm and honey-gold.\n\n*Not yet, little dream,*\n*the vault still sings unseen.*\n\nPress your ear—oh, hush now, dear,\nthe dark will hold you near.",
+    "target_age": 7,
+    "age_min": 6,
+    "age_max": 8,
+    "age_group": "6-8",
+    "length": "LONG",
+    "word_count": 760,
+    "duration_seconds": 628,
+    "duration": 10,
+    "categories": [
+      "Bedtime",
+      "Library"
+    ],
+    "theme": "bedtime",
+    "morals": [],
+    "cover": "/covers/gen-7573f233b6ea.svg",
+    "musicProfile": null,
+    "musicParams": null,
+    "musicalBrief": null,
+    "music_type": "baked",
+    "audio_variants": [
+      {
+        "voice": "mixed",
+        "url": "/audio/pre-gen/7573f233_mixed.mp3",
+        "duration_seconds": 628.98,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "experimental_v2",
+    "has_baked_music": true,
+    "experimental_v2": true,
+    "episode_format": "v2",
+    "world_type": "library",
+    "mystery_type": "something_lost",
+    "breathing_mechanic": "door",
+    "lead_character_type": "insect",
+    "name_culture": "India",
+    "characters": [
+      {
+        "name": "Kavya",
+        "personality": "curious",
+        "voice_style": "small",
+        "gender": "female"
+      },
+      {
+        "name": "Dodi",
+        "personality": "wise",
+        "voice_style": "gentle",
+        "gender": "neutral"
+      }
+    ],
+    "repeated_phrase": "Not yet, little dream.",
+    "voice_map": {
+      "Kavya": "female_1",
+      "Dodi": "male_1"
+    },
+    "narrator_voice": "female_2",
+    "mood": "curious",
+    "created_at": "2026-04-13T01:59:50.440804",
+    "updated_at": "2026-04-13T01:59:50.440804",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "character": {
+      "name": "Kavya",
+      "identity": "A tiny creature who discovers a library — A place where stories/dreams/memories/songs are stored as physical objects",
+      "special": "Uses a door to solve the mystery",
+      "personality_tags": [
+        "Curious",
+        "Small"
+      ]
+    },
+    "is_saved": false,
+    "story_type": "nature",
+    "language_level": "intermediate"
+  },
+  {
+    "id": "gen-17871d0b10ff",
+    "type": "story",
+    "lang": "en",
+    "title": "Bloop and the Whispering Moonvines",
+    "description": "Bloop, a small alien gardener, tends to the moonvines that sprout in the corners of his ship. One night, he hears them humming—a sound no one else notices. What will he discover in their soft, glowing leaves?",
+    "text": "It was nightshift, and nightshifts always meant quiet corners. Bloop floated down the silver hallway. His three fingers brushed the walls. The ship hummed low, like a sleepy engine. The moonvines were waiting. They grew in the cracks where the light never reached. Tiny leaves, soft like moth wings. Bloop carried his watering can. Drip. Drip. The vines drank the starlight water. Can you guess what happened next? One leaf trembled. Then another. A sound came from them—a quiet, shimmering hum. The moonvines were waiting. Bloop tilted his head. No one else heard it. Just him. He knelt close. The vines curled around his wrist. Their glow pulsed like a slow heartbeat. Between you and me, it felt like a secret. A beautiful, quiet secret. Bloop smiled. He didn’t need to go anywhere. The vines were here. The hum was here. The moonvines were waiting. He sat down. The leaves brushed his cheeks. The hum wrapped around him like a blanket. The ship kept moving. The stars kept shining. The vines kept humming. Bloop closed his eyes. The hum grew softer. Everything was quiet. Just like that.",
+    "annotated_text": "It was nightshift, and nightshifts always meant quiet corners.\n\nBloop floated down the silver hallway. His three fingers brushed the walls. [PAUSE: 800] The ship hummed low, like a sleepy engine. [PHRASE]The moonvines were waiting.[/PHRASE]\n\nThey grew in the cracks where the light never reached. Tiny leaves, soft like moth wings. Bloop carried his watering can. [PAUSE: 1200] Drip. Drip. The vines drank the starlight water. [MUSIC]\n\nCan you guess what happened next?\n\nOne leaf trembled. Then another. A sound came from them—a quiet, shimmering hum. [PHRASE]The moonvines were waiting.[/PHRASE] Bloop tilted his head. No one else heard it. Just him.\n\nHe knelt close. The vines curled around his wrist. Their glow pulsed like a slow heartbeat. [PAUSE: 1500] Between you and me, it felt like a secret. A beautiful, quiet secret.\n\nBloop smiled. He didn’t need to go anywhere. The vines were here. The hum was here. [PHRASE]The moonvines were waiting.[/PHRASE] [MUSIC]\n\nHe sat down. The leaves brushed his cheeks. The hum wrapped around him like a blanket. [PAUSE: 2000]\n\nThe ship kept moving. The stars kept shining. The vines kept humming.\n\nBloop closed his eyes.\n\nThe hum grew softer.\n\nEverything was quiet.\n\nJust like that.",
+    "target_age": 7,
+    "age_min": 6,
+    "age_max": 8,
+    "age_group": "6-8",
+    "length": "SHORT",
+    "word_count": 195,
+    "duration_seconds": 0,
+    "categories": [
+      "Slice of Life",
+      "Space Adventure"
+    ],
+    "theme": "space",
+    "morals": [
+      "Even the smallest things can hold great beauty.",
+      "Sometimes the quietest moments are the most magical."
+    ],
+    "cover": "/covers/gen-17871d0b10ff.svg",
+    "musicProfile": "",
+    "music_type": "baked",
+    "audio_variants": [
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-1787_male_2.mp3",
+        "duration_seconds": 178.93,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_4",
+        "url": "/audio/pre-gen/gen-1787_female_4.mp3",
+        "duration_seconds": 200.04,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "male",
+    "character": {
+      "name": "Bloop",
+      "identity": "A gentle alien gardener who tends to the moonvines on his spaceship.",
+      "special": "He can hear the soft hum of growing plants no one else notices.",
+      "personality_tags": [
+        "Gentle",
+        "Curious"
+      ]
+    },
+    "cover_context": "A dimly lit spaceship hallway with glowing vines sprouting from the cracks in the walls. Soft blue light filters through the leaves, casting gentle shadows on the metallic floor.",
+    "lead_character_type": "alien",
+    "character_name": "Bloop",
+    "universe": "futuristic",
+    "geography": "Americas",
+    "life_aspect": "friendship",
+    "plot_archetype": "friendship_bonding",
+    "diversityFingerprint": {
+      "characterType": "plant_tree",
+      "setting": null,
+      "mood": null,
+      "storyType": null,
+      "plotShape": "discovery_reveal",
+      "languageLevel": null,
+      "scale": null,
+      "companion": null,
+      "movement": null,
+      "timeOfDay": "deep_night_starlight",
+      "weather": null,
+      "theme": "curiosity_wonder",
+      "characterTrait": null,
+      "magicType": null,
+      "season": null,
+      "senseEmphasis": null
+    },
+    "mood": "curious",
+    "story_type": "slice_of_life",
+    "language_level": "basic",
+    "created_at": "2026-04-13T02:02:06.792184",
+    "updated_at": "2026-04-13T02:02:06.792184",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "has_baked_music": true,
+    "experimental_v2": true,
+    "hook": "Have you ever wondered what grows in the quiet cracks of a spaceship?",
+    "repeated_phrase": "The moonvines were waiting.",
+    "raw_text": "It was nightshift, and nightshifts always meant quiet corners.\n\nBloop floated down the silver hallway. His three fingers brushed the walls. [PAUSE: 800] The ship hummed low, like a sleepy engine. [PHRASE]The moonvines were waiting.[/PHRASE]\n\nThey grew in the cracks where the light never reached. Tiny leaves, soft like moth wings. Bloop carried his watering can. [PAUSE: 1200] Drip. Drip. The vines drank the starlight water. [MUSIC]\n\nCan you guess what happened next?\n\nOne leaf trembled. Then another. A sound came from them—a quiet, shimmering hum. [PHRASE]The moonvines were waiting.[/PHRASE] Bloop tilted his head. No one else heard it. Just him.\n\nHe knelt close. The vines curled around his wrist. Their glow pulsed like a slow heartbeat. [PAUSE: 1500] Between you and me, it felt like a secret. A beautiful, quiet secret.\n\nBloop smiled. He didn’t need to go anywhere. The vines were here. The hum was here. [PHRASE]The moonvines were waiting.[/PHRASE] [MUSIC]\n\nHe sat down. The leaves brushed his cheeks. The hum wrapped around him like a blanket. [PAUSE: 2000]\n\nThe ship kept moving. The stars kept shining. The vines kept humming.\n\nBloop closed his eyes.\n\nThe hum grew softer.\n\nEverything was quiet.\n\nJust like that.",
+    "duration": 4
+  },
+  {
+    "id": "permission-0-1-514a",
+    "type": "song",
+    "lang": "en",
+    "title": "Lulu and the Moonhush",
+    "card_label": "The World Sleeps",
+    "cover": "/covers/permission-0-1-514a.svg",
+    "description": "A gentle, descending lullaby where the world settles into stillness one soft sound at a time. The mirrored rhythms of nature—breath, breeze, and moonlight—guide little ones into sleep, offering permission to let go with each quiet note.",
+    "text": "[verse]\nMmm ooh laa lu\nShaa noo tss haa\nPff eeh na na\nMmm ooh laa\n\n[verse]\nHaa lu lu shh\nOoh naa pff mmm\nTss laa ooh eeh\nMmm haa lu\n\n[verse]\nMmm shh noo noo\nPff laa lu mmm\nOoh haa tss shh\nMmm...\n\n---",
+    "annotated_text": "[verse]\nMmm ooh laa lu\nShaa noo tss haa\nPff eeh na na\nMmm ooh laa\n\n[verse]\nHaa lu lu shh\nOoh naa pff mmm\nTss laa ooh eeh\nMmm haa lu\n\n[verse]\nMmm shh noo noo\nPff laa lu mmm\nOoh haa tss shh\nMmm...\n\n---",
+    "cover_context": "A small, round creature with soft lavender fur and wide, curious eyes curled in a nest of silver moss under a glowing crescent moon. Fireflies drift like tiny stars around her, and the forest breathes in quiet blue-green hues.",
+    "target_age": 0,
+    "age_min": 0,
+    "age_max": 1,
+    "age_group": "0-1",
+    "duration": 1,
+    "duration_seconds": 41,
+    "author_id": "system",
+    "created_at": "2026-04-13T02:14:12.340231",
+    "updated_at": "2026-04-13T02:14:12.341714",
+    "audio_url": null,
+    "album_art_url": null,
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "categories": [
+      "Lullabies"
+    ],
+    "theme": "dreamy",
+    "is_generated": true,
+    "generation_quality": "good",
+    "music_genre": "lullaby",
+    "lead_character_type": "animal",
+    "character": {
+      "name": "Lulu",
+      "identity": "A tiny night-dwelling creature who hums the world to sleep with her soft, curious sounds.",
+      "special": "Her voice mirrors the quiet rhythms of the forest, turning every rustle and sigh into a lullaby.",
+      "personality_tags": [
+        "Gentle",
+        "Sleepy"
+      ]
+    },
+    "about": "A gentle, descending lullaby where the world settles into stillness one soft sound at a time. The mirrored rhythms of nature—breath, breeze, and moonlight—guide little ones into sleep, offering permission to let go with each quiet note.",
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/permission-0-1-514a_female_1.mp3",
+        "duration_seconds": 41,
+        "provider": "minimax-music-v2"
+      }
+    ],
+    "mood": "curious",
+    "lullaby_type": "permission"
   }
 ]
