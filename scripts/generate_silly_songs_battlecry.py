@@ -1720,13 +1720,21 @@ Examples:
         else:
             assigned_moods = [None] * count
 
-        # Category rotation: cycle through all 3 categories
+        # Category rotation: pick categories not used in recent songs.
+        # For count=1 (daily pipeline), this ensures we rotate through all 3
+        # categories across days instead of always picking battle_cry.
         cat_cycle = ["battle_cry", "celebration", "observation"]
         if args.category:
             assigned_cats = [args.category] * count
         else:
-            assigned_cats = [cat_cycle[i % len(cat_cycle)] for i in range(count)]
-            random.shuffle(assigned_cats)
+            recent_cats = [s.get("category", "battle_cry") for s in existing_songs[-3:]]
+            # Start with the first category not in recent songs
+            start_cat = next((c for c in cat_cycle if c not in recent_cats),
+                             random.choice(cat_cycle))
+            start_idx = cat_cycle.index(start_cat)
+            assigned_cats = [cat_cycle[(start_idx + i) % len(cat_cycle)] for i in range(count)]
+            if count > 1:
+                random.shuffle(assigned_cats)
 
         print(f"\n{'='*60}")
         print(f"  Silly Songs Generator (FRESH / diversity-tracked)")
@@ -1748,6 +1756,13 @@ Examples:
         random.shuffle(assigned_ages)  # Shuffle so order varies
         print(f"  Age rotation: {' → '.join(assigned_ages)}")
 
+        # Build set of song IDs that already have JSON files on disk,
+        # so we don't "generate" an existing song and count it as new.
+        existing_on_disk = set()
+        if DATA_DIR.exists():
+            for f in DATA_DIR.glob("*.json"):
+                existing_on_disk.add(f.stem)  # e.g. "not_sleepy_2_5"
+
         results = []
         for i in range(count):
             try:
@@ -1756,15 +1771,32 @@ Examples:
                     time.sleep(35)
 
                 forced_age = assigned_ages[i]
+                age_suffix = forced_age.replace('-', '_')
 
                 # Select params with enforced age group, excluding batch duplicates
+                # AND anthems that already have a file on disk for this age group
                 batch_cries = {r.get("anthem_id") or r.get("battle_cry_id") for r in results}
+                disk_cries_for_age = {
+                    sid.rsplit(f"_{age_suffix}", 1)[0]
+                    for sid in existing_on_disk
+                    if sid.endswith(f"_{age_suffix}")
+                }
+                exclude = batch_cries | disk_cries_for_age
                 song_mood = assigned_moods[i]
                 song_cat = assigned_cats[i]
                 params = select_silly_song_params(
-                    existing_songs, age_group=forced_age, exclude_cries=batch_cries,
+                    existing_songs, age_group=forced_age, exclude_cries=exclude,
                     mood=song_mood, category=song_cat,
                 )
+
+                # Check if this specific song_id already exists on disk
+                song_id = f"{params['battle_cry_id']}_{age_suffix}"
+                if song_id in existing_on_disk and not args.force:
+                    print(f"\n  ⚠️  All eligible anthems for {song_cat}/{forced_age}/{song_mood or 'any'} already generated on disk.")
+                    print(f"     Selected '{params['anthem']}' ({song_id}) but file exists. Skipping.")
+                    print(f"     To regenerate, use --force. To add variety, add new anthems to the library.")
+                    continue
+
                 ok, reason = validate_batch_diversity(params, results)
                 if not ok:
                     # Should not happen with exclude_cries, but log just in case
@@ -1786,15 +1818,20 @@ Examples:
                 if result:
                     results.append(result)
                     existing_songs.append(result)
+                    existing_on_disk.add(song_id)
             except Exception as e:
                 print(f"  ✗ FAILED: {e}")
                 import traceback
                 traceback.print_exc()
 
         print(f"\n{'='*60}")
-        print(f"  Generated {len(results)}/{count} songs (fresh mode)")
-        for r in results:
-            print(f"    • {r['title']} (ages {r['age_group']}) — {r.get('instruments', '?')}")
+        if results:
+            print(f"  Generated {len(results)}/{count} songs (fresh mode)")
+            for r in results:
+                print(f"    • {r['title']} (ages {r['age_group']}) — {r.get('instruments', '?')}")
+        else:
+            print(f"  Generated 0/{count} songs — all eligible anthems already exist on disk.")
+            print(f"  Add new anthems to BATTLE_CRIES/CELEBRATIONS/OBSERVATIONS to enable more generation.")
         print(f"{'='*60}\n")
         return
 
