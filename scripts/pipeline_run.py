@@ -1582,7 +1582,7 @@ def _pick_before_bed_age() -> str:
 
 
 # Before-bed mood weights — biased towards fun/energetic since this is
-# pre-sleep entertainment content (funny shorts, silly songs, poems).
+# pre-sleep entertainment content (silly songs, poems).
 # Stories use a separate deficit-based mood selector.
 _BEFORE_BED_MOOD_WEIGHTS = {
     "wired":   35,   # high energy, bouncy — natural fit for silly songs
@@ -1602,93 +1602,29 @@ def _pick_before_bed_mood() -> str:
 
 
 def step_before_bed(args, state: dict) -> bool:
-    """Generate 1 funny short + 1 silly song + 1 musical poem for today's age group."""
+    """Generate 1 silly song + 1 musical poem for today's age group."""
     logger.info("\n╔══════════════════════════════════════╗")
-    logger.info("║  BEFORE BED: short + song + poem     ║")
+    logger.info("║  BEFORE BED: song + poem             ║")
     logger.info("╚══════════════════════════════════════╝")
 
     if args.dry_run:
         age = _pick_before_bed_age()
         mood = _pick_before_bed_mood()
-        logger.info("  [DRY RUN] Would generate for ages %s, mood %s: 1 funny short + 1 silly song + 1 poem", age, mood)
+        logger.info("  [DRY RUN] Would generate for ages %s, mood %s: 1 silly song + 1 poem", age, mood)
         state["step_before_bed"] = "dry_run"
         save_state(state)
         return True
 
     age = _pick_before_bed_age()
     # Before-bed uses its own mood selection — independent from story mood.
-    # Funny shorts don't use mood. Songs & poems each handle all 6 moods
-    # with appropriate energy/tempo adjustments.
+    # Songs & poems each handle all 6 moods with appropriate energy/tempo adjustments.
     mood = _pick_before_bed_mood()
     logger.info("  Today's age group: %s  |  Mood: %s", age, mood)
 
-    before_bed_results = {"age": age, "mood": mood, "funny_short": None, "silly_song": None, "poem": None}
+    before_bed_results = {"age": age, "mood": mood, "silly_song": None, "poem": None}
     all_ok = True
 
-    # ── 1. Funny Short (script → TTS → mix) ──────────────────────────
-    logger.info("\n  ── Funny Short ──")
-    ok, stdout, stderr, elapsed = run_command(
-        [sys.executable, str(SCRIPTS_DIR / "generate_funny_short.py"),
-         "--age", age, "--auto", "--count", "1"],
-        "Before Bed: generate funny short script",
-        timeout=120,
-    )
-    if ok:
-        # Extract the short ID from stdout (script prints "ID: xxx")
-        short_id = None
-        for line in (stdout or "").split("\n"):
-            if line.strip().startswith("ID:"):
-                short_id = line.strip().split("ID:", 1)[1].strip()
-                break
-        if short_id:
-            logger.info("  Funny short script: %s", short_id)
-            before_bed_results["funny_short"] = short_id
-
-            # Generate TTS audio chunks
-            ok2, _, _, _ = run_command(
-                [sys.executable, str(SCRIPTS_DIR / "generate_funny_audio.py"),
-                 "--short-id", short_id],
-                "Before Bed: TTS for funny short",
-                timeout=300,
-            )
-            if ok2:
-                # Mix final audio
-                ok3, _, _, _ = run_command(
-                    [sys.executable, str(SCRIPTS_DIR / "mix_funny_short.py"),
-                     "--short-id", short_id],
-                    "Before Bed: mix funny short",
-                    timeout=120,
-                )
-                if ok3:
-                    logger.info("  Funny short audio: OK")
-                else:
-                    logger.warning("  Funny short mix failed (script saved, no audio)")
-                    all_ok = False
-            else:
-                logger.warning("  Funny short TTS failed (script saved, no audio)")
-                all_ok = False
-
-            # Generate cover
-            ok4, _, _, _ = run_command(
-                [sys.executable, str(SCRIPTS_DIR / "generate_funny_cover.py"),
-                 "--short-id", short_id],
-                "Before Bed: funny short cover",
-                timeout=120,
-            )
-            if not ok4:
-                logger.warning("  Funny short cover generation failed (non-fatal)")
-        else:
-            logger.warning("  Could not parse funny short ID from output")
-            all_ok = False
-    else:
-        logger.warning("  Funny short script generation failed")
-        all_ok = False
-
-    # Rate limit pause (Mistral free tier: 2 req/min)
-    logger.info("  Waiting 35s for Mistral rate limit...")
-    time.sleep(35)
-
-    # ── 2. Silly Song ─────────────────────────────────────────────────
+    # ── 1. Silly Song ─────────────────────────────────────────────────
     logger.info("\n  ── Silly Song ──")
     # --fresh mode with --count 1 generates one diversity-tracked song
     silly_cmd = [
@@ -1718,7 +1654,7 @@ def step_before_bed(args, state: dict) -> bool:
     logger.info("  Waiting 35s for Mistral rate limit...")
     time.sleep(35)
 
-    # ── 3. Musical Poem ───────────────────────────────────────────────
+    # ── 2. Musical Poem ───────────────────────────────────────────────
     logger.info("\n  ── Musical Poem ──")
     ok, stdout, stderr, elapsed = run_command(
         [sys.executable, str(SCRIPTS_DIR / "generate_experimental_poems.py"),
@@ -1740,10 +1676,9 @@ def step_before_bed(args, state: dict) -> bool:
     state["step_before_bed"] = "done" if all_ok else "partial"
     save_state(state)
 
-    generated = sum(1 for v in [before_bed_results["funny_short"],
-                                 before_bed_results["silly_song"],
+    generated = sum(1 for v in [before_bed_results["silly_song"],
                                  before_bed_results["poem"]] if v)
-    logger.info("\n  Before Bed: %d/3 generated for ages %s", generated, age)
+    logger.info("\n  Before Bed: %d/2 generated for ages %s", generated, age)
     return True  # Non-fatal — don't block the rest of the pipeline
 
 
@@ -1884,9 +1819,9 @@ def step_sync(args, state: dict) -> bool:
             if recovered:
                 logger.info("  Recovered %d audio files from persistent store (repo re-clone detected)", recovered)
 
-        # ── Sync non-story audio (funny-shorts, silly-songs, poems, lullabies) to web public ──
+        # ── Sync non-story audio (silly-songs, poems, lullabies) to web public ──
         # Radio reads from web public dir; backend may have files web doesn't
-        for audio_subdir in ["funny-shorts", "silly-songs", "poems", "lullabies"]:
+        for audio_subdir in ["silly-songs", "poems", "lullabies"]:
             backend_sub = BASE_DIR / "public" / "audio" / audio_subdir
             web_sub = WEB_DIR / "public" / "audio" / audio_subdir
             if not backend_sub.exists():
@@ -1909,7 +1844,7 @@ def step_sync(args, state: dict) -> bool:
                 logger.info("  Synced %d %s audio files to web public", synced, audio_subdir)
 
         # ── Sync before-bed covers (backend → web) so nginx can serve them ──
-        for cover_subdir in ["funny-shorts", "silly-songs", "poems"]:
+        for cover_subdir in ["silly-songs", "poems"]:
             backend_sub = BASE_DIR / "public" / "covers" / cover_subdir
             web_sub = WEB_DIR / "public" / "covers" / cover_subdir
             if not backend_sub.exists():
@@ -1934,14 +1869,6 @@ def step_sync(args, state: dict) -> bool:
                 if not store_dest.exists() or svg.stat().st_size != store_dest.stat().st_size:
                     shutil.copy2(svg, store_dest)
                     covers_backed_up += 1
-        # Also back up funny-shorts covers from backend repo (svg + webp)
-        backend_covers_funny = BASE_DIR / "public" / "covers" / "funny-shorts"
-        if backend_covers_funny.exists():
-            for cover in list(backend_covers_funny.glob("*.svg")) + list(backend_covers_funny.glob("*.webp")):
-                store_dest = COVER_STORE / f"funny-shorts--{cover.name}"
-                if not store_dest.exists() or cover.stat().st_size != store_dest.stat().st_size:
-                    shutil.copy2(cover, store_dest)
-                    covers_backed_up += 1
         # Also back up from backend experimental covers
         exp_covers = SEED_OUTPUT / "covers_experimental"
         if exp_covers.exists():
@@ -1956,7 +1883,7 @@ def step_sync(args, state: dict) -> bool:
             logger.info("  Backed up %d cover files to persistent store", covers_backed_up)
 
         # ── Sync content-type covers to cover-store subdirs (nginx serves from these) ──
-        for subdir in ["funny-shorts", "silly-songs", "poems", "lullabies"]:
+        for subdir in ["silly-songs", "poems", "lullabies"]:
             src_dir = BASE_DIR / "public" / "covers" / subdir
             store_subdir = COVER_STORE / subdir
             store_subdir.mkdir(parents=True, exist_ok=True)
@@ -1976,21 +1903,6 @@ def step_sync(args, state: dict) -> bool:
                     covers_recovered += 1
             if covers_recovered:
                 logger.info("  Recovered %d cover files from persistent store", covers_recovered)
-
-        # ── Recover missing funny-shorts covers from persistent store (svg + webp) ──
-        backend_covers_funny = BASE_DIR / "public" / "covers" / "funny-shorts"
-        backend_covers_funny.mkdir(parents=True, exist_ok=True)
-        funny_recovered = 0
-        if COVER_STORE.exists():
-            for cover in COVER_STORE.glob("funny-shorts--*"):
-                # Store name is "funny-shorts--{original}", strip prefix
-                original_name = cover.name.replace("funny-shorts--", "", 1)
-                dest = backend_covers_funny / original_name
-                if not dest.exists():
-                    shutil.copy2(cover, dest)
-                    funny_recovered += 1
-            if funny_recovered:
-                logger.info("  Recovered %d funny-shorts cover files from persistent store", funny_recovered)
 
     # Save diversity snapshot for current/previous comparison on dashboard
     try:
@@ -2101,9 +2013,8 @@ def _deploy_guard_snapshot() -> dict | None:
     try:
         from scripts.deploy_guard import capture_state
         state = capture_state("http://localhost:8000")
-        logger.info("  Deploy Guard: snapshot captured (%d stories, fs=%s, ss=%s)",
+        logger.info("  Deploy Guard: snapshot captured (%d stories, ss=%s)",
                      state.get("story_count", 0),
-                     state.get("funny_shorts_count", {}),
                      state.get("silly_songs_count", {}))
         return state
     except Exception as e:
@@ -2508,8 +2419,8 @@ def print_summary(state: dict, total_elapsed: float):
                 len(state.get("covers_failed", [])))
     logger.info("  Lullabies:  %s", state.get("step_lullabies", "not run"))
     bb = state.get("before_bed", {})
-    bb_count = sum(1 for k in ["funny_short", "silly_song", "poem"] if bb.get(k))
-    logger.info("  Before Bed: %s (%d/3 for ages %s)",
+    bb_count = sum(1 for k in ["silly_song", "poem"] if bb.get(k))
+    logger.info("  Before Bed: %s (%d/2 for ages %s)",
                 state.get("step_before_bed", "not run"), bb_count, bb.get("age", "?"))
     logger.info("  Enriched:   %s", state.get("step_enrich", "not run"))
     logger.info("  Synced:     %s", state.get("step_sync", "not run"))

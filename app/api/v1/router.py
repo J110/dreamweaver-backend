@@ -16,7 +16,6 @@ from .admin import router as admin_router
 from .blog import router as blog_router
 from .analytics import router as analytics_router
 from .clips import router as clips_router
-from .funny_shorts import router as funny_shorts_router
 from .silly_songs import router as silly_songs_router
 from .lullabies import router as lullabies_router
 from .poems import router as poems_router
@@ -39,7 +38,6 @@ router.include_router(audio_router, prefix="/audio", tags=["Audio"])
 router.include_router(feedback_router, prefix="/feedback", tags=["Feedback"])
 router.include_router(analytics_router, prefix="/analytics", tags=["Analytics"])
 router.include_router(clips_router, prefix="/clips", tags=["Clips"])
-router.include_router(funny_shorts_router, prefix="/funny-shorts", tags=["Funny Shorts"])
 router.include_router(silly_songs_router, prefix="/silly-songs", tags=["Silly Songs"])
 router.include_router(lullabies_router, prefix="/lullabies", tags=["Lullabies"])
 router.include_router(poems_router, prefix="/poems", tags=["Poems"])

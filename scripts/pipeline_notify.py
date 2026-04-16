@@ -155,10 +155,6 @@ def _build_html(state: dict, log_file: str = "", elapsed: float = 0) -> str:
         bb_age = bb.get("age", "?")
         bb_mood = bb.get("mood", "?")
         bb_items = []
-        if bb.get("funny_short"):
-            bb_items.append(f'<li style="color:#22c55e;">😂 Funny Short: {bb["funny_short"]}</li>')
-        else:
-            bb_items.append('<li style="color:#ef4444;">😂 Funny Short: failed</li>')
         if bb.get("silly_song"):
             bb_items.append(f'<li style="color:#22c55e;">🎵 Silly Song: {bb["silly_song"]}</li>')
         else:

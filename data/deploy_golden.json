@@ -1,5 +1,5 @@
 {
-  "captured_at": "2026-04-04T13:43:24.646262",
+  "captured_at": "2026-04-10T11:28:37.264114",
   "api": "https://api.dreamvalley.app",
   "stories": {
     "counting-2-5-4f65": {
@@ -1836,125 +1836,245 @@
       ],
       "cover_url": "/covers/gen-ccec86ba6b87.svg",
       "mood": "curious"
+    },
+    "rocking-2-5-bc84": {
+      "id": "rocking-2-5-bc84",
+      "title": "Lumi and the Sky Cradle",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/rocking-2-5-bc84_female_1.mp3"
+      ],
+      "cover_url": "/covers/rocking-2-5-bc84.svg",
+      "mood": "anxious"
+    },
+    "gen-95365398726f": {
+      "id": "gen-95365398726f",
+      "title": "Kai and the Shivering Stars",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-9536_male_2.mp3",
+        "/audio/pre-gen/gen-9536_female_1.mp3"
+      ],
+      "cover_url": "/covers/gen-95365398726f.svg",
+      "mood": "anxious"
+    },
+    "gen-cc7bbbe29f9e": {
+      "id": "gen-cc7bbbe29f9e",
+      "title": "Mira and Tiko and the Kitchen",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/cc7bbbe2_mixed.mp3"
+      ],
+      "cover_url": "/covers/gen-cc7bbbe29f9e.svg",
+      "mood": "anxious"
+    },
+    "gen-0e1314bb90d8": {
+      "id": "gen-0e1314bb90d8",
+      "title": "Jasper and the Clockwork Cricket",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-0e13_female_3.mp3",
+        "/audio/pre-gen/gen-0e13_male_2.mp3"
+      ],
+      "cover_url": "/covers/gen-0e1314bb90d8.svg",
+      "mood": "wired"
+    },
+    "shield-0-1-73db": {
+      "id": "shield-0-1-73db",
+      "title": "Nalu and the Warm Hum",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/shield-0-1-73db_female_1.mp3"
+      ],
+      "cover_url": "/covers/shield-0-1-73db.svg",
+      "mood": "anxious"
+    },
+    "gen-2e9b43edbe06": {
+      "id": "gen-2e9b43edbe06",
+      "title": "Mira and Lumi and the Workshop",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/2e9b43ed_mixed.mp3"
+      ],
+      "cover_url": "/covers/gen-2e9b43edbe06.webp",
+      "mood": "wired"
+    },
+    "gen-5cb2c4b14302": {
+      "id": "gen-5cb2c4b14302",
+      "title": "Hoot and the Mist Song",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/5cb2c4b1_mixed.mp3"
+      ],
+      "cover_url": "/covers/gen-5cb2c4b14302.webp",
+      "mood": "curious"
+    },
+    "warning-2-5-1348": {
+      "id": "warning-2-5-1348",
+      "title": "Mira and the Dreaming Ships",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/warning-2-5-1348_female_1.mp3"
+      ],
+      "cover_url": "/covers/warning-2-5-1348.svg",
+      "mood": "curious"
+    },
+    "gen-7e85423bfca3": {
+      "id": "gen-7e85423bfca3",
+      "title": "Cirrus and the Starlight Threads",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-7e85_male_2.mp3",
+        "/audio/pre-gen/gen-7e85_female_2.mp3"
+      ],
+      "cover_url": "/covers/gen-7e85423bfca3.svg",
+      "mood": "curious"
+    },
+    "gen-720fff357423": {
+      "id": "gen-720fff357423",
+      "title": "Pippa and the Tiny Tidepool",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-720f_female_4.mp3",
+        "/audio/pre-gen/gen-720f_male_2.mp3"
+      ],
+      "cover_url": "/covers/gen-720fff357423.svg",
+      "mood": "curious"
+    },
+    "permission-6-8-c3a8": {
+      "id": "permission-6-8-c3a8",
+      "title": "Mara and the Sleeping Birds",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/permission-6-8-c3a8_female_1.mp3"
+      ],
+      "cover_url": "/covers/permission-6-8-c3a8.svg",
+      "mood": "curious"
+    },
+    "gen-65cb7d5ac114": {
+      "id": "gen-65cb7d5ac114",
+      "title": "Tessa and the First Dewdrop River",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-65cb_male_2.mp3",
+        "/audio/pre-gen/gen-65cb_female_4.mp3"
+      ],
+      "cover_url": "/covers/gen-65cb7d5ac114.svg",
+      "mood": "curious"
+    },
+    "gen-30999f1d21bc": {
+      "id": "gen-30999f1d21bc",
+      "title": "Glim and the First Firefly",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-3099_male_2.mp3",
+        "/audio/pre-gen/gen-3099_female_4.mp3"
+      ],
+      "cover_url": "/covers/gen-30999f1d21bc.svg",
+      "mood": "curious"
+    },
+    "heartbeat-0-1-0f6f": {
+      "id": "heartbeat-0-1-0f6f",
+      "title": "Miro's Fading Hum",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/heartbeat-0-1-0f6f_female_1.mp3"
+      ],
+      "cover_url": "/covers/heartbeat-0-1-0f6f.svg",
+      "mood": "sad"
+    },
+    "gen-26757a03a4b6": {
+      "id": "gen-26757a03a4b6",
+      "title": "Tiko and the Empty Starlight Bench",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-2675_male_2.mp3",
+        "/audio/pre-gen/gen-2675_female_1.mp3"
+      ],
+      "cover_url": "/covers/gen-26757a03a4b6.svg",
+      "mood": "sad"
+    },
+    "gen-61edac9950bc": {
+      "id": "gen-61edac9950bc",
+      "title": "Mira and Lumi and the Garden",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/61edac99_mixed.mp3"
+      ],
+      "cover_url": "/covers/gen-61edac9950bc.svg",
+      "mood": "sad"
+    },
+    "permission-0-1-5b9d": {
+      "id": "permission-0-1-5b9d",
+      "title": "Lulu and the Moonhush",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/permission-0-1-5b9d_female_1.mp3"
+      ],
+      "cover_url": "/covers/permission-0-1-5b9d.svg",
+      "mood": "curious"
+    },
+    "gen-87842a65b675": {
+      "id": "gen-87842a65b675",
+      "title": "Aria and the Glowing Hollow Tree",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-87842a65b675_female_4.mp3",
+        "/audio/pre-gen/gen-87842a65b675_male_2.mp3"
+      ],
+      "cover_url": "/covers/gen-87842a65b675.svg",
+      "mood": "curious"
+    },
+    "gen-b08733b50cb5": {
+      "id": "gen-b08733b50cb5",
+      "title": "Mira and Tiko and the Observatory",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/b08733b5_mixed.mp3"
+      ],
+      "cover_url": "/covers/gen-b08733b50cb5.webp",
+      "mood": "curious"
     }
   },
-  "story_count": 125,
-  "funny_shorts": {
-    "2-5": {
-      "the-bouncy-bubble-5b82": {
-        "title": "The Bouncy Bubble",
-        "has_audio": true,
-        "audio_url": "/audio/funny-shorts/the-bouncy-bubble-5b82_episode.mp3",
-        "cover_url": "/covers/funny-shorts/the-bouncy-bubble-5b82.svg"
-      },
-      "the-great-crocodile-trap-flop-685b": {
-        "title": "The Great Crocodile Trap Flop",
-        "has_audio": true,
-        "audio_url": "/audio/funny-shorts/the-great-crocodile-trap-flop-685b_episode.mp3",
-        "cover_url": "/covers/funny-shorts/the-great-crocodile-trap-flop-685b.svg"
-      },
-      "the-wobble-whoopsie-d708": {
-        "title": "The Wobble Whoopsie",
-        "has_audio": true,
-        "audio_url": "/audio/funny-shorts/the-wobble-whoopsie-d708_episode.mp3",
-        "cover_url": "/covers/funny-shorts/the-wobble-whoopsie-d708.svg"
-      },
-      "the-wobbly-bridge-eb6c": {
-        "title": "The Wobbly Bridge",
-        "has_audio": true,
-        "audio_url": "/audio/funny-shorts/the-wobbly-bridge-eb6c_episode.mp3",
-        "cover_url": "/covers/funny-shorts/the-wobbly-bridge-eb6c.svg"
-      },
-      "the-dark-isnt-scary-0a84": {
-        "title": "The Dark Isn't Scary",
-        "has_audio": true,
-        "audio_url": "/audio/funny-shorts/funny_2_5_0a8402.mp3",
-        "cover_url": "/covers/funny-shorts/funny_2_5_0a8402_cover.webp"
-      },
-      "the-sleepy-time-symphony-92c8": {
-        "title": "The Sleepy-Time Symphony",
-        "has_audio": true,
-        "audio_url": "/audio/funny-shorts/funny_2_5_5fa3b2.mp3",
-        "cover_url": "/covers/funny-shorts/funny_2_5_5fa3b2_cover.webp"
-      }
-    },
-    "6-8": {
-      "the-bouncy-bridge-32ce": {
-        "title": "The Bouncy Bridge",
-        "has_audio": true,
-        "audio_url": "/audio/funny-shorts/the-bouncy-bridge-32ce_episode.mp3",
-        "cover_url": "/covers/funny-shorts/the-bouncy-bridge-32ce.svg"
-      },
-      "the-bridge-too-far-4b64": {
-        "title": "The Bridge Too Far",
-        "has_audio": true,
-        "audio_url": "/audio/funny-shorts/the-bridge-too-far-4b64_episode.mp3",
-        "cover_url": "/covers/funny-shorts/the-bridge-too-far-4b64.svg"
-      },
-      "the-curse-of-the-crumbly-cracker-01fc": {
-        "title": "The Curse of the Crumbly Cracker",
-        "has_audio": true,
-        "audio_url": "/audio/funny-shorts/the-curse-of-the-crumbly-cracker-01fc_episode.mp3",
-        "cover_url": "/covers/funny-shorts/the-curse-of-the-crumbly-cracker-01fc.svg"
-      },
-      "the-great-cake-caper-b8c8": {
-        "title": "The Great Cake Caper",
-        "has_audio": true,
-        "audio_url": "/audio/funny-shorts/the-great-cake-caper-b8c8_episode.mp3",
-        "cover_url": "/covers/funny-shorts/the-great-cake-caper-b8c8.svg"
-      },
-      "the-science-of-rain-b649": {
-        "title": "The Science of Rain",
-        "has_audio": true,
-        "audio_url": "/audio/funny-shorts/funny_6_8_b649d8.mp3",
-        "cover_url": "/covers/funny-shorts/funny_6_8_b649d8_cover.webp"
-      },
-      "the-world-s-best-shadow-puppeteer-7e30": {
-        "title": "The World's Best Shadow Puppeteer",
-        "has_audio": true,
-        "audio_url": "/audio/funny-shorts/funny_6_8_1f8ee6.mp3",
-        "cover_url": "/covers/funny-shorts/funny_6_8_1f8ee6_cover.webp"
-      }
-    },
-    "9-12": {
-      "the-dark-prophecy-of-lunchbox-day-2179": {
-        "title": "The Dark Prophecy of Lunchbox Day",
-        "has_audio": true,
-        "audio_url": "/audio/funny-shorts/the-dark-prophecy-of-lunchbox-day-2179_episode.mp3",
-        "cover_url": "/covers/funny-shorts/the-dark-prophecy-of-lunchbox-day-2179.svg"
-      },
-      "the-great-bridge-heist-7db1": {
-        "title": "The Great Bridge Heist",
-        "has_audio": true,
-        "audio_url": "/audio/funny-shorts/the-great-bridge-heist-7db1_episode.mp3",
-        "cover_url": "/covers/funny-shorts/the-great-bridge-heist-7db1.svg"
-      },
-      "the-ominous-lunchbox-4cf8": {
-        "title": "The Ominous Lunchbox",
-        "has_audio": true,
-        "audio_url": "/audio/funny-shorts/the-ominous-lunchbox-4cf8_episode.mp3",
-        "cover_url": "/covers/funny-shorts/the-ominous-lunchbox-4cf8.svg"
-      },
-      "the-very-important-tail-4122": {
-        "title": "The Very Important Tail",
-        "has_audio": true,
-        "audio_url": "/audio/funny-shorts/the-very-important-tail-4122_episode.mp3",
-        "cover_url": "/covers/funny-shorts/the-very-important-tail-4122.svg"
-      },
-      "the-tooth-truth-d3c6": {
-        "title": "The Tooth Truth",
-        "has_audio": true,
-        "audio_url": "/audio/funny-shorts/funny_9_12_d3c6b0.mp3",
-        "cover_url": "/covers/funny-shorts/funny_9_12_d3c6b0_cover.webp"
-      },
-      "the-shadow-knows-77a5": {
-        "title": "The Shadow Knows",
-        "has_audio": true,
-        "audio_url": "/audio/funny-shorts/funny_9_12_69648a.mp3",
-        "cover_url": "/covers/funny-shorts/funny_9_12_69648a_cover.webp"
-      }
-    }
-  },
+  "story_count": 144,
   "silly_songs": {
     "2-5": {
       "not_tired_2_5": {
@@ -1985,7 +2105,7 @@
         "title": "It'S My Birthday!",
         "has_audio": true,
         "audio_url": "/audio/silly-songs/my_birthday_2_5.mp3",
-        "cover_url": ""
+        "cover_url": "/covers/silly-songs/my_birthday_2_5.webp"
       },
       "not_sleepy_2_5": {
         "title": "I'M Not Sleepy",
@@ -1998,6 +2118,18 @@
         "has_audio": true,
         "audio_url": "/audio/silly-songs/no_bath_2_5.mp3",
         "cover_url": "/covers/silly-songs/no_bath_2_5.webp"
+      },
+      "dont_like_it_2_5": {
+        "title": "I Don'T Like It",
+        "has_audio": true,
+        "audio_url": "/audio/silly-songs/dont_like_it_2_5.mp3",
+        "cover_url": "/covers/silly-songs/dont_like_it_2_5.webp"
+      },
+      "no_no_no_2_5": {
+        "title": "No No No",
+        "has_audio": true,
+        "audio_url": "/audio/silly-songs/no_no_no_2_5.mp3",
+        "cover_url": "/covers/silly-songs/no_no_no_2_5.webp"
       }
     },
     "6-8": {
@@ -2090,6 +2222,12 @@
         "has_audio": true,
         "audio_url": "/audio/poems/sound_2_5_b65c.mp3",
         "cover_url": "/covers/poems/sound_2_5_b65c_cover.webp"
+      },
+      "sound_2_5_128f": {
+        "title": "Hush Now, Little Heart",
+        "has_audio": true,
+        "audio_url": "/audio/poems/sound_2_5_128f.mp3",
+        "cover_url": "/covers/poems/sound_2_5_128f_cover.webp"
       }
     },
     "6-8": {
@@ -2104,6 +2242,12 @@
         "has_audio": true,
         "audio_url": "/audio/poems/nonsense_6_8_b5f5.mp3",
         "cover_url": "/covers/poems/nonsense_6_8_b5f5_cover.webp"
+      },
+      "nonsense_6_8_5d10": {
+        "title": "Snickety Snap",
+        "has_audio": true,
+        "audio_url": "/audio/poems/nonsense_6_8_5d10.mp3",
+        "cover_url": "/covers/poems/nonsense_6_8_5d10_cover.webp"
       }
     },
     "9-12": {
@@ -2112,12 +2256,6 @@
         "has_audio": true,
         "audio_url": "/audio/poems/question_9_12_52d7.mp3",
         "cover_url": "/covers/poems/question_9_12_52d7_cover.webp"
-      },
-      "question_9_12_b68f": {
-        "title": "Why Does the Moon?",
-        "has_audio": true,
-        "audio_url": "/audio/poems/question_9_12_b68f.mp3",
-        "cover_url": "/covers/poems/question_9_12_b68f_cover.webp"
       },
       "question_9_12_bf17": {
         "title": "How Does the Sea?",

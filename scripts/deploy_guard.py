@@ -11,7 +11,7 @@ Features:
   4. Auto-recovery — missing files are restored from backup stores
      (/opt/cover-store, /opt/audio-store) automatically.
   5. JSON data file protection — backs up and restores JSON data files
-     (silly_songs/*.json, funny_shorts/*.json) so accidental deletions
+     (silly_songs/*.json, poems/*.json) so accidental deletions
      are auto-recovered from /opt/json-store/.
   6. Golden baseline enforcement — verify compares against golden, not just
      snapshot. Items in golden that disappear are auto-recovered.
@@ -84,13 +84,11 @@ JSON_STORE = "/opt/json-store"  # JSON data file backups
 # Serve paths on the GCP VM
 FRONTEND_COVERS = "/opt/dreamweaver-web/public/covers"
 FRONTEND_AUDIO = "/opt/dreamweaver-web/public/audio/pre-gen"
-BACKEND_COVERS_FUNNY = "/opt/dreamweaver-backend/public/covers/funny-shorts"
 BACKEND_COVERS_SILLY = "/opt/dreamweaver-backend/public/covers/silly-songs"
 BACKEND_AUDIO_SILLY = "/opt/dreamweaver-backend/public/audio/silly-songs"
 BACKEND_AUDIO_POEMS = "/opt/dreamweaver-backend/public/audio/poems"
 BACKEND_COVERS_POEMS = "/opt/dreamweaver-backend/public/covers/poems"
 BACKEND_DATA_SILLY = "/opt/dreamweaver-backend/data/silly_songs"
-BACKEND_DATA_FUNNY = "/opt/dreamweaver-backend/data/funny_shorts"
 BACKEND_DATA_POEMS = "/opt/dreamweaver-backend/data/poems"
 
 
@@ -157,26 +155,7 @@ def capture_state(api: str) -> dict:
         state["story_count"] = 0
         state["stories_error"] = str(e)
 
-    # 2. Funny shorts (per age group)
-    state["funny_shorts"] = {}
-    for age in ["2-5", "6-8", "9-12"]:
-        try:
-            resp = client.get(f"{api}/api/v1/funny-shorts", params={"age_group": age})
-            data = resp.json()
-            items = data.get("data", {}).get("items", [])
-            state["funny_shorts"][age] = {
-                item["id"]: {
-                    "title": item.get("title"),
-                    "has_audio": bool(item.get("audio_file")),
-                    "audio_url": item.get("audio_url", ""),
-                    "cover_url": item.get("cover", ""),
-                }
-                for item in items
-            }
-        except Exception:
-            state["funny_shorts"][age] = {}
-
-    # 3. Silly songs (per age group)
+    # 2. Silly songs (per age group)
     state["silly_songs"] = {}
     for age in ["2-5", "6-8", "9-12"]:
         try:
@@ -195,7 +174,7 @@ def capture_state(api: str) -> dict:
         except Exception:
             state["silly_songs"][age] = {}
 
-    # 4. Poems (per age group)
+    # 3. Poems (per age group)
     state["poems"] = {}
     for age in ["2-5", "6-8", "9-12"]:
         try:
@@ -221,7 +200,7 @@ def verify_files(state: dict, frontend: str, api: str) -> tuple[list[str], list[
     """HEAD-check all audio and cover URLs. Returns (issues, recoverable_items).
 
     Each recoverable_item is a dict with keys:
-      type: 'story_audio' | 'story_cover' | 'funny_short_cover' | 'silly_song_audio' | 'silly_song_cover'
+      type: 'story_audio' | 'story_cover' | 'silly_song_audio' | 'silly_song_cover'
       url_path: the URL path that's missing
       filename: the filename to look for in backup stores
     """
@@ -240,18 +219,6 @@ def verify_files(state: dict, frontend: str, api: str) -> tuple[list[str], list[
             filename = s["cover_url"].split("/")[-1]
             urls_to_check.append((frontend, s["cover_url"], f"story cover: {sid}",
                                   {"type": "story_cover", "url_path": s["cover_url"], "filename": filename}))
-
-    # Funny shorts covers — served by nginx from backend public dir
-    for age, items in state.get("funny_shorts", {}).items():
-        for fid, f in items.items():
-            if f.get("audio_url"):
-                filename = f["audio_url"].split("/")[-1]
-                urls_to_check.append((api, f["audio_url"], f"funny short audio ({age}): {fid}",
-                                      {"type": "funny_short_audio", "url_path": f["audio_url"], "filename": filename}))
-            if f.get("cover_url"):
-                filename = f["cover_url"].split("/")[-1]
-                urls_to_check.append((frontend, f["cover_url"], f"funny short cover ({age}): {fid}",
-                                      {"type": "funny_short_cover", "url_path": f["cover_url"], "filename": filename}))
 
     # Silly songs — served by backend API
     for age, items in state.get("silly_songs", {}).items():
@@ -339,19 +306,6 @@ def auto_recover(recoverable: list[dict], dry_run: bool = False) -> tuple[int, i
                 f'cp "{COVER_STORE}/{filename}" "{FRONTEND_COVERS}/{filename}" && echo "RECOVERED: {filename}"; '
                 f'else echo "NOT_IN_STORE: {filename}"; fi'
             )
-        elif ftype == "funny_short_cover":
-            # Funny short covers: store uses "funny-shorts--{name}" naming
-            store_name = f"funny-shorts--{filename}"
-            recover_commands.append(
-                f'if [ -f "{COVER_STORE}/{store_name}" ]; then '
-                f'cp "{COVER_STORE}/{store_name}" "{BACKEND_COVERS_FUNNY}/{filename}" && echo "RECOVERED: {filename}"; '
-                f'elif [ -f "{COVER_STORE}/{filename}" ]; then '
-                f'cp "{COVER_STORE}/{filename}" "{BACKEND_COVERS_FUNNY}/{filename}" && echo "RECOVERED: {filename}"; '
-                f'else echo "NOT_IN_STORE: {filename}"; fi'
-            )
-        elif ftype == "funny_short_audio":
-            # Funny short audio: no dedicated store, will fall through to git restore
-            recover_commands.append(f'echo "NOT_IN_STORE: {filename}"')
         elif ftype == "silly_song_audio":
             recover_commands.append(
                 f'if [ -f "{AUDIO_STORE_SILLY}/{filename}" ]; then '
@@ -443,24 +397,14 @@ def _git_restore_recover(filenames: list[str], recoverable: list[dict]) -> int:
     frontend_paths = []
     for fname in filenames:
         ftype = file_types.get(fname, "")
-        if ftype in ("funny_short_cover", "funny_short_audio", "silly_song_cover", "silly_song_audio",
+        if ftype in ("silly_song_cover", "silly_song_audio",
                      "poem_cover", "poem_audio"):
             # These are in the backend repo
             if "cover" in ftype:
-                if "funny" in ftype:
-                    subdir = "funny-shorts"
-                elif "silly" in ftype:
-                    subdir = "silly-songs"
-                else:
-                    subdir = "poems"
+                subdir = "silly-songs" if "silly" in ftype else "poems"
                 backend_paths.append(f"public/covers/{subdir}/{fname}")
             else:
-                if "funny" in ftype:
-                    subdir = "funny-shorts"
-                elif "silly" in ftype:
-                    subdir = "silly-songs"
-                else:
-                    subdir = "poems"
+                subdir = "silly-songs" if "silly" in ftype else "poems"
                 backend_paths.append(f"public/audio/{subdir}/{fname}")
         elif ftype in ("story_audio",):
             frontend_paths.append(f"public/audio/pre-gen/{fname}")
@@ -531,12 +475,6 @@ def _backup_to_store(recoverable: list[dict]):
                 f'[ -f "{FRONTEND_COVERS}/{filename}" ] && '
                 f'cp "{FRONTEND_COVERS}/{filename}" "{COVER_STORE}/{filename}" 2>/dev/null'
             )
-        elif ftype == "funny_short_cover":
-            store_name = f"funny-shorts--{filename}"
-            backup_cmds.append(
-                f'[ -f "{BACKEND_COVERS_FUNNY}/{filename}" ] && '
-                f'cp "{BACKEND_COVERS_FUNNY}/{filename}" "{COVER_STORE}/{store_name}" 2>/dev/null'
-            )
         elif ftype == "silly_song_cover":
             store_name = f"silly-songs--{filename}"
             backup_cmds.append(
@@ -564,14 +502,13 @@ def _backup_to_store(recoverable: list[dict]):
 
 
 def backup_json_files():
-    """Back up all JSON data files (silly_songs, funny_shorts) to /opt/json-store/.
+    """Back up all JSON data files (silly_songs, poems) to /opt/json-store/.
 
     Called during snapshot to ensure we have a copy of every JSON before deploy.
     """
     cmds = [
-        f'mkdir -p "{JSON_STORE}/silly_songs" "{JSON_STORE}/funny_shorts" "{JSON_STORE}/poems"',
+        f'mkdir -p "{JSON_STORE}/silly_songs" "{JSON_STORE}/poems"',
         f'cp -f {BACKEND_DATA_SILLY}/*.json "{JSON_STORE}/silly_songs/" 2>/dev/null; true',
-        f'cp -f {BACKEND_DATA_FUNNY}/*.json "{JSON_STORE}/funny_shorts/" 2>/dev/null; true',
         f'cp -f {BACKEND_DATA_POEMS}/*.json "{JSON_STORE}/poems/" 2>/dev/null; true',
         'echo "JSON_BACKUP_OK"',
     ]
@@ -584,7 +521,6 @@ def backup_json_files():
             # Count backed-up files
             count_cmd = (
                 f'ls "{JSON_STORE}/silly_songs/"*.json 2>/dev/null | wc -l; '
-                f'ls "{JSON_STORE}/funny_shorts/"*.json 2>/dev/null | wc -l; '
                 f'ls "{JSON_STORE}/poems/"*.json 2>/dev/null | wc -l'
             )
             count_result = subprocess.run(
@@ -592,9 +528,8 @@ def backup_json_files():
             )
             counts = count_result.stdout.strip().split("\n")
             silly = int(counts[0].strip()) if counts else 0
-            funny = int(counts[1].strip()) if len(counts) > 1 else 0
-            poems_count = int(counts[2].strip()) if len(counts) > 2 else 0
-            print(f"  📦 JSON backup: {silly} silly songs, {funny} funny shorts, {poems_count} poems → {JSON_STORE}/")
+            poems_count = int(counts[1].strip()) if len(counts) > 1 else 0
+            print(f"  📦 JSON backup: {silly} silly songs, {poems_count} poems → {JSON_STORE}/")
             return True
         else:
             print(f"  ⚠️  JSON backup may have failed: {result.stderr[:200]}")
@@ -608,7 +543,7 @@ def recover_json_files(missing_items: list[dict]) -> tuple[int, int]:
     """Restore missing JSON data files from /opt/json-store/.
 
     Each item in missing_items should have:
-      category: 'silly_songs' | 'funny_shorts'
+      category: 'silly_songs' | 'poems'
       item_id: the ID of the item
       age_group: the age group (for logging)
 
@@ -626,8 +561,6 @@ def recover_json_files(missing_items: list[dict]) -> tuple[int, int]:
         store_dir = f"{JSON_STORE}/{cat}"
         if cat == "silly_songs":
             data_dir = BACKEND_DATA_SILLY
-        elif cat == "funny_shorts":
-            data_dir = BACKEND_DATA_FUNNY
         else:
             data_dir = BACKEND_DATA_POEMS
 
@@ -667,9 +600,9 @@ def verify_new_items_serving(added_items: list[dict], frontend: str, api: str) -
     """For each newly added item, verify its audio and cover URLs are reachable.
 
     Each item in added_items should have:
-      category: 'story' | 'funny_short' | 'silly_song'
+      category: 'story' | 'silly_song' | 'poem'
       item_id: the ID
-      age_group: (for funny_shorts/silly_songs)
+      age_group: (for silly_songs/poems)
       audio_url: URL path to check
       cover_url: URL path to check
 
@@ -689,7 +622,7 @@ def verify_new_items_serving(added_items: list[dict], frontend: str, api: str) -
         label = f"{cat} ({item.get('age_group', '')}): {item_id}" if item.get("age_group") else f"{cat}: {item_id}"
 
         # Determine base URL based on category
-        audio_base = api if cat in ("funny_short", "silly_song", "poem") else frontend
+        audio_base = api if cat in ("silly_song", "poem") else frontend
         cover_base = frontend
 
         # Check audio
@@ -767,30 +700,6 @@ def diff_states(before: dict, after: dict) -> dict:
         # Detect title changes (content update)
         if b.get("title") != a.get("title"):
             updated.append(f"  ✏️  UPDATED story: {sid} — title \"{b['title']}\" → \"{a['title']}\"")
-
-    # ── Funny shorts per age group ──
-    for age in ["2-5", "6-8", "9-12"]:
-        before_fs = set(before.get("funny_shorts", {}).get(age, {}).keys())
-        after_fs = set(after.get("funny_shorts", {}).get(age, {}).keys())
-
-        for fid in sorted(after_fs - before_fs):
-            f = after["funny_shorts"][age][fid]
-            added.append(f"  ADDED funny short ({age}): {fid}")
-            added_items.append({
-                "category": "funny_short", "item_id": fid, "age_group": age,
-                "audio_url": f.get("audio_url", ""),
-                "cover_url": f.get("cover_url", ""),
-            })
-
-        for fid in sorted(before_fs - after_fs):
-            removed.append(f"  ❌ REMOVED funny short ({age}): {fid}")
-            removed_items.append({"category": "funny_shorts", "item_id": fid, "age_group": age})
-
-        for fid in before_fs & after_fs:
-            b = before["funny_shorts"][age][fid]
-            a = after["funny_shorts"][age][fid]
-            if b.get("has_audio") and not a.get("has_audio"):
-                degraded.append(f"  ❌ LOST AUDIO funny short ({age}): {fid}")
 
     # ── Silly songs per age group ──
     for age in ["2-5", "6-8", "9-12"]:
@@ -883,8 +792,8 @@ def merge_golden(golden: dict, current: dict) -> dict:
 
     merged["story_count"] = len(merged.get("stories", {}))
 
-    # Funny shorts, silly songs & poems: same union logic
-    for category in ["funny_shorts", "silly_songs", "poems"]:
+    # Silly songs & poems: same union logic
+    for category in ["silly_songs", "poems"]:
         for age in ["2-5", "6-8", "9-12"]:
             current_items = current.get(category, {}).get(age, {})
             for item_id, item in current_items.items():
@@ -910,14 +819,6 @@ def print_state_summary(state: dict, label: str = "Current"):
     no_cover = len(stories) - with_cover
     print(f"    Audio: {with_audio} with audio{f', ❌ {no_audio} WITHOUT' if no_audio else ' ✅'}")
     print(f"    Covers: {with_cover} with covers{f', ❌ {no_cover} WITHOUT' if no_cover else ' ✅'}")
-
-    print(f"\n  FUNNY SHORTS")
-    for age in ["2-5", "6-8", "9-12"]:
-        items = state.get("funny_shorts", {}).get(age, {})
-        count = len(items)
-        with_audio = sum(1 for d in items.values() if d.get("has_audio"))
-        status = "✅" if with_audio == count else f"❌ {count - with_audio} without audio"
-        print(f"    {age}: {count} shorts, {with_audio} with audio {status}")
 
     print(f"\n  SILLY SONGS")
     for age in ["2-5", "6-8", "9-12"]:
@@ -1038,7 +939,7 @@ def check_radio_health():
             total = int(total_match.group(1))
             print(f"  ✅ Radio content loaded: {total} playable tracks")
 
-            required_types = {"story", "long_story", "silly_song", "funny_short", "poem", "lullaby"}
+            required_types = {"story", "long_story", "silly_song", "poem", "lullaby"}
             missing_types = []
             for ct in required_types:
                 ct_match = _re.search(rf"^\s*{ct}:\s*(\d+)", out, _re.MULTILINE)
@@ -1072,7 +973,7 @@ def check_radio_health():
     # 4. Audio parity — check on server that backend audio is mirrored to web public
     try:
         out, rc = _ssh_run(
-            "for d in funny-shorts silly-songs poems lullabies; do "
+            "for d in silly-songs poems lullabies; do "
             "  b=/opt/dreamweaver-backend/public/audio/$d; "
             "  w=/opt/dreamweaver-web/public/audio/$d; "
             "  if [ -d \"$b\" ]; then "
@@ -1306,9 +1207,9 @@ def cmd_verify(args):
         merged = merge_golden(golden, after)
         save_json(GOLDEN_PATH, merged)
         new_stories = len(merged.get("stories", {})) - len(golden.get("stories", {}))
-        # Count new silly songs + funny shorts + poems
+        # Count new silly songs + poems
         new_other = 0
-        for cat in ["silly_songs", "funny_shorts", "poems"]:
+        for cat in ["silly_songs", "poems"]:
             for age in ["2-5", "6-8", "9-12"]:
                 new_other += len(merged.get(cat, {}).get(age, {})) - len(golden.get(cat, {}).get(age, {}))
         total_new = new_stories + new_other
@@ -1395,12 +1296,6 @@ def cmd_check(args):
     no_cover = [s for s in state.get("stories", {}).values() if not s.get("has_cover")]
     if no_cover:
         issues.append(f"  ❌ {len(no_cover)} stories without covers")
-
-    # Check funny shorts counts (expect 4 per group)
-    for age in ["2-5", "6-8", "9-12"]:
-        count = len(state.get("funny_shorts", {}).get(age, {}))
-        if count != 4:
-            issues.append(f"  ⚠️  Funny shorts ({age}): expected 4, got {count}")
 
     # Check silly songs counts (expect >=1 per group)
     for age in ["2-5", "6-8", "9-12"]:
@@ -1646,96 +1541,6 @@ def cmd_invariants(args):
         'sig_text = ""' in gen_lullaby,
         "generate_lullaby.py may still pass signature openings for 0-1",
         source_file="scripts/generate_lullaby.py",
-    )
-
-    # ── Funny Shorts ──────────────────────────────────────────
-    print("\n  Funny Shorts:")
-    gen_funny_path = BASE_DIR / "scripts" / "generate_funny_shorts_v2.py"
-    gen_funny = gen_funny_path.read_text()
-    check(
-        "CHARACTER_VISUALS for text-free covers",
-        "CHARACTER_VISUALS" in gen_funny,
-        "generate_funny_shorts_v2.py missing CHARACTER_VISUALS — covers will render text",
-        source_file="scripts/generate_funny_shorts_v2.py",
-    )
-    # Cover prompt must NOT mention "text/words/letters" even negatively —
-    # FLUX interprets "no text" as "generate text". Prompt must be purely visual.
-    check(
-        "Cover prompt is purely visual (no text mentions)",
-        "NEVER put the title" in gen_funny and "CHARACTER_VISUALS" in gen_funny,
-        "Cover generation must use CHARACTER_VISUALS and never mention title or text",
-        source_file="scripts/generate_funny_shorts_v2.py",
-    )
-    check(
-        "Context-aware SFX generation",
-        "generate_episode_sfx" in gen_funny,
-        "generate_funny_shorts_v2.py missing generate_episode_sfx function",
-        source_file="scripts/generate_funny_shorts_v2.py",
-    )
-    check(
-        "TTS silence trimming",
-        "trim_tts_silence" in gen_funny,
-        "generate_funny_shorts_v2.py missing trim_tts_silence function",
-        source_file="scripts/generate_funny_shorts_v2.py",
-    )
-
-    # Check TTS speeds are fast enough
-    speed_checks = [
-        ("boomy", 1.05), ("pip", 1.15), ("shadow", 0.92),
-        ("sunny", 1.08), ("melody", 1.02),
-    ]
-    for char, min_speed in speed_checks:
-        pattern = rf'"{char}":\s*\{{[^}}]*"speed":\s*([\d.]+)'
-        m = _re.search(pattern, gen_funny, _re.DOTALL)
-        if m:
-            actual = float(m.group(1))
-            check(
-                f"{char} speed >= {min_speed}",
-                actual >= min_speed,
-                f"Current: {actual}, minimum: {min_speed}",
-                source_file="scripts/generate_funny_shorts_v2.py",
-            )
-        else:
-            check(f"{char} speed >= {min_speed}", False, "Could not find speed value",
-                  source_file="scripts/generate_funny_shorts_v2.py")
-
-    # Inter-line gap
-    gap_m = _re.search(r'AudioSegment\.silent\(duration=(\d+)\)\s*#.*conversation', gen_funny)
-    if not gap_m:
-        gap_m = _re.search(r'narration \+= AudioSegment\.silent\(duration=(\d+)\)', gen_funny)
-    if gap_m:
-        gap = int(gap_m.group(1))
-        check(f"Inter-line gap <= 100ms", gap <= 100, f"Current: {gap}ms",
-              source_file="scripts/generate_funny_shorts_v2.py")
-    else:
-        check("Inter-line gap <= 100ms", False, "Could not find inter-line gap value",
-              source_file="scripts/generate_funny_shorts_v2.py")
-
-    # Diversity system
-    check(
-        "Diversity system: DYNAMICS pool",
-        "DYNAMICS = [" in gen_funny and "DYNAMIC_DESCRIPTIONS" in gen_funny,
-        "generate_funny_shorts_v2.py missing DYNAMICS diversity pool",
-        source_file="scripts/generate_funny_shorts_v2.py",
-    )
-    check(
-        "Diversity system: select_episode_params",
-        "def select_episode_params" in gen_funny and "_pick_avoiding_recent" in gen_funny,
-        "generate_funny_shorts_v2.py missing diversity parameter selection",
-        source_file="scripts/generate_funny_shorts_v2.py",
-    )
-    check(
-        "Diversity system: validate_episode_variety",
-        "def validate_episode_variety" in gen_funny,
-        "generate_funny_shorts_v2.py missing post-generation variety validation",
-        source_file="scripts/generate_funny_shorts_v2.py",
-    )
-    check(
-        "Diversity system: metadata tracks dimensions",
-        '"dynamic":' in gen_funny and '"topic":' in gen_funny
-        and '"melody_role":' in gen_funny and '"ending":' in gen_funny,
-        "Episode metadata must track all diversity dimensions",
-        source_file="scripts/generate_funny_shorts_v2.py",
     )
 
     # ── Silly Songs ──────────────────────────────────────────
