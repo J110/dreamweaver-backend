@@ -681,8 +681,23 @@ followed by a colon, then the quoted dialogue. Nothing else.
 === REPEATED PHRASE ===
 
 Create ONE phrase, under 6 words, feeling: {repeated_phrase_feeling}
-Mark every instance with [PHRASE] tags. Must be unique to THIS story.
-Appears in all three phases, getting quieter each time.
+Must be unique to THIS story. Appears in all three phases,
+getting quieter each time.
+
+CRITICAL TAG FORMAT: Every instance of the phrase MUST be
+wrapped like this: [PHRASE]your phrase here[/PHRASE]
+
+Examples of CORRECT use:
+  [PHRASE]Listen, little one[/PHRASE]
+  KAELANI: "[PHRASE]Not yet, Skywhale[/PHRASE]"
+
+WRONG — do NOT do any of these:
+  "Not yet, Skywhale."[PHRASE]        ← bare marker, missing wrap
+  [PHRASE] Not yet, Skywhale.         ← missing closing tag
+  "Not yet, Skywhale." (no tags)      ← missing tags entirely
+
+The opening [PHRASE] and closing [/PHRASE] must ALWAYS surround
+the phrase text. No exceptions.
 
 The phrase must be UNIQUE. Not generic ("not yet" or
 "almost there"). Specific to THIS story, THIS character,
@@ -1051,9 +1066,33 @@ def parse_long_story(raw_response):
     song_seed_match = re.search(r'\[SONG_SEED:\s*(.+?)\]', raw_response)
     song_seed = song_seed_match.group(1) if song_seed_match else ""
 
-    # Extract repeated phrase
+    # Extract repeated phrase (wrapped form: [PHRASE]text[/PHRASE])
     phrases = re.findall(r'\[PHRASE\](.+?)\[/PHRASE\]', raw_response)
     repeated_phrase = phrases[0].strip() if phrases else ""
+
+    # Recovery: Mistral sometimes emits a bare [PHRASE] marker after a line
+    # (e.g. `"Not yet..."[PHRASE]`) instead of wrapping. Pull the phrase from
+    # the text immediately preceding the bare marker.
+    if not repeated_phrase:
+        bare_matches = re.findall(
+            r'([^\n\[]+?)\[PHRASE\](?!\s*[^\[]*\[/PHRASE\])',
+            raw_response
+        )
+        for candidate in bare_matches:
+            # Prefer quoted content if present (dialogue lines)
+            quoted = re.search(r'["\u201c\u201d\'"]([^"\u201c\u201d\']{2,60})["\u201c\u201d\'"]', candidate)
+            if quoted:
+                repeated_phrase = quoted.group(1).strip()
+                break
+            # Otherwise take the trailing ~6 words of the preceding text
+            tail = candidate.strip().rstrip(":").rstrip()
+            words = tail.split()
+            if 1 <= len(words) <= 10:
+                repeated_phrase = tail
+                break
+            if len(words) > 10:
+                repeated_phrase = " ".join(words[-6:])
+                break
 
     # Count words per phase (strip tags for accurate count)
     def clean_count(text):
@@ -2391,43 +2430,72 @@ def main():
             "You use plain text only — NO markdown bold (**), NO italic (*), "
             "NO horizontal rules (---). Only use the tags specified in the prompt."
         )
-        print("1. Generating story text via Mistral...")
-        raw_response = call_mistral(prompt, max_tokens=8000, temperature=0.85,
-                                    system_prompt=story_system)
+        # Generate + validate with one retry if validation errors occur.
+        # Mistral occasionally emits malformed tags (bare [PHRASE], missing
+        # sections); a second attempt with explicit error feedback usually fixes it.
+        MAX_GEN_ATTEMPTS = 2
+        parsed = None
+        issues = []
+        for gen_attempt in range(MAX_GEN_ATTEMPTS):
+            attempt_label = f" (attempt {gen_attempt + 1}/{MAX_GEN_ATTEMPTS})" if gen_attempt > 0 else ""
+            print(f"1. Generating story text via Mistral{attempt_label}...")
 
-        raw_path = os.path.join(output_dir, "story_raw.txt")
-        with open(raw_path, "w") as f:
-            f.write(raw_response)
-        print(f"   Saved: {raw_path}")
+            attempt_prompt = prompt
+            if gen_attempt > 0 and issues:
+                error_summary = "\n".join(f"- {i}" for i in issues if i.startswith("ERROR:"))
+                attempt_prompt = (
+                    prompt
+                    + "\n\n=== PREVIOUS ATTEMPT FAILED ===\n"
+                    + "Your previous response had these problems:\n"
+                    + error_summary
+                    + "\n\nFix these issues. Pay special attention to tag formatting — "
+                    "every [PHRASE] must be closed with [/PHRASE], and every section "
+                    "tag ([INTRO], [PHASE_1], etc.) must be present."
+                )
+                time.sleep(31)  # rate limit: 2 req/min
 
-        # Parse
-        print("2. Parsing story...")
-        parsed = parse_long_story(raw_response)
+            raw_response = call_mistral(attempt_prompt, max_tokens=8000, temperature=0.85,
+                                        system_prompt=story_system)
 
-        # Fix untagged dialogue (LLM often mixes tagged and prose styles)
-        if parsed["characters"]:
-            char_names = [c["name"] for c in parsed["characters"]]
-            for section in ["intro", "phase_1", "post_song", "phase_2", "phase_3"]:
-                if parsed[section]:
-                    parsed[section] = fix_untagged_dialogue(parsed[section], char_names)
+            raw_path = os.path.join(output_dir, "story_raw.txt")
+            with open(raw_path, "w") as f:
+                f.write(raw_response)
+            print(f"   Saved: {raw_path}")
 
-        print(f"   Characters: {[c['name'] for c in parsed['characters']]}")
-        print(f"   Repeated phrase: \"{parsed['repeated_phrase']}\"")
-        print(f"   Song seed: \"{parsed['song_seed']}\"")
-        print(f"   Word counts: {parsed['word_counts']}")
+            # Parse
+            print("2. Parsing story...")
+            parsed = parse_long_story(raw_response)
 
-        # Validate
-        print("3. Validating...")
-        issues = validate_story(parsed, params)
-        if issues:
-            for issue in issues:
-                print(f"   {issue}")
-        else:
-            print("   All checks passed!")
+            # Fix untagged dialogue (LLM often mixes tagged and prose styles)
+            if parsed["characters"]:
+                char_names = [c["name"] for c in parsed["characters"]]
+                for section in ["intro", "phase_1", "post_song", "phase_2", "phase_3"]:
+                    if parsed[section]:
+                        parsed[section] = fix_untagged_dialogue(parsed[section], char_names)
+
+            print(f"   Characters: {[c['name'] for c in parsed['characters']]}")
+            print(f"   Repeated phrase: \"{parsed['repeated_phrase']}\"")
+            print(f"   Song seed: \"{parsed['song_seed']}\"")
+            print(f"   Word counts: {parsed['word_counts']}")
+
+            # Validate
+            print("3. Validating...")
+            issues = validate_story(parsed, params)
+            if issues:
+                for issue in issues:
+                    print(f"   {issue}")
+            else:
+                print("   All checks passed!")
+
+            has_errors = any(i.startswith("ERROR:") for i in issues)
+            if not has_errors:
+                break
+            if gen_attempt < MAX_GEN_ATTEMPTS - 1:
+                print(f"\n   Validation failed — retrying with error feedback...")
 
         has_errors = any(i.startswith("ERROR:") for i in issues)
         if has_errors:
-            print("\n   FATAL: Story has missing sections. Check raw output.")
+            print("\n   FATAL: Story has missing sections after retries. Check raw output.")
             sys.exit(1)
 
         # Generate song lyrics
