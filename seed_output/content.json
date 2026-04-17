@@ -19972,5 +19972,153 @@
     ],
     "mood": "sad",
     "lullaby_type": "parent_song"
+  },
+  {
+    "id": "gen-41733c7229e0",
+    "type": "story",
+    "lang": "en",
+    "title": "Priya and the Turtle Who Forgot to Breathe",
+    "description": "Priya meets a turtle who’s too busy counting bubbles to remember how to breathe. A silly, swirling underwater chat that ends in a cozy, salty hug.",
+    "text": "One day, Priya said to a sea turtle— \"Why do you keep popping up, then going back down?\" The turtle blinked. \"I’m counting my bubbles,\" he said. The bubbles float like tiny glass moons. Priya watched. The turtle bobbed up. One. Down. Two. Up. Three. \"But… don’t you need to breathe?\" The turtle paused. \"Ohhhh…\" His shell wobbled. The bubbles float like tiny glass moons. Priya giggled. She blew a bubble ring. It drifted up, up, up. The turtle gasped. \"That one’s mine!\" He chased it, forgetting to count. Priya sat on a smooth rock. The turtle flopped beside her. The bubbles float like tiny glass moons. His eyes closed. His shell rose. Fell. Rose. Fell. Priya’s fingers traced the water. The bubbles popped. Soft. Quiet. The turtle snored. The sea hummed. And Priya found her answer.",
+    "annotated_text": "One day, Priya said to a sea turtle—\n\n[PAUSE: 800]\n\"Why do you keep popping up, then going back down?\"\n\nThe turtle blinked. [EMPHASIS]\"I’m counting my bubbles,\"[/EMPHASIS] he said. [PHRASE]The bubbles float like tiny glass moons.[/PHRASE]\n\n[PAUSE: 1200]\nPriya watched. The turtle bobbed up. One. Down. Two. Up. Three.\n\n[MUSIC]\n\n\"But… don’t you need to breathe?\"\n\nThe turtle paused. [EMPHASIS]\"Ohhhh…\"[/EMPHASIS] His shell wobbled. [PHRASE]The bubbles float like tiny glass moons.[/PHRASE]\n\n[PAUSE: 1500]\nPriya giggled. She blew a bubble ring. It drifted up, up, up.\n\n[PAUSE: 800]\nThe turtle gasped. [EMPHASIS]\"That one’s mine!\"[/EMPHASIS] He chased it, forgetting to count.\n\n[MUSIC]\n\nPriya sat on a smooth rock. The turtle flopped beside her. [PHRASE]The bubbles float like tiny glass moons.[/PHRASE]\n\n[PAUSE: 2000]\nHis eyes closed. His shell rose. Fell. Rose. Fell.\n\nPriya’s fingers traced the water. The bubbles popped. Soft. Quiet.\n\nThe turtle snored.\n\nThe sea hummed.\n\n[PAUSE: 1500]\nAnd Priya found her answer.",
+    "target_age": 0,
+    "age_min": 0,
+    "age_max": 1,
+    "age_group": "0-1",
+    "length": "SHORT",
+    "word_count": 149,
+    "duration_seconds": 0,
+    "categories": [
+      "Underwater",
+      "Friendship"
+    ],
+    "theme": "ocean",
+    "morals": [
+      "Sometimes we forget what we’re doing when we’re having fun",
+      "Quiet moments can be as lovely as busy ones"
+    ],
+    "cover": "/covers/gen-41733c7229e0.svg",
+    "musicProfile": "",
+    "music_type": "baked",
+    "audio_variants": [
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-4173_male_2.mp3",
+        "duration_seconds": 159.13,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-4173_female_3.mp3",
+        "duration_seconds": 157.28,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "female",
+    "character": {
+      "name": "Priya",
+      "identity": "A girl who talks to sea creatures while her toes dip in the tide",
+      "special": "She can blow perfect bubble rings underwater",
+      "personality_tags": [
+        "Playful",
+        "Gentle"
+      ]
+    },
+    "cover_context": "A shallow tide pool glows under the late afternoon sun, bubbles rising in slow spirals from the sandy bottom. Seaweed sways like lazy ribbons.",
+    "lead_character_type": "human",
+    "character_name": "Priya",
+    "universe": "contemporary",
+    "geography": "Ocean/Islands",
+    "life_aspect": "family_home",
+    "plot_archetype": "transformation",
+    "diversityFingerprint": {
+      "characterType": "human_child",
+      "setting": null,
+      "mood": null,
+      "storyType": null,
+      "plotShape": "discovery_reveal",
+      "languageLevel": null,
+      "scale": null,
+      "companion": null,
+      "movement": null,
+      "timeOfDay": "late_afternoon",
+      "weather": null,
+      "theme": null,
+      "characterTrait": null,
+      "magicType": null,
+      "season": "summer",
+      "senseEmphasis": null
+    },
+    "mood": "wired",
+    "story_type": "fable",
+    "language_level": "basic",
+    "created_at": "2026-04-17T01:32:50.931904",
+    "updated_at": "2026-04-17T01:32:50.931904",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "has_baked_music": true,
+    "experimental_v2": true,
+    "hook": "Did you know some turtles hum when they nap under the waves?",
+    "repeated_phrase": "The bubbles float like tiny glass moons",
+    "raw_text": "One day, Priya said to a sea turtle—\n\n[PAUSE: 800]\n\"Why do you keep popping up, then going back down?\"\n\nThe turtle blinked. [EMPHASIS]\"I’m counting my bubbles,\"[/EMPHASIS] he said. [PHRASE]The bubbles float like tiny glass moons.[/PHRASE]\n\n[PAUSE: 1200]\nPriya watched. The turtle bobbed up. One. Down. Two. Up. Three.\n\n[MUSIC]\n\n\"But… don’t you need to breathe?\"\n\nThe turtle paused. [EMPHASIS]\"Ohhhh…\"[/EMPHASIS] His shell wobbled. [PHRASE]The bubbles float like tiny glass moons.[/PHRASE]\n\n[PAUSE: 1500]\nPriya giggled. She blew a bubble ring. It drifted up, up, up.\n\n[PAUSE: 800]\nThe turtle gasped. [EMPHASIS]\"That one’s mine!\"[/EMPHASIS] He chased it, forgetting to count.\n\n[MUSIC]\n\nPriya sat on a smooth rock. The turtle flopped beside her. [PHRASE]The bubbles float like tiny glass moons.[/PHRASE]\n\n[PAUSE: 2000]\nHis eyes closed. His shell rose. Fell. Rose. Fell.\n\nPriya’s fingers traced the water. The bubbles popped. Soft. Quiet.\n\nThe turtle snored.\n\nThe sea hummed.\n\n[PAUSE: 1500]\nAnd Priya found her answer.",
+    "duration": 3
+  },
+  {
+    "id": "rocking-0-1-8f3a",
+    "type": "song",
+    "lang": "en",
+    "title": "Veeva and the Rolling Wave",
+    "card_label": "Rock-a-bye",
+    "cover": "/covers/rocking-0-1-8f3a.svg",
+    "description": "A swaying, ocean-inspired lullaby that mimics the gentle back-and-forth of waves. The lilting rhythm engages the vestibular system, helping little ones feel the soothing motion of rocking. Perfect for winding down active minds with the calming embrace of the sea.",
+    "text": "[verse]\nMm-loo loo, shh-vee vee\nNah-voh voh, pff-ah ah\nTss-mee mee, haa-noo noo\nDah-vee vee, mmm-ah ah\n\n[verse]\nShaa-vee vee, luu-moh moh\nNoh-vee vee, tss-ah ah\nHaa-loo loo, shh-mee mee\nPff-voh voh, mmm-ah ah\n\n[verse]\nMm-vee vee, nah-loo loo\nShaa-voh voh, tss-ah ah\nDah-mee mee, haa-noo noo\nLuu-vee vee, mmm-ah ah",
+    "annotated_text": "[verse]\nMm-loo loo, shh-vee vee\nNah-voh voh, pff-ah ah\nTss-mee mee, haa-noo noo\nDah-vee vee, mmm-ah ah\n\n[verse]\nShaa-vee vee, luu-moh moh\nNoh-vee vee, tss-ah ah\nHaa-loo loo, shh-mee mee\nPff-voh voh, mmm-ah ah\n\n[verse]\nMm-vee vee, nah-loo loo\nShaa-voh voh, tss-ah ah\nDah-mee mee, haa-noo noo\nLuu-vee vee, mmm-ah ah",
+    "cover_context": "A small, round seal pup with soft silver fur curled on a floating piece of driftwood, rocking gently on moonlit ocean waves. The water glows with bioluminescent ripples, and the sky is a dreamy wash of deep blues and purples, dotted with tiny stars.",
+    "target_age": 0,
+    "age_min": 0,
+    "age_max": 1,
+    "age_group": "0-1",
+    "duration": 1,
+    "duration_seconds": 74,
+    "author_id": "system",
+    "created_at": "2026-04-17T01:40:01.274438",
+    "updated_at": "2026-04-17T01:40:01.274580",
+    "audio_url": null,
+    "album_art_url": null,
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "categories": [
+      "Lullabies"
+    ],
+    "theme": "dreamy",
+    "is_generated": true,
+    "generation_quality": "good",
+    "music_genre": "lullaby",
+    "lead_character_type": "animal",
+    "character": {
+      "name": "Veeva",
+      "identity": "A tiny, curious seal pup who rides the waves to lull the ocean to sleep.",
+      "special": "Her gentle rocking never disturbs the water, only soothes it.",
+      "personality_tags": [
+        "Gentle",
+        "Sleepy"
+      ]
+    },
+    "about": "A swaying, ocean-inspired lullaby that mimics the gentle back-and-forth of waves. The lilting rhythm engages the vestibular system, helping little ones feel the soothing motion of rocking. Perfect for winding down active minds with the calming embrace of the sea.",
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/rocking-0-1-8f3a_female_1.mp3",
+        "duration_seconds": 74,
+        "provider": "minimax-music-v2"
+      }
+    ],
+    "mood": "wired",
+    "lullaby_type": "rocking"
   }
 ]
