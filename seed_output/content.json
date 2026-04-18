@@ -20120,5 +20120,239 @@
     ],
     "mood": "wired",
     "lullaby_type": "rocking"
+  },
+  {
+    "id": "gen-822c8c398f84",
+    "type": "long_story",
+    "lang": "en",
+    "title": "Nalu and Piko and the Transport",
+    "description": "A bedtime story episode where Nalu and Piko discovers a magical transport.",
+    "text": "Close your eyes and feel the gentle sway. The Night Whisper is a boat made of silver moonlight, drifting on a river that hums lullabies. The water sparkles with firefly lights, and the air smells like warm honey. You are Nalu, small and brave, ready to sail into the dreamiest night.\n\nThe Night Whisper rocks beneath your feet. You grip the smooth wooden rail and peer into the dark. The river glows faintly, like someone scattered stars into the water.\n\nNALU: \"Where are we going, Piko?\"\nPIKO: \"Where the river takes us.\"\n\nPiko is a tiny moth with wings like folded paper. She sits on your shoulder, her antennae twitching. The boat creaks softly, and the water laps against the hull. Then—you hear it. A sound like a bell, but not quite. Too soft. Too far away.\n\nNALU: \"Did you hear that?\"\nPIKO: \"Hear what?\"\n\nYou strain your ears. There it is again. A chime, but it fades before you can tell where it’s coming from. The boat drifts around a bend, and the riverbank changes. The trees here have leaves that shimmer like coins, and the air feels thicker, sweeter.\n\nNALU: \"Just one more bend.\"\n\nPiko flutters to your wrist. She points with one tiny leg toward the center of the boat. There, on the deck, sits a small silver flute. It wasn’t there before. You pick it up. It’s warm, like it’s been waiting for you.\n\nPIKO: \"Blow softly.\"\n\nYou press the flute to your lips. Nothing happens. Piko nudges your hand.\n\nPIKO: \"Breathe first.\"\n\nYou try. You take a big breath, but it’s too fast. The flute stays silent.\n\nPIKO: \"Slow. Like the river.\"\n\nYou breathe in through your nose, slow and deep. Then out through your mouth, soft as a whisper.\n\nThe flute hums. A single, clear note floats into the air. The sound lingers, sweet and bright. The river seems to sigh, and the fireflies flicker in time with the note.\n\nNALU: \"It played!\"\nPIKO: \"Only when you’re calm.\"\n\nThe boat drifts again. The chime sound returns, closer now. It’s coming from the flute itself. But how? You didn’t even blow it this time.\n\nNALU: \"Why is it doing that?\"\nPIKO: \"Listen.\"\n\nThe flute plays another note, then another. The melody is slow, like a lullaby you’ve always known. The Night Whisper sways gently, and the stars above seem to lean in closer.\n\nThe song grows softer, but it doesn’t stop. It wraps around you, warm and quiet. The river carries the boat forward, and the trees on the bank begin to glow. Their leaves rustle in a rhythm that matches the flute.\n\nNALU: \"Just one more bend.\"\n\nThe flute’s song fades into the night. The river is quieter now, the fireflies dimmer. The Night Whisper glides forward, but the air feels heavier, softer. The mystery of the chime isn’t gone—it’s just settling, like dust after a dance.\n\nThe boat rocks gently beneath you. The silver flute rests in your lap, still warm. Piko curls up on your shoulder, her wings folding like a blanket. The riverbank is lined with trees that sway without wind, their leaves humming the same slow tune.\n\nNALU: \"Piko, why does the flute play by itself?\"\nPIKO: \"When the world is still, it sings.\"\n\nYou try to listen. The river laps softly against the boat. The fireflies flicker, then rest. The air smells like sleep—warm and sweet.\n\nIn through the nose, out through the mouth. Slow. Steady.\n\nThe flute plays another note, softer this time. The sound doesn’t fade. It lingers, like a held breath. Piko’s antennae droop. Her wings rise and fall with your breathing.\n\nNALU: \"Are you sleepy, Piko?\"\nPIKO: \"Mmm.\"\n\nHer voice is a whisper. The boat drifts, and the trees on the bank blur into shadows. The river carries you forward, but the world feels slower now. The chime wasn’t lost. It was waiting. Waiting for the night to be quiet enough to hear.\n\nPiko’s wings stop moving. She’s asleep, curled into a tiny ball on your shoulder. The flute plays one last note, so soft you almost miss it. The river hums along, and the fireflies blink once, twice, then rest.\n\nNALU: \"...just one more...\"\n\nYour eyelids feel heavy. The boat rocks, and the night wraps around you like a blanket. The mystery isn’t a mystery anymore. The flute plays because the world is still. And the world is still because you are.\n\nThe boat rocks.\nThe river hums.\nThe flute is quiet.\n\nYour hands rest.\nPiko sleeps.\nThe night breathes.\n\nFireflies blink slow.\nTrees sway soft.\nThe air is warm.\n\nNo more bends.\nNo more questions.\nJust the boat.\n\nJust the river.\nJust the dark.\nJust the still.\n\nThe flute waits.\nPiko dreams.\nYou drift.\n\nEyes close.\nHands relax.\nBreath slows.\n\nWarm.\nSoft.\nStill.\n\nRiver hums.\nNight wraps.\nDream comes.\n\n...\nMoonlight... boat... sleep...\n\nGone.",
+    "annotated_text": "Close your eyes and feel the gentle sway. The Night Whisper is a boat made of silver moonlight, drifting on a river that hums lullabies. The water sparkles with firefly lights, and the air smells like warm honey. You are Nalu, small and brave, ready to sail into the dreamiest night.\n\nThe Night Whisper rocks beneath your feet. You grip the smooth wooden rail and peer into the dark. The river glows faintly, like someone scattered stars into the water.\n\nNALU: \"Where are we going, Piko?\"\nPIKO: \"Where the river takes us.\"\n\nPiko is a tiny moth with wings like folded paper. She sits on your shoulder, her antennae twitching. The boat creaks softly, and the water laps against the hull. Then—you hear it. A sound like a bell, but not quite. Too soft. Too far away.\n\nNALU: \"Did you hear that?\"\nPIKO: \"Hear what?\"\n\nYou strain your ears. There it is again. A chime, but it fades before you can tell where it’s coming from. The boat drifts around a bend, and the riverbank changes. The trees here have leaves that shimmer like coins, and the air feels thicker, sweeter.\n\nNALU: \"[PHRASE]Just one more bend[/PHRASE].\"\n\nPiko flutters to your wrist. She points with one tiny leg toward the center of the boat. There, on the deck, sits a small silver flute. It wasn’t there before. You pick it up. It’s warm, like it’s been waiting for you.\n\nPIKO: \"Blow softly.\"\n\nYou press the flute to your lips. Nothing happens. Piko nudges your hand.\n\nPIKO: \"Breathe first.\"\n\nYou try. You take a big breath, but it’s too fast. The flute stays silent.\n\nPIKO: \"Slow. Like the river.\"\n\n[BREATHE_GUIDE]You breathe in through your nose, slow and deep. Then out through your mouth, soft as a whisper.[/BREATHE_GUIDE]\n[BREATHE]\n\nThe flute hums. A single, clear note floats into the air. The sound lingers, sweet and bright. The river seems to sigh, and the fireflies flicker in time with the note.\n\nNALU: \"It played!\"\nPIKO: \"Only when you’re calm.\"\n\nThe boat drifts again. The chime sound returns, closer now. It’s coming from the flute itself. But how? You didn’t even blow it this time.\n\nNALU: \"Why is it doing that?\"\nPIKO: \"Listen.\"\n\nThe flute plays another note, then another. The melody is slow, like a lullaby you’ve always known. The Night Whisper sways gently, and the stars above seem to lean in closer.\n\n[PAUSE: 800]\n[BREATHE]\n\nThe song grows softer, but it doesn’t stop. It wraps around you, warm and quiet. The river carries the boat forward, and the trees on the bank begin to glow. Their leaves rustle in a rhythm that matches the flute.\n\nNALU: \"[PHRASE]Just one more bend[/PHRASE].\"\n\n[SONG_SEED: A lullaby played by a silver flute, drifting on a river of stars, where every note makes the fireflies dance and the trees hum along.]\n\nThe flute’s song fades into the night. The river is quieter now, the fireflies dimmer. The Night Whisper glides forward, but the air feels heavier, softer. The mystery of the chime isn’t gone—it’s just settling, like dust after a dance.\n\nThe boat rocks gently beneath you. The silver flute rests in your lap, still warm. Piko curls up on your shoulder, her wings folding like a blanket. The riverbank is lined with trees that sway without wind, their leaves humming the same slow tune.\n\nNALU: \"Piko, why does the flute play by itself?\"\nPIKO: \"When the world is still, it sings.\"\n\nYou try to listen. The river laps softly against the boat. The fireflies flicker, then rest. The air smells like sleep—warm and sweet.\n\n[BREATHE_GUIDE]In through the nose, out through the mouth. Slow. Steady.[/BREATHE_GUIDE]\n[BREATHE]\n\nThe flute plays another note, softer this time. The sound doesn’t fade. It lingers, like a held breath. Piko’s antennae droop. Her wings rise and fall with your breathing.\n\nNALU: \"Are you sleepy, Piko?\"\nPIKO: \"Mmm.\"\n\nHer voice is a whisper. The boat drifts, and the trees on the bank blur into shadows. The river carries you forward, but the world feels slower now. The chime wasn’t lost. It was waiting. Waiting for the night to be quiet enough to hear.\n\n[PAUSE: 1500]\n[BREATHE]\n\nPiko’s wings stop moving. She’s asleep, curled into a tiny ball on your shoulder. The flute plays one last note, so soft you almost miss it. The river hums along, and the fireflies blink once, twice, then rest.\n\nNALU: \"[PHRASE]...just one more...[/PHRASE]\"\n\nYour eyelids feel heavy. The boat rocks, and the night wraps around you like a blanket. The mystery isn’t a mystery anymore. The flute plays because the world is still. And the world is still because you are.\n\n[PAUSE: 1500]\n[BREATHE]\n\nThe boat rocks.\nThe river hums.\nThe flute is quiet.\n\nYour hands rest.\nPiko sleeps.\nThe night breathes.\n\nFireflies blink slow.\nTrees sway soft.\nThe air is warm.\n\nNo more bends.\nNo more questions.\nJust the boat.\n\nJust the river.\nJust the dark.\nJust the still.\n\nThe flute waits.\nPiko dreams.\nYou drift.\n\nEyes close.\nHands relax.\nBreath slows.\n\nWarm.\nSoft.\nStill.\n\nRiver hums.\nNight wraps.\nDream comes.\n\n[PHRASE]...[/PHRASE]\n[WHISPER]Moonlight... boat... sleep...[/WHISPER]\n\nGone.",
+    "lullaby_lyrics": "Soft wood hums,\nriver hums too.\nNalu leans—\nwhat waits for you?\n\nJust one more bend,\njust one more glow.\nStars in the dark,\nwhere do they go?\n\nPiko’s wings fold,\nthe bell fades slow.\nNow the boat rests—\nnow you know.",
+    "target_age": 3,
+    "age_min": 2,
+    "age_max": 5,
+    "age_group": "2-5",
+    "length": "LONG",
+    "word_count": 811,
+    "duration_seconds": 636,
+    "duration": 10,
+    "categories": [
+      "Bedtime",
+      "Transport"
+    ],
+    "theme": "bedtime",
+    "morals": [],
+    "cover": "/covers/gen-822c8c398f84.svg",
+    "musicProfile": null,
+    "musicParams": null,
+    "musicalBrief": null,
+    "music_type": "baked",
+    "audio_variants": [
+      {
+        "voice": "mixed",
+        "url": "/audio/pre-gen/822c8c39_mixed.mp3",
+        "duration_seconds": 636.13,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "experimental_v2",
+    "has_baked_music": true,
+    "experimental_v2": true,
+    "episode_format": "v2",
+    "world_type": "transport",
+    "mystery_type": "something_strange",
+    "breathing_mechanic": "instrument",
+    "lead_character_type": "human",
+    "name_culture": "Ocean/Islands",
+    "characters": [
+      {
+        "name": "Nalu",
+        "personality": "curious",
+        "voice_style": "gentle",
+        "gender": "male"
+      },
+      {
+        "name": "Piko",
+        "personality": "wise",
+        "voice_style": "quiet",
+        "gender": "neutral"
+      }
+    ],
+    "repeated_phrase": "Just one more bend",
+    "voice_map": {
+      "Nalu": "male_1",
+      "Piko": "male_2"
+    },
+    "narrator_voice": "female_1",
+    "mood": "wired",
+    "created_at": "2026-04-17T03:41:44.056456",
+    "updated_at": "2026-04-17T03:41:44.056456",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "character": {
+      "name": "Nalu",
+      "identity": "A child who discovers a transport — A vehicle that travels somewhere magical — a train, a boat, a balloon",
+      "special": "Uses a instrument to solve the mystery",
+      "personality_tags": [
+        "Curious",
+        "Gentle"
+      ]
+    },
+    "is_saved": false,
+    "story_type": "nature",
+    "language_level": "intermediate"
+  },
+  {
+    "id": "gen-ac562d418c8a",
+    "type": "story",
+    "lang": "en",
+    "title": "Zib and the Planet That Hummed",
+    "description": "Zib, a small alien with ears like satellite dishes, floats above a planet that hums a lullaby. She listens, closer and closer, until the sound becomes the whole world. A story of quiet discovery among the stars.",
+    "text": "It was evening, and evenings always meant the stars were waking up. Zib stretched her long, silver fingers toward the sky. Her ship, no bigger than a pebble, drifted near a planet wrapped in soft blue clouds. The planet hummed like a sleepy cat. She tilted her head. The hum was warm, like the sound of her mother’s voice when she sang. Zib had heard planets before, but never one that hummed. The planet hummed like a sleepy cat. Between you and me, she thought, maybe it’s not just the stars that wake up at night. Zib floated lower. The hum grew louder. It vibrated through her toes, her knees, her chest. The clouds parted, just a little, and she saw the planet’s surface—rolling hills of purple grass, rivers that glowed silver, trees with leaves like tiny lanterns. She reached out. The hum wrapped around her fingers. It was the sound of the wind through the grass, the rivers rushing over smooth stones, the lantern-leaves rustling together. The planet hummed like a sleepy cat. Zib closed her eyes. The hum filled her up. She didn’t need to go anywhere else. The planet was singing just for her. The hum softened. The lantern-leaves dimmed. The rivers slowed their glow. Zib’s ship drifted in a slow circle. Her fingers uncurled. Her breath slowed. The hum was all there was. And the planet was quiet. And everything was fine. Just like that.",
+    "annotated_text": "It was evening, and evenings always meant the stars were waking up.\n\nZib stretched her long, silver fingers toward the sky. [PAUSE: 800] Her ship, no bigger than a pebble, drifted near a planet wrapped in soft blue clouds. [PHRASE]The planet hummed like a sleepy cat.[/PHRASE] [MUSIC]\n\nShe tilted her head. The hum was warm, like the sound of her mother’s voice when she sang. [PAUSE: 1200] Zib had heard planets before, but never one that hummed. [PHRASE]The planet hummed like a sleepy cat.[/PHRASE] [MUSIC]\n\nBetween you and me, she thought, maybe it’s not just the stars that wake up at night.\n\nZib floated lower. The hum grew louder. It vibrated through her toes, her knees, her chest. [PAUSE: 1500] The clouds parted, just a little, and she saw the planet’s surface—rolling hills of purple grass, rivers that glowed silver, trees with leaves like tiny lanterns. [MUSIC]\n\nShe reached out. The hum wrapped around her fingers. [PAUSE: 1200] It was the sound of the wind through the grass, the rivers rushing over smooth stones, the lantern-leaves rustling together. [PHRASE]The planet hummed like a sleepy cat.[/PHRASE]\n\nZib closed her eyes. The hum filled her up. [PAUSE: 2000] She didn’t need to go anywhere else. The planet was singing just for her.\n\nThe hum softened. The lantern-leaves dimmed. The rivers slowed their glow.\n\nZib’s ship drifted in a slow circle. [MUSIC]\n\nHer fingers uncurled. Her breath slowed.\n\nThe hum was all there was.\n\nAnd the planet was quiet. And everything was fine. Just like that.",
+    "target_age": 10,
+    "age_min": 9,
+    "age_max": 12,
+    "age_group": "9-12",
+    "length": "SHORT",
+    "word_count": 249,
+    "duration_seconds": 0,
+    "categories": [
+      "Space Adventure",
+      "Bedtime Story"
+    ],
+    "theme": "space",
+    "morals": [
+      "Even the quietest things have something to say.",
+      "Sometimes the best adventures are the ones you listen to."
+    ],
+    "cover": "/covers/gen-ac562d418c8a.svg",
+    "musicProfile": "",
+    "music_type": "baked",
+    "audio_variants": [
+      {
+        "voice": "female_4",
+        "url": "/audio/pre-gen/gen-ac56_female_4.mp3",
+        "duration_seconds": 238.72,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-ac56_male_2.mp3",
+        "duration_seconds": 213.76,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "female",
+    "character": {
+      "name": "Zib",
+      "identity": "A small alien who listens to the sounds of the universe.",
+      "special": "Her ears can hear the songs of planets and stars.",
+      "personality_tags": [
+        "Curious",
+        "Gentle"
+      ]
+    },
+    "cover_context": "A planet wrapped in swirling blue clouds, its surface glowing with soft purple light. Rivers of silver wind through rolling hills, and trees with lantern-like leaves sway gently in the breeze.",
+    "lead_character_type": "alien",
+    "character_name": "Zib",
+    "universe": "historical",
+    "geography": "Europe",
+    "life_aspect": "friendship",
+    "plot_archetype": "quest_journey",
+    "diversityFingerprint": {
+      "characterType": null,
+      "setting": null,
+      "mood": null,
+      "storyType": null,
+      "plotShape": "discovery_reveal",
+      "languageLevel": null,
+      "scale": null,
+      "companion": null,
+      "movement": "floating_drifting",
+      "timeOfDay": null,
+      "weather": "clear_calm",
+      "theme": null,
+      "characterTrait": null,
+      "magicType": "music_sound_magic",
+      "season": null,
+      "senseEmphasis": null
+    },
+    "mood": "curious",
+    "story_type": "slice_of_life",
+    "language_level": "basic",
+    "created_at": "2026-04-18T02:32:43.873600",
+    "updated_at": "2026-04-18T02:32:43.873600",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "has_baked_music": true,
+    "experimental_v2": true,
+    "hook": "Have you ever wondered what a planet sounds like when it’s falling asleep?",
+    "repeated_phrase": "The planet hummed like a sleepy cat.",
+    "raw_text": "It was evening, and evenings always meant the stars were waking up.\n\nZib stretched her long, silver fingers toward the sky. [PAUSE: 800] Her ship, no bigger than a pebble, drifted near a planet wrapped in soft blue clouds. [PHRASE]The planet hummed like a sleepy cat.[/PHRASE] [MUSIC]\n\nShe tilted her head. The hum was warm, like the sound of her mother’s voice when she sang. [PAUSE: 1200] Zib had heard planets before, but never one that hummed. [PHRASE]The planet hummed like a sleepy cat.[/PHRASE] [MUSIC]\n\nBetween you and me, she thought, maybe it’s not just the stars that wake up at night.\n\nZib floated lower. The hum grew louder. It vibrated through her toes, her knees, her chest. [PAUSE: 1500] The clouds parted, just a little, and she saw the planet’s surface—rolling hills of purple grass, rivers that glowed silver, trees with leaves like tiny lanterns. [MUSIC]\n\nShe reached out. The hum wrapped around her fingers. [PAUSE: 1200] It was the sound of the wind through the grass, the rivers rushing over smooth stones, the lantern-leaves rustling together. [PHRASE]The planet hummed like a sleepy cat.[/PHRASE]\n\nZib closed her eyes. The hum filled her up. [PAUSE: 2000] She didn’t need to go anywhere else. The planet was singing just for her.\n\nThe hum softened. The lantern-leaves dimmed. The rivers slowed their glow.\n\nZib’s ship drifted in a slow circle. [MUSIC]\n\nHer fingers uncurled. Her breath slowed.\n\nThe hum was all there was.\n\nAnd the planet was quiet. And everything was fine. Just like that.",
+    "duration": 4
+  },
+  {
+    "id": "warning-6-8-efae",
+    "type": "song",
+    "lang": "en",
+    "title": "Mira and the Silver Dreams",
+    "card_label": "Dream Catcher",
+    "cover": "/covers/warning-6-8-efae.svg",
+    "description": "A playful lullaby about dreams searching for sleepy children to visit. The gentle fear of missing out (FOMO) encourages little ones to close their eyes so the magic can begin. The conspiratorial tone makes bedtime feel like a secret adventure.",
+    "text": "The dreams are out tonight\nSoftly calling through the air\nLooking for a sleepy sight\nEyes that close without a care\n\nOne just tapped upon your pane\nWhispered, \"Child, are you still there?\"\nAlmost stayed but slipped like rain\nBack into the dreaming glare\n\n[chorus]\nClose your eyes and they will come\nDancing light and whispered hum\nClose your eyes and they will stay\nTill the break of waking day\n\nTiny dream with silver wings\nTried to land upon your nose\nTold you all the secret things\nThat the moon and nighttime knows\n\nBut you stirred and turned away\nSo it flew on silver toes\nNow it waits for you to say\n\"Come and visit, soft repose\"\n\n[chorus]\nClose your eyes and they will come\nDancing light and whispered hum\nClose your eyes and they will stay\nTill the break of waking day\n\nBetter close your eyes",
+    "annotated_text": "The dreams are out tonight\nSoftly calling through the air\nLooking for a sleepy sight\nEyes that close without a care\n\nOne just tapped upon your pane\nWhispered, \"Child, are you still there?\"\nAlmost stayed but slipped like rain\nBack into the dreaming glare\n\n[chorus]\nClose your eyes and they will come\nDancing light and whispered hum\nClose your eyes and they will stay\nTill the break of waking day\n\nTiny dream with silver wings\nTried to land upon your nose\nTold you all the secret things\nThat the moon and nighttime knows\n\nBut you stirred and turned away\nSo it flew on silver toes\nNow it waits for you to say\n\"Come and visit, soft repose\"\n\n[chorus]\nClose your eyes and they will come\nDancing light and whispered hum\nClose your eyes and they will stay\nTill the break of waking day\n\nBetter close your eyes",
+    "cover_context": "A small, round-faced girl with long dark hair curled under a quilt, peeking at tiny glowing dream creatures with silver wings fluttering outside her window. Soft moonlight spills across the floor, and the room glows in warm watercolor hues.",
+    "target_age": 7,
+    "age_min": 6,
+    "age_max": 8,
+    "age_group": "6-8",
+    "duration": 2,
+    "duration_seconds": 113,
+    "author_id": "system",
+    "created_at": "2026-04-18T02:44:12.407009",
+    "updated_at": "2026-04-18T02:44:12.408300",
+    "audio_url": null,
+    "album_art_url": null,
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "categories": [
+      "Lullabies"
+    ],
+    "theme": "dreamy",
+    "is_generated": true,
+    "generation_quality": "good",
+    "music_genre": "lullaby",
+    "lead_character_type": "animal",
+    "character": {
+      "name": "Mira",
+      "identity": "A curious little girl who almost catches dreams before they slip away",
+      "special": "She can hear the whispers of dreams if she listens very closely",
+      "personality_tags": [
+        "Gentle",
+        "Sleepy"
+      ]
+    },
+    "about": "A playful lullaby about dreams searching for sleepy children to visit. The gentle fear of missing out (FOMO) encourages little ones to close their eyes so the magic can begin. The conspiratorial tone makes bedtime feel like a secret adventure.",
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/warning-6-8-efae_female_1.mp3",
+        "duration_seconds": 113,
+        "provider": "minimax-music-v2"
+      }
+    ],
+    "mood": "curious",
+    "lullaby_type": "warning"
   }
 ]
