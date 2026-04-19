@@ -1,0 +1,30 @@
+{
+  "id": "hi-permission-2-5-chnd",
+  "title": "Chaand So Gaya",
+  "content_type": "lullaby",
+  "lullaby_type": "permission",
+  "card_label": "Chaand So Gaya",
+  "card_subtitle": "Sab so rahe hain, ab tum bhi",
+  "age_group": "2-5",
+  "mood": "calm",
+  "lang": "hi",
+  "language": "hi",
+  "instrument": "harmonium",
+  "imagery": "night_sky",
+  "audio_file": "hi-permission-2-5-chnd.mp3",
+  "cover_file": "hi-permission-2-5-chnd_cover.svg",
+  "cover_prompt": "A soft watercolor illustration of a sleeping crescent moon with closed eyes, tiny birds dozing on a bare branch, a quiet still river below, muted indigo and silver palette, gentle evening hush, cozy Indian nighttime, children's book style",
+  "duration_seconds": 149,
+  "lyrics": "[verse]\nChaand so gaya\nTaare so gaye\nChidiya so gayi\nAb tum bhi so jao\n\n[chorus]\nSo ja, so ja\nSab so rahe hain\nSo ja, so ja\nRaat aa gayi hai\n\n[verse]\nHawa tham gayi\nPed chup ho gaye\nNadi ruk gayi\nPhool band ho gaye\n\n[chorus]\nSo ja, so ja\nSab so rahe hain\nSo ja, so ja\nTum bhi so jao",
+  "lyrics_devanagari": "[verse]\nचाँद सो गया\nतारे सो गए\nचिड़िया सो गई\nअब तुम भी सो जाओ\n\n[chorus]\nसो जा, सो जा\nसब सो रहे हैं\nसो जा, सो जा\nरात आ गई है\n\n[verse]\nहवा थम गई\nपेड़ चुप हो गए\nनदी रुक गई\nफूल बंद हो गए\n\n[chorus]\nसो जा, सो जा\nसब सो रहे हैं\nसो जा, सो जा\nतुम भी सो जाओ",
+  "style_prompt": "Traditional Indian lori sung in Hindi, warm female vocal with clear Hindi pronunciation, soft harmonium and acoustic guitar, 64 BPM, Hindustani classical flavor, pastoral evening, authentic Indian vocal style, not Western",
+  "reference_audio": "Hindi_Voices/Lullaby.m4a (trimmed to 28s)",
+  "engine": "minimax-music-v2.5-fal (with reference_audio)",
+  "fingerprint": {
+    "lullabyType": "permission",
+    "instrument": "harmonium",
+    "imagery": "night_sky",
+    "mood": "calm"
+  },
+  "created_at": "2026-04-19"
+}

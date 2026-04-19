@@ -1,0 +1,30 @@
+{
+  "id": "hi-heartbeat-0-1-dhee",
+  "title": "Dheere Dheere",
+  "content_type": "lullaby",
+  "lullaby_type": "heartbeat",
+  "card_label": "Dheere Dheere",
+  "card_subtitle": "Maa ki halki gunguna",
+  "age_group": "0-1",
+  "mood": "calm",
+  "lang": "hi",
+  "language": "hi",
+  "instrument": "acapella",
+  "imagery": "none",
+  "audio_file": "hi-heartbeat-0-1-dhee.mp3",
+  "cover_file": "hi-heartbeat-0-1-dhee_cover.svg",
+  "cover_prompt": "A soft watercolor illustration of a sleeping infant wrapped in a warm cream-colored quilt, a gentle crescent moon glowing above, tiny stars twinkling softly, dreamy deep-blue and lavender palette, cozy Indian nighttime, children's book style",
+  "duration_seconds": 118,
+  "lyrics": "[verse]\nMmm mmm mmm mmm\nDheere dheere\nMmm mmm mmm mmm\nSo ja\n\n[verse]\nMmm mmm mmm mmm\nDheere dheere so ja\nMmm mmm mmm mmm\nSo ja so ja\n\n[verse]\nMmm mmm mmm\nSo ja\nMmm mmm\nSo ja\nMmm",
+  "lyrics_devanagari": "[verse]\nMmm mmm mmm mmm\nधीरे धीरे\nMmm mmm mmm mmm\nसो जा\n\n[verse]\nMmm mmm mmm mmm\nधीरे धीरे सो जा\nMmm mmm mmm mmm\nसो जा सो जा\n\n[verse]\nMmm mmm mmm\nसो जा\nMmm mmm\nसो जा\nMmm",
+  "style_prompt": "Hindi lullaby, solo female vocal, mouth-closed humming with soft Hindi words, no instruments, 58 BPM, breathy, intimate, monotone, meditative, Indian maternal warmth, traditional lori feel",
+  "reference_audio": "Hindi_Voices/Lullaby.m4a (trimmed to 28s)",
+  "engine": "minimax-music-v2.5-fal (with reference_audio)",
+  "fingerprint": {
+    "lullabyType": "heartbeat",
+    "instrument": "acapella",
+    "imagery": "none",
+    "mood": "calm"
+  },
+  "created_at": "2026-04-19"
+}

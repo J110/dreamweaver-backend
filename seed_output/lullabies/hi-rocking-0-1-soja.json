@@ -1,0 +1,30 @@
+{
+  "id": "hi-rocking-0-1-soja",
+  "title": "So Ja Mere Raja",
+  "content_type": "lullaby",
+  "lullaby_type": "rocking",
+  "card_label": "So Ja Mere Raja",
+  "card_subtitle": "Classic Indian cradle lori",
+  "age_group": "0-1",
+  "mood": "calm",
+  "lang": "hi",
+  "language": "hi",
+  "instrument": "harmonium",
+  "imagery": "jhula",
+  "audio_file": "hi-rocking-0-1-soja.mp3",
+  "cover_file": "hi-rocking-0-1-soja_cover.svg",
+  "cover_prompt": "A soft watercolor illustration of a wooden jhula cradle gently swaying under a crescent moon, soft motion lines suggesting rocking sway, starry sky, dreamy soft-blue and silver palette, cozy Indian nighttime, children's book style",
+  "duration_seconds": 163,
+  "lyrics": "[verse]\nSo ja mere raja, so ja\nSo ja mere raja, so ja\nChaand ki god mein so ja\nTaaron ki chhaanv mein so ja\n\n[chorus]\nJhoola jhoole, jhoola jhoole\nSo ja so ja so ja\nJhoola jhoole, jhoola jhoole\nSo ja mere raja\n\n[verse]\nSo ja meri rani, so ja\nSo ja meri rani, so ja\nSapnon ki naav mein so ja\nMaa ki baahon mein so ja\n\n[chorus]\nJhoola jhoole, jhoola jhoole\nSo ja so ja so ja\nSo ja mere raja, so ja",
+  "lyrics_devanagari": "[verse]\nसो जा मेरे राजा, सो जा\nसो जा मेरे राजा, सो जा\nचाँद की गोद में सो जा\nतारों की छाँव में सो जा\n\n[chorus]\nझूला झूले, झूला झूले\nसो जा सो जा सो जा\nझूला झूले, झूला झूले\nसो जा मेरे राजा\n\n[verse]\nसो जा मेरी रानी, सो जा\nसो जा मेरी रानी, सो जा\nसपनों की नाव में सो जा\nमाँ की बाँहों में सो जा\n\n[chorus]\nझूला झूले, झूला झूले\nसो जा सो जा सो जा\nसो जा मेरे राजा, सो जा",
+  "style_prompt": "Traditional Indian cradle lori in Hindi, warm maternal female vocal, harmonium drone and soft tabla, tanpura, 6/8 dadra taal swaying rhythm, 64 BPM, classic Bollywood lori, Hindustani ornamentation, repetitive swinging pattern",
+  "reference_audio": "Hindi_Voices/Lullaby.m4a (trimmed to 28s)",
+  "engine": "minimax-music-v2.5-fal (with reference_audio)",
+  "fingerprint": {
+    "lullabyType": "rocking",
+    "instrument": "harmonium",
+    "imagery": "jhula",
+    "mood": "calm"
+  },
+  "created_at": "2026-04-19"
+}
