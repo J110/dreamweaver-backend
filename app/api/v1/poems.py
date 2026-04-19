@@ -74,12 +74,16 @@ def _save_poem(poem: dict) -> None:
 @router.get("", response_model=PoemsListResponse)
 async def list_poems(
     age_group: Optional[str] = Query(None, description="Filter by age group: '2-5', '6-8', '9-12'"),
+    lang: Optional[str] = Query("en", description="Filter by language: 'en' or 'hi'"),
 ) -> PoemsListResponse:
-    """List all poems, optionally filtered by age group."""
+    """List all poems, optionally filtered by age group and language."""
     poems = _load_all_poems()
 
     if age_group:
         poems = [p for p in poems if p.get("age_group") == age_group]
+
+    if lang:
+        poems = [p for p in poems if p.get("lang", "en") == lang]
 
     # Only return poems that have audio
     poems = [p for p in poems if p.get("audio_file")]

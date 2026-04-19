@@ -75,12 +75,16 @@ def _save_short(short: dict) -> None:
 @router.get("", response_model=FunnyShortsListResponse)
 async def list_funny_shorts(
     age_group: Optional[str] = Query(None, description="Filter by age group: '2-5', '6-8', '9-12'"),
+    lang: Optional[str] = Query("en", description="Filter by language: 'en' or 'hi'"),
 ) -> FunnyShortsListResponse:
-    """List all funny shorts, optionally filtered by age group."""
+    """List all funny shorts, optionally filtered by age group and language."""
     shorts = _load_all_shorts()
 
     if age_group:
         shorts = [s for s in shorts if s.get("age_group") == age_group]
+
+    if lang:
+        shorts = [s for s in shorts if s.get("lang", "en") == lang]
 
     # Sort by created_at descending (newest first)
     shorts.sort(key=lambda x: x.get("created_at", ""), reverse=True)

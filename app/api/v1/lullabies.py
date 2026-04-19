@@ -44,8 +44,9 @@ async def list_lullabies(
     age_group: Optional[str] = Query(None, description="Filter by age group (0-1, 2-5, 6-8, 9-12)"),
     mood: Optional[str] = Query(None, description="Filter by mood (calm, wired, curious, sad, anxious, angry)"),
     lullaby_type: Optional[str] = Query(None, description="Filter by lullaby type"),
+    lang: Optional[str] = Query("en", description="Filter by language: 'en' or 'hi'"),
 ):
-    """List lullabies with optional mood and age filtering."""
+    """List lullabies with optional mood, age, and language filtering."""
     lullabies = _load_lullabies()
 
     if age_group:
@@ -56,6 +57,9 @@ async def list_lullabies(
 
     if lullaby_type:
         lullabies = [l for l in lullabies if l.get("lullaby_type") == lullaby_type]
+
+    if lang:
+        lullabies = [l for l in lullabies if l.get("lang", "en") == lang]
 
     return {
         "success": True,

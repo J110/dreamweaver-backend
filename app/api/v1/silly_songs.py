@@ -74,12 +74,16 @@ def _save_song(song: dict) -> None:
 @router.get("", response_model=SillySongsListResponse)
 async def list_silly_songs(
     age_group: Optional[str] = Query(None, description="Filter by age group: '2-5', '6-8', '9-12'"),
+    lang: Optional[str] = Query("en", description="Filter by language: 'en' or 'hi'"),
 ) -> SillySongsListResponse:
-    """List all silly songs, optionally filtered by age group."""
+    """List all silly songs, optionally filtered by age group and language."""
     songs = _load_all_songs()
 
     if age_group:
         songs = [s for s in songs if s.get("age_group") == age_group]
+
+    if lang:
+        songs = [s for s in songs if s.get("lang", "en") == lang]
 
     # Only return songs that have audio
     songs = [s for s in songs if s.get("audio_file")]

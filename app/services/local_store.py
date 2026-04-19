@@ -68,7 +68,20 @@ class LocalStore:
                         changed = False
                         # Fields that should always be updated from seed
                         # (frontend-owned fields that may improve over time)
-                        SEED_PREFERRED_FIELDS = {"cover", "musicParams", "audio_variants", "mood", "musicalBrief", "story_type"}
+                        SEED_PREFERRED_FIELDS = {
+                            "cover", "musicParams", "audio_variants", "mood", "musicalBrief", "story_type",
+                            "lang", "title_en", "description_en", "cover_description_en",
+                            "repeated_phrase", "conversational_score",
+                        }
+                        seed_ids = {item[key_field] for item in seed_items}
+                        # Drop runtime Hindi items whose id isn't in seed.
+                        # Scoped to lang=hi so English is never affected — needed to
+                        # evict old शुद्ध Hindi content removed from seed.
+                        for existing_id in list(self.collections[coll_name].keys()):
+                            existing = self.collections[coll_name][existing_id]
+                            if existing.get("lang") == "hi" and existing_id not in seed_ids:
+                                del self.collections[coll_name][existing_id]
+                                changed = True
                         for item in seed_items:
                             item_id = item[key_field]
                             if item_id not in self.collections[coll_name]:
@@ -158,7 +171,11 @@ class LocalStore:
                         with open(seed_path) as f:
                             seed_items = json.load(f)
                             changed = False
-                            SEED_PREFERRED_FIELDS = {"cover", "musicParams", "audio_variants", "mood", "musicalBrief", "story_type"}
+                            SEED_PREFERRED_FIELDS = {
+                                "cover", "musicParams", "audio_variants", "mood", "musicalBrief", "story_type",
+                                "lang", "title_en", "description_en", "cover_description_en",
+                                "repeated_phrase", "conversational_score",
+                            }
                             for item in seed_items:
                                 item_id = item[key_field]
                                 if item_id not in self.collections[coll_name]:
