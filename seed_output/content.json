@@ -18922,5 +18922,143 @@
     "tts_engine": "elevenlabs_multilingual_v2",
     "language_level": "intermediate",
     "conversational_score": 0.85
+  },
+  {
+    "id": "hi-heartbeat-0-1-dhee",
+    "type": "song",
+    "lang": "hi",
+    "title": "Dheere Dheere",
+    "card_label": "Dheere Dheere",
+    "cover": "/covers/hi-heartbeat-0-1-dhee.svg",
+    "description": "Maa ki halki gunguna",
+    "text": "[verse]\nMmm mmm mmm mmm\nDheere dheere\nMmm mmm mmm mmm\nSo ja\n\n[verse]\nMmm mmm mmm mmm\nDheere dheere so ja\nMmm mmm mmm mmm\nSo ja so ja\n\n[verse]\nMmm mmm mmm\nSo ja\nMmm mmm\nSo ja\nMmm",
+    "annotated_text": "[verse]\nMmm mmm mmm mmm\nDheere dheere\nMmm mmm mmm mmm\nSo ja\n\n[verse]\nMmm mmm mmm mmm\nDheere dheere so ja\nMmm mmm mmm mmm\nSo ja so ja\n\n[verse]\nMmm mmm mmm\nSo ja\nMmm mmm\nSo ja\nMmm",
+    "cover_context": "A soft watercolor illustration of a sleeping infant wrapped in a warm cream-colored quilt, a gentle crescent moon glowing above, tiny stars twinkling softly, dreamy deep-blue and lavender palette, cozy Indian nighttime, children's book style",
+    "target_age": 0,
+    "age_min": 0,
+    "age_max": 1,
+    "age_group": "0-1",
+    "duration": 2,
+    "duration_seconds": 118,
+    "author_id": "system",
+    "created_at": "2026-04-19T11:09:34.720080",
+    "updated_at": "2026-04-19T11:09:34.720080",
+    "audio_url": null,
+    "album_art_url": null,
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "categories": [
+      "Lullabies"
+    ],
+    "theme": "dreamy",
+    "is_generated": true,
+    "generation_quality": "good",
+    "music_genre": "lullaby",
+    "lead_character_type": "object",
+    "character": null,
+    "about": "",
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/hi-heartbeat-0-1-dhee_female_1.mp3",
+        "duration_seconds": 118,
+        "provider": "minimax-music-v2.5"
+      }
+    ],
+    "mood": "calm",
+    "lullaby_type": "heartbeat"
+  },
+  {
+    "id": "hi-permission-2-5-chnd",
+    "type": "song",
+    "lang": "hi",
+    "title": "Chaand So Gaya",
+    "card_label": "Chaand So Gaya",
+    "cover": "/covers/hi-permission-2-5-chnd.svg",
+    "description": "Sab so rahe hain, ab tum bhi",
+    "text": "[verse]\nChaand so gaya\nTaare so gaye\nChidiya so gayi\nAb tum bhi so jao\n\n[chorus]\nSo ja, so ja\nSab so rahe hain\nSo ja, so ja\nRaat aa gayi hai\n\n[verse]\nHawa tham gayi\nPed chup ho gaye\nNadi ruk gayi\nPhool band ho gaye\n\n[chorus]\nSo ja, so ja\nSab so rahe hain\nSo ja, so ja\nTum bhi so jao",
+    "annotated_text": "[verse]\nChaand so gaya\nTaare so gaye\nChidiya so gayi\nAb tum bhi so jao\n\n[chorus]\nSo ja, so ja\nSab so rahe hain\nSo ja, so ja\nRaat aa gayi hai\n\n[verse]\nHawa tham gayi\nPed chup ho gaye\nNadi ruk gayi\nPhool band ho gaye\n\n[chorus]\nSo ja, so ja\nSab so rahe hain\nSo ja, so ja\nTum bhi so jao",
+    "cover_context": "A soft watercolor illustration of a sleeping crescent moon with closed eyes, tiny birds dozing on a bare branch, a quiet still river below, muted indigo and silver palette, gentle evening hush, cozy Indian nighttime, children's book style",
+    "target_age": 3,
+    "age_min": 2,
+    "age_max": 5,
+    "age_group": "2-5",
+    "duration": 2,
+    "duration_seconds": 149,
+    "author_id": "system",
+    "created_at": "2026-04-19T11:09:34.739164",
+    "updated_at": "2026-04-19T11:09:34.739164",
+    "audio_url": null,
+    "album_art_url": null,
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "categories": [
+      "Lullabies"
+    ],
+    "theme": "dreamy",
+    "is_generated": true,
+    "generation_quality": "good",
+    "music_genre": "lullaby",
+    "lead_character_type": "object",
+    "character": null,
+    "about": "",
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/hi-permission-2-5-chnd_female_1.mp3",
+        "duration_seconds": 149,
+        "provider": "minimax-music-v2.5"
+      }
+    ],
+    "mood": "calm",
+    "lullaby_type": "permission"
+  },
+  {
+    "id": "hi-rocking-0-1-soja",
+    "type": "song",
+    "lang": "hi",
+    "title": "So Ja Mere Raja",
+    "card_label": "So Ja Mere Raja",
+    "cover": "/covers/hi-rocking-0-1-soja.svg",
+    "description": "Classic Indian cradle lori",
+    "text": "[verse]\nSo ja mere raja, so ja\nSo ja mere raja, so ja\nChaand ki god mein so ja\nTaaron ki chhaanv mein so ja\n\n[chorus]\nJhoola jhoole, jhoola jhoole\nSo ja so ja so ja\nJhoola jhoole, jhoola jhoole\nSo ja mere raja\n\n[verse]\nSo ja meri rani, so ja\nSo ja meri rani, so ja\nSapnon ki naav mein so ja\nMaa ki baahon mein so ja\n\n[chorus]\nJhoola jhoole, jhoola jhoole\nSo ja so ja so ja\nSo ja mere raja, so ja",
+    "annotated_text": "[verse]\nSo ja mere raja, so ja\nSo ja mere raja, so ja\nChaand ki god mein so ja\nTaaron ki chhaanv mein so ja\n\n[chorus]\nJhoola jhoole, jhoola jhoole\nSo ja so ja so ja\nJhoola jhoole, jhoola jhoole\nSo ja mere raja\n\n[verse]\nSo ja meri rani, so ja\nSo ja meri rani, so ja\nSapnon ki naav mein so ja\nMaa ki baahon mein so ja\n\n[chorus]\nJhoola jhoole, jhoola jhoole\nSo ja so ja so ja\nSo ja mere raja, so ja",
+    "cover_context": "A soft watercolor illustration of a wooden jhula cradle gently swaying under a crescent moon, soft motion lines suggesting rocking sway, starry sky, dreamy soft-blue and silver palette, cozy Indian nighttime, children's book style",
+    "target_age": 0,
+    "age_min": 0,
+    "age_max": 1,
+    "age_group": "0-1",
+    "duration": 3,
+    "duration_seconds": 163,
+    "author_id": "system",
+    "created_at": "2026-04-19T11:09:34.746728",
+    "updated_at": "2026-04-19T11:09:34.746728",
+    "audio_url": null,
+    "album_art_url": null,
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "categories": [
+      "Lullabies"
+    ],
+    "theme": "dreamy",
+    "is_generated": true,
+    "generation_quality": "good",
+    "music_genre": "lullaby",
+    "lead_character_type": "object",
+    "character": null,
+    "about": "",
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/hi-rocking-0-1-soja_female_1.mp3",
+        "duration_seconds": 163,
+        "provider": "minimax-music-v2.5"
+      }
+    ],
+    "mood": "calm",
+    "lullaby_type": "rocking"
   }
 ]
