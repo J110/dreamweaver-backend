@@ -1,0 +1,37 @@
+{
+  "id": "closing-2-5-0607",
+  "title": "Mira’s Pillow Fight",
+  "content_type": "lullaby",
+  "lullaby_type": "closing",
+  "card_label": "Day Is Done",
+  "card_subtitle": "Wrapping up today",
+  "age_group": "2-5",
+  "mood": "angry",
+  "language": "en",
+  "instrument": "piano",
+  "imagery": "pillow",
+  "audio_file": "closing-2-5-0607.mp3",
+  "cover_file": "closing-2-5-0607_cover.svg",
+  "cover_prompt": "A small girl with wild curls, half-asleep, hugging a plump pillow in a cozy moonlit bedroom. The pillow glows softly, and her angry frown melts into a tired smile as fireflies drift near the window.",
+  "duration_seconds": 130,
+  "lyrics": "[verse]\nWhat a day, what a day\nToss and turn, shout and play\nPillow’s warm but I won’t stay\nKick the sheets and run away\n\n[chorus]\nOh, the day is done\nOh, the day is done\nLay your head, my little one\nAnd the day is done\n\n[verse]\nTripped my toe, spilled my cup\nSister took the toy truck up\nDaddy said to clean my plate\nI just threw it at the gate\n\n[chorus]\nOh, the day is done\nOh, the day is done\nLay your head, my little one\nAnd the day is done\n\n[verse]\nNow the moon is soft and low\nPillow holds me, warm and slow\nAngry thoughts begin to fade\nIn the dark my bed’s remade\n\n[chorus]\nOh, the day is done\nOh, the day is done\nLay your head, my little one\nAnd the day is done",
+  "style_prompt": "Intimate domestic lullaby, warm female vocal, soft acoustic guitar, 64 BPM, cozy, familiar, conversational, almost speaking melodically, not performative, kitchen-to-bedroom energy, end of day warmth, soft piano accompaniment",
+  "engine": "minimax-music-v2-fal",
+  "fingerprint": {
+    "lullabyType": "closing",
+    "instrument": "piano",
+    "imagery": "pillow",
+    "mood": "angry"
+  },
+  "created_at": "2026-04-12",
+  "character": {
+    "name": "Mira",
+    "identity": "A fiery little girl who struggles to let go of her big feelings at bedtime.",
+    "special": "She turns her pillow into a friend who whispers the day is over.",
+    "personality_tags": [
+      "Gentle",
+      "Sleepy"
+    ]
+  },
+  "about": "A lullaby for children who fight sleep with frustration, acknowledging their anger while gently guiding them toward closure. The repetition of \"the day is done\" acts as a soothing mantra, helping little ones release the day’s chaos and settle into rest."
+}

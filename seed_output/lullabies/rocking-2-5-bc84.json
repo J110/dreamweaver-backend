@@ -1,0 +1,37 @@
+{
+  "id": "rocking-2-5-bc84",
+  "title": "Lumi and the Sky Cradle",
+  "content_type": "lullaby",
+  "lullaby_type": "rocking",
+  "card_label": "Rock-a-bye",
+  "card_subtitle": "A classic cradle song",
+  "age_group": "2-5",
+  "mood": "anxious",
+  "language": "en",
+  "instrument": "piano",
+  "imagery": "sky",
+  "audio_file": "rocking-2-5-bc84.mp3",
+  "cover_file": "rocking-2-5-bc84_cover.svg",
+  "cover_prompt": "A small, glowing child with soft wings curled in a nest of clouds, cradled by a smiling moon. Stars twinkle like fireflies in the deep blue sky, and a gentle wind wraps around them like a blanket.",
+  "duration_seconds": 124,
+  "lyrics": "[verse]\nRock-a-bye, rock-a-bye\nClouds will hold you in the sky\nSoft and slow we drift and sway\nMoon will light the gentle way\n\n[verse]\nRock-a-bye, rock-a-bye\nStars will hum a lullaby\nUp so high but safe and warm\nDreams will keep you from all harm\n\n[chorus]\nRock and sway, don’t you fear\nSky will cradle you right here\nClose your eyes, the night is kind\nLeave the world and stars behind\n\n[verse]\nRock-a-bye, rock-a-bye\nWind will sing you to the sky\nGentle breeze will tuck you tight\nSleep now deep and dream so light\n\n[chorus]\nRock and sway, don’t you fear\nSky will cradle you right here\nClose your eyes, the night is kind\nLeave the world and stars behind\n\n[verse]\nRock-a-bye, rock-a-bye\nNow the stars all wave goodbye\nDrift so far but safe and near\nRock-a-bye, goodnight my dear",
+  "style_prompt": "Traditional cradle song, warm maternal female vocal, harp arpeggios, 6/8 time signature, 64 BPM, swaying rocking rhythm, gentle lilting motion, the feeling of being carried and rocked, celtic lullaby influence, repetitive swinging pattern, soft piano accompaniment",
+  "engine": "minimax-music-v2-fal",
+  "fingerprint": {
+    "lullabyType": "rocking",
+    "instrument": "piano",
+    "imagery": "sky",
+    "mood": "anxious"
+  },
+  "created_at": "2026-04-08",
+  "character": {
+    "name": "Lumi",
+    "identity": "A tiny sky child who drifts on clouds and sings the night to sleep.",
+    "special": "Her voice carries the warmth of the moon and the whisper of the stars.",
+    "personality_tags": [
+      "Gentle",
+      "Sleepy"
+    ]
+  },
+  "about": "A soothing lullaby about drifting safely in the sky, wrapped in clouds and starlight. The rocking rhythm mimics the gentle sway of a cradle, helping little ones feel held and secure as they fall asleep. Perfect for children who need reassurance that the night is kind."
+}

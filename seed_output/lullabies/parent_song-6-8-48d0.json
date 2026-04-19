@@ -1,0 +1,37 @@
+{
+  "id": "parent_song-6-8-48d0",
+  "title": "Mara’s Fading Light",
+  "content_type": "lullaby",
+  "lullaby_type": "parent_song",
+  "card_label": "For You",
+  "card_subtitle": "A parent's love",
+  "age_group": "6-8",
+  "mood": "sad",
+  "language": "en",
+  "instrument": "piano",
+  "imagery": "growing_up",
+  "audio_file": "parent_song-6-8-48d0.mp3",
+  "cover_file": "parent_song-6-8-48d0_cover.svg",
+  "cover_prompt": "A mother with long, loose hair sits on a porch step at dusk, watching her child run ahead down a golden-lit path, one small hand waving back. The sky glows soft pink, and fireflies begin to flicker in the tall grass.",
+  "duration_seconds": 141,
+  "lyrics": "[verse]\nI watched you today\nTiny hands in the sun\nYou giggled so bright\nLike the whole world was fun\nYour feet barely touched\nThe soft summer ground\nEvery moment so sweet\nEvery laugh the best sound\n\n[chorus]\nOh my love, you won’t remember this\nThe way the light danced in your hair\nYou won’t know how my heart just held you close\nBut I’ll be there, I’ll be there\n\n[verse]\nI watched you today\nYou ran past the gate\nYour voice called my name\nBut you didn’t wait\nThe years slip so fast\nLike a breeze through the trees\nYou’re growing so tall\nAnd I’m learning to breathe\n\n[chorus]\nOh my love, you won’t remember this\nThe way the light danced in your hair\nYou won’t know how my heart just held you close\nBut I’ll be there, I’ll be there",
+  "style_prompt": "Intimate singer-songwriter lullaby, breathy unpolished female vocal, low register, sparse solo piano with single notes, 60 BPM, vulnerable, tender, raw, emotional, like singing alone late at night, not a performance, imperfect and real, extreme sparsity, soft piano accompaniment",
+  "engine": "minimax-music-v2-fal",
+  "fingerprint": {
+    "lullabyType": "parent_song",
+    "instrument": "piano",
+    "imagery": "growing_up",
+    "mood": "sad"
+  },
+  "created_at": "2026-04-16",
+  "character": {
+    "name": "Mara",
+    "identity": "A mother singing to her growing child as the years slip by like summer light.",
+    "special": "Holds every fleeting moment like a quiet promise in her heart.",
+    "personality_tags": [
+      "Gentle",
+      "Sleepy"
+    ]
+  },
+  "about": "A tender, bittersweet lullaby about watching a child grow up too fast. The gentle repetition of \"you won’t remember this\" helps children feel safe in the present, while acknowledging the natural passage of time. The song’s quiet vulnerability fosters deep bonding, easing little hearts into sleep."
+}

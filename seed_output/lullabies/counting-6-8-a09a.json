@@ -1,0 +1,37 @@
+{
+  "id": "counting-6-8-a09a",
+  "title": "Mara’s Moonlit Pond",
+  "content_type": "lullaby",
+  "lullaby_type": "counting",
+  "card_label": "One by One",
+  "card_subtitle": "Counting things to sleep",
+  "age_group": "6-8",
+  "mood": "wired",
+  "language": "en",
+  "instrument": "piano",
+  "imagery": "pond",
+  "audio_file": "counting-6-8-a09a.mp3",
+  "cover_file": "counting-6-8-a09a_cover.svg",
+  "cover_prompt": "A small, round frog named Mara sits on a wide lily pad at dusk, her eyes half-closed as fireflies flicker above the still pond. Three sleepy fish circle below the surface, and four ducks nestle close on the grassy bank, all bathed in soft moonlight.",
+  "duration_seconds": 89,
+  "lyrics": "[verse]\nOne frog on a lily so green\nFloats soft in the silver sheen\nDreams drift on the water’s glow\nSoft and slow, soft and slow\n\n[verse]\nOne frog on a lily so green\nFloats soft in the silver sheen\nTwo fish in the ripple below\nWeave circles, soft and slow\n\n[verse]\nOne frog on a lily so green\nFloats soft in the silver sheen\nTwo fish in the ripple below\nWeave circles, soft and slow\nThree bugs on a reed so tall\nHum quiet, then drift, then fall\n\n[verse]\nOne frog on a lily so green\nFloats soft in the silver sheen\nTwo fish in the ripple below\nWeave circles, soft and slow\nThree bugs on a reed so tall\nHum quiet, then drift, then fall\nFour ducks on the bank so still\nClose their eyes, bend their bill\nAnd that was all",
+  "style_prompt": "Children's counting lullaby, clear sweet female vocal, xylophone and music box, 66 BPM, simple repetitive melody, same tune every line, cumulative nursery rhyme structure, bright but soft, childlike, extremely predictable rhythm, soft piano accompaniment",
+  "engine": "minimax-music-v2-fal",
+  "fingerprint": {
+    "lullabyType": "counting",
+    "instrument": "piano",
+    "imagery": "pond",
+    "mood": "wired"
+  },
+  "created_at": "2026-04-14",
+  "character": {
+    "name": "Mara",
+    "identity": "A gentle frog who watches over the pond as her friends fall asleep",
+    "special": "She hums the quietest tune to help every creature drift into dreams",
+    "personality_tags": [
+      "Gentle",
+      "Sleepy"
+    ]
+  },
+  "about": "A soothing cumulative lullaby where pond friends settle one by one. The repetitive, gentle counting slows busy minds, while the soft imagery of still water and drifting dreams eases children into sleep."
+}

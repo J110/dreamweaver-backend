@@ -1,0 +1,37 @@
+{
+  "id": "origin-6-8-3d00",
+  "title": "Lumi and the First Dream",
+  "content_type": "lullaby",
+  "lullaby_type": "origin",
+  "card_label": "How Dreams Began",
+  "card_subtitle": "Where dreams come from",
+  "age_group": "6-8",
+  "mood": "curious",
+  "language": "en",
+  "instrument": "drone",
+  "imagery": "first_dream",
+  "audio_file": "origin-6-8-3d00.mp3",
+  "cover_file": "origin-6-8-3d00_cover.svg",
+  "cover_prompt": "A small glowing child with silver hair, Lumi, dancing barefoot on a field of soft blue night. Silver threads of light swirl around her like fireflies, weaving into the shape of a dream. The moon watches gently from above, casting a warm glow over the quiet, star-filled sky.",
+  "duration_seconds": 204,
+  "lyrics": "[verse]\nLong before you were born\nSky was wide and the earth was new\nNo one knew what a dream could be\nNo soft glow in the midnight blue\n\n[verse]\nThen came Lumi with silver light\nDancing slow on the edge of sight\nShe hummed low where the dark was deep\nAnd the world gave a quiet leap\n\n[chorus]\nThat was the first dream\nSoft as a sigh\nWoven from wonder\nWay up so high\nThat was the first dream\nFloating so free\nBorn in the starlight\nJust for you and me\n\n[verse]\nLumi tiptoed past the moon\nWhispered secrets to the air\nEvery shadow, every tune\nLearned to drift without a care\n\n[chorus]\nThat was the first dream\nSoft as a sigh\nWoven from wonder\nWay up so high\nThat was the first dream\nFloating so free\nBorn in the starlight\nJust for you and me\n\n[verse]\nNow you close your sleepy eyes\nSee the spark that Lumi made\nFirst dream ever in the skies\nAnd it's still true tonight",
+  "style_prompt": "Ancient storytelling lullaby, warm resonant female vocal, singing bowl and soft cello drone, 60 BPM, mythological, vast, reverent, timeless, the voice of someone very old and very kind, starts spacious and narrows to intimate, wonder without weight, low drone pad accompaniment",
+  "engine": "minimax-music-v2-fal",
+  "fingerprint": {
+    "lullabyType": "origin",
+    "instrument": "drone",
+    "imagery": "first_dream",
+    "mood": "curious"
+  },
+  "created_at": "2026-04-19",
+  "character": {
+    "name": "Lumi",
+    "identity": "A gentle dream-weaver who brought the very first dream to the world.",
+    "special": "She turns wonder into dreams with just a whisper and a dance.",
+    "personality_tags": [
+      "Gentle",
+      "Sleepy"
+    ]
+  },
+  "about": "A curious lullaby about the birth of the first dream, where wonder fills the night sky. The story of Lumi’s gentle magic helps children drift into sleep, knowing dreams have always been there—soft, floating, and full of light."
+}

@@ -1,0 +1,37 @@
+{
+  "id": "heartbeat-0-1-0f6f",
+  "title": "Miro's Fading Hum",
+  "content_type": "lullaby",
+  "lullaby_type": "heartbeat",
+  "card_label": "Humming",
+  "card_subtitle": "Just a gentle hum",
+  "age_group": "0-1",
+  "mood": "sad",
+  "language": "en",
+  "instrument": "acapella",
+  "imagery": "none",
+  "audio_file": "heartbeat-0-1-0f6f.mp3",
+  "cover_file": "heartbeat-0-1-0f6f_cover.svg",
+  "cover_prompt": "A small, round creature with soft, fuzzy edges curled in a nest of twilight-blue moss, eyes half-closed, surrounded by gentle wisps of mist that glow faintly in the dim light. The scene is painted in soft watercolors, with deep purples and blues fading into warm amber at the edges.",
+  "duration_seconds": 93,
+  "lyrics": "[verse]\nMmm aah mmm ooh\nMmm hmm aah ooh\nHmm mmm aah mmm\n\n[verse]\nMmm ooh hmm aah\nAah mmm ooh hmm\nMmm\n\n[verse]\nHmm\nAah\n\n---",
+  "style_prompt": "Solo female vocal lullaby, humming only, no instruments, no melody variation, sustained warm tones, 58 BPM, extremely intimate, breathy, mouth-closed humming, monotone drone, like breathing set to pitch, meditative, hypnotic, no percussion, pure voice",
+  "engine": "minimax-music-v2-fal",
+  "fingerprint": {
+    "lullabyType": "heartbeat",
+    "instrument": "acapella",
+    "imagery": "none",
+    "mood": "sad"
+  },
+  "created_at": "2026-04-09",
+  "character": {
+    "name": "Miro",
+    "identity": "A quiet, gentle creature who hums the world to sleep with their steady, fading breath.",
+    "special": "Their hum carries the weight of the night, slowing time until all is still.",
+    "personality_tags": [
+      "Gentle",
+      "Sleepy"
+    ]
+  },
+  "about": "A lullaby of pure sound, designed to mimic the steady, slowing rhythm of a heartbeat. The minimal, drone-like hums create a sense of safety and entrainment, guiding little ones into deep, restful sleep. Perfect for calming even the most restless minds."
+}

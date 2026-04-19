@@ -1,0 +1,37 @@
+{
+  "id": "permission-0-1-514a",
+  "title": "Lulu and the Moonhush",
+  "content_type": "lullaby",
+  "lullaby_type": "permission",
+  "card_label": "The World Sleeps",
+  "card_subtitle": "Everything is going to sleep",
+  "age_group": "0-1",
+  "mood": "curious",
+  "language": "en",
+  "instrument": "guitar",
+  "imagery": "moon",
+  "audio_file": "permission-0-1-514a.mp3",
+  "cover_file": "permission-0-1-514a_cover.svg",
+  "cover_prompt": "A small, round creature with soft lavender fur and wide, curious eyes curled in a nest of silver moss under a glowing crescent moon. Fireflies drift like tiny stars around her, and the forest breathes in quiet blue-green hues.",
+  "duration_seconds": 41,
+  "lyrics": "[verse]\nMmm ooh laa lu\nShaa noo tss haa\nPff eeh na na\nMmm ooh laa\n\n[verse]\nHaa lu lu shh\nOoh naa pff mmm\nTss laa ooh eeh\nMmm haa lu\n\n[verse]\nMmm shh noo noo\nPff laa lu mmm\nOoh haa tss shh\nMmm...\n\n---",
+  "style_prompt": "Gentle folk lullaby, warm female vocal, fingerpicked acoustic guitar, 64 BPM, pastoral, settling, peaceful, evening atmosphere, descending melody phrases, each verse quieter, conversational singing, the world going to sleep, fingerpicked acoustic guitar accompaniment",
+  "engine": "minimax-music-v2-fal",
+  "fingerprint": {
+    "lullabyType": "permission",
+    "instrument": "guitar",
+    "imagery": "moon",
+    "mood": "curious"
+  },
+  "created_at": "2026-04-13",
+  "character": {
+    "name": "Lulu",
+    "identity": "A tiny night-dwelling creature who hums the world to sleep with her soft, curious sounds.",
+    "special": "Her voice mirrors the quiet rhythms of the forest, turning every rustle and sigh into a lullaby.",
+    "personality_tags": [
+      "Gentle",
+      "Sleepy"
+    ]
+  },
+  "about": "A gentle, descending lullaby where the world settles into stillness one soft sound at a time. The mirrored rhythms of nature—breath, breeze, and moonlight—guide little ones into sleep, offering permission to let go with each quiet note."
+}

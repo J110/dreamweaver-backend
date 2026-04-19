@@ -1,0 +1,37 @@
+{
+  "id": "warning-6-8-efae",
+  "title": "Mira and the Silver Dreams",
+  "content_type": "lullaby",
+  "lullaby_type": "warning",
+  "card_label": "Dream Catcher",
+  "card_subtitle": "The dreams are waiting",
+  "age_group": "6-8",
+  "mood": "curious",
+  "language": "en",
+  "instrument": "flute",
+  "imagery": "dreams",
+  "audio_file": "warning-6-8-efae.mp3",
+  "cover_file": "warning-6-8-efae_cover.svg",
+  "cover_prompt": "A small, round-faced girl with long dark hair curled under a quilt, peeking at tiny glowing dream creatures with silver wings fluttering outside her window. Soft moonlight spills across the floor, and the room glows in warm watercolor hues.",
+  "duration_seconds": 113,
+  "lyrics": "The dreams are out tonight\nSoftly calling through the air\nLooking for a sleepy sight\nEyes that close without a care\n\nOne just tapped upon your pane\nWhispered, \"Child, are you still there?\"\nAlmost stayed but slipped like rain\nBack into the dreaming glare\n\n[chorus]\nClose your eyes and they will come\nDancing light and whispered hum\nClose your eyes and they will stay\nTill the break of waking day\n\nTiny dream with silver wings\nTried to land upon your nose\nTold you all the secret things\nThat the moon and nighttime knows\n\nBut you stirred and turned away\nSo it flew on silver toes\nNow it waits for you to say\n\"Come and visit, soft repose\"\n\n[chorus]\nClose your eyes and they will come\nDancing light and whispered hum\nClose your eyes and they will stay\nTill the break of waking day\n\nBetter close your eyes",
+  "style_prompt": "Playful mysterious lullaby, warm female vocal, soft woodwind and low flute, 64 BPM, mischievous, conspiratorial, whimsical, fairy tale energy, like sharing a secret, mysterious but gentle, storytelling melody, soft breathy flute accompaniment",
+  "engine": "minimax-music-v2-fal",
+  "fingerprint": {
+    "lullabyType": "warning",
+    "instrument": "flute",
+    "imagery": "dreams",
+    "mood": "curious"
+  },
+  "created_at": "2026-04-18",
+  "character": {
+    "name": "Mira",
+    "identity": "A curious little girl who almost catches dreams before they slip away",
+    "special": "She can hear the whispers of dreams if she listens very closely",
+    "personality_tags": [
+      "Gentle",
+      "Sleepy"
+    ]
+  },
+  "about": "A playful lullaby about dreams searching for sleepy children to visit. The gentle fear of missing out (FOMO) encourages little ones to close their eyes so the magic can begin. The conspiratorial tone makes bedtime feel like a secret adventure."
+}

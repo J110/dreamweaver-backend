@@ -1,0 +1,37 @@
+{
+  "id": "counting-6-8-abe7",
+  "title": "Mara’s Moonlit Count",
+  "content_type": "lullaby",
+  "lullaby_type": "counting",
+  "card_label": "One by One",
+  "card_subtitle": "Counting things to sleep",
+  "age_group": "6-8",
+  "mood": "wired",
+  "language": "en",
+  "instrument": "piano",
+  "imagery": "forest_animals",
+  "audio_file": "counting-6-8-abe7.mp3",
+  "cover_file": "counting-6-8-abe7_cover.svg",
+  "cover_prompt": "A small silver fox with a fluffy tail curled around her nose, nestled in a mossy forest glade under a soft glowing moon. Nearby, two deer rest with gentle eyes half-closed, three tiny rabbits snuggle together, and four round owls perch on a low branch, all bathed in warm, dreamy watercolor light.",
+  "duration_seconds": 90,
+  "lyrics": "[verse]\nOne fox curls up so tight\nSoft paws tucked out of sight\n\n[verse]\nOne fox curls up so tight\nSoft paws tucked out of sight\nTwo deer lie down so slow\nEars drowsy, heads bowed low\n\n[verse]\nOne fox curls up so tight\nSoft paws tucked out of sight\nTwo deer lie down so slow\nEars drowsy, heads bowed low\nThree rabbits close their eyes\nNoses twitch in moonlit skies\n\n[verse]\nOne fox curls up so tight\nSoft paws tucked out of sight\nTwo deer lie down so slow\nEars drowsy, heads bowed low\nThree rabbits close their eyes\nNoses twitch in moonlit skies\nFour owls rest on a limb\nWings folded, soft and dim\nAnd that was all",
+  "style_prompt": "Children's counting lullaby, clear sweet female vocal, xylophone and music box, 66 BPM, simple repetitive melody, same tune every line, cumulative nursery rhyme structure, bright but soft, childlike, extremely predictable rhythm, soft piano accompaniment",
+  "engine": "minimax-music-v2-fal",
+  "fingerprint": {
+    "lullabyType": "counting",
+    "instrument": "piano",
+    "imagery": "forest_animals",
+    "mood": "wired"
+  },
+  "created_at": "2026-04-11",
+  "character": {
+    "name": "Mara",
+    "identity": "A wise little fox who watches over the forest as the animals drift to sleep.",
+    "special": "She knows the quietest way to guide every creature into peaceful dreams.",
+    "personality_tags": [
+      "Gentle",
+      "Sleepy"
+    ]
+  },
+  "about": "A gentle cumulative lullaby where forest friends settle down one by one under Mara’s watchful eye. The repeating, rhythmic counting softly slows busy minds, helping little listeners drift into sleep with each verse."
+}
