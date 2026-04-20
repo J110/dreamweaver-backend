@@ -714,6 +714,14 @@ The phrase must be UNIQUE. Not generic ("not yet" or
 THIS world. If the phrase could fit in a different story,
 make it more specific.
 
+Repeated phrases ALREADY used in other recent stories.
+Yours MUST be completely different — do NOT reuse, paraphrase,
+or start with the same first word as any of these:
+{recent_phrases_to_avoid}
+
+Also do NOT start the phrase with the same first word as
+the 3 most recent phrases above. Vary the cadence.
+
 === STRUCTURE ===
 
 [INTRO]
@@ -795,7 +803,7 @@ Ages {age_group} Phase 2 rules:
 - Sensory writing: air, light, ground, sounds far away,
   temperature, textures
 - The repeated phrase appears once, quieter:
-  [PHRASE]...[/PHRASE]
+  [PHRASE]<your unique phrase here>[/PHRASE]
 - Include [PAUSE: 1500] tags between sensory images
 - Include 3-4 [BREATHE] tags at moments of stillness
   (after a character falls asleep, between sensory
@@ -830,7 +838,7 @@ Ages {age_group} Phase 3 rules:
 - The writing mirrors what the child is physically
   feeling: warmth, stillness, heaviness, softness
 - The repeated phrase one final time, barely there:
-  [PHRASE]...[/PHRASE]
+  [PHRASE]<your unique phrase here>[/PHRASE]
 - Mark the final 3-4 lines: [WHISPER]...[/WHISPER]
 - The story doesn't end. It just stops.
   No moral. No conclusion. No "the end."
@@ -976,6 +984,13 @@ def build_long_story_prompt(params):
     else:
         recent_names_block = "  (no recent names — pick freely)"
 
+    # Recent repeated phrases to avoid (cadence leakage fix)
+    recent_phrases = params.get("recent_phrases") or []
+    if recent_phrases:
+        recent_phrases_block = "  - " + "\n  - ".join(f'"{p}"' for p in recent_phrases[-10:])
+    else:
+        recent_phrases_block = "  (no recent phrases — invent freely)"
+
     # Pick a neutral example name for the dialogue-tag illustration that
     # doesn't anchor Mistral on any specific character. Avoid the recent list.
     EXAMPLE_NAMES = ["AYO", "REN", "TALA", "INES", "KAI", "NIKO", "ZARA", "ELI"]
@@ -995,6 +1010,7 @@ def build_long_story_prompt(params):
         protagonist_voice_hint=proto_voice_hint,
         name_culture_hint=name_culture_hint,
         recent_names_to_avoid=recent_names_block,
+        recent_phrases_to_avoid=recent_phrases_block,
         example_name=example_name,
         character_count=char_count,
         character_instructions=char_instructions,
@@ -1024,7 +1040,45 @@ def clean_markdown(text):
     text = re.sub(r'\n---+\n', '\n', text)
     # Remove italic markers around text inside tags
     text = re.sub(r'\*([^*]+)\*', r'\1', text)
+    # Defensive: strip literal [PHRASE]...[/PHRASE] template leakage —
+    # Mistral sometimes echoes the placeholder verbatim.
+    text = strip_empty_phrases(text)
     return text
+
+
+def strip_empty_phrases(text):
+    """Remove literal [PHRASE]...[/PHRASE] or [PHRASE]<placeholder>[/PHRASE]
+    template leakage from the LLM output. A real phrase has real words;
+    an ellipsis or angle-bracket placeholder is a template echo.
+    """
+    # Bare ellipsis: [PHRASE] ... [/PHRASE]
+    text = re.sub(r'\[PHRASE\]\s*\.\.\.\s*\[/PHRASE\]', '', text)
+    # Angle-bracket placeholder: [PHRASE]<...>[/PHRASE]
+    text = re.sub(r'\[PHRASE\]\s*<[^>]*>\s*\[/PHRASE\]', '', text)
+    return text
+
+
+def is_phrase_too_similar(new_phrase, existing_phrases, threshold=0.6):
+    """Return (too_similar, reason). Mirrors the short-story check so long +
+    short catch cadence repetition with the same rule.
+    """
+    from difflib import SequenceMatcher
+    if not new_phrase:
+        return False, "OK"
+    new_lower = new_phrase.lower().strip()
+    for existing in existing_phrases:
+        existing_lower = existing.lower().strip()
+        if not existing_lower:
+            continue
+        ratio = SequenceMatcher(None, new_lower, existing_lower).ratio()
+        if ratio > threshold:
+            return True, f"Too similar to '{existing}' (ratio {ratio:.2f})"
+        # First-word cadence: "Listen, little one" vs "Listen, softly now"
+        new_first = new_lower.split()[:1]
+        ex_first = existing_lower.split()[:1]
+        if new_first and new_first == ex_first:
+            return True, f"Starts with same first word as '{existing}'"
+    return False, "OK"
 
 
 SECTION_TAGS = ["INTRO", "PHASE_1", "POST_SONG", "PHASE_2", "PHASE_3"]
@@ -2011,6 +2065,19 @@ def validate_story(parsed, params):
     if breathe_count < 3:
         issues.append(f"WARN: Only {breathe_count} [BREATHE] tags (need 4+)")
 
+    # Name collision vs recent names (WARN — don't regenerate, but flag)
+    recent_names = params.get("recent_character_names") or []
+    recent_lower = {n.lower() for n in recent_names}
+    for char in parsed.get("characters") or []:
+        n = (char.get("name") or "").strip()
+        if n and n.lower() in recent_lower:
+            issues.append(f"WARN: character name '{n}' was used recently")
+
+    # Literal template leakage (defensive net; strip_empty_phrases should
+    # have caught this — escalate if we still see it)
+    if re.search(r'\[PHRASE\]\s*(?:\.\.\.|<[^>]*>)\s*\[/PHRASE\]', full_text):
+        issues.append("ERROR: literal [PHRASE] template leaked into output")
+
     return issues
 
 
@@ -2059,6 +2126,34 @@ def _load_existing_long_stories():
         return []
 
 
+def _recent_phrases_cross_content(limit=20):
+    """Pull recent repeated_phrase values from BOTH long stories and v2 short
+    stories. Cadence/phrase leakage is cross-content, not just within long.
+    """
+    content_path = BASE_DIR / "seed_output" / "content.json"
+    if not content_path.exists():
+        return []
+    try:
+        with open(content_path) as f:
+            content = json.load(f)
+    except Exception:
+        return []
+
+    phrases = []
+    for item in content:
+        # Long story v2 stores it at top level; short-story v2 stores it under
+        # diversity_fingerprint or as repeated_phrase directly.
+        p = item.get("repeated_phrase")
+        if not p:
+            fp = item.get("diversity_fingerprint") or {}
+            p = fp.get("repeated_phrase")
+        if p and isinstance(p, str):
+            p = p.strip()
+            if p and p not in phrases:
+                phrases.append(p)
+    return phrases[-limit:]
+
+
 def _weighted_pick_avoiding_recent(existing_stories, key, weighted_pool, recency=6):
     """Like _pick_avoiding_recent, but pool is a list of (value, weight) tuples.
 
@@ -2075,13 +2170,50 @@ def _weighted_pick_avoiding_recent(existing_stories, key, weighted_pool, recency
 
 
 def _recent_character_names(existing_stories, recency=10):
-    """Return up to `recency` recently used character names from past long stories."""
+    """Return recently used character names from long + short V2 stories.
+
+    Combines:
+      - Last `recency` long stories' character lists
+      - Last ~14 days of short V2 stories (they use a single character name
+        stored on the item). Cross-content so "Mira" never repeats across
+        long or short in a rolling window.
+    """
     names = []
+
+    # Long stories: use the provided sliding window
     for story in existing_stories[-recency:]:
         for char in (story.get("characters") or []):
             n = (char.get("name") or "").strip()
             if n and n not in names:
                 names.append(n)
+
+    # Cross-content: pull short-story character names from content.json
+    # within the last ~14 days. short V2 stories stamp character_name on the
+    # diversity_fingerprint.
+    try:
+        import datetime as _dt
+        content_path = BASE_DIR / "seed_output" / "content.json"
+        if content_path.exists():
+            with open(content_path) as f:
+                content = json.load(f)
+            cutoff = _dt.datetime.utcnow() - _dt.timedelta(days=14)
+            for item in content:
+                if item.get("type") != "story":
+                    continue
+                created = item.get("createdAt") or item.get("created_at") or ""
+                try:
+                    ts = _dt.datetime.fromisoformat(created.replace("Z", "+00:00")).replace(tzinfo=None)
+                    if ts < cutoff:
+                        continue
+                except Exception:
+                    pass  # no timestamp — include defensively
+                fp = item.get("diversity_fingerprint") or {}
+                n = (fp.get("character_name") or item.get("character_name") or "").strip()
+                if n and n not in names:
+                    names.append(n)
+    except Exception:
+        pass
+
     return names
 
 
@@ -2120,6 +2252,9 @@ def randomize_params(mood="curious", age_group=None):
     # to avoid them. This is what was missing — "Mira" for 4 days in a row.
     recent_names = _recent_character_names(existing, recency=10)
 
+    # Cadence/phrase leakage fix: pull last 10 phrases across long + short
+    recent_phrases = _recent_phrases_cross_content(limit=20)
+
     character_count = random.choice([1, 2, 2, 2, 3])
 
     # Pick mentor/companion types for multi-character stories
@@ -2146,6 +2281,7 @@ def randomize_params(mood="curious", age_group=None):
         "name_culture": name_culture,
         "name_culture_hint": name_culture_hint,
         "recent_character_names": recent_names,
+        "recent_phrases": recent_phrases,
     }
 
 
@@ -2363,6 +2499,7 @@ def main():
             lead_character_type = random.choices(lct_values, weights=lct_weights, k=1)[0]
         name_culture, name_culture_hint = random.choice(NAME_CULTURES)
         recent_names = _recent_character_names(_load_existing_long_stories(), recency=10)
+        recent_phrases = _recent_phrases_cross_content(limit=20)
         params = {
             "mood": mood,
             "age_group": age_group,
@@ -2383,6 +2520,7 @@ def main():
             "name_culture": name_culture,
             "name_culture_hint": name_culture_hint,
             "recent_character_names": recent_names,
+            "recent_phrases": recent_phrases,
         }
 
     output_dir = args.output_dir or str(BASE_DIR.parent / "output" / "long_story_test")
@@ -2508,6 +2646,14 @@ def main():
             # Validate
             print("3. Validating...")
             issues = validate_story(parsed, params)
+
+            # Phrase-similarity check against recent catalog
+            new_phrase = parsed.get("repeated_phrase") or ""
+            recent_phrases_pool = params.get("recent_phrases") or []
+            too_similar, reason = is_phrase_too_similar(new_phrase, recent_phrases_pool)
+            if too_similar:
+                issues.append(f"ERROR: repeated_phrase rejected — {reason}")
+
             if issues:
                 for issue in issues:
                     print(f"   {issue}")
@@ -2519,6 +2665,12 @@ def main():
                 break
             if gen_attempt < MAX_GEN_ATTEMPTS - 1:
                 print(f"\n   Validation failed — retrying with error feedback...")
+                # If the rejection was phrase similarity, append the phrase to
+                # the blocklist so the next attempt knows not to echo it.
+                if too_similar and new_phrase:
+                    recent_phrases_pool = list(recent_phrases_pool) + [new_phrase]
+                    params["recent_phrases"] = recent_phrases_pool
+                    prompt = build_long_story_prompt(params)
 
         has_errors = any(i.startswith("ERROR:") for i in issues)
         if has_errors:
