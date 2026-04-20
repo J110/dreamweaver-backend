@@ -75,6 +75,16 @@ SSH_CMD = [_GCLOUD, "compute", "ssh", "dreamvalley-prod",
            "--project=strong-harbor-472607-n4", "--zone=asia-south1-a",
            "--command"]
 
+# When deploy_guard runs on the prod VM itself, gcloud SSH from VM→VM
+# fails (default service account lacks SSH scopes). Detect and run
+# radio checks as local subprocesses in that case.
+ON_PROD_VM = os.path.isdir("/opt/dreamweaver-backend") and (
+    os.environ.get("HOSTNAME", "").startswith("dreamvalley-prod")
+    or os.path.realpath(os.path.dirname(os.path.abspath(__file__))).startswith(
+        "/opt/dreamweaver-backend"
+    )
+)
+
 # Backup stores on the GCP VM
 COVER_STORE = "/opt/cover-store"
 AUDIO_STORE_PREGEN = "/opt/audio-store/pre-gen"
@@ -513,19 +523,20 @@ def backup_json_files():
         'echo "JSON_BACKUP_OK"',
     ]
     script = " && ".join(cmds)
+    _runner = (
+        (lambda c, **kw: subprocess.run(["bash", "-c", c], **kw))
+        if ON_PROD_VM
+        else (lambda c, **kw: subprocess.run(SSH_CMD + [c], **kw))
+    )
     try:
-        result = subprocess.run(
-            SSH_CMD + [script], capture_output=True, text=True, timeout=30
-        )
+        result = _runner(script, capture_output=True, text=True, timeout=30)
         if "JSON_BACKUP_OK" in result.stdout:
             # Count backed-up files
             count_cmd = (
                 f'ls "{JSON_STORE}/silly_songs/"*.json 2>/dev/null | wc -l; '
                 f'ls "{JSON_STORE}/poems/"*.json 2>/dev/null | wc -l'
             )
-            count_result = subprocess.run(
-                SSH_CMD + [count_cmd], capture_output=True, text=True, timeout=15
-            )
+            count_result = _runner(count_cmd, capture_output=True, text=True, timeout=15)
             counts = count_result.stdout.strip().split("\n")
             silly = int(counts[0].strip()) if counts else 0
             poems_count = int(counts[1].strip()) if len(counts) > 1 else 0
@@ -870,11 +881,22 @@ def cmd_snapshot(args):
 
 
 def _ssh_run(cmd, timeout=30):
-    """Run a command on the GCP server via SSH. Returns (stdout, returncode)."""
-    result = subprocess.run(
-        SSH_CMD + [cmd],
-        capture_output=True, text=True, timeout=timeout,
-    )
+    """Run a command on the GCP server. Returns (stdout, returncode).
+
+    If deploy_guard is already running on the prod VM, execute locally via
+    `bash -c` instead of `gcloud compute ssh` (which fails from VM→VM because
+    the VM's default service account lacks SSH scopes).
+    """
+    if ON_PROD_VM:
+        result = subprocess.run(
+            ["bash", "-c", cmd],
+            capture_output=True, text=True, timeout=timeout,
+        )
+    else:
+        result = subprocess.run(
+            SSH_CMD + [cmd],
+            capture_output=True, text=True, timeout=timeout,
+        )
     return result.stdout.strip(), result.returncode
 
 
