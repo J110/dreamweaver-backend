@@ -1053,5 +1053,42 @@
     "geography": "south_asia",
     "indian_region": "north",
     "created_at": "2026-04-20"
+  },
+  {
+    "id": "counting-2-5-8e2a",
+    "title": "Mara’s Pond of Dreams",
+    "content_type": "lullaby",
+    "lullaby_type": "counting",
+    "card_label": "One by One",
+    "card_subtitle": "Counting things to sleep",
+    "age_group": "2-5",
+    "mood": "wired",
+    "language": "en",
+    "instrument": "xylophone",
+    "imagery": "pond",
+    "audio_file": "counting-2-5-8e2a.mp3",
+    "cover_file": "counting-2-5-8e2a_cover.svg",
+    "cover_prompt": "A soft watercolor of a round, gentle frog named Mara with half-closed eyes, sitting on a lily pad at dusk. Fireflies glow warmly over a quiet pond, where fish ripple the water and tiny bugs rest on leaves. The sky is painted in muted blues and purples, with a silver moon casting a gentle shimmer.",
+    "duration_seconds": 64,
+    "lyrics": "[verse]\nOne frog on a lily, drifting slow\nMoonlight hums soft, just below\n\n[verse]\nOne frog on a lily, drifting slow\nTwo fish in the ripple, letting go\n\n[verse]\nOne frog on a lily, drifting slow\nTwo fish in the ripple, letting go\nThree bugs on a leaf, dreaming low\n\n[verse]\nOne frog on a lily, drifting slow\nTwo fish in the ripple, letting go\nThree bugs on a leaf, dreaming low\nFour ducks in a row, floating slow\nAnd that was all",
+    "style_prompt": "Children's counting lullaby, clear sweet female vocal, xylophone and music box, 66 BPM, simple repetitive melody, same tune every line, cumulative nursery rhyme structure, bright but soft, childlike, extremely predictable rhythm, xylophone accompaniment",
+    "engine": "minimax-music-v2-fal",
+    "fingerprint": {
+      "lullabyType": "counting",
+      "instrument": "xylophone",
+      "imagery": "pond",
+      "mood": "wired"
+    },
+    "created_at": "2026-04-20",
+    "character": {
+      "name": "Mara",
+      "identity": "A kind little frog who watches over the pond as its friends drift to sleep.",
+      "special": "She hums the same soft tune every night to help the pond feel safe and still.",
+      "personality_tags": [
+        "Gentle",
+        "Sleepy"
+      ]
+    },
+    "about": "A soothing cumulative lullaby where Mara counts her pond friends as they fall asleep one by one. The gentle repetition and predictable rhythm help little minds unwind, turning bedtime into a quiet, dreamy ritual. Perfect for calming busy thoughts and easing into sleep."
   }
 ]
