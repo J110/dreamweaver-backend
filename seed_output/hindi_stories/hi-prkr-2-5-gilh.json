@@ -1,0 +1,32 @@
+{
+  "id": "hi-prkr-2-5-gilh",
+  "type": "STORY",
+  "lang": "hi",
+  "title": "Chiki Aur Pehli Baarish",
+  "title_en": "Chiki and the First Rain",
+  "description": "Chiki gilhari ki pehli baarish — tap tap, chupke chupke",
+  "description_en": "Chiki the squirrel meets her first monsoon rain",
+  "story_type": "prakriti_katha",
+  "mood": "curious",
+  "age_group": "2-5",
+  "character_name": "Chiki",
+  "character_identity": "a small Indian palm squirrel (gilhari)",
+  "lead_character_type": "land_mammal",
+  "characterType": "land_mammal",
+  "character_subtype": "familiar",
+  "theme": "monsoon_wonder",
+  "themes": [
+    "monsoon_wonder",
+    "nature_wonder"
+  ],
+  "geography": "south_asia",
+  "indian_region": "central",
+  "gender_lead": "female",
+  "repeated_phrase": "Chupke chupke, tip tip tip",
+  "cover_context": "A small brown Indian palm squirrel (gilhari) with a striped back, sitting on a wide green pipal leaf, wide curious eyes, first monsoon raindrops falling around her, soft gold-green evening light filtering through leaves, warm earthy palette, watercolor storybook style, 512x512",
+  "raw_text": "Suno na bachcho. Aaj Chiki gilhari ki kahani.\n\nChiki ek bade pipal ke ped par rehti thi. Choti choti aankhein, bhuri si dumm, aur hamesha kuch na kuch chabati rehti.\n\n[PAUSE: 800]\n\nEk shaam hawa thandi thandi chalne lagi. Sarr sarr, sarr sarr. Chiki ne upar dekha. Baadal kaale kaale aa gaye the. Arre, yeh kya ho raha hai?\n\n[PAUSE: 600]\n\nPhir tap. Ek bunda gira patte par. Phir tap tap. Aur phir tap tap tap tap.\n\nChiki chhup gayi bade patte ke niche. Baarish ki aawaz sunne lagi. Dheere dheere, jaise koi lori gaa raha ho.\n\n[PHRASE] Chupke chupke, tip tip tip. [/PHRASE]\n[MUSIC]\n\nPata hai, Chiki ko yeh baarish bahut achhi lagi. Ek chhota sa phal haath mein, patte ki chatri upar, aur aankhein band.\n\n[PHRASE] Chupke chupke, tip tip tip. [/PHRASE]\n[PAUSE: 1000]\n\nHawa dheemi. Baarish dheemi. Chiki ki neend bhi aane lagi.\n\nPipal jhoomta raha. Baadal gale milte rahe. Chiki ki saans dheere chalti rahi.\n\n[PHRASE] Chupke chupke, tip tip tip. [/PHRASE]\n\nAur Chiki so gayi.",
+  "voice": "anika",
+  "experimental_v2": true,
+  "has_baked_music": true,
+  "tts_engine": "elevenlabs_multilingual_v2"
+}

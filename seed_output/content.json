@@ -19386,5 +19386,71 @@
     ],
     "mood": "wired",
     "lullaby_type": "counting"
+  },
+  {
+    "id": "hi-prkr-2-5-gilh",
+    "type": "story",
+    "lang": "hi",
+    "title": "Chiki Aur Pehli Baarish",
+    "description": "Chiki gilhari ki pehli baarish — tap tap, chupke chupke",
+    "ageGroup": "2-5",
+    "age_group": "2-5",
+    "mood": "curious",
+    "storyType": "prakriti_katha",
+    "story_type": "prakriti_katha",
+    "character": "Chiki",
+    "characterType": "land_mammal",
+    "lead_character_type": "land_mammal",
+    "theme": "monsoon_wonder",
+    "themes": [
+      "monsoon_wonder",
+      "nature_wonder"
+    ],
+    "geography": "south_asia",
+    "indian_region": "central",
+    "experimental_v2": true,
+    "has_baked_music": true,
+    "tts_engine": "elevenlabs_multilingual_v2",
+    "cover": "/covers/hi-prkr-2-5-gilh.svg",
+    "audio_variants": [
+      {
+        "voice": "anika",
+        "url": "/audio/pre-gen/hi-prkr-2-5-gilh_anika.mp3",
+        "duration_seconds": 146,
+        "provider": "elevenlabs-multilingual-v2"
+      }
+    ],
+    "audio_url": "/audio/pre-gen/hi-prkr-2-5-gilh_anika.mp3",
+    "duration_seconds": 146,
+    "created_at": "2026-04-20",
+    "raw_text": "Suno na bachcho. Aaj Chiki gilhari ki kahani.\n\nChiki ek bade pipal ke ped par rehti thi. Choti choti aankhein, bhuri si dumm, aur hamesha kuch na kuch chabati rehti.\n\n[PAUSE: 800]\n\nEk shaam hawa thandi thandi chalne lagi. Sarr sarr, sarr sarr. Chiki ne upar dekha. Baadal kaale kaale aa gaye the. Arre, yeh kya ho raha hai?\n\n[PAUSE: 600]\n\nPhir tap. Ek bunda gira patte par. Phir tap tap. Aur phir tap tap tap tap.\n\nChiki chhup gayi bade patte ke niche. Baarish ki aawaz sunne lagi. Dheere dheere, jaise koi lori gaa raha ho.\n\n[PHRASE] Chupke chupke, tip tip tip. [/PHRASE]\n[MUSIC]\n\nPata hai, Chiki ko yeh baarish bahut achhi lagi. Ek chhota sa phal haath mein, patte ki chatri upar, aur aankhein band.\n\n[PHRASE] Chupke chupke, tip tip tip. [/PHRASE]\n[PAUSE: 1000]\n\nHawa dheemi. Baarish dheemi. Chiki ki neend bhi aane lagi.\n\nPipal jhoomta raha. Baadal gale milte rahe. Chiki ki saans dheere chalti rahi.\n\n[PHRASE] Chupke chupke, tip tip tip. [/PHRASE]\n\nAur Chiki so gayi."
+  },
+  {
+    "id": "hi-counting-6-8-blbl",
+    "type": "song",
+    "lang": "hi",
+    "title": "Taare Gin, Rani",
+    "description": "Rani bulbul ke saath taare ginte ginte so jao",
+    "ageGroup": "6-8",
+    "age_group": "6-8",
+    "mood": "calm",
+    "lullaby_type": "counting",
+    "character": "Rani",
+    "characterType": "bird",
+    "theme": "rest",
+    "geography": "south_asia",
+    "indian_region": "north",
+    "cover": "/covers/hi-counting-6-8-blbl.svg",
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/hi-counting-6-8-blbl_female_1.mp3",
+        "duration_seconds": 82,
+        "provider": "minimax-music-v2.5"
+      }
+    ],
+    "audio_url": "/audio/lullabies/hi-counting-6-8-blbl.mp3",
+    "duration_seconds": 82,
+    "created_at": "2026-04-20"
   }
 ]
