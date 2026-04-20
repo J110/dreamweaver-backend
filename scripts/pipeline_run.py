@@ -44,6 +44,15 @@ from pathlib import Path
 # ── Paths ────────────────────────────────────────────────────────────────
 BASE_DIR = Path(__file__).parent.parent
 
+# Diversity sampler (canonical taxonomies, deficit-aware sampling)
+sys.path.insert(0, str(BASE_DIR))
+from scripts.diversity_sampler import (  # noqa: E402
+    load_recent_catalog,
+    sample_geography,
+    sample_plot_archetype,
+    sample_theme,
+)
+
 # ── Load .env so pipeline can check required keys ────────────────────────
 try:
     from dotenv import load_dotenv
@@ -1478,6 +1487,19 @@ def step_lullabies(args, state: dict) -> bool:
 
                 dur_secs = ll.get("duration_seconds", 120)
                 dur_mins = max(1, round(dur_secs / 60))
+
+                # Deficit-aware diversity metadata (lullabies previously
+                # hardcoded theme="dreamy" and a binary animal/object char).
+                _lull_recent = load_recent_catalog(lang=ll.get("language", "en"))
+                ll_theme = sample_theme(recent=_lull_recent)
+                ll_geo = sample_geography(recent=_lull_recent)
+                ll_archetype = sample_plot_archetype(recent=_lull_recent)
+                ll_legacy_ct = "animal" if character else "object"
+                ll_canonical_ct = "land_mammal" if character else "object_alive"
+                ll_gender = random.choices(
+                    ["male", "female", "neutral"], weights=[0.4, 0.4, 0.2], k=1
+                )[0]
+
                 entry = {
                     "id": lid, "type": "song", "lang": ll.get("language", "en"),
                     "title": ll.get("title", ll.get("card_label", "Lullaby")),
@@ -1497,10 +1519,14 @@ def step_lullabies(args, state: dict) -> bool:
                     "updated_at": datetime.now().isoformat(),
                     "audio_url": None, "album_art_url": None,
                     "view_count": 0, "like_count": 0, "save_count": 0,
-                    "categories": ["Lullabies"], "theme": "dreamy",
+                    "categories": ["Lullabies"], "theme": ll_theme,
+                    "geography": ll_geo,
+                    "plot_archetype": ll_archetype,
+                    "lead_gender": ll_gender,
+                    "characterType": ll_canonical_ct,
                     "is_generated": True, "generation_quality": "good",
                     "music_genre": "lullaby",
-                    "lead_character_type": "animal" if character else "object",
+                    "lead_character_type": ll_legacy_ct,
                     "character": character,
                     "about": about,
                     "audio_variants": [{

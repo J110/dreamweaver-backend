@@ -56,6 +56,16 @@ MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY", "nkMwV9APQAsY4KALXMk3CaGLV1a5RPBa
 client = Mistral(api_key=MISTRAL_API_KEY)
 MODEL = "mistral-large-latest"
 
+# Diversity sampler — canonical taxonomies + deficit-aware sampling
+sys.path.insert(0, str(BASE_DIR))
+from scripts.diversity_sampler import (  # noqa: E402
+    ORCHESTRATOR_TO_CANONICAL,
+    load_recent_catalog,
+    sample_geography,
+    sample_plot_archetype,
+    sample_theme,
+)
+
 # ── Word count targets (v2 — higher for richer episodes) ──
 
 LONG_STORY_WORD_COUNTS = {
@@ -2204,6 +2214,19 @@ def publish_episode(output_dir, params, metadata, duration_seconds):
 
     now = datetime.utcnow().isoformat()
 
+    # Deficit-aware diversity metadata (pull from catalog — same window for
+    # all three dimensions so the sampler sees a consistent snapshot).
+    _recent = load_recent_catalog(lang="en")
+    sampled_theme = sample_theme(recent=_recent)
+    sampled_geography = sample_geography(recent=_recent)
+    sampled_archetype = sample_plot_archetype(recent=_recent)
+    canonical_character = ORCHESTRATOR_TO_CANONICAL.get(lead_character_type, "human_child")
+
+    # Lead gender: 40/40/20 female/male/neutral (long stories didn't sample before)
+    sampled_gender = random.choices(
+        ["male", "female", "neutral"], weights=[0.4, 0.4, 0.2], k=1
+    )[0]
+
     # Build title from characters and world
     char_names = [c["name"] for c in characters]
     title_name = " and ".join(char_names[:2]) if len(char_names) > 1 else char_names[0] if char_names else "Unknown"
@@ -2227,7 +2250,11 @@ def publish_episode(output_dir, params, metadata, duration_seconds):
         "duration_seconds": int(duration_seconds),
         "duration": int(duration_seconds / 60),
         "categories": ["Bedtime", world_label],
-        "theme": "bedtime",
+        "theme": sampled_theme,
+        "geography": sampled_geography,
+        "plot_archetype": sampled_archetype,
+        "lead_gender": sampled_gender,
+        "characterType": canonical_character,
         "morals": [],
         "cover": cover_field,
         "musicProfile": None,

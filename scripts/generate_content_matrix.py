@@ -60,6 +60,14 @@ from app.services.ai.prompts import (
     get_theme_instructions,
 )
 
+from scripts.diversity_sampler import (
+    CANONICAL_TO_FLUX,
+    load_recent_catalog,
+    sample_character_type,
+    sample_geography,
+    sample_plot_archetype,
+)
+
 # ── Paths ──────────────────────────────────────────────────────────────
 
 OUTPUT_PATH = BASE_DIR / "seed_output" / "content_expanded.json"
@@ -373,20 +381,24 @@ def build_generation_plan(lang_filter: Optional[str] = None,
             random.shuffle(characters)
             char_idx = 0
 
+            # Catalog snapshot for deficit-aware sampling (shared across this age bucket)
+            _recent = load_recent_catalog(lang=lang)
+
             for idx, piece in enumerate(all_pieces):
-                # Rotate diversity dimensions
+                # Rotate universe, life_aspect; sample others with deficit-awareness
                 universe = UNIVERSES[idx % len(UNIVERSES)]
-                geography = GEOGRAPHIES[idx % len(GEOGRAPHIES)]
-                archetype = PLOT_ARCHETYPES[idx % len(PLOT_ARCHETYPES)]
                 life_aspect = life_aspects[idx % len(life_aspects)]
                 lead_gender = random.choices(LEAD_GENDERS, weights=LEAD_GENDER_WEIGHTS, k=1)[0]
 
-                # Pick lead character TYPE for entity diversity
-                char_type_key = random.choices(
-                    [t[0] for t in LEAD_CHARACTER_TYPES],
-                    weights=LEAD_CHARACTER_TYPE_WEIGHTS, k=1
-                )[0]
-                char_type_label = next(t[1] for t in LEAD_CHARACTER_TYPES if t[0] == char_type_key)
+                # Deficit-aware sampling for character type, geography, archetype
+                canonical_ct = sample_character_type(age_group, recent=_recent)
+                char_type_key = CANONICAL_TO_FLUX.get(canonical_ct, "animal")
+                char_type_label = next(
+                    (t[1] for t in LEAD_CHARACTER_TYPES if t[0] == char_type_key),
+                    "Animal (land)",
+                )
+                geography = sample_geography(recent=_recent)
+                archetype = sample_plot_archetype(recent=_recent)
 
                 # Pick character — prefer CHARACTER_BANK for familiar names,
                 # fall back to CHARACTER_TYPE_EXAMPLES for entity diversity
@@ -426,6 +438,7 @@ def build_generation_plan(lang_filter: Optional[str] = None,
                     "lead_gender": lead_gender,
                     "lead_character_type": char_type_key,
                     "lead_character_type_label": char_type_label,
+                    "characterType": canonical_ct,
                     "character_name": char_name,
                     "character_species": char_species,
                     "character_setting": char_setting,
@@ -1569,17 +1582,19 @@ def build_fresh_plan(count_stories: int = 1, count_poems: int = 1,
         else:
             length = _rng.choice(lengths)
         universe = _rng.choice(UNIVERSES)
-        geography = _rng.choice(GEOGRAPHIES)
-        archetype = _rng.choice(PLOT_ARCHETYPES)
         life_aspect = _rng.choice(life_aspects)
         lead_gender = _rng.choices(LEAD_GENDERS, weights=LEAD_GENDER_WEIGHTS, k=1)[0]
 
-        # Character type diversity
-        char_type_key = _rng.choices(
-            [t[0] for t in LEAD_CHARACTER_TYPES],
-            weights=LEAD_CHARACTER_TYPE_WEIGHTS, k=1
-        )[0]
-        char_type_label = next(t[1] for t in LEAD_CHARACTER_TYPES if t[0] == char_type_key)
+        # Deficit-aware sampling against the current catalog window
+        _recent = existing if existing else load_recent_catalog(lang=lang)
+        canonical_ct = sample_character_type(age_group, recent=_recent)
+        char_type_key = CANONICAL_TO_FLUX.get(canonical_ct, "animal")
+        char_type_label = next(
+            (t[1] for t in LEAD_CHARACTER_TYPES if t[0] == char_type_key),
+            "Animal (land)",
+        )
+        geography = sample_geography(recent=_recent)
+        archetype = sample_plot_archetype(recent=_recent)
 
         # Pick character
         if char_type_key in CHARACTER_TYPE_EXAMPLES:
@@ -1610,6 +1625,7 @@ def build_fresh_plan(count_stories: int = 1, count_poems: int = 1,
             "lead_gender": lead_gender,
             "lead_character_type": char_type_key,
             "lead_character_type_label": char_type_label,
+            "characterType": canonical_ct,
             "character_name": char_name,
             "character_species": char_species,
             "character_setting": char_setting,
