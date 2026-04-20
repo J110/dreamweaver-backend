@@ -422,3 +422,36 @@ If a shipped story misses any of §1-7, the fix is the same shape:
 Precedents: `scripts/fix_hindi_batch_day2.py` (bugs 1-3),
 `fix_hindi_batch_day2_patch.py` (bugs 4-5),
 `fix_hindi_batch_day2_patch2.py` (bugs 6-8).
+
+### 10. Enforcement — where the gates live
+
+The narrative-craft rules are **not just documentation**. Every path
+that writes a Hindi story to `content.json` is gated by
+`validate_hindi_story.validate_story_dict(STORY)` and fails fast if
+any §1-§7 rule is broken:
+
+| Entry point                                    | Gate                                       |
+|------------------------------------------------|--------------------------------------------|
+| `generate_experimental_hindi.py::main`         | Post-LLM. Up to `--max-craft-retries` (default 3) feedback rounds: failed attempts are re-prompted with the violation list. `sys.exit(1)` if still failing. |
+| `publish_hindi_batch_day2.py::publish_story`   | Pre-publish `AssertionError` with listed violations. |
+| `fix_hindi_batch_day2.py::main`                | Pre-run `sys.exit(1)` with listed violations. |
+| `fix_hindi_batch_day2_patch.py::main`          | Pre-run `sys.exit(1)` with listed violations. |
+| `fix_hindi_batch_day2_patch2.py::main`         | Post-monkey-patch, pre-run `sys.exit(1)`. |
+
+**LLM prompt** (`generate_experimental_hindi.build_hindi_prompt`) is
+story-type aware: the opener rule, direct-address examples, and
+"specific vs generic" character rule are all baked into the prompt
+body for the five story types (`lok_katha`, `prakriti_katha`,
+`chatur_katha`, `mitra_katha`, `sanskaar_katha`).
+
+**Post-deploy audit** — catch any entry that slipped into content.json
+from an out-of-band source:
+
+```bash
+python3 scripts/validate_hindi_story.py --all-hindi
+# Exit code 0 = all pass, 1 = one or more violations.
+```
+
+To extend the rules, edit `validate_hindi_story.py` and
+`build_hindi_prompt()` together — prose-only rule updates will not be
+enforced.

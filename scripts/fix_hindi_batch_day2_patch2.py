@@ -145,6 +145,19 @@ def main():
     STORY["text_deva"]      = NEW_TEXT_DEVA
     STORY["description_en"] = NEW_DESCRIPTION_EN
 
+    # HARD GATE — run the narrative-craft validator on the mutated STORY
+    # dict before we spend any Mistral/ElevenLabs/MiniMax calls.
+    # See docs/HINDI_SHORT_STORY_GUIDELINES.md.
+    from validate_hindi_story import validate_story_dict
+    issues = validate_story_dict(STORY)
+    if issues:
+        print("\n═══ STORY dict fails narrative-craft checklist ═══",
+              file=sys.stderr)
+        for i in issues:
+            print(f"  ❌ {i}", file=sys.stderr)
+        sys.exit(1)
+    print("  ✓ narrative-craft checklist (§1-§7) passed")
+
     # 1. Re-render story audio (Devanagari for TTS, hook suppressed).
     print("\n═══ STORY audio (new text, skip_hook=True) ═══")
     story_audio = assemble_story_audio_no_hook(

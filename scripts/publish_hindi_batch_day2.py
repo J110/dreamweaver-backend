@@ -536,6 +536,21 @@ def ensure_dirs() -> dict:
 def publish_story(paths: dict) -> dict:
     sid = STORY["id"]
     print(f"\n═════ STORY {sid} ═════")
+    # HARD GATE: narrative-craft checklist (§1-§7).
+    # See docs/HINDI_SHORT_STORY_GUIDELINES.md.
+    import sys as _sys
+    _sys.path.insert(0, str(Path(__file__).parent))
+    from validate_hindi_story import validate_story_dict
+    craft_issues = validate_story_dict(STORY)
+    if craft_issues:
+        print("  ❌ STORY fails narrative-craft checklist:", file=_sys.stderr)
+        for i in craft_issues:
+            print(f"    - {i}", file=_sys.stderr)
+        raise AssertionError(
+            "STORY dict failed §1-§7 checklist. Fix the dict before "
+            "publishing. See docs/HINDI_SHORT_STORY_GUIDELINES.md."
+        )
+    print("  ✓ narrative-craft checklist (§1-§7) passed")
     validate_story_text(STORY)
 
     # Seed JSON (required input for the cover generator).

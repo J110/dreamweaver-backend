@@ -217,6 +217,18 @@ def main():
                     help="only rewrite JSON, keep existing MP3")
     args = ap.parse_args()
 
+    # HARD GATE — narrative-craft checklist (§1-§7) before any rewrite.
+    # See docs/HINDI_SHORT_STORY_GUIDELINES.md.
+    from validate_hindi_story import validate_story_dict
+    issues = validate_story_dict(STORY)
+    if issues:
+        print("\n═══ STORY dict fails narrative-craft checklist ═══",
+              file=sys.stderr)
+        for i in issues:
+            print(f"  ❌ {i}", file=sys.stderr)
+        sys.exit(1)
+    print("  ✓ narrative-craft checklist (§1-§7) passed")
+
     # Existing audio paths — same filenames as before, overwriting in-place.
     story_audio_path = WEB_ROOT / "public" / "audio" / "pre-gen" / f"{STORY['id']}_{STORY['voice']}.mp3"
     lullaby_audio_path = WEB_ROOT / "public" / "audio" / "lullabies" / f"{LULLABY['id']}.mp3"

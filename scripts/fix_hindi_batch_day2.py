@@ -113,7 +113,7 @@ STORY = {
     "hook_roman":  "Chiki gilhari ki pehli baarish — tap tap, chupke chupke",
     "hook_deva":   "चिकी गिलहरी की पहली बारिश — टप टप, चुपके चुपके।",
     "description_roman": "Chiki gilhari ki pehli baarish — tap tap, chupke chupke",
-    "description_en":    "A small Indian palm squirrel named Chiki watches the first monsoon rain fall on a pipal tree.",
+    "description_en":    "A small Indian palm squirrel named Chiki sits on the topmost branch of a peepal tree and watches the first monsoon rain arrive.",
     "repeated_phrase_roman": "Chupke chupke, tip tip tip",
     "repeated_phrase_deva":  "चुपके चुपके, टिप टिप टिप",
     # Character identity — dict shape matching English V2 schema.
@@ -144,48 +144,64 @@ STORY = {
     # Tag set: [PAUSE: ms], [PHRASE]...[/PHRASE], [MUSIC]. Sentences
     # end with । in Devanagari and . in Roman. Lines are 1:1 between
     # the two.
+    # Post-patch2 narrative. See docs/HINDI_SHORT_STORY_GUIDELINES.md §4/§5/§6.
+    # - Sensory opening (prakriti_katha signature).
+    # - 3 clean direct addresses to child ("Tumne kabhi…", "Tumhe pata hai…").
+    # - One specific Chiki-only detail (topmost branch, village view).
     "text_roman": (
-        "Suno na bachcho. Aaj Chiki gilhari ki kahani.\n\n"
-        "Chiki ek bade pipal ke ped par rehti thi. Choti choti aankhein, "
-        "bhuri si dumm, aur hamesha kuch na kuch chabati rehti.\n\n"
+        "Shaam thi. Hawa thandi thandi chal rahi thi. Peepal ke bade se "
+        "ped par, sabse upar wali shaakh par, ek chhoti si gilhari baithi "
+        "thi. Naam tha Chiki.\n\n"
+        "Chiki hamesha isi shaakh par aati thi — sabse upar wali — jahan "
+        "se saara gaon dikhta tha. Chhote chhote ghar, mandir ki choti, "
+        "aur door door tak khet.\n\n"
+        "Tumne kabhi hawa ko itna dheere chalte dekha hai? Waisi hi thi "
+        "us shaam ki hawa.\n\n"
         "[PAUSE: 800]\n\n"
-        "Ek shaam hawa thandi thandi chalne lagi. Sarr sarr, sarr sarr. "
-        "Chiki ne upar dekha. Baadal kaale kaale aa gaye the. Arre, yeh kya "
-        "ho raha hai?\n\n"
+        "Chiki ne upar dekha. Tumhe pata hai kya ho raha tha? Baadal "
+        "kaale kaale aa rahe the, aasmaan bhar gaya. Sarr sarr, sarr "
+        "sarr — hawa dheere dheere ghoomne lagi.\n\n"
         "[PAUSE: 600]\n\n"
-        "Phir tap. Ek bunda gira patte par. Phir tap tap. Aur phir tap tap "
-        "tap tap.\n\n"
-        "Chiki chhup gayi bade patte ke niche. Baarish ki aawaz sunne lagi. "
-        "Dheere dheere, jaise koi lori gaa raha ho.\n\n"
+        "Phir tap. Ek bunda gira patte par. Phir tap tap. Aur phir tap "
+        "tap tap tap.\n\n"
+        "Tumne kabhi baarish mein patte ke niche chhupa hai? Chiki ne "
+        "bhi aisa hi kiya — chhup gayi bade patte ke niche, aur baarish "
+        "ki aawaz sunne lagi. Dheere dheere, jaise koi lori gaa raha ho.\n\n"
         "[PHRASE] Chupke chupke, tip tip tip. [/PHRASE]\n"
         "[MUSIC]\n\n"
-        "Pata hai, Chiki ko yeh baarish bahut achhi lagi. Ek chhota sa phal "
-        "haath mein, patte ki chatri upar, aur aankhein band.\n\n"
+        "Ek chhota sa phal haath mein, patte ki chatri upar, aur aankhein "
+        "band. Chiki ko yeh pehli baarish bahut achhi lagi.\n\n"
         "[PHRASE] Chupke chupke, tip tip tip. [/PHRASE]\n"
         "[PAUSE: 1000]\n\n"
         "Hawa dheemi. Baarish dheemi. Chiki ki neend bhi aane lagi.\n\n"
-        "Pipal jhoomta raha. Baadal gale milte rahe. Chiki ki saans dheere "
-        "chalti rahi.\n\n"
+        "Peepal jhoomta raha. Baadal gale milte rahe. Chiki ki saans "
+        "dheere chalti rahi.\n\n"
         "[PHRASE] Chupke chupke, tip tip tip. [/PHRASE]\n\n"
         "Aur Chiki so gayi."
     ),
     "text_deva": (
-        "सुनो ना बच्चो। आज चिकी गिलहरी की कहानी।\n\n"
-        "चिकी एक बड़े पीपल के पेड़ पर रहती थी। छोटी छोटी आँखें, भूरी सी दुम, "
-        "और हमेशा कुछ ना कुछ चबाती रहती।\n\n"
+        "शाम थी। हवा ठंडी ठंडी चल रही थी। पीपल के बड़े से पेड़ पर, "
+        "सबसे ऊपर वाली शाख पर, एक छोटी सी गिलहरी बैठी थी। नाम था "
+        "चिकी।\n\n"
+        "चिकी हमेशा इसी शाख पर आती थी — सबसे ऊपर वाली — जहाँ से "
+        "सारा गाँव दिखता था। छोटे छोटे घर, मंदिर की चोटी, और दूर "
+        "दूर तक खेत।\n\n"
+        "तुमने कभी हवा को इतना धीरे चलते देखा है? वैसी ही थी उस "
+        "शाम की हवा।\n\n"
         "[PAUSE: 800]\n\n"
-        "एक शाम हवा ठंडी ठंडी चलने लगी। सर्र सर्र, सर्र सर्र। "
-        "चिकी ने ऊपर देखा। बादल काले काले आ गए थे। अरे, यह क्या "
-        "हो रहा है?\n\n"
+        "चिकी ने ऊपर देखा। तुम्हें पता है क्या हो रहा था? बादल काले "
+        "काले आ रहे थे, आसमान भर गया। सर्र सर्र, सर्र सर्र — हवा "
+        "धीरे धीरे घूमने लगी।\n\n"
         "[PAUSE: 600]\n\n"
         "फिर टप। एक बूँदा गिरा पत्ते पर। फिर टप टप। और फिर टप टप "
         "टप टप।\n\n"
-        "चिकी छुप गई बड़े पत्ते के नीचे। बारिश की आवाज़ सुनने लगी। "
-        "धीरे धीरे, जैसे कोई लोरी गा रहा हो।\n\n"
+        "तुमने कभी बारिश में पत्ते के नीचे छुपा है? चिकी ने भी "
+        "ऐसा ही किया — छुप गई बड़े पत्ते के नीचे, और बारिश की आवाज़ "
+        "सुनने लगी। धीरे धीरे, जैसे कोई लोरी गा रहा हो।\n\n"
         "[PHRASE] चुपके चुपके, टिप टिप टिप। [/PHRASE]\n"
         "[MUSIC]\n\n"
-        "पता है, चिकी को यह बारिश बहुत अच्छी लगी। एक छोटा सा फल "
-        "हाथ में, पत्ते की छतरी ऊपर, और आँखें बंद।\n\n"
+        "एक छोटा सा फल हाथ में, पत्ते की छतरी ऊपर, और आँखें बंद। "
+        "चिकी को यह पहली बारिश बहुत अच्छी लगी।\n\n"
         "[PHRASE] चुपके चुपके, टिप टिप टिप। [/PHRASE]\n"
         "[PAUSE: 1000]\n\n"
         "हवा धीमी। बारिश धीमी। चिकी की नींद भी आने लगी।\n\n"
@@ -690,6 +706,21 @@ def upsert_lullabies_agg(entry: dict):
 # ─────────────────────────────────────────────────────────────────────────
 
 def main():
+    # 0. HARD GATE — narrative-craft checklist (§1-§7).
+    # See docs/HINDI_SHORT_STORY_GUIDELINES.md.
+    from validate_hindi_story import validate_story_dict
+    issues = validate_story_dict(STORY)
+    if issues:
+        print("\n═══ STORY dict fails narrative-craft checklist ═══",
+              file=sys.stderr)
+        for i in issues:
+            print(f"  ❌ {i}", file=sys.stderr)
+        print("\nFix the STORY dict before running this script. See "
+              "docs/HINDI_SHORT_STORY_GUIDELINES.md for the rules.",
+              file=sys.stderr)
+        sys.exit(1)
+    print("  ✓ narrative-craft checklist (§1-§7) passed")
+
     # 1. STORY audio re-render with Devanagari
     print("\n═══ STORY audio (ElevenLabs + Devanagari) ═══")
     story_audio = assemble_story_audio(
