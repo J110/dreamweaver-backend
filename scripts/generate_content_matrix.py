@@ -156,6 +156,7 @@ GEOGRAPHIES = [
     "Americas",        # prairies, jungles
     "Arctic/Polar",    # ice lands, northern lights
     "Ocean/Islands",   # tropical islands, coral reefs
+    "Middle East",     # desert oases, bazaars, mountain villages
 ]
 
 PLOT_ARCHETYPES = [
@@ -503,6 +504,27 @@ or goes quiet.
 - NEVER use ALL CAPS for emphasis (write 'splash' not 'SPLASH')
 - NEVER use markdown (*word*, **word**)
 
+=== CHARACTER FAMILIARITY ===
+Favor characters the child has seen or can easily imagine seeing.
+Animals, insects, birds, objects they might own, plants, the moon
+or stars. Avoid aliens and robots unless the child is aged 9+ AND
+the orchestrator specifically sampled them. For ages 0-5, aliens
+and robots are forbidden entirely.
+
+=== SPECIFICITY OVER GENERIC ===
+Give the character a small, specific, endearing detail.
+A teacup named Buttercup who hates when the kettle sings too loud.
+A rabbit named Moss who walks slowly because he likes to notice things.
+A child named Iris who wears one yellow sock and one blue sock.
+Specificity is what makes a story memorable. Generic detail ("a
+small rabbit in a forest") makes a story forgettable.
+
+=== WARM OVER CLEVER ===
+The character is warm, not witty. Gentle, not sarcastic. Endearing,
+not funny. A child should want to fall asleep thinking about this
+character because they felt safe with them — not because they were
+amused.
+
 === DO NOT ===
 - Do NOT use emotion markers like [GENTLE], [SLEEPY], [EXCITED], etc.
 - Do NOT use [PHASE_1], [PHASE_2], [PHASE_3] tags
@@ -538,7 +560,7 @@ Return ONLY a valid JSON object with these fields (no markdown, no extra text):
         "personality_tags": ["Trait1", "Trait2"]
     },
     "cover_context": "1-2 sentence visual scene description for the cover. Describe ONLY the world/scene, NOT the character.",
-    "characterType": "main character type",
+    "characterType": "MUST be one of the canonical 11 values: land_mammal, bird, sea_creature, insect, reptile_amphibian, human_child, mythical_creature, object_alive, plant_tree, celestial_weather, robot_mechanical. Aliens emit as mythical_creature; robots as robot_mechanical.",
     "setting": "where it happens",
     "plotShape": "story structure",
     "timeOfDay": "time of day",
