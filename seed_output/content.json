@@ -19388,76 +19388,6 @@
     "lullaby_type": "counting"
   },
   {
-    "id": "hi-prkr-2-5-gilh",
-    "type": "story",
-    "lang": "hi",
-    "title": "Chiki Aur Pehli Baarish",
-    "title_deva": "चिकी और पहली बारिश",
-    "title_en": "Chiki and the First Rain",
-    "description": "Chiki gilhari ki pehli baarish — tap tap, chupke chupke",
-    "description_en": "A small Indian palm squirrel named Chiki watches the first monsoon rain fall on a pipal tree.",
-    "hook": "Chiki gilhari ki pehli baarish — tap tap, chupke chupke",
-    "hook_deva": "चिकी गिलहरी की पहली बारिश — टप टप, चुपके चुपके।",
-    "text": "Suno na bachcho. Aaj Chiki gilhari ki kahani.\n\nChiki ek bade pipal ke ped par rehti thi. Choti choti aankhein, bhuri si dumm, aur hamesha kuch na kuch chabati rehti.\n\nEk shaam hawa thandi thandi chalne lagi. Sarr sarr, sarr sarr. Chiki ne upar dekha. Baadal kaale kaale aa gaye the. Arre, yeh kya ho raha hai?\n\nPhir tap. Ek bunda gira patte par. Phir tap tap. Aur phir tap tap tap tap.\n\nChiki chhup gayi bade patte ke niche. Baarish ki aawaz sunne lagi. Dheere dheere, jaise koi lori gaa raha ho.\n\nChupke chupke, tip tip tip.\n\nPata hai, Chiki ko yeh baarish bahut achhi lagi. Ek chhota sa phal haath mein, patte ki chatri upar, aur aankhein band.\n\nChupke chupke, tip tip tip.\n\nHawa dheemi. Baarish dheemi. Chiki ki neend bhi aane lagi.\n\nPipal jhoomta raha. Baadal gale milte rahe. Chiki ki saans dheere chalti rahi.\n\nChupke chupke, tip tip tip.\n\nAur Chiki so gayi.",
-    "text_deva": "सुनो ना बच्चो। आज चिकी गिलहरी की कहानी।\n\nचिकी एक बड़े पीपल के पेड़ पर रहती थी। छोटी छोटी आँखें, भूरी सी दुम, और हमेशा कुछ ना कुछ चबाती रहती।\n\nएक शाम हवा ठंडी ठंडी चलने लगी। सर्र सर्र, सर्र सर्र। चिकी ने ऊपर देखा। बादल काले काले आ गए थे। अरे, यह क्या हो रहा है?\n\nफिर टप। एक बूँदा गिरा पत्ते पर। फिर टप टप। और फिर टप टप टप टप।\n\nचिकी छुप गई बड़े पत्ते के नीचे। बारिश की आवाज़ सुनने लगी। धीरे धीरे, जैसे कोई लोरी गा रहा हो।\n\nचुपके चुपके, टिप टिप टिप।\n\nपता है, चिकी को यह बारिश बहुत अच्छी लगी। एक छोटा सा फल हाथ में, पत्ते की छतरी ऊपर, और आँखें बंद।\n\nचुपके चुपके, टिप टिप टिप।\n\nहवा धीमी। बारिश धीमी। चिकी की नींद भी आने लगी।\n\nपीपल झूमता रहा। बादल गले मिलते रहे। चिकी की साँस धीरे चलती रही।\n\nचुपके चुपके, टिप टिप टिप।\n\nऔर चिकी सो गई।",
-    "raw_text": "Suno na bachcho. Aaj Chiki gilhari ki kahani.\n\nChiki ek bade pipal ke ped par rehti thi. Choti choti aankhein, bhuri si dumm, aur hamesha kuch na kuch chabati rehti.\n\n[PAUSE: 800]\n\nEk shaam hawa thandi thandi chalne lagi. Sarr sarr, sarr sarr. Chiki ne upar dekha. Baadal kaale kaale aa gaye the. Arre, yeh kya ho raha hai?\n\n[PAUSE: 600]\n\nPhir tap. Ek bunda gira patte par. Phir tap tap. Aur phir tap tap tap tap.\n\nChiki chhup gayi bade patte ke niche. Baarish ki aawaz sunne lagi. Dheere dheere, jaise koi lori gaa raha ho.\n\n[PHRASE] Chupke chupke, tip tip tip. [/PHRASE]\n[MUSIC]\n\nPata hai, Chiki ko yeh baarish bahut achhi lagi. Ek chhota sa phal haath mein, patte ki chatri upar, aur aankhein band.\n\n[PHRASE] Chupke chupke, tip tip tip. [/PHRASE]\n[PAUSE: 1000]\n\nHawa dheemi. Baarish dheemi. Chiki ki neend bhi aane lagi.\n\nPipal jhoomta raha. Baadal gale milte rahe. Chiki ki saans dheere chalti rahi.\n\n[PHRASE] Chupke chupke, tip tip tip. [/PHRASE]\n\nAur Chiki so gayi.",
-    "repeated_phrase": "Chupke chupke, tip tip tip",
-    "repeated_phrase_deva": "चुपके चुपके, टिप टिप टिप",
-    "character": {
-      "name": "Chiki",
-      "identity": "a small Indian palm squirrel named Chiki with a striped brown back and bright curious eyes",
-      "special": "she watches the world from the branches of an old pipal tree",
-      "personality_tags": [
-        "Curious",
-        "Gentle"
-      ]
-    },
-    "character_name": "Chiki",
-    "characterType": "land_mammal",
-    "lead_character_type": "land_mammal",
-    "lead_gender": "female",
-    "age_group": "2-5",
-    "ageGroup": "2-5",
-    "age_min": 2,
-    "age_max": 5,
-    "target_age": 4,
-    "mood": "curious",
-    "story_type": "prakriti_katha",
-    "storyType": "prakriti_katha",
-    "theme": "monsoon_wonder",
-    "themes": [
-      "monsoon_wonder",
-      "nature_wonder"
-    ],
-    "geography": "south_asia",
-    "indian_region": "central",
-    "experimental_v2": true,
-    "has_baked_music": true,
-    "tts_engine": "elevenlabs_multilingual_v2",
-    "tts_input_script": "devanagari",
-    "cover": "/covers/hi-prkr-2-5-gilh.svg",
-    "audio_variants": [
-      {
-        "voice": "anika",
-        "url": "/audio/pre-gen/hi-prkr-2-5-gilh_anika.mp3",
-        "duration_seconds": 150,
-        "provider": "elevenlabs-multilingual-v2"
-      }
-    ],
-    "audio_url": "/audio/pre-gen/hi-prkr-2-5-gilh_anika.mp3",
-    "duration_seconds": 150,
-    "word_count": 157,
-    "created_at": "2026-04-20T13:06:43",
-    "updated_at": "2026-04-20T13:06:43",
-    "is_generated": true,
-    "author_id": "system",
-    "categories": [
-      "Bedtime"
-    ],
-    "raw_text_deva": "सुनो ना बच्चो। आज चिकी गिलहरी की कहानी।\n\nचिकी एक बड़े पीपल के पेड़ पर रहती थी। छोटी छोटी आँखें, भूरी सी दुम, और हमेशा कुछ ना कुछ चबाती रहती।\n\n[PAUSE: 800]\n\nएक शाम हवा ठंडी ठंडी चलने लगी। सर्र सर्र, सर्र सर्र। चिकी ने ऊपर देखा। बादल काले काले आ गए थे। अरे, यह क्या हो रहा है?\n\n[PAUSE: 600]\n\nफिर टप। एक बूँदा गिरा पत्ते पर। फिर टप टप। और फिर टप टप टप टप।\n\nचिकी छुप गई बड़े पत्ते के नीचे। बारिश की आवाज़ सुनने लगी। धीरे धीरे, जैसे कोई लोरी गा रहा हो।\n\n[PHRASE] चुपके चुपके, टिप टिप टिप। [/PHRASE]\n[MUSIC]\n\nपता है, चिकी को यह बारिश बहुत अच्छी लगी। एक छोटा सा फल हाथ में, पत्ते की छतरी ऊपर, और आँखें बंद।\n\n[PHRASE] चुपके चुपके, टिप टिप टिप। [/PHRASE]\n[PAUSE: 1000]\n\nहवा धीमी। बारिश धीमी। चिकी की नींद भी आने लगी।\n\nपीपल झूमता रहा। बादल गले मिलते रहे। चिकी की साँस धीरे चलती रही।\n\n[PHRASE] चुपके चुपके, टिप टिप टिप। [/PHRASE]\n\nऔर चिकी सो गई।",
-    "hook_spoken_in_audio": false
-  },
-  {
     "id": "hi-counting-6-8-blbl",
     "type": "song",
     "lang": "hi",
@@ -19519,5 +19449,75 @@
     "updated_at": "2026-04-20T13:06:43",
     "raw_lyrics": "[verse]\nEk do teen, ginte jaao\nTaare saare dekhte jaao\nNeend ki raahon par chalo pyaari\nRani bulbul, so jaao dheere\n\n[chorus]\nGin gin taare, ek do teen\nChup chup ke sab hain sheen\nAankhein meechi, saans halki\nAaja neend, ho tum halki\n\n[verse]\nChaar paanch chhe, sapno wale\nChaand ke piche baadal jaale\nBansuri bajti hai dheere dheere\nNeend ki godi mein aao pyaari\n\n[chorus]\nGin gin taare, ek do teen\nChup chup ke sab hain sheen\n\n[verse]\nSaat aath nau, sab sitaare\nSoye dheere dheere saare\nAb aankhein band karo pyaari\nRani bulbul, so gayi dheere\n",
     "raw_lyrics_deva": "[verse]\nएक दो तीन, गिनते जाओ\nतारे सारे देखते जाओ\nनींद की राहों पर चलो प्यारी\nरानी बुलबुल, सो जाओ धीरे\n\n[chorus]\nगिन गिन तारे, एक दो तीन\nचुप चुप के सब हैं शीन\nआँखें मींची, साँस हल्की\nआजा नींद, हो तुम हल्की\n\n[verse]\nचार पाँच छह, सपनों वाले\nचाँद के पीछे बादल जाले\nबंसुरी बजती है धीरे धीरे\nनींद की गोदी में आओ प्यारी\n\n[chorus]\nगिन गिन तारे, एक दो तीन\nचुप चुप के सब हैं शीन\n\n[verse]\nसात आठ नौ, सब सितारे\nसोये धीरे धीरे सारे\nअब आँखें बंद करो प्यारी\nरानी बुलबुल, सो गई धीरे\n"
+  },
+  {
+    "id": "hi-prkr-2-5-gilh",
+    "type": "story",
+    "lang": "hi",
+    "title": "Chiki Aur Pehli Baarish",
+    "title_deva": "चिकी और पहली बारिश",
+    "title_en": "Chiki and the First Rain",
+    "description": "Chiki gilhari ki pehli baarish — tap tap, chupke chupke",
+    "description_en": "A small Indian palm squirrel named Chiki sits on the topmost branch of a peepal tree and watches the first monsoon rain arrive.",
+    "hook": "Chiki gilhari ki pehli baarish — tap tap, chupke chupke",
+    "hook_deva": "चिकी गिलहरी की पहली बारिश — टप टप, चुपके चुपके।",
+    "text": "Shaam thi. Hawa thandi thandi chal rahi thi. Peepal ke bade se ped par, sabse upar wali shaakh par, ek chhoti si gilhari baithi thi. Naam tha Chiki.\n\nChiki hamesha isi shaakh par aati thi — sabse upar wali — jahan se saara gaon dikhta tha. Chhote chhote ghar, mandir ki choti, aur door door tak khet.\n\nTumne kabhi hawa ko itna dheere chalte dekha hai? Waisi hi thi us shaam ki hawa.\n\nChiki ne upar dekha. Tumhe pata hai kya ho raha tha? Baadal kaale kaale aa rahe the, aasmaan bhar gaya. Sarr sarr, sarr sarr — hawa dheere dheere ghoomne lagi.\n\nPhir tap. Ek bunda gira patte par. Phir tap tap. Aur phir tap tap tap tap.\n\nTumne kabhi baarish mein patte ke niche chhupa hai? Chiki ne bhi aisa hi kiya — chhup gayi bade patte ke niche, aur baarish ki aawaz sunne lagi. Dheere dheere, jaise koi lori gaa raha ho.\n\nChupke chupke, tip tip tip.\n\nEk chhota sa phal haath mein, patte ki chatri upar, aur aankhein band. Chiki ko yeh pehli baarish bahut achhi lagi.\n\nChupke chupke, tip tip tip.\n\nHawa dheemi. Baarish dheemi. Chiki ki neend bhi aane lagi.\n\nPeepal jhoomta raha. Baadal gale milte rahe. Chiki ki saans dheere chalti rahi.\n\nChupke chupke, tip tip tip.\n\nAur Chiki so gayi.",
+    "text_deva": "शाम थी। हवा ठंडी ठंडी चल रही थी। पीपल के बड़े से पेड़ पर, सबसे ऊपर वाली शाख पर, एक छोटी सी गिलहरी बैठी थी। नाम था चिकी।\n\nचिकी हमेशा इसी शाख पर आती थी — सबसे ऊपर वाली — जहाँ से सारा गाँव दिखता था। छोटे छोटे घर, मंदिर की चोटी, और दूर दूर तक खेत।\n\nतुमने कभी हवा को इतना धीरे चलते देखा है? वैसी ही थी उस शाम की हवा।\n\nचिकी ने ऊपर देखा। तुम्हें पता है क्या हो रहा था? बादल काले काले आ रहे थे, आसमान भर गया। सर्र सर्र, सर्र सर्र — हवा धीरे धीरे घूमने लगी।\n\nफिर टप। एक बूँदा गिरा पत्ते पर। फिर टप टप। और फिर टप टप टप टप।\n\nतुमने कभी बारिश में पत्ते के नीचे छुपा है? चिकी ने भी ऐसा ही किया — छुप गई बड़े पत्ते के नीचे, और बारिश की आवाज़ सुनने लगी। धीरे धीरे, जैसे कोई लोरी गा रहा हो।\n\nचुपके चुपके, टिप टिप टिप।\n\nएक छोटा सा फल हाथ में, पत्ते की छतरी ऊपर, और आँखें बंद। चिकी को यह पहली बारिश बहुत अच्छी लगी।\n\nचुपके चुपके, टिप टिप टिप।\n\nहवा धीमी। बारिश धीमी। चिकी की नींद भी आने लगी।\n\nपीपल झूमता रहा। बादल गले मिलते रहे। चिकी की साँस धीरे चलती रही।\n\nचुपके चुपके, टिप टिप टिप।\n\nऔर चिकी सो गई।",
+    "raw_text": "Shaam thi. Hawa thandi thandi chal rahi thi. Peepal ke bade se ped par, sabse upar wali shaakh par, ek chhoti si gilhari baithi thi. Naam tha Chiki.\n\nChiki hamesha isi shaakh par aati thi — sabse upar wali — jahan se saara gaon dikhta tha. Chhote chhote ghar, mandir ki choti, aur door door tak khet.\n\nTumne kabhi hawa ko itna dheere chalte dekha hai? Waisi hi thi us shaam ki hawa.\n\n[PAUSE: 800]\n\nChiki ne upar dekha. Tumhe pata hai kya ho raha tha? Baadal kaale kaale aa rahe the, aasmaan bhar gaya. Sarr sarr, sarr sarr — hawa dheere dheere ghoomne lagi.\n\n[PAUSE: 600]\n\nPhir tap. Ek bunda gira patte par. Phir tap tap. Aur phir tap tap tap tap.\n\nTumne kabhi baarish mein patte ke niche chhupa hai? Chiki ne bhi aisa hi kiya — chhup gayi bade patte ke niche, aur baarish ki aawaz sunne lagi. Dheere dheere, jaise koi lori gaa raha ho.\n\n[PHRASE] Chupke chupke, tip tip tip. [/PHRASE]\n[MUSIC]\n\nEk chhota sa phal haath mein, patte ki chatri upar, aur aankhein band. Chiki ko yeh pehli baarish bahut achhi lagi.\n\n[PHRASE] Chupke chupke, tip tip tip. [/PHRASE]\n[PAUSE: 1000]\n\nHawa dheemi. Baarish dheemi. Chiki ki neend bhi aane lagi.\n\nPeepal jhoomta raha. Baadal gale milte rahe. Chiki ki saans dheere chalti rahi.\n\n[PHRASE] Chupke chupke, tip tip tip. [/PHRASE]\n\nAur Chiki so gayi.",
+    "repeated_phrase": "Chupke chupke, tip tip tip",
+    "repeated_phrase_deva": "चुपके चुपके, टिप टिप टिप",
+    "character": {
+      "name": "Chiki",
+      "identity": "a small Indian palm squirrel named Chiki with a striped brown back and bright curious eyes",
+      "special": "she watches the world from the branches of an old pipal tree",
+      "personality_tags": [
+        "Curious",
+        "Gentle"
+      ]
+    },
+    "character_name": "Chiki",
+    "characterType": "land_mammal",
+    "lead_character_type": "land_mammal",
+    "lead_gender": "female",
+    "age_group": "2-5",
+    "ageGroup": "2-5",
+    "age_min": 2,
+    "age_max": 5,
+    "target_age": 4,
+    "mood": "curious",
+    "story_type": "prakriti_katha",
+    "storyType": "prakriti_katha",
+    "theme": "monsoon_wonder",
+    "themes": [
+      "monsoon_wonder",
+      "nature_wonder"
+    ],
+    "geography": "south_asia",
+    "indian_region": "central",
+    "experimental_v2": true,
+    "has_baked_music": true,
+    "tts_engine": "elevenlabs_multilingual_v2",
+    "tts_input_script": "devanagari",
+    "cover": "/covers/hi-prkr-2-5-gilh.svg",
+    "audio_variants": [
+      {
+        "voice": "anika",
+        "url": "/audio/pre-gen/hi-prkr-2-5-gilh_anika.mp3",
+        "duration_seconds": 176,
+        "provider": "elevenlabs-multilingual-v2"
+      }
+    ],
+    "audio_url": "/audio/pre-gen/hi-prkr-2-5-gilh_anika.mp3",
+    "duration_seconds": 176,
+    "word_count": 218,
+    "created_at": "2026-04-20T13:20:45",
+    "updated_at": "2026-04-20T13:20:45",
+    "is_generated": true,
+    "author_id": "system",
+    "categories": [
+      "Bedtime"
+    ],
+    "raw_text_deva": "शाम थी। हवा ठंडी ठंडी चल रही थी। पीपल के बड़े से पेड़ पर, सबसे ऊपर वाली शाख पर, एक छोटी सी गिलहरी बैठी थी। नाम था चिकी।\n\nचिकी हमेशा इसी शाख पर आती थी — सबसे ऊपर वाली — जहाँ से सारा गाँव दिखता था। छोटे छोटे घर, मंदिर की चोटी, और दूर दूर तक खेत।\n\nतुमने कभी हवा को इतना धीरे चलते देखा है? वैसी ही थी उस शाम की हवा।\n\n[PAUSE: 800]\n\nचिकी ने ऊपर देखा। तुम्हें पता है क्या हो रहा था? बादल काले काले आ रहे थे, आसमान भर गया। सर्र सर्र, सर्र सर्र — हवा धीरे धीरे घूमने लगी।\n\n[PAUSE: 600]\n\nफिर टप। एक बूँदा गिरा पत्ते पर। फिर टप टप। और फिर टप टप टप टप।\n\nतुमने कभी बारिश में पत्ते के नीचे छुपा है? चिकी ने भी ऐसा ही किया — छुप गई बड़े पत्ते के नीचे, और बारिश की आवाज़ सुनने लगी। धीरे धीरे, जैसे कोई लोरी गा रहा हो।\n\n[PHRASE] चुपके चुपके, टिप टिप टिप। [/PHRASE]\n[MUSIC]\n\nएक छोटा सा फल हाथ में, पत्ते की छतरी ऊपर, और आँखें बंद। चिकी को यह पहली बारिश बहुत अच्छी लगी।\n\n[PHRASE] चुपके चुपके, टिप टिप टिप। [/PHRASE]\n[PAUSE: 1000]\n\nहवा धीमी। बारिश धीमी। चिकी की नींद भी आने लगी।\n\nपीपल झूमता रहा। बादल गले मिलते रहे। चिकी की साँस धीरे चलती रही।\n\n[PHRASE] चुपके चुपके, टिप टिप टिप। [/PHRASE]\n\nऔर चिकी सो गई।",
+    "hook_spoken_in_audio": false
   }
 ]
