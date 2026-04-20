@@ -1028,33 +1028,6 @@
     "about": "A playful lullaby about dream ships sailing in the night, waiting to visit children who close their eyes. The gentle \"fear of missing out\" on dreams encourages little ones to drift off before the magic slips away. The soothing repetition and soft imagery help quiet busy minds."
   },
   {
-    "id": "hi-counting-6-8-blbl",
-    "title": "Taare Gin, Rani",
-    "lullaby_type": "counting",
-    "card_label": "Taare Gin, Rani",
-    "card_subtitle": "Rani bulbul ke saath taare ginte ginte so jao",
-    "age_group": "6-8",
-    "mood": "calm",
-    "lang": "hi",
-    "language": "hi",
-    "audio_file": "hi-counting-6-8-blbl.mp3",
-    "cover_file": "hi-counting-6-8-blbl_cover.svg",
-    "duration_seconds": 82,
-    "lyrics": "[verse]\nEk do teen, ginte jaao\nTaare saare dekhte jaao\nNeend ki raahon par chalo pyaari\nRani bulbul, so jaao dheere\n\n[chorus]\nGin gin taare, ek do teen\nChup chup ke sab hain sheen\nAankhein meechi, saans halki\nAaja neend, ho tum halki\n\n[verse]\nChaar paanch chhe, sapno wale\nChaand ke piche baadal jaale\nBansuri bajti hai dheere dheere\nNeend ki godi mein aao pyaari\n\n[chorus]\nGin gin taare, ek do teen\nChup chup ke sab hain sheen\n\n[verse]\nSaat aath nau, sab sitaare\nSoye dheere dheere saare\nAb aankhein band karo pyaari\nRani bulbul, so gayi dheere\n",
-    "style_prompt": "Solo female Hindi lullaby, soft bamboo bansuri flute with a gentle tanpura drone, tender maternal voice, 62 BPM, lilting Hindustani feel, warm major key, no melancholy, intimate bedroom atmosphere, counting-song cadence, soft breath between phrases",
-    "engine": "minimax-music-v2.5",
-    "character_name": "Rani",
-    "character_identity": "a bulbul (Indian songbird) counting stars",
-    "characterType": "bird",
-    "character_subtype": "familiar",
-    "instrument": "bansuri_tanpura",
-    "imagery": "taare",
-    "theme": "rest",
-    "geography": "south_asia",
-    "indian_region": "north",
-    "created_at": "2026-04-20"
-  },
-  {
     "id": "counting-2-5-8e2a",
     "title": "Mara’s Pond of Dreams",
     "content_type": "lullaby",
@@ -1090,5 +1063,41 @@
       ]
     },
     "about": "A soothing cumulative lullaby where Mara counts her pond friends as they fall asleep one by one. The gentle repetition and predictable rhythm help little minds unwind, turning bedtime into a quiet, dreamy ritual. Perfect for calming busy thoughts and easing into sleep."
+  },
+  {
+    "id": "hi-counting-6-8-blbl",
+    "title": "Taare Gin, Rani",
+    "title_deva": "तारे गिन, रानी",
+    "lullaby_type": "counting",
+    "card_label": "Taare Gin, Rani",
+    "card_subtitle": "Rani bulbul ke saath taare ginte ginte so jao",
+    "age_group": "6-8",
+    "mood": "calm",
+    "lang": "hi",
+    "language": "hi",
+    "audio_file": "hi-counting-6-8-blbl.mp3",
+    "cover_file": "hi-counting-6-8-blbl_cover.svg",
+    "duration_seconds": 85,
+    "lyrics": "[verse]\nEk do teen, ginte jaao\nTaare saare dekhte jaao\nNeend ki raahon par chalo pyaari\nRani bulbul, so jaao dheere\n\n[chorus]\nGin gin taare, ek do teen\nChup chup ke sab hain sheen\nAankhein meechi, saans halki\nAaja neend, ho tum halki\n\n[verse]\nChaar paanch chhe, sapno wale\nChaand ke piche baadal jaale\nBansuri bajti hai dheere dheere\nNeend ki godi mein aao pyaari\n\n[chorus]\nGin gin taare, ek do teen\nChup chup ke sab hain sheen\n\n[verse]\nSaat aath nau, sab sitaare\nSoye dheere dheere saare\nAb aankhein band karo pyaari\nRani bulbul, so gayi dheere\n",
+    "lyrics_deva": "[verse]\nएक दो तीन, गिनते जाओ\nतारे सारे देखते जाओ\nनींद की राहों पर चलो प्यारी\nरानी बुलबुल, सो जाओ धीरे\n\n[chorus]\nगिन गिन तारे, एक दो तीन\nचुप चुप के सब हैं शीन\nआँखें मींची, साँस हल्की\nआजा नींद, हो तुम हल्की\n\n[verse]\nचार पाँच छह, सपनों वाले\nचाँद के पीछे बादल जाले\nबंसुरी बजती है धीरे धीरे\nनींद की गोदी में आओ प्यारी\n\n[chorus]\nगिन गिन तारे, एक दो तीन\nचुप चुप के सब हैं शीन\n\n[verse]\nसात आठ नौ, सब सितारे\nसोये धीरे धीरे सारे\nअब आँखें बंद करो प्यारी\nरानी बुलबुल, सो गई धीरे\n",
+    "style_prompt": "Solo female Hindi lullaby, soft bamboo bansuri flute with a gentle tanpura drone, tender maternal voice, 62 BPM, lilting Hindustani feel, warm major key, no melancholy, intimate bedroom atmosphere, counting-song cadence, soft breath between phrases",
+    "engine": "minimax-music-v2.5",
+    "tts_input_script": "devanagari",
+    "character": {
+      "name": "Rani",
+      "identity": "a small Indian bulbul songbird named Rani perched on a branch under a starry sky",
+      "special": "she counts the night stars until her own eyes grow heavy",
+      "personality_tags": [
+        "Gentle",
+        "Sleepy"
+      ]
+    },
+    "characterType": "bird",
+    "instrument": "bansuri_tanpura",
+    "imagery": "taare",
+    "theme": "rest",
+    "geography": "south_asia",
+    "indian_region": "north",
+    "created_at": "2026-04-20"
   }
 ]
