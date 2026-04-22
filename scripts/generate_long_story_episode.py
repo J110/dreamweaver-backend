@@ -31,6 +31,7 @@ import re
 import shutil
 import sys
 import time
+from datetime import datetime
 from pathlib import Path
 
 import httpx
@@ -715,12 +716,15 @@ THIS world. If the phrase could fit in a different story,
 make it more specific.
 
 Repeated phrases ALREADY used in other recent stories.
-Yours MUST be completely different — do NOT reuse, paraphrase,
-or start with the same first word as any of these:
+Yours MUST be completely different — do NOT reuse or paraphrase:
 {recent_phrases_to_avoid}
 
-Also do NOT start the phrase with the same first word as
-the 3 most recent phrases above. Vary the cadence.
+Do NOT start your phrase with any of these content words
+(they've been used as opening cadence in recent stories):
+{forbidden_first_words}
+
+Common words like "the", "a", "almost", "just", "when" are fine
+as openings — only avoid the content words listed above.
 
 === STRUCTURE ===
 
@@ -991,6 +995,12 @@ def build_long_story_prompt(params):
     else:
         recent_phrases_block = "  (no recent phrases — invent freely)"
 
+    forbidden_words = _forbidden_cadence_first_words(recent_phrases)
+    if forbidden_words:
+        forbidden_first_words_block = "  " + ", ".join(forbidden_words)
+    else:
+        forbidden_first_words_block = "  (none — any content word is fine)"
+
     # Pick a neutral example name for the dialogue-tag illustration that
     # doesn't anchor Mistral on any specific character. Avoid the recent list.
     EXAMPLE_NAMES = ["AYO", "REN", "TALA", "INES", "KAI", "NIKO", "ZARA", "ELI"]
@@ -1011,6 +1021,7 @@ def build_long_story_prompt(params):
         name_culture_hint=name_culture_hint,
         recent_names_to_avoid=recent_names_block,
         recent_phrases_to_avoid=recent_phrases_block,
+        forbidden_first_words=forbidden_first_words_block,
         example_name=example_name,
         character_count=char_count,
         character_instructions=char_instructions,
@@ -1058,6 +1069,21 @@ def strip_empty_phrases(text):
     return text
 
 
+# Stopwords excluded from the first-word cadence check. A phrase that starts
+# with one of these shares no real cadence signal with another phrase starting
+# with the same word — "The stone sat there" vs "The gate remembers now" is
+# not cadence repetition. Banning stopword collisions across a growing catalog
+# (28+ stories) was eating Mistral's available sentence openings and causing
+# ~25% of long-story runs to fail validation. Content-carrying first words
+# ("Listen", "Almost", "Breathe") still trigger the cadence check.
+PHRASE_FIRST_WORD_STOPWORDS = {
+    "the", "a", "an", "and", "or", "but", "almost",
+    "just", "when", "while", "under", "over", "into",
+    "soft", "slow", "quiet", "little", "one",
+    "my", "your", "our", "her", "his", "this", "that",
+}
+
+
 def is_phrase_too_similar(new_phrase, existing_phrases, threshold=0.6):
     """Return (too_similar, reason). Mirrors the short-story check so long +
     short catch cadence repetition with the same rule.
@@ -1066,6 +1092,14 @@ def is_phrase_too_similar(new_phrase, existing_phrases, threshold=0.6):
     if not new_phrase:
         return False, "OK"
     new_lower = new_phrase.lower().strip()
+
+    def _first_token(s):
+        toks = s.split()
+        if not toks:
+            return ""
+        return toks[0].strip(".,!?;:\"'")
+
+    new_first = _first_token(new_lower)
     for existing in existing_phrases:
         existing_lower = existing.lower().strip()
         if not existing_lower:
@@ -1073,12 +1107,50 @@ def is_phrase_too_similar(new_phrase, existing_phrases, threshold=0.6):
         ratio = SequenceMatcher(None, new_lower, existing_lower).ratio()
         if ratio > threshold:
             return True, f"Too similar to '{existing}' (ratio {ratio:.2f})"
-        # First-word cadence: "Listen, little one" vs "Listen, softly now"
-        new_first = new_lower.split()[:1]
-        ex_first = existing_lower.split()[:1]
-        if new_first and new_first == ex_first:
+        # First-word cadence: "Listen, little one" vs "Listen, softly now".
+        # Only fire when the shared first word is content-carrying.
+        ex_first = _first_token(existing_lower)
+        if (new_first and new_first == ex_first
+                and new_first not in PHRASE_FIRST_WORD_STOPWORDS):
             return True, f"Starts with same first word as '{existing}'"
     return False, "OK"
+
+
+def _forbidden_cadence_first_words(existing_phrases):
+    """Content-carrying first words already used recently. Feed into the
+    prompt so Mistral stops producing phrases that will be rejected.
+    """
+    words = set()
+    for p in existing_phrases:
+        toks = (p or "").lower().strip().split()
+        if not toks:
+            continue
+        first = toks[0].strip(".,!?;:\"'")
+        if first and first not in PHRASE_FIRST_WORD_STOPWORDS:
+            words.add(first)
+    return sorted(words)
+
+
+def _log_validation_failure(output_dir, params, phrase, reason, raw_response):
+    """Append a structured record of a phrase rejection so over-aggressive
+    rules surface in a log instead of only as production failures.
+    """
+    try:
+        log_dir = BASE_DIR / "seed_output" / "long_stories"
+        log_dir.mkdir(parents=True, exist_ok=True)
+        entry = {
+            "ts": datetime.now().isoformat(timespec="seconds"),
+            "output_dir": str(output_dir),
+            "mood": params.get("mood"),
+            "age_group": params.get("age_group"),
+            "phrase": phrase,
+            "reason": reason,
+            "raw_len": len(raw_response or ""),
+        }
+        with open(log_dir / "_validation_failures.jsonl", "a") as f:
+            f.write(json.dumps(entry) + "\n")
+    except Exception:
+        pass
 
 
 SECTION_TAGS = ["INTRO", "PHASE_1", "POST_SONG", "PHASE_2", "PHASE_3"]
@@ -2653,6 +2725,9 @@ def main():
             too_similar, reason = is_phrase_too_similar(new_phrase, recent_phrases_pool)
             if too_similar:
                 issues.append(f"ERROR: repeated_phrase rejected — {reason}")
+                _log_validation_failure(
+                    output_dir, params, new_phrase, reason, raw_response
+                )
 
             if issues:
                 for issue in issues:

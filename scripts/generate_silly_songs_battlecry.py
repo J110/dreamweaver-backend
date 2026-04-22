@@ -1771,31 +1771,62 @@ Examples:
                     time.sleep(35)
 
                 forced_age = assigned_ages[i]
-                age_suffix = forced_age.replace('-', '_')
-
-                # Select params with enforced age group, excluding batch duplicates
-                # AND anthems that already have a file on disk for this age group
-                batch_cries = {r.get("anthem_id") or r.get("battle_cry_id") for r in results}
-                disk_cries_for_age = {
-                    sid.rsplit(f"_{age_suffix}", 1)[0]
-                    for sid in existing_on_disk
-                    if sid.endswith(f"_{age_suffix}")
-                }
-                exclude = batch_cries | disk_cries_for_age
                 song_mood = assigned_moods[i]
                 song_cat = assigned_cats[i]
-                params = select_silly_song_params(
-                    existing_songs, age_group=forced_age, exclude_cries=exclude,
-                    mood=song_mood, category=song_cat,
-                )
 
-                # Check if this specific song_id already exists on disk
-                song_id = f"{params['battle_cry_id']}_{age_suffix}"
-                if song_id in existing_on_disk and not args.force:
-                    print(f"\n  ⚠️  All eligible anthems for {song_cat}/{forced_age}/{song_mood or 'any'} already generated on disk.")
-                    print(f"     Selected '{params['anthem']}' ({song_id}) but file exists. Skipping.")
-                    print(f"     To regenerate, use --force. To add variety, add new anthems to the library.")
+                # Build the rotation ladder: try the originally-assigned combo
+                # first, then other categories, then other ages, then drop the
+                # mood filter. Stops once we find a combo that has an eligible
+                # anthem not already on disk. This fixes the "0 songs generated"
+                # dead-end that used to fire whenever one combo was exhausted.
+                cat_order = [song_cat] + [c for c in ["battle_cry", "celebration", "observation"] if c != song_cat]
+                age_order = [forced_age] + [a for a in ["2-5", "6-8", "9-12"] if a != forced_age]
+                mood_order = [song_mood, None] if song_mood else [None]
+
+                params = None
+                tried_combos = []
+                exhausted_combos = []
+                batch_cries = {r.get("anthem_id") or r.get("battle_cry_id") for r in results}
+                for try_cat in cat_order:
+                    for try_age in age_order:
+                        for try_mood in mood_order:
+                            try_suffix = try_age.replace('-', '_')
+                            disk_cries = {
+                                sid.rsplit(f"_{try_suffix}", 1)[0]
+                                for sid in existing_on_disk
+                                if sid.endswith(f"_{try_suffix}")
+                            }
+                            exclude = batch_cries | disk_cries
+                            tried_combos.append((try_cat, try_age, try_mood))
+                            candidate = select_silly_song_params(
+                                existing_songs, age_group=try_age, exclude_cries=exclude,
+                                mood=try_mood, category=try_cat,
+                            )
+                            candidate_id = f"{candidate['battle_cry_id']}_{try_suffix}"
+                            if candidate_id in existing_on_disk and not args.force:
+                                exhausted_combos.append((try_cat, try_age, try_mood or "any"))
+                                continue
+                            params = candidate
+                            forced_age = try_age
+                            age_suffix = try_suffix
+                            song_cat = try_cat
+                            song_mood = try_mood
+                            song_id = candidate_id
+                            break
+                        if params:
+                            break
+                    if params:
+                        break
+
+                if params is None:
+                    print(f"\n  ⚠️  All rotation combos exhausted on disk. Tried:")
+                    for c, a, m in exhausted_combos[:10]:
+                        print(f"     - {c}/{a}/{m}")
+                    print(f"     Add new anthems to BATTLE_CRIES/CELEBRATIONS/OBSERVATIONS, or use --force.")
                     continue
+
+                if exhausted_combos:
+                    print(f"\n  ⚠️  Rotated past {len(exhausted_combos)} exhausted combo(s); using {song_cat}/{forced_age}/{song_mood or 'any'}")
 
                 ok, reason = validate_batch_diversity(params, results)
                 if not ok:
