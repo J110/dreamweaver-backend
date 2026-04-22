@@ -3772,6 +3772,8 @@ def main():
     parser.add_argument("--story-type",
                         choices=["folk_tale", "mythological", "fable", "nature", "slice_of_life", "dream"],
                         default=None, help="Story type for cover style modifiers")
+    parser.add_argument("--allow-unknown-protagonist", action="store_true",
+                        help="Bypass the lead_character_type/inference guard (not recommended)")
     args = parser.parse_args()
 
     # Load story
@@ -3786,6 +3788,26 @@ def main():
     story_id = story.get("id", "unknown")
     title = story.get("title", "Untitled")
     logger.info("Generating cover for: '%s' (%s)", title, story_id)
+
+    # Fail loud when the story JSON has no protagonist signal at all. The
+    # previous silent fallback to "human_child" produced mismatched covers
+    # (e.g. a human boy for a story whose protagonist was a young animal).
+    # If lead_character_type is missing AND there's no title/description/
+    # cover_context for inference to key off, refuse to proceed unless the
+    # caller explicitly opts into the old behavior with --allow-unknown-protagonist.
+    has_explicit_type = bool(story.get("lead_character_type"))
+    has_inference_text = any(story.get(k) for k in ("title", "description", "cover_context"))
+    if not has_explicit_type and not has_inference_text and not args.allow_unknown_protagonist:
+        logger.error(
+            "Story JSON has no lead_character_type and no title/description/"
+            "cover_context to infer from (%s). Refusing to generate a cover "
+            "with the default human-child fallback — this is how species "
+            "mismatches leak into production. Add these fields to the "
+            "generator's metadata output, or pass "
+            "--allow-unknown-protagonist to bypass.",
+            story_path,
+        )
+        sys.exit(2)
 
     # Build overrides from CLI args
     overrides = {}

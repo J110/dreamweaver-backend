@@ -2782,10 +2782,48 @@ def main():
 
         # Save metadata
         print("6. Saving metadata...")
+
+        # Title/description/protagonist-type mirror what publish_episode will
+        # write into content.json. Persist them in metadata.json so the cover
+        # generator (run as a separate step) has the protagonist signal it
+        # needs. Omitting these led to the Tali-as-human-boy mismatch: the
+        # cover script silently fell through to the default human child
+        # when lead_character_type was missing.
+        char_names_meta = [c["name"] for c in parsed["characters"]]
+        title_name_meta = (
+            " and ".join(char_names_meta[:2])
+            if len(char_names_meta) > 1
+            else (char_names_meta[0] if char_names_meta else "Unknown")
+        )
+        world_label_meta = params.get("world_type", "").replace("_", " ").capitalize()
+        proto_def_meta = PROTAGONIST_DESCRIPTIONS.get(
+            params.get("lead_character_type", "human"),
+            PROTAGONIST_DESCRIPTIONS["human"],
+        )
+        proto_label_meta = proto_def_meta["label"]
+        meta_title = f"{title_name_meta} and the {world_label_meta}"
+        meta_description = (
+            f"A bedtime story episode where {title_name_meta} discovers a "
+            f"magical {params.get('world_type', '')}."
+        )
+        # cover_context is the protagonist-identity line the cover script
+        # searches for species keywords. Giving it the full phrase (e.g.
+        # "young animal who discovers a lighthouse") lets _infer_character_type
+        # resolve correctly even when lead_character_type is somehow dropped.
+        cover_context_line = (
+            f"A {proto_label_meta} who discovers a "
+            f"{params.get('world_type', '')} — {params.get('world_concept', '')}"
+        )
+
         metadata = {
             "content_type": "long_story",
             "episode_format": "v2",
             "experimental": True,
+            "title": meta_title,
+            "description": meta_description,
+            "cover_context": cover_context_line,
+            "protagonist_label": proto_label_meta,
+            "lead_character_type": params.get("lead_character_type", "human"),
             "age_group": params["age_group"],
             "mood": params["mood"],
             "world_type": params.get("world_type", ""),

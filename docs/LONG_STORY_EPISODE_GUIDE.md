@@ -112,6 +112,30 @@ python3 scripts/generate_long_story_episode.py --dry-run
 python3 scripts/generate_long_story_episode.py --text-only
 ```
 
+## Metadata invariants (required for downstream steps)
+
+The `metadata.json` written by this script is the **handoff contract** to
+`generate_cover_experimental.py` and `publish_episode`. It must carry enough
+protagonist signal that the cover generator can pick the right species. If
+these fields are missing, the cover script now **fails with exit code 2**
+rather than silently generating a human-child cover for a non-human
+protagonist (see the Tali-as-human-boy incident, 2026-04-22).
+
+Required fields in `metadata.json`:
+
+| Field | Purpose |
+|---|---|
+| `lead_character_type` | Authoritative protagonist type (human/animal/bird/etc.). Copied from generation params. |
+| `title` | Used by cover inference + content.json. |
+| `description` | Used by cover inference + app UI. Must contain the protagonist phrase. |
+| `cover_context` | "A {proto_label} who discovers a {world} — {world_concept}" — the phrase the cover script keyword-matches against. |
+| `protagonist_label` | The resolved label (e.g. "young animal"). Stored for debugging. |
+
+If you write a new long-story generator or edit this one, keep these five
+keys populated. The cover script's guard is there to catch regressions —
+don't pass `--allow-unknown-protagonist` to work around it; fix the
+metadata source instead.
+
 ### CLI Arguments Reference
 
 | Argument | Default | Description |
