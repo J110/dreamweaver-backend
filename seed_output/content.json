@@ -19755,5 +19755,157 @@
     ],
     "mood": "curious",
     "lullaby_type": "origin"
+  },
+  {
+    "id": "gen-4af2afd65084",
+    "type": "story",
+    "lang": "en",
+    "title": "Dot and the Firefly River",
+    "description": "Dot the glowworm is afraid of the night. Her tiny light feels too small against the big, dark world. But when she meets the fireflies, she learns the dark isn’t empty—it’s full of little sparks just like her.",
+    "text": "Long ago, before fireflies filled the summer nights... Dot the glowworm lived in a hollow tree. Her light was soft, like a candle in a jar. The dark pressed close, and Dot shivered. Her belly felt tight. Her wings trembled. She peeked outside. The sky was black. The grass was black. Even the air felt heavy. Then—something flickered. A tiny light, dancing. Then another. And another. Dot crawled closer. The lights were fireflies! Their glow pulsed like breathing. The dark pressed close, but now it wasn’t empty. It was full of little sparks. One firefly landed near her. \"Why do you hide?\" it asked. Dot’s light dimmed. \"I’m too small,\" she whispered. The firefly laughed. \"So are we. But together? We light up the whole river.\" Dot took a deep breath. She let her light shine. The fireflies cheered. Their glow rippled like water. The dark pressed close, but now it was warm. Now it was safe. Dot curled up in the grass. The fireflies hummed a quiet song. Their lights twinkled like stars. And ever since then, the dark glows with tiny sparks.",
+    "annotated_text": "Long ago, before fireflies filled the summer nights...\n\nDot the glowworm lived in a hollow tree. [PAUSE: 800] Her light was soft, like a candle in a jar. [PHRASE]The dark pressed close[/PHRASE], and Dot shivered. Her belly felt tight. Her wings trembled.\n\nShe peeked outside. The sky was black. The grass was black. Even the air felt heavy. [PAUSE: 1200] Then—something flickered. A tiny light, dancing. Then another. And another. [MUSIC]\n\nDot crawled closer. The lights were fireflies! Their glow pulsed like breathing. [PHRASE]The dark pressed close[/PHRASE], but now it wasn’t empty. It was full of little sparks.\n\nOne firefly landed near her. \"Why do you hide?\" it asked. Dot’s light dimmed. \"I’m too small,\" she whispered. The firefly laughed. \"So are we. But together? We light up the whole river.\"\n\nDot took a deep breath. She let her light shine. [PAUSE: 1500] The fireflies cheered. Their glow rippled like water. [PHRASE]The dark pressed close[/PHRASE], but now it was warm. Now it was safe.\n\nDot curled up in the grass. The fireflies hummed a quiet song. Their lights twinkled like stars. [MUSIC]\n\nAnd ever since then, the dark glows with tiny sparks.",
+    "target_age": 0,
+    "age_min": 0,
+    "age_max": 1,
+    "age_group": "0-1",
+    "length": "MEDIUM",
+    "word_count": 190,
+    "duration_seconds": 0,
+    "categories": [
+      "Bedtime",
+      "Nature"
+    ],
+    "theme": "animals",
+    "morals": [
+      "Even the smallest light can brighten the dark.",
+      "You are never alone when others shine beside you."
+    ],
+    "cover": "/covers/gen-4af2afd65084.svg",
+    "musicProfile": "",
+    "music_type": "baked",
+    "audio_variants": [
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-4af2_male_2.mp3",
+        "duration_seconds": 182.32,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-4af2_female_1.mp3",
+        "duration_seconds": 193.51,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "neutral",
+    "character": {
+      "name": "Dot",
+      "identity": "A tiny glowworm who is afraid of the dark.",
+      "special": "Her light is soft but steady, like a candle in a jar.",
+      "personality_tags": [
+        "Gentle",
+        "Curious"
+      ]
+    },
+    "cover_context": "A summer night by a quiet river, where fireflies dance above the water. The sky is deep blue, and the grass glows with tiny lights.",
+    "lead_character_type": "insect",
+    "character_name": "Dot",
+    "universe": "historical",
+    "geography": "southeast_asia",
+    "life_aspect": "family_home",
+    "plot_archetype": "quest_journey",
+    "diversityFingerprint": {
+      "characterType": "insect",
+      "setting": null,
+      "mood": null,
+      "storyType": null,
+      "plotShape": null,
+      "languageLevel": null,
+      "scale": "tiny_intimate",
+      "companion": null,
+      "movement": null,
+      "timeOfDay": "deep_night_starlight",
+      "weather": "clear_calm",
+      "theme": null,
+      "characterTrait": null,
+      "magicType": null,
+      "season": "summer",
+      "senseEmphasis": null
+    },
+    "mood": "anxious",
+    "story_type": "mythological",
+    "language_level": "basic",
+    "created_at": "2026-04-22T01:34:22.379268",
+    "updated_at": "2026-04-22T01:34:22.379268",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "has_baked_music": true,
+    "experimental_v2": true,
+    "hook": "I'm going to tell you something... the dark is just waiting to glow.",
+    "repeated_phrase": "The dark pressed close",
+    "raw_text": "Long ago, before fireflies filled the summer nights...\n\nDot the glowworm lived in a hollow tree. [PAUSE: 800] Her light was soft, like a candle in a jar. [PHRASE]The dark pressed close[/PHRASE], and Dot shivered. Her belly felt tight. Her wings trembled.\n\nShe peeked outside. The sky was black. The grass was black. Even the air felt heavy. [PAUSE: 1200] Then—something flickered. A tiny light, dancing. Then another. And another. [MUSIC]\n\nDot crawled closer. The lights were fireflies! Their glow pulsed like breathing. [PHRASE]The dark pressed close[/PHRASE], but now it wasn’t empty. It was full of little sparks.\n\nOne firefly landed near her. \"Why do you hide?\" it asked. Dot’s light dimmed. \"I’m too small,\" she whispered. The firefly laughed. \"So are we. But together? We light up the whole river.\"\n\nDot took a deep breath. She let her light shine. [PAUSE: 1500] The fireflies cheered. Their glow rippled like water. [PHRASE]The dark pressed close[/PHRASE], but now it was warm. Now it was safe.\n\nDot curled up in the grass. The fireflies hummed a quiet song. Their lights twinkled like stars. [MUSIC]\n\nAnd ever since then, the dark glows with tiny sparks.",
+    "duration": 4
+  },
+  {
+    "id": "heartbeat-2-5-2795",
+    "type": "song",
+    "lang": "en",
+    "title": "Mira's Humming Heart",
+    "card_label": "Humming",
+    "cover": "/covers/heartbeat-2-5-2795.svg",
+    "description": "A soothing humming lullaby that mimics the steady rhythm of a heartbeat, helping little ones sync their breathing to the sound. The gentle, wordless melody eases anxiety by creating a sense of warmth and closeness, guiding restless minds into peaceful sleep.",
+    "text": "[verse]\nMmm, la la, hush now, dear\nMmm, the night is almost here\nShh, na na, close your eyes\nMmm, the dark is soft surprise\n\n[verse]\nLa la, shh, the wind is low\nMmm, just feel the gentle glow\nNa na, hmm, the world is small\nMmm, and safe inside it all\n\n[verse]\nShh, la la\nMmm",
+    "annotated_text": "[verse]\nMmm, la la, hush now, dear\nMmm, the night is almost here\nShh, na na, close your eyes\nMmm, the dark is soft surprise\n\n[verse]\nLa la, shh, the wind is low\nMmm, just feel the gentle glow\nNa na, hmm, the world is small\nMmm, and safe inside it all\n\n[verse]\nShh, la la\nMmm",
+    "cover_context": "A small, round-faced child with rosy cheeks curled up in a nest of blankets, eyes half-closed, while soft golden light glows around them like a heartbeat. The room is dim, with gentle shadows shaped like wings.",
+    "target_age": 3,
+    "age_min": 2,
+    "age_max": 5,
+    "age_group": "2-5",
+    "duration": 1,
+    "duration_seconds": 74,
+    "author_id": "system",
+    "created_at": "2026-04-22T01:43:53.914745",
+    "updated_at": "2026-04-22T01:43:53.914766",
+    "audio_url": null,
+    "album_art_url": null,
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "categories": [
+      "Lullabies"
+    ],
+    "theme": "kindness",
+    "geography": "south_asia",
+    "plot_archetype": "discovery",
+    "lead_gender": "neutral",
+    "characterType": "land_mammal",
+    "is_generated": true,
+    "generation_quality": "good",
+    "music_genre": "lullaby",
+    "lead_character_type": "animal",
+    "character": {
+      "name": "Mira",
+      "identity": "A little girl who hums the world to sleep with her steady, warm heartbeat song.",
+      "special": "Her voice carries the rhythm of safety, wrapping every worry in a quiet, loving hum.",
+      "personality_tags": [
+        "Gentle",
+        "Sleepy"
+      ]
+    },
+    "about": "A soothing humming lullaby that mimics the steady rhythm of a heartbeat, helping little ones sync their breathing to the sound. The gentle, wordless melody eases anxiety by creating a sense of warmth and closeness, guiding restless minds into peaceful sleep.",
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/heartbeat-2-5-2795_female_1.mp3",
+        "duration_seconds": 74,
+        "provider": "minimax-music-v2"
+      }
+    ],
+    "mood": "anxious",
+    "lullaby_type": "heartbeat"
   }
 ]
