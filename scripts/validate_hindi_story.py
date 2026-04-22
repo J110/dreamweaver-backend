@@ -57,11 +57,13 @@ DIRECT_ADDRESS_PATTERNS = [
     r"\bTumne kabhi\b",
     r"\bTumhe pata hai\b",
     r"\bSuno na bachcho\b",
+    r"\bSuno zara\b",
     r"\bSocho zara\b",
     # Devanagari equivalents
     r"तुमने कभी",
     r"तुम्हें पता है",
     r"सुनो ना बच्चो",
+    r"सुनो ज़रा",
     r"सोचो ज़रा",
 ]
 

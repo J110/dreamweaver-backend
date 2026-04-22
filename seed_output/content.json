@@ -19907,5 +19907,138 @@
     ],
     "mood": "anxious",
     "lullaby_type": "heartbeat"
+  },
+  {
+    "id": "hi-mitra-6-8-jugn",
+    "type": "story",
+    "lang": "hi",
+    "title": "Jugnu aur Chaand",
+    "title_deva": "जुगनू और चाँद",
+    "title_en": "The Firefly and the Moon",
+    "description": "Jugnu aur Chaand ki chhupi si dosti — tim tim, tim tim.",
+    "description_en": "A tiny Indian firefly named Jugnu and the moon share a quiet friendship across the night — he blinks in sets of three to signal, and the moon always peeks back through the clouds.",
+    "hook": "Kya tum jaante ho, Chaand ka sabse chhota dost kaun hai",
+    "hook_deva": "क्या तुम जानते हो, चाँद का सबसे छोटा दोस्त कौन है?",
+    "text": "Raat thi gehri. Aasmaan mein Chaand chamak raha tha, aur neeche ghaas ke maidaan mein Jugnu Chaand ki taraf dekh raha tha.\n\nDono bahut purane dost the — ek upar, ek neeche. Jab bhi raat hoti, dono ek doosre ko dhoondte.\n\nTumne kabhi jugnu dekha hai raat ko? Unki roshni aisi hi hoti hai — tim tim, tim tim.\n\nJugnu teen baar blink karta tha. Hamesha teen — jaise Chaand ko signal bhej raha ho, main yahaan hoon, main yahaan hoon.\n\nTim tim, chandni re.\n\nTumhe pata hai Chaand bhi dost dhoondhta hai? Bade bade taaron ke beech mein, uska sabse chhota dost Jugnu hi hai.\n\nUs raat baadal thode mote the. Jugnu ne upar dekha, par Chaand dikhayi nahi diya. Jugnu ne phir teen baar blink kiya — tim, tim, tim.\n\nAur tabhi baadal hate. Chaand ne jhaanka, aur muskuraya.\n\nTim tim, chandni re.\n\nSuno zara — ab hawa dheemi thi. Jugnu ki roshni bhi dheemi, aur Chaand ki chandni bhi naram.\n\nDono dost chupchap ek doosre ko dekh rahe the. Koi baat nahi karni thi — bas saath hona hi kaafi tha.\n\nTim tim, chandni re.\n\nJugnu ghaas ke upar baith gaya. Aankhein bhari, roshni halki.\n\nChaand upar raha. Dost so gaya, aur Chaand ne chandni aur naram kar di.\n\nAur Jugnu so gaya.",
+    "text_deva": "रात थी गहरी। आसमान में चाँद चमक रहा था, और नीचे घास के मैदान में जुगनू चाँद की तरफ देख रहा था।\n\nदोनों बहुत पुराने दोस्त थे — एक ऊपर, एक नीचे। जब भी रात होती, दोनों एक दूसरे को ढूँढते।\n\nतुमने कभी जुगनू देखा है रात को? उनकी रोशनी ऐसी ही होती है — टिम टिम, टिम टिम।\n\nजुगनू तीन बार ब्लिंक करता था। हमेशा तीन — जैसे चाँद को सिग्नल भेज रहा हो, मैं यहाँ हूँ, मैं यहाँ हूँ।\n\nटिम टिम, चाँदनी रे।\n\nतुम्हें पता है चाँद भी दोस्त ढूँढता है? बड़े बड़े तारों के बीच में, उसका सबसे छोटा दोस्त जुगनू ही है।\n\nउस रात बादल थोड़े मोटे थे। जुगनू ने ऊपर देखा, पर चाँद दिखाई नहीं दिया। जुगनू ने फिर तीन बार ब्लिंक किया — टिम, टिम, टिम।\n\nऔर तभी बादल हटे। चाँद ने झाँका, और मुस्कुराया।\n\nटिम टिम, चाँदनी रे।\n\nसुनो ज़रा — अब हवा धीमी थी। जुगनू की रोशनी भी धीमी, और चाँद की चाँदनी भी नरम।\n\nदोनों दोस्त चुपचाप एक दूसरे को देख रहे थे। कोई बात नहीं करनी थी — बस साथ होना ही काफ़ी था।\n\nटिम टिम, चाँदनी रे।\n\nजुगनू घास के ऊपर बैठ गया। आँखें भारी, रोशनी हल्की।\n\nचाँद ऊपर रहा। दोस्त सो गया, और चाँद ने चाँदनी और नरम कर दी।\n\nऔर जुगनू सो गया।",
+    "raw_text": "Raat thi gehri. Aasmaan mein Chaand chamak raha tha, aur neeche ghaas ke maidaan mein Jugnu Chaand ki taraf dekh raha tha.\n\nDono bahut purane dost the — ek upar, ek neeche. Jab bhi raat hoti, dono ek doosre ko dhoondte.\n\n[PAUSE: 800]\n\nTumne kabhi jugnu dekha hai raat ko? Unki roshni aisi hi hoti hai — tim tim, tim tim.\n\nJugnu teen baar blink karta tha. Hamesha teen — jaise Chaand ko signal bhej raha ho, main yahaan hoon, main yahaan hoon.\n\n[PHRASE] Tim tim, chandni re. [/PHRASE]\n[PAUSE: 600]\n\nTumhe pata hai Chaand bhi dost dhoondhta hai? Bade bade taaron ke beech mein, uska sabse chhota dost Jugnu hi hai.\n\nUs raat baadal thode mote the. Jugnu ne upar dekha, par Chaand dikhayi nahi diya. Jugnu ne phir teen baar blink kiya — tim, tim, tim.\n\n[MUSIC]\n\nAur tabhi baadal hate. Chaand ne jhaanka, aur muskuraya.\n\n[PHRASE] Tim tim, chandni re. [/PHRASE]\n[PAUSE: 1000]\n\nSuno zara — ab hawa dheemi thi. Jugnu ki roshni bhi dheemi, aur Chaand ki chandni bhi naram.\n\nDono dost chupchap ek doosre ko dekh rahe the. Koi baat nahi karni thi — bas saath hona hi kaafi tha.\n\n[PHRASE] Tim tim, chandni re. [/PHRASE]\n[PAUSE: 800]\n\nJugnu ghaas ke upar baith gaya. Aankhein bhari, roshni halki.\n\nChaand upar raha. Dost so gaya, aur Chaand ne chandni aur naram kar di.\n\nAur Jugnu so gaya.",
+    "raw_text_deva": "रात थी गहरी। आसमान में चाँद चमक रहा था, और नीचे घास के मैदान में जुगनू चाँद की तरफ देख रहा था।\n\nदोनों बहुत पुराने दोस्त थे — एक ऊपर, एक नीचे। जब भी रात होती, दोनों एक दूसरे को ढूँढते।\n\n[PAUSE: 800]\n\nतुमने कभी जुगनू देखा है रात को? उनकी रोशनी ऐसी ही होती है — टिम टिम, टिम टिम।\n\nजुगनू तीन बार ब्लिंक करता था। हमेशा तीन — जैसे चाँद को सिग्नल भेज रहा हो, मैं यहाँ हूँ, मैं यहाँ हूँ।\n\n[PHRASE] टिम टिम, चाँदनी रे। [/PHRASE]\n[PAUSE: 600]\n\nतुम्हें पता है चाँद भी दोस्त ढूँढता है? बड़े बड़े तारों के बीच में, उसका सबसे छोटा दोस्त जुगनू ही है।\n\nउस रात बादल थोड़े मोटे थे। जुगनू ने ऊपर देखा, पर चाँद दिखाई नहीं दिया। जुगनू ने फिर तीन बार ब्लिंक किया — टिम, टिम, टिम।\n\n[MUSIC]\n\nऔर तभी बादल हटे। चाँद ने झाँका, और मुस्कुराया।\n\n[PHRASE] टिम टिम, चाँदनी रे। [/PHRASE]\n[PAUSE: 1000]\n\nसुनो ज़रा — अब हवा धीमी थी। जुगनू की रोशनी भी धीमी, और चाँद की चाँदनी भी नरम।\n\nदोनों दोस्त चुपचाप एक दूसरे को देख रहे थे। कोई बात नहीं करनी थी — बस साथ होना ही काफ़ी था।\n\n[PHRASE] टिम टिम, चाँदनी रे। [/PHRASE]\n[PAUSE: 800]\n\nजुगनू घास के ऊपर बैठ गया। आँखें भारी, रोशनी हल्की।\n\nचाँद ऊपर रहा। दोस्त सो गया, और चाँद ने चाँदनी और नरम कर दी।\n\nऔर जुगनू सो गया।",
+    "repeated_phrase": "Tim tim, chandni re",
+    "repeated_phrase_deva": "टिम टिम, चाँदनी रे",
+    "character": {
+      "name": "Jugnu",
+      "identity": "a tiny Indian firefly named Jugnu with a soft green-gold glowing abdomen, flying just above tall silver grass beside a slow river under a deep indigo night sky",
+      "special": "he blinks in sets of three — a private signal to the moon, who always peeks back through the clouds",
+      "personality_tags": [
+        "Gentle",
+        "Loyal"
+      ]
+    },
+    "character_name": "Jugnu",
+    "characterType": "insect",
+    "lead_character_type": "insect",
+    "lead_gender": "male",
+    "age_group": "6-8",
+    "ageGroup": "6-8",
+    "age_min": 6,
+    "age_max": 8,
+    "target_age": 7,
+    "mood": "calm",
+    "story_type": "mitra_katha",
+    "storyType": "mitra_katha",
+    "theme": "friendship",
+    "themes": [
+      "friendship",
+      "night_sky",
+      "gentle_companionship"
+    ],
+    "geography": "south_asia",
+    "indian_region": "east",
+    "experimental_v2": true,
+    "has_baked_music": true,
+    "tts_engine": "elevenlabs_multilingual_v2",
+    "tts_input_script": "devanagari",
+    "cover": "/covers/hi-mitra-6-8-jugn.svg",
+    "audio_variants": [
+      {
+        "voice": "tripti",
+        "url": "/audio/pre-gen/hi-mitra-6-8-jugn_tripti.mp3",
+        "duration_seconds": 195,
+        "provider": "elevenlabs-multilingual-v2"
+      }
+    ],
+    "audio_url": "/audio/pre-gen/hi-mitra-6-8-jugn_tripti.mp3",
+    "duration_seconds": 195,
+    "word_count": 216,
+    "created_at": "2026-04-22T15:41:55",
+    "updated_at": "2026-04-22T15:41:55",
+    "is_generated": true,
+    "author_id": "system",
+    "categories": [
+      "Bedtime"
+    ]
+  },
+  {
+    "id": "hi-shield-2-5-main",
+    "type": "song",
+    "lang": "hi",
+    "title": "Main Yahin Hoon",
+    "title_deva": "मैं यहीं हूँ",
+    "title_en": "I Am Here",
+    "description": "Maa ki dheemi awaaz — main yahin hoon, koi dar nahi",
+    "description_en": "A soft Hindi shield lullaby — a mother's quiet promise that she is here, a small earthen lamp glows beside the bed, the child is safe to close their eyes.",
+    "text": "Main yahin hoon, meri jaan\nNeend aa jaayegi dheere\nDiya jal raha hai paas\nChaadar halki si hai tere\n\nMain yahin hoon, main yahin hoon\nKoi dar nahi, meri jaan\nMain yahin hoon, main yahin hoon\nAankhein band kar, ab so ja\n\nRaat thandi si hai baahar\nGhar mein garam sa pyaar\nTaare upar, Chaand upar\nTu bhi neend mein utar\n\nMain yahin hoon, main yahin hoon\nKoi dar nahi, meri jaan\nMain yahin hoon, main yahin hoon\nAankhein band kar, ab so ja\n\nSaans halki, saans dheere\nSapne aane waale hain\nMain yahin hoon tere paas\nDar nahi, dar nahi, dar nahi hai",
+    "text_deva": "मैं यहीं हूँ, मेरी जान\nनींद आ जाएगी धीरे\nदिया जल रहा है पास\nचादर हल्की सी है तेरे\n\nमैं यहीं हूँ, मैं यहीं हूँ\nकोई डर नहीं, मेरी जान\nमैं यहीं हूँ, मैं यहीं हूँ\nआँखें बंद कर, अब सो जा\n\nरात ठंडी सी है बाहर\nघर में गरम सा प्यार\nतारे ऊपर, चाँद ऊपर\nतू भी नींद में उतर\n\nमैं यहीं हूँ, मैं यहीं हूँ\nकोई डर नहीं, मेरी जान\nमैं यहीं हूँ, मैं यहीं हूँ\nआँखें बंद कर, अब सो जा\n\nसाँस हल्की, साँस धीरे\nसपने आने वाले हैं\nमैं यहीं हूँ तेरे पास\nडर नहीं, डर नहीं, डर नहीं है",
+    "lyrics": "Main yahin hoon, meri jaan\nNeend aa jaayegi dheere\nDiya jal raha hai paas\nChaadar halki si hai tere\n\nMain yahin hoon, main yahin hoon\nKoi dar nahi, meri jaan\nMain yahin hoon, main yahin hoon\nAankhein band kar, ab so ja\n\nRaat thandi si hai baahar\nGhar mein garam sa pyaar\nTaare upar, Chaand upar\nTu bhi neend mein utar\n\nMain yahin hoon, main yahin hoon\nKoi dar nahi, meri jaan\nMain yahin hoon, main yahin hoon\nAankhein band kar, ab so ja\n\nSaans halki, saans dheere\nSapne aane waale hain\nMain yahin hoon tere paas\nDar nahi, dar nahi, dar nahi hai",
+    "lyrics_deva": "मैं यहीं हूँ, मेरी जान\nनींद आ जाएगी धीरे\nदिया जल रहा है पास\nचादर हल्की सी है तेरे\n\nमैं यहीं हूँ, मैं यहीं हूँ\nकोई डर नहीं, मेरी जान\nमैं यहीं हूँ, मैं यहीं हूँ\nआँखें बंद कर, अब सो जा\n\nरात ठंडी सी है बाहर\nघर में गरम सा प्यार\nतारे ऊपर, चाँद ऊपर\nतू भी नींद में उतर\n\nमैं यहीं हूँ, मैं यहीं हूँ\nकोई डर नहीं, मेरी जान\nमैं यहीं हूँ, मैं यहीं हूँ\nआँखें बंद कर, अब सो जा\n\nसाँस हल्की, साँस धीरे\nसपने आने वाले हैं\nमैं यहीं हूँ तेरे पास\nडर नहीं, डर नहीं, डर नहीं है",
+    "raw_lyrics": "[verse]\nMain yahin hoon, meri jaan\nNeend aa jaayegi dheere\nDiya jal raha hai paas\nChaadar halki si hai tere\n\n[chorus]\nMain yahin hoon, main yahin hoon\nKoi dar nahi, meri jaan\nMain yahin hoon, main yahin hoon\nAankhein band kar, ab so ja\n\n[verse]\nRaat thandi si hai baahar\nGhar mein garam sa pyaar\nTaare upar, Chaand upar\nTu bhi neend mein utar\n\n[chorus]\nMain yahin hoon, main yahin hoon\nKoi dar nahi, meri jaan\nMain yahin hoon, main yahin hoon\nAankhein band kar, ab so ja\n\n[verse]\nSaans halki, saans dheere\nSapne aane waale hain\nMain yahin hoon tere paas\nDar nahi, dar nahi, dar nahi hai\n",
+    "raw_lyrics_deva": "[verse]\nमैं यहीं हूँ, मेरी जान\nनींद आ जाएगी धीरे\nदिया जल रहा है पास\nचादर हल्की सी है तेरे\n\n[chorus]\nमैं यहीं हूँ, मैं यहीं हूँ\nकोई डर नहीं, मेरी जान\nमैं यहीं हूँ, मैं यहीं हूँ\nआँखें बंद कर, अब सो जा\n\n[verse]\nरात ठंडी सी है बाहर\nघर में गरम सा प्यार\nतारे ऊपर, चाँद ऊपर\nतू भी नींद में उतर\n\n[chorus]\nमैं यहीं हूँ, मैं यहीं हूँ\nकोई डर नहीं, मेरी जान\nमैं यहीं हूँ, मैं यहीं हूँ\nआँखें बंद कर, अब सो जा\n\n[verse]\nसाँस हल्की, साँस धीरे\nसपने आने वाले हैं\nमैं यहीं हूँ तेरे पास\nडर नहीं, डर नहीं, डर नहीं है\n",
+    "lullaby_type": "shield",
+    "age_group": "2-5",
+    "ageGroup": "2-5",
+    "age_min": 2,
+    "age_max": 5,
+    "target_age": 4,
+    "mood": "calm",
+    "character": {
+      "name": "Maa",
+      "identity": "a small sleeping Indian toddler wrapped in a soft warm chaadar, a single earthen diya (oil lamp) glowing beside the bed, a calm maternal presence implied but not shown",
+      "special": "the diya's small golden flame is the only light — everything else is warm shadow",
+      "personality_tags": [
+        "Safe",
+        "Warm"
+      ]
+    },
+    "character_name": "Maa",
+    "characterType": "human_child",
+    "theme": "safety",
+    "instruments": [
+      "tanpura",
+      "bansuri"
+    ],
+    "geography": "south_asia",
+    "indian_region": "north",
+    "cover": "/covers/hi-shield-2-5-main.svg",
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/hi-shield-2-5-main_female_1.mp3",
+        "duration_seconds": 63,
+        "provider": "minimax-music-v2.5"
+      }
+    ],
+    "audio_url": "/audio/lullabies/hi-shield-2-5-main.mp3",
+    "duration_seconds": 63,
+    "word_count": 104,
+    "music_type": "ambient",
+    "music_genre": "lullaby",
+    "categories": [
+      "Lullabies"
+    ],
+    "is_generated": true,
+    "author_id": "system",
+    "tts_input_script": "devanagari",
+    "created_at": "2026-04-22T15:59:27",
+    "updated_at": "2026-04-22T15:59:27"
   }
 ]

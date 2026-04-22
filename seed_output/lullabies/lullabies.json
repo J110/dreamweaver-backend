@@ -1101,5 +1101,43 @@
     "created_at": "2026-04-20",
     "raw_lyrics": "[verse]\nEk do teen, ginte jaao\nTaare saare dekhte jaao\nNeend ki raahon par chalo pyaari\nRani bulbul, so jaao dheere\n\n[chorus]\nGin gin taare, ek do teen\nChup chup ke sab hain sheen\nAankhein meechi, saans halki\nAaja neend, ho tum halki\n\n[verse]\nChaar paanch chhe, sapno wale\nChaand ke piche baadal jaale\nBansuri bajti hai dheere dheere\nNeend ki godi mein aao pyaari\n\n[chorus]\nGin gin taare, ek do teen\nChup chup ke sab hain sheen\n\n[verse]\nSaat aath nau, sab sitaare\nSoye dheere dheere saare\nAb aankhein band karo pyaari\nRani bulbul, so gayi dheere\n",
     "raw_lyrics_deva": "[verse]\nएक दो तीन, गिनते जाओ\nतारे सारे देखते जाओ\nनींद की राहों पर चलो प्यारी\nरानी बुलबुल, सो जाओ धीरे\n\n[chorus]\nगिन गिन तारे, एक दो तीन\nचुप चुप के सब हैं शीन\nआँखें मींची, साँस हल्की\nआजा नींद, हो तुम हल्की\n\n[verse]\nचार पाँच छह, सपनों वाले\nचाँद के पीछे बादल जाले\nबंसुरी बजती है धीरे धीरे\nनींद की गोदी में आओ प्यारी\n\n[chorus]\nगिन गिन तारे, एक दो तीन\nचुप चुप के सब हैं शीन\n\n[verse]\nसात आठ नौ, सब सितारे\nसोये धीरे धीरे सारे\nअब आँखें बंद करो प्यारी\nरानी बुलबुल, सो गई धीरे\n"
+  },
+  {
+    "id": "hi-shield-2-5-main",
+    "title": "Main Yahin Hoon",
+    "title_deva": "मैं यहीं हूँ",
+    "lullaby_type": "shield",
+    "card_label": "Main Yahin Hoon",
+    "card_subtitle": "Maa ki dheemi awaaz — main yahin hoon, koi dar nahi",
+    "age_group": "2-5",
+    "mood": "calm",
+    "lang": "hi",
+    "language": "hi",
+    "audio_file": "hi-shield-2-5-main.mp3",
+    "cover_file": "hi-shield-2-5-main_cover.svg",
+    "duration_seconds": 63,
+    "lyrics": "Main yahin hoon, meri jaan\nNeend aa jaayegi dheere\nDiya jal raha hai paas\nChaadar halki si hai tere\n\nMain yahin hoon, main yahin hoon\nKoi dar nahi, meri jaan\nMain yahin hoon, main yahin hoon\nAankhein band kar, ab so ja\n\nRaat thandi si hai baahar\nGhar mein garam sa pyaar\nTaare upar, Chaand upar\nTu bhi neend mein utar\n\nMain yahin hoon, main yahin hoon\nKoi dar nahi, meri jaan\nMain yahin hoon, main yahin hoon\nAankhein band kar, ab so ja\n\nSaans halki, saans dheere\nSapne aane waale hain\nMain yahin hoon tere paas\nDar nahi, dar nahi, dar nahi hai",
+    "lyrics_deva": "मैं यहीं हूँ, मेरी जान\nनींद आ जाएगी धीरे\nदिया जल रहा है पास\nचादर हल्की सी है तेरे\n\nमैं यहीं हूँ, मैं यहीं हूँ\nकोई डर नहीं, मेरी जान\nमैं यहीं हूँ, मैं यहीं हूँ\nआँखें बंद कर, अब सो जा\n\nरात ठंडी सी है बाहर\nघर में गरम सा प्यार\nतारे ऊपर, चाँद ऊपर\nतू भी नींद में उतर\n\nमैं यहीं हूँ, मैं यहीं हूँ\nकोई डर नहीं, मेरी जान\nमैं यहीं हूँ, मैं यहीं हूँ\nआँखें बंद कर, अब सो जा\n\nसाँस हल्की, साँस धीरे\nसपने आने वाले हैं\nमैं यहीं हूँ तेरे पास\nडर नहीं, डर नहीं, डर नहीं है",
+    "raw_lyrics": "[verse]\nMain yahin hoon, meri jaan\nNeend aa jaayegi dheere\nDiya jal raha hai paas\nChaadar halki si hai tere\n\n[chorus]\nMain yahin hoon, main yahin hoon\nKoi dar nahi, meri jaan\nMain yahin hoon, main yahin hoon\nAankhein band kar, ab so ja\n\n[verse]\nRaat thandi si hai baahar\nGhar mein garam sa pyaar\nTaare upar, Chaand upar\nTu bhi neend mein utar\n\n[chorus]\nMain yahin hoon, main yahin hoon\nKoi dar nahi, meri jaan\nMain yahin hoon, main yahin hoon\nAankhein band kar, ab so ja\n\n[verse]\nSaans halki, saans dheere\nSapne aane waale hain\nMain yahin hoon tere paas\nDar nahi, dar nahi, dar nahi hai\n",
+    "raw_lyrics_deva": "[verse]\nमैं यहीं हूँ, मेरी जान\nनींद आ जाएगी धीरे\nदिया जल रहा है पास\nचादर हल्की सी है तेरे\n\n[chorus]\nमैं यहीं हूँ, मैं यहीं हूँ\nकोई डर नहीं, मेरी जान\nमैं यहीं हूँ, मैं यहीं हूँ\nआँखें बंद कर, अब सो जा\n\n[verse]\nरात ठंडी सी है बाहर\nघर में गरम सा प्यार\nतारे ऊपर, चाँद ऊपर\nतू भी नींद में उतर\n\n[chorus]\nमैं यहीं हूँ, मैं यहीं हूँ\nकोई डर नहीं, मेरी जान\nमैं यहीं हूँ, मैं यहीं हूँ\nआँखें बंद कर, अब सो जा\n\n[verse]\nसाँस हल्की, साँस धीरे\nसपने आने वाले हैं\nमैं यहीं हूँ तेरे पास\nडर नहीं, डर नहीं, डर नहीं है\n",
+    "style_prompt": "Protective Hindi shield lullaby, warm female vocal, low register, soft tanpura drone with a gentle bansuri flute above, 62 BPM, steady, certain, grounded, reassuring, no vibrato, direct delivery like a spoken promise set to a simple Hindustani melody, tender maternal voice, intimate bedroom atmosphere, minimal instrumentation, soft breath between phrases",
+    "engine": "minimax-music-v2.5",
+    "tts_input_script": "devanagari",
+    "character": {
+      "name": "Maa",
+      "identity": "a small sleeping Indian toddler wrapped in a soft warm chaadar, a single earthen diya (oil lamp) glowing beside the bed, a calm maternal presence implied but not shown",
+      "special": "the diya's small golden flame is the only light — everything else is warm shadow",
+      "personality_tags": [
+        "Safe",
+        "Warm"
+      ]
+    },
+    "characterType": "human_child",
+    "instrument": "tanpura_bansuri",
+    "imagery": "diya_chaadar",
+    "theme": "safety",
+    "geography": "south_asia",
+    "indian_region": "north",
+    "created_at": "2026-04-22"
   }
 ]
