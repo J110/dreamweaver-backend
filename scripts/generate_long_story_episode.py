@@ -23,12 +23,14 @@ Usage:
 
 import argparse
 import base64
+import gc
 import io
 import json
 import os
 import random
 import re
 import shutil
+import subprocess
 import sys
 import time
 from datetime import datetime
@@ -1616,7 +1618,7 @@ def parse_section_into_segments(text):
 
 def _parse_single_line(line):
     """Determine if a line is dialogue or narration."""
-    char_match = re.match(r'^([A-Z][A-Za-z\s]+?):\s*["\']?(.+?)["\']?\s*$', line)
+    char_match = re.match(r'^([A-Z][A-Z\s]+?):\s*["\']?(.+?)["\']?\s*$', line)
     if char_match:
         return {
             "type": "dialogue",
@@ -1891,107 +1893,120 @@ def _apply_breathe_swells(bed_segment, breathe_positions, base_db):
     return result
 
 
-def assemble_long_story_episode(section_audios, song_audio_path, mood):
-    """
-    Assemble complete long story episode with continuous music bed.
+def _export_part_wav(segment, path):
+    """Export an AudioSegment to WAV at path and return its duration in ms."""
+    dur = len(segment)
+    segment.export(path, format="wav")
+    return dur
 
-    Timeline:
-    [music intro]
-    [2s silence]
-    [Part A: intro + phase_1 narration + bed at -20dB]
-    [bed fades out 2s → song fades in]
-    [THE SONG — standalone, no bed]
-    [song fades out → bed fades in 2s]
-    [Part B: post_song + phase_2 narration + bed at -14dB]
-    [Part C: phase_3 narration + bed at -10dB]
-    [bed alone 30s fading to silence — this IS the outro]
 
-    Bed is CONTINUOUS from first narrator word to 30s after last word.
-    Silent only during the song, with crossfade transitions.
-    [BREATHE] tags create +10dB swell moments in the bed.
+def assemble_long_story_episode_streaming(section_audios, song_audio_path, mood, output_dir):
     """
-    # Load mood music
+    Stream-assemble the episode by building each Part, writing it to a temp
+    WAV, freeing it from memory, and finally concatenating all temp WAVs into
+    a single MP3 via ffmpeg.
+
+    Why: holding the entire 14+ min episode in pydub memory (plus intermediate
+    overlays) peaks ~800MB on a 2GB VM and triggers swap thrash. The old
+    single-`output` approach hung for 20+ min on MP3 export when the VM was
+    under pressure. Exporting per-part keeps peak RSS at ~Part size (~150MB).
+
+    Returns (episode_mp3_path, total_duration_sec).
+    """
+    parts_dir = os.path.join(output_dir, "_parts")
+    os.makedirs(parts_dir, exist_ok=True)
+    part_paths = []
+    total_ms = 0
+
+    def add_part(name, segment):
+        nonlocal total_ms
+        p = os.path.join(parts_dir, f"{name}.wav")
+        total_ms += _export_part_wav(segment, p)
+        part_paths.append(p)
+
+    # ── Music intro + 2s silence ──
     intro_music = AudioSegment.from_wav(str(MUSIC_DIR / f"intro_{mood}.wav"))
+    add_part("00_intro_music", intro_music + AudioSegment.silent(duration=2000))
+    del intro_music
+    gc.collect()
+
+    # Bed is reused across Parts A/B/C — load once, drop after use.
     bed_raw = AudioSegment.from_wav(str(MUSIC_DIR / f"bed_{mood}.wav"))
-
-    output = AudioSegment.empty()
-
-    # ── Music intro ──
-    output += intro_music
-    output += AudioSegment.silent(duration=2000)
 
     # ═══ PART A: intro + phase_1 with bed at -20dB ═══
     intro_audio, intro_breathes = stitch_chunks(section_audios["intro"], gap_ms=400)
     p1_audio, p1_breathes = stitch_chunks(section_audios["phase_1"], gap_ms=300)
-
-    # Combine intro + 1s gap + phase_1 into one voice track
     gap_between = AudioSegment.silent(duration=1000)
     part_a_voice = intro_audio + gap_between + p1_audio
-
-    # Offset p1 breathe positions by intro + gap length
     p1_offset = len(intro_audio) + len(gap_between)
     all_a_breathes = intro_breathes + [pos + p1_offset for pos in p1_breathes]
+    del intro_audio, p1_audio, gap_between
+    gc.collect()
 
-    # Build bed for Part A (same length as voice)
-    part_a_bed = _trim_or_loop(bed_raw, len(part_a_voice))
-    part_a_bed = part_a_bed - 20  # -20dB base
-    part_a_bed = _apply_breathe_swells(part_a_bed, all_a_breathes, -20)
+    part_a_bed = _trim_or_loop(bed_raw, len(part_a_voice)) - 20
+    part_a_bed = _apply_breathe_swells(part_a_bed, all_a_breathes, -20).fade_out(2000)
+    add_part("01_part_a", part_a_voice.overlay(part_a_bed))
+    del part_a_voice, part_a_bed, intro_breathes, p1_breathes, all_a_breathes
+    gc.collect()
 
-    # Fade out last 2s of bed for transition into song
-    part_a_bed = part_a_bed.fade_out(2000)
-
-    part_a_mixed = part_a_voice.overlay(part_a_bed)
-    output += part_a_mixed
-
-    # ═══ SONG with crossfade transitions ═══
+    # ═══ SONG with crossfade-ish transitions ═══
     song = AudioSegment.from_file(song_audio_path)
-
-    # 500ms silence before song, then song with 2s fade-in at start
-    # and 2s fade-out at end, then 500ms silence after
-    output += AudioSegment.silent(duration=500)
-    song_with_fades = song.fade_in(2000).fade_out(2000)
-    output += song_with_fades
-    output += AudioSegment.silent(duration=500)
+    song_with_fades = (AudioSegment.silent(duration=500) + song.fade_in(2000).fade_out(2000)
+                       + AudioSegment.silent(duration=500))
+    add_part("02_song", song_with_fades)
+    del song, song_with_fades
+    gc.collect()
 
     # ═══ PART B: post_song + phase_2 with bed at -14dB ═══
     post_audio, post_breathes = stitch_chunks(section_audios["post_song"], gap_ms=500)
     p2_audio, p2_breathes = stitch_chunks(section_audios["phase_2"], gap_ms=500)
-
     gap_b = AudioSegment.silent(duration=1000)
     part_b_voice = post_audio + gap_b + p2_audio
-
     p2_offset = len(post_audio) + len(gap_b)
     all_b_breathes = post_breathes + [pos + p2_offset for pos in p2_breathes]
+    del post_audio, p2_audio, gap_b
+    gc.collect()
 
-    part_b_bed = _trim_or_loop(bed_raw, len(part_b_voice))
-    part_b_bed = part_b_bed - 14  # -14dB: more present as voice slows
-    part_b_bed = _apply_breathe_swells(part_b_bed, all_b_breathes, -14)
+    part_b_bed = _trim_or_loop(bed_raw, len(part_b_voice)) - 14
+    part_b_bed = _apply_breathe_swells(part_b_bed, all_b_breathes, -14).fade_in(2000)
+    add_part("03_part_b", part_b_voice.overlay(part_b_bed))
+    del part_b_voice, part_b_bed, post_breathes, p2_breathes, all_b_breathes
+    gc.collect()
 
-    # Fade in first 2s of bed (coming back after song)
-    part_b_bed = part_b_bed.fade_in(2000)
-
-    part_b_mixed = part_b_voice.overlay(part_b_bed)
-    output += part_b_mixed
-
-    # ═══ PART C: phase_3 with bed at -10dB + 30s tail fade ═══
+    # ═══ PART C: phase_3 with bed at -10dB, then 30s bed tail ═══
     p3_audio, p3_breathes = stitch_chunks(section_audios["phase_3"], gap_ms=800)
+    p3_bed_full = _trim_or_loop(bed_raw, len(p3_audio) + 30000) - 10
+    p3_bed_full = _apply_breathe_swells(p3_bed_full, p3_breathes, -10)
+    add_part("04_part_c", p3_audio.overlay(p3_bed_full[:len(p3_audio)]))
+    tail = p3_bed_full[len(p3_audio):len(p3_audio) + 30000].fade_out(15000)
+    add_part("05_tail", tail)
+    del p3_audio, p3_bed_full, tail, p3_breathes, bed_raw
+    gc.collect()
 
-    # Bed covers voice + 30s tail
-    p3_bed = _trim_or_loop(bed_raw, len(p3_audio) + 30000)
-    p3_bed = p3_bed - 10  # -10dB: bed becomes primary sound
-    p3_bed = _apply_breathe_swells(p3_bed, p3_breathes, -10)
+    # ── Final: ffmpeg concat demuxer → MP3 (streams from disk, tiny RSS) ──
+    episode_path = os.path.join(output_dir, "episode.mp3")
+    concat_list = os.path.join(parts_dir, "_concat.txt")
+    with open(concat_list, "w") as f:
+        for p in part_paths:
+            f.write(f"file '{p}'\n")
+    cmd = [
+        "ffmpeg", "-y", "-loglevel", "warning",
+        "-f", "concat", "-safe", "0", "-i", concat_list,
+        "-c:a", "libmp3lame", "-b:a", "192k",
+        episode_path,
+    ]
+    subprocess.run(cmd, check=True)
 
-    # Voice portion overlaid with bed
-    p3_mixed = p3_audio.overlay(p3_bed[:len(p3_audio)])
-    output += p3_mixed
+    # Clean up temp WAVs — they're big (~200MB for a 14min episode).
+    for p in part_paths:
+        try: os.remove(p)
+        except OSError: pass
+    try: os.remove(concat_list)
+    except OSError: pass
+    try: os.rmdir(parts_dir)
+    except OSError: pass
 
-    # Bed alone for 30s, fading to silence — this IS the outro.
-    # No outro music. The child is asleep.
-    bed_tail = p3_bed[len(p3_audio):len(p3_audio) + 30000]
-    bed_tail = bed_tail.fade_out(15000)
-    output += bed_tail
-
-    return output
+    return episode_path, total_ms / 1000.0
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -2386,14 +2401,9 @@ def publish_episode(output_dir, params, metadata, duration_seconds):
         shutil.copy2(episode_path, web_audio)
         print(f"  Copied audio: {web_audio}")
 
-    # Copy cover if exists
+    # Cover: leave empty — pipeline cover step generates proper SVG covers
+    # and updates content.json with the correct /covers/{id}.svg path
     cover_field = ""
-    if os.path.exists(cover_path):
-        web_cover = BASE_DIR.parent / "dreamweaver-web" / "public" / "covers" / f"{story_id}.webp"
-        if web_cover.parent.exists():
-            shutil.copy2(cover_path, web_cover)
-            print(f"  Copied cover: {web_cover}")
-        cover_field = f"/covers/{story_id}.webp"
 
     # Build clean text (no tags)
     sections = metadata.get("sections", {})
@@ -2913,36 +2923,64 @@ def main():
         section_audio.export(section_path, format="wav")
         print(f"   Saved: {section_path} ({len(section_audio)/1000:.1f}s)")
 
-    # Step 7: Assembly
+    # Step 7: Assembly — streams parts to disk + ffmpeg-concats to MP3.
+    # Avoids holding the full 14-min episode in pydub memory (swap-thrash risk
+    # on small VMs). See assemble_long_story_episode_streaming docstring.
     print("9. Assembling episode...")
     if song_audio_path and os.path.exists(song_audio_path):
-        final_audio = assemble_long_story_episode(section_audios, song_audio_path, params["mood"])
+        episode_path, duration_sec = assemble_long_story_episode_streaming(
+            section_audios, song_audio_path, params["mood"], output_dir
+        )
     else:
-        # Assemble without song
+        # No song — assemble sections sequentially via disk streaming too.
         print("   (No song audio — assembling without song)")
-        output_audio = AudioSegment.empty()
+        parts_dir = os.path.join(output_dir, "_parts")
+        os.makedirs(parts_dir, exist_ok=True)
+        part_paths = []
+        total_ms = 0
         for section in ["intro", "phase_1", "post_song", "phase_2", "phase_3"]:
             gap = {"intro": 400, "phase_1": 300, "post_song": 500,
                    "phase_2": 500, "phase_3": 800}[section]
             sec_audio, _ = stitch_chunks(section_audios[section], gap_ms=gap)
-            output_audio += sec_audio
-            output_audio += AudioSegment.silent(duration=1000)
-        output_audio += AudioSegment.silent(duration=15000).fade_out(10000)
-        final_audio = output_audio
+            sec_audio = sec_audio + AudioSegment.silent(duration=1000)
+            p = os.path.join(parts_dir, f"{section}.wav")
+            total_ms += len(sec_audio)
+            sec_audio.export(p, format="wav")
+            part_paths.append(p)
+            del sec_audio
+            gc.collect()
+        tail = AudioSegment.silent(duration=15000).fade_out(10000)
+        p_tail = os.path.join(parts_dir, "_tail.wav")
+        total_ms += len(tail)
+        tail.export(p_tail, format="wav")
+        part_paths.append(p_tail)
+        del tail
+        gc.collect()
+        episode_path = os.path.join(output_dir, "episode.mp3")
+        concat_list = os.path.join(parts_dir, "_concat.txt")
+        with open(concat_list, "w") as f:
+            for p in part_paths:
+                f.write(f"file '{p}'\n")
+        subprocess.run([
+            "ffmpeg", "-y", "-loglevel", "warning",
+            "-f", "concat", "-safe", "0", "-i", concat_list,
+            "-c:a", "libmp3lame", "-b:a", "192k", episode_path,
+        ], check=True)
+        for p in part_paths:
+            try: os.remove(p)
+            except OSError: pass
+        try: os.remove(concat_list)
+        except OSError: pass
+        try: os.rmdir(parts_dir)
+        except OSError: pass
+        duration_sec = total_ms / 1000.0
 
-    episode_path = os.path.join(output_dir, "episode.mp3")
-    final_audio.export(episode_path, format="mp3", bitrate="192k")
-    duration_sec = len(final_audio) / 1000
     print(f"   Saved: {episode_path}")
     print(f"   Duration: {duration_sec:.0f}s ({duration_sec/60:.1f} minutes)")
 
-    # Step 8: Cover
+    # Step 10: Cover — SKIPPED (pipeline cover step generates proper SVG covers)
     cover_path = os.path.join(output_dir, "cover.webp")
-    if os.path.exists(cover_path):
-        print(f"10. Cover already exists: {cover_path}")
-    else:
-        print("10. Generating cover via FLUX...")
-        generate_cover(params, cover_path)
+    print("10. Cover: skipped (pipeline generates SVG covers)")
 
     # ── Final summary ──
     print()

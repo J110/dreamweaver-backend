@@ -1055,6 +1055,52 @@ def check_radio_health():
         print(f"  ❌ {msg}")
         issues.append(msg)
 
+    # 6. End-to-end: is YouTube actually broadcasting the live stream?
+    # The checks above only verify our side — ffmpeg can happily push RTMP
+    # frames into a dead stream key while YouTube shows the channel offline
+    # (happens when YouTube ends the live broadcast due to health issues,
+    # bitrate drops, or the 12-hour broadcast cap).
+    #
+    # Signal used: /live URL canonical redirect.
+    #   Live    → canonical lands on https://www.youtube.com/watch?v=<id>
+    #   Offline → canonical lands on https://www.youtube.com/channel/<id>
+    try:
+        probe_path = "/tmp/_dg_yt_probe.py"
+        probe_body = (
+            "import urllib.request, re, sys\n"
+            "try:\n"
+            "    req = urllib.request.Request("
+            "'https://www.youtube.com/@DreamValleyStories/live', "
+            "headers={'User-Agent':'Mozilla/5.0'})\n"
+            "    body = urllib.request.urlopen(req, timeout=20).read().decode('utf-8','ignore')\n"
+            "    m = re.search(r'<link rel=\"canonical\" href=\"([^\"]+)\"', body)\n"
+            "    canonical = m.group(1) if m else ''\n"
+            "    if '/watch?v=' in canonical:\n"
+            "        print('LIVE')\n"
+            "    elif '/channel/' in canonical or '/@' in canonical:\n"
+            "        print('OFFLINE')\n"
+            "    else:\n"
+            "        print('UNKNOWN:' + canonical[:80])\n"
+            "except Exception as e:\n"
+            "    print('ERROR:' + type(e).__name__)\n"
+        )
+        # Write probe to disk once then run — keeps quoting simple.
+        with open(probe_path, "w") as _f:
+            _f.write(probe_body)
+        out, rc = _ssh_run(f"python3 {probe_path}", timeout=30)
+        if rc == 0 and out.strip() == "LIVE":
+            print(f"  ✅ YouTube broadcast is LIVE (@DreamValleyStories)")
+        elif rc == 0 and out.strip() == "OFFLINE":
+            msg = ("YouTube broadcast is OFFLINE — ffmpeg may still be pushing "
+                   "into a dead stream key. Restart radio (see runbook) to reconnect.")
+            print(f"  ❌ {msg}")
+            issues.append(msg)
+        else:
+            print(f"  ⚠️  Could not determine YouTube live status (rc={rc}, out={out[:80]!r})")
+    except Exception as e:
+        # Network check is advisory — don't fail the whole guard on a flaky DNS.
+        print(f"  ⚠️  YouTube liveness probe failed: {e}")
+
     print(f"\n{'='*60}")
     if not issues:
         print(f"  ✅ Radio health: all checks passed.")
