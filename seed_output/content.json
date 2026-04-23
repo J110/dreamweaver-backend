@@ -20040,5 +20040,149 @@
     "tts_input_script": "devanagari",
     "created_at": "2026-04-22T15:59:27",
     "updated_at": "2026-04-22T15:59:27"
+  },
+  {
+    "id": "gen-1392861743df",
+    "type": "story",
+    "lang": "en",
+    "title": "Whistle and the Empty Nest",
+    "description": "Whistle the sparrow misses his friend who moved away. The nest feels wide, the evening feels long. Then, a small wing brushes his—just for a moment. Nothing is fixed, but the night feels softer.",
+    "text": "It was evening, and evenings always brought the same quiet. Whistle hopped into his nest. The twigs were still there. The leaves were still soft. But something was missing. He fluffed his feathers. He turned in a circle. The nest felt too big. The space beside him was empty. Shhh... listen... the wind rustled the branches. It sounded like a whisper. Whistle tucked his beak under his wing. The stars blinked on, one by one. The sky was wide, but the nest was wider. The space beside him was empty. Then—a soft touch. A feather brushed his. Not his friend. Just another sparrow, passing by. It didn’t stay. It didn’t talk. But for a breath, Whistle wasn’t alone. The nest still felt big. The evening still felt long. But the night air was warm. The stars were bright. The space beside him was empty. And that was enough. Whistle closed his eyes. The nest rocked gently. The house was quiet. And everything was fine. Just like that.",
+    "annotated_text": "It was evening, and evenings always brought the same quiet.\n\nWhistle hopped into his nest. The twigs were still there. The leaves were still soft. But something was [EMPHASIS]missing[/EMPHASIS]. [PAUSE: 1200]\n\nHe fluffed his feathers. He turned in a circle. The nest felt too big. [PHRASE]The space beside him was empty.[/PHRASE] [PAUSE: 1500]\n\nShhh... listen... the wind rustled the branches. It sounded like a whisper. [MUSIC]\n\nWhistle tucked his beak under his wing. The stars blinked on, one by one. The sky was wide, but the nest was wider. [PHRASE]The space beside him was empty.[/PHRASE] [PAUSE: 2000]\n\nThen—a soft touch. A feather brushed his. Not his friend. Just another sparrow, passing by. It didn’t stay. It didn’t talk. But for a breath, Whistle wasn’t alone. [MUSIC]\n\nThe nest still felt big. The evening still felt long. But the night air was warm. The stars were bright. [PHRASE]The space beside him was empty.[/PHRASE] And that was enough. [PAUSE: 1500]\n\nWhistle closed his eyes. The nest rocked gently. The house was quiet. And everything was fine. Just like that.",
+    "target_age": 0,
+    "age_min": 0,
+    "age_max": 1,
+    "age_group": "0-1",
+    "length": "SHORT",
+    "word_count": 175,
+    "duration_seconds": 0,
+    "categories": [
+      "Comfort",
+      "Slice of Life"
+    ],
+    "theme": "bedtime",
+    "morals": [
+      "It’s okay to miss someone.",
+      "Small kindnesses make the night softer."
+    ],
+    "cover": "/covers/gen-1392861743df.svg",
+    "musicProfile": "",
+    "music_type": "baked",
+    "audio_variants": [
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-1392_male_2.mp3",
+        "duration_seconds": 165.05,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/gen-1392_female_1.mp3",
+        "duration_seconds": 175.25,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "male",
+    "character": {
+      "name": "Whistle",
+      "identity": "A small sparrow who notices everything, especially the quiet moments",
+      "special": "His feathers ruffle just so when the wind blows from the east",
+      "personality_tags": [
+        "Gentle",
+        "Quiet"
+      ]
+    },
+    "cover_context": "A twilight sky streaked with pink and gold, a single nest woven into the branches of a bare tree, leaves rustling softly in the breeze.",
+    "lead_character_type": "bird",
+    "character_name": "Whistle",
+    "universe": "historical",
+    "geography": "south_america",
+    "life_aspect": "family_home",
+    "plot_archetype": "friendship_bonding",
+    "diversityFingerprint": {
+      "characterType": "bird",
+      "setting": null,
+      "mood": null,
+      "storyType": null,
+      "plotShape": null,
+      "languageLevel": null,
+      "scale": "tiny_intimate",
+      "companion": null,
+      "movement": null,
+      "timeOfDay": null,
+      "weather": "clear_calm",
+      "theme": null,
+      "characterTrait": null,
+      "magicType": null,
+      "season": "autumn",
+      "senseEmphasis": null
+    },
+    "mood": "sad",
+    "story_type": "slice_of_life",
+    "language_level": "basic",
+    "created_at": "2026-04-23T02:32:24.074931",
+    "updated_at": "2026-04-23T02:32:24.074931",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "has_baked_music": true,
+    "experimental_v2": true,
+    "hook": "You know that feeling when your favorite spot feels too big?",
+    "repeated_phrase": "The space beside him was empty",
+    "raw_text": "It was evening, and evenings always brought the same quiet.\n\nWhistle hopped into his nest. The twigs were still there. The leaves were still soft. But something was [EMPHASIS]missing[/EMPHASIS]. [PAUSE: 1200]\n\nHe fluffed his feathers. He turned in a circle. The nest felt too big. [PHRASE]The space beside him was empty.[/PHRASE] [PAUSE: 1500]\n\nShhh... listen... the wind rustled the branches. It sounded like a whisper. [MUSIC]\n\nWhistle tucked his beak under his wing. The stars blinked on, one by one. The sky was wide, but the nest was wider. [PHRASE]The space beside him was empty.[/PHRASE] [PAUSE: 2000]\n\nThen—a soft touch. A feather brushed his. Not his friend. Just another sparrow, passing by. It didn’t stay. It didn’t talk. But for a breath, Whistle wasn’t alone. [MUSIC]\n\nThe nest still felt big. The evening still felt long. But the night air was warm. The stars were bright. [PHRASE]The space beside him was empty.[/PHRASE] And that was enough. [PAUSE: 1500]\n\nWhistle closed his eyes. The nest rocked gently. The house was quiet. And everything was fine. Just like that.",
+    "duration": 3
+  },
+  {
+    "id": "heartbeat-0-1-867d",
+    "type": "song",
+    "lang": "en",
+    "title": "Humming",
+    "card_label": "Humming",
+    "cover": "/covers/heartbeat-0-1-867d.svg",
+    "description": "Just a gentle hum",
+    "text": "[verse]\nMmm... aah... mmm...\nHmm... ooh... hmm...\nMmm... eeh... mmm...\nAah... ooh... aah...\n\n[verse]\nMmm... ooh... mmm...\nHmm... aah... hmm...\nMmm... eeh... aah...\nOoh... mmm...\n\n[verse]\nMmm... aah...\nHmm...\nMmm...",
+    "annotated_text": "[verse]\nMmm... aah... mmm...\nHmm... ooh... hmm...\nMmm... eeh... mmm...\nAah... ooh... aah...\n\n[verse]\nMmm... ooh... mmm...\nHmm... aah... hmm...\nMmm... eeh... aah...\nOoh... mmm...\n\n[verse]\nMmm... aah...\nHmm...\nMmm...",
+    "cover_context": "Watercolor, extremely soft, single gentle curve suggesting breath, dark blue and purple, abstract, warmth and stillness",
+    "target_age": 0,
+    "age_min": 0,
+    "age_max": 1,
+    "age_group": "0-1",
+    "duration": 1,
+    "duration_seconds": 73,
+    "author_id": "system",
+    "created_at": "2026-04-23T02:40:48.212311",
+    "updated_at": "2026-04-23T02:40:48.212342",
+    "audio_url": null,
+    "album_art_url": null,
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "categories": [
+      "Lullabies"
+    ],
+    "theme": "kindness",
+    "geography": "middle_east",
+    "plot_archetype": "celebration",
+    "lead_gender": "neutral",
+    "characterType": "object_alive",
+    "is_generated": true,
+    "generation_quality": "good",
+    "music_genre": "lullaby",
+    "lead_character_type": "object",
+    "character": null,
+    "about": "",
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/heartbeat-0-1-867d_female_1.mp3",
+        "duration_seconds": 73,
+        "provider": "minimax-music-v2"
+      }
+    ],
+    "mood": "sad",
+    "lullaby_type": "heartbeat"
   }
 ]
