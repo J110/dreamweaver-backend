@@ -20184,5 +20184,337 @@
     ],
     "mood": "sad",
     "lullaby_type": "heartbeat"
+  },
+  {
+    "id": "gen-659740ac0422",
+    "type": "long_story",
+    "lang": "en",
+    "title": "Meera and Bansi and the Garden",
+    "description": "A bedtime story episode where Meera and Bansi discovers a magical garden.",
+    "text": "Close your eyes and let the air carry you to the Whispergarden, where every thought you’ve ever had has taken root like a seed. At night, the garden breathes—petals unfurl, vines stretch, and the soil sighs as dreams settle into the earth. You’ll know you’ve arrived when the ground hums beneath your paws, soft as a lullaby. This is where the lonely things go to rest. And tonight, something is waiting for you.\n\nThe first thing Meera noticed was the scent—like rain on dry leaves, like the moment before a yawn. She padded through the Whispergarden, her fox paws sinking into moss that glowed faintly blue. The air was thick with the sound of rustling, though no wind stirred. It was the sound of thoughts growing.\n\nMEERA: \"The roots remember everything.\"\n\nA path of silver pebbles stretched ahead, but when Meera hurried, the stones dimmed. She stopped, ears twitching. The path only glowed when she moved slowly. She tried again, stepping one paw at a time.\n\nIn through the nose, slow and deep. Out through the mouth, soft as a whisper.\n\nThe pebbles brightened, pulsing like a heartbeat. Meera followed them deeper into the garden, where the trees grew upside-down—roots curling in the air like fingers reaching for the sky. Between their branches, something flickered. A light, but not from the moon. It was warm, like a lantern left behind.\n\nMEERA: \"Who’s there?\"\n\nA voice, drowsy and slow, answered from the shadows.\n\nBANSI: \"The light is tired. It’s been waiting for someone to sit with it.\"\n\nMeera turned. A small, round creature with fur like dandelion fluff sat curled beneath the trees. Its eyes were half-closed, its breath steady.\n\nMEERA: \"Why does it need company?\"\nBANSI: \"Because lights don’t like to go out alone.\"\n\nMeera tilted her head. The flickering glow came from a single seed, resting in the hollow of a tree. It pulsed weakly, as if it might fade at any moment.\n\nMEERA: \"The roots remember everything.\"\n\nBansi yawned, stretching its paws\nBANSI: \"You’ll have to walk slowly. The path only stays if you do.\"\n\nMeera looked back at the silver pebbles. They were already dimming again. She took a breath.\n\nIn through the nose, slow and deep. Out through the mouth, soft as a whisper.\n\nThe path glowed brighter, leading her forward. The seed’s light flickered, but it didn’t go out. Meera sat beside it, her tail curled around her paws. The garden hummed around her, a song of settling things.\n\nThen, the music began—not from the trees, not from the wind, but from the earth itself. A low, warm hum, like a voice singing just below hearing. The seed’s light pulsed in time, and Meera felt her own breath slowing to match it.\n\nThe music faded, leaving the garden quieter than before. The seed’s glow had softened, no longer flickering but steady, like a heartbeat. Meera’s ears twitched at the sound of Bansi’s breathing—slow, even, already half-asleep. The mystery wasn’t something to fix. It was something to sit with. And the garden knew that better than anyone.\n\nMeera stayed beside the seed, watching its light grow warmer, not weaker. The air smelled like honey and old books, like the moment before a story ends. Bansi had curled into a tight ball, its fur rising and falling with each breath.\n\nMEERA: \"The roots remember everything.\"\n\nThe words came out softer this time, barely a whisper. The seed’s light pulsed once, twice, then settled into a steady glow. Meera’s paws felt heavy, her eyelids heavier. She remembered the path, how it had only appeared when she walked slowly. She tried it now, breathing in time with the garden.\n\nIn through the nose, out through the mouth. Slow. Steady.\n\nThe silver pebbles glowed faintly beneath her, leading nowhere in particular. They didn’t need to. The garden was already where it wanted to be. Meera lay down beside Bansi, her tail brushing against the seed’s light. The ground beneath her was warm, like a blanket pulled fresh from the sun.\n\nThe trees sighed, their upside-down roots swaying gently. Somewhere, a petal unfurled with a sound like a held note. The air was thick with the scent of sleep—like lavender, like the first snowfall, like the moment after a story ends and you don’t want to move yet.\n\nBansi’s breathing had slowed, its chest rising and falling like the tide. Meera watched the seed’s light, how it no longer flickered but burned steady, like a promise. The garden didn’t need her to do anything. It just needed her to be there.\n\nThe last of the silver pebbles faded, leaving only the glow of the seed and the soft blue moss. Meera’s ears twitched at the sound of her own breath, slow and even. The garden hummed around her, a lullaby without words. She closed her eyes, just for a moment.\n\nThe seed’s light dimmed, not from sadness, but from rest. The roots beneath her remembered everything, but they didn’t need to hold onto it tonight. The garden was settling, and so was she.\n\nMeera’s paws sank into the moss.\nThe seed’s light was warm.\nBansi’s breathing was slow.\n\nThe garden hummed.\nThe roots sighed.\nThe air was still.\n\nNo wind.\nNo hurry.\nNo need.\n\nThe light dimmed.\nThe moss glowed.\nThe seed rested.\n\nMeera’s ears twitched.\nHer tail curled.\nHer breath slowed.\n\nThe roots remembered.\nThe roots held.\nThe roots let go.\n\nThe seed’s light was soft.\nThe seed’s light was steady.\nThe seed’s light was home.\n\nBansi slept.\nThe garden slept.\nMeera slept.\n\nThe roots remember\neverything\nsoftly\nnow\n\nwarm\nstill\nhere\ntogether\nrest",
+    "annotated_text": "Close your eyes and let the air carry you to the Whispergarden, where every thought you’ve ever had has taken root like a seed. At night, the garden breathes—petals unfurl, vines stretch, and the soil sighs as dreams settle into the earth. You’ll know you’ve arrived when the ground hums beneath your paws, soft as a lullaby. This is where the lonely things go to rest. And tonight, something is waiting for you.\n\nThe first thing Meera noticed was the scent—like rain on dry leaves, like the moment before a yawn. She padded through the Whispergarden, her fox paws sinking into moss that glowed faintly blue. The air was thick with the sound of rustling, though no wind stirred. It was the sound of thoughts growing.\n\nMEERA: \"[PHRASE]The roots remember everything[/PHRASE].\"\n\nA path of silver pebbles stretched ahead, but when Meera hurried, the stones dimmed. She stopped, ears twitching. The path only glowed when she moved slowly. She tried again, stepping one paw at a time.\n\n[BREATHE_GUIDE]In through the nose, slow and deep. Out through the mouth, soft as a whisper.[/BREATHE_GUIDE]\n[BREATHE]\n\nThe pebbles brightened, pulsing like a heartbeat. Meera followed them deeper into the garden, where the trees grew upside-down—roots curling in the air like fingers reaching for the sky. Between their branches, something flickered. A light, but not from the moon. It was warm, like a lantern left behind.\n\nMEERA: \"Who’s there?\"\n\nA voice, drowsy and slow, answered from the shadows.\n\nBANSI: \"The light is tired. It’s been waiting for someone to sit with it.\"\n\nMeera turned. A small, round creature with fur like dandelion fluff sat curled beneath the trees. Its eyes were half-closed, its breath steady.\n\nMEERA: \"Why does it need company?\"\nBANSI: \"Because lights don’t like to go out alone.\"\n\nMeera tilted her head. The flickering glow came from a single seed, resting in the hollow of a tree. It pulsed weakly, as if it might fade at any moment.\n\nMEERA: \"[PHRASE]The roots remember everything[/PHRASE].\"\n\nBansi yawned, stretching its paws\nBANSI: \"You’ll have to walk slowly. The path only stays if you do.\"\n\nMeera looked back at the silver pebbles. They were already dimming again. She took a breath.\n\n[BREATHE_GUIDE]In through the nose, slow and deep. Out through the mouth, soft as a whisper.[/BREATHE_GUIDE]\n[BREATHE]\n\nThe path glowed brighter, leading her forward. The seed’s light flickered, but it didn’t go out. Meera sat beside it, her tail curled around her paws. The garden hummed around her, a song of settling things.\n\nThen, the music began—not from the trees, not from the wind, but from the earth itself. A low, warm hum, like a voice singing just below hearing. The seed’s light pulsed in time, and Meera felt her own breath slowing to match it.\n\n[SONG_SEED: A song about a seed learning to rest, its light dimming not from sadness but from peace, like a story ending softly.]\n\nThe music faded, leaving the garden quieter than before. The seed’s glow had softened, no longer flickering but steady, like a heartbeat. Meera’s ears twitched at the sound of Bansi’s breathing—slow, even, already half-asleep. The mystery wasn’t something to fix. It was something to sit with. And the garden knew that better than anyone.\n\nMeera stayed beside the seed, watching its light grow warmer, not weaker. The air smelled like honey and old books, like the moment before a story ends. Bansi had curled into a tight ball, its fur rising and falling with each breath.\n\nMEERA: \"[PHRASE]The roots remember everything[/PHRASE].\"\n\nThe words came out softer this time, barely a whisper. The seed’s light pulsed once, twice, then settled into a steady glow. Meera’s paws felt heavy, her eyelids heavier. She remembered the path, how it had only appeared when she walked slowly. She tried it now, breathing in time with the garden.\n\n[BREATHE_GUIDE]In through the nose, out through the mouth. Slow. Steady.[/BREATHE_GUIDE]\n[BREATHE]\n\nThe silver pebbles glowed faintly beneath her, leading nowhere in particular. They didn’t need to. The garden was already where it wanted to be. Meera lay down beside Bansi, her tail brushing against the seed’s light. The ground beneath her was warm, like a blanket pulled fresh from the sun.\n\nThe trees sighed, their upside-down roots swaying gently. Somewhere, a petal unfurled with a sound like a held note. The air was thick with the scent of sleep—like lavender, like the first snowfall, like the moment after a story ends and you don’t want to move yet.\n\nBansi’s breathing had slowed, its chest rising and falling like the tide. Meera watched the seed’s light, how it no longer flickered but burned steady, like a promise. The garden didn’t need her to do anything. It just needed her to be there.\n\n[PAUSE: 1500]\n[BREATHE]\n\nThe last of the silver pebbles faded, leaving only the glow of the seed and the soft blue moss. Meera’s ears twitched at the sound of her own breath, slow and even. The garden hummed around her, a lullaby without words. She closed her eyes, just for a moment.\n\n[PAUSE: 1500]\n[BREATHE]\n\nThe seed’s light dimmed, not from sadness, but from rest. The roots beneath her remembered everything, but they didn’t need to hold onto it tonight. The garden was settling, and so was she.\n\nMeera’s paws sank into the moss.\nThe seed’s light was warm.\nBansi’s breathing was slow.\n\nThe garden hummed.\nThe roots sighed.\nThe air was still.\n\nNo wind.\nNo hurry.\nNo need.\n\nThe light dimmed.\nThe moss glowed.\nThe seed rested.\n\nMeera’s ears twitched.\nHer tail curled.\nHer breath slowed.\n\nThe roots remembered.\nThe roots held.\nThe roots let go.\n\nThe seed’s light was soft.\nThe seed’s light was steady.\nThe seed’s light was home.\n\nBansi slept.\nThe garden slept.\nMeera slept.\n\n[PHRASE]The roots remember[/PHRASE]\neverything\nsoftly\nnow\n\n[WHISPER]warm\nstill\nhere\ntogether[/WHISPER]\nrest",
+    "lullaby_lyrics": "Blue moss hums low,\nfox paws tread slow.\nSilver stones know—\nlet the path glow.\n\nMeera stands still,\nears catch the chill.\nThe roots remember everything.\n\nLight fades like rain,\nsoft as a chain\nof thoughts that remain.\nSleep comes again.",
+    "target_age": 10,
+    "age_min": 9,
+    "age_max": 12,
+    "age_group": "9-12",
+    "length": "LONG",
+    "word_count": 933,
+    "duration_seconds": 866,
+    "duration": 14,
+    "categories": [
+      "Bedtime",
+      "Garden"
+    ],
+    "theme": "friendship",
+    "geography": "oceania",
+    "plot_archetype": "celebration",
+    "lead_gender": "female",
+    "characterType": "land_mammal",
+    "morals": [],
+    "cover": "/covers/gen-659740ac0422.svg",
+    "musicProfile": null,
+    "musicParams": null,
+    "musicalBrief": null,
+    "music_type": "baked",
+    "audio_variants": [
+      {
+        "voice": "mixed",
+        "url": "/audio/pre-gen/659740ac_mixed.mp3",
+        "duration_seconds": 866.44,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "experimental_v2",
+    "has_baked_music": true,
+    "experimental_v2": true,
+    "episode_format": "v2",
+    "world_type": "garden",
+    "mystery_type": "someone_needs_help",
+    "breathing_mechanic": "path",
+    "lead_character_type": "animal",
+    "name_culture": "India",
+    "characters": [
+      {
+        "name": "Meera",
+        "personality": "curious",
+        "voice_style": "gentle",
+        "gender": "female"
+      },
+      {
+        "name": "Bansi",
+        "personality": "dreamy",
+        "voice_style": "quiet",
+        "gender": "neutral"
+      }
+    ],
+    "repeated_phrase": "The roots remember everything",
+    "voice_map": {
+      "Meera": "female_2",
+      "Bansi": "male_1"
+    },
+    "narrator_voice": "female_1",
+    "mood": "sad",
+    "created_at": "2026-04-23T03:35:10.563773",
+    "updated_at": "2026-04-23T03:35:10.563773",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "character": {
+      "name": "Meera",
+      "identity": "A young animal who discovers a garden — A growing place where dreams/thoughts/feelings are plants or weather",
+      "special": "Uses a path to solve the mystery",
+      "personality_tags": [
+        "Curious",
+        "Gentle"
+      ]
+    },
+    "is_saved": false,
+    "story_type": "nature",
+    "language_level": "intermediate"
+  },
+  {
+    "id": "gen-1b8c1685e4cb",
+    "type": "long_story",
+    "lang": "en",
+    "title": "Liora and Tannin and the Theater",
+    "description": "A bedtime story episode where Liora and Tannin discovers a magical theater.",
+    "text": "Close your eyes and imagine a sky that never sleeps. Not the dark, quiet sky you know, but the Glimmering Stage—where stars don’t just twinkle, they dance. The moon isn’t a watcher; she’s the conductor, waving her silver baton to cue the clouds, who sweep across the sky like velvet curtains. And tonight, something is wrong. The music has stopped. The stars aren’t dancing. Liora can feel it in her bones.\n\nThe air smelled like burnt sugar and rain. Liora stood at the edge of the Glimmering Stage, her bare feet pressing into the cool, silver grass. The stars above her were frozen mid-leap, their light dimmed to a dull hum. She clenched her fists\nLIORA: \"Where’s the music?\"\n\nA soft rustle came from behind her. Tannin, the old cloud-keeper, floated just above the ground, his edges fuzzy like a half-remembered dream. His voice was warm, like honey poured over bread.\n\nTANNIN: \"The wind forgot its song, little spark.\"\n\nLIORA: \"Forgot? How do you forget a song?\"\n\nTANNIN: \"The same way you forget to breathe. Sometimes, you just... stop.\"\n\nLiora kicked a pebble. It skittered into the dark and vanished. She wanted to yell, to shake the sky until the stars remembered their steps. But Tannin was already drifting toward the Whisper Gate, a tall arch of woven moonlight that stood at the center of the stage. The gate was closed, its silver strands humming faintly, like a sleeping cat’s purr.\n\nTANNIN: \"The gate only opens when the air is still. Breathe with me.\"\n\nLiora crossed her arms\nLIORA: \"I don’t want to breathe. I want the music back.\"\n\nTANNIN: \"Then breathe first. Anger is loud. The gate listens to quiet.\"\n\nShe huffed but stepped closer. The gate shimmered, waiting. Tannin’s voice dropped to a murmur.\n\nTANNIN: \"In through your nose, slow and deep...\"\n\nLiora copied him. The air filled her lungs, cool and sweet.\n\nTANNIN: \"Out through your mouth, soft as a whisper.\"\n\nShe exhaled, and the gate’s strands trembled. A crack of light appeared down the middle.\n\nShe breathed in again, slower this time. The light grew brighter. Out through her mouth, softer than before. The gate creaked open, just enough for a child to slip through.\n\nLIORA: \"The stars can’t stay stuck forever.\"\n\nTannin smiled, his edges glowing faintly\nTANNIN: \"Go on, then. But don’t rush. The night moves at its own pace.\"\n\nLiora stepped through the gate. The other side was darker, quieter. The ground was made of something soft—like moss, but warmer. And there, in the center of the space, was the orchestra pit. Empty. The star-drums lay silent, their surfaces dusted with silver. The moon’s baton rested on the conductor’s stand, untouched. Liora’s chest tightened\nLIORA: \"They’re all gone,\"\n\nTannin floated beside her, his voice barely above a sigh.\n\nTANNIN: \"Not gone. Just... resting.\"\n\nLIORA: \"Resting? Now? The show’s supposed to start!\"\n\nTANNIN: \"Even the sky needs a nap sometimes.\"\n\nLiora wanted to argue, but the air around her was changing. The darkness softened, like ink spreading in water. A single note hummed in the distance—a low, warm sound, like a cello string being plucked. Then another. And another. The ground beneath her feet began to vibrate, just slightly.\n\nThe first cloud drifted into view, its edges glowing faintly blue. It settled into place above the orchestra pit, curling like a cat preparing to sleep. Then another cloud joined it, and another, until the sky was a patchwork of soft, glowing shapes. The notes grew louder, weaving together into a melody so gentle it made Liora’s eyelids heavy.\n\nTANNIN: \"Listen.\"\n\nThe song wasn’t the same as before. It was slower. Deeper. Like a lullaby sung by the sky itself.\n\nThe music curled around Liora like a warm breeze. The stars above her weren’t dancing yet, but they were stirring, their light flickering like candle flames. The air smelled like lavender and rain. Tannin’s voice was softer now, drifting.\n\nTANNIN: \"The night isn’t broken, little spark. It’s just... tired.\"\n\nLiora sat down on the soft ground. The music wrapped around her, pulling her deeper into the quiet. The clouds above her pulsed gently, their glow dimming and brightening like slow breaths. She watched them, her own breathing matching their rhythm.\n\nIn through her nose, out through her mouth. Slow. Steady. The air around her stilled, and the Whisper Gate behind her hummed softly, its strands vibrating in time with her breath.\n\nTannin floated lower, his edges blurring. His voice was barely a whisper.\n\nTANNIN: \"You’re doing it, little spark. Just like that.\"\n\nLIORA: \"The stars can’t stay stuck forever.\"\n\nTannin didn’t answer. His glow faded, his shape dissolving into the dark like sugar in tea. Liora didn’t move. She could feel the music in her bones now, in the ground beneath her, in the air filling her lungs. The stars above her twitched, their light flickering like fireflies. One by one, they began to dim, their glow softening into sleep.\n\nThe moon’s baton lay still on the conductor’s stand. Liora reached out and touched it. It was warm, like a stone left in the sun. She didn’t pick it up. She didn’t need to. The music was already inside her.\n\nThe ground beneath her was softer now, like a bed of feathers. The air smelled like chamomile and rain. She lay back, her head sinking into the moss. The clouds above her pulsed once, twice, then stilled. The last notes of the song faded into silence.\n\nThe darkness wasn’t empty anymore. It was full—full of quiet, full of rest, full of the slow, steady breath of the sky. Liora’s eyelids grew heavy. She didn’t fight it. She let them close, her breathing slowing to match the rhythm of the night.\n\nThe ground is warm.\nThe air is still.\nNo more words.\nNo more questions.\n\nLiora’s breath slows.\nThe stars blink once.\nTwice.\nThen close.\n\nThe moon hums.\nThe clouds sigh.\nThe gate hums back.\n\nHer fingers curl.\nHer toes relax.\nHer chest rises.\nFalls.\n\nThe music fades.\nThe light dims.\nThe dark wraps tight.\n\nSoft.\nSoft.\nSoft.\n\nThe stars can’t stay stuck.\n\nHer breath slows.\nThe night breathes.\nShe breathes too.\n\nNo sound.\nNo movement.\nNo time.\n\nWarm.\nStill.\nQuiet.\n\nSleep now.\nSleep.\n...",
+    "annotated_text": "Close your eyes and imagine a sky that never sleeps. Not the dark, quiet sky you know, but the Glimmering Stage—where stars don’t just twinkle, they dance. The moon isn’t a watcher; she’s the conductor, waving her silver baton to cue the clouds, who sweep across the sky like velvet curtains. And tonight, something is wrong. The music has stopped. The stars aren’t dancing. Liora can feel it in her bones.\n\nThe air smelled like burnt sugar and rain. Liora stood at the edge of the Glimmering Stage, her bare feet pressing into the cool, silver grass. The stars above her were frozen mid-leap, their light dimmed to a dull hum. She clenched her fists\nLIORA: \"Where’s the music?\"\n\nA soft rustle came from behind her. Tannin, the old cloud-keeper, floated just above the ground, his edges fuzzy like a half-remembered dream. His voice was warm, like honey poured over bread.\n\nTANNIN: \"The wind forgot its song, little spark.\"\n\nLIORA: \"Forgot? How do you forget a song?\"\n\nTANNIN: \"The same way you forget to breathe. Sometimes, you just... stop.\"\n\nLiora kicked a pebble. It skittered into the dark and vanished. She wanted to yell, to shake the sky until the stars remembered their steps. But Tannin was already drifting toward the Whisper Gate, a tall arch of woven moonlight that stood at the center of the stage. The gate was closed, its silver strands humming faintly, like a sleeping cat’s purr.\n\nTANNIN: \"The gate only opens when the air is still. Breathe with me.\"\n\nLiora crossed her arms\nLIORA: \"I don’t want to breathe. I want the music back.\"\n\nTANNIN: \"Then breathe first. Anger is loud. The gate listens to quiet.\"\n\nShe huffed but stepped closer. The gate shimmered, waiting. Tannin’s voice dropped to a murmur.\n\nTANNIN: \"In through your nose, slow and deep...\"\n\nLiora copied him. The air filled her lungs, cool and sweet.\n\nTANNIN: \"Out through your mouth, soft as a whisper.\"\n\nShe exhaled, and the gate’s strands trembled. A crack of light appeared down the middle.\n\n[BREATHE_GUIDE]She breathed in again, slower this time. The light grew brighter. Out through her mouth, softer than before. The gate creaked open, just enough for a child to slip through.[/BREATHE_GUIDE]\n[BREATHE]\n\nLIORA: \"[PHRASE]The stars can’t stay stuck forever[/PHRASE].\"\n\nTannin smiled, his edges glowing faintly\nTANNIN: \"Go on, then. But don’t rush. The night moves at its own pace.\"\n\nLiora stepped through the gate. The other side was darker, quieter. The ground was made of something soft—like moss, but warmer. And there, in the center of the space, was the orchestra pit. Empty. The star-drums lay silent, their surfaces dusted with silver. The moon’s baton rested on the conductor’s stand, untouched. Liora’s chest tightened\nLIORA: \"They’re all gone,\"\n\nTannin floated beside her, his voice barely above a sigh.\n\nTANNIN: \"Not gone. Just... resting.\"\n\nLIORA: \"Resting? Now? The show’s supposed to start!\"\n\nTANNIN: \"Even the sky needs a nap sometimes.\"\n\nLiora wanted to argue, but the air around her was changing. The darkness softened, like ink spreading in water. A single note hummed in the distance—a low, warm sound, like a cello string being plucked. Then another. And another. The ground beneath her feet began to vibrate, just slightly.\n\n[PAUSE: 800]\n\nThe first cloud drifted into view, its edges glowing faintly blue. It settled into place above the orchestra pit, curling like a cat preparing to sleep. Then another cloud joined it, and another, until the sky was a patchwork of soft, glowing shapes. The notes grew louder, weaving together into a melody so gentle it made Liora’s eyelids heavy.\n\nTANNIN: \"Listen.\"\n\nThe song wasn’t the same as before. It was slower. Deeper. Like a lullaby sung by the sky itself.\n\n[SONG_SEED: A melody of clouds settling, stars yawning, the moon humming a slow, deep tune that wraps around the listener like a blanket.]\n\nThe music curled around Liora like a warm breeze. The stars above her weren’t dancing yet, but they were stirring, their light flickering like candle flames. The air smelled like lavender and rain. Tannin’s voice was softer now, drifting.\n\nTANNIN: \"The night isn’t broken, little spark. It’s just... tired.\"\n\nLiora sat down on the soft ground. The music wrapped around her, pulling her deeper into the quiet. The clouds above her pulsed gently, their glow dimming and brightening like slow breaths. She watched them, her own breathing matching their rhythm.\n\n[BREATHE_GUIDE]In through her nose, out through her mouth. Slow. Steady. The air around her stilled, and the Whisper Gate behind her hummed softly, its strands vibrating in time with her breath.[/BREATHE_GUIDE]\n[BREATHE]\n\nTannin floated lower, his edges blurring. His voice was barely a whisper.\n\nTANNIN: \"You’re doing it, little spark. Just like that.\"\n\nLIORA: \"[PHRASE]The stars can’t stay stuck forever[/PHRASE].\"\n\nTannin didn’t answer. His glow faded, his shape dissolving into the dark like sugar in tea. Liora didn’t move. She could feel the music in her bones now, in the ground beneath her, in the air filling her lungs. The stars above her twitched, their light flickering like fireflies. One by one, they began to dim, their glow softening into sleep.\n\nThe moon’s baton lay still on the conductor’s stand. Liora reached out and touched it. It was warm, like a stone left in the sun. She didn’t pick it up. She didn’t need to. The music was already inside her.\n\nThe ground beneath her was softer now, like a bed of feathers. The air smelled like chamomile and rain. She lay back, her head sinking into the moss. The clouds above her pulsed once, twice, then stilled. The last notes of the song faded into silence.\n\n[BREATHE]\n[PAUSE: 1500]\n\nThe darkness wasn’t empty anymore. It was full—full of quiet, full of rest, full of the slow, steady breath of the sky. Liora’s eyelids grew heavy. She didn’t fight it. She let them close, her breathing slowing to match the rhythm of the night.\n\n[BREATHE]\n[BREATHE]\n\nThe ground is warm.\nThe air is still.\nNo more words.\nNo more questions.\n\nLiora’s breath slows.\nThe stars blink once.\nTwice.\nThen close.\n\nThe moon hums.\nThe clouds sigh.\nThe gate hums back.\n\nHer fingers curl.\nHer toes relax.\nHer chest rises.\nFalls.\n\nThe music fades.\nThe light dims.\nThe dark wraps tight.\n\nSoft.\nSoft.\nSoft.\n\n[PHRASE]The stars can’t stay stuck[/PHRASE].\n\nHer breath slows.\nThe night breathes.\nShe breathes too.\n\nNo sound.\nNo movement.\nNo time.\n\nWarm.\nStill.\nQuiet.\n\n[WHISPER]Sleep now[/WHISPER].\n[WHISPER]Sleep[/WHISPER].\n[WHISPER]...[/WHISPER]",
+    "lullaby_lyrics": "Bare feet press the silver grass,\nstars hold still—too long, too fast.\n\nLiora’s fists are tight with night,\nwhere’s the wind? Where’s the light?\n\nThe stars can’t stay stuck forever,\nclouds will wake and sing together.\n\nMoon hums low, the stage grows wide,\nsleep now—let the dark abide.",
+    "target_age": 7,
+    "age_min": 6,
+    "age_max": 8,
+    "age_group": "6-8",
+    "length": "LONG",
+    "word_count": 1039,
+    "duration_seconds": 687,
+    "duration": 11,
+    "categories": [
+      "Bedtime",
+      "Theater"
+    ],
+    "theme": "belonging",
+    "geography": "arctic_polar",
+    "plot_archetype": "discovery",
+    "lead_gender": "neutral",
+    "characterType": "human_child",
+    "morals": [],
+    "cover": "/covers/gen-1b8c1685e4cb.svg",
+    "musicProfile": null,
+    "musicParams": null,
+    "musicalBrief": null,
+    "music_type": "baked",
+    "audio_variants": [
+      {
+        "voice": "mixed",
+        "url": "/audio/pre-gen/1b8c1685_mixed.mp3",
+        "duration_seconds": 687.39,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "experimental_v2",
+    "has_baked_music": true,
+    "experimental_v2": true,
+    "episode_format": "v2",
+    "world_type": "theater",
+    "mystery_type": "something_missing",
+    "breathing_mechanic": "door",
+    "lead_character_type": "human",
+    "name_culture": "Europe",
+    "characters": [
+      {
+        "name": "Liora",
+        "personality": "curious",
+        "voice_style": "small",
+        "gender": "female"
+      },
+      {
+        "name": "Tannin",
+        "personality": "wise",
+        "voice_style": "gentle",
+        "gender": "neutral"
+      }
+    ],
+    "repeated_phrase": "The stars can’t stay stuck forever",
+    "voice_map": {
+      "Liora": "female_1",
+      "Tannin": "male_1"
+    },
+    "narrator_voice": "female_3",
+    "mood": "angry",
+    "created_at": "2026-04-24T02:01:22.622681",
+    "updated_at": "2026-04-24T02:01:22.622681",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "character": {
+      "name": "Liora",
+      "identity": "A child who discovers a theater — A place where the night performs — stars act, the moon directs, clouds are the curtain",
+      "special": "Uses a door to solve the mystery",
+      "personality_tags": [
+        "Curious",
+        "Small"
+      ]
+    },
+    "is_saved": false,
+    "story_type": "nature",
+    "language_level": "intermediate"
+  },
+  {
+    "id": "gen-28e39619b0e1",
+    "type": "story",
+    "lang": "en",
+    "title": "Nixie and the Star That Wouldn’t Listen",
+    "description": "A small dragon with stardust scales is furious when the sky won’t bend to her wish. She stomps through the cosmos, kicking comet dust, until the quiet beauty of the universe softens her fire.",
+    "text": "One day, Nixie said to the brightest star — My light is brighter than yours, she huffed. The star twinkled but did not move. That’s not fair, Nixie said. I asked nicely. You should listen. She puffed a tiny smoke ring. It curled into a question mark. Nixie stomped across the Milky Way. Her claws clicked on the silver path. She kicked a cloud of comet dust. It scattered like fireflies. Can you guess what happened next? The dust swirled into shapes. A rabbit. A teacup. A sleeping moon. Nixie stopped stomping. She watched the shapes dance. My light is brighter than yours, she whispered. The star still did not move. Between you and me, Nixie wasn’t really angry at the star. She was angry because no one listened. Not the planets. Not the comets. Not even the wind. She sat on a quiet asteroid. The rocks were warm from the sun. She let her fire breathe out slowly. My light is brighter than yours, she said one last time. Then she closed her eyes. The star twinkled above her. The universe held its breath. Nixie slept. The star kept shining. The shapes kept dancing.",
+    "annotated_text": "One day, Nixie said to the brightest star —\n\n[PHRASE]My light is brighter than yours[/PHRASE], she huffed.\nThe star twinkled but did not move.\n[PAUSE: 1200]\n\nThat’s not fair, Nixie said.\nI asked nicely.\nYou should listen.\n[PAUSE: 800]\n\nShe puffed a tiny smoke ring.\nIt curled into a question mark.\n[MUSIC]\n\nNixie stomped across the Milky Way.\nHer claws clicked on the silver path.\nShe kicked a cloud of comet dust.\nIt scattered like fireflies.\n[PAUSE: 1500]\n\nCan you guess what happened next?\nThe dust swirled into shapes.\nA rabbit. A teacup. A sleeping moon.\n[MUSIC]\n\nNixie stopped stomping.\nShe watched the shapes dance.\n[PHRASE]My light is brighter than yours[/PHRASE], she whispered.\nThe star still did not move.\n[PAUSE: 1200]\n\nBetween you and me, Nixie wasn’t really angry at the star.\nShe was angry because no one listened.\nNot the planets. Not the comets. Not even the wind.\n[MUSIC]\n\nShe sat on a quiet asteroid.\nThe rocks were warm from the sun.\nShe let her fire breathe out slowly.\n[PHRASE]My light is brighter than yours[/PHRASE], she said one last time.\nThen she closed her eyes.\nThe star twinkled above her.\nThe universe held its breath.\n[PAUSE: 2000]\n\nNixie slept.\nThe star kept shining.\nThe shapes kept dancing.\n[MUSIC]",
+    "target_age": 7,
+    "age_min": 6,
+    "age_max": 8,
+    "age_group": "6-8",
+    "length": "SHORT",
+    "word_count": 205,
+    "duration_seconds": 0,
+    "categories": [
+      "Space Adventure",
+      "Emotional Journey"
+    ],
+    "theme": "space",
+    "morals": [
+      "Even the brightest fire needs a place to rest.",
+      "The sky listens in its own way."
+    ],
+    "cover": "/covers/gen-28e39619b0e1.svg",
+    "musicProfile": "",
+    "music_type": "baked",
+    "audio_variants": [
+      {
+        "voice": "female_3",
+        "url": "/audio/pre-gen/gen-28e3_female_3.mp3",
+        "duration_seconds": 187.43,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-28e3_male_2.mp3",
+        "duration_seconds": 187.72,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "neutral",
+    "character": {
+      "name": "Nixie",
+      "identity": "A small dragon with stardust scales who believes her light should outshine everything.",
+      "special": "Her fire sparkles like broken stars.",
+      "personality_tags": [
+        "Determined",
+        "Dreamy"
+      ]
+    },
+    "cover_context": "A swirling galaxy of silver and blue, with comet dust scattering into soft shapes—a rabbit, a teacup, a sleeping moon—against the backdrop of a quiet asteroid.",
+    "lead_character_type": "mythical",
+    "character_name": "Nixie",
+    "universe": "prehistoric",
+    "geography": "southeast_asia",
+    "life_aspect": "friendship",
+    "plot_archetype": "quest_journey",
+    "diversityFingerprint": {
+      "characterType": "mythical_creature",
+      "setting": null,
+      "mood": null,
+      "storyType": null,
+      "plotShape": null,
+      "languageLevel": null,
+      "scale": null,
+      "companion": null,
+      "movement": null,
+      "timeOfDay": "twilight_blue_hour",
+      "weather": "clear_calm",
+      "theme": "self_acceptance",
+      "characterTrait": "stubborn_determined",
+      "magicType": null,
+      "season": null,
+      "senseEmphasis": null
+    },
+    "mood": "angry",
+    "story_type": "fable",
+    "language_level": "basic",
+    "created_at": "2026-04-24T02:01:39.354681",
+    "updated_at": "2026-04-24T02:01:39.354681",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "has_baked_music": true,
+    "experimental_v2": true,
+    "hook": "Once, something happened that wasn't fair... Nixie asked the brightest star to move, but it stayed right where it was.",
+    "repeated_phrase": "My light is brighter than yours",
+    "raw_text": "One day, Nixie said to the brightest star —\n\n[PHRASE]My light is brighter than yours[/PHRASE], she huffed.\nThe star twinkled but did not move.\n[PAUSE: 1200]\n\nThat’s not fair, Nixie said.\nI asked nicely.\nYou should listen.\n[PAUSE: 800]\n\nShe puffed a tiny smoke ring.\nIt curled into a question mark.\n[MUSIC]\n\nNixie stomped across the Milky Way.\nHer claws clicked on the silver path.\nShe kicked a cloud of comet dust.\nIt scattered like fireflies.\n[PAUSE: 1500]\n\nCan you guess what happened next?\nThe dust swirled into shapes.\nA rabbit. A teacup. A sleeping moon.\n[MUSIC]\n\nNixie stopped stomping.\nShe watched the shapes dance.\n[PHRASE]My light is brighter than yours[/PHRASE], she whispered.\nThe star still did not move.\n[PAUSE: 1200]\n\nBetween you and me, Nixie wasn’t really angry at the star.\nShe was angry because no one listened.\nNot the planets. Not the comets. Not even the wind.\n[MUSIC]\n\nShe sat on a quiet asteroid.\nThe rocks were warm from the sun.\nShe let her fire breathe out slowly.\n[PHRASE]My light is brighter than yours[/PHRASE], she said one last time.\nThen she closed her eyes.\nThe star twinkled above her.\nThe universe held its breath.\n[PAUSE: 2000]\n\nNixie slept.\nThe star kept shining.\nThe shapes kept dancing.\n[MUSIC]",
+    "duration": 4
+  },
+  {
+    "id": "closing-6-8-d099",
+    "type": "song",
+    "lang": "en",
+    "title": "Mira's Draining Day",
+    "card_label": "Day Is Done",
+    "cover": "/covers/closing-6-8-d099.svg",
+    "description": "A soothing lullaby for children who struggle to let go of the day’s chaos. The rhythmic draining of the bath water mirrors the release of tension, helping young minds find closure. The repeated chorus gently reinforces that the day is over, making it easier to drift into sleep.",
+    "text": "[verse]\nWhat a day, what a day\nWater splashed and soap would sting\nTowel so warm, it wrapped away\nAll the noise that stung my skin\n\n[verse]\nWhat a day, what a day\nLoudest voices, sharpest words\nToys all scattered, rules all blurred\nI just wanted to be heard\n\n[chorus]\nThe day is done, the day is done\nBubbles pop and fade to none\nDrain the tub, the fight is gone\nThe day is done, the day is done\n\n[verse]\nWhat a day, what a day\nPajamas soft, the lights burn low\nStories whispered, not too slow\nNow the stars will watch me go\n\n[chorus]\nThe day is done, the day is done\nBubbles pop and fade to none\nDrain the tub, the fight is gone\nThe day is done, the day is done\n\n[chorus]\nThe day is done, the day is done\nBubbles pop and fade to none\nDrain the tub, the fight is gone\nThe day is done, and the day is done",
+    "annotated_text": "[verse]\nWhat a day, what a day\nWater splashed and soap would sting\nTowel so warm, it wrapped away\nAll the noise that stung my skin\n\n[verse]\nWhat a day, what a day\nLoudest voices, sharpest words\nToys all scattered, rules all blurred\nI just wanted to be heard\n\n[chorus]\nThe day is done, the day is done\nBubbles pop and fade to none\nDrain the tub, the fight is gone\nThe day is done, the day is done\n\n[verse]\nWhat a day, what a day\nPajamas soft, the lights burn low\nStories whispered, not too slow\nNow the stars will watch me go\n\n[chorus]\nThe day is done, the day is done\nBubbles pop and fade to none\nDrain the tub, the fight is gone\nThe day is done, the day is done\n\n[chorus]\nThe day is done, the day is done\nBubbles pop and fade to none\nDrain the tub, the fight is gone\nThe day is done, and the day is done",
+    "cover_context": "A small girl with damp curls sits in a deep porcelain tub, bubbles clinging to her shoulders as the water swirls down the drain. The room glows with warm lamplight, steam curling like dreams above the water.",
+    "target_age": 7,
+    "age_min": 6,
+    "age_max": 8,
+    "age_group": "6-8",
+    "duration": 2,
+    "duration_seconds": 101,
+    "author_id": "system",
+    "created_at": "2026-04-24T02:09:34.345311",
+    "updated_at": "2026-04-24T02:09:34.345320",
+    "audio_url": null,
+    "album_art_url": null,
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "categories": [
+      "Lullabies"
+    ],
+    "theme": "family",
+    "geography": "middle_east",
+    "plot_archetype": "friendship_bonding",
+    "lead_gender": "male",
+    "characterType": "land_mammal",
+    "is_generated": true,
+    "generation_quality": "good",
+    "music_genre": "lullaby",
+    "lead_character_type": "animal",
+    "character": {
+      "name": "Mira",
+      "identity": "A spirited little girl who finds peace in her evening bath after a long, loud day.",
+      "special": "She lets the water carry away her frustrations, leaving only quiet behind.",
+      "personality_tags": [
+        "Gentle",
+        "Sleepy"
+      ]
+    },
+    "about": "A soothing lullaby for children who struggle to let go of the day’s chaos. The rhythmic draining of the bath water mirrors the release of tension, helping young minds find closure. The repeated chorus gently reinforces that the day is over, making it easier to drift into sleep.",
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/closing-6-8-d099_female_1.mp3",
+        "duration_seconds": 101,
+        "provider": "minimax-music-v2"
+      }
+    ],
+    "mood": "angry",
+    "lullaby_type": "closing"
   }
 ]
