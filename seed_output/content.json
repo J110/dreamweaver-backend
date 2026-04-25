@@ -20516,5 +20516,247 @@
     ],
     "mood": "angry",
     "lullaby_type": "closing"
+  },
+  {
+    "id": "gen-548508062243",
+    "type": "long_story",
+    "lang": "en",
+    "title": "Tukalu and Sila and the Observatory",
+    "description": "A bedtime story episode where Tukalu and Sila discovers a magical observatory.",
+    "text": "Close your eyes and let the water lift you. Above, the sky is a dark bowl of salt and stars, and below, the reef hums with sleeping fish. Somewhere between, where the waves rock like a cradle, is the Watching Cove. Here, the night doesn’t hurry. It waits. And if you listen with your whole body, you’ll hear the dreams rising like bubbles.\n\nTukalu drifted into the Watching Cove, his tiny fins stirring the warm current. The water here tasted different—softer, like moonlight dissolved in salt. Above him, the Dreaming Cloud pulsed faintly, its edges glowing blue when the world below was quiet.\n\nTUKALU: \"Sila? Are you awake?\"\nA slow ripple answered. Sila, the old sea turtle, surfaced beside him, her shell covered in glowing barnacles.\n\nSILA: \"I am always awake at night, little one. The stars tell better stories when the sun sleeps.\"\nTUKALU: \"But the stars aren’t moving tonight. They’re just… sitting.\"\nSILA: \"Ah. Then it’s time to listen instead of watch. Try this.\"\nShe nodded toward the Dreaming Cloud.\n\nTukalu breathed in through his nose, slow and deep. The water filled his gills, cool and steady. Then out through his mouth, soft as a whisper.\n\nThe Dreaming Cloud shimmered brighter, its blue light spilling over the cove. Tiny silver fish darted away, their scales flashing like scattered stars.\n\nTUKALU: \"One more breath, just one.\"\nHe breathed again. This time, the cloud lowered, its glow brushing the water’s surface like a kiss.\n\nTUKALU: \"Sila, look! The cloud is listening too!\"\nSILA: \"It always listens. But it only answers when the world is still.\"\nTUKALU: \"What’s it saying?\"\nSILA: \"That’s for you to hear. Close your eyes and float.\"\n\nTukalu let the current rock him. The water held him gently, as if he were made of sea foam. Then, from the reef below, a sound rose—a soft, humming song, like a hundred sleeping fish sighing at once.\n\nThe song wrapped around him, warm and slow. It didn’t ask for anything. It just was.\n\nThe humming faded, leaving only the quiet. The Dreaming Cloud glowed steady now, its light painting the cove in silver. Tukalu’s fins stilled. Even the waves seemed to hold their breath.\n\nSila’s barnacles dimmed, one by one, until only a few flickered like distant stars. Her breathing slowed, her shell rising and falling with the tide.\n\nTUKALU: \"Sila?\"\nNo answer. Just the sound of water slipping over shell.\n\nTukalu floated closer. The old turtle’s eyes were closed, her body swaying with the current. She wasn’t gone. She was resting. And the cove was resting with her.\n\nThe Dreaming Cloud pulsed softly above, its light now a steady heartbeat. Tukalu remembered Sila’s words: It only answers when the world is still.\n\nIn through the nose, out through the mouth. Slow. Steady.\n\nThe cloud lowered again, its glow brushing Tukalu’s back like a warm hand. The water around him felt thicker, heavier, as if it were tucking him in. The silver fish had stopped darting. They hung in the water, their gills moving in slow time.\n\nTUKALU: \"One more breath, just one.\"\nBut his voice was barely a whisper. The breath came easily now, without thinking. In. Out. The cove was quiet. The stars were quiet. Even the reef’s hum had softened to a murmur.\n\nSila’s barnacles glowed once, twice, then dimmed completely. The last light in the cove came from the Dreaming Cloud, and it too was fading, settling into the water like a blanket.\n\nTukalu’s fins stopped moving.\nThe current held him.\nNo need to swim.\nNo need to watch.\n\nThe water was warm.\nThe water was still.\nThe water was home.\n\nThe Dreaming Cloud rested.\nIts light dim.\nIts glow soft.\nIts job done.\n\nThe stars didn’t move.\nThey didn’t need to.\nThey were already where they belonged.\n\nThe reef sighed.\nA long, slow breath.\nIn.\nOut.\n\nTukalu’s gills slowed.\nHis body heavy.\nHis mind quiet.\n\nOne more breath.\nJust one.\n\nThe water cradled him.\nThe night cradled the water.\nThe sky cradled the night.\n\nNo sound.\nNo hurry.\nNo need.\n\nWarm.\nStill.\nSoft.\n\nThe last barnacle flickered.\nThen dark.\nThen nothing.\n\nSleep\nNow\nDream",
+    "annotated_text": "Close your eyes and let the water lift you. Above, the sky is a dark bowl of salt and stars, and below, the reef hums with sleeping fish. Somewhere between, where the waves rock like a cradle, is the Watching Cove. Here, the night doesn’t hurry. It waits. And if you listen with your whole body, you’ll hear the dreams rising like bubbles.\n\nTukalu drifted into the Watching Cove, his tiny fins stirring the warm current. The water here tasted different—softer, like moonlight dissolved in salt. Above him, the Dreaming Cloud pulsed faintly, its edges glowing blue when the world below was quiet.\n\nTUKALU: \"Sila? Are you awake?\"\nA slow ripple answered. Sila, the old sea turtle, surfaced beside him, her shell covered in glowing barnacles.\n\nSILA: \"I am always awake at night, little one. The stars tell better stories when the sun sleeps.\"\nTUKALU: \"But the stars aren’t moving tonight. They’re just… sitting.\"\nSILA: \"Ah. Then it’s time to listen instead of watch. Try this.\"\nShe nodded toward the Dreaming Cloud.\n\n[BREATHE_GUIDE]Tukalu breathed in through his nose, slow and deep. The water filled his gills, cool and steady. Then out through his mouth, soft as a whisper.[/BREATHE_GUIDE]\n[BREATHE]\n\nThe Dreaming Cloud shimmered brighter, its blue light spilling over the cove. Tiny silver fish darted away, their scales flashing like scattered stars.\n\nTUKALU: \"[PHRASE]One more breath, just one[/PHRASE].\"\nHe breathed again. This time, the cloud lowered, its glow brushing the water’s surface like a kiss.\n\nTUKALU: \"Sila, look! The cloud is listening too!\"\nSILA: \"It always listens. But it only answers when the world is still.\"\nTUKALU: \"What’s it saying?\"\nSILA: \"That’s for you to hear. Close your eyes and float.\"\n\nTukalu let the current rock him. The water held him gently, as if he were made of sea foam. Then, from the reef below, a sound rose—a soft, humming song, like a hundred sleeping fish sighing at once.\n\nThe song wrapped around him, warm and slow. It didn’t ask for anything. It just was.\n\n[SONG_SEED: A lullaby of bubbles rising from the reef, each one carrying a sleeping creature’s dream to the surface.]\n\nThe humming faded, leaving only the quiet. The Dreaming Cloud glowed steady now, its light painting the cove in silver. Tukalu’s fins stilled. Even the waves seemed to hold their breath.\n\nSila’s barnacles dimmed, one by one, until only a few flickered like distant stars. Her breathing slowed, her shell rising and falling with the tide.\n\nTUKALU: \"Sila?\"\nNo answer. Just the sound of water slipping over shell.\n\nTukalu floated closer. The old turtle’s eyes were closed, her body swaying with the current. She wasn’t gone. She was resting. And the cove was resting with her.\n\nThe Dreaming Cloud pulsed softly above, its light now a steady heartbeat. Tukalu remembered Sila’s words: It only answers when the world is still.\n\n[BREATHE_GUIDE]In through the nose, out through the mouth. Slow. Steady.[/BREATHE_GUIDE]\n[BREATHE]\n\nThe cloud lowered again, its glow brushing Tukalu’s back like a warm hand. The water around him felt thicker, heavier, as if it were tucking him in. The silver fish had stopped darting. They hung in the water, their gills moving in slow time.\n\nTUKALU: \"[PHRASE]One more breath, just one[/PHRASE].\"\nBut his voice was barely a whisper. The breath came easily now, without thinking. In. Out. The cove was quiet. The stars were quiet. Even the reef’s hum had softened to a murmur.\n\nSila’s barnacles glowed once, twice, then dimmed completely. The last light in the cove came from the Dreaming Cloud, and it too was fading, settling into the water like a blanket.\n\nTukalu’s fins stopped moving.\nThe current held him.\nNo need to swim.\nNo need to watch.\n\nThe water was warm.\nThe water was still.\nThe water was home.\n\nThe Dreaming Cloud rested.\nIts light dim.\nIts glow soft.\nIts job done.\n\nThe stars didn’t move.\nThey didn’t need to.\nThey were already where they belonged.\n\nThe reef sighed.\nA long, slow breath.\nIn.\nOut.\n\nTukalu’s gills slowed.\nHis body heavy.\nHis mind quiet.\n\n[PHRASE]One more breath[/PHRASE].\nJust one.\n\nThe water cradled him.\nThe night cradled the water.\nThe sky cradled the night.\n\nNo sound.\nNo hurry.\nNo need.\n\nWarm.\nStill.\nSoft.\n\nThe last barnacle flickered.\nThen dark.\nThen nothing.\n\n[WHISPER]Sleep[/WHISPER]\n[WHISPER]Now[/WHISPER]\n[WHISPER]Dream[/WHISPER]",
+    "lullaby_lyrics": "Soft fins stir the silver tide,\nTukalu swims where dreams abide.\n\nMoonlight swirls in salty light,\nSila watches through the night.\n\nOne more breath, just one—\nbubbles rise, the stars are done.\n\nHush now, little reef below,\nsleep drifts in on currents slow.",
+    "target_age": 3,
+    "age_min": 2,
+    "age_max": 5,
+    "age_group": "2-5",
+    "length": "LONG",
+    "word_count": 690,
+    "duration_seconds": 582,
+    "duration": 9,
+    "categories": [
+      "Bedtime",
+      "Observatory"
+    ],
+    "theme": "courage",
+    "geography": "imaginary",
+    "plot_archetype": "celebration",
+    "lead_gender": "neutral",
+    "characterType": "sea_creature",
+    "morals": [],
+    "cover": "/covers/gen-548508062243.svg",
+    "musicProfile": null,
+    "musicParams": null,
+    "musicalBrief": null,
+    "music_type": "baked",
+    "audio_variants": [
+      {
+        "voice": "mixed",
+        "url": "/audio/pre-gen/54850806_mixed.mp3",
+        "duration_seconds": 582.67,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "experimental_v2",
+    "has_baked_music": true,
+    "experimental_v2": true,
+    "episode_format": "v2",
+    "world_type": "observatory",
+    "mystery_type": "something_strange",
+    "breathing_mechanic": "cloud",
+    "lead_character_type": "sea_creature",
+    "name_culture": "Arctic/Polar",
+    "characters": [
+      {
+        "name": "Tukalu",
+        "personality": "curious",
+        "voice_style": "gentle",
+        "gender": "neutral"
+      },
+      {
+        "name": "Sila",
+        "personality": "wise",
+        "voice_style": "quiet",
+        "gender": "female"
+      }
+    ],
+    "repeated_phrase": "One more breath, just one",
+    "voice_map": {
+      "Tukalu": "male_1",
+      "Sila": "female_1"
+    },
+    "narrator_voice": "female_2",
+    "mood": "curious",
+    "created_at": "2026-04-25T01:52:38.200330",
+    "updated_at": "2026-04-25T01:52:38.200330",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "character": {
+      "name": "Tukalu",
+      "identity": "A young sea creature who discovers a observatory — A place for watching — stars, dreams, the night sky, sleeping animals",
+      "special": "Uses a cloud to solve the mystery",
+      "personality_tags": [
+        "Curious",
+        "Gentle"
+      ]
+    },
+    "is_saved": false,
+    "story_type": "nature",
+    "language_level": "intermediate"
+  },
+  {
+    "id": "gen-231617e54cb7",
+    "type": "story",
+    "lang": "en",
+    "title": "Chai and the Lantern That Lit the Fireflies",
+    "description": "Long ago, when fireflies were dark and the world was dim, a little lantern named Chai set out to share her light. What she discovered changed the night forever.",
+    "text": "Long ago, before fireflies knew how to glow... There was a small lantern named Chai. She hung from a hook in a quiet village, watching the world grow dark each evening. The people would light her wick, and her glass sides would warm with golden light. But outside, beyond the village, the fireflies flew in the dark. They were tiny, silent, and invisible. No one could see them dance. One night, Chai felt a tug in her heart. She wanted the fireflies to be seen. So she asked the wind to unhook her from the wall. The wind lifted her gently, and Chai floated into the night. She drifted over fields and streams, her light flickering like a tiny sun. The fireflies noticed her. They fluttered close, their wings brushing her glass. No one could see them dance. Chai wished they could glow like she did. Then, something magical happened. The fireflies began to shimmer. One by one, their bellies lit up—soft, golden, like little lanterns in the dark. Chai’s light had touched them. Can you guess what happened next? The fireflies danced in the air, their glow weaving patterns like stars come to earth. Chai watched, her heart full. No one could see them dance. But now, everyone could. Ever since that night, Chai returned to her hook in the village. But sometimes, when the wind blows just right, she floats into the dark again. And if you look closely, you’ll see her light mingling with the fireflies. The night is quieter now. The fireflies glow softly. Chai’s light flickers. The wind hums. The stars blink. The world is still. And ever since then, fireflies glow when the lanterns do.",
+    "annotated_text": "Long ago, before fireflies knew how to glow...\n\nThere was a small lantern named Chai. She hung from a hook in a quiet village, watching the world grow dark each evening. [PAUSE: 800] The people would light her wick, and her glass sides would warm with golden light. But outside, beyond the village, the fireflies flew in the dark. They were tiny, silent, and invisible. [PHRASE]No one could see them dance.[/PHRASE]\n\nOne night, Chai felt a tug in her heart. She wanted the fireflies to be seen. [PAUSE: 1200] So she asked the wind to unhook her from the wall. The wind lifted her gently, and Chai floated into the night. [MUSIC]\n\nShe drifted over fields and streams, her light flickering like a tiny sun. The fireflies noticed her. They fluttered close, their wings brushing her glass. [PHRASE]No one could see them dance.[/PHRASE] Chai wished they could glow like she did. [PAUSE: 1500]\n\nThen, something magical happened. The fireflies began to shimmer. One by one, their bellies lit up—soft, golden, like little lanterns in the dark. Chai’s light had touched them. [MUSIC]\n\nCan you guess what happened next? The fireflies danced in the air, their glow weaving patterns like stars come to earth. Chai watched, her heart full. [PHRASE]No one could see them dance.[/PHRASE] But now, everyone could. [PAUSE: 2000]\n\nEver since that night, Chai returned to her hook in the village. But sometimes, when the wind blows just right, she floats into the dark again. And if you look closely, you’ll see her light mingling with the fireflies. [MUSIC]\n\nThe night is quieter now. The fireflies glow softly. Chai’s light flickers. [PAUSE: 1200]\n\nThe wind hums. The stars blink. The world is still.\n\nAnd ever since then, fireflies glow when the lanterns do.",
+    "target_age": 10,
+    "age_min": 9,
+    "age_max": 12,
+    "age_group": "9-12",
+    "length": "MEDIUM",
+    "word_count": 291,
+    "duration_seconds": 0,
+    "categories": [
+      "Mythological",
+      "Adventure"
+    ],
+    "theme": "fantasy",
+    "morals": [
+      "Sharing what you have can light up the world.",
+      "Even the smallest light can make a difference."
+    ],
+    "cover": "/covers/gen-231617e54cb7.svg",
+    "musicProfile": "",
+    "music_type": "baked",
+    "audio_variants": [
+      {
+        "voice": "male_2",
+        "url": "/audio/pre-gen/gen-2316_male_2.mp3",
+        "duration_seconds": 227.13,
+        "provider": "chatterbox"
+      },
+      {
+        "voice": "female_4",
+        "url": "/audio/pre-gen/gen-2316_female_4.mp3",
+        "duration_seconds": 240.76,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "female",
+    "character": {
+      "name": "Chai",
+      "identity": "A small lantern who wanted to share her light with the dark.",
+      "special": "Her glow could warm the hearts of those who saw it.",
+      "personality_tags": [
+        "Kind",
+        "Dreamy"
+      ]
+    },
+    "cover_context": "A quiet village at dusk, fields stretching into the distance where tiny golden lights flicker like stars fallen to earth. The sky is deep blue, and the first stars are just beginning to appear.",
+    "lead_character_type": "object",
+    "character_name": "Chai",
+    "universe": "futuristic",
+    "geography": "europe",
+    "life_aspect": "relationships",
+    "plot_archetype": "transformation",
+    "diversityFingerprint": {
+      "characterType": "object_alive",
+      "setting": "village_town",
+      "mood": null,
+      "storyType": null,
+      "plotShape": "transformation",
+      "languageLevel": null,
+      "scale": null,
+      "companion": null,
+      "movement": "floating_drifting",
+      "timeOfDay": null,
+      "weather": "clear_calm",
+      "theme": null,
+      "characterTrait": null,
+      "magicType": "music_sound_magic",
+      "season": "summer",
+      "senseEmphasis": null
+    },
+    "mood": "curious",
+    "story_type": "mythological",
+    "language_level": "basic",
+    "created_at": "2026-04-25T01:54:42.542398",
+    "updated_at": "2026-04-25T01:54:42.542398",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "has_baked_music": true,
+    "experimental_v2": true,
+    "hook": "Have you ever wondered why fireflies glow just as the lanterns do?",
+    "repeated_phrase": "No one could see them dance.",
+    "raw_text": "Long ago, before fireflies knew how to glow...\n\nThere was a small lantern named Chai. She hung from a hook in a quiet village, watching the world grow dark each evening. [PAUSE: 800] The people would light her wick, and her glass sides would warm with golden light. But outside, beyond the village, the fireflies flew in the dark. They were tiny, silent, and invisible. [PHRASE]No one could see them dance.[/PHRASE]\n\nOne night, Chai felt a tug in her heart. She wanted the fireflies to be seen. [PAUSE: 1200] So she asked the wind to unhook her from the wall. The wind lifted her gently, and Chai floated into the night. [MUSIC]\n\nShe drifted over fields and streams, her light flickering like a tiny sun. The fireflies noticed her. They fluttered close, their wings brushing her glass. [PHRASE]No one could see them dance.[/PHRASE] Chai wished they could glow like she did. [PAUSE: 1500]\n\nThen, something magical happened. The fireflies began to shimmer. One by one, their bellies lit up—soft, golden, like little lanterns in the dark. Chai’s light had touched them. [MUSIC]\n\nCan you guess what happened next? The fireflies danced in the air, their glow weaving patterns like stars come to earth. Chai watched, her heart full. [PHRASE]No one could see them dance.[/PHRASE] But now, everyone could. [PAUSE: 2000]\n\nEver since that night, Chai returned to her hook in the village. But sometimes, when the wind blows just right, she floats into the dark again. And if you look closely, you’ll see her light mingling with the fireflies. [MUSIC]\n\nThe night is quieter now. The fireflies glow softly. Chai’s light flickers. [PAUSE: 1200]\n\nThe wind hums. The stars blink. The world is still.\n\nAnd ever since then, fireflies glow when the lanterns do.",
+    "duration": 4
+  },
+  {
+    "id": "origin-6-8-20eb",
+    "type": "song",
+    "lang": "en",
+    "title": "Lumi and the First Dream",
+    "card_label": "How Dreams Began",
+    "cover": "/covers/origin-6-8-20eb.svg",
+    "description": "A curious lullaby about the origin of dreams, where a tiny creature named Lumi weaves starlight into the first dream. The wonder of creation and the soft, repeating chorus help children drift into sleep with a sense of magic and comfort.",
+    "text": "[verse]\nLong before you were born\nNo dreams lit the sky\nOnly stars watched the world\nWith their quiet bright eye\n\n[chorus]\nOh, that was the first dream\nSoft as a sigh\nA spark in the dark\nWhere the dreamers lie\n\n[verse]\nThen Lumi woke up\nIn the heart of the night\nShe wove all the stars\nInto threads of light\n\n[chorus]\nOh, that was the first dream\nSoft as a sigh\nA spark in the dark\nWhere the dreamers lie",
+    "annotated_text": "[verse]\nLong before you were born\nNo dreams lit the sky\nOnly stars watched the world\nWith their quiet bright eye\n\n[chorus]\nOh, that was the first dream\nSoft as a sigh\nA spark in the dark\nWhere the dreamers lie\n\n[verse]\nThen Lumi woke up\nIn the heart of the night\nShe wove all the stars\nInto threads of light\n\n[chorus]\nOh, that was the first dream\nSoft as a sigh\nA spark in the dark\nWhere the dreamers lie",
+    "cover_context": "A small, glowing creature with silver-blue fur sits on a crescent moon, weaving starlight into delicate threads that drift down like fireflies over a sleeping village below. Soft watercolor hues of deep blues, purples, and warm golden glows create a dreamy, cozy night sky.",
+    "target_age": 7,
+    "age_min": 6,
+    "age_max": 8,
+    "age_group": "6-8",
+    "duration": 2,
+    "duration_seconds": 90,
+    "author_id": "system",
+    "created_at": "2026-04-25T02:04:27.597923",
+    "updated_at": "2026-04-25T02:04:27.598053",
+    "audio_url": null,
+    "album_art_url": null,
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "categories": [
+      "Lullabies"
+    ],
+    "theme": "family",
+    "geography": "north_america",
+    "plot_archetype": "friendship_bonding",
+    "lead_gender": "female",
+    "characterType": "land_mammal",
+    "is_generated": true,
+    "generation_quality": "good",
+    "music_genre": "lullaby",
+    "lead_character_type": "animal",
+    "character": {
+      "name": "Lumi",
+      "identity": "A gentle starlight weaver who created the very first dream.",
+      "special": "She turns the quiet glow of stars into dreams for every sleeping child.",
+      "personality_tags": [
+        "Gentle",
+        "Sleepy"
+      ]
+    },
+    "about": "A curious lullaby about the origin of dreams, where a tiny creature named Lumi weaves starlight into the first dream. The wonder of creation and the soft, repeating chorus help children drift into sleep with a sense of magic and comfort.",
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/origin-6-8-20eb_female_1.mp3",
+        "duration_seconds": 90,
+        "provider": "minimax-music-v2"
+      }
+    ],
+    "mood": "curious",
+    "lullaby_type": "origin"
   }
 ]
