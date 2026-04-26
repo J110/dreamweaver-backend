@@ -977,25 +977,67 @@ def elevenlabs_tts(text: str, voice_id: str, *, stability: float, similarity: fl
 # ──────────────────────────────────────────────────────────────────────
 # Long-story audio assembly
 # ──────────────────────────────────────────────────────────────────────
+def _trim_or_loop(segment: AudioSegment, target_ms: int) -> AudioSegment:
+    """Loop or trim segment to exactly target_ms."""
+    if len(segment) >= target_ms:
+        return segment[:target_ms]
+    loops = (target_ms // len(segment)) + 1
+    return (segment * loops)[:target_ms]
+
+
+def _apply_breathe_swells(
+    bed_segment: AudioSegment,
+    breathe_positions: list[int],
+    base_db: float,
+    swell_window_ms: int = 5000,
+    swell_db: float = 10.0,
+) -> AudioSegment:
+    """Apply +swell_db swells at breathe positions in a bed segment.
+
+    The bed is chunked at small intervals; chunks overlapping each
+    breathe position get raised swell_db above base. Mirrors
+    ``generate_long_story_episode.py:_apply_breathe_swells``.
+    """
+    if not breathe_positions:
+        return bed_segment
+
+    CHUNK_MS = 100
+    out = AudioSegment.empty()
+    for chunk_start in range(0, len(bed_segment), CHUNK_MS):
+        chunk = bed_segment[chunk_start:chunk_start + CHUNK_MS]
+        chunk_end = chunk_start + len(chunk)
+        # Is any breathe window overlapping this chunk?
+        in_swell = any(
+            chunk_start < (pos + swell_window_ms) and chunk_end > pos
+            for pos in breathe_positions
+        )
+        if in_swell:
+            chunk = chunk + swell_db  # raise +10 dB above base
+        out += chunk
+    return out
+
+
+# ──────────────────────────────────────────────────────────────────────
+# Long-story audio assembly  (mirrors generate_long_story_episode.py)
+# ──────────────────────────────────────────────────────────────────────
 def assemble_long_story_audio(segments: list, song_audio: AudioSegment | None) -> AudioSegment:
     """Render long story segments to a single AudioSegment.
 
-    Layout:
-      intro music (calm) → 500ms silence → narration with embedded song
-      → 3000ms silence → outro music (calm)
+    Layout (mirrors the English long-story pipeline):
+
+      00_intro_music   intro_calm.wav + 2000ms silence
+      01_part_a        intro narration + 1000ms gap + phase_1, bed at -20 dB,
+                       +10 dB swells at breathe positions, 2000ms bed fade-out at end
+      02_song          500ms silence + song with 2000ms fade-in/out + 500ms silence
+      03_part_b        post_song narration + 1000ms gap + phase_2, bed at -14 dB,
+                       +10 dB swells at breathe positions, 2000ms bed fade-in at start
+      04_part_c        phase_3, bed at -10 dB, +10 dB swells at breathe positions
+      05_tail          30000ms bed tail, fade-out over 15000ms
 
     Multi-voice routing:
       - narration / breathe_guide / phrase / whisper → various voice choices
       - dialogue → CHAR_VOICE[character]
-      - song segment → song_audio inserted in place
     """
-    intro = AudioSegment.from_wav(str(MUSIC_DIR / "intro_calm.wav"))
-    outro = AudioSegment.from_wav(str(MUSIC_DIR / "outro_calm.wav"))
-
-    timeline = AudioSegment.silent(duration=0)
-    timeline += intro
-    timeline += AudioSegment.silent(duration=500)
-
     counts: dict = {}
     for s in segments:
         counts[s["kind"]] = counts.get(s["kind"], 0) + 1
@@ -1018,8 +1060,8 @@ def assemble_long_story_audio(segments: list, song_audio: AudioSegment | None) -
         if kind == "pause":
             return AudioSegment.silent(duration=seg["ms"])
         if kind == "breathe":
-            # Saans pause: long breath silence.
-            return AudioSegment.silent(duration=4000)
+            # 5s breath silence — bed swells across this window.
+            return AudioSegment.silent(duration=5000)
         if kind == "song":
             return song_audio if song_audio is not None else AudioSegment.silent(duration=0)
 
@@ -1044,7 +1086,6 @@ def assemble_long_story_audio(segments: list, song_audio: AudioSegment | None) -
             text = seg["content"]
         elif kind == "narration":
             voice_label = NARRATOR_VOICE
-            # Intro section uses INTRO_TTS (livelier hook).
             if seg.get("section") == "intro":
                 preset = INTRO_TTS
             else:
@@ -1066,24 +1107,101 @@ def assemble_long_story_audio(segments: list, song_audio: AudioSegment | None) -
             next_text=nxt,
         )
 
-    # Render every segment in order.
-    for idx, seg in enumerate(segments):
-        rendered = render_seg(idx, seg)
-        if rendered is None:
-            continue
-        # Tiny breath between successive narration / dialogue lines.
-        if seg["kind"] in ("narration", "dialogue", "phrase", "whisper"):
-            timeline += AudioSegment.silent(duration=180)
-        timeline += rendered
-        if seg["kind"] == "phrase":
-            timeline += AudioSegment.silent(duration=900)
-        if seg["kind"] == "whisper":
-            timeline += AudioSegment.silent(duration=600)
-        if seg["kind"] == "song":
-            timeline += AudioSegment.silent(duration=1500)
+    def _stitch_section(section_name: str, gap_ms: int) -> tuple[AudioSegment, list[int]]:
+        """Stitch all segments in a given section.
 
-    timeline += AudioSegment.silent(duration=3000)
-    timeline += outro
+        Returns (audio, breathe_positions_in_ms_relative_to_audio_start).
+        Skips song segments — those are rendered separately as Part 02.
+        """
+        out = AudioSegment.silent(duration=0)
+        breathe_positions: list[int] = []
+        for idx, seg in enumerate(segments):
+            if seg.get("section") != section_name:
+                continue
+            if seg["kind"] == "song":
+                # Song is split out; ignore here.
+                continue
+            if seg["kind"] == "breathe":
+                breathe_positions.append(len(out))
+                out += AudioSegment.silent(duration=5000)
+                continue
+            if seg["kind"] == "breathe_guide":
+                # Render the guide, then 3000ms silence with bed swelling over it.
+                rendered = render_seg(idx, seg)
+                if rendered is not None:
+                    out += AudioSegment.silent(duration=180)
+                    out += rendered
+                breathe_positions.append(len(out))
+                out += AudioSegment.silent(duration=3000)
+                continue
+            rendered = render_seg(idx, seg)
+            if rendered is None:
+                continue
+            if seg["kind"] in ("narration", "dialogue", "phrase", "whisper"):
+                out += AudioSegment.silent(duration=180)
+            out += rendered
+            if seg["kind"] == "phrase":
+                out += AudioSegment.silent(duration=900)
+            elif seg["kind"] == "whisper":
+                out += AudioSegment.silent(duration=600)
+            elif seg["kind"] in ("narration", "dialogue"):
+                out += AudioSegment.silent(duration=gap_ms)
+            # pause segments are already a silence — don't add gap_ms after.
+        return out, breathe_positions
+
+    # ── Load music assets ────────────────────────────────────────────
+    intro_music = AudioSegment.from_wav(str(MUSIC_DIR / "intro_calm.wav"))
+    bed_raw = AudioSegment.from_wav(str(MUSIC_DIR / "bed_calm.wav"))
+
+    # ── 00 Intro music ───────────────────────────────────────────────
+    timeline = intro_music + AudioSegment.silent(duration=2000)
+
+    # ── 01 Part A: intro narration + 1000ms gap + phase_1, bed at -20 dB ──
+    intro_audio, intro_breathes = _stitch_section("intro", gap_ms=300)
+    p1_audio, p1_breathes = _stitch_section("phase_1", gap_ms=300)
+    gap_a = AudioSegment.silent(duration=1000)
+    part_a_voice = intro_audio + gap_a + p1_audio
+    p1_offset = len(intro_audio) + len(gap_a)
+    all_a_breathes = intro_breathes + [p + p1_offset for p in p1_breathes]
+
+    part_a_bed = _trim_or_loop(bed_raw, len(part_a_voice)) - 20
+    part_a_bed = _apply_breathe_swells(part_a_bed, all_a_breathes, -20).fade_out(2000)
+    timeline += part_a_voice.overlay(part_a_bed)
+
+    # ── 02 Song with crossfade-ish transitions ───────────────────────
+    if song_audio is not None:
+        song_with_fades = (
+            AudioSegment.silent(duration=500)
+            + song_audio.fade_in(2000).fade_out(2000)
+            + AudioSegment.silent(duration=500)
+        )
+        timeline += song_with_fades
+
+    # ── 03 Part B: post_song + 1000ms gap + phase_2, bed at -14 dB ───
+    post_audio, post_breathes = _stitch_section("post_song", gap_ms=500)
+    p2_audio, p2_breathes = _stitch_section("phase_2", gap_ms=500)
+    gap_b = AudioSegment.silent(duration=1000)
+    part_b_voice = post_audio + gap_b + p2_audio
+    p2_offset = len(post_audio) + len(gap_b)
+    all_b_breathes = post_breathes + [p + p2_offset for p in p2_breathes]
+
+    part_b_bed = _trim_or_loop(bed_raw, len(part_b_voice)) - 14
+    part_b_bed = _apply_breathe_swells(part_b_bed, all_b_breathes, -14).fade_in(2000)
+    timeline += part_b_voice.overlay(part_b_bed)
+
+    # ── 04 Part C: phase_3, bed at -10 dB ────────────────────────────
+    p3_audio, p3_breathes = _stitch_section("phase_3", gap_ms=800)
+
+    # 05 tail = additional 30s of bed (continues seamlessly after Part C),
+    # so we trim the bed to (p3 length + 30s) once and split it.
+    p3_bed_full = _trim_or_loop(bed_raw, len(p3_audio) + 30000) - 10
+    p3_bed_full = _apply_breathe_swells(p3_bed_full, p3_breathes, -10)
+    timeline += p3_audio.overlay(p3_bed_full[:len(p3_audio)])
+
+    # ── 05 Tail: 30s bed continuation, fade-out 15s ──────────────────
+    tail = p3_bed_full[len(p3_audio):len(p3_audio) + 30000].fade_out(15000)
+    timeline += tail
+
     return timeline
 
 
