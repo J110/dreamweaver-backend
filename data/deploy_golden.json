@@ -1,5 +1,5 @@
 {
-  "captured_at": "2026-04-10T11:28:37.264114",
+  "captured_at": "2026-04-26T13:18:40.820559",
   "api": "https://api.dreamvalley.app",
   "stories": {
     "counting-2-5-4f65": {
@@ -2072,9 +2072,613 @@
       ],
       "cover_url": "/covers/gen-b08733b50cb5.webp",
       "mood": "curious"
+    },
+    "permission-0-1-7356": {
+      "id": "permission-0-1-7356",
+      "title": "Luma and the Whispering Stream",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/permission-0-1-7356_female_1.mp3"
+      ],
+      "cover_url": "/covers/permission-0-1-7356.svg",
+      "mood": "calm"
+    },
+    "gen-5107b4b880f6": {
+      "id": "gen-5107b4b880f6",
+      "title": "Kai and the Star That Learned to Breathe",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-5107_female_1.mp3",
+        "/audio/pre-gen/gen-5107_asmr.mp3"
+      ],
+      "cover_url": "/covers/gen-5107b4b880f6.svg",
+      "mood": "calm"
+    },
+    "gen-476294432ed4": {
+      "id": "gen-476294432ed4",
+      "title": "Liorin and Bramble and the Lighthouse",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/47629443_mixed.mp3"
+      ],
+      "cover_url": "/covers/gen-476294432ed4.svg",
+      "mood": "calm"
+    },
+    "origin-6-8-20eb": {
+      "id": "origin-6-8-20eb",
+      "title": "Lumi and the First Dream",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/origin-6-8-20eb_female_1.mp3"
+      ],
+      "cover_url": "/covers/origin-6-8-20eb.svg",
+      "mood": "curious"
+    },
+    "gen-231617e54cb7": {
+      "id": "gen-231617e54cb7",
+      "title": "Chai and the Lantern That Lit the Fireflies",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-2316_male_2.mp3",
+        "/audio/pre-gen/gen-2316_female_4.mp3"
+      ],
+      "cover_url": "/covers/gen-231617e54cb7.svg",
+      "mood": "curious"
+    },
+    "gen-548508062243": {
+      "id": "gen-548508062243",
+      "title": "Tukalu and Sila and the Observatory",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/54850806_mixed.mp3"
+      ],
+      "cover_url": "/covers/gen-548508062243.svg",
+      "mood": "curious"
+    },
+    "closing-6-8-d099": {
+      "id": "closing-6-8-d099",
+      "title": "Mira's Draining Day",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/closing-6-8-d099_female_1.mp3"
+      ],
+      "cover_url": "/covers/closing-6-8-d099.svg",
+      "mood": "angry"
+    },
+    "gen-28e39619b0e1": {
+      "id": "gen-28e39619b0e1",
+      "title": "Nixie and the Star That Wouldn\u2019t Listen",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-28e3_female_3.mp3",
+        "/audio/pre-gen/gen-28e3_male_2.mp3"
+      ],
+      "cover_url": "/covers/gen-28e39619b0e1.svg",
+      "mood": "angry"
+    },
+    "gen-1b8c1685e4cb": {
+      "id": "gen-1b8c1685e4cb",
+      "title": "Liora and Tannin and the Theater",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/1b8c1685_mixed.mp3"
+      ],
+      "cover_url": "/covers/gen-1b8c1685e4cb.svg",
+      "mood": "angry"
+    },
+    "gen-659740ac0422": {
+      "id": "gen-659740ac0422",
+      "title": "Meera and Bansi and the Garden",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/659740ac_mixed.mp3"
+      ],
+      "cover_url": "/covers/gen-659740ac0422.svg",
+      "mood": "sad"
+    },
+    "heartbeat-0-1-867d": {
+      "id": "heartbeat-0-1-867d",
+      "title": "Humming",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/heartbeat-0-1-867d_female_1.mp3"
+      ],
+      "cover_url": "/covers/heartbeat-0-1-867d.svg",
+      "mood": "sad"
+    },
+    "gen-1392861743df": {
+      "id": "gen-1392861743df",
+      "title": "Whistle and the Empty Nest",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-1392_male_2.mp3",
+        "/audio/pre-gen/gen-1392_female_1.mp3"
+      ],
+      "cover_url": "/covers/gen-1392861743df.svg",
+      "mood": "sad"
+    },
+    "gen-b70846bfc0eb": {
+      "id": "gen-b70846bfc0eb",
+      "title": "Tali and Moss and the Lighthouse",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/b70846bf_mixed.mp3"
+      ],
+      "cover_url": "/covers/gen-b70846bfc0eb.svg",
+      "mood": "anxious"
+    },
+    "heartbeat-2-5-2795": {
+      "id": "heartbeat-2-5-2795",
+      "title": "Mira's Humming Heart",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/heartbeat-2-5-2795_female_1.mp3"
+      ],
+      "cover_url": "/covers/heartbeat-2-5-2795.svg",
+      "mood": "anxious"
+    },
+    "gen-4af2afd65084": {
+      "id": "gen-4af2afd65084",
+      "title": "Dot and the Firefly River",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-4af2_male_2.mp3",
+        "/audio/pre-gen/gen-4af2_female_1.mp3"
+      ],
+      "cover_url": "/covers/gen-4af2afd65084.svg",
+      "mood": "anxious"
+    },
+    "origin-6-8-d9d1": {
+      "id": "origin-6-8-d9d1",
+      "title": "Mira and the Sky's First Dream",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/origin-6-8-d9d1_female_1.mp3"
+      ],
+      "cover_url": "/covers/origin-6-8-d9d1.svg",
+      "mood": "curious"
+    },
+    "gen-d516582f12b2": {
+      "id": "gen-d516582f12b2",
+      "title": "Kai and the Moonlit Cat Paws",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-d516_male_2.mp3",
+        "/audio/pre-gen/gen-d516_female_4.mp3"
+      ],
+      "cover_url": "/covers/gen-d516582f12b2.svg",
+      "mood": "curious"
+    },
+    "gen-3fb72ddf1fa0": {
+      "id": "gen-3fb72ddf1fa0",
+      "title": "JIVAN and the Library",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/3fb72ddf_mixed.mp3"
+      ],
+      "cover_url": "/covers/gen-3fb72ddf1fa0.svg",
+      "mood": "curious"
+    },
+    "counting-2-5-8e2a": {
+      "id": "counting-2-5-8e2a",
+      "title": "Mara\u2019s Pond of Dreams",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/counting-2-5-8e2a_female_1.mp3"
+      ],
+      "cover_url": "/covers/counting-2-5-8e2a.svg",
+      "mood": "wired"
+    },
+    "rocking-0-1-df2e": {
+      "id": "rocking-0-1-df2e",
+      "title": "Silver Stream",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/rocking-0-1-df2e_female_1.mp3"
+      ],
+      "cover_url": "/covers/rocking-0-1-df2e.svg",
+      "mood": "wired"
+    },
+    "counting-6-8-2d84": {
+      "id": "counting-6-8-2d84",
+      "title": "Four Small Snails",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/counting-6-8-2d84_female_1.mp3"
+      ],
+      "cover_url": "/covers/counting-6-8-2d84.svg",
+      "mood": "wired"
+    },
+    "gen-71bfcce167b5": {
+      "id": "gen-71bfcce167b5",
+      "title": "Sparks and the Snoring Turtle",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-71bf_male_2.mp3",
+        "/audio/pre-gen/gen-71bf_female_3.mp3"
+      ],
+      "cover_url": "/covers/gen-71bfcce167b5.svg",
+      "mood": "wired"
+    },
+    "gen-5da48a0d5748": {
+      "id": "gen-5da48a0d5748",
+      "title": "Rishi and Chanda and the Workshop",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/5da48a0d_mixed.mp3"
+      ],
+      "cover_url": "/covers/gen-5da48a0d5748.svg",
+      "mood": "wired"
+    },
+    "origin-6-8-3d00": {
+      "id": "origin-6-8-3d00",
+      "title": "Lumi and the First Dream",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/origin-6-8-3d00_female_1.mp3"
+      ],
+      "cover_url": "/covers/origin-6-8-3d00.svg",
+      "mood": "curious"
+    },
+    "gen-fdab3d5c5b6c": {
+      "id": "gen-fdab3d5c5b6c",
+      "title": "Pip and the River That Forgot to Flow",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-fdab_male_2.mp3",
+        "/audio/pre-gen/gen-fdab_female_4.mp3"
+      ],
+      "cover_url": "/covers/gen-fdab3d5c5b6c.svg",
+      "mood": "curious"
+    },
+    "gen-875b91988634": {
+      "id": "gen-875b91988634",
+      "title": "Solren and Glimble and the Museum",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/875b9198_mixed.mp3"
+      ],
+      "cover_url": "/covers/gen-875b91988634.svg",
+      "mood": "curious"
+    },
+    "warning-6-8-efae": {
+      "id": "warning-6-8-efae",
+      "title": "Mira and the Silver Dreams",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/warning-6-8-efae_female_1.mp3"
+      ],
+      "cover_url": "/covers/warning-6-8-efae.svg",
+      "mood": "curious"
+    },
+    "gen-ac562d418c8a": {
+      "id": "gen-ac562d418c8a",
+      "title": "Zib and the Planet That Hummed",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-ac56_female_4.mp3",
+        "/audio/pre-gen/gen-ac56_male_2.mp3"
+      ],
+      "cover_url": "/covers/gen-ac562d418c8a.svg",
+      "mood": "curious"
+    },
+    "gen-822c8c398f84": {
+      "id": "gen-822c8c398f84",
+      "title": "Nalu and Piko and the Transport",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/822c8c39_mixed.mp3"
+      ],
+      "cover_url": "/covers/gen-822c8c398f84.svg",
+      "mood": "wired"
+    },
+    "rocking-0-1-8f3a": {
+      "id": "rocking-0-1-8f3a",
+      "title": "Veeva and the Rolling Wave",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/rocking-0-1-8f3a_female_1.mp3"
+      ],
+      "cover_url": "/covers/rocking-0-1-8f3a.svg",
+      "mood": "wired"
+    },
+    "gen-41733c7229e0": {
+      "id": "gen-41733c7229e0",
+      "title": "Priya and the Turtle Who Forgot to Breathe",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-4173_male_2.mp3",
+        "/audio/pre-gen/gen-4173_female_3.mp3"
+      ],
+      "cover_url": "/covers/gen-41733c7229e0.svg",
+      "mood": "wired"
+    },
+    "parent_song-6-8-48d0": {
+      "id": "parent_song-6-8-48d0",
+      "title": "Mara\u2019s Fading Light",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/parent_song-6-8-48d0_female_1.mp3"
+      ],
+      "cover_url": "/covers/parent_song-6-8-48d0.svg",
+      "mood": "sad"
+    },
+    "gen-467f19261176": {
+      "id": "gen-467f19261176",
+      "title": "Leo and the Turtle Who Carried the Sky",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-467f_male_2.mp3",
+        "/audio/pre-gen/gen-467f_female_1.mp3"
+      ],
+      "cover_url": "/covers/gen-467f19261176.svg",
+      "mood": "sad"
+    },
+    "gen-fb96c7cf6143": {
+      "id": "gen-fb96c7cf6143",
+      "title": "Kaeli and Sori and the Kitchen",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/fb96c7cf_mixed.mp3"
+      ],
+      "cover_url": "/covers/gen-fb96c7cf6143.svg",
+      "mood": "sad"
+    },
+    "gen-318fba8acb0b": {
+      "id": "gen-318fba8acb0b",
+      "title": "Veera and Thalai and the Lighthouse",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/318fba8a_mixed.mp3"
+      ],
+      "cover_url": "/covers/gen-318fba8acb0b.svg",
+      "mood": "anxious"
+    },
+    "rocking-0-1-f728": {
+      "id": "rocking-0-1-f728",
+      "title": "Shloo and the Starlight Rock",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/rocking-0-1-f728_female_1.mp3"
+      ],
+      "cover_url": "/covers/rocking-0-1-f728.svg",
+      "mood": "anxious"
+    },
+    "gen-9a904319d9a3": {
+      "id": "gen-9a904319d9a3",
+      "title": "Orla and the Whispering Dunes",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-9a90_male_2.mp3",
+        "/audio/pre-gen/gen-9a90_female_1.mp3"
+      ],
+      "cover_url": "/covers/gen-9a904319d9a3.svg",
+      "mood": "anxious"
+    },
+    "counting-6-8-a09a": {
+      "id": "counting-6-8-a09a",
+      "title": "Mara\u2019s Moonlit Pond",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/counting-6-8-a09a_female_1.mp3"
+      ],
+      "cover_url": "/covers/counting-6-8-a09a.svg",
+      "mood": "wired"
+    },
+    "gen-7cab9c8a52a7": {
+      "id": "gen-7cab9c8a52a7",
+      "title": "Aria and the Planet That Forgot to Spin",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-7cab_female_3.mp3",
+        "/audio/pre-gen/gen-7cab_male_2.mp3"
+      ],
+      "cover_url": "/covers/gen-7cab9c8a52a7.svg",
+      "mood": "wired"
+    },
+    "gen-2c93c038c880": {
+      "id": "gen-2c93c038c880",
+      "title": "Nivi and Qamaniq and the Post office",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/2c93c038_mixed.mp3"
+      ],
+      "cover_url": "/covers/gen-2c93c038c880.svg",
+      "mood": "wired"
+    },
+    "permission-0-1-514a": {
+      "id": "permission-0-1-514a",
+      "title": "Lulu and the Moonhush",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/permission-0-1-514a_female_1.mp3"
+      ],
+      "cover_url": "/covers/permission-0-1-514a.svg",
+      "mood": "curious"
+    },
+    "gen-17871d0b10ff": {
+      "id": "gen-17871d0b10ff",
+      "title": "Bloop and the Whispering Moonvines",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-1787_male_2.mp3",
+        "/audio/pre-gen/gen-1787_female_4.mp3"
+      ],
+      "cover_url": "/covers/gen-17871d0b10ff.svg",
+      "mood": "curious"
+    },
+    "gen-7573f233b6ea": {
+      "id": "gen-7573f233b6ea",
+      "title": "Kavya and Dodi and the Library",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/7573f233_mixed.mp3"
+      ],
+      "cover_url": "/covers/gen-7573f233b6ea.svg",
+      "mood": "curious"
+    },
+    "closing-2-5-0607": {
+      "id": "closing-2-5-0607",
+      "title": "Mira\u2019s Pillow Fight",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/closing-2-5-0607_female_1.mp3"
+      ],
+      "cover_url": "/covers/closing-2-5-0607.svg",
+      "mood": "angry"
+    },
+    "gen-77b340eaaa5a": {
+      "id": "gen-77b340eaaa5a",
+      "title": "Feather and the Stone That Listened",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-77b3_male_2.mp3",
+        "/audio/pre-gen/gen-77b3_female_3.mp3"
+      ],
+      "cover_url": "/covers/gen-77b340eaaa5a.svg",
+      "mood": "angry"
+    },
+    "gen-295778b0c571": {
+      "id": "gen-295778b0c571",
+      "title": "VELIS and ORRA and the Theater",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/295778b0_mixed.mp3"
+      ],
+      "cover_url": "/covers/gen-295778b0c571.svg",
+      "mood": "angry"
+    },
+    "counting-6-8-abe7": {
+      "id": "counting-6-8-abe7",
+      "title": "Mara\u2019s Moonlit Count",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/counting-6-8-abe7_female_1.mp3"
+      ],
+      "cover_url": "/covers/counting-6-8-abe7.svg",
+      "mood": "wired"
+    },
+    "gen-01ab2fc9907f": {
+      "id": "gen-01ab2fc9907f",
+      "title": "Leo and the Slippery Slide Cloud",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-01ab_male_2.mp3",
+        "/audio/pre-gen/gen-01ab_female_3.mp3"
+      ],
+      "cover_url": "/covers/gen-01ab2fc9907f.svg",
+      "mood": "wired"
+    },
+    "gen-466919aaf983": {
+      "id": "gen-466919aaf983",
+      "title": "Ren and Chime and the Transport",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/466919aa_mixed.mp3"
+      ],
+      "cover_url": "/covers/gen-466919aaf983.svg",
+      "mood": "wired"
     }
   },
-  "story_count": 144,
+  "story_count": 193,
   "silly_songs": {
     "2-5": {
       "not_tired_2_5": {
@@ -2130,6 +2734,54 @@
         "has_audio": true,
         "audio_url": "/audio/silly-songs/no_no_no_2_5.mp3",
         "cover_url": "/covers/silly-songs/no_no_no_2_5.webp"
+      },
+      "puddles_2_5": {
+        "title": "Puddles!",
+        "has_audio": true,
+        "audio_url": "/audio/silly-songs/puddles_2_5.mp3",
+        "cover_url": "/covers/silly-songs/puddles_2_5.webp"
+      },
+      "why_dark_2_5": {
+        "title": "Why Is It Dark?",
+        "has_audio": true,
+        "audio_url": "/audio/silly-songs/why_dark_2_5.mp3",
+        "cover_url": "/covers/silly-songs/why_dark_2_5.webp"
+      },
+      "pyjama_day_2_5": {
+        "title": "Pyjama Day!",
+        "has_audio": true,
+        "audio_url": "/audio/silly-songs/pyjama_day_2_5.mp3",
+        "cover_url": "/covers/silly-songs/pyjama_day_2_5.webp"
+      },
+      "where_socks_2_5": {
+        "title": "Where Do Socks Go?",
+        "has_audio": true,
+        "audio_url": "/audio/silly-songs/where_socks_2_5.mp3",
+        "cover_url": "/covers/silly-songs/where_socks_2_5.webp"
+      },
+      "ice_cream_2_5": {
+        "title": "Ice Cream!",
+        "has_audio": true,
+        "audio_url": "/audio/silly-songs/ice_cream_2_5.mp3",
+        "cover_url": "/covers/silly-songs/ice_cream_2_5.webp"
+      },
+      "belly_button_2_5": {
+        "title": "What'S My Belly Button For?",
+        "has_audio": true,
+        "audio_url": "/audio/silly-songs/belly_button_2_5.mp3",
+        "cover_url": "/covers/silly-songs/belly_button_2_5.webp"
+      },
+      "bubbles_2_5": {
+        "title": "Bubbles!",
+        "has_audio": true,
+        "audio_url": "/audio/silly-songs/bubbles_2_5.mp3",
+        "cover_url": "/covers/silly-songs/bubbles_2_5.webp"
+      },
+      "dont_wanna_2_5": {
+        "title": "I Don'T Wanna",
+        "has_audio": true,
+        "audio_url": "/audio/silly-songs/dont_wanna_2_5.mp3",
+        "cover_url": "/covers/silly-songs/dont_wanna_2_5.webp"
       }
     },
     "6-8": {
@@ -2174,6 +2826,36 @@
         "has_audio": true,
         "audio_url": "/audio/silly-songs/one_more_6_8.mp3",
         "cover_url": "/covers/silly-songs/one_more_6_8.webp"
+      },
+      "no_school_6_8": {
+        "title": "No School Tomorrow!",
+        "has_audio": true,
+        "audio_url": "/audio/silly-songs/no_school_6_8.mp3",
+        "cover_url": "/covers/silly-songs/no_school_6_8.webp"
+      },
+      "new_pet_6_8": {
+        "title": "We Got A Pet!",
+        "has_audio": true,
+        "audio_url": "/audio/silly-songs/new_pet_6_8.mp3",
+        "cover_url": "/covers/silly-songs/new_pet_6_8.webp"
+      },
+      "snow_day_6_8": {
+        "title": "Snow Day!",
+        "has_audio": true,
+        "audio_url": "/audio/silly-songs/snow_day_6_8.mp3",
+        "cover_url": "/covers/silly-songs/snow_day_6_8.webp"
+      },
+      "pizza_night_6_8": {
+        "title": "Pizza Night!",
+        "has_audio": true,
+        "audio_url": "/audio/silly-songs/pizza_night_6_8.mp3",
+        "cover_url": "/covers/silly-songs/pizza_night_6_8.webp"
+      },
+      "sleepover_6_8": {
+        "title": "Sleepover!",
+        "has_audio": true,
+        "audio_url": "/audio/silly-songs/sleepover_6_8.mp3",
+        "cover_url": "/covers/silly-songs/sleepover_6_8.webp"
       }
     },
     "9-12": {
@@ -2228,6 +2910,36 @@
         "has_audio": true,
         "audio_url": "/audio/poems/sound_2_5_128f.mp3",
         "cover_url": "/covers/poems/sound_2_5_128f_cover.webp"
+      },
+      "sound_2_5_d174": {
+        "title": "Zip Zoom Zing",
+        "has_audio": true,
+        "audio_url": "/audio/poems/sound_2_5_d174.mp3",
+        "cover_url": "/covers/poems/sound_2_5_d174_cover.webp"
+      },
+      "sound_2_5_da48": {
+        "title": "Puddle Steps",
+        "has_audio": true,
+        "audio_url": "/audio/poems/sound_2_5_da48.mp3",
+        "cover_url": "/covers/poems/sound_2_5_da48_cover.webp"
+      },
+      "sound_2_5_f0a3": {
+        "title": "Bubble Drift",
+        "has_audio": true,
+        "audio_url": "/audio/poems/sound_2_5_f0a3.mp3",
+        "cover_url": "/covers/poems/sound_2_5_f0a3_cover.webp"
+      },
+      "sound_2_5_f9a3": {
+        "title": "Tick Tock Safe",
+        "has_audio": true,
+        "audio_url": "/audio/poems/sound_2_5_f9a3.mp3",
+        "cover_url": "/covers/poems/sound_2_5_f9a3_cover.webp"
+      },
+      "sound_2_5_0826": {
+        "title": "Whisper of the Pond",
+        "has_audio": true,
+        "audio_url": "/audio/poems/sound_2_5_0826.mp3",
+        "cover_url": "/covers/poems/sound_2_5_0826_cover.webp"
       }
     },
     "6-8": {
@@ -2248,6 +2960,36 @@
         "has_audio": true,
         "audio_url": "/audio/poems/nonsense_6_8_5d10.mp3",
         "cover_url": "/covers/poems/nonsense_6_8_5d10_cover.webp"
+      },
+      "nonsense_6_8_21d1": {
+        "title": "Glimmer Glow Glee",
+        "has_audio": true,
+        "audio_url": "/audio/poems/nonsense_6_8_21d1.mp3",
+        "cover_url": "/covers/poems/nonsense_6_8_21d1_cover.webp"
+      },
+      "nonsense_6_8_2802": {
+        "title": "Tizzle Twirl Tick",
+        "has_audio": true,
+        "audio_url": "/audio/poems/nonsense_6_8_2802.mp3",
+        "cover_url": "/covers/poems/nonsense_6_8_2802_cover.webp"
+      },
+      "nonsense_6_8_3e10": {
+        "title": "Fizzle Flip Flop",
+        "has_audio": true,
+        "audio_url": "/audio/poems/nonsense_6_8_3e10.mp3",
+        "cover_url": "/covers/poems/nonsense_6_8_3e10_cover.webp"
+      },
+      "nonsense_6_8_4b24": {
+        "title": "Wobble Wump Whirl",
+        "has_audio": true,
+        "audio_url": "/audio/poems/nonsense_6_8_4b24.mp3",
+        "cover_url": "/covers/poems/nonsense_6_8_4b24_cover.webp"
+      },
+      "nonsense_6_8_5249": {
+        "title": "Bibble Bobble Boom",
+        "has_audio": true,
+        "audio_url": "/audio/poems/nonsense_6_8_5249.mp3",
+        "cover_url": "/covers/poems/nonsense_6_8_5249_cover.webp"
       }
     },
     "9-12": {
@@ -2262,6 +3004,42 @@
         "has_audio": true,
         "audio_url": "/audio/poems/question_9_12_bf17.mp3",
         "cover_url": "/covers/poems/question_9_12_bf17_cover.webp"
+      },
+      "question_9_12_7428": {
+        "title": "Why Do Cats Wear Hats?",
+        "has_audio": true,
+        "audio_url": "/audio/poems/question_9_12_7428.mp3",
+        "cover_url": "/covers/poems/question_9_12_7428_cover.webp"
+      },
+      "question_9_12_8734": {
+        "title": "Where Do Dreams Go",
+        "has_audio": true,
+        "audio_url": "/audio/poems/question_9_12_8734.mp3",
+        "cover_url": "/covers/poems/question_9_12_8734_cover.webp"
+      },
+      "question_9_12_8efe": {
+        "title": "Why Do Shadows Dance?",
+        "has_audio": true,
+        "audio_url": "/audio/poems/question_9_12_8efe.mp3",
+        "cover_url": "/covers/poems/question_9_12_8efe_cover.webp"
+      },
+      "question_9_12_9017": {
+        "title": "Why Do Socks Run Off?",
+        "has_audio": true,
+        "audio_url": "/audio/poems/question_9_12_9017.mp3",
+        "cover_url": "/covers/poems/question_9_12_9017_cover.webp"
+      },
+      "question_9_12_a2b9": {
+        "title": "What If the Sky",
+        "has_audio": true,
+        "audio_url": "/audio/poems/question_9_12_a2b9.mp3",
+        "cover_url": "/covers/poems/question_9_12_a2b9_cover.webp"
+      },
+      "question_9_12_ae00": {
+        "title": "Why Do Whispers Fly?",
+        "has_audio": true,
+        "audio_url": "/audio/poems/question_9_12_ae00.mp3",
+        "cover_url": "/covers/poems/question_9_12_ae00_cover.webp"
       }
     }
   }
