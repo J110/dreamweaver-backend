@@ -72,7 +72,7 @@ for _path in ["/opt/homebrew/bin/gcloud", "/usr/local/bin/gcloud", "/usr/bin/gcl
         break
 
 SSH_CMD = [_GCLOUD, "compute", "ssh", "dreamvalley-prod",
-           "--project=strong-harbor-472607-n4", "--zone=asia-south1-a",
+           "--project=strong-harbor-472607-n4", "--zone=asia-south1-c",
            "--command"]
 
 # When deploy_guard runs on the prod VM itself, gcloud SSH from VM→VM
