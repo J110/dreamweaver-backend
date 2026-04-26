@@ -1178,7 +1178,11 @@ def story_entry(duration: int, song_seconds: int) -> dict:
     full_text_roman = STORY["full_text_roman"]
     return {
         "id": STORY["id"],
-        "type": "story",
+        # NOTE: explore page (dreamweaver-web/src/app/explore/page.js)
+        # filters tabs by item.type === "long_story" (matching English
+        # long stories). Setting type=long_story (not "story") makes
+        # this surface in the "Long Stories" / "Lambi Kahaniyan" tab.
+        "type": "long_story",
         "lang": "hi",
         "language": "hi",
         "story_format": "long_story",
