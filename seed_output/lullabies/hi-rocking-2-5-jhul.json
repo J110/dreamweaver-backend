@@ -1,0 +1,38 @@
+{
+  "id": "hi-rocking-2-5-jhul",
+  "title": "Jhulna Re",
+  "title_deva": "झूलना रे",
+  "lullaby_type": "rocking",
+  "card_label": "Jhulna Re",
+  "card_subtitle": "Maa ki goad mein dheere dheere — aage peeche, aage peeche",
+  "age_group": "2-5",
+  "mood": "calm",
+  "lang": "hi",
+  "language": "hi",
+  "audio_file": "hi-rocking-2-5-jhul.mp3",
+  "cover_file": "hi-rocking-2-5-jhul_cover.svg",
+  "duration_seconds": 72,
+  "lyrics": "Jhulna re, jhulna re\nDheere dheere jhulna re\nAage peeche, aage peeche\nAankhein band ho jaayein dheere\n\nMaa ki goad mein, jhulna re\nSaari raat hai apni\nMaa ki goad mein, jhulna re\nNeend hai meethi apni\n\nSham dhali, hawa thandi\nAangan mein deep jale\nBachche ka hai jhula resham\nDheere dheere chale\n\nMaa ki goad mein, jhulna re\nSaari raat hai apni\nMaa ki goad mein, jhulna re\nNeend hai meethi apni\n\nSaans dheere, dil dheere\nJhula bhi ab dheere\nAage peeche, neend mein kheenche\nSapne aaye sapne",
+  "lyrics_deva": "झूलना रे, झूलना रे\nधीरे धीरे झूलना रे\nआगे पीछे, आगे पीछे\nआँखें बंद हो जाएँ धीरे\n\nमाँ की गोद में, झूलना रे\nसारी रात है अपनी\nमाँ की गोद में, झूलना रे\nनींद है मीठी अपनी\n\nशाम ढली, हवा ठंडी\nआँगन में दीप जले\nबच्चे का है झूला रेशम\nधीरे धीरे चले\n\nमाँ की गोद में, झूलना रे\nसारी रात है अपनी\nमाँ की गोद में, झूलना रे\nनींद है मीठी अपनी\n\nसाँस धीरे, दिल धीरे\nझूला भी अब धीरे\nआगे पीछे, नींद में खींचे\nसपने आए सपने",
+  "raw_lyrics": "[verse]\nJhulna re, jhulna re\nDheere dheere jhulna re\nAage peeche, aage peeche\nAankhein band ho jaayein dheere\n\n[chorus]\nMaa ki goad mein, jhulna re\nSaari raat hai apni\nMaa ki goad mein, jhulna re\nNeend hai meethi apni\n\n[verse]\nSham dhali, hawa thandi\nAangan mein deep jale\nBachche ka hai jhula resham\nDheere dheere chale\n\n[chorus]\nMaa ki goad mein, jhulna re\nSaari raat hai apni\nMaa ki goad mein, jhulna re\nNeend hai meethi apni\n\n[verse]\nSaans dheere, dil dheere\nJhula bhi ab dheere\nAage peeche, neend mein kheenche\nSapne aaye sapne\n",
+  "raw_lyrics_deva": "[verse]\nझूलना रे, झूलना रे\nधीरे धीरे झूलना रे\nआगे पीछे, आगे पीछे\nआँखें बंद हो जाएँ धीरे\n\n[chorus]\nमाँ की गोद में, झूलना रे\nसारी रात है अपनी\nमाँ की गोद में, झूलना रे\nनींद है मीठी अपनी\n\n[verse]\nशाम ढली, हवा ठंडी\nआँगन में दीप जले\nबच्चे का है झूला रेशम\nधीरे धीरे चले\n\n[chorus]\nमाँ की गोद में, झूलना रे\nसारी रात है अपनी\nमाँ की गोद में, झूलना रे\nनींद है मीठी अपनी\n\n[verse]\nसाँस धीरे, दिल धीरे\nझूला भी अब धीरे\nआगे पीछे, नींद में खींचे\nसपने आए सपने\n",
+  "style_prompt": "Gentle Hindi rocking lullaby, soft warm female vocal, low register, swaying 6/8 rhythm at 58 BPM, soft santoor pulse underneath like raindrops, tender sarangi answering each line, no vibrato, intimate maternal delivery, even back-and-forth swaying motion in the music itself, minimal instrumentation, soft breath between phrases, traditional Indian classical lullaby feel",
+  "engine": "minimax-music-v2.5",
+  "tts_input_script": "devanagari",
+  "character": {
+    "name": "Bachcha",
+    "identity": "a small drowsy Indian toddler being gently rocked in a soft cotton hammock-jhula strung between two pillars in a warm south-Indian courtyard at dusk, eyes half-closed, one tiny hand draped over the edge",
+    "special": "the jhula moves in a slow steady rhythm — aage peeche, aage peeche — exactly the speed of a calm breath",
+    "personality_tags": [
+      "Drowsy",
+      "Held"
+    ]
+  },
+  "characterType": "human_child",
+  "instrument": "santoor_sarangi",
+  "imagery": "jhula_aangan",
+  "theme": "comfort",
+  "geography": "south_asia",
+  "indian_region": "west",
+  "created_at": "2026-04-26"
+}
