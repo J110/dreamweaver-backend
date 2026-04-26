@@ -1292,8 +1292,53 @@ def _word_count(text: str) -> int:
 # ──────────────────────────────────────────────────────────────────────
 # content.json upsert
 # ──────────────────────────────────────────────────────────────────────
+_LONG_STORY_TAG_RE = re.compile(
+    r"""
+    \[CHARACTER:[^\]]*\]                         # character tag (drop entirely)
+    | \[INTRO\] | \[PHASE_[123]\] | \[POST_SONG\] # section markers (drop)
+    | \[BREATHE\]                                # standalone breathe (drop)
+    | \[/?BREATHE_GUIDE\]                        # breathe-guide wrappers (keep inner)
+    | \[/?PHRASE\]                               # phrase wrappers (keep inner)
+    | \[/?WHISPER\]                              # whisper wrappers (keep inner)
+    | \[SONG_SEED:[^\]]*\]                       # english song seed (drop)
+    | \[PAUSE:\s*\d+\s*\]                        # pause directive (drop)
+    """,
+    re.VERBOSE,
+)
+
+
+def strip_long_story_tags(text: str) -> str:
+    """Produce user-facing Roman Hindi prose by stripping structural tags.
+
+    What stays:
+      • narration paragraphs
+      • dialogue lines (NAME: "..." kept as-is — the reader sees who speaks)
+      • [BREATHE_GUIDE] inner text (the breath instructions are spoken aloud,
+        so they're part of the story the child hears)
+      • [PHRASE] inner text (the repeated phrase is real story content)
+      • [WHISPER] inner text (the closing whispered words)
+
+    What goes:
+      • [CHARACTER:] metadata
+      • [INTRO] / [PHASE_N] / [POST_SONG] section markers
+      • Standalone [BREATHE] and [PAUSE: ms] directives
+      • [SONG_SEED: ...] (it's an English seed for the song generator,
+        not Hindi prose; the actual song is heard, not read)
+
+    Multiple blank lines collapsed to a single blank line.
+    """
+    out = _LONG_STORY_TAG_RE.sub("", text)
+    # Collapse runs of 3+ newlines to exactly 2 (paragraph break).
+    out = re.sub(r"\n{3,}", "\n\n", out)
+    # Trim whitespace on each line, then collapse leading/trailing blanks.
+    out = "\n".join(line.rstrip() for line in out.splitlines())
+    return out.strip()
+
+
 def story_entry(duration: int, song_seconds: int) -> dict:
     full_text_roman = STORY["full_text_roman"]
+    display_text = strip_long_story_tags(full_text_roman)
+    display_text_deva = strip_long_story_tags(STORY["full_text_deva"])
     return {
         "id": STORY["id"],
         # NOTE: explore page (dreamweaver-web/src/app/explore/page.js)
@@ -1324,9 +1369,13 @@ def story_entry(duration: int, song_seconds: int) -> dict:
         "phase_2_text": STORY["phase_2_text_roman"],
         "phase_3_text": STORY["phase_3_text_roman"],
         # Combined narrative for the reader page (Roman, user-facing).
-        "text": full_text_roman,
-        "text_deva": STORY["full_text_deva"],
+        # `text` and `text_deva` are tag-stripped — the display-time prose.
+        # `raw_text` keeps the tags so the assembler / pipeline can re-render
+        # audio without losing structural markers.
+        "text": display_text,
+        "text_deva": display_text_deva,
         "raw_text": full_text_roman,
+        "raw_text_deva": STORY["full_text_deva"],
         "diversityFingerprint": STORY["diversityFingerprint"],
         # Standard catalog fields.
         "character": {
