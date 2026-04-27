@@ -111,10 +111,10 @@ LONG_STORY_TTS_EN = {
     "song_transition": {"stability": 0.55, "similarity_boost": 0.75, "style": 0.25, "speed": 0.82},
     "post_song":       {"stability": 0.60, "similarity_boost": 0.75, "style": 0.20, "speed": 0.78},
     "phase_2":         {"stability": 0.65, "similarity_boost": 0.75, "style": 0.15, "speed": 0.78},
-    "phase_3":         {"stability": 0.75, "similarity_boost": 0.75, "style": 0.10, "speed": 0.70},
-    "whisper":         {"stability": 0.85, "similarity_boost": 0.75, "style": 0.00, "speed": 0.65},
+    "phase_3":         {"stability": 0.75, "similarity_boost": 0.75, "style": 0.10, "speed": 0.72},
+    "whisper":         {"stability": 0.85, "similarity_boost": 0.75, "style": 0.00, "speed": 0.70},
     "breathing":       {"stability": 0.70, "similarity_boost": 0.75, "style": 0.10, "speed": 0.72},
-    "breathe_guide":   {"stability": 0.75, "similarity_boost": 0.75, "style": 0.05, "speed": 0.68},
+    "breathe_guide":   {"stability": 0.75, "similarity_boost": 0.75, "style": 0.05, "speed": 0.70},
 }
 
 # Character voice-style modifiers (per spec §7.1).
@@ -166,7 +166,7 @@ def _clamp(x: float, lo: float, hi: float) -> float:
 def apply_modifier(base: dict, modifier_name: str) -> dict:
     """Apply a character voice-style modifier on top of a section base.
 
-    Clamps to: stability ∈ [0.40, 1.0], style ∈ [0,1], speed ∈ [0.65, 1.2].
+    Clamps to: stability ∈ [0.40, 1.0], style ∈ [0,1], speed ∈ [0.70, 1.2].
 
     Stability floor at 0.40 (raised 2026-04-27 from 0.0) prevents the
     "speaking too fast and randomly" failure mode when a `nervous` or
@@ -180,7 +180,7 @@ def apply_modifier(base: dict, modifier_name: str) -> dict:
         "stability":        _clamp(base["stability"] + mod["stability_offset"], 0.40, 1.0),
         "similarity_boost": base.get("similarity_boost", 0.75),
         "style":            _clamp(base["style"] + mod["style_offset"], 0.0, 1.0),
-        "speed":            _clamp(base["speed"] + mod["speed_offset"], 0.65, 1.2),
+        "speed":            _clamp(base["speed"] + mod["speed_offset"], 0.70, 1.2),
     }
 
 
@@ -203,7 +203,7 @@ def chatterbox_to_elevenlabs(exaggeration: float, cfg_weight: float, speed: floa
         "stability":        _clamp(1.0 - cfg_weight * 1.1, 0.40, 0.95),
         "similarity_boost": 0.75,
         "style":            _clamp(exaggeration * 0.6, 0.0, 0.50),
-        "speed":            _clamp(speed, 0.65, 1.2),
+        "speed":            _clamp(speed, 0.70, 1.2),
     }
 
 
@@ -311,7 +311,7 @@ def tts_eleven_raw(text: str, voice: str, *,
             "stability": _clamp(stability, 0.0, 1.0),
             "similarity_boost": _clamp(similarity_boost, 0.0, 1.0),
             "style": _clamp(style, 0.0, 1.0),
-            "speed": _clamp(speed, 0.65, 1.2),
+            "speed": _clamp(speed, 0.70, 1.2),
         },
     }
     if previous_text:

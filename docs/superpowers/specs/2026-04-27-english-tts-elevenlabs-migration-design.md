@@ -130,10 +130,12 @@ The `voice_map` is persisted in `metadata.json` exactly as today.
 | song_transition | 0.55 | 0.25 | 0.82 | Bridging into the song; slightly softer than phase_1 |
 | post_song | 0.60 | 0.20 | 0.78 | Returning softer after the song |
 | phase_2 | 0.65 | 0.15 | 0.78 | Settling, sensation over plot |
-| phase_3 | 0.75 | 0.10 | 0.70 | Dissolution, fragments; style 0.10 keeps trace warmth |
-| whisper | 0.85 | 0.00 | 0.65 | Final 3–4 lines; only place style 0.00 is right |
+| phase_3 | 0.75 | 0.10 | 0.72 | Dissolution, fragments; style 0.10 keeps trace warmth |
+| whisper | 0.85 | 0.00 | 0.70 | Final 3–4 lines; only place style 0.00 is right |
 | breathing | 0.70 | 0.10 | 0.72 | Slow steady delivery, calmer than narrator default |
-| breathe_guide | 0.75 | 0.05 | 0.68 | Instructional, very slow, almost meditative |
+| breathe_guide | 0.75 | 0.05 | 0.70 | Instructional, very slow, almost meditative |
+
+**Speed floor 0.70**: ElevenLabs API rejects `speed < 0.70` with HTTP 400 (`invalid_voice_settings`). Originally tuned to 0.65–0.68 for whisper/breathe_guide; raised 2026-04-27 after the API rejection. Clamps in `chatterbox_to_elevenlabs()`, `tts_eleven_raw()`, and `apply_modifier()` all enforce `[0.70, 1.20]`.
 
 ### 7.1 Modifier floor clamp
 
