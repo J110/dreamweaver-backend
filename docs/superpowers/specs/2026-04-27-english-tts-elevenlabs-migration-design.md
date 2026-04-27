@@ -66,9 +66,10 @@ ELEVENLABS_VOICES_EN = {
     "zara":    "wdymxIQkYn7MJCYCQF2Q",  # Soothing, Meditative — ASMR / whisper
     # Male voices (long-story characters only)
     "ranbir":  "MgKG6W05zBkvXijkNguO",  # Deep and Dramatic Storyteller
-    "tarun":   "qr9D67rNgxf5xNgv46nx",  # Rich, Warm and Friendly (replaced harshit 2026-04-27)
+    "prem":    "2XXEFRk2sGzKPk6Kl6wa",  # Fairy Tale Story Narrator (replaced tarun 2026-04-27)
     "ishan":   "N09NFwYJJG9VSSgdLQbT",  # Bold and Upbeat
     # Retired (kept in library for legacy lookups, unused in routing):
+    # "tarun":   "qr9D67rNgxf5xNgv46nx",  # Rich, Warm and Friendly
     # "harshit": "6TcvxMZXgg9AlJrd8iCl",  # Strong, Deep and Casual
     # "maya":    "4O1sYUnmtThcBoSBrri7",  # Friendly and Cheerful
 }
@@ -100,7 +101,7 @@ This is a **deliberate departure** from the existing dual-narrator A/B system do
 Routing rule:
 - The orchestrator (`generate_long_story_episode.py`) already samples character gender per story from the diversity scheduler. Voice routing **respects** that sampling, not overrides it.
 - For each character, pick a voice matching the sampled gender that is not already in use by the narrator, whisper, or another character in this story.
-- Male pool: `ranbir` → `tarun` → `ishan` (priority order). `tarun` (Rich, Warm and Friendly) replaced `harshit` 2026-04-27 per user feedback.
+- Male pool: `ranbir` → `prem` → `ishan` (priority order). `prem` (Fairy Tale Story Narrator) replaced `tarun` 2026-04-27 per user feedback. `tarun` and `harshit` retired.
 - Female pool: any of the 5 narrator voices not currently assigned (`tripti, monika, tara, simran, rhea`). `zara` is **excluded** from character casting — she's reserved for the angry-narrator + whisper roles to keep that voice unique.
 - `maya` is **retired** as of 2026-04-27 (voice didn't land in user testing); the voice ID stays in the library for reference but is unused.
 - `WHISPER_VOICE = "zara"` regardless of cast.
@@ -235,7 +236,29 @@ Dialogue gets the larger window because a short character line absolutely depend
 
 V2 short stories also accept these params via `tts_eleven_compat()` but the V2 caller doesn't currently set them — V2 chunks are short enough that a fresh emotional state per chunk doesn't audibly hurt.
 
-### 8.4 Long-input defensive check
+### 8.4 Dialogue-aware silence gaps + narrator pre-padding
+
+Originally `stitch_chunks()` inserted a flat ~300ms silence between every audio segment. With character voices distinct from the narrator, the absence of a real beat between dialogue and narration made the conversation feel mechanical — character finishes speaking, narrator immediately jumps in, listener has no time to absorb the line.
+
+Updated 2026-04-27: each `("audio", ...)` chunk is now tagged with its source segment type (`narration` / `dialogue` / `phrase` / `whisper` / `breathe_guide`) and original text. `stitch_chunks()` picks a perceived-silence target based on the (prev, next) transition type:
+
+| Transition | Target silence | Notes |
+|------------|----------------|-------|
+| narrator → narrator | 300 ms | Same voice, no transition needed |
+| narrator → dialogue | 700 ms | Setup pause; listener orients to "someone is about to speak" |
+| dialogue → dialogue | 800 ms | Conversational turn-taking |
+| dialogue → narrator (default) | 900 ms | Listener absorbs the line |
+| dialogue → narrator after `?` | 1000 ms | Question — give time for the answer to land |
+| dialogue → narrator after `!` or `—` | 1200 ms | Emphatic / em-dash hesitation |
+| dialogue → narrator after `...` | 1500 ms | Significant beat |
+
+ElevenLabs MP3 output has ~200 ms of natural trailing room-tone, so the assembler subtracts `TTS_TRAIL_MS = 200` from the target before inserting explicit silence (floored at 50 ms).
+
+**Narrator pre-padding.** When a narrator chunk follows a dialogue chunk, the narrator's text is prepended with `"... "` before being sent to ElevenLabs. The model renders this as a soft entrance breath, so the narrator picks up gently rather than starting cold after the character's line. Combined with the dialogue-aware silence gap, the effect is: character ends with ~150 ms trail → ~700-1300 ms silence → ~250 ms breath/pause at narrator start → narrator content begins. Total perceived gap ≈ 1000-1700 ms before the narrator's actual content lands.
+
+**Silence inserts ahead.** If the next non-audio chunk is `pause`, `breathe`, or `breathe_guide_pause`, the assembler skips the dialogue-aware gap (those segments already insert their own explicit silence — adding more would over-pad).
+
+### 8.5 Long-input defensive check
 
 ElevenLabs Multilingual v2 prosody soft-degrades on inputs longer than ~2000 characters per call (less expressive, more monotone, occasional mispronunciations of less common words). Long stories segmented properly (one `[PHASE_1]` chunk = ~3–4 calls) won't hit this, but a defensive guard catches edge cases (a weird story producing one long settling block, an over-eager `_batch_short_lines()` flush):
 

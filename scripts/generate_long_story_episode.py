@@ -513,12 +513,12 @@ _CHATTERBOX_MOOD_NARRATOR = {
 _ELEVENLABS_ALL_VOICES = [
     "female_tripti", "female_monika", "female_tara",
     "female_simran", "female_rhea",
-    "male_ranbir", "male_tarun", "male_ishan",
+    "male_ranbir", "male_prem", "male_ishan",
 ]
-# Note: female_maya retired 2026-04-27 (user feedback). male_harshit retired
-# 2026-04-27 (user feedback) and replaced with male_tarun. female_zara is the
-# angry-mood narrator and the whisper voice; intentionally NOT in this pool
-# so she isn't double-cast as a dialogue character.
+# Note: female_maya, male_harshit, male_tarun all retired 2026-04-27 (user
+# feedback). male_prem (Fairy Tale Story Narrator) is the current male_1 slot.
+# female_zara is the angry-mood narrator AND the whisper voice; intentionally
+# NOT in this pool so she isn't double-cast as a dialogue character.
 _ELEVENLABS_MOOD_NARRATOR = {
     "wired":   "female_tara",     # Conversational and Expressive — playful energy
     "curious": "female_simran",   # Cheerful Best Friend — wonder vibe
@@ -1858,22 +1858,40 @@ def generate_section_tts(section_text, phase_key, narrator_voice, voice_map):
         next_text = _collect(idx + 1, +1, next_max)[:next_max]
         return prev_text, next_text
 
+    # Determine the previous TEXT-bearing segment type at each position
+    # (skipping pause/breathe/music). Used to detect dialogue→narrator
+    # transitions for "... " pre-padding.
+    prev_type_at: dict[int, str] = {}
+    last_text_type = None
+    for i, s in enumerate(segments):
+        prev_type_at[i] = last_text_type
+        if s.get("text") or s["type"] in ("phrase", "whisper", "breathe_guide"):
+            last_text_type = s["type"]
+
     audio_chunks = []
 
     for i, seg in enumerate(segments):
         is_dialogue = seg["type"] == "dialogue"
         prev_t, next_t = _context_for(i, is_dialogue=is_dialogue)
+        prev_was_dialogue = (prev_type_at.get(i) == "dialogue")
+
         if seg["type"] == "narration":
             text = seg["text"]
-            # Pad very short text to avoid Chatterbox issues
-            if len(text.split()) <= 3:
+            # Pre-pad with "... " when this narration follows a dialogue
+            # line — gives ElevenLabs a soft entrance breath after a
+            # character finishes speaking, so the narrator picks up
+            # gently rather than starting cold.
+            if use_eleven and prev_was_dialogue:
+                text = f"... {text}"
+            elif len(text.split()) <= 3:
+                # Pad very short text to avoid Chatterbox issues
                 text = f"... {text}"
             # Phase 3 staged transition (or default phase params)
             local_voice, local_params = stage_override.get(i, (section_narrator, phase_params))
             audio = generate_tts(text, voice=local_voice, **local_params,
                                  previous_text=prev_t, next_text=next_t)
             audio = trim_tts_silence(audio)
-            audio_chunks.append(("audio", audio))
+            audio_chunks.append(("audio", audio, "narration", seg["text"]))
 
         elif seg["type"] == "dialogue":
             # Try exact match, then case-insensitive, then first char voice
@@ -1899,21 +1917,21 @@ def generate_section_tts(section_text, phase_key, narrator_voice, voice_map):
             audio = generate_tts(text, voice=char_voice, **char_params,
                                  previous_text=prev_t, next_text=next_t)
             audio = trim_tts_silence(audio)
-            audio_chunks.append(("audio", audio))
+            audio_chunks.append(("audio", audio, "dialogue", seg["text"]))
 
         elif seg["type"] == "phrase":
             audio = generate_tts(seg["text"], voice=section_narrator,
                                  **LONG_STORY_TTS["phrase"], is_phrase=True,
                                  previous_text=prev_t, next_text=next_t)
             audio = trim_tts_silence(audio)
-            audio_chunks.append(("audio", audio))
+            audio_chunks.append(("audio", audio, "phrase", seg["text"]))
 
         elif seg["type"] == "whisper":
             audio = generate_tts(seg["text"], voice=whisper_voice,
                                  **LONG_STORY_TTS["whisper"], is_phrase=True,
                                  previous_text=prev_t, next_text=next_t)
             audio = trim_tts_silence(audio)
-            audio_chunks.append(("audio", audio))
+            audio_chunks.append(("audio", audio, "whisper", seg["text"]))
 
         elif seg["type"] == "breathe_guide":
             text = f"... {seg['text']}"
@@ -1921,7 +1939,7 @@ def generate_section_tts(section_text, phase_key, narrator_voice, voice_map):
                                  **LONG_STORY_TTS["breathe_guide"],
                                  previous_text=prev_t, next_text=next_t)
             audio = trim_tts_silence(audio)
-            audio_chunks.append(("audio", audio))
+            audio_chunks.append(("audio", audio, "breathe_guide", seg["text"]))
             # 3s silence after — the child breathes here
             audio_chunks.append(("breathe_guide_pause", 3000))
 
@@ -1948,21 +1966,105 @@ def generate_section_tts(section_text, phase_key, narrator_voice, voice_map):
 #  Step 7: Assembly
 # ═══════════════════════════════════════════════════════════════
 
+# ─── Dialogue-aware gap insertion (ElevenLabs path) ──────────────────────
+# Real storytelling has uneven gaps between voices. Same voice continuing
+# can cut in fast (200ms); a different speaker needs setup time; a beat
+# after dialogue needs the longest pause so the listener absorbs the line.
+# Values are TOTAL perceived silence; the assembler subtracts ~200ms of
+# natural TTS trailing room-tone before inserting explicit silence.
+
+TTS_TRAIL_MS = 200  # Approx trailing room-tone in ElevenLabs MP3 output
+
+# Default gap between consecutive narrator chunks (no transition).
+NARRATOR_NARRATOR_GAP_MS = 300
+
+
+def _gap_for_dialogue_transition(prev_seg_type: str, next_seg_type: str,
+                                 prev_text: str = "") -> int:
+    """Pick a perceived-silence target (ms) for the transition between
+    two text-bearing chunks. Subtract TTS_TRAIL_MS at the call site to
+    get the explicit silence to insert.
+
+    Heuristics by transition type, with character→narrator getting the
+    longest gap (the listener needs to absorb the line before continuing).
+    """
+    NARRATOR_TYPES = {"narration", "phrase", "whisper", "breathe_guide"}
+    text = (prev_text or "").strip()
+
+    # Same voice continuing — short cut.
+    if prev_seg_type in NARRATOR_TYPES and next_seg_type in NARRATOR_TYPES:
+        return NARRATOR_NARRATOR_GAP_MS
+
+    # Narrator → character: setup pause, listener orients.
+    if prev_seg_type in NARRATOR_TYPES and next_seg_type == "dialogue":
+        return 700
+
+    # Character → character: conversational turn-taking.
+    if prev_seg_type == "dialogue" and next_seg_type == "dialogue":
+        return 800
+
+    # Character → narrator: the longest gap. Heuristics by punctuation:
+    if prev_seg_type == "dialogue" and next_seg_type in NARRATOR_TYPES:
+        if text.endswith("..."):
+            return 1500   # trailing ellipsis = significant beat
+        if "—" in text or text.startswith(("I—", "I...")):
+            return 1200   # em-dash hesitation, emotional charge
+        if text.endswith("!"):
+            return 1200   # emphatic
+        if text.endswith("?"):
+            return 1000   # question — give time for the answer to land
+        return 900        # default character → narrator
+
+    return NARRATOR_NARRATOR_GAP_MS
+
+
 def stitch_chunks(chunks, gap_ms=300):
-    """Stitch audio chunks with gaps and pauses.
+    """Stitch audio chunks with dialogue-aware gaps and pauses.
+
+    Each "audio" chunk is a 4-tuple (kind, audio, seg_type, text). For
+    backward compat with callers passing 2-tuples, falls back to a flat
+    `gap_ms` between chunks.
 
     Returns (audio, breathe_positions) where breathe_positions is a list
     of ms offsets where [BREATHE] or [BREATHE_GUIDE] pauses occurred.
-    Both trigger the same bed swell behaviour.
     """
+    use_eleven = _use_elevenlabs()
     output = AudioSegment.empty()
     breathe_positions = []
-    for chunk_type, content in chunks:
+
+    # Pre-flatten chunks into a positional list so we can peek at next.
+    n = len(chunks)
+    for idx, item in enumerate(chunks):
+        chunk_type = item[0]
         if chunk_type == "audio":
-            output += content
-            output += AudioSegment.silent(duration=gap_ms)
+            audio = item[1]
+            seg_type = item[2] if len(item) > 2 else None
+            text = item[3] if len(item) > 3 else ""
+            output += audio
+
+            # Pick gap based on the type of THIS audio and the next audio.
+            gap = gap_ms
+            if use_eleven and seg_type:
+                next_seg_type = None
+                # Walk forward to the next "audio" chunk; pause/breathe in
+                # between are explicit silences and don't need our gap on top.
+                saw_explicit_silence = False
+                for k in range(idx + 1, n):
+                    nxt = chunks[k]
+                    if nxt[0] == "audio":
+                        next_seg_type = nxt[2] if len(nxt) > 2 else None
+                        break
+                    if nxt[0] in ("pause", "breathe", "breathe_guide_pause"):
+                        saw_explicit_silence = True
+                        break
+                if next_seg_type and not saw_explicit_silence:
+                    target = _gap_for_dialogue_transition(seg_type, next_seg_type, text)
+                    # Subtract natural TTS trail; floor at 50ms.
+                    gap = max(50, target - TTS_TRAIL_MS)
+            output += AudioSegment.silent(duration=gap)
+
         elif chunk_type == "pause":
-            output += AudioSegment.silent(duration=content)
+            output += AudioSegment.silent(duration=item[1])
         elif chunk_type == "breathe":
             # Record position, insert 5s silence for the breathing moment
             breathe_positions.append(len(output))
@@ -1971,7 +2073,7 @@ def stitch_chunks(chunks, gap_ms=300):
             # 3s silence after the narrator demonstrates breathing.
             # Bed swells here — the child hears music and breathes.
             breathe_positions.append(len(output))
-            output += AudioSegment.silent(duration=content)
+            output += AudioSegment.silent(duration=item[1])
     return output, breathe_positions
 
 
