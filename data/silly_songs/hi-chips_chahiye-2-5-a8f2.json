@@ -13,14 +13,15 @@
   "instruments": "ukulele, dholki, and hand claps",
   "tempo": 124,
   "lyrics": "[verse 1]\nSchool khatam, hum aaye\n*Dhadaam* bag tham gaye\nMaa boli, khaana le lo\nHum boli, chips chahiye!\n\n[chorus]\nChips chahiye, chips chahiye!\nCrunchy crunchy chips chahiye!\nMaa do na, please de na\nChips chahiye, chips chahiye!\n\n[verse 2]\nMaa kahti, pehle daal\nHum kahte, chips abhi laal\n*Khat khat* fridge khulta\nPacket bhi nikalta\n\n[chorus]\nChips chahiye, chips chahiye!\nCrunchy crunchy chips chahiye!\nMaa do na, please de na\nChips chahiye, chips chahiye!\n\n[ending]\nMaa hansi, packet diya\nCrunch crunch, neend aayi\n",
-  "style_prompt": "Catchy children's Hindi song, full musical production with Indian instruments, ukulele, dholki, and hand claps, 124 BPM, bouncy and playful, high-energy Indian rhythm, warm clear North Indian female child vocal, native Hindi pronunciation, strong singalong chorus, every word easy to understand. Not Western.",
+  "style_prompt": "Catchy children's Hindi protest song, bouncy playful battle-cry anthem, ukulele strums and soft dholki rhythm and rhythmic hand claps, 124 BPM, super energetic and joyful, smiling cheeky young Indian child female vocal, cheerful Bollywood-nursery lilt, warm major key, native Hindi pronunciation, strong singalong chorus, kids should want to chant along, every Hindi word crystal clear, like a happy four-year-old demanding chips before dinner",
   "cover_description": "A small Indian child sitting cross-legged on a sunlit kitchen floor at golden hour, school bag flopped open beside them, holding up a single potato chip with a delighted face, smiling mom watching from a stove behind a pressure cooker",
   "animation_preset": "bounce",
-  "duration_seconds": 44,
-  "audio_engine": "minimax-music-v2.5-fal",
+  "duration_seconds": 75,
+  "audio_engine": "elevenlabs-music",
   "audio_file": "hi-chips_chahiye-2-5-a8f2.mp3",
   "cover_file": "hi-chips_chahiye-2-5-a8f2_cover.webp",
   "play_count": 0,
   "replay_count": 0,
-  "created_at": "2026-04-27"
+  "created_at": "2026-04-27",
+  "target_length_ms": 75000
 }

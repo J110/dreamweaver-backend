@@ -33,19 +33,19 @@
     "audio_url": "/audio/silly-songs/hi-chips_chahiye-2-5-a8f2.mp3",
     "audio_variants": [
       {
-        "voice": "minimax_v2.5_hi_ref",
+        "voice": "elevenlabs_music_v1",
         "url": "/audio/silly-songs/hi-chips_chahiye-2-5-a8f2.mp3",
-        "duration_seconds": 44,
-        "provider": "minimax-music-v2.5-fal"
+        "duration_seconds": 75,
+        "provider": "elevenlabs-music"
       }
     ],
     "cover": "/covers/hi-chips_chahiye-2-5-a8f2.webp",
     "cover_file": "/covers/silly-songs/hi-chips_chahiye-2-5-a8f2_cover.webp",
     "cover_context": "A small Indian child sitting cross-legged on a sunlit kitchen floor at golden hour, school bag flopped open beside them, holding up a single potato chip with a delighted face, a smiling mom watching from a stove behind a pressure cooker, warm cozy kitchen with a ceiling fan and chai cup, bold cartoon style",
-    "duration_seconds": 44,
-    "durationSec": 44,
-    "audio_engine": "minimax-music-v2.5-fal",
-    "tts_engine": "minimax-music-v2.5-fal",
+    "duration_seconds": 75,
+    "durationSec": 75,
+    "audio_engine": "elevenlabs-music",
+    "tts_engine": "elevenlabs-music",
     "reference_audio": "https://dreamvalley.app/audio/reference/hindi_lullaby_ref.m4a",
     "experimental_v2": false,
     "has_baked_music": true,
