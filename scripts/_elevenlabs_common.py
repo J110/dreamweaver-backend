@@ -51,9 +51,10 @@ ELEVENLABS_VOICES_EN = {
     "zara":    "wdymxIQkYn7MJCYCQF2Q",  # Soothing, Meditative — ASMR / whisper
     # Male voices (long-story characters only)
     "ranbir":  "MgKG6W05zBkvXijkNguO",  # Deep and Dramatic Storyteller
-    "prem":    "2XXEFRk2sGzKPk6Kl6wa",  # Fairy Tale Story Narrator (replaced tarun 2026-04-27)
+    "jackie":  "BZ7QSotEmGyFMP8nbbhC",  # Jackie Shaw - Energetic and Friendly (replaced prem 2026-04-27)
     "ishan":   "N09NFwYJJG9VSSgdLQbT",  # Bold and Upbeat
     # Retired (kept in library for legacy lookups, unused in routing):
+    "prem":    "2XXEFRk2sGzKPk6Kl6wa",  # Fairy Tale Story Narrator — retired
     "tarun":   "qr9D67rNgxf5xNgv46nx",  # Rich, Warm and Friendly — retired
     "harshit": "6TcvxMZXgg9AlJrd8iCl",  # Strong, Deep and Casual — retired
 }
@@ -67,7 +68,7 @@ LEGACY_VOICE_MAP_EN = {
     "female_4": "simran",
     "female_5": "rhea",
     "female_6": "maya",
-    "male_1":   "prem",    # was harshit/tarun; retired 2026-04-27
+    "male_1":   "jackie",  # was harshit/tarun/prem; retired 2026-04-27
     "male_2":   "ranbir",
     "male_3":   "ishan",
     "asmr":     "zara",

@@ -66,9 +66,10 @@ ELEVENLABS_VOICES_EN = {
     "zara":    "wdymxIQkYn7MJCYCQF2Q",  # Soothing, Meditative — ASMR / whisper
     # Male voices (long-story characters only)
     "ranbir":  "MgKG6W05zBkvXijkNguO",  # Deep and Dramatic Storyteller
-    "prem":    "2XXEFRk2sGzKPk6Kl6wa",  # Fairy Tale Story Narrator (replaced tarun 2026-04-27)
+    "jackie":  "BZ7QSotEmGyFMP8nbbhC",  # Jackie Shaw - Energetic and Friendly (current male_1, 2026-04-27)
     "ishan":   "N09NFwYJJG9VSSgdLQbT",  # Bold and Upbeat
     # Retired (kept in library for legacy lookups, unused in routing):
+    # "prem":    "2XXEFRk2sGzKPk6Kl6wa",  # Fairy Tale Story Narrator
     # "tarun":   "qr9D67rNgxf5xNgv46nx",  # Rich, Warm and Friendly
     # "harshit": "6TcvxMZXgg9AlJrd8iCl",  # Strong, Deep and Casual
     # "maya":    "4O1sYUnmtThcBoSBrri7",  # Friendly and Cheerful
@@ -101,7 +102,7 @@ This is a **deliberate departure** from the existing dual-narrator A/B system do
 Routing rule:
 - The orchestrator (`generate_long_story_episode.py`) already samples character gender per story from the diversity scheduler. Voice routing **respects** that sampling, not overrides it.
 - For each character, pick a voice matching the sampled gender that is not already in use by the narrator, whisper, or another character in this story.
-- Male pool: `ranbir` → `prem` → `ishan` (priority order). `prem` (Fairy Tale Story Narrator) replaced `tarun` 2026-04-27 per user feedback. `tarun` and `harshit` retired.
+- Male pool: `ranbir` → `jackie` → `ishan` (priority order). `jackie` (Jackie Shaw — Energetic and Friendly) is the current `male_1` slot per 2026-04-27 user iteration. Retired in order: `harshit` → `tarun` → `prem` → `jackie` (current).
 - Female pool: any of the 5 narrator voices not currently assigned (`tripti, monika, tara, simran, rhea`). `zara` is **excluded** from character casting — she's reserved for the angry-narrator + whisper roles to keep that voice unique.
 - `maya` is **retired** as of 2026-04-27 (voice didn't land in user testing); the voice ID stays in the library for reference but is unused.
 - `WHISPER_VOICE = "zara"` regardless of cast.
@@ -318,8 +319,12 @@ Rollback: a single env flag `TTS_ENGINE_EN=chatterbox|elevenlabs` (default `elev
 | Output sample-rate mismatch breaks audio assembly | Request `pcm_24000` explicitly; assembly already standardizes to 24 kHz / mono |
 | User dislikes a mood→narrator pairing after launch | Single config table change in `_elevenlabs_common.py`; no code change needed |
 
-## 15. Open items before implementation
+## 15. Open items — resolved
 
-1. Populate the 10 voice IDs in `ELEVENLABS_VOICES_EN` from the user's ElevenLabs dashboard.
-2. **Verify ElevenLabs plan tier supports `pcm_24000`.** If not, fall back per §3.3 (pcm_22050 with upsample, or mp3_44100_128). Inspect Hindi pipeline output format — likely already answered there.
-3. **Verify cron env-flag plumbing** on Day 5 per §11 step 4: actual run with `TTS_ENGINE_EN` set both ways before flipping production. Don't assume; verify on the cron host.
+1. ~~Populate the 10 voice IDs~~ → **Done** 2026-04-27. Voice library iterated multiple times based on user feedback; current active set is 9 voices (Maya retired). See voice library above for IDs.
+2. ~~Verify `pcm_24000` support~~ → **Resolved**: Hindi pipeline uses `mp3_44100_128`, so we match that. PCM not used.
+3. ~~Verify cron env-flag plumbing~~ → **Done** 2026-04-27. The English daily cron at `30 1 * * *` was updated to:
+   ```
+   30 1 * * * cd /opt/dreamweaver-backend && TTS_ENGINE_EN=elevenlabs /usr/bin/python3 scripts/pipeline_run.py --lang en --count-lullabies 1 --count-long-stories 1 >> /opt/dreamweaver-backend/logs/cron.log 2>&1
+   ```
+   Inline env-var prefix sets the flag for the cron command's process tree without touching `.env`. The Hindi cron at `0 4 * * *` is unchanged (Hindi was already on ElevenLabs through its own code path; flag is English-only).

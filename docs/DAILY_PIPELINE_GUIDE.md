@@ -11,7 +11,7 @@ GCP VM (dreamvalley-prod) runs pipeline_run.py daily via cron (7 days/week):
 
   PREFLIGHT → Warm Modal + test Mistral + check disk + kill stale processes
   1. GENERATE  → Mistral Large (free tier)         → 1 story (v2) + 1 poem + 1 lullaby
-  2. AUDIO GEN → Chatterbox TTS + CassetteAI beds  → 2 MP3s/story (v2 baked music) + lullabies
+  2. AUDIO GEN → ElevenLabs Multilingual v2 + CassetteAI beds → 1 MP3/story (v2 baked music) + lullabies
   3. AUDIO QA  → Voxtral transcription (free tier)  → PASS/FAIL
   4. ENRICH    → Mistral Large (free tier)          → musicParams (skipped for v2 stories)
   5. COVERS    → Mistral Large (free tier)          → animated SVG cover per story
@@ -167,10 +167,13 @@ crontab -e
 Add this line to run the pipeline daily at 2:00 AM IST (every day, including weekends):
 
 ```cron
-0 2 * * * cd /opt/dreamweaver-backend && /usr/bin/python3 scripts/pipeline_run.py --lang en --count-lullabies 1 >> /opt/dreamweaver-backend/logs/cron.log 2>&1
+30 1 * * * cd /opt/dreamweaver-backend && TTS_ENGINE_EN=elevenlabs /usr/bin/python3 scripts/pipeline_run.py --lang en --count-lullabies 1 --count-long-stories 1 >> /opt/dreamweaver-backend/logs/cron.log 2>&1
 ```
 
-**Note**: The cron uses `0 2 * * *` (every day at 2 AM). If the server timezone is UTC, use `30 20 * * *` (20:30 UTC = 2:00 AM IST next day). Check timezone with `timedatectl`.
+**Notes:**
+- `30 1 * * *` = 01:30 UTC (= 07:00 AM IST). If you want a different IST time, adjust accordingly. Check timezone with `timedatectl`.
+- **`TTS_ENGINE_EN=elevenlabs`** is required for English content to use the ElevenLabs Multilingual v2 path. Without it, the pipeline defaults to Chatterbox (the `_use_elevenlabs()` check looks for this exact env var, default `chatterbox`). See `docs/superpowers/specs/2026-04-27-english-tts-elevenlabs-migration-design.md`.
+- Hindi cron at `0 4 * * *` does NOT need this flag — Hindi has its own ElevenLabs code path (`scripts/_hindi_generators.py`).
 
 ---
 

@@ -433,26 +433,92 @@ Key points:
 
 ## Voice Assignment
 
-Voice assignment follows a contrast-maximizing strategy:
+> **2026-04-27 — TTS engine migration**: English long stories now run on **ElevenLabs Multilingual v2** (selected via `TTS_ENGINE_EN=elevenlabs` env). Chatterbox path preserved as fallback. Full design: `docs/superpowers/specs/2026-04-27-english-tts-elevenlabs-migration-design.md`.
 
-- **Narrator**: mood-specific (see `MOOD_NARRATOR_VOICE` in script)
-- **Characters**: assigned for maximum gender contrast from the narrator
-  - If narrator is female, the first character gets a male voice
-  - Second character gets the next available contrasting voice
-- **Dialogue routing**: character dialogue uses name labels in the text
-  (e.g., `MIRA:`, `PIP:`) which are mapped to character voices
-- **Voice map**: stored in `metadata.json` under the `voice_map` key
-- **Character voice modifiers**: each character's `voice_style` (confident,
-  gentle, small, wise, nervous, curious, stubborn, dreamy, brave, quiet,
-  playful, careful, sleepy) adjusts TTS speed and exaggeration offsets
+Voice assignment is a three-layer system:
+
+**Layer 1 — Mood narrator** (one unique voice per mood):
+
+| Mood | Narrator | Voice descriptor |
+|------|----------|-------------------|
+| wired | tara | Conversational and Expressive |
+| curious | simran | Cheerful Best Friend |
+| calm | tripti | Calm and Experienced |
+| sad | rhea | Soft, Polished and Calm |
+| anxious | monika | Deep and Natural — grounding, reassuring |
+| angry | zara | Soothing, Meditative — softens the heat with stillness |
+
+**Layer 2 — Phase 3 staged voice transition.** Instead of a hard switch from mood narrator to `zara` at the `[PHASE_3]` boundary, the transition stages across Phase 3 narration segments by position:
+- First 25% of Phase 3 narration: mood narrator with `phase_2` settings
+- Middle 50%: mood narrator with `phase_3` settings
+- Final 25%: `zara` with `whisper` settings
+
+`[WHISPER]` blocks always force `zara` regardless of position. For **angry** mood, narrator is already `zara` so the takeover is a no-op (params still stage).
+
+**Layer 3 — Character casting** (per-story `CHAR_VOICE` dict in `metadata.json`):
+- Orchestrator's diversity scheduler samples character gender per story; voice routing **respects** that sampling.
+- Female pool (excluding the assigned narrator and `zara`): `tripti, monika, tara, simran, rhea`.
+- Male pool (priority order): `ranbir` → `jackie` → `ishan`.
+- `WHISPER_VOICE = "zara"` regardless of cast.
+
+**Character voice-style modifiers** (`CHARACTER_VOICE_MODIFIERS_EN`): each character's `voice_style` (confident, gentle, small, wise, nervous, curious, stubborn, dreamy, brave, quiet, playful, careful, sleepy) adds offsets to base section params. Clamped to `stability ∈ [0.40, 1.0]`, `style ∈ [0, 1]`, `speed ∈ [0.70, 1.20]`.
+
+Dialogue text uses label routing (`MIRA: "..."` / `PIP: "..."`), mapped via `_build_voice_lookup()`.
 
 ---
 
-## TTS Parameters
+## TTS Parameters (ElevenLabs path — current)
 
-Each section uses different Chatterbox parameters to create the sleep descent
-effect. Exaggeration and speed decrease as the story progresses; lower values
-produce softer, slower speech.
+Each section uses different ElevenLabs voice settings to create the sleep-descent arc. **Stability rises** (engagement→stillness), **style descends** (warm→flat→whisper), **speed slows** continuously. `similarity_boost = 0.75` for all calls.
+
+| Section | stability | style | speed |
+|---------|-----------|-------|-------|
+| intro | 0.45 | 0.35 | 0.92 |
+| phase_1 | 0.50 | 0.30 | 0.88 |
+| phrase | 0.60 | 0.20 | 0.75 |
+| song_transition | 0.55 | 0.25 | 0.82 |
+| post_song | 0.60 | 0.20 | 0.78 |
+| phase_2 | 0.65 | 0.15 | 0.78 |
+| phase_3 | 0.75 | 0.10 | 0.72 |
+| whisper | 0.85 | 0.00 | 0.70 |
+| breathing | 0.70 | 0.10 | 0.72 |
+| breathe_guide | 0.75 | 0.05 | 0.70 |
+
+Whisper is the only section where style 0.00 is correct. Speed minimum is 0.70 (ElevenLabs API hard floor; below this returns HTTP 400).
+
+### Context passing (ElevenLabs)
+
+Every long-story TTS call passes `previous_text` and `next_text` so the model maintains tonal continuity across chunk boundaries. Window sizes:
+- Narration / phrase / whisper / breathe_guide: ~300 chars previous, ~200 next
+- **Dialogue**: **~500 chars previous, ~300 next** (a 5-word character line absolutely depends on surrounding scene context for prosody)
+
+`_collect()` walks back/forward through multiple text-bearing segments (skipping pauses/breathes/music) until the char budget is hit.
+
+### Inline `<break>` tags
+
+`[PAUSE: ms]` markers below 2000ms are converted to inline `<break time="<s>s"/>` SSML so the TTS chunk renders with natural breath rhythm instead of cold silence inserts. Longer pauses stay as discrete silence segments handled by the audio assembler.
+
+### Dialogue-aware silence gaps + narrator pre-padding
+
+`stitch_chunks()` picks gap by transition type, then subtracts ~200 ms of natural ElevenLabs trailing room-tone:
+
+| Transition | Target perceived silence |
+|------------|--------------------------|
+| narrator → narrator | 300 ms |
+| narrator → dialogue | 700 ms |
+| dialogue → dialogue | 800 ms |
+| dialogue → narrator (default) | 900 ms |
+| dialogue → narrator after `?` | 1000 ms |
+| dialogue → narrator after `!` or `—` | 1200 ms |
+| dialogue → narrator after `...` | 1500 ms |
+
+Narrator chunks following dialogue are pre-padded with `"... "` so ElevenLabs renders a soft entrance breath. Dialogue gap is skipped if a `[PAUSE]`, `[BREATHE]`, or `[BREATHE_GUIDE]` is the next non-audio segment (those already insert their own silence).
+
+---
+
+## TTS Parameters (Chatterbox path — fallback)
+
+Active when `TTS_ENGINE_EN=chatterbox` (default). Each section uses Chatterbox `(exaggeration, speed, cfg_weight)`:
 
 | Section | Exaggeration | Speed | CFG Weight |
 |---------|-------------|-------|------------|
@@ -466,8 +532,7 @@ produce softer, slower speech.
 | whisper | 0.15 | 0.68 | 0.30 |
 | breathing | 0.35 | 0.75 | 0.40 |
 
-The `breathing` entry is used for text around `[BREATHE]` moments -- slightly
-slower and softer than Phase 1 narration to reinforce the calm breathing cue.
+The `breathing` entry is used for text around `[BREATHE]` moments — slightly slower and softer than Phase 1 narration to reinforce the calm breathing cue.
 
 ---
 
@@ -485,7 +550,7 @@ batching strategy is used:
 - This reduces approximately 80 TTS calls down to around 41 segments
 
 The batching logic lives in the `_batch_short_lines()` function within the
-generation script.
+generation script. Preserved on the ElevenLabs path even though ElevenLabs handles short inputs cleanly — batching produces more natural prosody than 80 micro-segments stitched with silence.
 
 ---
 

@@ -513,12 +513,13 @@ _CHATTERBOX_MOOD_NARRATOR = {
 _ELEVENLABS_ALL_VOICES = [
     "female_tripti", "female_monika", "female_tara",
     "female_simran", "female_rhea",
-    "male_ranbir", "male_prem", "male_ishan",
+    "male_ranbir", "male_jackie", "male_ishan",
 ]
-# Note: female_maya, male_harshit, male_tarun all retired 2026-04-27 (user
-# feedback). male_prem (Fairy Tale Story Narrator) is the current male_1 slot.
-# female_zara is the angry-mood narrator AND the whisper voice; intentionally
-# NOT in this pool so she isn't double-cast as a dialogue character.
+# Note: female_maya, male_harshit, male_tarun, male_prem all retired
+# 2026-04-27 (user feedback iteration). male_jackie (Jackie Shaw - Energetic
+# and Friendly) is the current male_1 slot. female_zara is the angry-mood
+# narrator AND the whisper voice; intentionally NOT in this pool so she
+# isn't double-cast as a dialogue character.
 _ELEVENLABS_MOOD_NARRATOR = {
     "wired":   "female_tara",     # Conversational and Expressive — playful energy
     "curious": "female_simran",   # Cheerful Best Friend — wonder vibe

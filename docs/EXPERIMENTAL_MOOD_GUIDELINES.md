@@ -408,20 +408,36 @@ Only `calm` and `curious` moods. Both use the existing 0-1 lullaby format (nonse
 
 ## 2.1 Voice Selection by Mood
 
-Each content piece generates **2 mood-appropriate voice variants per language** (not 5). The voice pairing is automatically selected based on mood, content type, and age group using the maps in `voice_service.py`.
+> **2026-04-27 — TTS engine migration**: English V2 short stories now run on **ElevenLabs Multilingual v2** with **one narrator voice per mood** (single variant). The earlier 2-voice-per-story system is documented below as the Chatterbox-era design but is no longer the active path. Hindi continues with its own ElevenLabs library (separate voice IDs). Full design: `docs/superpowers/specs/2026-04-27-english-tts-elevenlabs-migration-design.md`.
 
-This cuts audio generation cost and time by 60% while producing more appropriate voice pairings.
+### English (current — ElevenLabs path)
 
-**Applies to:** Stories, Long Stories, Poems.
-**Does NOT apply to:** Lullabies (use ACE-Step, not Chatterbox TTS).
+Single narrator per mood, defined in `_elevenlabs_common.MOOD_NARRATOR_EN`:
 
-See `voice-mood-autoselection.md` for the complete `STORY_VOICE_MAP`, `POEM_VOICE_MAP`, and `LONG_STORY_VOICE_MAP` tables, including age group overrides and the rationale for each pairing.
+| Mood | Narrator | ElevenLabs descriptor | Why |
+|------|----------|------------------------|-----|
+| wired | tara | Conversational and Expressive | Channels wound-up energy without amplifying it |
+| curious | simran | Cheerful Best Friend | Wonder reads better in a bright friendly voice |
+| calm | tripti | Calm and Experienced | The steady anchor |
+| sad | rhea | Soft, Polished and Calm | Tender and soft, doesn't push sympathy |
+| anxious | monika | Deep and Natural | Grounding and reassuring; depth IS the reassurance |
+| angry | zara | Soothing, Meditative and Calm | Softens the heat with stillness, not warmth |
 
-**Key design choices:**
-- `gentle` (male) appears in 5/6 moods — every mood benefits from a male-female pair for variety
-- `musical` (almost-singing quality) anchors most poem deliveries
-- Long stories use mood voices for Phase 1-2, then ASMR voice always takes over Phase 3
-- Calm long stories use `gentle` as Voice 2 (not `asmr`) to preserve contrast with the ASMR Phase 3 takeover
+**Phase 3 ASMR takeover** is preserved for long stories: `zara` narrates `[PHASE_3]` and `[WHISPER]` blocks regardless of mood. For angry mood (where `zara` is already the narrator), the takeover is a no-op. See `LONG_STORY_EPISODE_GUIDE.md` for the staged-transition mechanic (first 25% / middle 50% / final 25%).
+
+V2 short stories produce ONE audio variant per story (mood narrator only). Long stories cast 1–2 character voices from the male pool (`ranbir, jackie, ishan`) for gender contrast against the female narrator.
+
+### Chatterbox-era design (legacy, kept for context)
+
+Each content piece generates **2 mood-appropriate voice variants per language** (not 5). The voice pairing is automatically selected based on mood, content type, and age group using the maps in `voice_service.py`. This applied to Stories, Long Stories, Poems (lullabies always used ACE-Step, not Chatterbox TTS).
+
+See `voice-mood-autoselection.md` for the complete `STORY_VOICE_MAP`, `POEM_VOICE_MAP`, and `LONG_STORY_VOICE_MAP` tables.
+
+Key design choices (Chatterbox era):
+- `gentle` (male) appeared in 5/6 moods — every mood benefited from a male-female pair for variety
+- `musical` (almost-singing quality) anchored most poem deliveries
+- Long stories used mood voices for Phase 1-2, then ASMR voice always took over Phase 3
+- Calm long stories used `gentle` as Voice 2 (not `asmr`) to preserve contrast with the ASMR Phase 3 takeover
 
 ---
 

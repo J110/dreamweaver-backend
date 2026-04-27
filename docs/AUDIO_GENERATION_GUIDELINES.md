@@ -1,6 +1,10 @@
-# Dream Valley — Audio Generation Guidelines (Chatterbox TTS)
+# Dream Valley — Audio Generation Guidelines
 
-> **Purpose**: Ensure consistent, high-quality audio narration for all Dream Valley content using Chatterbox TTS on GPU. Follow these guidelines for every batch generation, regeneration, or single-story audio run.
+> **Purpose**: Ensure consistent, high-quality audio narration for all Dream Valley content. Follow these guidelines for every batch generation, regeneration, or single-story audio run.
+
+> **2026-04-27 — TTS engine migration**: English V2 short stories and long stories migrated from Chatterbox (Modal GPU) to **ElevenLabs Multilingual v2**. Hindi remains on ElevenLabs (already migrated). MiniMax stays for Lullabies, Silly Songs, and Musical Poems. Funny Shorts still on Chatterbox.
+>
+> Engine selection happens at runtime via env var `TTS_ENGINE_EN` (default `chatterbox`; production cron sets `elevenlabs`). Full design: `docs/superpowers/specs/2026-04-27-english-tts-elevenlabs-migration-design.md`.
 
 ---
 
@@ -10,23 +14,32 @@
 
 ```
 content.json (annotated text)
-  → parse_annotated_text()     # Split by \n\n paragraphs, then by emotion markers
-  → split_into_chunks()        # Sub-chunk any segment > 300 chars
-  → generate_tts_for_segment() # One Chatterbox API call per chunk
+  → parse_annotated_text()     # Split by \n\n paragraphs, then by tags
+  → generate_tts_for_segment() # One ElevenLabs (or Chatterbox) call per chunk
   → concatenate + post-process # Combine, normalize, fade, export MP3
   → qa_audio.py                # Voxtral-based transcription QA
 ```
 
-### Infrastructure
+### Infrastructure (English — current)
+
+| Component | Details |
+|-----------|---------|
+| **TTS Engine** | ElevenLabs **Multilingual v2** via REST API |
+| **Output Format** | `mp3_44100_128` (44.1 kHz, 128 kbps; matches Hindi pipeline) |
+| **Endpoint** | `POST https://api.elevenlabs.io/v1/text-to-speech/{voice_id}` |
+| **Auth** | `xi-api-key` header (in `dreamweaver-backend/.env`) |
+| **Engine selector** | `TTS_ENGINE_EN={chatterbox|elevenlabs}` (default `chatterbox`; cron sets `elevenlabs`) |
+| **Shared module** | `scripts/_elevenlabs_common.py` — voice library, params, TTS function, modifiers |
+
+### Infrastructure (Chatterbox — fallback / Funny Shorts)
 
 | Component | Details |
 |-----------|---------|
 | **TTS Engine** | Chatterbox (Resemble AI), running on Modal GPU |
-| **GPU** | NVIDIA A10G or A100 via Modal (8–16 GB VRAM for inference) |
-| **Native Sample Rate** | 24 kHz (do NOT upsample — adds interpolation artifacts) |
-| **Output Format** | 256 kbps MP3 at native 24 kHz |
-| **Voice References** | Pre-recorded human WAV files (24 kHz, mono) |
-| **Endpoint** | `https://j110--dreamweaver-chatterbox-tts.modal.run` |
+| **GPU** | NVIDIA A10G or A100 via Modal |
+| **Native Sample Rate** | 24 kHz |
+| **Voice References** | Pre-recorded human WAV files at `/data/voices/` on Modal |
+| **Endpoint** | `https://mohan-32314--dreamweaver-chatterbox-tts.modal.run` |
 
 ---
 
@@ -155,33 +168,49 @@ if len(text.strip()) < 20:
 
 ---
 
-## 4. Voice References
+## 4. Voice Library
 
-### Requirements for Voice Reference Files
+### English — ElevenLabs (current, post-2026-04-27)
+
+Nine active voices, all from the ElevenLabs shared library, all Indian-English accent. Single voice ID per voice; mood-based routing decides which voice narrates which story. Defined in `scripts/_elevenlabs_common.py` (`ELEVENLABS_VOICES_EN`).
+
+**Female narrators** (one per mood):
+
+| Voice | Role | ElevenLabs descriptor |
+|-------|------|------------------------|
+| `tripti` | calm narrator (anchor) | Calm and Experienced |
+| `monika` | anxious narrator (grounding) | Deep and Natural |
+| `tara` | wired narrator (playful) | Conversational and Expressive |
+| `simran` | curious narrator (wonder) | Cheerful Best Friend |
+| `rhea` | sad narrator (tender) | Soft, Polished and Calm |
+| `zara` | angry narrator + WHISPER + Phase-3 ASMR | Soothing, Meditative and Calm |
+
+**Male voices** (long-story characters only; chosen for gender contrast against female narrator):
+
+| Voice | Priority | ElevenLabs descriptor |
+|-------|----------|------------------------|
+| `ranbir` | 1 | Deep and Dramatic Storyteller |
+| `jackie` | 2 | Jackie Shaw — Energetic and Friendly |
+| `ishan` | 3 | Bold and Upbeat |
+
+**Retired** (voice IDs preserved in library for legacy lookups, no longer routed): `maya`, `harshit`, `tarun`, `prem`.
+
+### Hindi — ElevenLabs (already migrated)
+
+Voice IDs in `scripts/publish_hindi_long_day1.py` and `scripts/_hindi_generators.py`. Distinct IDs from English even where names overlap (e.g., Tripti hi ≠ Tripti en).
+
+### Chatterbox voice references (fallback / Funny Shorts only)
+
+Stored on Modal volume `chatterbox-data` at `/data/voices/`. Active references: `female_1`, `female_2`, `female_3`, `male_2`, `asmr` (English); `_hi` suffix variants for Hindi (legacy fallback only).
+
+**Voice reference file requirements** (Chatterbox path):
 
 | Property | Requirement |
 |----------|-------------|
 | **Format** | WAV (lossless) — never use MP3 as reference |
 | **Sample rate** | 24 kHz (match Chatterbox native rate) |
 | **Channels** | Mono |
-| **Duration** | 10–20 seconds optimal (longer is fine, shorter hurts quality) |
-| **Content** | Clear speech, minimal background noise |
-| **Quality** | Clean recording, no compression artifacts |
-
-### Current Voice Lineup
-
-**English (5 voices)**:
-| Voice ID | Character |
-|----------|-----------|
-| `female_1` | Calm, maternal |
-| `female_2` | Soft, gentle |
-| `female_3` | Melodic, soothing |
-| `male_2` | Gentle, friendly |
-| `asmr` | Ultra-soft whisper |
-
-> **Retired voices:** `male_1` (Warm) and `male_3` (Musical) are no longer generated for new content. Existing audio files remain but are hidden from the UI.
-
-**Hindi (5 voices)** — `_hi` suffix variants with Hindi-specific recordings.
+| **Duration** | 10–20 seconds optimal |
 
 ### Voice Reference Best Practices
 
@@ -193,7 +222,15 @@ if len(text.strip()) < 20:
 
 ---
 
-## 5. Emotion Profiles — Chatterbox Parameters
+## 5. Emotion Profiles
+
+### ElevenLabs (V2 short stories + long stories)
+
+ElevenLabs takes four params: `stability` (0–1, lower = more emotional range), `similarity_boost` (0–1, voice-cloning fidelity; we use 0.75 everywhere), `style` (0–1, expressivity; only `whisper` should be 0.00), `speed` (0.70–1.20, **API rejects below 0.70**). Per-section tables live in `_elevenlabs_common.py` (`V2_PHASE_PARAMS_EN`, `LONG_STORY_TTS_EN`). See migration spec §6 and §7 for the full tables; principle is **stability rises** across phases (engagement→stillness), **style descends** (warm→flat→whisper), **speed slows** continuously.
+
+Character voices apply offsets via `CHARACTER_VOICE_MODIFIERS_EN` keyed by `voice_style` (confident, gentle, small, wise, nervous, curious, stubborn, dreamy, brave, quiet, playful, careful, sleepy). `apply_modifier()` clamps to `stability ∈ [0.40, 1.0]`, `style ∈ [0, 1]`, `speed ∈ [0.70, 1.20]`.
+
+### Chatterbox (fallback / Funny Shorts)
 
 Chatterbox controls vocal expression through two parameters:
 
