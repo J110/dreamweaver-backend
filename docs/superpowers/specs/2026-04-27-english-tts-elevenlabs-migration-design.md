@@ -105,32 +105,34 @@ The `voice_map` is persisted in `metadata.json` exactly as today.
 
 ## 6. TTS parameters — V2 short stories
 
-Translated from `generate_audio.py` Chatterbox phase profiles. `similarity_boost = 0.75` for all V2 calls.
+`similarity_boost = 0.75` for all V2 calls.
 
-| Phase | stability | style | speed |
-|-------|-----------|-------|-------|
-| 1 (engaged) | 0.55 | 0.05 | 0.90 |
-| 2 (settling) | 0.70 | 0.00 | 0.82 |
-| 3 (sleep) | 0.85 | 0.00 | 0.78 |
-| `[PHRASE]` block | 0.85 | 0.00 | 0.78 |
-| `[PAUSE: ms]` | n/a — handled by audio assembly (silence insert) |
+**Tuning history.** Initial values (stability 0.55–0.85, style 0.00) were copied from the Hindi spec and sounded flat — high stability + zero style puts the model in "consistent narration" mode with no emotional range. Hindi works at those values because Hindi rhythm and Tripti's voice carry warmth innately; English voices need explicit `style` to be expressive. Updated 2026-04-27 to lower stability and add moderate style across phases.
+
+| Phase | stability | style | speed | Why |
+|-------|-----------|-------|-------|-----|
+| 1 (engaged) | 0.45 | 0.30 | 0.92 | Lower stability for emotional range; moderate style for warmth |
+| 2 (settling) | 0.55 | 0.20 | 0.85 | Settling but still warm |
+| 3 (sleep) | 0.65 | 0.10 | 0.78 | Calmer but not robotic |
+| `[PHRASE]` block | 0.70 | 0.15 | 0.75 | Slow, intimate, warm |
+| `[PAUSE: ms]` | inline `<break>` if `<2000ms`, else silence insert (see §8.3) |
 
 ## 7. TTS parameters — long stories
 
-Translated from `LONG_STORY_TTS` in `scripts/generate_long_story_episode.py:522`. `similarity_boost = 0.75` for all calls.
+`similarity_boost = 0.75` for all calls. Same emotional-warmth tuning as V2 (see §6) — original values (stability 0.60–0.95 / style 0.00–0.05) were too flat for English. Updated 2026-04-27.
 
 | Section | stability | style | speed |
 |---------|-----------|-------|-------|
-| intro | 0.60 | 0.05 | 0.90 |
-| phase_1 | 0.70 | 0.00 | 0.85 |
-| phrase | 0.85 | 0.05 | 0.78 |
-| song_transition | 0.72 | 0.00 | 0.80 |
-| post_song | 0.75 | 0.00 | 0.78 |
-| phase_2 | 0.78 | 0.00 | 0.78 |
-| phase_3 | 0.85 | 0.00 | 0.72 |
-| whisper | 0.95 | 0.00 | 0.68 |
-| breathing | 0.78 | 0.00 | 0.75 |
-| breathe_guide | 0.82 | 0.00 | 0.70 |
+| intro | 0.50 | 0.25 | 0.92 |
+| phase_1 | 0.55 | 0.20 | 0.85 |
+| phrase | 0.70 | 0.15 | 0.75 |
+| song_transition | 0.60 | 0.18 | 0.82 |
+| post_song | 0.62 | 0.15 | 0.80 |
+| phase_2 | 0.62 | 0.12 | 0.80 |
+| phase_3 | 0.70 | 0.08 | 0.75 |
+| whisper | 0.80 | 0.00 | 0.70 |
+| breathing | 0.68 | 0.10 | 0.75 |
+| breathe_guide | 0.72 | 0.05 | 0.72 |
 
 ### 7.1 Character voice-style modifiers
 
@@ -174,7 +176,18 @@ The existing tag set is parsed pre-TTS exactly as today. ElevenLabs receives onl
 
 `_batch_short_lines()` is preserved. ElevenLabs handles 1–3 word inputs cleanly (so the original Chatterbox crash-avoidance reason is gone), but batching produces more natural prosody than 80 micro-segments stitched with silence. Behavior unchanged.
 
-### 8.2 Long-input defensive check
+### 8.2 Inline `<break>` tags for short pauses (per ElevenLabs SSML)
+
+Originally all `[PAUSE: ms]` tags were rendered as discrete silence inserts at segment boundaries — each sentence around a pause became its own TTS call, and ElevenLabs got no signal that a pause was coming, so the sentence ended cold without a trailing breath.
+
+Updated 2026-04-27 (per ElevenLabs SSML guidance):
+
+- `[PAUSE: ms]` with **ms < 2000** → converted to inline `<break time="<s>s"/>` SSML inside the TTS chunk. The model renders natural breath rhythm around the pause (trailing breath before, soft pickup after).
+- `[PAUSE: ms]` with **ms ≥ 2000** → stays as a discrete silence insert at the segment boundary (ElevenLabs caps inline breaks at 3 seconds and warns about prosody artifacts above 3 break tags per chunk).
+
+Implemented in `_elevenlabs_common.convert_short_pauses_to_breaks()` and applied in `audio_assembly.parse_segments()` only when `TTS_ENGINE_EN=elevenlabs`. The Chatterbox path is unchanged.
+
+### 8.3 Long-input defensive check
 
 ElevenLabs Multilingual v2 prosody soft-degrades on inputs longer than ~2000 characters per call (less expressive, more monotone, occasional mispronunciations of less common words). Long stories segmented properly (one `[PHASE_1]` chunk = ~3–4 calls) won't hit this, but a defensive guard catches edge cases (a weird story producing one long settling block, an over-eager `_batch_short_lines()` flush):
 

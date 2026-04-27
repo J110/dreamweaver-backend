@@ -54,9 +54,21 @@ MOOD_VOICES = _ELEVENLABS_MOOD_VOICES if _use_elevenlabs() else _CHATTERBOX_MOOD
 DEFAULT_VOICES = ["tripti"] if _use_elevenlabs() else ["female_1", "asmr"]
 
 # ── TTS parameter sets ─────────────────────────────────────────────────
-NORMAL_TTS = {"exaggeration": 0.45, "speed": 0.85, "cfg_weight": 0.5}
-HOOK_TTS = {"exaggeration": 0.55, "speed": 0.82, "cfg_weight": 0.45}
-PHRASE_TTS = {"exaggeration": 0.60, "speed": 0.78, "cfg_weight": 0.42}
+# When ElevenLabs is on, params are picked so the chatterbox→elevenlabs
+# formula in _elevenlabs_common.chatterbox_to_elevenlabs() lands on the
+# tuned-for-warmth values (per spec §6 + 2026-04-27 tuning):
+#   NORMAL → stab 0.50 / style 0.25 / speed 0.88
+#   HOOK   → stab 0.45 / style 0.30 / speed 0.90
+#   PHRASE → stab 0.70 / style 0.15 / speed 0.75 (intimate)
+# Formula: stab = 1.0 - cfg*1.1, style = exag*0.6
+if _use_elevenlabs():
+    NORMAL_TTS = {"exaggeration": 0.42, "speed": 0.88, "cfg_weight": 0.45}
+    HOOK_TTS   = {"exaggeration": 0.50, "speed": 0.90, "cfg_weight": 0.50}
+    PHRASE_TTS = {"exaggeration": 0.25, "speed": 0.75, "cfg_weight": 0.27}
+else:
+    NORMAL_TTS = {"exaggeration": 0.45, "speed": 0.85, "cfg_weight": 0.5}
+    HOOK_TTS   = {"exaggeration": 0.55, "speed": 0.82, "cfg_weight": 0.45}
+    PHRASE_TTS = {"exaggeration": 0.60, "speed": 0.78, "cfg_weight": 0.42}
 
 
 # ── Text normalization ──────────────────────────────────────────────────
@@ -90,10 +102,18 @@ def parse_segments(text: str) -> list:
 
     Handles:
     - [MUSIC] → 6-second swell region
-    - [PAUSE: ms] → silence of given duration
+    - [PAUSE: ms] → silence of given duration (or inline <break/> on ElevenLabs)
     - [PHRASE]...[/PHRASE] → repeated phrase (special TTS delivery)
     - Everything else → narration text
+
+    On the ElevenLabs path, short pauses (<2s) are converted to inline SSML
+    <break time="..."/> tags so the TTS renders them with natural breath
+    instead of cold silence inserts. Longer pauses stay as discrete segments.
     """
+    if _use_elevenlabs():
+        from _elevenlabs_common import convert_short_pauses_to_breaks
+        text = convert_short_pauses_to_breaks(text)
+
     segments = []
     pattern = r'(\[MUSIC\]|\[PAUSE:\s*\d+\]|\[PHRASE\].*?\[/PHRASE\])'
     parts = re.split(pattern, text, flags=re.DOTALL)

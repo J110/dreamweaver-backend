@@ -86,24 +86,30 @@ WHISPER_VOICE_EN = "zara"
 #  TTS parameter tables (per spec §6, §7)
 # ────────────────────────────────────────────────────────────────────────
 
+# V2 short-story phase params (per spec §6 + 2026-04-27 emotional-warmth tuning).
+# Initial values (stab 0.55-0.85 / style 0.00-0.05) sounded flat — too high
+# stability + zero style suppressed emotion. New range: lower stability for
+# range, moderate style for warmth. Hindi defaults don't translate to English
+# because Hindi rhythm/voice carries warmth innately; English needs more style.
 V2_PHASE_PARAMS_EN = {
-    1: {"stability": 0.55, "similarity_boost": 0.75, "style": 0.05, "speed": 0.90},
-    2: {"stability": 0.70, "similarity_boost": 0.75, "style": 0.00, "speed": 0.82},
-    3: {"stability": 0.85, "similarity_boost": 0.75, "style": 0.00, "speed": 0.78},
+    1: {"stability": 0.45, "similarity_boost": 0.75, "style": 0.30, "speed": 0.92},
+    2: {"stability": 0.55, "similarity_boost": 0.75, "style": 0.20, "speed": 0.85},
+    3: {"stability": 0.65, "similarity_boost": 0.75, "style": 0.10, "speed": 0.78},
 }
-V2_PHRASE_PARAMS_EN = {"stability": 0.85, "similarity_boost": 0.75, "style": 0.00, "speed": 0.78}
+V2_PHRASE_PARAMS_EN = {"stability": 0.70, "similarity_boost": 0.75, "style": 0.15, "speed": 0.75}
 
+# Long-story section params — same emotional-warmth tuning as V2.
 LONG_STORY_TTS_EN = {
-    "intro":           {"stability": 0.60, "similarity_boost": 0.75, "style": 0.05, "speed": 0.90},
-    "phase_1":         {"stability": 0.70, "similarity_boost": 0.75, "style": 0.00, "speed": 0.85},
-    "phrase":          {"stability": 0.85, "similarity_boost": 0.75, "style": 0.05, "speed": 0.78},
-    "song_transition": {"stability": 0.72, "similarity_boost": 0.75, "style": 0.00, "speed": 0.80},
-    "post_song":       {"stability": 0.75, "similarity_boost": 0.75, "style": 0.00, "speed": 0.78},
-    "phase_2":         {"stability": 0.78, "similarity_boost": 0.75, "style": 0.00, "speed": 0.78},
-    "phase_3":         {"stability": 0.85, "similarity_boost": 0.75, "style": 0.00, "speed": 0.72},
-    "whisper":         {"stability": 0.95, "similarity_boost": 0.75, "style": 0.00, "speed": 0.68},
-    "breathing":       {"stability": 0.78, "similarity_boost": 0.75, "style": 0.00, "speed": 0.75},
-    "breathe_guide":   {"stability": 0.82, "similarity_boost": 0.75, "style": 0.00, "speed": 0.70},
+    "intro":           {"stability": 0.50, "similarity_boost": 0.75, "style": 0.25, "speed": 0.92},
+    "phase_1":         {"stability": 0.55, "similarity_boost": 0.75, "style": 0.20, "speed": 0.85},
+    "phrase":          {"stability": 0.70, "similarity_boost": 0.75, "style": 0.15, "speed": 0.75},
+    "song_transition": {"stability": 0.60, "similarity_boost": 0.75, "style": 0.18, "speed": 0.82},
+    "post_song":       {"stability": 0.62, "similarity_boost": 0.75, "style": 0.15, "speed": 0.80},
+    "phase_2":         {"stability": 0.62, "similarity_boost": 0.75, "style": 0.12, "speed": 0.80},
+    "phase_3":         {"stability": 0.70, "similarity_boost": 0.75, "style": 0.08, "speed": 0.75},
+    "whisper":         {"stability": 0.80, "similarity_boost": 0.75, "style": 0.00, "speed": 0.70},
+    "breathing":       {"stability": 0.68, "similarity_boost": 0.75, "style": 0.10, "speed": 0.75},
+    "breathe_guide":   {"stability": 0.72, "similarity_boost": 0.75, "style": 0.05, "speed": 0.72},
 }
 
 # Character voice-style modifiers (per spec §7.1).
@@ -169,20 +175,56 @@ def apply_modifier(base: dict, modifier_name: str) -> dict:
 
 
 def chatterbox_to_elevenlabs(exaggeration: float, cfg_weight: float, speed: float) -> dict:
-    """Translate Chatterbox params → ElevenLabs params (formula-based fallback).
+    """Translate Chatterbox params → ElevenLabs params (formula-based).
 
-    For drop-in compatibility when call sites pass legacy Chatterbox params.
-    Spec tables are preferred (see V2_PHASE_PARAMS_EN, LONG_STORY_TTS_EN), but
-    this formula keeps existing call sites working without rewriting.
+    Tuned 2026-04-27 for English emotional warmth: original formula gave
+    stability ≈ 0.75 / style ≈ 0.10 from default chatterbox params, which
+    sounded flat (high stability + zero style = "consistent narration" mode
+    with no expressivity).
+
+    New formula: stab = 1.0 - cfg*1.1 (more aggressive looseness),
+                 style = exag*0.6 (more aggressive expressivity).
+
+    Used by V2 short-story call sites where the audio_assembly chatterbox-
+    style param dicts (NORMAL_TTS, HOOK_TTS, PHRASE_TTS) are now picked to
+    map to the desired ElevenLabs values via this formula.
     """
     return {
-        # Lower cfg_weight (looser/slower delivery) → higher stability.
-        "stability":        _clamp(1.0 - cfg_weight * 0.5, 0.4, 0.95),
+        "stability":        _clamp(1.0 - cfg_weight * 1.1, 0.40, 0.95),
         "similarity_boost": 0.75,
-        # Exaggeration → style; conservative scaling (chatterbox 0.5 → style ~0.10).
-        "style":            _clamp(exaggeration * 0.2, 0.0, 0.5),
+        "style":            _clamp(exaggeration * 0.6, 0.0, 0.50),
         "speed":            _clamp(speed, 0.65, 1.2),
     }
+
+
+# ────────────────────────────────────────────────────────────────────────
+#  SSML / pause handling
+# ────────────────────────────────────────────────────────────────────────
+
+# Pauses below this threshold render inline as <break time="..."/> SSML
+# tags inside a TTS chunk, producing natural breath rhythm. Pauses at or
+# above this threshold stay as discrete silence inserts at the assembly
+# level (audio_assembly handles the segment break).
+INLINE_PAUSE_THRESHOLD_MS = 2000
+
+# ElevenLabs warns: more than ~3 break tags in a single generation can
+# cause prosody instability. We cap and split if a chunk exceeds this.
+MAX_INLINE_BREAKS_PER_CHUNK = 3
+
+
+def convert_short_pauses_to_breaks(text: str,
+                                   threshold_ms: int = INLINE_PAUSE_THRESHOLD_MS) -> str:
+    """Replace `[PAUSE: <ms>]` tags below `threshold_ms` with inline SSML
+    `<break time="<s>s"/>` tags so ElevenLabs renders natural breath inside
+    a single TTS chunk. Longer pauses are left as-is (audio assembly converts
+    them to silence inserts at segment boundaries).
+    """
+    def _replace(m):
+        ms = int(m.group(1))
+        if ms < threshold_ms:
+            return f' <break time="{ms/1000:.2f}s"/> '
+        return m.group(0)
+    return re.sub(r'\[PAUSE:\s*(\d+)\]', _replace, text)
 
 
 # ────────────────────────────────────────────────────────────────────────
