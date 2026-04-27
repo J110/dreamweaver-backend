@@ -513,9 +513,10 @@ _CHATTERBOX_MOOD_NARRATOR = {
 _ELEVENLABS_ALL_VOICES = [
     "female_tripti", "female_monika", "female_tara",
     "female_simran", "female_rhea",
-    "male_ranbir", "male_harshit", "male_ishan",
+    "male_ranbir", "male_tarun", "male_ishan",
 ]
-# Note: female_maya retired 2026-04-27 (user feedback). female_zara is the
+# Note: female_maya retired 2026-04-27 (user feedback). male_harshit retired
+# 2026-04-27 (user feedback) and replaced with male_tarun. female_zara is the
 # angry-mood narrator and the whisper voice; intentionally NOT in this pool
 # so she isn't double-cast as a dialogue character.
 _ELEVENLABS_MOOD_NARRATOR = {
@@ -1826,25 +1827,42 @@ def generate_section_tts(section_text, phase_key, narrator_voice, voice_map):
     section_narrator = narrator_voice
 
     # Pre-compute context strings for each segment (ElevenLabs only).
-    def _context_for(idx):
+    # Dialogue chunks need MORE context than narration: a single character line
+    # is 1-15 words, sent alone with its character voice settings, with no idea
+    # what scene it's in. Walking back through multiple text-bearing segments
+    # gives ElevenLabs the surrounding emotional arc so prosody matches.
+    # Per dialogue: ~500 chars previous, ~300 next.
+    # Per narration: ~300 chars previous, ~200 next.
+    def _collect(start, step, max_chars):
+        """Walk segments by `step` collecting text-bearing content up to max_chars."""
+        chunks = []
+        chars = 0
+        j = start
+        while 0 <= j < len(segments) and chars < max_chars:
+            t = segments[j].get("text", "")
+            if t:
+                if step < 0:
+                    chunks.insert(0, t)
+                else:
+                    chunks.append(t)
+                chars += len(t)
+            j += step
+        return " ".join(chunks)
+
+    def _context_for(idx, is_dialogue=False):
         if not use_eleven:
             return "", ""
-        prev_text = ""
-        for j in range(idx - 1, -1, -1):
-            if segments[j].get("text"):
-                prev_text = segments[j]["text"]
-                break
-        next_text = ""
-        for j in range(idx + 1, len(segments)):
-            if segments[j].get("text"):
-                next_text = segments[j]["text"]
-                break
+        prev_max = 500 if is_dialogue else 300
+        next_max = 300 if is_dialogue else 200
+        prev_text = _collect(idx - 1, -1, prev_max)[-prev_max:]
+        next_text = _collect(idx + 1, +1, next_max)[:next_max]
         return prev_text, next_text
 
     audio_chunks = []
 
     for i, seg in enumerate(segments):
-        prev_t, next_t = _context_for(i)
+        is_dialogue = seg["type"] == "dialogue"
+        prev_t, next_t = _context_for(i, is_dialogue=is_dialogue)
         if seg["type"] == "narration":
             text = seg["text"]
             # Pad very short text to avoid Chatterbox issues

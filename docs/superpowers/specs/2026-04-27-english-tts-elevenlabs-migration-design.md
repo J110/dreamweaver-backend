@@ -66,8 +66,11 @@ ELEVENLABS_VOICES_EN = {
     "zara":    "wdymxIQkYn7MJCYCQF2Q",  # Soothing, Meditative — ASMR / whisper
     # Male voices (long-story characters only)
     "ranbir":  "MgKG6W05zBkvXijkNguO",  # Deep and Dramatic Storyteller
-    "harshit": "6TcvxMZXgg9AlJrd8iCl",  # Strong, Deep and Casual
+    "tarun":   "qr9D67rNgxf5xNgv46nx",  # Rich, Warm and Friendly (replaced harshit 2026-04-27)
     "ishan":   "N09NFwYJJG9VSSgdLQbT",  # Bold and Upbeat
+    # Retired (kept in library for legacy lookups, unused in routing):
+    # "harshit": "6TcvxMZXgg9AlJrd8iCl",  # Strong, Deep and Casual
+    # "maya":    "4O1sYUnmtThcBoSBrri7",  # Friendly and Cheerful
 }
 ```
 
@@ -97,7 +100,7 @@ This is a **deliberate departure** from the existing dual-narrator A/B system do
 Routing rule:
 - The orchestrator (`generate_long_story_episode.py`) already samples character gender per story from the diversity scheduler. Voice routing **respects** that sampling, not overrides it.
 - For each character, pick a voice matching the sampled gender that is not already in use by the narrator, whisper, or another character in this story.
-- Male pool: `ranbir` → `harshit` → `ishan` (priority order).
+- Male pool: `ranbir` → `tarun` → `ishan` (priority order). `tarun` (Rich, Warm and Friendly) replaced `harshit` 2026-04-27 per user feedback.
 - Female pool: any of the 5 narrator voices not currently assigned (`tripti, monika, tara, simran, rhea`). `zara` is **excluded** from character casting — she's reserved for the angry-narrator + whisper roles to keep that voice unique.
 - `maya` is **retired** as of 2026-04-27 (voice didn't land in user testing); the voice ID stays in the library for reference but is unused.
 - `WHISPER_VOICE = "zara"` regardless of cast.
@@ -218,12 +221,17 @@ Implemented in `_elevenlabs_common.convert_short_pauses_to_breaks()` and applied
 
 ### 8.3 Context passing for long-story tonal continuity
 
-Long stories produce 30–50 TTS chunks. Without context hints, every chunk starts emotionally fresh — the voice resets state at every segment boundary, flattening the multi-phase arc the text encodes. Updated 2026-04-27: every long-story TTS call passes:
+Long stories produce 30–50 TTS chunks. Without context hints, every chunk starts emotionally fresh — the voice resets state at every segment boundary, flattening the multi-phase arc the text encodes. Critical for **dialogue** specifically: a single character line is 1–15 words, sent alone with character-specific voice settings, with no idea what scene it's in. ElevenLabs renders the words with the voice's baseline emotional state — like a voice actor reading one line off a card with no script context.
 
-- `previous_text`: last ~300 chars of the preceding text-bearing segment
-- `next_text`: first ~200 chars of the following text-bearing segment
+Every long-story TTS call passes `previous_text` and `next_text`. Window sizes (tuned 2026-04-27 round 2):
 
-ElevenLabs uses these for tonal continuity — the chunk knows what came before and what's coming, so prosody flows naturally across phase transitions, dialogue boundaries, and music swells. Pauses, breathes, and music segments are **skipped** when computing context (we only look back/forward to the nearest text-bearing segment).
+| Segment type | previous_text | next_text |
+|--------------|---------------|-----------|
+| Narration | ~300 chars | ~200 chars |
+| **Dialogue** | **~500 chars** | **~300 chars** |
+| Phrase / Whisper / Breathe-guide | ~300 chars | ~200 chars |
+
+Dialogue gets the larger window because a short character line absolutely depends on the surrounding emotional arc to render correctly. The `_collect()` helper walks back/forward through multiple text-bearing segments (skipping pauses, breathes, music) and concatenates content until it hits the char budget — so the context spans the prior 3–5 narration paragraphs, not just the immediately preceding sentence.
 
 V2 short stories also accept these params via `tts_eleven_compat()` but the V2 caller doesn't currently set them — V2 chunks are short enough that a fresh emotional state per chunk doesn't audibly hurt.
 

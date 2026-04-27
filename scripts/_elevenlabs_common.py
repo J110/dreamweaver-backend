@@ -51,8 +51,10 @@ ELEVENLABS_VOICES_EN = {
     "zara":    "wdymxIQkYn7MJCYCQF2Q",  # Soothing, Meditative — ASMR / whisper
     # Male voices (long-story characters only)
     "ranbir":  "MgKG6W05zBkvXijkNguO",  # Deep and Dramatic Storyteller
-    "harshit": "6TcvxMZXgg9AlJrd8iCl",  # Strong, Deep and Casual
+    "tarun":   "qr9D67rNgxf5xNgv46nx",  # Rich, Warm and Friendly (replaced harshit 2026-04-27)
     "ishan":   "N09NFwYJJG9VSSgdLQbT",  # Bold and Upbeat
+    # harshit retired 2026-04-27 (user feedback); voice ID kept for legacy lookups.
+    "harshit": "6TcvxMZXgg9AlJrd8iCl",  # Strong, Deep and Casual — retired, unused
 }
 
 # Legacy chatterbox voice labels → ElevenLabs labels (used when call sites
@@ -64,7 +66,7 @@ LEGACY_VOICE_MAP_EN = {
     "female_4": "simran",
     "female_5": "rhea",
     "female_6": "maya",
-    "male_1":   "harshit",
+    "male_1":   "tarun",   # was harshit; retired 2026-04-27
     "male_2":   "ranbir",
     "male_3":   "ishan",
     "asmr":     "zara",
