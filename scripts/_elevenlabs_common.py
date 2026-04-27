@@ -98,18 +98,23 @@ V2_PHASE_PARAMS_EN = {
 }
 V2_PHRASE_PARAMS_EN = {"stability": 0.70, "similarity_boost": 0.75, "style": 0.15, "speed": 0.75}
 
-# Long-story section params — same emotional-warmth tuning as V2.
+# Long-story section params — emotional-warmth tuning v2 (2026-04-27).
+# Long stories need MORE arc than V2 shorts (15-25 min runtime traversing
+# engagement → easing → settling → dissolution). Earlier values kept style
+# at 0.00 across all phases — that flattens the arc the text already has.
+# New design: stability rises across phases, style descends, speed slows.
+# Whisper is the ONLY place style 0.00 is correct.
 LONG_STORY_TTS_EN = {
-    "intro":           {"stability": 0.50, "similarity_boost": 0.75, "style": 0.25, "speed": 0.92},
-    "phase_1":         {"stability": 0.55, "similarity_boost": 0.75, "style": 0.20, "speed": 0.85},
-    "phrase":          {"stability": 0.70, "similarity_boost": 0.75, "style": 0.15, "speed": 0.75},
-    "song_transition": {"stability": 0.60, "similarity_boost": 0.75, "style": 0.18, "speed": 0.82},
-    "post_song":       {"stability": 0.62, "similarity_boost": 0.75, "style": 0.15, "speed": 0.80},
-    "phase_2":         {"stability": 0.62, "similarity_boost": 0.75, "style": 0.12, "speed": 0.80},
-    "phase_3":         {"stability": 0.70, "similarity_boost": 0.75, "style": 0.08, "speed": 0.75},
-    "whisper":         {"stability": 0.80, "similarity_boost": 0.75, "style": 0.00, "speed": 0.70},
-    "breathing":       {"stability": 0.68, "similarity_boost": 0.75, "style": 0.10, "speed": 0.75},
-    "breathe_guide":   {"stability": 0.72, "similarity_boost": 0.75, "style": 0.05, "speed": 0.72},
+    "intro":           {"stability": 0.45, "similarity_boost": 0.75, "style": 0.35, "speed": 0.92},
+    "phase_1":         {"stability": 0.50, "similarity_boost": 0.75, "style": 0.30, "speed": 0.88},
+    "phrase":          {"stability": 0.60, "similarity_boost": 0.75, "style": 0.20, "speed": 0.75},
+    "song_transition": {"stability": 0.55, "similarity_boost": 0.75, "style": 0.25, "speed": 0.82},
+    "post_song":       {"stability": 0.60, "similarity_boost": 0.75, "style": 0.20, "speed": 0.78},
+    "phase_2":         {"stability": 0.65, "similarity_boost": 0.75, "style": 0.15, "speed": 0.78},
+    "phase_3":         {"stability": 0.75, "similarity_boost": 0.75, "style": 0.10, "speed": 0.70},
+    "whisper":         {"stability": 0.85, "similarity_boost": 0.75, "style": 0.00, "speed": 0.65},
+    "breathing":       {"stability": 0.70, "similarity_boost": 0.75, "style": 0.10, "speed": 0.72},
+    "breathe_guide":   {"stability": 0.75, "similarity_boost": 0.75, "style": 0.05, "speed": 0.68},
 }
 
 # Character voice-style modifiers (per spec §7.1).
@@ -161,13 +166,18 @@ def _clamp(x: float, lo: float, hi: float) -> float:
 def apply_modifier(base: dict, modifier_name: str) -> dict:
     """Apply a character voice-style modifier on top of a section base.
 
-    Clamps to: stability ∈ [0,1], style ∈ [0,1], speed ∈ [0.65, 1.2].
+    Clamps to: stability ∈ [0.40, 1.0], style ∈ [0,1], speed ∈ [0.65, 1.2].
+
+    Stability floor at 0.40 (raised 2026-04-27 from 0.0) prevents the
+    "speaking too fast and randomly" failure mode when a `nervous` or
+    `small` modifier stacks on top of an already-low phase_1 base. Per
+    ElevenLabs docs: stability <0.30 risks overly random performances.
     """
     mod = CHARACTER_VOICE_MODIFIERS_EN.get(modifier_name)
     if not mod:
         return dict(base)
     return {
-        "stability":        _clamp(base["stability"] + mod["stability_offset"], 0.0, 1.0),
+        "stability":        _clamp(base["stability"] + mod["stability_offset"], 0.40, 1.0),
         "similarity_boost": base.get("similarity_boost", 0.75),
         "style":            _clamp(base["style"] + mod["style_offset"], 0.0, 1.0),
         "speed":            _clamp(base["speed"] + mod["speed_offset"], 0.65, 1.2),
@@ -258,11 +268,18 @@ def _split_at_sentence_boundary(text: str, soft_limit: int = SOFT_LIMIT) -> list
 
 def tts_eleven_raw(text: str, voice: str, *,
                    stability: float, similarity_boost: float, style: float, speed: float,
-                   is_phrase: bool = False, timeout: float = 180.0) -> AudioSegment:
+                   is_phrase: bool = False, timeout: float = 180.0,
+                   previous_text: str = "", next_text: str = "") -> AudioSegment:
     """Single ElevenLabs TTS call → AudioSegment (MP3 decoded via pydub).
 
     Caller passes section-correct ElevenLabs params (preferred over the
     chatterbox-formula path).
+
+    `previous_text` / `next_text` (added 2026-04-27): pass surrounding
+    chunks (last ~300 chars / first ~200 chars respectively) so ElevenLabs
+    maintains tonal continuity across long-story chunk boundaries. Without
+    these, the voice resets emotional state at every segment boundary,
+    flattening the multi-phase arc.
     """
     text = _normalize_text(text, is_phrase)
     if not text or not text.strip():
@@ -276,7 +293,8 @@ def tts_eleven_raw(text: str, voice: str, *,
         for c in chunks:
             out += tts_eleven_raw(c, voice, stability=stability,
                                   similarity_boost=similarity_boost, style=style,
-                                  speed=speed, is_phrase=False, timeout=timeout)
+                                  speed=speed, is_phrase=False, timeout=timeout,
+                                  previous_text=previous_text, next_text=next_text)
         return out
 
     voice_id = resolve_voice_id(voice)
@@ -296,6 +314,10 @@ def tts_eleven_raw(text: str, voice: str, *,
             "speed": _clamp(speed, 0.65, 1.2),
         },
     }
+    if previous_text:
+        body["previous_text"] = previous_text[-300:]
+    if next_text:
+        body["next_text"] = next_text[:200]
 
     last_err = None
     with httpx.Client() as client:
@@ -317,11 +339,14 @@ def tts_eleven_raw(text: str, voice: str, *,
 
 def tts_eleven_compat(text: str, voice: str, exaggeration: float = 0.45,
                       cfg_weight: float = 0.5, speed: float = 0.85,
-                      is_phrase: bool = False, timeout: float = 180.0) -> AudioSegment:
+                      is_phrase: bool = False, timeout: float = 180.0,
+                      previous_text: str = "", next_text: str = "") -> AudioSegment:
     """Drop-in replacement for chatterbox `generate_tts(...)`.
 
-    Same signature, formula-translated params, English-only voices.
-    Call this from `generate_tts(...)` wrappers when TTS_ENGINE_EN=elevenlabs.
+    Same signature, formula-translated params, English-only voices. Optional
+    `previous_text` / `next_text` for tonal continuity across long-story
+    chunks (no-op for V2 short stories which are short enough).
     """
     params = chatterbox_to_elevenlabs(exaggeration, cfg_weight, speed)
-    return tts_eleven_raw(text, voice, is_phrase=is_phrase, timeout=timeout, **params)
+    return tts_eleven_raw(text, voice, is_phrase=is_phrase, timeout=timeout,
+                          previous_text=previous_text, next_text=next_text, **params)

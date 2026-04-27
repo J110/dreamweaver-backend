@@ -1540,10 +1540,14 @@ CHATTERBOX_URL = "https://mohan-32314--dreamweaver-chatterbox-tts.modal.run"
 
 
 def generate_tts(text, voice, exaggeration=0.45, cfg_weight=0.5, speed=0.85,
-                 is_phrase=False, timeout=180):
+                 is_phrase=False, timeout=180,
+                 previous_text="", next_text=""):
     """Generate TTS audio via Chatterbox Modal endpoint OR ElevenLabs.
 
     Engine selected by env TTS_ENGINE_EN (default 'chatterbox').
+
+    `previous_text` / `next_text` (ElevenLabs only): pass surrounding
+    chunks for tonal continuity across long-story segment boundaries.
 
     timeout: Per-attempt timeout in seconds (default 60). Prevents hangs
     on short inputs that Chatterbox can't handle.
@@ -1558,7 +1562,8 @@ def generate_tts(text, voice, exaggeration=0.45, cfg_weight=0.5, speed=0.85,
         from _elevenlabs_common import tts_eleven_compat
         return tts_eleven_compat(text, eleven_voice, exaggeration=exaggeration,
                                  cfg_weight=cfg_weight, speed=speed,
-                                 is_phrase=is_phrase, timeout=timeout)
+                                 is_phrase=is_phrase, timeout=timeout,
+                                 previous_text=previous_text, next_text=next_text)
 
     from urllib.parse import urlencode
 
@@ -1606,7 +1611,13 @@ def trim_tts_silence(audio, silence_thresh=-50, min_silence_len=300):
 
 
 def parse_section_into_segments(text):
-    """Parse story section into narrator, dialogue, phrase, whisper, pause segments."""
+    """Parse story section into narrator, dialogue, phrase, whisper, pause segments.
+
+    On the ElevenLabs path, short [PAUSE: ms] tags (<2s) are converted to
+    inline SSML <break time="..."/> tags so the TTS chunk renders with
+    natural breath rhythm instead of cold silence inserts. Longer pauses
+    stay as discrete pause segments handled by the audio assembler.
+    """
     # Pre-process: collapse multi-line [BREATHE_GUIDE] blocks into single lines
     text = re.sub(
         r'\[BREATHE_GUIDE\](.*?)\[/BREATHE_GUIDE\]',
@@ -1614,13 +1625,18 @@ def parse_section_into_segments(text):
         text, flags=re.DOTALL,
     )
 
+    # ElevenLabs path: convert short pauses to inline <break/> tags.
+    if _use_elevenlabs():
+        from _elevenlabs_common import convert_short_pauses_to_breaks
+        text = convert_short_pauses_to_breaks(text)
+
     segments = []
     for line in text.split('\n'):
         line = line.strip()
         if not line:
             continue
 
-        # Pause tags
+        # Pause tags (only the long pauses survive ElevenLabs short-pause conversion)
         pause_match = re.search(r'\[PAUSE:\s*(\d+)\]', line)
         if pause_match:
             before = line[:pause_match.start()].strip()
@@ -1761,7 +1777,20 @@ def _build_voice_lookup(voice_map, full_text):
 
 
 def generate_section_tts(section_text, phase_key, narrator_voice, voice_map):
-    """Generate TTS for a story section with character voices."""
+    """Generate TTS for a story section with character voices.
+
+    On the ElevenLabs path:
+    - Phase 3 uses a *staged* voice transition (not a hard switch at the
+      phase boundary): first 25% of narration-bearing segments use the
+      mood narrator with phase_2 settings, middle 50% use the mood
+      narrator with phase_3 settings, final 25% use zara with whisper
+      settings. This buries the voice change inside the dissolution arc
+      so it doesn't announce itself as a discontinuity.
+    - Each TTS call receives `previous_text` (last ~300 chars of the
+      preceding text-bearing segment) and `next_text` (first ~200 chars
+      of the following) so ElevenLabs maintains tonal continuity across
+      chunk boundaries instead of resetting emotional state every segment.
+    """
     phase_params = LONG_STORY_TTS[phase_key]
     segments = parse_section_into_segments(section_text)
 
@@ -1772,25 +1801,59 @@ def generate_section_tts(section_text, phase_key, narrator_voice, voice_map):
     # Build flexible voice lookup (handles OWL vs Hoot mismatches)
     voice_lookup = _build_voice_lookup(voice_map, section_text)
 
-    # Phase 3 ASMR takeover: when ElevenLabs is on, zara narrates Phase 3
-    # for all moods (per spec §5.2 layer 2). Whisper segments also always
-    # use zara regardless of phase.
-    section_narrator = narrator_voice
-    if _use_elevenlabs() and phase_key == "phase_3":
-        section_narrator = _ELEVENLABS_WHISPER_VOICE
+    use_eleven = _use_elevenlabs()
+    whisper_voice = _ELEVENLABS_WHISPER_VOICE if use_eleven else narrator_voice
 
-    whisper_voice = (_ELEVENLABS_WHISPER_VOICE if _use_elevenlabs()
-                     else narrator_voice)
+    # Phase 3 staged transition: compute per-segment voice + params.
+    # Build mapping from segment index → (narrator, params) for narration
+    # segments specifically. Non-narration types (dialogue, phrase, whisper,
+    # breathe_guide) use their own routing rules below.
+    stage_override: dict[int, tuple[str, dict]] = {}
+    if use_eleven and phase_key == "phase_3":
+        text_idx = [i for i, s in enumerate(segments) if s["type"] == "narration"]
+        n = len(text_idx)
+        first_25 = max(1, int(n * 0.25))
+        last_75 = max(first_25 + 1, int(n * 0.75))
+        for pos, idx in enumerate(text_idx):
+            if pos < first_25:
+                stage_override[idx] = (narrator_voice, LONG_STORY_TTS["phase_2"])
+            elif pos < last_75:
+                stage_override[idx] = (narrator_voice, LONG_STORY_TTS["phase_3"])
+            else:
+                stage_override[idx] = (whisper_voice, LONG_STORY_TTS["whisper"])
+
+    # Default narrator for non-staged segments.
+    section_narrator = narrator_voice
+
+    # Pre-compute context strings for each segment (ElevenLabs only).
+    def _context_for(idx):
+        if not use_eleven:
+            return "", ""
+        prev_text = ""
+        for j in range(idx - 1, -1, -1):
+            if segments[j].get("text"):
+                prev_text = segments[j]["text"]
+                break
+        next_text = ""
+        for j in range(idx + 1, len(segments)):
+            if segments[j].get("text"):
+                next_text = segments[j]["text"]
+                break
+        return prev_text, next_text
 
     audio_chunks = []
 
     for i, seg in enumerate(segments):
+        prev_t, next_t = _context_for(i)
         if seg["type"] == "narration":
             text = seg["text"]
             # Pad very short text to avoid Chatterbox issues
             if len(text.split()) <= 3:
                 text = f"... {text}"
-            audio = generate_tts(text, voice=section_narrator, **phase_params)
+            # Phase 3 staged transition (or default phase params)
+            local_voice, local_params = stage_override.get(i, (section_narrator, phase_params))
+            audio = generate_tts(text, voice=local_voice, **local_params,
+                                 previous_text=prev_t, next_text=next_t)
             audio = trim_tts_silence(audio)
             audio_chunks.append(("audio", audio))
 
@@ -1815,26 +1878,30 @@ def generate_section_tts(section_text, phase_key, narrator_voice, voice_map):
             text = seg["text"]
             if len(text.split()) <= 4:
                 text = f"... {text}"
-            audio = generate_tts(text, voice=char_voice, **char_params)
+            audio = generate_tts(text, voice=char_voice, **char_params,
+                                 previous_text=prev_t, next_text=next_t)
             audio = trim_tts_silence(audio)
             audio_chunks.append(("audio", audio))
 
         elif seg["type"] == "phrase":
             audio = generate_tts(seg["text"], voice=section_narrator,
-                                 **LONG_STORY_TTS["phrase"], is_phrase=True)
+                                 **LONG_STORY_TTS["phrase"], is_phrase=True,
+                                 previous_text=prev_t, next_text=next_t)
             audio = trim_tts_silence(audio)
             audio_chunks.append(("audio", audio))
 
         elif seg["type"] == "whisper":
             audio = generate_tts(seg["text"], voice=whisper_voice,
-                                 **LONG_STORY_TTS["whisper"], is_phrase=True)
+                                 **LONG_STORY_TTS["whisper"], is_phrase=True,
+                                 previous_text=prev_t, next_text=next_t)
             audio = trim_tts_silence(audio)
             audio_chunks.append(("audio", audio))
 
         elif seg["type"] == "breathe_guide":
             text = f"... {seg['text']}"
             audio = generate_tts(text, voice=section_narrator,
-                                 **LONG_STORY_TTS["breathe_guide"])
+                                 **LONG_STORY_TTS["breathe_guide"],
+                                 previous_text=prev_t, next_text=next_t)
             audio = trim_tts_silence(audio)
             audio_chunks.append(("audio", audio))
             # 3s silence after — the child breathes here

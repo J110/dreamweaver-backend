@@ -120,20 +120,46 @@ The `voice_map` is persisted in `metadata.json` exactly as today.
 
 ## 7. TTS parameters — long stories
 
-`similarity_boost = 0.75` for all calls. Same emotional-warmth tuning as V2 (see §6) — original values (stability 0.60–0.95 / style 0.00–0.05) were too flat for English. Updated 2026-04-27.
+`similarity_boost = 0.75` for all calls. Long stories need MORE emotional range than V2 shorts because they have a 15–25-minute arc — voice should traverse engagement → easing → settling → dissolution. Initial values had style 0.00 across all phases, flattening the arc the text already has. Tuned 2026-04-27 (round 2): stability rises across phases, style descends, speed slows. Whisper is the **only** place style 0.00 is correct.
 
-| Section | stability | style | speed |
-|---------|-----------|-------|-------|
-| intro | 0.50 | 0.25 | 0.92 |
-| phase_1 | 0.55 | 0.20 | 0.85 |
-| phrase | 0.70 | 0.15 | 0.75 |
-| song_transition | 0.60 | 0.18 | 0.82 |
-| post_song | 0.62 | 0.15 | 0.80 |
-| phase_2 | 0.62 | 0.12 | 0.80 |
-| phase_3 | 0.70 | 0.08 | 0.75 |
-| whisper | 0.80 | 0.00 | 0.70 |
-| breathing | 0.68 | 0.10 | 0.75 |
-| breathe_guide | 0.72 | 0.05 | 0.72 |
+| Section | stability | style | speed | Why |
+|---------|-----------|-------|-------|-----|
+| intro | 0.45 | 0.35 | 0.92 | Opening hook needs warmth — the "narrator pulls you in" moment |
+| phase_1 | 0.50 | 0.30 | 0.88 | Active discovery, dialogue-heavy; voice should be alive |
+| phrase | 0.60 | 0.20 | 0.75 | Slow, intimate, warm — emotional anchor |
+| song_transition | 0.55 | 0.25 | 0.82 | Bridging into the song; slightly softer than phase_1 |
+| post_song | 0.60 | 0.20 | 0.78 | Returning softer after the song |
+| phase_2 | 0.65 | 0.15 | 0.78 | Settling, sensation over plot |
+| phase_3 | 0.75 | 0.10 | 0.70 | Dissolution, fragments; style 0.10 keeps trace warmth |
+| whisper | 0.85 | 0.00 | 0.65 | Final 3–4 lines; only place style 0.00 is right |
+| breathing | 0.70 | 0.10 | 0.72 | Slow steady delivery, calmer than narrator default |
+| breathe_guide | 0.75 | 0.05 | 0.68 | Instructional, very slow, almost meditative |
+
+### 7.1 Modifier floor clamp
+
+Character voice-style modifiers (§7.2) stack offsets on top of the section base. To prevent the "speaking too fast and randomly" failure mode when (e.g.) a `nervous` modifier (`stability_offset: -0.08`) lands on top of an already-low phase_1 base, `apply_modifier()` clamps to:
+
+- `stability ∈ [0.40, 1.0]` — raised from 0.0 floor 2026-04-27
+- `style ∈ [0, 1]`
+- `speed ∈ [0.65, 1.20]`
+
+ElevenLabs docs warn that stability < 0.30 risks overly random performances; 0.40 keeps the voice grounded while still allowing emotional range.
+
+### 7.2 Phase 3 staged voice transition
+
+Original design: at the `[PHASE_3]` boundary, switch the narrator from the mood voice to `zara` (whisper voice) for the rest of the section. Listeners hear a hard voice change at the phase boundary — "wait, this is a different person now." The discontinuity announces itself rather than burying inside the dissolution arc.
+
+Updated 2026-04-27: stage the transition across Phase 3 in three sub-stages, computed by position among Phase-3 narration segments:
+
+| Sub-stage | Range | Voice | Section params |
+|-----------|-------|-------|----------------|
+| early | first 25% | mood narrator | `phase_2` |
+| middle | middle 50% | mood narrator | `phase_3` |
+| late | final 25% | `zara` | `whisper` |
+
+The voice change happens deep inside dissolution where the listener is already drifting, masking the transition. For the **angry** mood (where narrator is already `zara`), this stages params only — no voice switch since narrator and whisper are the same voice. `[WHISPER]` blocks always force `zara` regardless of position.
+
+Implemented in `generate_section_tts()` via a per-segment override map computed before the rendering loop.
 
 ### 7.1 Character voice-style modifiers
 
@@ -188,7 +214,18 @@ Updated 2026-04-27 (per ElevenLabs SSML guidance):
 
 Implemented in `_elevenlabs_common.convert_short_pauses_to_breaks()` and applied in `audio_assembly.parse_segments()` only when `TTS_ENGINE_EN=elevenlabs`. The Chatterbox path is unchanged.
 
-### 8.3 Long-input defensive check
+### 8.3 Context passing for long-story tonal continuity
+
+Long stories produce 30–50 TTS chunks. Without context hints, every chunk starts emotionally fresh — the voice resets state at every segment boundary, flattening the multi-phase arc the text encodes. Updated 2026-04-27: every long-story TTS call passes:
+
+- `previous_text`: last ~300 chars of the preceding text-bearing segment
+- `next_text`: first ~200 chars of the following text-bearing segment
+
+ElevenLabs uses these for tonal continuity — the chunk knows what came before and what's coming, so prosody flows naturally across phase transitions, dialogue boundaries, and music swells. Pauses, breathes, and music segments are **skipped** when computing context (we only look back/forward to the nearest text-bearing segment).
+
+V2 short stories also accept these params via `tts_eleven_compat()` but the V2 caller doesn't currently set them — V2 chunks are short enough that a fresh emotional state per chunk doesn't audibly hurt.
+
+### 8.4 Long-input defensive check
 
 ElevenLabs Multilingual v2 prosody soft-degrades on inputs longer than ~2000 characters per call (less expressive, more monotone, occasional mispronunciations of less common words). Long stories segmented properly (one `[PHASE_1]` chunk = ~3–4 calls) won't hit this, but a defensive guard catches edge cases (a weird story producing one long settling block, an over-eager `_batch_short_lines()` flush):
 
