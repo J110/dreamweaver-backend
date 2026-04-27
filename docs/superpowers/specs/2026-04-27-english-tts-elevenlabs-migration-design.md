@@ -79,12 +79,12 @@ This is a **deliberate departure** from the existing dual-narrator A/B system do
 
 | Mood | Narrator | Voice descriptor | Why this voice |
 |------|----------|------------------|----------------|
-| wired | tara | Conversational and Expressive | Channels the wound-up energy without amplifying it; expressive cadence carries the Phase-1 momentum and naturally softens through the descent |
+| wired | tara | Conversational and Expressive | Channels wound-up energy without amplifying it; expressive cadence carries Phase-1 momentum and naturally softens through the descent |
 | curious | simran | Cheerful Best Friend | Wonder reads better in a bright, friendly voice than a deep one; matches the discovery arc |
 | calm | tripti | Calm and Experienced | The steady anchor — mature, unrushed, the baseline a calm story should sit on |
-| sad | rhea | Soft, Polished and Calm | Tender and soft, doesn't push or perform sympathy; sits beside the feeling rather than fixing it. Distinct from tripti (mature/anchored) — rhea is delicate, tripti is steady |
-| anxious | maya | Friendly and Cheerful | Anxious children need **warmth**, not gravity. A reassuring, approachable voice defuses anxiety better than a deep one |
-| angry | monika | Deep and Natural | **Grounding, not energy-mirror.** A deep, settled voice meets anger by not matching it; depth is the counter-weight that pulls the child down toward sleep |
+| sad | rhea | Soft, Polished and Calm | Tender and soft, doesn't push or perform sympathy; sits beside the feeling rather than fixing it |
+| anxious | monika | Deep and Natural | **Grounding and reassuring.** Anxious children settle into a deep, slow-breathing voice that signals "everything is steady" — the depth is the reassurance |
+| angry | maya | Friendly and Cheerful | **Softens the heat.** Anger meets warmth, not more weight. A friendly, light voice defuses the charge rather than matching its gravity |
 
 ### 5.2 Long stories — three-layer voice system (preserved)
 

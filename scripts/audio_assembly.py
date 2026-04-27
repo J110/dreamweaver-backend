@@ -43,12 +43,12 @@ _CHATTERBOX_MOOD_VOICES = {
     "angry":   ["female_3", "male_2"],    # melodic + gentle
 }
 _ELEVENLABS_MOOD_VOICES = {
-    "wired":   ["tara"],     # Conversational and Expressive
-    "curious": ["simran"],   # Cheerful Best Friend
-    "calm":    ["tripti"],   # Calm and Experienced
-    "sad":     ["rhea"],     # Soft, Polished and Calm
-    "anxious": ["maya"],     # Friendly and Cheerful (warm reassurance)
-    "angry":   ["monika"],   # Deep and Natural (grounding)
+    "wired":   ["tara"],     # Conversational and Expressive — playful energy
+    "curious": ["simran"],   # Cheerful Best Friend — wonder vibe
+    "calm":    ["tripti"],   # Calm and Experienced — the anchor
+    "sad":     ["rhea"],     # Soft, Polished and Calm — tender
+    "anxious": ["monika"],   # Deep and Natural — grounding, reassuring
+    "angry":   ["maya"],     # Friendly and Cheerful — softens the heat
 }
 MOOD_VOICES = _ELEVENLABS_MOOD_VOICES if _use_elevenlabs() else _CHATTERBOX_MOOD_VOICES
 DEFAULT_VOICES = ["tripti"] if _use_elevenlabs() else ["female_1", "asmr"]

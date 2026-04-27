@@ -516,12 +516,12 @@ _ELEVENLABS_ALL_VOICES = [
     "male_ranbir", "male_harshit", "male_ishan",
 ]
 _ELEVENLABS_MOOD_NARRATOR = {
-    "wired":   "female_tara",     # Conversational and Expressive
-    "curious": "female_simran",   # Cheerful Best Friend
-    "calm":    "female_tripti",   # Calm and Experienced
-    "sad":     "female_rhea",     # Soft, Polished and Calm
-    "anxious": "female_maya",     # Friendly and Cheerful (warm reassurance)
-    "angry":   "female_monika",   # Deep and Natural (grounding)
+    "wired":   "female_tara",     # Conversational and Expressive — playful energy
+    "curious": "female_simran",   # Cheerful Best Friend — wonder vibe
+    "calm":    "female_tripti",   # Calm and Experienced — the anchor
+    "sad":     "female_rhea",     # Soft, Polished and Calm — tender
+    "anxious": "female_monika",   # Deep and Natural — grounding, reassuring
+    "angry":   "female_maya",     # Friendly and Cheerful — softens the heat
 }
 _ELEVENLABS_WHISPER_VOICE = "female_zara"  # Phase 3 / [WHISPER] takeover
 

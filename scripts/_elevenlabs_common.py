@@ -72,12 +72,12 @@ LEGACY_VOICE_MAP_EN = {
 
 # Mood → narrator voice label (single narrator per mood, per spec §5.1).
 MOOD_NARRATOR_EN = {
-    "wired":   "tara",     # Conversational and Expressive
-    "curious": "simran",   # Cheerful Best Friend
-    "calm":    "tripti",   # Calm and Experienced
-    "sad":     "rhea",     # Soft, Polished and Calm
-    "anxious": "maya",     # Friendly and Cheerful (warm reassurance)
-    "angry":   "monika",   # Deep and Natural (grounding)
+    "wired":   "tara",     # Conversational and Expressive — playful energy
+    "curious": "simran",   # Cheerful Best Friend — wonder vibe
+    "calm":    "tripti",   # Calm and Experienced — the anchor
+    "sad":     "rhea",     # Soft, Polished and Calm — tender
+    "anxious": "monika",   # Deep and Natural — grounding, reassuring
+    "angry":   "maya",     # Friendly and Cheerful — softens the heat
 }
 WHISPER_VOICE_EN = "zara"
 
