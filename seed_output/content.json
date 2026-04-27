@@ -21878,5 +21878,56 @@
     ],
     "created_at": "2026-04-27T12:05:11",
     "updated_at": "2026-04-27T12:05:11"
+  },
+  {
+    "id": "hi-nonsense-9-12-dfcd",
+    "type": "poem",
+    "lang": "hi",
+    "language": "hi",
+    "story_type": "poem",
+    "storyType": "poem",
+    "content_type": "poem",
+    "poem_type": "nonsense",
+    "title": "Dhama Chauk Chidiya",
+    "title_en": "The Bustling Bird Square",
+    "description": "Hindi children's musical poem",
+    "description_en": "Hindi children's musical poem",
+    "poem_text": "Dhama chauk chidiya bol,\nTippan toppan thol thol.\n\nGhoda gaadi dhool udaye,\nBilli bani sher ki maaye.\n\nPaani mein halla gulla,\nMachhli ne khela dhaani phulla.\n\nChand ka thaila jhoola jheela,\nTaaron ne phenka phuljhadi neela.\n\nGhar se nikla gubbara sa,\nUda le gaya dholak ka bhes.",
+    "text": "Dhama chauk chidiya bol,\nTippan toppan thol thol.\n\nGhoda gaadi dhool udaye,\nBilli bani sher ki maaye.\n\nPaani mein halla gulla,\nMachhli ne khela dhaani phulla.\n\nChand ka thaila jhoola jheela,\nTaaron ne phenka phuljhadi neela.\n\nGhar se nikla gubbara sa,\nUda le gaya dholak ka bhes.",
+    "raw_text": "Dhama chauk chidiya bol,\nTippan toppan thol thol.\n\nGhoda gaadi dhool udaye,\nBilli bani sher ki maaye.\n\nPaani mein halla gulla,\nMachhli ne khela dhaani phulla.\n\nChand ka thaila jhoola jheela,\nTaaron ne phenka phuljhadi neela.\n\nGhar se nikla gubbara sa,\nUda le gaya dholak ka bhes.",
+    "age_group": "9-12",
+    "ageGroup": "9-12",
+    "age_min": 9,
+    "age_max": 12,
+    "mood": "wired",
+    "instruments": "tabla, flute, tanpura, soft electronic pads",
+    "tempo": 100,
+    "char_count": 279,
+    "line_count": 10,
+    "audio_url": "/audio/poems-hi/hi-nonsense-9-12-dfcd.mp3",
+    "audio_variants": [
+      {
+        "voice": "minimax_v2.5_hi_ref",
+        "url": "/audio/poems-hi/hi-nonsense-9-12-dfcd.mp3",
+        "duration_seconds": 44,
+        "provider": "minimax-music-v2.5-fal"
+      }
+    ],
+    "cover": "/covers/hi-nonsense-9-12-dfcd.webp",
+    "cover_file": "/covers/poems-hi/hi-nonsense-9-12-dfcd_cover.webp",
+    "cover_context": "A surreal moonlit square where oversized birds juggle glowing, floating objects against a starry sky.",
+    "duration_seconds": 44,
+    "durationSec": 44,
+    "audio_engine": "minimax-music-v2.5-fal",
+    "tts_engine": "minimax-music-v2.5-fal",
+    "has_baked_music": true,
+    "is_generated": true,
+    "author_id": "system",
+    "categories": [
+      "Bedtime",
+      "Poem"
+    ],
+    "created_at": "2026-04-27T13:24:20",
+    "updated_at": "2026-04-27T13:24:20"
   }
 ]

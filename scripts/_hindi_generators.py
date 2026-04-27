@@ -1,0 +1,1299 @@
+"""Per-content-type generation + audio + cover + storage.
+
+One function per content type. Each:
+  1. Takes diversity axes from _hindi_diversity
+  2. Builds a type-specific Mistral/Groq prompt
+  3. Calls _hindi_llm.generate_json with retry-on-validation-fail (≤3)
+  4. Renders audio via the engine the v2 spec mandates for that type
+  5. Generates cover via Together AI FLUX
+  6. Writes to seed + per-item runtime + content.json
+  7. Returns the entry dict (or raises on terminal failure)
+
+Engine matrix (per v2 specs):
+  short_story → ElevenLabs Multilingual v2 (single voice)
+  long_story  → ElevenLabs multi-voice + MiniMax mid-song + bed/swells
+  lullaby     → MiniMax v2.5 + Hindi reference audio
+  silly_song  → ElevenLabs Music
+  poem        → MiniMax v2.5 + Hindi reference audio
+"""
+from __future__ import annotations
+
+import base64
+import io
+import json
+import os
+import re
+import sys
+import time
+import uuid
+from pathlib import Path
+
+import httpx
+from PIL import Image
+from pydub import AudioSegment
+
+BASE_DIR = Path(__file__).parent.parent
+REPO_ROOT = BASE_DIR.parent
+WEB_ROOT = REPO_ROOT / "dreamweaver-web"
+
+sys.path.insert(0, str(Path(__file__).parent))
+
+from _hindi_llm import generate_json, LLMError  # type: ignore
+from _hindi_validators import VALIDATORS  # type: ignore
+
+
+TOGETHER_KEY = os.getenv("TOGETHER_API_KEY", "")
+
+
+# ───────────────────────────────────────────────────────────────────────
+# COMMON HELPERS
+# ───────────────────────────────────────────────────────────────────────
+
+def _slug(s: str, n: int = 4) -> str:
+    return re.sub(r"[^a-z0-9]+", "", (s or "").lower())[:n] or uuid.uuid4().hex[:n]
+
+
+def _hex(n: int = 4) -> str:
+    return uuid.uuid4().hex[:n]
+
+
+def _flux_cover(prompt: str, w: int = 1024, h: int = 1024) -> bytes | None:
+    if not TOGETHER_KEY:
+        print("  TOGETHER_API_KEY missing, skipping cover")
+        return None
+    try:
+        resp = httpx.post(
+            "https://api.together.xyz/v1/images/generations",
+            headers={"Authorization": f"Bearer {TOGETHER_KEY}"},
+            json={
+                "model": "black-forest-labs/FLUX.1-schnell",
+                "prompt": prompt[:1000],
+                "width": w, "height": h, "n": 1,
+                "response_format": "b64_json",
+            },
+            timeout=180,
+        )
+        if resp.status_code != 200:
+            print(f"  FLUX {resp.status_code}: {resp.text[:200]}")
+            return None
+        return base64.b64decode(resp.json()["data"][0]["b64_json"])
+    except Exception as e:
+        print(f"  FLUX error: {e}")
+        return None
+
+
+def _save_cover(png_bytes: bytes, *paths: Path, size: tuple[int, int] = (1024, 1024)):
+    img = Image.open(io.BytesIO(png_bytes)).convert("RGB").resize(size, Image.LANCZOS)
+    for p in paths:
+        p.parent.mkdir(parents=True, exist_ok=True)
+        img.save(p, format="WEBP", quality=85)
+
+
+def _save_audio(seg: AudioSegment, *paths: Path):
+    for p in paths:
+        p.parent.mkdir(parents=True, exist_ok=True)
+        seg.export(p, format="mp3", bitrate="192k")
+
+
+def _upsert_content(entry: dict) -> None:
+    cj = BASE_DIR / "seed_output" / "content.json"
+    data = json.loads(cj.read_text())
+    items = data["items"] if isinstance(data, dict) else data
+    items = [i for i in items if i.get("id") != entry["id"]]
+    items.append(entry)
+    if isinstance(data, dict):
+        data["items"] = items
+    else:
+        data = items
+    cj.write_text(json.dumps(data, ensure_ascii=False, indent=2))
+
+
+def _llm_with_retry(*, system: str, user: str, validator_key: str,
+                     max_retries: int = 3, log_prefix: str = "  ",
+                     post_process=None) -> dict:
+    """Generate JSON, validate, retry on failure. post_process optionally
+    transforms the LLM JSON into the validator-shape."""
+    last_errors: list[str] = []
+    for attempt in range(max_retries):
+        retry_hint = ""
+        if attempt > 0 and last_errors:
+            retry_hint = (
+                "\n\nPREVIOUS ATTEMPT FAILED VALIDATION:\n"
+                + "\n".join(f"- {e}" for e in last_errors[:8])
+                + "\nFix these issues. Output ONLY corrected JSON."
+            )
+        try:
+            data = generate_json(
+                system=system,
+                user=user + retry_hint,
+                temperature=0.85,
+                max_tokens=4096,
+                log_prefix=log_prefix,
+            )
+        except LLMError as e:
+            print(f"{log_prefix}LLM failure: {e}")
+            last_errors = [str(e)]
+            continue
+
+        # Optional shape transform before validation
+        validator_input = post_process(data) if post_process else data
+        errors = VALIDATORS[validator_key](validator_input)
+        if not errors:
+            print(f"{log_prefix}validator passed")
+            return data
+        print(f"{log_prefix}validator fail (attempt {attempt+1}): {errors[:5]}")
+        last_errors = errors
+    raise RuntimeError(
+        f"validator failed after {max_retries} attempts; "
+        f"last errors: {last_errors}"
+    )
+
+
+# ───────────────────────────────────────────────────────────────────────
+# SHORT STORY
+# ───────────────────────────────────────────────────────────────────────
+
+def _short_story_prompt(axes: dict) -> tuple[str, str]:
+    age = axes["age_group"]
+    word_band = {"2-5": "50-200", "6-8": "160-320", "9-12": "240-400"}[age]
+    mood_descriptions = {
+        "calm":    "soft and settling, warm steady rhythm, almost a lullaby",
+        "curious": "dreamy and wondering, spacious and slow",
+        "wired":   "bouncy and playful, high-energy Indian rhythm",
+        "sad":     "gentle and tender, quiet, like a hug from Daadi",
+        "anxious": "cozy and reassuring, steady predictable rhythm",
+        "angry":   "firm then softening, strong rhythm gradually settling",
+    }
+    avoid_titles = "; ".join(t for t in axes["recent_titles"] if t) or "(none yet)"
+    avoid_phrases = "; ".join(p for p in axes["recent_phrases"] if p) or "(none yet)"
+    avoid_names = "; ".join(n for n in axes["recent_names"] if n) or "(none yet)"
+    story_type_signature = {
+        "katha":          'Open with "Kehte hain ki..." or "Bahut purani baat hai..."',
+        "lok_katha":      'Open with "Ek tha..." or "Ek gaon mein..."',
+        "neeti_katha":    "Open with two characters in dialogue",
+        "prakriti_katha": "Open with a sensory nature image (sound, smell, temperature)",
+        "sapnon_ki_katha":"Open with something impossible stated matter-of-factly",
+        "ghar_ki_kahani": "Open with an Indian home sensory detail (chai smell, fan sound)",
+    }[axes["story_type"]]
+
+    system = (
+        "You are a Hindi children's storyteller writing original bedtime "
+        "stories in conversational Roman Hindi (bolchaal ki Hindi). "
+        "Never use Devanagari. Never use literary Hindi (nidra, nakshatra, "
+        "shayan, pushp, van, nayan, vidyalay). Never include religious or "
+        "deity content. Output only the requested JSON."
+    )
+    user = f"""Generate a Hindi short story for age {age}.
+
+DIVERSITY AXES (use these exactly):
+- age_group: {age} (word count {word_band})
+- mood: {axes['mood']} → {mood_descriptions[axes['mood']]}
+- characterType: {axes['characterType']} (canonical 11)
+- story_type: {axes['story_type']} ({story_type_signature})
+
+ANTI-DUPLICATION (do NOT reuse):
+- recent titles: {avoid_titles}
+- recent phrases: {avoid_phrases}
+- recent character names: {avoid_names}
+- BANNED names: Chintu, Raju, Bittu, Munna, Guddu, Pinky, Rinku, Bablu,
+  Pappu, Chhotu, Motu, Golu, Sonu, Monu, Titu, Bunty, Ramu
+
+REQUIRED in `text`:
+- TITLE must contain the lead character's name
+- 3-5 [MUSIC] tags at meaningful pause beats (6-second swell each)
+- 3+ [PHRASE]...[/PHRASE] wraps around your unique repeated phrase
+- 0-2 [PAUSE: ms] tags (800/1200/1500/2000)
+- ≥2 onomatopoeia (sarr, tap tap, chhap, khat khat, dheere dheere, gunghun, jhoom)
+- ≥2 conversational markers (na, toh, pata hai, dekho, suno, achha, bas, arre, zara)
+- Word count strictly within {word_band} (excluding tags)
+- NO emotion markers ([GENTLE], [SLEEPY], etc.)
+
+Return JSON with exactly this shape:
+{{
+  "id": "hi-{axes['story_type']}-{age}-XXXX",
+  "title": "Roman Hindi title with character name",
+  "title_en": "English translation",
+  "hook": "One-line tease in Roman Hindi (under 80 chars) for the audio intro",
+  "description": "2-line description in Roman Hindi",
+  "description_en": "English description",
+  "text": "Full Roman Hindi story with [MUSIC], [PAUSE: ms], [PHRASE] tags inline",
+  "repeated_phrase": "Roman Hindi (≤5 words)",
+  "morals": ["one or two short morals in English"],
+  "categories": ["Bedtime", "<Hindi label>"],
+  "character": {{
+    "name": "Roman Hindi name (NOT in banned list)",
+    "identity": "Roman Hindi description (3-5 words)",
+    "special": "Roman Hindi quirk (3-7 words)",
+    "personality_tags": ["Curious","Gentle"]
+  }},
+  "characterType": "{axes['characterType']}",
+  "story_type": "{axes['story_type']}",
+  "age_group": "{age}",
+  "mood": "{axes['mood']}",
+  "cover_context": "ONE English sentence for FLUX (no text/letters)",
+  "diversityFingerprint": {{
+    "characterType": "{axes['characterType']}",
+    "setting": "<one of: forest, river, sky, meadow, mountain, village, house, garden, beach, pond>",
+    "plotShape": "<one of: discovery_reveal, journey_home, gentle_help, found_thing, change_inside>",
+    "timeOfDay": "<one of: dawn, morning, afternoon, dusk, twilight, night, deep_night>",
+    "weather": "<clear, monsoon, breeze, mist, warm>",
+    "theme": "<patience, friendship, wonder, comfort, kindness, courage, rest>",
+    "scale": "<tiny_intimate, small_personal, medium, big_world>",
+    "companion": "<solo, pair, family, group, object_pair>",
+    "movement": "<walking, sitting, climbing, floating, stillness>",
+    "magicType": "<none, glow, transformation, voice, breath, dream>",
+    "season": "<summer, monsoon, winter, autumn, spring>",
+    "senseEmphasis": "<auditory, visual, tactile, olfactory>",
+    "characterTrait": "<curious, gentle, brave, dreamy, kind>"
+  }}
+}}
+"""
+    return system, user
+
+
+def generate_short_story(axes: dict, log_prefix: str = "  ") -> dict:
+    """Generate, validate, render, save. Returns the upserted entry."""
+    print(f"\n{log_prefix}═══ SHORT STORY: age={axes['age_group']} mood={axes['mood']} type={axes['story_type']} char={axes['characterType']} ═══")
+    sys_msg, user_msg = _short_story_prompt(axes)
+
+    data = _llm_with_retry(
+        system=sys_msg, user=user_msg,
+        validator_key="short_story", log_prefix=log_prefix,
+    )
+
+    # ── Render audio via existing day-2 short-story assembler
+    from fix_hindi_batch_day2 import assemble_story_audio  # type: ignore
+    # Engine wants Devanagari; we got Roman. Use Roman directly — ElevenLabs
+    # multilingual handles both, with a slight phoneme-fidelity penalty for
+    # Roman. Acceptable v1.
+    voice_for_mood = {
+        "calm":    "tripti",
+        "curious": "anika",
+        "wired":   "anika",
+        "sad":     "meher",
+        "anxious": "meher",
+        "angry":   "anika",
+    }[axes["mood"]]
+    audio = assemble_story_audio(
+        text_deva=data["text"],          # Roman in, ElevenLabs handles it
+        hook_deva=data["hook"],
+        voice_label=voice_for_mood,
+        mood=axes["mood"],
+    )
+    duration = round(len(audio) / 1000)
+
+    # Generate ID with character slug (matches existing convention)
+    char_slug = _slug(data["character"]["name"], 4) or _hex(4)
+    sid = data["id"] = f"hi-{axes['story_type']}-{axes['age_group']}-{char_slug}"
+
+    # Save audio
+    _save_audio(
+        audio,
+        WEB_ROOT / "public" / "audio" / "pre-gen" / f"{sid}_{voice_for_mood}.mp3",
+        BASE_DIR / "seed_output" / "stories_hi" / f"{sid}.mp3",
+    )
+
+    # Generate + save cover
+    cover = _flux_cover(data.get("cover_context", "Indian bedtime watercolor"))
+    if cover:
+        _save_cover(
+            cover,
+            WEB_ROOT / "public" / "covers" / f"{sid}.webp",
+            BASE_DIR / "seed_output" / "stories_hi" / f"{sid}_cover.webp",
+        )
+
+    entry = {
+        "id": sid,
+        "type": "story",
+        "lang": "hi",
+        "language": "hi",
+        "title": data["title"],
+        "title_en": data["title_en"],
+        "hook": data["hook"],
+        "description": data["description"],
+        "description_en": data["description_en"],
+        "text": data["text"],
+        "repeated_phrase": data["repeated_phrase"],
+        "morals": data.get("morals", []),
+        "categories": data.get("categories", ["Bedtime"]),
+        "character": data["character"],
+        "character_name": data["character"]["name"],
+        "characterType": data["characterType"],
+        "lead_character_type": data["characterType"],
+        "story_type": data["story_type"],
+        "storyType": data["story_type"],
+        "age_group": axes["age_group"],
+        "ageGroup": axes["age_group"],
+        "age_min": int(axes["age_group"].split("-")[0]),
+        "age_max": int(axes["age_group"].split("-")[1]),
+        "target_age": (
+            int(axes["age_group"].split("-")[0])
+            + int(axes["age_group"].split("-")[1])
+        ) // 2,
+        "mood": axes["mood"],
+        "cover": f"/covers/{sid}.webp" if cover else "/covers/default.svg",
+        "cover_context": data.get("cover_context", ""),
+        "audio_url": f"/audio/pre-gen/{sid}_{voice_for_mood}.mp3",
+        "audio_variants": [{
+            "voice": voice_for_mood,
+            "url": f"/audio/pre-gen/{sid}_{voice_for_mood}.mp3",
+            "duration_seconds": duration,
+            "provider": "elevenlabs-multilingual-v2",
+        }],
+        "duration_seconds": duration,
+        "durationSec": duration,
+        "tts_engine": "elevenlabs_multilingual_v2",
+        "tts_input_script": "roman",
+        "has_baked_music": True,
+        "diversityFingerprint": data.get("diversityFingerprint", {}),
+        "is_generated": True,
+        "author_id": "system",
+        "created_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "updated_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+    }
+    _upsert_content(entry)
+    print(f"{log_prefix}✓ short story published: {sid} ({duration}s)")
+    return entry
+
+
+# ───────────────────────────────────────────────────────────────────────
+# LULLABY
+# ───────────────────────────────────────────────────────────────────────
+
+LULLABY_TYPE_FLAVORS = {
+    "heartbeat":   "humming-only acapella, mmm/dheere repeats, infant-pace rhythm",
+    "permission":  "narrator gives child permission to sleep, gentle",
+    "rocking":     "swaying 6/8 rhythm, jhulna metaphor, soft tabla",
+    "counting":    "1-10 in Hindi, naming things one by one",
+    "shield":      "I'm here, you're safe, parent's voice anchoring",
+    "closing":     "saying goodnight to objects in the room",
+    "humming":     "melodic hum motif (gunghun gunghun), word-light",
+    "naming":      "naming stars/clouds/flowers as the child drifts",
+}
+
+
+def _lullaby_prompt(axes: dict) -> tuple[str, str]:
+    age = axes["age_group"]
+    avoid_titles = "; ".join(t for t in axes["recent_titles"] if t) or "(none yet)"
+    flavor = LULLABY_TYPE_FLAVORS[axes["lullaby_type"]]
+
+    system = (
+        "You are a Hindi children's lullaby writer. Write in Roman Hindi "
+        "(bolchaal). No Devanagari. No literary Hindi. No religious content. "
+        "Lullabies should be gentle, repetitive, and full of warmth. "
+        "Output only the requested JSON."
+    )
+    user = f"""Generate a Hindi lullaby.
+
+AXES:
+- age_group: {age}
+- mood: {axes['mood']}
+- lullaby_type: {axes['lullaby_type']} ({flavor})
+
+ANTI-DUPLICATION:
+- recent titles: {avoid_titles}
+
+REQUIREMENTS:
+- 6-16 lines of Roman Hindi lyrics
+- Repetition is GOOD. Same phrase 2-3 times across the lullaby.
+- Each line ≤8 words, ≤9 syllables.
+- Tempo cue: ~60 BPM feel (slow, breathing-paced).
+- NO instructions like "[verse]" — just the lyrics. Keep it bare.
+- Total lyrics ≤500 chars.
+
+Return JSON with exactly this shape:
+{{
+  "title": "Roman Hindi title (under 4 words)",
+  "title_en": "English translation",
+  "card_label": "Roman Hindi label (under 4 words)",
+  "card_subtitle": "Roman Hindi subtitle (under 8 words)",
+  "lyrics": "Roman Hindi lyrics, line-separated, no section tags",
+  "instruments": "<short Indian-instrument phrase, e.g. 'soft harmonium and gentle hum'>",
+  "tempo": 60,
+  "cover_context": "ONE English sentence for FLUX (Indian child sleeping, watercolor)"
+}}
+"""
+    return system, user
+
+
+def generate_lullaby(axes: dict, log_prefix: str = "  ") -> dict:
+    print(f"\n{log_prefix}═══ LULLABY: age={axes['age_group']} mood={axes['mood']} type={axes['lullaby_type']} ═══")
+    sys_msg, user_msg = _lullaby_prompt(axes)
+
+    # Validator wants a `lullaby_type` and lyrics — pass via post_process
+    def shape(d: dict) -> dict:
+        return {
+            **d,
+            "lullaby_type": axes["lullaby_type"],
+            "lyrics_roman": d.get("lyrics", ""),
+        }
+
+    data = _llm_with_retry(
+        system=sys_msg, user=user_msg,
+        validator_key="lullaby", log_prefix=log_prefix, post_process=shape,
+    )
+
+    # ── Render audio via MiniMax v2.5 + Hindi reference
+    from fix_hindi_batch_day2 import minimax_lullaby  # type: ignore
+    style = (
+        f"Sweet Hindi lori, {data.get('instruments', 'soft harmonium')}, "
+        f"{data.get('tempo', 60)} BPM, warm and loving, "
+        f"smiling maternal voice, major key, native Hindi pronunciation, "
+        f"gentle Indian bedtime feel, {LULLABY_TYPE_FLAVORS[axes['lullaby_type']]}"
+    )
+    composed = (
+        f"{style}.\n\n"
+        "Sing the following Hindi lyrics clearly, in a native North Indian "
+        "female voice, with conversational mother-tongue pronunciation — "
+        "not a Western or Chinese vocal lens.\n\n"
+        f"Lyrics:\n{data['lyrics']}"
+    )
+    audio_bytes = minimax_lullaby(composed, data["lyrics"])
+    audio = AudioSegment.from_file(io.BytesIO(audio_bytes), format="mp3")
+    duration = round(len(audio) / 1000)
+
+    sid = f"hi-{axes['lullaby_type']}-{axes['age_group']}-{_slug(data['title'])}"
+
+    _save_audio(
+        audio,
+        WEB_ROOT / "public" / "audio" / "lullabies" / f"{sid}.mp3",
+        WEB_ROOT / "public" / "audio" / "pre-gen" / f"{sid}_female_1.mp3",
+        BASE_DIR / "seed_output" / "lullabies" / f"{sid}.mp3",
+    )
+
+    cover = _flux_cover(data.get("cover_context", "Indian baby sleeping under a quilt"))
+    if cover:
+        _save_cover(
+            cover,
+            WEB_ROOT / "public" / "covers" / f"{sid}.webp",
+            WEB_ROOT / "public" / "covers" / "lullabies" / f"{sid}_cover.webp",
+            BASE_DIR / "seed_output" / "lullabies" / f"{sid}_cover.webp",
+        )
+
+    entry = {
+        "id": sid,
+        "type": "song",
+        "lang": "hi",
+        "language": "hi",
+        "story_format": "lullaby",
+        "story_type": "lullaby",
+        "storyType": "lullaby",
+        "title": data["title"],
+        "title_en": data["title_en"],
+        "card_label": data["card_label"],
+        "card_subtitle": data["card_subtitle"],
+        "description": data["card_subtitle"],
+        "description_en": data["title_en"],
+        "lullaby_type": axes["lullaby_type"],
+        "age_group": axes["age_group"],
+        "ageGroup": axes["age_group"],
+        "age_min": int(axes["age_group"].split("-")[0]),
+        "age_max": int(axes["age_group"].split("-")[1]),
+        "mood": axes["mood"],
+        "instruments": data.get("instruments", ""),
+        "tempo": data.get("tempo", 60),
+        "text": data["lyrics"],
+        "lyrics": data["lyrics"],
+        "characterType": "human_child",
+        "lead_character_type": "human_child",
+        "audio_url": f"/audio/lullabies/{sid}.mp3",
+        "audio_variants": [{
+            "voice": "minimax_v2.5_hi_ref",
+            "url": f"/audio/lullabies/{sid}.mp3",
+            "duration_seconds": duration,
+            "provider": "minimax-music-v2.5-fal",
+        }],
+        "cover": f"/covers/{sid}.webp" if cover else "/covers/default.svg",
+        "cover_context": data.get("cover_context", ""),
+        "duration_seconds": duration,
+        "durationSec": duration,
+        "audio_engine": "minimax-music-v2.5-fal",
+        "tts_engine": "minimax-music-v2.5-fal",
+        "has_baked_music": True,
+        "is_generated": True,
+        "author_id": "system",
+        "categories": ["Bedtime", "Lullaby"],
+        "created_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "updated_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+    }
+    _upsert_content(entry)
+    print(f"{log_prefix}✓ lullaby published: {sid} ({duration}s)")
+    return entry
+
+
+# ───────────────────────────────────────────────────────────────────────
+# SILLY SONG
+# ───────────────────────────────────────────────────────────────────────
+
+def _silly_prompt(axes: dict) -> tuple[str, str]:
+    age = axes["age_group"]
+    cat = axes["category"]
+    voice_arc = {
+        "battle_cry":  "The child PROTESTS — cheeky, defiant, lovable",
+        "celebration": "The child CELEBRATES — joy bursting out, ends in tired glow",
+        "observation": "The child WONDERS — funny philosophical, ends drowsy",
+    }[cat]
+    avoid_anthems = ", ".join(axes.get("recent_anthem_ids", [])) or "(none yet)"
+
+    system = (
+        "You are a Hindi children's songwriter writing fun, bouncy, catchy "
+        "kids' songs in Roman Hindi. Cheeky, energetic, smiling. "
+        "No Devanagari. No literary Hindi. No religious content of any kind "
+        "(no deity names, no ritual verbs). Output only the requested JSON."
+    )
+    user = f"""Generate a Hindi silly song.
+
+AXES:
+- age_group: {age}
+- mood: {axes['mood']}
+- category: {cat} ({voice_arc})
+
+ANTI-DUPLICATION:
+- recent anthem_ids: {avoid_anthems}
+
+REQUIREMENTS:
+- Total ≤20 lines
+- Each line ≤8 words, ≤9 matras
+- Structure: [verse 1] (4 lines) / [chorus] (3-4 lines, anthem repeated) /
+  [verse 2] (4 lines) / [chorus] (IDENTICAL to first) / [ending] (2-3 lines, fading)
+- Section tags KEPT in lyrics (silly songs include them)
+- ≥1 asterisked sound effect like *dhadaam*, *khat khat*, *chhapaak*, *thapp*
+- Body text (excluding tags) ≤500 chars
+- Hinglish OK ("Mom", "okay", "school")
+- NO emotion markers, NO simile-with-banned-noun
+
+Return JSON:
+{{
+  "anthem_id": "snake_case_short_descriptor",
+  "anthem": "The 2-5 word battle/celebration cry in Roman Hindi",
+  "title": "Roman Hindi title using the anthem",
+  "title_en": "English translation",
+  "card_label": "Roman Hindi label",
+  "card_subtitle": "One-line scene-setting in Roman Hindi",
+  "lyrics": "Full lyrics with [verse 1]/[chorus]/etc section tags",
+  "instruments": "Indian-fusion instrument phrase, e.g. 'ukulele, dholki, and hand claps'",
+  "tempo": 120,
+  "cover_context": "ONE English sentence for FLUX, Indian-kid-cartoon vibe"
+}}
+"""
+    return system, user
+
+
+def generate_silly_song(axes: dict, log_prefix: str = "  ") -> dict:
+    print(f"\n{log_prefix}═══ SILLY SONG: age={axes['age_group']} mood={axes['mood']} cat={axes['category']} ═══")
+    sys_msg, user_msg = _silly_prompt(axes)
+
+    data = _llm_with_retry(
+        system=sys_msg, user=user_msg,
+        validator_key="silly_song", log_prefix=log_prefix,
+    )
+
+    # ── Render via ElevenLabs Music
+    elevenlabs_key = os.getenv(
+        "ELEVENLABS_API_KEY",
+        "sk_5bbd5d1a1ee9fa532c454154e2a7723f94ffc3bce07087ff",
+    )
+    style_prompt = (
+        f"Catchy children's Hindi {axes['category']} song, bouncy playful "
+        f"anthem, {data.get('instruments', 'ukulele and dholki')}, "
+        f"{data.get('tempo', 120)} BPM, super energetic and joyful, "
+        "smiling cheeky young Indian child female vocal, cheerful "
+        "Bollywood-nursery lilt, warm major key, native Hindi "
+        "pronunciation, strong singalong chorus."
+    )[:295]
+    composed = (
+        f"{style_prompt}\n\n"
+        "Sing the following Hindi lyrics clearly, in a native North Indian "
+        "female child voice, with conversational mother-tongue pronunciation. "
+        "Verses are bouncy; the chorus is the singalong hook.\n\n"
+        f"Lyrics:\n{data['lyrics']}"
+    )
+    body = {
+        "prompt": composed,
+        "music_length_ms": 70_000,
+        "output_format": "mp3_44100_128",
+    }
+    print(f"{log_prefix}calling ElevenLabs Music…")
+    resp = httpx.post(
+        "https://api.elevenlabs.io/v1/music",
+        headers={
+            "xi-api-key": elevenlabs_key,
+            "Content-Type": "application/json",
+            "Accept": "audio/mpeg",
+        },
+        json=body, timeout=600,
+    )
+    if resp.status_code != 200:
+        raise RuntimeError(f"ElevenLabs Music {resp.status_code}: {resp.text[:300]}")
+    audio = AudioSegment.from_file(io.BytesIO(resp.content), format="mp3")
+    duration = round(len(audio) / 1000)
+
+    sid = f"hi-{data['anthem_id']}-{axes['age_group']}-{_hex()}"
+
+    # SILLY-SONG paths (per HINDI_SILLY_SONGS_GUIDELINES (1) §12)
+    _save_audio(
+        audio,
+        WEB_ROOT / "public" / "audio" / "silly-songs" / f"{sid}.mp3",
+        WEB_ROOT / "public" / "audio" / "pre-gen" / f"{sid}.mp3",
+        BASE_DIR / "seed_output" / "silly_songs" / f"{sid}.mp3",
+    )
+
+    cover = _flux_cover(data.get("cover_context", "Indian kid in cozy kitchen"), 512, 512)
+    if cover:
+        _save_cover(
+            cover,
+            WEB_ROOT / "public" / "covers" / f"{sid}.webp",
+            WEB_ROOT / "public" / "covers" / "silly-songs" / f"{sid}_cover.webp",
+            BASE_DIR / "seed_output" / "silly_songs" / f"{sid}_cover.webp",
+            size=(512, 512),
+        )
+
+    entry = {
+        "id": sid,
+        "type": "song",
+        "subtype": "silly_song",
+        "story_type": "silly_song",
+        "storyType": "silly_song",
+        "lang": "hi",
+        "language": "hi",
+        "category": axes["category"],
+        "anthem_id": data["anthem_id"],
+        "anthem": data["anthem"],
+        "title": data["title"],
+        "title_en": data["title_en"],
+        "card_label": data["card_label"],
+        "card_subtitle": data["card_subtitle"],
+        "description": data["card_subtitle"],
+        "description_en": data["title_en"],
+        "lyrics": data["lyrics"],
+        "raw_lyrics": data["lyrics"],
+        "age_group": axes["age_group"],
+        "ageGroup": axes["age_group"],
+        "age_min": int(axes["age_group"].split("-")[0]),
+        "age_max": int(axes["age_group"].split("-")[1]),
+        "mood": axes["mood"],
+        "instruments": data.get("instruments", ""),
+        "tempo": data.get("tempo", 120),
+        "audio_url": f"/audio/silly-songs/{sid}.mp3",
+        "audio_variants": [{
+            "voice": "elevenlabs_music_v1",
+            "url": f"/audio/silly-songs/{sid}.mp3",
+            "duration_seconds": duration,
+            "provider": "elevenlabs-music",
+        }],
+        "cover": f"/covers/{sid}.webp" if cover else "/covers/default.svg",
+        "cover_file": f"/covers/silly-songs/{sid}_cover.webp",
+        "cover_context": data.get("cover_context", ""),
+        "duration_seconds": duration,
+        "durationSec": duration,
+        "audio_engine": "elevenlabs-music",
+        "tts_engine": "elevenlabs-music",
+        "has_baked_music": True,
+        "is_generated": True,
+        "author_id": "system",
+        "categories": ["Bedtime", "Silly Song"],
+        "created_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "updated_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+    }
+
+    # Per-item runtime file for /api/v1/silly-songs
+    runtime_entry = {
+        "id": sid,
+        "lang": "hi",
+        "title": data["title"],
+        "title_en": data["title_en"],
+        "category": axes["category"],
+        "anthem_id": data["anthem_id"],
+        "anthem": data["anthem"],
+        "card_label": data["card_label"],
+        "card_subtitle": data["card_subtitle"],
+        "age_group": axes["age_group"],
+        "mood": axes["mood"],
+        "instruments": data.get("instruments", ""),
+        "tempo": data.get("tempo", 120),
+        "lyrics": data["lyrics"],
+        "duration_seconds": duration,
+        "audio_engine": "elevenlabs-music",
+        "audio_file": f"{sid}.mp3",
+        "cover_file": f"{sid}_cover.webp",
+        "play_count": 0,
+        "replay_count": 0,
+        "created_at": time.strftime("%Y-%m-%d"),
+    }
+    rp = BASE_DIR / "data" / "silly_songs" / f"{sid}.json"
+    rp.parent.mkdir(parents=True, exist_ok=True)
+    rp.write_text(json.dumps(runtime_entry, ensure_ascii=False, indent=2))
+
+    _upsert_content(entry)
+    print(f"{log_prefix}✓ silly song published: {sid} ({duration}s)")
+    return entry
+
+
+# ───────────────────────────────────────────────────────────────────────
+# POEM
+# ───────────────────────────────────────────────────────────────────────
+
+POEM_TYPE_FLAVORS = {
+    "sound":    "build the entire scene from Hindi onomatopoeia (sarr sarr, tap tap, chhap chhap, gunghun, khat khat). Each line is mostly onomatopoeia plus a single content word.",
+    "nonsense": "playful Hindi nonsense words. Pair real words in absurd combinations. Invent Hindi-shaped nonsense (tippan toppan, halla gulla, dhaani paani).",
+    "question": "chain of unanswerable Indian questions. Each more absurd. Don't answer them.",
+}
+
+
+def _poem_prompt(axes: dict) -> tuple[str, str]:
+    age = axes["age_group"]
+    matra = 11 if axes["poem_type"] == "question" else 9
+    avoid_titles = "; ".join(t for t in axes["recent_titles"] if t) or "(none yet)"
+
+    system = (
+        "You are a Hindi children's poet writing rhythmic, memorable poems "
+        "for bedtime in conversational Roman Hindi. No Devanagari. "
+        "No literary Hindi. No religious content. Output only the requested JSON."
+    )
+    user = f"""Generate a Hindi musical poem (spoken to a beat, not sung).
+
+AXES:
+- age_group: {age}
+- mood: {axes['mood']}
+- poem_type: {axes['poem_type']} ({POEM_TYPE_FLAVORS[axes['poem_type']]})
+
+ANTI-DUPLICATION:
+- recent titles: {avoid_titles}
+
+REQUIREMENTS:
+- 8-16 total lines (no section tags, no [verse]/[chorus])
+- Each line ≤6 WORDS and very short — under 12 syllables in Roman Hindi
+- Use simple words (chaand not chandra, paani not jal, aankh not nayan)
+- Avoid multi-syllable Hindi words that stack matras fast
+  (e.g. "kahaani"=3-syl, "ghoomega"=3-syl — break into shorter phrases)
+- AABB rhyming couplets (line 1 rhymes with line 2, line 3 with line 4, ...)
+- Total ≤500 chars
+- Each line is a complete thought; one thought per line
+
+Return JSON:
+{{
+  "title": "Roman Hindi title (under 5 words)",
+  "title_en": "English translation",
+  "poem_text": "Full Roman Hindi poem, lines newline-separated, no tags",
+  "instruments": "Indian-fusion gentle instruments",
+  "tempo": 100,
+  "cover_context": "ONE English sentence for FLUX (abstract, no people, no faces)"
+}}
+"""
+    return system, user
+
+
+def generate_poem(axes: dict, log_prefix: str = "  ") -> dict:
+    print(f"\n{log_prefix}═══ POEM: age={axes['age_group']} mood={axes['mood']} type={axes['poem_type']} ═══")
+    sys_msg, user_msg = _poem_prompt(axes)
+
+    def shape(d: dict) -> dict:
+        return {**d, "poem_type": axes["poem_type"]}
+
+    data = _llm_with_retry(
+        system=sys_msg, user=user_msg,
+        validator_key="poem", log_prefix=log_prefix, post_process=shape,
+    )
+
+    # ── Render via MiniMax v2.5 + Hindi reference
+    from fix_hindi_batch_day2 import minimax_lullaby  # type: ignore
+    mood_energy = {
+        "calm":    "soft and settling, warm steady rhythm, almost a lullaby",
+        "curious": "dreamy and wondering, spacious like a slow afternoon",
+        "wired":   "bouncy and playful, high-energy Indian rhythm",
+        "sad":     "gentle and tender, quiet rhythm, like a hug from Daadi",
+        "anxious": "cozy and reassuring, steady predictable rhythm",
+        "angry":   "firm then softening, strong rhythm gradually settling",
+    }[axes["mood"]]
+    style = (
+        f"Children's Hindi musical poem, {data.get('instruments', 'soft harmonium and tabla')}, "
+        f"{data.get('tempo', 100)} BPM, {mood_energy}, warm clear North Indian "
+        "female vocal speaking each word rhythmically, native Hindi pronunciation, "
+        "every word crystal clear, like a parent reciting a poem at bedtime, "
+        "not sung — spoken to a beat. Not Western."
+    )[:300]
+    composed = (
+        f"{style}.\n\n"
+        "Recite the following Hindi poem rhythmically, in a native North "
+        "Indian female voice, with conversational mother-tongue "
+        "pronunciation — spoken to a beat, not sung.\n\n"
+        f"Poem:\n{data['poem_text']}"
+    )
+    audio_bytes = minimax_lullaby(composed, data["poem_text"])
+    audio = AudioSegment.from_file(io.BytesIO(audio_bytes), format="mp3")
+    duration = round(len(audio) / 1000)
+
+    sid = f"hi-{axes['poem_type']}-{axes['age_group']}-{_hex()}"
+
+    # POEM paths use language-agnostic /poems/ at served URL level
+    _save_audio(
+        audio,
+        WEB_ROOT / "public" / "audio" / "poems-hi" / f"{sid}.mp3",
+        WEB_ROOT / "public" / "audio" / "pre-gen" / f"{sid}.mp3",
+        BASE_DIR / "seed_output" / "poems_hi" / f"{sid}.mp3",
+    )
+
+    cover = _flux_cover(data.get("cover_context", "Indian abstract watercolor"))
+    if cover:
+        _save_cover(
+            cover,
+            WEB_ROOT / "public" / "covers" / f"{sid}.webp",
+            WEB_ROOT / "public" / "covers" / "poems-hi" / f"{sid}_cover.webp",
+            BASE_DIR / "seed_output" / "poems_hi" / f"{sid}_cover.webp",
+        )
+
+    text_lines = [l for l in data["poem_text"].split("\n") if l.strip()]
+    entry = {
+        "id": sid,
+        "type": "poem",
+        "lang": "hi",
+        "language": "hi",
+        "story_type": "poem",
+        "storyType": "poem",
+        "content_type": "poem",
+        "poem_type": axes["poem_type"],
+        "title": data["title"],
+        "title_en": data["title_en"],
+        "description": "Hindi children's musical poem",
+        "description_en": "Hindi children's musical poem",
+        "poem_text": data["poem_text"],
+        "text": data["poem_text"],
+        "raw_text": data["poem_text"],
+        "age_group": axes["age_group"],
+        "ageGroup": axes["age_group"],
+        "age_min": int(axes["age_group"].split("-")[0]),
+        "age_max": int(axes["age_group"].split("-")[1]),
+        "mood": axes["mood"],
+        "instruments": data.get("instruments", ""),
+        "tempo": data.get("tempo", 100),
+        "char_count": len(data["poem_text"]),
+        "line_count": len(text_lines),
+        "audio_url": f"/audio/poems-hi/{sid}.mp3",
+        "audio_variants": [{
+            "voice": "minimax_v2.5_hi_ref",
+            "url": f"/audio/poems-hi/{sid}.mp3",
+            "duration_seconds": duration,
+            "provider": "minimax-music-v2.5-fal",
+        }],
+        "cover": f"/covers/{sid}.webp" if cover else "/covers/default.svg",
+        "cover_file": f"/covers/poems-hi/{sid}_cover.webp",
+        "cover_context": data.get("cover_context", ""),
+        "duration_seconds": duration,
+        "durationSec": duration,
+        "audio_engine": "minimax-music-v2.5-fal",
+        "tts_engine": "minimax-music-v2.5-fal",
+        "has_baked_music": True,
+        "is_generated": True,
+        "author_id": "system",
+        "categories": ["Bedtime", "Poem"],
+        "created_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "updated_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+    }
+
+    # Per-item runtime file for /api/v1/poems
+    runtime_entry = {
+        "id": sid,
+        "lang": "hi",
+        "title": data["title"],
+        "title_en": data["title_en"],
+        "content_type": "poem",
+        "poem_type": axes["poem_type"],
+        "age_group": axes["age_group"],
+        "mood": axes["mood"],
+        "instruments": data.get("instruments", ""),
+        "tempo": data.get("tempo", 100),
+        "poem_text": data["poem_text"],
+        "char_count": len(data["poem_text"]),
+        "line_count": len(text_lines),
+        "audio_file": f"{sid}.mp3",
+        "cover_file": f"{sid}_cover.webp",
+        "cover_context": data.get("cover_context", ""),
+        "duration_seconds": duration,
+        "audio_engine": "minimax-music-v2.5-fal",
+        "created_at": time.strftime("%Y-%m-%d"),
+    }
+    rp = BASE_DIR / "data" / "poems" / f"{sid}.json"
+    rp.parent.mkdir(parents=True, exist_ok=True)
+    rp.write_text(json.dumps(runtime_entry, ensure_ascii=False, indent=2))
+
+    _upsert_content(entry)
+    print(f"{log_prefix}✓ poem published: {sid} ({duration}s)")
+    return entry
+
+
+# ───────────────────────────────────────────────────────────────────────
+# LONG STORY
+# ───────────────────────────────────────────────────────────────────────
+
+def _long_story_prompt(axes: dict) -> tuple[str, str]:
+    age = axes["age_group"]
+    word_band = {"2-5": (1040, 1520), "6-8": (1520, 2240), "9-12": (2240, 3040)}[age]
+    avoid_titles = "; ".join(t for t in axes["recent_titles"] if t) or "(none yet)"
+    avoid_phrases = "; ".join(p for p in axes["recent_phrases"] if p) or "(none yet)"
+    avoid_mysteries = "; ".join(m for m in axes["recent_mysteries"] if m) or "(none yet)"
+
+    system = (
+        "You are a Hindi children's storyteller writing long-form bedtime "
+        "stories (15-25 minutes spoken). Conversational Roman Hindi only. "
+        "No Devanagari. No literary Hindi. No religious content. "
+        "Output ONLY the requested JSON."
+    )
+    user = f"""Generate a Hindi long story.
+
+AXES:
+- age_group: {age} ({word_band[0]}-{word_band[1]} words total)
+- mood: {axes['mood']}
+- world_name: {axes['world_name']}
+- characterType: {axes['characterType']}
+
+ANTI-DUPLICATION:
+- recent titles: {avoid_titles}
+- recent phrases: {avoid_phrases}
+- recent mysteries: {avoid_mysteries}
+- BANNED names: Chintu, Raju, Bittu, Munna, Guddu, Pinky, Rinku, Bablu,
+  Pappu, Chhotu, Motu, Golu, Sonu, Monu, Titu, Bunty, Ramu
+
+THREE-PHASE ARC (mandatory):
+- Phase 1 — Khoj (Discovery, ~30%): character enters {axes['world_name']},
+  finds a mystery, meets companions, gets a breathing mechanic
+- Phase 2 — Vishraam (Resolution-as-Rest, ~35%): the mystery resolves to
+  rest. Companions settle. Dialogue fades.
+- Phase 3 — Vilay (Dissolution, ~35%): no dialogue. Descending sentence
+  length. Wave repetition. Closes with [WHISPER]...[/WHISPER]
+
+REQUIRED tags throughout:
+- [CHARACTER: Name, personality, voice_style, gender] for each character (top of story)
+- [INTRO] (2-3 sentences direct address to child)
+- [PHASE_1] [PHASE_2] [PHASE_3] section markers
+- [BREATHE_GUIDE]...[/BREATHE_GUIDE] (slow-breath instructions, once)
+- 4-6 [BREATHE] standalone tags (clustered in P1 + P2)
+- [SONG_SEED: one English sentence] at end of P1
+- [POST_SONG] section after song
+- 3+ [PHRASE]...[/PHRASE] wraps around the unique repeated phrase
+- 0-2 [PAUSE: ms] tags
+- [WHISPER]...[/WHISPER] for the final 3-4 lines
+- ≥5 conversational markers (na, toh, pata hai, bas, suno, dekho, achha)
+- ≥3 onomatopoeia (sarr, tap tap, chhap chhap, dheere dheere, gunghun, jhoom, tip tip, khat khat)
+
+The mystery's reveal is ALWAYS rest: "khoya nahin, so raha tha".
+Mechanic is an object that activates with slow breath (diya, patang, leaf, talaab).
+
+Return JSON:
+{{
+  "title": "Roman Hindi (must include lead character's name)",
+  "title_en": "English translation",
+  "world_name": "{axes['world_name']}",
+  "world_name_en": "English",
+  "world_description": "Roman Hindi (one sentence)",
+  "world_description_en": "English",
+  "mystery": "Roman Hindi (one sentence)",
+  "resolution": "Roman Hindi (one sentence)",
+  "breathing_mechanic": "Roman Hindi (one sentence)",
+  "repeated_phrase": "Roman Hindi (≤5 words)",
+  "characters": [
+    {{"name": "X", "identity": "Roman Hindi (one sentence)",
+      "personality": "<gentle|wise|curious|brave|...>",
+      "voice_style": "<dreamy|quiet|small|confident|...>",
+      "gender": "<female|male|neutral>"}},
+    ...
+  ],
+  "song_seed": "ONE English sentence describing the mid-story song's mood + imagery",
+  "cover_context": "ONE English sentence for FLUX",
+  "full_text_roman": "FULL Roman Hindi story with all the tags above"
+}}
+"""
+    return system, user
+
+
+def generate_long_story(axes: dict, log_prefix: str = "  ") -> dict:
+    print(f"\n{log_prefix}═══ LONG STORY: age={axes['age_group']} mood={axes['mood']} world={axes['world_name']} ═══")
+    sys_msg, user_msg = _long_story_prompt(axes)
+
+    def shape(d: dict) -> dict:
+        # Validator wants phase splits — extract them from full_text_roman
+        full = d.get("full_text_roman", "")
+        p1 = re.search(r"\[PHASE_1\](.*?)\[PHASE_2\]", full, re.DOTALL)
+        p2 = re.search(r"\[PHASE_2\](.*?)\[PHASE_3\]", full, re.DOTALL)
+        p3 = re.search(r"\[PHASE_3\](.*)", full, re.DOTALL)
+        return {
+            **d,
+            "phase_1_text_roman": p1.group(1).strip() if p1 else "",
+            "phase_2_text_roman": p2.group(1).strip() if p2 else "",
+            "phase_3_text_roman": p3.group(1).strip() if p3 else "",
+        }
+
+    data = _llm_with_retry(
+        system=sys_msg, user=user_msg,
+        validator_key="long_story", log_prefix=log_prefix, post_process=shape,
+        max_retries=2,  # long stories are expensive — fewer retries
+    )
+
+    # ── Render via existing publish_hindi_long_day1 helpers
+    from publish_hindi_long_day1 import (  # type: ignore
+        elevenlabs_tts, ELEVENLABS_VOICES, PHASE_TTS, PHRASE_TTS,
+        WHISPER_TTS, INTRO_TTS, _trim_or_loop, _apply_breathe_swells,
+        parse_long_segments, _ensure_terminal,
+    )
+    from audio_assembly import normalize_for_tts, MUSIC_DIR  # type: ignore
+    from fix_hindi_batch_day2 import minimax_lullaby  # type: ignore
+
+    # Devanagari version: use Roman directly for engine input. ElevenLabs
+    # multilingual handles Roman with slight phoneme penalty. Acceptable v1.
+    full_text = data["full_text_roman"]
+    segments = parse_long_segments(full_text)
+
+    # Generate the embedded song
+    song_style = (
+        "Sweet Hindi lori, solo female vocal humming an intimate riverbank "
+        "lullaby, soft harmonium and bansuri, 60 BPM, warm and loving, "
+        "smiling maternal voice, major key, native Hindi pronunciation"
+    )
+    print(f"{log_prefix}generating mid-story song…")
+    song_lyrics = (
+        f"{data['repeated_phrase']}, {data['repeated_phrase']}\n"
+        f"Dheere dheere, bas dheere dheere\n"
+        f"{data['repeated_phrase']}"
+    )
+    song_bytes = minimax_lullaby(song_style, song_lyrics)
+    song = AudioSegment.from_file(io.BytesIO(song_bytes), format="mp3")
+    if len(song) > 45000:
+        song = song[:45000].fade_out(2000)
+
+    # Assemble Part A / B / C with bed + swells (port of publish_hindi_long_day1)
+    NARRATOR_VOICE = "tripti"
+    WHISPER_VOICE = "roohi"
+    chars = data.get("characters", [])
+    char_voice = {}
+    for ch in chars:
+        gender = ch.get("gender", "neutral")
+        if gender == "female":
+            char_voice[ch["name"].upper()] = "anika"
+        elif gender == "male":
+            char_voice[ch["name"].upper()] = "kuber_j"
+        else:
+            char_voice[ch["name"].upper()] = "tripti"
+
+    text_segs = [(i, s) for i, s in enumerate(segments)
+                 if s["kind"] in ("narration", "dialogue", "phrase",
+                                  "whisper", "breathe_guide")]
+    neighbor: dict = {}
+    for j, (i, s) in enumerate(text_segs):
+        prev_text = text_segs[j - 1][1]["content"] if j > 0 else ""
+        next_text = text_segs[j + 1][1]["content"] if j + 1 < len(text_segs) else ""
+        neighbor[i] = (prev_text, next_text)
+
+    def render_seg(idx: int, seg: dict):
+        kind = seg["kind"]
+        if kind == "pause":
+            return AudioSegment.silent(duration=seg["ms"])
+        if kind == "breathe":
+            return AudioSegment.silent(duration=5000)
+        if kind == "song":
+            return song
+        prev, nxt = neighbor.get(idx, ("", ""))
+        phase = seg.get("phase", 1)
+        if kind == "dialogue":
+            voice_label = char_voice.get(seg["character"], NARRATOR_VOICE)
+            preset = PHASE_TTS[phase]
+            text = _ensure_terminal(seg["content"])
+        elif kind == "phrase":
+            voice_label = NARRATOR_VOICE
+            preset = PHRASE_TTS
+            text = _ensure_terminal(seg["content"])
+        elif kind == "whisper":
+            voice_label = WHISPER_VOICE
+            preset = WHISPER_TTS
+            text = _ensure_terminal(seg["content"])
+        elif kind == "breathe_guide":
+            voice_label = NARRATOR_VOICE
+            preset = {"stability": 0.85, "style": 0.0, "speed": 0.72}
+            text = seg["content"]
+        elif kind == "narration":
+            voice_label = NARRATOR_VOICE
+            preset = INTRO_TTS if seg.get("section") == "intro" else PHASE_TTS[phase]
+            text = seg["content"]
+        else:
+            return None
+        text = normalize_for_tts(text)
+        return elevenlabs_tts(
+            text, ELEVENLABS_VOICES[voice_label],
+            stability=preset["stability"], similarity=0.75,
+            style=preset["style"], speed=preset["speed"],
+            previous_text=prev, next_text=nxt,
+        )
+
+    def stitch(section: str, gap_ms: int):
+        out = AudioSegment.silent(duration=0)
+        breathes: list[int] = []
+        for idx, seg in enumerate(segments):
+            if seg.get("section") != section or seg["kind"] == "song":
+                continue
+            if seg["kind"] == "breathe":
+                breathes.append(len(out))
+                out += AudioSegment.silent(duration=5000)
+                continue
+            if seg["kind"] == "breathe_guide":
+                rendered = render_seg(idx, seg)
+                if rendered is not None:
+                    out += AudioSegment.silent(duration=180)
+                    out += rendered
+                breathes.append(len(out))
+                out += AudioSegment.silent(duration=3000)
+                continue
+            rendered = render_seg(idx, seg)
+            if rendered is None:
+                continue
+            if seg["kind"] in ("narration", "dialogue", "phrase", "whisper"):
+                out += AudioSegment.silent(duration=180)
+            out += rendered
+            if seg["kind"] == "phrase":
+                out += AudioSegment.silent(duration=900)
+            elif seg["kind"] == "whisper":
+                out += AudioSegment.silent(duration=600)
+            elif seg["kind"] in ("narration", "dialogue"):
+                out += AudioSegment.silent(duration=gap_ms)
+        return out, breathes
+
+    intro_music = AudioSegment.from_wav(str(MUSIC_DIR / "intro_calm.wav"))
+    bed_raw = AudioSegment.from_wav(str(MUSIC_DIR / "bed_calm.wav"))
+
+    timeline = intro_music + AudioSegment.silent(duration=2000)
+
+    intro_audio, ib = stitch("intro", 300)
+    p1_audio, p1b = stitch("phase_1", 300)
+    gap_a = AudioSegment.silent(duration=1000)
+    part_a_voice = intro_audio + gap_a + p1_audio
+    p1_offset = len(intro_audio) + len(gap_a)
+    a_breathes = ib + [p + p1_offset for p in p1b]
+    part_a_bed = _trim_or_loop(bed_raw, len(part_a_voice)) - 20
+    part_a_bed = _apply_breathe_swells(part_a_bed, a_breathes, -20).fade_out(2000)
+    timeline += part_a_voice.overlay(part_a_bed)
+
+    timeline += (
+        AudioSegment.silent(duration=500)
+        + song.fade_in(2000).fade_out(2000)
+        + AudioSegment.silent(duration=500)
+    )
+
+    post_audio, pb = stitch("post_song", 500)
+    p2_audio, p2b = stitch("phase_2", 500)
+    gap_b = AudioSegment.silent(duration=1000)
+    part_b_voice = post_audio + gap_b + p2_audio
+    p2_offset = len(post_audio) + len(gap_b)
+    b_breathes = pb + [p + p2_offset for p in p2b]
+    part_b_bed = _trim_or_loop(bed_raw, len(part_b_voice)) - 14
+    part_b_bed = _apply_breathe_swells(part_b_bed, b_breathes, -14).fade_in(2000)
+    timeline += part_b_voice.overlay(part_b_bed)
+
+    p3_audio, p3b = stitch("phase_3", 800)
+    p3_bed_full = _trim_or_loop(bed_raw, len(p3_audio) + 30000) - 10
+    p3_bed_full = _apply_breathe_swells(p3_bed_full, p3b, -10)
+    timeline += p3_audio.overlay(p3_bed_full[:len(p3_audio)])
+    timeline += p3_bed_full[len(p3_audio):len(p3_audio) + 30000].fade_out(15000)
+
+    audio = timeline
+    duration = round(len(audio) / 1000)
+
+    char_slug = _slug(chars[0]["name"], 4) if chars else _hex(4)
+    sid = f"hi-long-{axes['age_group']}-{char_slug}"
+
+    _save_audio(
+        audio,
+        WEB_ROOT / "public" / "audio" / "pre-gen" / f"{sid}_tripti.mp3",
+        BASE_DIR / "seed_output" / "hindi_long" / f"{sid}.mp3",
+    )
+
+    cover = _flux_cover(data.get("cover_context", "Indian dreamy bedtime watercolor"))
+    if cover:
+        _save_cover(
+            cover,
+            WEB_ROOT / "public" / "covers" / f"{sid}.webp",
+            BASE_DIR / "seed_output" / "hindi_long" / f"{sid}_cover.webp",
+        )
+
+    # Strip tags for display text
+    from publish_hindi_long_day1 import strip_long_story_tags  # type: ignore
+    display_text = strip_long_story_tags(full_text)
+
+    entry = {
+        "id": sid,
+        "type": "long_story",
+        "lang": "hi",
+        "language": "hi",
+        "story_format": "long_story",
+        "story_type": "long_story",
+        "storyType": "long_story",
+        "title": data["title"],
+        "title_en": data["title_en"],
+        "description": data["world_description"],
+        "description_en": data["world_description_en"],
+        "world_name": data["world_name"],
+        "world_name_en": data["world_name_en"],
+        "world_description": data["world_description"],
+        "mystery": data["mystery"],
+        "resolution": data["resolution"],
+        "breathing_mechanic": data["breathing_mechanic"],
+        "repeated_phrase": data["repeated_phrase"],
+        "characters": chars,
+        "song_seed": data["song_seed"],
+        "phase_1_text": shape(data)["phase_1_text_roman"],
+        "phase_2_text": shape(data)["phase_2_text_roman"],
+        "phase_3_text": shape(data)["phase_3_text_roman"],
+        "text": display_text,
+        "raw_text": full_text,
+        "character": {
+            "name": chars[0]["name"] if chars else "",
+            "identity": chars[0].get("identity", "") if chars else "",
+        },
+        "character_name": chars[0]["name"] if chars else "",
+        "characterType": axes["characterType"],
+        "lead_character_type": axes["characterType"],
+        "age_group": axes["age_group"],
+        "ageGroup": axes["age_group"],
+        "age_min": int(axes["age_group"].split("-")[0]),
+        "age_max": int(axes["age_group"].split("-")[1]),
+        "mood": axes["mood"],
+        "theme": "rest",
+        "themes": ["rest"],
+        "experimental_v2": False,
+        "has_baked_music": True,
+        "tts_engine": "elevenlabs-multilingual-v2",
+        "voice_routing": {
+            "narrator": NARRATOR_VOICE,
+            "whisper": WHISPER_VOICE,
+            "characters": char_voice,
+        },
+        "audio_url": f"/audio/pre-gen/{sid}_tripti.mp3",
+        "audio_variants": [{
+            "voice": "tripti",
+            "url": f"/audio/pre-gen/{sid}_tripti.mp3",
+            "duration_seconds": duration,
+            "provider": "elevenlabs-multilingual-v2",
+        }],
+        "cover": f"/covers/{sid}.webp" if cover else "/covers/default.svg",
+        "cover_context": data.get("cover_context", ""),
+        "duration_seconds": duration,
+        "durationSec": duration,
+        "embedded_song_seconds": round(len(song) / 1000),
+        "is_generated": True,
+        "author_id": "system",
+        "categories": ["Bedtime", "Long Story"],
+        "created_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "updated_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+    }
+    _upsert_content(entry)
+    print(f"{log_prefix}✓ long story published: {sid} ({duration}s)")
+    return entry
+
+
+# ───────────────────────────────────────────────────────────────────────
+# Dispatcher
+# ───────────────────────────────────────────────────────────────────────
+
+GENERATORS = {
+    "short_story": generate_short_story,
+    "long_story":  generate_long_story,
+    "lullaby":     generate_lullaby,
+    "silly_song":  generate_silly_song,
+    "poem":        generate_poem,
+}
