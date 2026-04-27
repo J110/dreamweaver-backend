@@ -1177,5 +1177,63 @@
     "geography": "south_asia",
     "indian_region": "west",
     "created_at": "2026-04-26"
+  },
+  {
+    "id": "hi-closing-2-5-subh",
+    "type": "song",
+    "lang": "hi",
+    "language": "hi",
+    "story_format": "lullaby",
+    "story_type": "lullaby",
+    "storyType": "lullaby",
+    "title": "Subah Tak",
+    "title_deva": "सुबह तक",
+    "title_en": "Until Morning",
+    "card_label": "Subah Tak",
+    "card_subtitle": "Goodnight pankha, goodnight chaand — subah tak",
+    "description": "Goodnight pankha, goodnight chaand — subah tak",
+    "description_en": "Goodnight to the fan, the moon, and Mummy — until morning",
+    "lullaby_type": "closing",
+    "age_group": "2-5",
+    "ageGroup": "2-5",
+    "age_min": 2,
+    "age_max": 5,
+    "target_age": 3,
+    "mood": "calm",
+    "instruments": "soft harmonium and gentle hum",
+    "tempo": 60,
+    "text": "Goodnight pankha, dheere dheere\nGoodnight kitaab, neend ki dheere\nGoodnight gudiya, aankh band kar\nSubah tak, subah tak\n\nGoodnight chaand, aasmaan mein chup\nGoodnight taare, bistar par chup\nGoodnight Mummy, paas hi paas\nSubah tak, subah tak\n\nHawa dheemi, saans halki\nAankh meechi, neend halki\nSab cheezein, ab so jaayein\nSubah tak, subah tak\n\nGoodnight, goodnight, dheere dheere\nGoodnight, goodnight, ab so ja re\nSubah tak, subah tak",
+    "text_deva": "गुडनाइट पंखा, धीरे धीरे\nगुडनाइट किताब, नींद की धीरे\nगुडनाइट गुड़िया, आँख बंद कर\nसुबह तक, सुबह तक\n\nगुडनाइट चाँद, आसमान में चुप\nगुडनाइट तारे, बिस्तर पर चुप\nगुडनाइट मम्मी, पास ही पास\nसुबह तक, सुबह तक\n\nहवा धीमी, साँस हल्की\nआँख मीची, नींद हल्की\nसब चीज़ें, अब सो जाएँ\nसुबह तक, सुबह तक\n\nगुडनाइट, गुडनाइट, धीरे धीरे\nगुडनाइट, गुडनाइट, अब सो जा रे\nसुबह तक, सुबह तक",
+    "lyrics": "Goodnight pankha, dheere dheere\nGoodnight kitaab, neend ki dheere\nGoodnight gudiya, aankh band kar\nSubah tak, subah tak\n\nGoodnight chaand, aasmaan mein chup\nGoodnight taare, bistar par chup\nGoodnight Mummy, paas hi paas\nSubah tak, subah tak\n\nHawa dheemi, saans halki\nAankh meechi, neend halki\nSab cheezein, ab so jaayein\nSubah tak, subah tak\n\nGoodnight, goodnight, dheere dheere\nGoodnight, goodnight, ab so ja re\nSubah tak, subah tak",
+    "lyrics_deva": "गुडनाइट पंखा, धीरे धीरे\nगुडनाइट किताब, नींद की धीरे\nगुडनाइट गुड़िया, आँख बंद कर\nसुबह तक, सुबह तक\n\nगुडनाइट चाँद, आसमान में चुप\nगुडनाइट तारे, बिस्तर पर चुप\nगुडनाइट मम्मी, पास ही पास\nसुबह तक, सुबह तक\n\nहवा धीमी, साँस हल्की\nआँख मीची, नींद हल्की\nसब चीज़ें, अब सो जाएँ\nसुबह तक, सुबह तक\n\nगुडनाइट, गुडनाइट, धीरे धीरे\nगुडनाइट, गुडनाइट, अब सो जा रे\nसुबह तक, सुबह तक",
+    "characterType": "human_child",
+    "lead_character_type": "human_child",
+    "audio_url": "/audio/lullabies/hi-closing-2-5-subh.mp3",
+    "audio_variants": [
+      {
+        "voice": "minimax_v2.5_hi_ref",
+        "url": "/audio/lullabies/hi-closing-2-5-subh.mp3",
+        "duration_seconds": 86,
+        "provider": "minimax-music-v2.5-fal"
+      }
+    ],
+    "cover": "/covers/hi-closing-2-5-subh.webp",
+    "cover_file": "/covers/lullabies/hi-closing-2-5-subh_cover.webp",
+    "cover_context": "A small Indian child curled under a warm cream quilt at bedtime, soft moonlight through a window, ceiling fan barely visible above, a tiny doll resting on the pillow, a closed picture book on the bedside table, deep-blue and lavender palette, watercolor children's book illustration",
+    "duration_seconds": 86,
+    "durationSec": 86,
+    "audio_engine": "minimax-music-v2.5-fal",
+    "tts_engine": "minimax-music-v2.5-fal",
+    "reference_audio": "https://dreamvalley.app/audio/reference/hindi_lullaby_ref.m4a",
+    "experimental_v2": false,
+    "has_baked_music": true,
+    "is_generated": true,
+    "author_id": "system",
+    "categories": [
+      "Bedtime",
+      "Lullaby"
+    ],
+    "created_at": "2026-04-27T11:58:35",
+    "updated_at": "2026-04-27T11:58:35"
   }
 ]

@@ -21625,5 +21625,233 @@
     ],
     "created_at": "2026-04-27T10:28:43",
     "updated_at": "2026-04-27T10:28:43"
+  },
+  {
+    "id": "hi-closing-2-5-subh",
+    "type": "song",
+    "lang": "hi",
+    "language": "hi",
+    "story_format": "lullaby",
+    "story_type": "lullaby",
+    "storyType": "lullaby",
+    "title": "Subah Tak",
+    "title_deva": "सुबह तक",
+    "title_en": "Until Morning",
+    "card_label": "Subah Tak",
+    "card_subtitle": "Goodnight pankha, goodnight chaand — subah tak",
+    "description": "Goodnight pankha, goodnight chaand — subah tak",
+    "description_en": "Goodnight to the fan, the moon, and Mummy — until morning",
+    "lullaby_type": "closing",
+    "age_group": "2-5",
+    "ageGroup": "2-5",
+    "age_min": 2,
+    "age_max": 5,
+    "target_age": 3,
+    "mood": "calm",
+    "instruments": "soft harmonium and gentle hum",
+    "tempo": 60,
+    "text": "Goodnight pankha, dheere dheere\nGoodnight kitaab, neend ki dheere\nGoodnight gudiya, aankh band kar\nSubah tak, subah tak\n\nGoodnight chaand, aasmaan mein chup\nGoodnight taare, bistar par chup\nGoodnight Mummy, paas hi paas\nSubah tak, subah tak\n\nHawa dheemi, saans halki\nAankh meechi, neend halki\nSab cheezein, ab so jaayein\nSubah tak, subah tak\n\nGoodnight, goodnight, dheere dheere\nGoodnight, goodnight, ab so ja re\nSubah tak, subah tak",
+    "text_deva": "गुडनाइट पंखा, धीरे धीरे\nगुडनाइट किताब, नींद की धीरे\nगुडनाइट गुड़िया, आँख बंद कर\nसुबह तक, सुबह तक\n\nगुडनाइट चाँद, आसमान में चुप\nगुडनाइट तारे, बिस्तर पर चुप\nगुडनाइट मम्मी, पास ही पास\nसुबह तक, सुबह तक\n\nहवा धीमी, साँस हल्की\nआँख मीची, नींद हल्की\nसब चीज़ें, अब सो जाएँ\nसुबह तक, सुबह तक\n\nगुडनाइट, गुडनाइट, धीरे धीरे\nगुडनाइट, गुडनाइट, अब सो जा रे\nसुबह तक, सुबह तक",
+    "lyrics": "Goodnight pankha, dheere dheere\nGoodnight kitaab, neend ki dheere\nGoodnight gudiya, aankh band kar\nSubah tak, subah tak\n\nGoodnight chaand, aasmaan mein chup\nGoodnight taare, bistar par chup\nGoodnight Mummy, paas hi paas\nSubah tak, subah tak\n\nHawa dheemi, saans halki\nAankh meechi, neend halki\nSab cheezein, ab so jaayein\nSubah tak, subah tak\n\nGoodnight, goodnight, dheere dheere\nGoodnight, goodnight, ab so ja re\nSubah tak, subah tak",
+    "lyrics_deva": "गुडनाइट पंखा, धीरे धीरे\nगुडनाइट किताब, नींद की धीरे\nगुडनाइट गुड़िया, आँख बंद कर\nसुबह तक, सुबह तक\n\nगुडनाइट चाँद, आसमान में चुप\nगुडनाइट तारे, बिस्तर पर चुप\nगुडनाइट मम्मी, पास ही पास\nसुबह तक, सुबह तक\n\nहवा धीमी, साँस हल्की\nआँख मीची, नींद हल्की\nसब चीज़ें, अब सो जाएँ\nसुबह तक, सुबह तक\n\nगुडनाइट, गुडनाइट, धीरे धीरे\nगुडनाइट, गुडनाइट, अब सो जा रे\nसुबह तक, सुबह तक",
+    "characterType": "human_child",
+    "lead_character_type": "human_child",
+    "audio_url": "/audio/lullabies/hi-closing-2-5-subh.mp3",
+    "audio_variants": [
+      {
+        "voice": "minimax_v2.5_hi_ref",
+        "url": "/audio/lullabies/hi-closing-2-5-subh.mp3",
+        "duration_seconds": 86,
+        "provider": "minimax-music-v2.5-fal"
+      }
+    ],
+    "cover": "/covers/hi-closing-2-5-subh.webp",
+    "cover_file": "/covers/lullabies/hi-closing-2-5-subh_cover.webp",
+    "cover_context": "A small Indian child curled under a warm cream quilt at bedtime, soft moonlight through a window, ceiling fan barely visible above, a tiny doll resting on the pillow, a closed picture book on the bedside table, deep-blue and lavender palette, watercolor children's book illustration",
+    "duration_seconds": 86,
+    "durationSec": 86,
+    "audio_engine": "minimax-music-v2.5-fal",
+    "tts_engine": "minimax-music-v2.5-fal",
+    "reference_audio": "https://dreamvalley.app/audio/reference/hindi_lullaby_ref.m4a",
+    "experimental_v2": false,
+    "has_baked_music": true,
+    "is_generated": true,
+    "author_id": "system",
+    "categories": [
+      "Bedtime",
+      "Lullaby"
+    ],
+    "created_at": "2026-04-27T11:58:35",
+    "updated_at": "2026-04-27T11:58:35"
+  },
+  {
+    "id": "hi-patang-2-5-bndr",
+    "type": "story",
+    "lang": "hi",
+    "language": "hi",
+    "title": "Bandar Ki Patang",
+    "title_deva": "बंदर की पतंग",
+    "title_en": "The Monkey's Kite",
+    "description": "Neel bandar ne dheere dheere patang ko bulaaya — aur dono saath so gaye",
+    "description_en": "A small monkey named Neel learns that the kite only comes to him when he breathes slowly",
+    "text": "Pahaadi ke peechhe, ek bahut purana ped tha — bargad. Aur us ped par, sabse upar wali shaakh par, ek chhota sa bandar baitha tha. Bandar ka naam tha — Neel.\n\nNeel ko bargad bahut achha lagta tha. Wahaan se sab kuch dikhta tha — neeche ka gaaon, door ki nadi, aur khaali aakaash.\n\nAaj shaam, Neel ne kuch ajeeb dekha. Aakaash mein, ek nanhi si neeli patang. Patang dheere dheere udd rahi thi, hawa ke saath jhoom rahi thi.\n\nDheere, Neel, dheere\n\n\"Yeh kya hai?\" Neel ne pucha. Lekin koi nahin tha jawaab dene wala. Sirf hawa ki sarr sarr awaaz thi.\n\nPatang aur paas aane lagi. Neel ke haath bhi paas aaye — pakadne ko. Lekin haath nahin pahunche.\n\n\"Patang!\" Neel chillaaya. \"Aa ja meri taraf!\"\n\nPatang nahin aayi. Bas dheere dheere udti rahi.\n\nPhir Neel ne sochaa — shaayad zor se nahin, dheere se bulaaun.\n\nNeel chup baith gaya. Aankhein band kiin. Lambi saans li.\n\nDheere, Neel, dheere\n\nAur tab, ek hawa ka jhonka aaya. Patang dheere dheere, dheere dheere, neeche aane lagi. Aur uske saath, Neel ki aankhein bhi bhaari ho gayin.\n\nPatang bargad ki shaakh par utar gayi. Neel ke paas. Dono saath baithe rahe.\n\nHawa thandi thi. Aakaash mein chaand chamak raha tha.\n\n\"Achha,\" Neel ne dheere se kaha. \"Tum bhi thakk gayi ho?\"\n\nPatang chup thi.\n\nNeel muskaaya. Aankhein band kiin. Aur dheere dheere — bahut dheere — neend mein gum ho gaya. Patang bhi thakk ke shaakh par lipti rahi.\n\nHawa chal rahi thi. Bargad jhoom raha tha.\n\nDheere, Neel, dheere\n\nAur Neel aur patang — dono saath saath, neend ke andheron mein chale gaye.\n\nSubah hogi, phir milenge.\n\nAbhi, bas neend.",
+    "text_deva": "पहाड़ी के पीछे, एक बहुत पुराना पेड़ था — बरगद। और उस पेड़ पर, सबसे ऊपर वाली शाख पर, एक छोटा सा बंदर बैठा था। बंदर का नाम था — नील।\n\nनील को बरगद बहुत अच्छा लगता था। वहाँ से सब कुछ दिखता था — नीचे का गाँव, दूर की नदी, और खाली आकाश।\n\nआज शाम, नील ने कुछ अजीब देखा। आकाश में, एक नन्ही सी नीली पतंग। पतंग धीरे धीरे उड़ रही थी, हवा के साथ झूम रही थी।\n\nधीरे, नील, धीरे\n\n\"यह क्या है?\" नील ने पूछा। लेकिन कोई नहीं था जवाब देने वाला। सिर्फ़ हवा की सर्र सर्र आवाज़ थी।\n\nपतंग और पास आने लगी। नील के हाथ भी पास आए — पकड़ने को। लेकिन हाथ नहीं पहुँचे।\n\n\"पतंग!\" नील चिल्लाया। \"आ जा मेरी तरफ़!\"\n\nपतंग नहीं आई। बस धीरे धीरे उड़ती रही।\n\nफिर नील ने सोचा — शायद ज़ोर से नहीं, धीरे से बुलाऊँ।\n\nनील चुप बैठ गया। आँखें बंद कीं। लंबी साँस ली।\n\nधीरे, नील, धीरे\n\nऔर तब, एक हवा का झोंका आया। पतंग धीरे धीरे, धीरे धीरे, नीचे आने लगी। और उसके साथ, नील की आँखें भी भारी हो गईं।\n\nपतंग बरगद की शाख पर उतर गई। नील के पास। दोनों साथ बैठे रहे।\n\nहवा ठंडी थी। आकाश में चाँद चमक रहा था।\n\n\"अच्छा,\" नील ने धीरे से कहा। \"तुम भी थक गई हो?\"\n\nपतंग चुप थी।\n\nनील मुस्कुराया। आँखें बंद कीं। और धीरे धीरे — बहुत धीरे — नींद में गुम हो गया। पतंग भी थक के शाख पर लिपटी रही।\n\nहवा चल रही थी। बरगद झूम रहा था।\n\nधीरे, नील, धीरे\n\nऔर नील और पतंग — दोनों साथ साथ, नींद के अँधेरों में चले गए।\n\nसुबह होगी, फिर मिलेंगे।\n\nअभी, बस नींद।",
+    "raw_text": "Pahaadi ke peechhe, ek bahut purana ped tha — bargad. Aur us ped par, sabse upar wali shaakh par, ek chhota sa bandar baitha tha. Bandar ka naam tha — Neel.\n\nNeel ko bargad bahut achha lagta tha. Wahaan se sab kuch dikhta tha — neeche ka gaaon, door ki nadi, aur khaali aakaash.\n\nAaj shaam, Neel ne kuch ajeeb dekha. Aakaash mein, ek nanhi si neeli patang. Patang dheere dheere udd rahi thi, hawa ke saath jhoom rahi thi.\n\n[PHRASE]Dheere, Neel, dheere[/PHRASE]\n\n\"Yeh kya hai?\" Neel ne pucha. Lekin koi nahin tha jawaab dene wala. Sirf hawa ki sarr sarr awaaz thi.\n\nPatang aur paas aane lagi. Neel ke haath bhi paas aaye — pakadne ko. Lekin haath nahin pahunche.\n\n\"Patang!\" Neel chillaaya. \"Aa ja meri taraf!\"\n\nPatang nahin aayi. Bas dheere dheere udti rahi.\n\n[PAUSE: 800]\n\nPhir Neel ne sochaa — shaayad zor se nahin, dheere se bulaaun.\n\nNeel chup baith gaya. Aankhein band kiin. Lambi saans li.\n\n[PHRASE]Dheere, Neel, dheere[/PHRASE]\n\nAur tab, ek hawa ka jhonka aaya. Patang dheere dheere, dheere dheere, neeche aane lagi. Aur uske saath, Neel ki aankhein bhi bhaari ho gayin.\n\nPatang bargad ki shaakh par utar gayi. Neel ke paas. Dono saath baithe rahe.\n\nHawa thandi thi. Aakaash mein chaand chamak raha tha.\n\n\"Achha,\" Neel ne dheere se kaha. \"Tum bhi thakk gayi ho?\"\n\nPatang chup thi.\n\n[PAUSE: 1000]\n\nNeel muskaaya. Aankhein band kiin. Aur dheere dheere — bahut dheere — neend mein gum ho gaya. Patang bhi thakk ke shaakh par lipti rahi.\n\nHawa chal rahi thi. Bargad jhoom raha tha.\n\n[PHRASE]Dheere, Neel, dheere[/PHRASE]\n\nAur Neel aur patang — dono saath saath, neend ke andheron mein chale gaye.\n\nSubah hogi, phir milenge.\n\nAbhi, bas neend.\n",
+    "raw_text_deva": "पहाड़ी के पीछे, एक बहुत पुराना पेड़ था — बरगद। और उस पेड़ पर, सबसे ऊपर वाली शाख पर, एक छोटा सा बंदर बैठा था। बंदर का नाम था — नील।\n\nनील को बरगद बहुत अच्छा लगता था। वहाँ से सब कुछ दिखता था — नीचे का गाँव, दूर की नदी, और खाली आकाश।\n\nआज शाम, नील ने कुछ अजीब देखा। आकाश में, एक नन्ही सी नीली पतंग। पतंग धीरे धीरे उड़ रही थी, हवा के साथ झूम रही थी।\n\n[PHRASE]धीरे, नील, धीरे[/PHRASE]\n\n\"यह क्या है?\" नील ने पूछा। लेकिन कोई नहीं था जवाब देने वाला। सिर्फ़ हवा की सर्र सर्र आवाज़ थी।\n\nपतंग और पास आने लगी। नील के हाथ भी पास आए — पकड़ने को। लेकिन हाथ नहीं पहुँचे।\n\n\"पतंग!\" नील चिल्लाया। \"आ जा मेरी तरफ़!\"\n\nपतंग नहीं आई। बस धीरे धीरे उड़ती रही।\n\n[PAUSE: 800]\n\nफिर नील ने सोचा — शायद ज़ोर से नहीं, धीरे से बुलाऊँ।\n\nनील चुप बैठ गया। आँखें बंद कीं। लंबी साँस ली।\n\n[PHRASE]धीरे, नील, धीरे[/PHRASE]\n\nऔर तब, एक हवा का झोंका आया। पतंग धीरे धीरे, धीरे धीरे, नीचे आने लगी। और उसके साथ, नील की आँखें भी भारी हो गईं।\n\nपतंग बरगद की शाख पर उतर गई। नील के पास। दोनों साथ बैठे रहे।\n\nहवा ठंडी थी। आकाश में चाँद चमक रहा था।\n\n\"अच्छा,\" नील ने धीरे से कहा। \"तुम भी थक गई हो?\"\n\nपतंग चुप थी।\n\n[PAUSE: 1000]\n\nनील मुस्कुराया। आँखें बंद कीं। और धीरे धीरे — बहुत धीरे — नींद में गुम हो गया। पतंग भी थक के शाख पर लिपटी रही।\n\nहवा चल रही थी। बरगद झूम रहा था।\n\n[PHRASE]धीरे, नील, धीरे[/PHRASE]\n\nऔर नील और पतंग — दोनों साथ साथ, नींद के अँधेरों में चले गए।\n\nसुबह होगी, फिर मिलेंगे।\n\nअभी, बस नींद।\n",
+    "character": {
+      "name": "Neel",
+      "identity": "a small Indian monkey named Neel with a curious face and soft brown fur, perched in an old banyan tree at the edge of a hill village",
+      "special": "he watches the world from the highest branch and is learning to be patient",
+      "personality_tags": [
+        "Curious",
+        "Gentle"
+      ]
+    },
+    "character_name": "Neel",
+    "characterType": "land_mammal",
+    "lead_character_type": "land_mammal",
+    "lead_gender": "male",
+    "age_group": "2-5",
+    "ageGroup": "2-5",
+    "age_min": 2,
+    "age_max": 5,
+    "target_age": 3,
+    "mood": "calm",
+    "geography": "north_indian_hills",
+    "indian_region": "uttarakhand",
+    "theme": "patience",
+    "themes": [
+      "patience",
+      "patience"
+    ],
+    "audio_url": "/audio/pre-gen/hi-patang-2-5-bndr_anika.mp3",
+    "audio_variants": [
+      {
+        "voice": "anika",
+        "url": "/audio/pre-gen/hi-patang-2-5-bndr_anika.mp3",
+        "duration_seconds": 162,
+        "provider": "elevenlabs-multilingual-v2"
+      }
+    ],
+    "cover": "/covers/hi-patang-2-5-bndr.webp",
+    "cover_context": "A small Indian gray langur monkey perched on the highest branch of an enormous old banyan tree at twilight, a small blue paper kite resting on the same branch beside him, both looking sleepy, golden and indigo sunset sky behind, north Indian hill village visible far below, watercolor children's book illustration",
+    "duration_seconds": 162,
+    "durationSec": 162,
+    "tts_engine": "elevenlabs_multilingual_v2",
+    "tts_input_script": "devanagari",
+    "is_generated": true,
+    "author_id": "system",
+    "categories": [
+      "Bedtime",
+      "Short Story"
+    ],
+    "created_at": "2026-04-27T11:59:29",
+    "updated_at": "2026-04-27T11:59:29"
+  },
+  {
+    "id": "hi-long-2-5-nadi",
+    "type": "long_story",
+    "lang": "hi",
+    "language": "hi",
+    "story_format": "long_story",
+    "story_type": "long_story",
+    "storyType": "long_story",
+    "title": "Tara Aur Sapnon Ki Nadi",
+    "title_deva": "तारा और सपनों की नदी",
+    "title_en": "Tara and the River of Dreams",
+    "description": "Ek nadi jahaan har boond ek puraana sapna yaad rakhti hai",
+    "description_en": "A river where every drop remembers an old dream",
+    "world_name": "Sapnon Ki Nadi",
+    "world_name_en": "The River of Dreams",
+    "world_description": "Ek nadi jahaan har boond ek puraana sapna yaad rakhti hai",
+    "mystery": "Sapnon Ki Nadi chup ho gayi hai",
+    "resolution": "Nadi chup nahin thi — sun rahi thi",
+    "breathing_mechanic": "Ek patta jo dheere dheere saans lene par hi paani ko chhoo paata hai",
+    "repeated_phrase": "Nadi sun rahi hai",
+    "repeated_phrase_deva": "नदी सुन रही है",
+    "characters": [
+      {
+        "name": "Tara",
+        "identity": "Ek chhoti si ladki jo Sapnon Ki Nadi ke kinaare baithi hai",
+        "personality": "gentle",
+        "voice_style": "dreamy",
+        "gender": "female"
+      },
+      {
+        "name": "Old Patthar",
+        "identity": "Nadi ke kinaare ek bahut purana, gol, gehra patthar",
+        "personality": "wise",
+        "voice_style": "quiet",
+        "gender": "neutral"
+      }
+    ],
+    "song_seed": "The old riverbank stone hummed an ancient lori about every tear ever cried into the river, soft and slow.",
+    "phase_1_text": "Tara dheere dheere chal rahi thi. Sapnon Ki Nadi ka kinaara naram tha, thandi ret jaisi. Hawa halki thi. Aur nadi? Nadi chup thi. Pata hai, Sapnon Ki Nadi har raat gungunaati hai — har boond ek chhoti si awaaz. Lekin aaj? Aaj sab chup tha.\n\nTara ke paaon ke neeche chikni ret thi. Chhap chhap, chhap chhap — bas yahi ek awaaz thi.\n\nUpar dekha, chaand chup tha. Neeche dekha, paani chup tha. Door dekha, pahaad chup the. Bas Tara ki saans — wo bhi dheere dheere.\n\nTARA: \"Nadi, tum kyun chup ho aaj?\"\n\nNadi ne jawaab nahin diya. Bas dheere dheere behti rahi.\n\nTara ruki. Ek bahut puraana, gol, gehra patthar kinaare par baitha tha. Tara ko laga jaise wo saans le raha ho.\n\nOLD PATTHAR: \"Beta, chup nahin hai. Sun rahi hai.\"\n\nTARA: \"Kya sun rahi hai?\"\n\nOLD PATTHAR: \"Sab kuch — har saans, har sapna, har chhoti si halchal. Dikhaaun?\"\n\n[BREATHE_GUIDE]\nDheere dheere saans andar lo... naak se... aur phir dheere se baahar chhodo... muh se... bas. Aise hi.\n[/BREATHE_GUIDE]\n[BREATHE]\n\nTara ne ek nanha hara patta uthaya.\n\nOLD PATTHAR: \"Ise paani par rakho. Lekin — dheere saans lete hue. Tez saans se patta doob jaayega.\"\n\nTara ne saans li. Lambi, dheemi saans. Patte ko chhua — paani par. Patta tairne laga. Bahut halke se, bahut dheere.\n\n[BREATHE]\n\n[PHRASE]Nadi sun rahi hai[/PHRASE]\n\nPaani ne patte ko nahin duboya. Bas godi mein le liya.\n\nTara muskuraayi. Pehli baar aaj raat.\n\nOLD PATTHAR: \"Ab chup hokar suno. Nadi kya keh rahi hai.\"\n\nTara chup ho gayi. Saans bahut halki. Nadi ke paani par chaand ki roshni timtimaa rahi thi. Hawa ruk gayi thi. Patta ab bhi tair raha tha — bahut aaraam se.\n\nAur tab — door kahin — ek dheemi si gungunahat. Gunghun gunghun, gunghun gunghun. Nadi ke andar se. Jaise koi puraani lori.\n\nTara ne aankhein kholin. Patthar muskuraa raha tha.\n\nOLD PATTHAR: \"Sunti ho? Bas sunti raho. Chup hokar. Bas sunti raho.\"\n\n[SONG_SEED: The old riverbank stone hummed an ancient lori about every tear ever cried into the river, soft and slow.]\n\n[POST_SONG]\nTara ki aankhein thodi bhaari ho gayin. Lekin abhi neend nahin — abhi bas sunna. Patthar bhi dheere dheere saans le raha tha.",
+    "phase_2_text": "Aur Tara ne samjha — nadi chup nahin thi. Bas sun rahi thi. Dinbhar ke sapno ko. Dinbhar ke aansoon ko. Har chhoti baat ko.\n\nJo bhi bachcha kabhi roya tha — nadi ne suna tha. Jo bhi hansa tha — nadi ne suna tha. Jo bhi thaka hua soya tha — nadi ne uski saansein suni thin.\n\nOLD PATTHAR: \"Tara, dekho. Patte.\"\n\nKinaare par bahut saare patte the. Har patta paani par tair raha tha. Aur har patte ke saath — ek halki si phusphusahat.\n\nTARA: \"Ye kya keh rahe hain?\"\n\nOLD PATTHAR: \"Har patta ek sapna hai. Aur nadi sab sun rahi hai.\"\n\n[BREATHE]\n\nTara ne ek aur lambi saans li. Aur dekha — ek patta dheere dheere doob raha tha. Neend ki taraf.\n\nPatte ke peechhe ek aur patta. Uske peechhe ek aur. Har patta thodi si boondboond hokar paani mein mil raha tha. Bahut dheere. Bahut aaraam se.\n\nTara ne ungli nadi mein daali. Thanda paani, bahut thanda. Aur nadi? Nadi ne ungli ko pakad liya, bahut halke se. Jaise koi daadi apne pote ka haath pakadti hai.\n\nTARA: \"Nadi, tum sab kuch sunti ho?\"\n\nOLD PATTHAR: \"Haan beta. Har dil ki baat.\"\n\n[PHRASE]Nadi sun rahi hai[/PHRASE]\n\nHawa aur bhi dheemi ho gayi. Door kahin, ek jugnu apni roshni band karke so gaya. Phir ek aur. Phir ek aur. Aur ek ek karke sab jugnu so gaye. Bas ek reh gaya — sabse chhota, kinaare par baitha, dheere dheere timtimaa raha.\n\nTara ne patthar ko dekha. Patthar ki aankhein — agar patthar ki aankhein hoti hain — aadhi band thin.\n\nOLD PATTHAR: \"Ab main bhi aaraam karoonga. Tum baitho. Nadi paas hai.\"\n\nTARA: \"Achha. Main bhi sunti rahoongi.\"\n\nPatthar chup ho gaya. Poori tarah chup. Bas saans — dheere, bahut dheere. Saans ki ek chhoti si awaaz — phir kuch nahin.\n\nTara akeli thi. Lekin akeli nahin. Nadi paas thi. Patte paas the. Chaand paas tha. Aur sabse zaroori — saans paas thi.\n\n[BREATHE]\n\nAur har patta dheere dheere doobne laga. Aur har boond dheere dheere shaant ho gayi. Aur Tara ki aankhein — aur bhaari hoti gayin.\n\nAakhri jugnu ne bhi apni roshni band kar di.\n\nNadi ne Tara ko godi mein le liya. Bahut naram. Bahut dheere.\n\n[PHRASE]Nadi sun rahi hai[/PHRASE]",
+    "phase_3_text": "Raat dheemi hai. Hawa shaant hai. Paani naram hai.\n\nNadi ka gaana ab aur dheema hai. Patte sab doob gaye. Sapnon ke saath. Chaand ki roshni paani par pighal rahi hai.\n\nTara ki saans lambi hai. Bahut lambi. Aur bhi lambi.\n\nNaram.\n\nDheema.\n\nShaant.\n\nJugnu sab so gaye. Nadi ab bhi sun rahi hai. Patthar ab bhi paas hai.\n\nChaand naram hai. Bahut naram. Paani par tair raha hai.\n\nPatthar saans le raha hai. Bahut dheere. Bahut bahut dheere.\n\nHawa bas chhoo rahi hai. Tara ke baalon ko. Patthar ke sir ko. Nadi ki naram boondon ko.\n\nNaram aur dheema aur shaant.\n\nNaram aur shaant.\n\nNaram.\n\nShaant.\n\nDheema.\n\nTara ki saans — ek — aur — ek — aur.\n\nTap tap, tap tap — boondein chhoti hain. Awaazein chhoti hain. Duniya chhoti ho rahi hai.\n\n[PHRASE]Nadi sun rahi hai[/PHRASE]\n\nChhoti.\n\nAur chhoti.\n\nAur bhi chhoti.\n\nRaat dheemi. Hawa dheemi. Paani dheema. Saans dheemi.\n\nDheema aur dheema aur dheema.\n\nDheema.\n\nBahut dheema.\n\nRaat kitni naram hai. Chaand kitna door hai. Nadi kitni paas hai.\n\nPaas.\n\nBahut paas.\n\nBas yahin.\n\nBas ab.\n\nBas nadi jaag rahi hai. Ab bhi sun rahi hai. Hamesha sunti rahi hai.\n\nLekin Tara? Tara ab sapnon mein hai. Patthar bhi sapnon mein hai. Patte bhi sapnon mein.\n\nNeend aa gayi.\n\nDheere.\n\nBahut dheere.\n\nBahut bahut dheere.\n\nNadi ab bhi beh rahi hai. Ab bhi sun rahi hai. Ab bhi paas hai.\n\nBas. Bas. Bas.\n\nShaant aur naram.\n\nShaant.\n\nNaram.\n\nBas.\n\n[WHISPER]\nNadi.\nShaant.\nSaans.\nAb.\n[/WHISPER]",
+    "text": "Suno na, ek nadi hai — Sapnon Ki Nadi. Wahaan har boond ek puraani kahaani yaad rakhti hai. Aur aaj raat — kuch alag hua hai.\n\nTara dheere dheere chal rahi thi. Sapnon Ki Nadi ka kinaara naram tha, thandi ret jaisi. Hawa halki thi. Aur nadi? Nadi chup thi. Pata hai, Sapnon Ki Nadi har raat gungunaati hai — har boond ek chhoti si awaaz. Lekin aaj? Aaj sab chup tha.\n\nTara ke paaon ke neeche chikni ret thi. Chhap chhap, chhap chhap — bas yahi ek awaaz thi.\n\nUpar dekha, chaand chup tha. Neeche dekha, paani chup tha. Door dekha, pahaad chup the. Bas Tara ki saans — wo bhi dheere dheere.\n\nTARA: \"Nadi, tum kyun chup ho aaj?\"\n\nNadi ne jawaab nahin diya. Bas dheere dheere behti rahi.\n\nTara ruki. Ek bahut puraana, gol, gehra patthar kinaare par baitha tha. Tara ko laga jaise wo saans le raha ho.\n\nOLD PATTHAR: \"Beta, chup nahin hai. Sun rahi hai.\"\n\nTARA: \"Kya sun rahi hai?\"\n\nOLD PATTHAR: \"Sab kuch — har saans, har sapna, har chhoti si halchal. Dikhaaun?\"\n\nDheere dheere saans andar lo... naak se... aur phir dheere se baahar chhodo... muh se... bas. Aise hi.\n\nTara ne ek nanha hara patta uthaya.\n\nOLD PATTHAR: \"Ise paani par rakho. Lekin — dheere saans lete hue. Tez saans se patta doob jaayega.\"\n\nTara ne saans li. Lambi, dheemi saans. Patte ko chhua — paani par. Patta tairne laga. Bahut halke se, bahut dheere.\n\nNadi sun rahi hai\n\nPaani ne patte ko nahin duboya. Bas godi mein le liya.\n\nTara muskuraayi. Pehli baar aaj raat.\n\nOLD PATTHAR: \"Ab chup hokar suno. Nadi kya keh rahi hai.\"\n\nTara chup ho gayi. Saans bahut halki. Nadi ke paani par chaand ki roshni timtimaa rahi thi. Hawa ruk gayi thi. Patta ab bhi tair raha tha — bahut aaraam se.\n\nAur tab — door kahin — ek dheemi si gungunahat. Gunghun gunghun, gunghun gunghun. Nadi ke andar se. Jaise koi puraani lori.\n\nTara ne aankhein kholin. Patthar muskuraa raha tha.\n\nOLD PATTHAR: \"Sunti ho? Bas sunti raho. Chup hokar. Bas sunti raho.\"\n\nTara ki aankhein thodi bhaari ho gayin. Lekin abhi neend nahin — abhi bas sunna. Patthar bhi dheere dheere saans le raha tha.\n\nAur Tara ne samjha — nadi chup nahin thi. Bas sun rahi thi. Dinbhar ke sapno ko. Dinbhar ke aansoon ko. Har chhoti baat ko.\n\nJo bhi bachcha kabhi roya tha — nadi ne suna tha. Jo bhi hansa tha — nadi ne suna tha. Jo bhi thaka hua soya tha — nadi ne uski saansein suni thin.\n\nOLD PATTHAR: \"Tara, dekho. Patte.\"\n\nKinaare par bahut saare patte the. Har patta paani par tair raha tha. Aur har patte ke saath — ek halki si phusphusahat.\n\nTARA: \"Ye kya keh rahe hain?\"\n\nOLD PATTHAR: \"Har patta ek sapna hai. Aur nadi sab sun rahi hai.\"\n\nTara ne ek aur lambi saans li. Aur dekha — ek patta dheere dheere doob raha tha. Neend ki taraf.\n\nPatte ke peechhe ek aur patta. Uske peechhe ek aur. Har patta thodi si boondboond hokar paani mein mil raha tha. Bahut dheere. Bahut aaraam se.\n\nTara ne ungli nadi mein daali. Thanda paani, bahut thanda. Aur nadi? Nadi ne ungli ko pakad liya, bahut halke se. Jaise koi daadi apne pote ka haath pakadti hai.\n\nTARA: \"Nadi, tum sab kuch sunti ho?\"\n\nOLD PATTHAR: \"Haan beta. Har dil ki baat.\"\n\nNadi sun rahi hai\n\nHawa aur bhi dheemi ho gayi. Door kahin, ek jugnu apni roshni band karke so gaya. Phir ek aur. Phir ek aur. Aur ek ek karke sab jugnu so gaye. Bas ek reh gaya — sabse chhota, kinaare par baitha, dheere dheere timtimaa raha.\n\nTara ne patthar ko dekha. Patthar ki aankhein — agar patthar ki aankhein hoti hain — aadhi band thin.\n\nOLD PATTHAR: \"Ab main bhi aaraam karoonga. Tum baitho. Nadi paas hai.\"\n\nTARA: \"Achha. Main bhi sunti rahoongi.\"\n\nPatthar chup ho gaya. Poori tarah chup. Bas saans — dheere, bahut dheere. Saans ki ek chhoti si awaaz — phir kuch nahin.\n\nTara akeli thi. Lekin akeli nahin. Nadi paas thi. Patte paas the. Chaand paas tha. Aur sabse zaroori — saans paas thi.\n\nAur har patta dheere dheere doobne laga. Aur har boond dheere dheere shaant ho gayi. Aur Tara ki aankhein — aur bhaari hoti gayin.\n\nAakhri jugnu ne bhi apni roshni band kar di.\n\nNadi ne Tara ko godi mein le liya. Bahut naram. Bahut dheere.\n\nNadi sun rahi hai\n\nRaat dheemi hai. Hawa shaant hai. Paani naram hai.\n\nNadi ka gaana ab aur dheema hai. Patte sab doob gaye. Sapnon ke saath. Chaand ki roshni paani par pighal rahi hai.\n\nTara ki saans lambi hai. Bahut lambi. Aur bhi lambi.\n\nNaram.\n\nDheema.\n\nShaant.\n\nJugnu sab so gaye. Nadi ab bhi sun rahi hai. Patthar ab bhi paas hai.\n\nChaand naram hai. Bahut naram. Paani par tair raha hai.\n\nPatthar saans le raha hai. Bahut dheere. Bahut bahut dheere.\n\nHawa bas chhoo rahi hai. Tara ke baalon ko. Patthar ke sir ko. Nadi ki naram boondon ko.\n\nNaram aur dheema aur shaant.\n\nNaram aur shaant.\n\nNaram.\n\nShaant.\n\nDheema.\n\nTara ki saans — ek — aur — ek — aur.\n\nTap tap, tap tap — boondein chhoti hain. Awaazein chhoti hain. Duniya chhoti ho rahi hai.\n\nNadi sun rahi hai\n\nChhoti.\n\nAur chhoti.\n\nAur bhi chhoti.\n\nRaat dheemi. Hawa dheemi. Paani dheema. Saans dheemi.\n\nDheema aur dheema aur dheema.\n\nDheema.\n\nBahut dheema.\n\nRaat kitni naram hai. Chaand kitna door hai. Nadi kitni paas hai.\n\nPaas.\n\nBahut paas.\n\nBas yahin.\n\nBas ab.\n\nBas nadi jaag rahi hai. Ab bhi sun rahi hai. Hamesha sunti rahi hai.\n\nLekin Tara? Tara ab sapnon mein hai. Patthar bhi sapnon mein hai. Patte bhi sapnon mein.\n\nNeend aa gayi.\n\nDheere.\n\nBahut dheere.\n\nBahut bahut dheere.\n\nNadi ab bhi beh rahi hai. Ab bhi sun rahi hai. Ab bhi paas hai.\n\nBas. Bas. Bas.\n\nShaant aur naram.\n\nShaant.\n\nNaram.\n\nBas.\n\nNadi.\nShaant.\nSaans.\nAb.",
+    "text_deva": "सुनो ना, एक नदी है — सपनों की नदी। वहाँ हर बूँद एक पुरानी कहानी याद रखती है। और आज रात — कुछ अलग हुआ है।\n\nतारा धीरे धीरे चल रही थी। सपनों की नदी का किनारा नरम था, ठंडी रेत जैसी। हवा हल्की थी। और नदी? नदी चुप थी। पता है, सपनों की नदी हर रात गुनगुनाती है — हर बूँद एक छोटी सी आवाज़। लेकिन आज? आज सब चुप था।\n\nतारा के पाँव के नीचे चिकनी रेत थी। छप छप, छप छप — बस यही एक आवाज़ थी।\n\nऊपर देखा, चाँद चुप था। नीचे देखा, पानी चुप था। दूर देखा, पहाड़ चुप थे। बस तारा की साँस — वो भी धीरे धीरे।\n\nTARA: \"नदी, तुम क्यों चुप हो आज?\"\n\nनदी ने जवाब नहीं दिया। बस धीरे धीरे बहती रही।\n\nतारा रुकी। एक बहुत पुराना, गोल, गहरा पत्थर किनारे पर बैठा था। तारा को लगा जैसे वो साँस ले रहा हो।\n\nOLD PATTHAR: \"बेटा, चुप नहीं है। सुन रही है।\"\n\nTARA: \"क्या सुन रही है?\"\n\nOLD PATTHAR: \"सब कुछ — हर साँस, हर सपना, हर छोटी सी हलचल। दिखाऊँ?\"\n\nधीरे धीरे साँस अंदर लो... नाक से... और फिर धीरे से बाहर छोड़ो... मुँह से... बस। ऐसे ही।\n\nतारा ने एक नन्हा हरा पत्ता उठाया।\n\nOLD PATTHAR: \"इसे पानी पर रखो। लेकिन — धीरे साँस लेते हुए। तेज़ साँस से पत्ता डूब जाएगा।\"\n\nतारा ने साँस ली। लंबी, धीमी साँस। पत्ते को छुआ — पानी पर। पत्ता तैरने लगा। बहुत हल्के से, बहुत धीरे।\n\nनदी सुन रही है\n\nपानी ने पत्ते को नहीं डुबोया। बस गोदी में ले लिया।\n\nतारा मुस्कुराई। पहली बार आज रात।\n\nOLD PATTHAR: \"अब चुप होकर सुनो। नदी क्या कह रही है।\"\n\nतारा चुप हो गई। साँस बहुत हल्की। नदी के पानी पर चाँद की रोशनी टिमटिमा रही थी। हवा रुक गई थी। पत्ता अब भी तैर रहा था — बहुत आराम से।\n\nऔर तब — दूर कहीं — एक धीमी सी गुनगुनाहट। गुनगुन गुनगुन, गुनगुन गुनगुन। नदी के अंदर से। जैसे कोई पुरानी लोरी।\n\nतारा ने आँखें खोलीं। पत्थर मुस्कुरा रहा था।\n\nOLD PATTHAR: \"सुनती हो? बस सुनती रहो। चुप होकर। बस सुनती रहो।\"\n\nतारा की आँखें थोड़ी भारी हो गईं। लेकिन अभी नींद नहीं — अभी बस सुनना। पत्थर भी धीरे धीरे साँस ले रहा था।\n\nऔर तारा ने समझा — नदी चुप नहीं थी। बस सुन रही थी। दिनभर के सपनों को। दिनभर के आँसुओं को। हर छोटी बात को।\n\nजो भी बच्चा कभी रोया था — नदी ने सुना था। जो भी हँसा था — नदी ने सुना था। जो भी थका हुआ सोया था — नदी ने उसकी साँसें सुनी थीं।\n\nOLD PATTHAR: \"तारा, देखो। पत्ते।\"\n\nकिनारे पर बहुत सारे पत्ते थे। हर पत्ता पानी पर तैर रहा था। और हर पत्ते के साथ — एक हल्की सी फुसफुसाहट।\n\nTARA: \"ये क्या कह रहे हैं?\"\n\nOLD PATTHAR: \"हर पत्ता एक सपना है। और नदी सब सुन रही है।\"\n\nतारा ने एक और लंबी साँस ली। और देखा — एक पत्ता धीरे धीरे डूब रहा था। नींद की तरफ़।\n\nपत्ते के पीछे एक और पत्ता। उसके पीछे एक और। हर पत्ता थोड़ी सी बूंदबूंद होकर पानी में मिल रहा था। बहुत धीरे। बहुत आराम से।\n\nतारा ने उँगली नदी में डाली। ठंडा पानी, बहुत ठंडा। और नदी? नदी ने उँगली को पकड़ लिया, बहुत हल्के से। जैसे कोई दादी अपने पोते का हाथ पकड़ती है।\n\nTARA: \"नदी, तुम सब कुछ सुनती हो?\"\n\nOLD PATTHAR: \"हाँ बेटा। हर दिल की बात।\"\n\nनदी सुन रही है\n\nहवा और भी धीमी हो गई। दूर कहीं, एक जुगनू अपनी रोशनी बंद करके सो गया। फिर एक और। फिर एक और। और एक एक करके सब जुगनू सो गए। बस एक रह गया — सबसे छोटा, किनारे पर बैठा, धीरे धीरे टिमटिमा रहा।\n\nतारा ने पत्थर को देखा। पत्थर की आँखें — अगर पत्थर की आँखें होती हैं — आधी बंद थीं।\n\nOLD PATTHAR: \"अब मैं भी आराम करूँगा। तुम बैठो। नदी पास है।\"\n\nTARA: \"अच्छा। मैं भी सुनती रहूँगी।\"\n\nपत्थर चुप हो गया। पूरी तरह चुप। बस साँस — धीरे, बहुत धीरे। साँस की एक छोटी सी आवाज़ — फिर कुछ नहीं।\n\nतारा अकेली थी। लेकिन अकेली नहीं। नदी पास थी। पत्ते पास थे। चाँद पास था। और सबसे ज़रूरी — साँस पास थी।\n\nऔर हर पत्ता धीरे धीरे डूबने लगा। और हर बूँद धीरे धीरे शाँत हो गई। और तारा की आँखें — और भारी होती गईं।\n\nआख़िरी जुगनू ने भी अपनी रोशनी बंद कर दी।\n\nनदी ने तारा को गोदी में ले लिया। बहुत नरम। बहुत धीरे।\n\nनदी सुन रही है\n\nरात धीमी है। हवा शाँत है। पानी नरम है।\n\nनदी का गाना अब और धीमा है। पत्ते सब डूब गए। सपनों के साथ। चाँद की रोशनी पानी पर पिघल रही है।\n\nतारा की साँस लंबी है। बहुत लंबी। और भी लंबी।\n\nनरम।\n\nधीमा।\n\nशाँत।\n\nजुगनू सब सो गए। नदी अब भी सुन रही है। पत्थर अब भी पास है।\n\nचाँद नरम है। बहुत नरम। पानी पर तैर रहा है।\n\nपत्थर साँस ले रहा है। बहुत धीरे। बहुत बहुत धीरे।\n\nहवा बस छू रही है। तारा के बालों को। पत्थर के सर को। नदी की नरम बूँदों को।\n\nनरम और धीमा और शाँत।\n\nनरम और शाँत।\n\nनरम।\n\nशाँत।\n\nधीमा।\n\nतारा की साँस — एक — और — एक — और।\n\nटप टप, टप टप — बूँदें छोटी हैं। आवाज़ें छोटी हैं। दुनिया छोटी हो रही है।\n\nनदी सुन रही है\n\nछोटी।\n\nऔर छोटी।\n\nऔर भी छोटी।\n\nरात धीमी। हवा धीमी। पानी धीमा। साँस धीमी।\n\nधीमा और धीमा और धीमा।\n\nधीमा।\n\nबहुत धीमा।\n\nरात कितनी नरम है। चाँद कितना दूर है। नदी कितनी पास है।\n\nपास।\n\nबहुत पास।\n\nबस यहीं।\n\nबस अब।\n\nबस नदी जाग रही है। अब भी सुन रही है। हमेशा सुनती रही है।\n\nलेकिन तारा? तारा अब सपनों में है। पत्थर भी सपनों में है। पत्ते भी सपनों में।\n\nनींद आ गई।\n\nधीरे।\n\nबहुत धीरे।\n\nबहुत बहुत धीरे।\n\nनदी अब भी बह रही है। अब भी सुन रही है। अब भी पास है।\n\nबस। बस। बस।\n\nशाँत और नरम।\n\nशाँत।\n\nनरम।\n\nबस।\n\nनदी।\nशाँत।\nसाँस।\nअब।",
+    "raw_text": "[CHARACTER: Tara, gentle, dreamy, female]\n[CHARACTER: Old Patthar, wise, quiet, neutral]\n\n[INTRO]\nSuno na, ek nadi hai — Sapnon Ki Nadi. Wahaan har boond ek puraani kahaani yaad rakhti hai. Aur aaj raat — kuch alag hua hai.\n\n[PHASE_1]\nTara dheere dheere chal rahi thi. Sapnon Ki Nadi ka kinaara naram tha, thandi ret jaisi. Hawa halki thi. Aur nadi? Nadi chup thi. Pata hai, Sapnon Ki Nadi har raat gungunaati hai — har boond ek chhoti si awaaz. Lekin aaj? Aaj sab chup tha.\n\nTara ke paaon ke neeche chikni ret thi. Chhap chhap, chhap chhap — bas yahi ek awaaz thi.\n\nUpar dekha, chaand chup tha. Neeche dekha, paani chup tha. Door dekha, pahaad chup the. Bas Tara ki saans — wo bhi dheere dheere.\n\nTARA: \"Nadi, tum kyun chup ho aaj?\"\n\nNadi ne jawaab nahin diya. Bas dheere dheere behti rahi.\n\nTara ruki. Ek bahut puraana, gol, gehra patthar kinaare par baitha tha. Tara ko laga jaise wo saans le raha ho.\n\nOLD PATTHAR: \"Beta, chup nahin hai. Sun rahi hai.\"\n\nTARA: \"Kya sun rahi hai?\"\n\nOLD PATTHAR: \"Sab kuch — har saans, har sapna, har chhoti si halchal. Dikhaaun?\"\n\n[BREATHE_GUIDE]\nDheere dheere saans andar lo... naak se... aur phir dheere se baahar chhodo... muh se... bas. Aise hi.\n[/BREATHE_GUIDE]\n[BREATHE]\n\nTara ne ek nanha hara patta uthaya.\n\nOLD PATTHAR: \"Ise paani par rakho. Lekin — dheere saans lete hue. Tez saans se patta doob jaayega.\"\n\nTara ne saans li. Lambi, dheemi saans. Patte ko chhua — paani par. Patta tairne laga. Bahut halke se, bahut dheere.\n\n[BREATHE]\n\n[PHRASE]Nadi sun rahi hai[/PHRASE]\n\nPaani ne patte ko nahin duboya. Bas godi mein le liya.\n\nTara muskuraayi. Pehli baar aaj raat.\n\nOLD PATTHAR: \"Ab chup hokar suno. Nadi kya keh rahi hai.\"\n\nTara chup ho gayi. Saans bahut halki. Nadi ke paani par chaand ki roshni timtimaa rahi thi. Hawa ruk gayi thi. Patta ab bhi tair raha tha — bahut aaraam se.\n\nAur tab — door kahin — ek dheemi si gungunahat. Gunghun gunghun, gunghun gunghun. Nadi ke andar se. Jaise koi puraani lori.\n\nTara ne aankhein kholin. Patthar muskuraa raha tha.\n\nOLD PATTHAR: \"Sunti ho? Bas sunti raho. Chup hokar. Bas sunti raho.\"\n\n[SONG_SEED: The old riverbank stone hummed an ancient lori about every tear ever cried into the river, soft and slow.]\n\n[POST_SONG]\nTara ki aankhein thodi bhaari ho gayin. Lekin abhi neend nahin — abhi bas sunna. Patthar bhi dheere dheere saans le raha tha.\n\n[PHASE_2]\nAur Tara ne samjha — nadi chup nahin thi. Bas sun rahi thi. Dinbhar ke sapno ko. Dinbhar ke aansoon ko. Har chhoti baat ko.\n\nJo bhi bachcha kabhi roya tha — nadi ne suna tha. Jo bhi hansa tha — nadi ne suna tha. Jo bhi thaka hua soya tha — nadi ne uski saansein suni thin.\n\nOLD PATTHAR: \"Tara, dekho. Patte.\"\n\nKinaare par bahut saare patte the. Har patta paani par tair raha tha. Aur har patte ke saath — ek halki si phusphusahat.\n\nTARA: \"Ye kya keh rahe hain?\"\n\nOLD PATTHAR: \"Har patta ek sapna hai. Aur nadi sab sun rahi hai.\"\n\n[BREATHE]\n\nTara ne ek aur lambi saans li. Aur dekha — ek patta dheere dheere doob raha tha. Neend ki taraf.\n\nPatte ke peechhe ek aur patta. Uske peechhe ek aur. Har patta thodi si boondboond hokar paani mein mil raha tha. Bahut dheere. Bahut aaraam se.\n\nTara ne ungli nadi mein daali. Thanda paani, bahut thanda. Aur nadi? Nadi ne ungli ko pakad liya, bahut halke se. Jaise koi daadi apne pote ka haath pakadti hai.\n\nTARA: \"Nadi, tum sab kuch sunti ho?\"\n\nOLD PATTHAR: \"Haan beta. Har dil ki baat.\"\n\n[PHRASE]Nadi sun rahi hai[/PHRASE]\n\nHawa aur bhi dheemi ho gayi. Door kahin, ek jugnu apni roshni band karke so gaya. Phir ek aur. Phir ek aur. Aur ek ek karke sab jugnu so gaye. Bas ek reh gaya — sabse chhota, kinaare par baitha, dheere dheere timtimaa raha.\n\nTara ne patthar ko dekha. Patthar ki aankhein — agar patthar ki aankhein hoti hain — aadhi band thin.\n\nOLD PATTHAR: \"Ab main bhi aaraam karoonga. Tum baitho. Nadi paas hai.\"\n\nTARA: \"Achha. Main bhi sunti rahoongi.\"\n\nPatthar chup ho gaya. Poori tarah chup. Bas saans — dheere, bahut dheere. Saans ki ek chhoti si awaaz — phir kuch nahin.\n\nTara akeli thi. Lekin akeli nahin. Nadi paas thi. Patte paas the. Chaand paas tha. Aur sabse zaroori — saans paas thi.\n\n[BREATHE]\n\nAur har patta dheere dheere doobne laga. Aur har boond dheere dheere shaant ho gayi. Aur Tara ki aankhein — aur bhaari hoti gayin.\n\nAakhri jugnu ne bhi apni roshni band kar di.\n\nNadi ne Tara ko godi mein le liya. Bahut naram. Bahut dheere.\n\n[PHRASE]Nadi sun rahi hai[/PHRASE]\n\n[PHASE_3]\nRaat dheemi hai. Hawa shaant hai. Paani naram hai.\n\nNadi ka gaana ab aur dheema hai. Patte sab doob gaye. Sapnon ke saath. Chaand ki roshni paani par pighal rahi hai.\n\nTara ki saans lambi hai. Bahut lambi. Aur bhi lambi.\n\nNaram.\n\nDheema.\n\nShaant.\n\nJugnu sab so gaye. Nadi ab bhi sun rahi hai. Patthar ab bhi paas hai.\n\nChaand naram hai. Bahut naram. Paani par tair raha hai.\n\nPatthar saans le raha hai. Bahut dheere. Bahut bahut dheere.\n\nHawa bas chhoo rahi hai. Tara ke baalon ko. Patthar ke sir ko. Nadi ki naram boondon ko.\n\nNaram aur dheema aur shaant.\n\nNaram aur shaant.\n\nNaram.\n\nShaant.\n\nDheema.\n\nTara ki saans — ek — aur — ek — aur.\n\nTap tap, tap tap — boondein chhoti hain. Awaazein chhoti hain. Duniya chhoti ho rahi hai.\n\n[PHRASE]Nadi sun rahi hai[/PHRASE]\n\nChhoti.\n\nAur chhoti.\n\nAur bhi chhoti.\n\nRaat dheemi. Hawa dheemi. Paani dheema. Saans dheemi.\n\nDheema aur dheema aur dheema.\n\nDheema.\n\nBahut dheema.\n\nRaat kitni naram hai. Chaand kitna door hai. Nadi kitni paas hai.\n\nPaas.\n\nBahut paas.\n\nBas yahin.\n\nBas ab.\n\nBas nadi jaag rahi hai. Ab bhi sun rahi hai. Hamesha sunti rahi hai.\n\nLekin Tara? Tara ab sapnon mein hai. Patthar bhi sapnon mein hai. Patte bhi sapnon mein.\n\nNeend aa gayi.\n\nDheere.\n\nBahut dheere.\n\nBahut bahut dheere.\n\nNadi ab bhi beh rahi hai. Ab bhi sun rahi hai. Ab bhi paas hai.\n\nBas. Bas. Bas.\n\nShaant aur naram.\n\nShaant.\n\nNaram.\n\nBas.\n\n[WHISPER]\nNadi.\nShaant.\nSaans.\nAb.\n[/WHISPER]\n",
+    "raw_text_deva": "[CHARACTER: Tara, gentle, dreamy, female]\n[CHARACTER: Old Patthar, wise, quiet, neutral]\n\n[INTRO]\nसुनो ना, एक नदी है — सपनों की नदी। वहाँ हर बूँद एक पुरानी कहानी याद रखती है। और आज रात — कुछ अलग हुआ है।\n\n[PHASE_1]\nतारा धीरे धीरे चल रही थी। सपनों की नदी का किनारा नरम था, ठंडी रेत जैसी। हवा हल्की थी। और नदी? नदी चुप थी। पता है, सपनों की नदी हर रात गुनगुनाती है — हर बूँद एक छोटी सी आवाज़। लेकिन आज? आज सब चुप था।\n\nतारा के पाँव के नीचे चिकनी रेत थी। छप छप, छप छप — बस यही एक आवाज़ थी।\n\nऊपर देखा, चाँद चुप था। नीचे देखा, पानी चुप था। दूर देखा, पहाड़ चुप थे। बस तारा की साँस — वो भी धीरे धीरे।\n\nTARA: \"नदी, तुम क्यों चुप हो आज?\"\n\nनदी ने जवाब नहीं दिया। बस धीरे धीरे बहती रही।\n\nतारा रुकी। एक बहुत पुराना, गोल, गहरा पत्थर किनारे पर बैठा था। तारा को लगा जैसे वो साँस ले रहा हो।\n\nOLD PATTHAR: \"बेटा, चुप नहीं है। सुन रही है।\"\n\nTARA: \"क्या सुन रही है?\"\n\nOLD PATTHAR: \"सब कुछ — हर साँस, हर सपना, हर छोटी सी हलचल। दिखाऊँ?\"\n\n[BREATHE_GUIDE]\nधीरे धीरे साँस अंदर लो... नाक से... और फिर धीरे से बाहर छोड़ो... मुँह से... बस। ऐसे ही।\n[/BREATHE_GUIDE]\n[BREATHE]\n\nतारा ने एक नन्हा हरा पत्ता उठाया।\n\nOLD PATTHAR: \"इसे पानी पर रखो। लेकिन — धीरे साँस लेते हुए। तेज़ साँस से पत्ता डूब जाएगा।\"\n\nतारा ने साँस ली। लंबी, धीमी साँस। पत्ते को छुआ — पानी पर। पत्ता तैरने लगा। बहुत हल्के से, बहुत धीरे।\n\n[BREATHE]\n\n[PHRASE]नदी सुन रही है[/PHRASE]\n\nपानी ने पत्ते को नहीं डुबोया। बस गोदी में ले लिया।\n\nतारा मुस्कुराई। पहली बार आज रात।\n\nOLD PATTHAR: \"अब चुप होकर सुनो। नदी क्या कह रही है।\"\n\nतारा चुप हो गई। साँस बहुत हल्की। नदी के पानी पर चाँद की रोशनी टिमटिमा रही थी। हवा रुक गई थी। पत्ता अब भी तैर रहा था — बहुत आराम से।\n\nऔर तब — दूर कहीं — एक धीमी सी गुनगुनाहट। गुनगुन गुनगुन, गुनगुन गुनगुन। नदी के अंदर से। जैसे कोई पुरानी लोरी।\n\nतारा ने आँखें खोलीं। पत्थर मुस्कुरा रहा था।\n\nOLD PATTHAR: \"सुनती हो? बस सुनती रहो। चुप होकर। बस सुनती रहो।\"\n\n[SONG_SEED: The old riverbank stone hummed an ancient lori about every tear ever cried into the river, soft and slow.]\n\n[POST_SONG]\nतारा की आँखें थोड़ी भारी हो गईं। लेकिन अभी नींद नहीं — अभी बस सुनना। पत्थर भी धीरे धीरे साँस ले रहा था।\n\n[PHASE_2]\nऔर तारा ने समझा — नदी चुप नहीं थी। बस सुन रही थी। दिनभर के सपनों को। दिनभर के आँसुओं को। हर छोटी बात को।\n\nजो भी बच्चा कभी रोया था — नदी ने सुना था। जो भी हँसा था — नदी ने सुना था। जो भी थका हुआ सोया था — नदी ने उसकी साँसें सुनी थीं।\n\nOLD PATTHAR: \"तारा, देखो। पत्ते।\"\n\nकिनारे पर बहुत सारे पत्ते थे। हर पत्ता पानी पर तैर रहा था। और हर पत्ते के साथ — एक हल्की सी फुसफुसाहट।\n\nTARA: \"ये क्या कह रहे हैं?\"\n\nOLD PATTHAR: \"हर पत्ता एक सपना है। और नदी सब सुन रही है।\"\n\n[BREATHE]\n\nतारा ने एक और लंबी साँस ली। और देखा — एक पत्ता धीरे धीरे डूब रहा था। नींद की तरफ़।\n\nपत्ते के पीछे एक और पत्ता। उसके पीछे एक और। हर पत्ता थोड़ी सी बूंदबूंद होकर पानी में मिल रहा था। बहुत धीरे। बहुत आराम से।\n\nतारा ने उँगली नदी में डाली। ठंडा पानी, बहुत ठंडा। और नदी? नदी ने उँगली को पकड़ लिया, बहुत हल्के से। जैसे कोई दादी अपने पोते का हाथ पकड़ती है।\n\nTARA: \"नदी, तुम सब कुछ सुनती हो?\"\n\nOLD PATTHAR: \"हाँ बेटा। हर दिल की बात।\"\n\n[PHRASE]नदी सुन रही है[/PHRASE]\n\nहवा और भी धीमी हो गई। दूर कहीं, एक जुगनू अपनी रोशनी बंद करके सो गया। फिर एक और। फिर एक और। और एक एक करके सब जुगनू सो गए। बस एक रह गया — सबसे छोटा, किनारे पर बैठा, धीरे धीरे टिमटिमा रहा।\n\nतारा ने पत्थर को देखा। पत्थर की आँखें — अगर पत्थर की आँखें होती हैं — आधी बंद थीं।\n\nOLD PATTHAR: \"अब मैं भी आराम करूँगा। तुम बैठो। नदी पास है।\"\n\nTARA: \"अच्छा। मैं भी सुनती रहूँगी।\"\n\nपत्थर चुप हो गया। पूरी तरह चुप। बस साँस — धीरे, बहुत धीरे। साँस की एक छोटी सी आवाज़ — फिर कुछ नहीं।\n\nतारा अकेली थी। लेकिन अकेली नहीं। नदी पास थी। पत्ते पास थे। चाँद पास था। और सबसे ज़रूरी — साँस पास थी।\n\n[BREATHE]\n\nऔर हर पत्ता धीरे धीरे डूबने लगा। और हर बूँद धीरे धीरे शाँत हो गई। और तारा की आँखें — और भारी होती गईं।\n\nआख़िरी जुगनू ने भी अपनी रोशनी बंद कर दी।\n\nनदी ने तारा को गोदी में ले लिया। बहुत नरम। बहुत धीरे।\n\n[PHRASE]नदी सुन रही है[/PHRASE]\n\n[PHASE_3]\nरात धीमी है। हवा शाँत है। पानी नरम है।\n\nनदी का गाना अब और धीमा है। पत्ते सब डूब गए। सपनों के साथ। चाँद की रोशनी पानी पर पिघल रही है।\n\nतारा की साँस लंबी है। बहुत लंबी। और भी लंबी।\n\nनरम।\n\nधीमा।\n\nशाँत।\n\nजुगनू सब सो गए। नदी अब भी सुन रही है। पत्थर अब भी पास है।\n\nचाँद नरम है। बहुत नरम। पानी पर तैर रहा है।\n\nपत्थर साँस ले रहा है। बहुत धीरे। बहुत बहुत धीरे।\n\nहवा बस छू रही है। तारा के बालों को। पत्थर के सर को। नदी की नरम बूँदों को।\n\nनरम और धीमा और शाँत।\n\nनरम और शाँत।\n\nनरम।\n\nशाँत।\n\nधीमा।\n\nतारा की साँस — एक — और — एक — और।\n\nटप टप, टप टप — बूँदें छोटी हैं। आवाज़ें छोटी हैं। दुनिया छोटी हो रही है।\n\n[PHRASE]नदी सुन रही है[/PHRASE]\n\nछोटी।\n\nऔर छोटी।\n\nऔर भी छोटी।\n\nरात धीमी। हवा धीमी। पानी धीमा। साँस धीमी।\n\nधीमा और धीमा और धीमा।\n\nधीमा।\n\nबहुत धीमा।\n\nरात कितनी नरम है। चाँद कितना दूर है। नदी कितनी पास है।\n\nपास।\n\nबहुत पास।\n\nबस यहीं।\n\nबस अब।\n\nबस नदी जाग रही है। अब भी सुन रही है। हमेशा सुनती रही है।\n\nलेकिन तारा? तारा अब सपनों में है। पत्थर भी सपनों में है। पत्ते भी सपनों में।\n\nनींद आ गई।\n\nधीरे।\n\nबहुत धीरे।\n\nबहुत बहुत धीरे।\n\nनदी अब भी बह रही है। अब भी सुन रही है। अब भी पास है।\n\nबस। बस। बस।\n\nशाँत और नरम।\n\nशाँत।\n\nनरम।\n\nबस।\n\n[WHISPER]\nनदी।\nशाँत।\nसाँस।\nअब।\n[/WHISPER]\n",
+    "character": {
+      "name": "Tara",
+      "identity": "Ek chhoti si ladki jo Sapnon Ki Nadi ke kinaare baithi hai",
+      "personality_tags": [
+        "Gentle",
+        "Dreamy"
+      ]
+    },
+    "character_name": "Tara",
+    "characterType": "human_child",
+    "lead_character_type": "human_child",
+    "lead_gender": "female",
+    "age_group": "2-5",
+    "ageGroup": "2-5",
+    "age_min": 2,
+    "age_max": 5,
+    "target_age": 4,
+    "mood": "calm",
+    "theme": "rest",
+    "themes": [
+      "rest",
+      "listening"
+    ],
+    "geography": "north_indian_river",
+    "indian_region": "uttarakhand",
+    "experimental_v2": false,
+    "has_baked_music": true,
+    "tts_engine": "elevenlabs-multilingual-v2",
+    "tts_input_script": "devanagari",
+    "voice_routing": {
+      "narrator": "tripti",
+      "whisper": "roohi",
+      "characters": {
+        "TARA": "anika",
+        "OLD PATTHAR": "kuber_j"
+      }
+    },
+    "embedded_song_seconds": 41,
+    "audio_url": "/audio/pre-gen/hi-long-2-5-nadi_tripti.mp3",
+    "audio_variants": [
+      {
+        "voice": "tripti",
+        "url": "/audio/pre-gen/hi-long-2-5-nadi_tripti.mp3",
+        "duration_seconds": 820,
+        "provider": "elevenlabs-multilingual-v2"
+      }
+    ],
+    "cover": "/covers/hi-long-2-5-nadi.webp",
+    "cover_context": "A wide gentle river at twilight winding through a north Indian valley, smooth ancient grey stones along the banks, a small Indian girl with a long braid sitting cross-legged at the water's edge, a single tiny green leaf floating just above the water, soft moonlight, warm yellow lamp glow far away on a hill, watercolor, deep blues and warm golds, dreamy quiet atmosphere",
+    "duration_seconds": 820,
+    "durationSec": 820,
+    "word_count": 990,
+    "is_generated": true,
+    "author_id": "system",
+    "categories": [
+      "Bedtime",
+      "Long Story"
+    ],
+    "created_at": "2026-04-27T12:05:11",
+    "updated_at": "2026-04-27T12:05:11"
   }
 ]
