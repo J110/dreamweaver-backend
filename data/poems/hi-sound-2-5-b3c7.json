@@ -1,0 +1,22 @@
+{
+  "id": "hi-sound-2-5-b3c7",
+  "lang": "hi",
+  "title": "Baarish Ki Awaaz",
+  "title_en": "The Sound of Rain",
+  "content_type": "poem",
+  "poem_type": "sound",
+  "age_group": "2-5",
+  "mood": "calm",
+  "instruments": "soft harmonium and gentle tabla",
+  "tempo": 92,
+  "poem_text": "Tap tap tap, baadal hai\nChhap chhap chhap, paani hai\nPatak patak, chhat pe sab\nThak thak thak, darwaaze ab\nSarr sarr, hawa chali\nGunghun gunghun, neend chali\nChip chip chip, boondein hain\nTip tip tip, sapne hain\nTap tap tap, neend aaye\nChhap chhap chhap, so jaaye",
+  "char_count": 222,
+  "line_count": 10,
+  "audio_file": "hi-sound-2-5-b3c7.mp3",
+  "cover_file": "hi-sound-2-5-b3c7_cover.webp",
+  "cover_context": "A small Indian rooftop in soft watercolor twilight, raindrops falling on banana leaves, warm yellow window glow, blue-grey monsoon clouds gentle and hazy",
+  "style_prompt": "Children's Hindi musical poem, soft harmonium and gentle tabla, 92 BPM, soft and settling, warm steady rhythm, almost a lullaby, warm clear North Indian female vocal speaking each word rhythmically, native Hindi pronunciation, every word crystal clear, like a parent reciting a poem at bedtime, not sung — spoken to a beat. Not Western.",
+  "duration_seconds": 29,
+  "audio_engine": "minimax-music-v2.5-fal",
+  "created_at": "2026-04-27"
+}
