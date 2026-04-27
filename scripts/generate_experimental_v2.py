@@ -49,7 +49,17 @@ STORY_CONFIG = {
 }
 
 # Voice selection: wired × 6-8 → female_1 + asmr
-MOOD_VOICES = ["female_1", "asmr"]
+# When TTS_ENGINE_EN=elevenlabs, single-narrator-per-mood per spec §5.1.
+def _use_elevenlabs() -> bool:
+    return os.getenv("TTS_ENGINE_EN", "chatterbox").lower() == "elevenlabs"
+
+if _use_elevenlabs():
+    # ElevenLabs path: this script is rarely run standalone for production V2.
+    # The daily pipeline routes through audio_assembly.MOOD_VOICES instead.
+    # Resolve mood narrator from STORY_CONFIG below if needed.
+    MOOD_VOICES = ["tripti"]  # placeholder; overridden by mood selection at runtime
+else:
+    MOOD_VOICES = ["female_1", "asmr"]
 
 # ── TTS Params ───────────────────────────────────────────────────────
 
@@ -299,6 +309,11 @@ def normalize_for_tts(text: str) -> str:
 def generate_tts(text: str, voice: str, exaggeration: float = 0.45,
                  cfg_weight: float = 0.5, speed: float = 0.85,
                  is_phrase: bool = False) -> AudioSegment:
+    if _use_elevenlabs():
+        from _elevenlabs_common import tts_eleven_compat
+        return tts_eleven_compat(text, voice, exaggeration=exaggeration,
+                                 cfg_weight=cfg_weight, speed=speed,
+                                 is_phrase=is_phrase)
     # Normalize ALL CAPS → Title Case to prevent TTS acronym spelling
     text = normalize_for_tts(text)
     # Prefix phrases with ellipsis — adds a tiny breath that prevents

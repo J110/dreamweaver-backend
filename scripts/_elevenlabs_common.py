@@ -1,0 +1,285 @@
+"""Shared ElevenLabs TTS layer for English content (V2 short stories + long stories).
+
+Drop-in alternative to the Chatterbox `generate_tts(text, voice, exaggeration,
+cfg_weight, speed, ...)` contract used in audio_assembly.py,
+generate_experimental_v2.py, and generate_long_story_episode.py.
+
+Activated via env flag: TTS_ENGINE_EN=elevenlabs (default: chatterbox).
+
+See: docs/superpowers/specs/2026-04-27-english-tts-elevenlabs-migration-design.md
+"""
+
+from __future__ import annotations
+
+import io
+import os
+import re
+import time
+from pathlib import Path
+
+import httpx
+from pydub import AudioSegment
+
+# ────────────────────────────────────────────────────────────────────────
+#  ElevenLabs API
+# ────────────────────────────────────────────────────────────────────────
+
+ELEVENLABS_API_KEY = os.getenv(
+    "ELEVENLABS_API_KEY",
+    "sk_5bbd5d1a1ee9fa532c454154e2a7723f94ffc3bce07087ff",
+)
+ELEVENLABS_URL = "https://api.elevenlabs.io/v1/text-to-speech/{voice_id}"
+ELEVENLABS_MODEL = "eleven_multilingual_v2"
+ELEVENLABS_OUTPUT_FORMAT = "mp3_44100_128"
+
+# 2000 chars: above this, ElevenLabs Multilingual v2 prosody soft-degrades.
+SOFT_LIMIT = 2000
+
+
+# ────────────────────────────────────────────────────────────────────────
+#  Voice library — English (10 voices)
+# ────────────────────────────────────────────────────────────────────────
+
+ELEVENLABS_VOICES_EN = {
+    # Female narrators
+    "tripti":  "MwUMLXurEzSN7bIfIdXF",  # Calm and Experienced
+    "monika":  "2zRM7PkgwBPiau2jvVXc",  # Deep and Natural
+    "tara":    "P7vsEyTOpZ6YUTulin8m",  # Conversational and Expressive
+    "simran":  "1ea3IFhmSWgw8sJkSvfJ",  # Cheerful Best Friend
+    "rhea":    "eUdJpUEN3EslrgE24PKx",  # Soft, Polished and Calm
+    "maya":    "4O1sYUnmtThcBoSBrri7",  # Friendly and Cheerful
+    "zara":    "wdymxIQkYn7MJCYCQF2Q",  # Soothing, Meditative — ASMR / whisper
+    # Male voices (long-story characters only)
+    "ranbir":  "MgKG6W05zBkvXijkNguO",  # Deep and Dramatic Storyteller
+    "harshit": "6TcvxMZXgg9AlJrd8iCl",  # Strong, Deep and Casual
+    "ishan":   "N09NFwYJJG9VSSgdLQbT",  # Bold and Upbeat
+}
+
+# Legacy chatterbox voice labels → ElevenLabs labels (used when call sites
+# pass chatterbox names like "female_1" / "male_2" / "asmr").
+LEGACY_VOICE_MAP_EN = {
+    "female_1": "tripti",
+    "female_2": "monika",
+    "female_3": "tara",
+    "female_4": "simran",
+    "female_5": "rhea",
+    "female_6": "maya",
+    "male_1":   "harshit",
+    "male_2":   "ranbir",
+    "male_3":   "ishan",
+    "asmr":     "zara",
+}
+
+# Mood → narrator voice label (single narrator per mood, per spec §5.1).
+MOOD_NARRATOR_EN = {
+    "wired":   "tara",     # Conversational and Expressive
+    "curious": "simran",   # Cheerful Best Friend
+    "calm":    "tripti",   # Calm and Experienced
+    "sad":     "rhea",     # Soft, Polished and Calm
+    "anxious": "maya",     # Friendly and Cheerful (warm reassurance)
+    "angry":   "monika",   # Deep and Natural (grounding)
+}
+WHISPER_VOICE_EN = "zara"
+
+
+# ────────────────────────────────────────────────────────────────────────
+#  TTS parameter tables (per spec §6, §7)
+# ────────────────────────────────────────────────────────────────────────
+
+V2_PHASE_PARAMS_EN = {
+    1: {"stability": 0.55, "similarity_boost": 0.75, "style": 0.05, "speed": 0.90},
+    2: {"stability": 0.70, "similarity_boost": 0.75, "style": 0.00, "speed": 0.82},
+    3: {"stability": 0.85, "similarity_boost": 0.75, "style": 0.00, "speed": 0.78},
+}
+V2_PHRASE_PARAMS_EN = {"stability": 0.85, "similarity_boost": 0.75, "style": 0.00, "speed": 0.78}
+
+LONG_STORY_TTS_EN = {
+    "intro":           {"stability": 0.60, "similarity_boost": 0.75, "style": 0.05, "speed": 0.90},
+    "phase_1":         {"stability": 0.70, "similarity_boost": 0.75, "style": 0.00, "speed": 0.85},
+    "phrase":          {"stability": 0.85, "similarity_boost": 0.75, "style": 0.05, "speed": 0.78},
+    "song_transition": {"stability": 0.72, "similarity_boost": 0.75, "style": 0.00, "speed": 0.80},
+    "post_song":       {"stability": 0.75, "similarity_boost": 0.75, "style": 0.00, "speed": 0.78},
+    "phase_2":         {"stability": 0.78, "similarity_boost": 0.75, "style": 0.00, "speed": 0.78},
+    "phase_3":         {"stability": 0.85, "similarity_boost": 0.75, "style": 0.00, "speed": 0.72},
+    "whisper":         {"stability": 0.95, "similarity_boost": 0.75, "style": 0.00, "speed": 0.68},
+    "breathing":       {"stability": 0.78, "similarity_boost": 0.75, "style": 0.00, "speed": 0.75},
+    "breathe_guide":   {"stability": 0.82, "similarity_boost": 0.75, "style": 0.00, "speed": 0.70},
+}
+
+# Character voice-style modifiers (per spec §7.1).
+# Applied as offsets on the section base; clamped after summing.
+CHARACTER_VOICE_MODIFIERS_EN = {
+    "confident": {"speed_offset": +0.03, "style_offset": +0.05, "stability_offset": -0.05},
+    "gentle":    {"speed_offset": -0.03, "style_offset": +0.03, "stability_offset":  0.00},
+    "small":     {"speed_offset": +0.05, "style_offset": +0.05, "stability_offset": -0.05},
+    "wise":      {"speed_offset": -0.05, "style_offset": -0.03, "stability_offset": +0.05},
+    "nervous":   {"speed_offset": +0.04, "style_offset": +0.08, "stability_offset": -0.08},
+    "curious":   {"speed_offset": +0.02, "style_offset": +0.05, "stability_offset": -0.03},
+    "stubborn":  {"speed_offset": -0.02, "style_offset": +0.05, "stability_offset": -0.05},
+    "dreamy":    {"speed_offset": -0.06, "style_offset": -0.02, "stability_offset": +0.05},
+    "brave":     {"speed_offset": +0.01, "style_offset": +0.04, "stability_offset": -0.02},
+    "quiet":     {"speed_offset": -0.04, "style_offset": -0.05, "stability_offset": +0.10},
+    "playful":   {"speed_offset": +0.04, "style_offset": +0.05, "stability_offset": -0.05},
+    "careful":   {"speed_offset": -0.03, "style_offset": -0.03, "stability_offset": +0.05},
+    "sleepy":    {"speed_offset": -0.08, "style_offset": -0.05, "stability_offset": +0.10},
+}
+
+
+# ────────────────────────────────────────────────────────────────────────
+#  Helpers
+# ────────────────────────────────────────────────────────────────────────
+
+def is_enabled(lang: str = "en") -> bool:
+    """Whether ElevenLabs is the active engine for the given language."""
+    if lang != "en":
+        return False
+    return os.getenv("TTS_ENGINE_EN", "chatterbox").lower() == "elevenlabs"
+
+
+def resolve_voice_id(voice: str) -> str:
+    """Resolve a voice label or chatterbox legacy label to an ElevenLabs voice_id."""
+    if voice in ELEVENLABS_VOICES_EN:
+        return ELEVENLABS_VOICES_EN[voice]
+    if voice in LEGACY_VOICE_MAP_EN:
+        return ELEVENLABS_VOICES_EN[LEGACY_VOICE_MAP_EN[voice]]
+    # Already a raw voice_id?
+    if len(voice) == 20 and voice.isalnum():
+        return voice
+    raise ValueError(f"Unknown voice label: {voice!r}")
+
+
+def _clamp(x: float, lo: float, hi: float) -> float:
+    return max(lo, min(hi, x))
+
+
+def apply_modifier(base: dict, modifier_name: str) -> dict:
+    """Apply a character voice-style modifier on top of a section base.
+
+    Clamps to: stability ∈ [0,1], style ∈ [0,1], speed ∈ [0.65, 1.2].
+    """
+    mod = CHARACTER_VOICE_MODIFIERS_EN.get(modifier_name)
+    if not mod:
+        return dict(base)
+    return {
+        "stability":        _clamp(base["stability"] + mod["stability_offset"], 0.0, 1.0),
+        "similarity_boost": base.get("similarity_boost", 0.75),
+        "style":            _clamp(base["style"] + mod["style_offset"], 0.0, 1.0),
+        "speed":            _clamp(base["speed"] + mod["speed_offset"], 0.65, 1.2),
+    }
+
+
+def chatterbox_to_elevenlabs(exaggeration: float, cfg_weight: float, speed: float) -> dict:
+    """Translate Chatterbox params → ElevenLabs params (formula-based fallback).
+
+    For drop-in compatibility when call sites pass legacy Chatterbox params.
+    Spec tables are preferred (see V2_PHASE_PARAMS_EN, LONG_STORY_TTS_EN), but
+    this formula keeps existing call sites working without rewriting.
+    """
+    return {
+        # Lower cfg_weight (looser/slower delivery) → higher stability.
+        "stability":        _clamp(1.0 - cfg_weight * 0.5, 0.4, 0.95),
+        "similarity_boost": 0.75,
+        # Exaggeration → style; conservative scaling (chatterbox 0.5 → style ~0.10).
+        "style":            _clamp(exaggeration * 0.2, 0.0, 0.5),
+        "speed":            _clamp(speed, 0.65, 1.2),
+    }
+
+
+# ────────────────────────────────────────────────────────────────────────
+#  Core TTS call
+# ────────────────────────────────────────────────────────────────────────
+
+def _normalize_text(text: str, is_phrase: bool) -> str:
+    """Match the same normalization the chatterbox path applies."""
+    text = re.sub(r'\b[A-Z]{3,}\b', lambda m: m.group(0).capitalize(), text)
+    if is_phrase:
+        text = f"... {text}"
+    return text
+
+
+def _split_at_sentence_boundary(text: str, soft_limit: int = SOFT_LIMIT) -> list[str]:
+    """Split a long passage at sentence boundaries into chunks ≤ soft_limit chars."""
+    if len(text) <= soft_limit:
+        return [text]
+    sentences = re.split(r'(?<=[.!?])\s+', text)
+    chunks, buf = [], ""
+    for s in sentences:
+        if len(buf) + len(s) + 1 > soft_limit and buf:
+            chunks.append(buf.strip())
+            buf = s
+        else:
+            buf = (buf + " " + s).strip() if buf else s
+    if buf:
+        chunks.append(buf.strip())
+    return chunks
+
+
+def tts_eleven_raw(text: str, voice: str, *,
+                   stability: float, similarity_boost: float, style: float, speed: float,
+                   is_phrase: bool = False, timeout: float = 180.0) -> AudioSegment:
+    """Single ElevenLabs TTS call → AudioSegment (MP3 decoded via pydub).
+
+    Caller passes section-correct ElevenLabs params (preferred over the
+    chatterbox-formula path).
+    """
+    text = _normalize_text(text, is_phrase)
+    if not text or not text.strip():
+        return AudioSegment.silent(duration=200)
+
+    # Defensive: split at sentence boundaries if over soft limit.
+    if len(text) > SOFT_LIMIT:
+        print(f"     [eleven] chunk {len(text)} chars > {SOFT_LIMIT}, splitting")
+        chunks = _split_at_sentence_boundary(text, SOFT_LIMIT)
+        out = AudioSegment.empty()
+        for c in chunks:
+            out += tts_eleven_raw(c, voice, stability=stability,
+                                  similarity_boost=similarity_boost, style=style,
+                                  speed=speed, is_phrase=False, timeout=timeout)
+        return out
+
+    voice_id = resolve_voice_id(voice)
+    url = ELEVENLABS_URL.format(voice_id=voice_id) + f"?output_format={ELEVENLABS_OUTPUT_FORMAT}"
+    headers = {
+        "xi-api-key": ELEVENLABS_API_KEY,
+        "Content-Type": "application/json",
+        "Accept": "audio/mpeg",
+    }
+    body = {
+        "text": text,
+        "model_id": ELEVENLABS_MODEL,
+        "voice_settings": {
+            "stability": _clamp(stability, 0.0, 1.0),
+            "similarity_boost": _clamp(similarity_boost, 0.0, 1.0),
+            "style": _clamp(style, 0.0, 1.0),
+            "speed": _clamp(speed, 0.65, 1.2),
+        },
+    }
+
+    last_err = None
+    with httpx.Client() as client:
+        for attempt in range(3):
+            try:
+                resp = client.post(url, headers=headers, json=body, timeout=timeout)
+                if resp.status_code == 200 and len(resp.content) > 200:
+                    return AudioSegment.from_file(io.BytesIO(resp.content), format="mp3")
+                last_err = f"http={resp.status_code} body={resp.text[:200]}"
+            except Exception as e:
+                last_err = repr(e)
+            if attempt < 2:
+                time.sleep(2 * (attempt + 1))
+
+    print(f"     [eleven] FAILED voice={voice} text={text[:40]!r}  err={last_err}")
+    word_count = len(text.split())
+    return AudioSegment.silent(duration=max(500, word_count * 300))
+
+
+def tts_eleven_compat(text: str, voice: str, exaggeration: float = 0.45,
+                      cfg_weight: float = 0.5, speed: float = 0.85,
+                      is_phrase: bool = False, timeout: float = 180.0) -> AudioSegment:
+    """Drop-in replacement for chatterbox `generate_tts(...)`.
+
+    Same signature, formula-translated params, English-only voices.
+    Call this from `generate_tts(...)` wrappers when TTS_ENGINE_EN=elevenlabs.
+    """
+    params = chatterbox_to_elevenlabs(exaggeration, cfg_weight, speed)
+    return tts_eleven_raw(text, voice, is_phrase=is_phrase, timeout=timeout, **params)

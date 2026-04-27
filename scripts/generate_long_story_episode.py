@@ -492,9 +492,13 @@ MOOD_SONG_ARC = {
 
 # ── Voice assignment ──
 
-ALL_VOICES = ["female_1", "female_2", "female_3", "male_1", "male_2", "male_3"]
+def _use_elevenlabs() -> bool:
+    return os.getenv("TTS_ENGINE_EN", "chatterbox").lower() == "elevenlabs"
 
-MOOD_NARRATOR_VOICE = {
+
+# Chatterbox era voices.
+_CHATTERBOX_ALL_VOICES = ["female_1", "female_2", "female_3", "male_1", "male_2", "male_3"]
+_CHATTERBOX_MOOD_NARRATOR = {
     "wired":   "female_1",
     "curious": "female_2",
     "calm":    "female_3",
@@ -502,6 +506,31 @@ MOOD_NARRATOR_VOICE = {
     "anxious": "female_2",
     "angry":   "female_3",
 }
+
+# ElevenLabs era voices (per spec §5.1, §5.2).
+# Naming convention preserved: voices ending in "female_*" / "male_*" so the
+# existing assign_voices() pool-filter logic keeps working.
+_ELEVENLABS_ALL_VOICES = [
+    "female_tripti", "female_monika", "female_tara",
+    "female_simran", "female_rhea", "female_maya",
+    "male_ranbir", "male_harshit", "male_ishan",
+]
+_ELEVENLABS_MOOD_NARRATOR = {
+    "wired":   "female_tara",     # Conversational and Expressive
+    "curious": "female_simran",   # Cheerful Best Friend
+    "calm":    "female_tripti",   # Calm and Experienced
+    "sad":     "female_rhea",     # Soft, Polished and Calm
+    "anxious": "female_maya",     # Friendly and Cheerful (warm reassurance)
+    "angry":   "female_monika",   # Deep and Natural (grounding)
+}
+_ELEVENLABS_WHISPER_VOICE = "female_zara"  # Phase 3 / [WHISPER] takeover
+
+if _use_elevenlabs():
+    ALL_VOICES = _ELEVENLABS_ALL_VOICES
+    MOOD_NARRATOR_VOICE = _ELEVENLABS_MOOD_NARRATOR
+else:
+    ALL_VOICES = _CHATTERBOX_ALL_VOICES
+    MOOD_NARRATOR_VOICE = _CHATTERBOX_MOOD_NARRATOR
 
 CHARACTER_VOICE_MODIFIERS = {
     "confident": {"speed_offset": +0.03, "exag_offset": +0.10},
@@ -1509,11 +1538,25 @@ CHATTERBOX_URL = "https://mohan-32314--dreamweaver-chatterbox-tts.modal.run"
 
 def generate_tts(text, voice, exaggeration=0.45, cfg_weight=0.5, speed=0.85,
                  is_phrase=False, timeout=180):
-    """Generate TTS audio via Chatterbox Modal endpoint.
+    """Generate TTS audio via Chatterbox Modal endpoint OR ElevenLabs.
+
+    Engine selected by env TTS_ENGINE_EN (default 'chatterbox').
 
     timeout: Per-attempt timeout in seconds (default 60). Prevents hangs
     on short inputs that Chatterbox can't handle.
     """
+    if _use_elevenlabs():
+        # Translate "female_tripti" / "male_ranbir" labels → bare elevenlabs labels.
+        eleven_voice = voice
+        if voice.startswith(("female_", "male_")):
+            bare = voice.split("_", 1)[1]
+            # Bare labels like "tripti" are already in ELEVENLABS_VOICES_EN.
+            eleven_voice = bare
+        from _elevenlabs_common import tts_eleven_compat
+        return tts_eleven_compat(text, eleven_voice, exaggeration=exaggeration,
+                                 cfg_weight=cfg_weight, speed=speed,
+                                 is_phrase=is_phrase, timeout=timeout)
+
     from urllib.parse import urlencode
 
     # Normalize ALL CAPS words
@@ -1726,6 +1769,16 @@ def generate_section_tts(section_text, phase_key, narrator_voice, voice_map):
     # Build flexible voice lookup (handles OWL vs Hoot mismatches)
     voice_lookup = _build_voice_lookup(voice_map, section_text)
 
+    # Phase 3 ASMR takeover: when ElevenLabs is on, zara narrates Phase 3
+    # for all moods (per spec §5.2 layer 2). Whisper segments also always
+    # use zara regardless of phase.
+    section_narrator = narrator_voice
+    if _use_elevenlabs() and phase_key == "phase_3":
+        section_narrator = _ELEVENLABS_WHISPER_VOICE
+
+    whisper_voice = (_ELEVENLABS_WHISPER_VOICE if _use_elevenlabs()
+                     else narrator_voice)
+
     audio_chunks = []
 
     for i, seg in enumerate(segments):
@@ -1734,7 +1787,7 @@ def generate_section_tts(section_text, phase_key, narrator_voice, voice_map):
             # Pad very short text to avoid Chatterbox issues
             if len(text.split()) <= 3:
                 text = f"... {text}"
-            audio = generate_tts(text, voice=narrator_voice, **phase_params)
+            audio = generate_tts(text, voice=section_narrator, **phase_params)
             audio = trim_tts_silence(audio)
             audio_chunks.append(("audio", audio))
 
@@ -1764,20 +1817,20 @@ def generate_section_tts(section_text, phase_key, narrator_voice, voice_map):
             audio_chunks.append(("audio", audio))
 
         elif seg["type"] == "phrase":
-            audio = generate_tts(seg["text"], voice=narrator_voice,
+            audio = generate_tts(seg["text"], voice=section_narrator,
                                  **LONG_STORY_TTS["phrase"], is_phrase=True)
             audio = trim_tts_silence(audio)
             audio_chunks.append(("audio", audio))
 
         elif seg["type"] == "whisper":
-            audio = generate_tts(seg["text"], voice=narrator_voice,
+            audio = generate_tts(seg["text"], voice=whisper_voice,
                                  **LONG_STORY_TTS["whisper"], is_phrase=True)
             audio = trim_tts_silence(audio)
             audio_chunks.append(("audio", audio))
 
         elif seg["type"] == "breathe_guide":
             text = f"... {seg['text']}"
-            audio = generate_tts(text, voice=narrator_voice,
+            audio = generate_tts(text, voice=section_narrator,
                                  **LONG_STORY_TTS["breathe_guide"])
             audio = trim_tts_silence(audio)
             audio_chunks.append(("audio", audio))

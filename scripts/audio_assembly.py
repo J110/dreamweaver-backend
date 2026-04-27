@@ -10,6 +10,7 @@ Used by:
 """
 
 import io
+import os
 import re
 import time
 from pathlib import Path
@@ -25,9 +26,15 @@ MUSIC_DIR = BASE_DIR / "audio" / "story_music"
 # ── Chatterbox TTS endpoints ────────────────────────────────────────────
 CHATTERBOX_URL = "https://mohan-32314--dreamweaver-chatterbox-tts.modal.run"
 
+
+def _use_elevenlabs() -> bool:
+    return os.getenv("TTS_ENGINE_EN", "chatterbox").lower() == "elevenlabs"
+
+
 # ── Voice mapping by mood ───────────────────────────────────────────────
-# From AUDIO_GENERATION_GUIDELINES: mood → [primary_voice, secondary_voice]
-MOOD_VOICES = {
+# Chatterbox era: mood → [primary_voice, secondary_voice] (2 voice variants per story).
+# ElevenLabs era (per spec §5.1): single narrator per mood — list of one.
+_CHATTERBOX_MOOD_VOICES = {
     "wired":   ["female_3", "male_2"],    # melodic + gentle
     "curious": ["female_4", "male_2"],    # musical + gentle
     "calm":    ["female_1", "asmr"],      # calm + asmr
@@ -35,7 +42,16 @@ MOOD_VOICES = {
     "anxious": ["male_2", "female_1"],    # gentle + calm
     "angry":   ["female_3", "male_2"],    # melodic + gentle
 }
-DEFAULT_VOICES = ["female_1", "asmr"]
+_ELEVENLABS_MOOD_VOICES = {
+    "wired":   ["tara"],     # Conversational and Expressive
+    "curious": ["simran"],   # Cheerful Best Friend
+    "calm":    ["tripti"],   # Calm and Experienced
+    "sad":     ["rhea"],     # Soft, Polished and Calm
+    "anxious": ["maya"],     # Friendly and Cheerful (warm reassurance)
+    "angry":   ["monika"],   # Deep and Natural (grounding)
+}
+MOOD_VOICES = _ELEVENLABS_MOOD_VOICES if _use_elevenlabs() else _CHATTERBOX_MOOD_VOICES
+DEFAULT_VOICES = ["tripti"] if _use_elevenlabs() else ["female_1", "asmr"]
 
 # ── TTS parameter sets ─────────────────────────────────────────────────
 NORMAL_TTS = {"exaggeration": 0.45, "speed": 0.85, "cfg_weight": 0.5}
@@ -126,17 +142,26 @@ def generate_tts(text: str, voice: str, exaggeration: float = 0.45,
                  cfg_weight: float = 0.5, speed: float = 0.85,
                  is_phrase: bool = False,
                  chatterbox_url: str = CHATTERBOX_URL) -> AudioSegment:
-    """Generate TTS audio via Chatterbox Modal endpoint.
+    """Generate TTS audio via Chatterbox Modal endpoint OR ElevenLabs.
+
+    Engine selected by env TTS_ENGINE_EN (default 'chatterbox').
 
     Args:
         text: Text to speak
-        voice: Voice ID (e.g., female_1, male_2, asmr)
+        voice: Voice ID — chatterbox label (female_1, male_2, asmr) OR
+               elevenlabs label (tripti, monika, ranbir, ...)
         exaggeration: Chatterbox exaggeration param (0-1)
         cfg_weight: Chatterbox cfg_weight param (0-1)
         speed: Chatterbox speed param (0-1)
         is_phrase: If True, prefix with ellipsis for breath effect
         chatterbox_url: Override endpoint URL
     """
+    if _use_elevenlabs():
+        from _elevenlabs_common import tts_eleven_compat
+        return tts_eleven_compat(text, voice, exaggeration=exaggeration,
+                                 cfg_weight=cfg_weight, speed=speed,
+                                 is_phrase=is_phrase)
+
     text = normalize_for_tts(text)
     if is_phrase:
         text = f"... {text}"
