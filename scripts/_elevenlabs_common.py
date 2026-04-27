@@ -77,7 +77,7 @@ MOOD_NARRATOR_EN = {
     "calm":    "tripti",   # Calm and Experienced — the anchor
     "sad":     "rhea",     # Soft, Polished and Calm — tender
     "anxious": "monika",   # Deep and Natural — grounding, reassuring
-    "angry":   "maya",     # Friendly and Cheerful — softens the heat
+    "angry":   "zara",     # Soothing/Meditative — softens the heat (was maya, swapped 2026-04-27)
 }
 WHISPER_VOICE_EN = "zara"
 

@@ -84,13 +84,13 @@ This is a **deliberate departure** from the existing dual-narrator A/B system do
 | calm | tripti | Calm and Experienced | The steady anchor — mature, unrushed, the baseline a calm story should sit on |
 | sad | rhea | Soft, Polished and Calm | Tender and soft, doesn't push or perform sympathy; sits beside the feeling rather than fixing it |
 | anxious | monika | Deep and Natural | **Grounding and reassuring.** Anxious children settle into a deep, slow-breathing voice that signals "everything is steady" — the depth is the reassurance |
-| angry | maya | Friendly and Cheerful | **Softens the heat.** Anger meets warmth, not more weight. A friendly, light voice defuses the charge rather than matching its gravity |
+| angry | zara | Soothing, Meditative and Calm | **Softens the heat with stillness.** Anger meets a hushed, meditative voice — not warmth that matches its energy, not gravity that adds weight, but a voice so calm it pulls the child toward stillness. Maya was the original pick (Friendly and Cheerful) but the voice didn't land; replaced 2026-04-27. Zara double-duties as the whisper/Phase-3-ASMR voice, so angry long-stories play in zara throughout (no Phase-3 voice switch — the takeover is just continuation) |
 
 ### 5.2 Long stories — three-layer voice system (preserved)
 
 **Layer 1 — Mood narrator** (same as V2 table above).
 
-**Layer 2 — Phase 3 ASMR takeover.** For all moods, **`zara`** narrates `[PHASE_3]` and any `[WHISPER]` blocks, replacing the mood narrator for those sections. (Hindi pipeline does the same with `roohi`.)
+**Layer 2 — Phase 3 ASMR takeover.** For all moods, **`zara`** narrates `[PHASE_3]` and any `[WHISPER]` blocks, replacing the mood narrator for those sections. (Hindi pipeline does the same with `roohi`.) For **angry** mood specifically, zara is also the Phase-1/2 narrator — so the takeover is a no-op (same voice throughout the story).
 
 **Layer 3 — Character casting.** Per-story `CHAR_VOICE` dict assigns voices to dialogue characters. We **do not** apply the legacy "narrator female → first character male" override — that rule, applied across daily long-story output, would cast a male voice in ~80% of stories and create male-voice monoculture against the diversity-pipeline's intended `~40/40/20` gender split.
 
@@ -98,7 +98,8 @@ Routing rule:
 - The orchestrator (`generate_long_story_episode.py`) already samples character gender per story from the diversity scheduler. Voice routing **respects** that sampling, not overrides it.
 - For each character, pick a voice matching the sampled gender that is not already in use by the narrator, whisper, or another character in this story.
 - Male pool: `ranbir` → `harshit` → `ishan` (priority order).
-- Female pool: any of the 6 mood narrators not currently assigned, plus rotation across the unused mood narrators for variety across stories.
+- Female pool: any of the 5 narrator voices not currently assigned (`tripti, monika, tara, simran, rhea`). `zara` is **excluded** from character casting — she's reserved for the angry-narrator + whisper roles to keep that voice unique.
+- `maya` is **retired** as of 2026-04-27 (voice didn't land in user testing); the voice ID stays in the library for reference but is unused.
 - `WHISPER_VOICE = "zara"` regardless of cast.
 
 The `voice_map` is persisted in `metadata.json` exactly as today.

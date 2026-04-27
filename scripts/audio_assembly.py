@@ -48,7 +48,7 @@ _ELEVENLABS_MOOD_VOICES = {
     "calm":    ["tripti"],   # Calm and Experienced — the anchor
     "sad":     ["rhea"],     # Soft, Polished and Calm — tender
     "anxious": ["monika"],   # Deep and Natural — grounding, reassuring
-    "angry":   ["maya"],     # Friendly and Cheerful — softens the heat
+    "angry":   ["zara"],     # Soothing/Meditative — softens the heat (was maya, swapped 2026-04-27)
 }
 MOOD_VOICES = _ELEVENLABS_MOOD_VOICES if _use_elevenlabs() else _CHATTERBOX_MOOD_VOICES
 DEFAULT_VOICES = ["tripti"] if _use_elevenlabs() else ["female_1", "asmr"]

@@ -512,16 +512,19 @@ _CHATTERBOX_MOOD_NARRATOR = {
 # existing assign_voices() pool-filter logic keeps working.
 _ELEVENLABS_ALL_VOICES = [
     "female_tripti", "female_monika", "female_tara",
-    "female_simran", "female_rhea", "female_maya",
+    "female_simran", "female_rhea",
     "male_ranbir", "male_harshit", "male_ishan",
 ]
+# Note: female_maya retired 2026-04-27 (user feedback). female_zara is the
+# angry-mood narrator and the whisper voice; intentionally NOT in this pool
+# so she isn't double-cast as a dialogue character.
 _ELEVENLABS_MOOD_NARRATOR = {
     "wired":   "female_tara",     # Conversational and Expressive — playful energy
     "curious": "female_simran",   # Cheerful Best Friend — wonder vibe
     "calm":    "female_tripti",   # Calm and Experienced — the anchor
     "sad":     "female_rhea",     # Soft, Polished and Calm — tender
     "anxious": "female_monika",   # Deep and Natural — grounding, reassuring
-    "angry":   "female_maya",     # Friendly and Cheerful — softens the heat
+    "angry":   "female_zara",     # Soothing/Meditative — softens the heat (was maya, swapped 2026-04-27)
 }
 _ELEVENLABS_WHISPER_VOICE = "female_zara"  # Phase 3 / [WHISPER] takeover
 
