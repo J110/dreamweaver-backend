@@ -558,6 +558,10 @@ def crossfade_phases(phase_audios: list, crossfade_ms: int = 3000) -> "AudioSegm
 # TTS generation
 # ═════════════════════════════════════════════════════════════════════════
 
+def _use_elevenlabs(lang: str = "en") -> bool:
+    return lang == "en" and os.getenv("TTS_ENGINE_EN", "chatterbox").lower() == "elevenlabs"
+
+
 def generate_tts_for_segment(
     client: httpx.Client,
     text: str,
@@ -568,7 +572,24 @@ def generate_tts_for_segment(
     speed: float = 1.0,
     max_retries: int = 3,
 ) -> Optional[bytes]:
-    """Call Chatterbox Modal endpoint and return audio bytes (WAV for lossless quality)."""
+    """Return audio bytes (WAV for lossless quality).
+
+    Routes via Chatterbox (Modal) or ElevenLabs based on TTS_ENGINE_EN env flag.
+    """
+    if _use_elevenlabs(lang):
+        # ElevenLabs path: get an AudioSegment via the shared module, export as WAV bytes.
+        try:
+            sys.path.insert(0, str(Path(__file__).parent))
+            from _elevenlabs_common import tts_eleven_compat
+            seg = tts_eleven_compat(text, voice, exaggeration=exaggeration,
+                                    cfg_weight=cfg_weight, speed=speed)
+            buf = io.BytesIO()
+            seg.export(buf, format="wav")
+            return buf.getvalue()
+        except Exception as e:
+            logger.warning("  ElevenLabs TTS failed: %s", e)
+            return None
+
     params = {
         "text": text,
         "voice": voice,
@@ -607,7 +628,14 @@ def generate_tts_for_segment(
 
 
 def warm_up_chatterbox(client: httpx.Client) -> bool:
-    """Ping health endpoint to wake up Modal container."""
+    """Ping health endpoint to wake up Modal container.
+
+    No-op when running in ElevenLabs mode (no warm-up needed).
+    """
+    if _use_elevenlabs():
+        logger.info("ElevenLabs mode: skipping Chatterbox warm-up")
+        return True
+
     logger.info("Warming up Chatterbox Modal container...")
     try:
         resp = client.get(CHATTERBOX_HEALTH, timeout=30.0)
