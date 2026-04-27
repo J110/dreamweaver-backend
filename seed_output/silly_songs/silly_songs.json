@@ -1,0 +1,61 @@
+[
+  {
+    "id": "hi-chips_chahiye-2-5-a8f2",
+    "lang": "hi",
+    "language": "hi",
+    "type": "song",
+    "subtype": "silly_song",
+    "story_type": "silly_song",
+    "storyType": "silly_song",
+    "category": "battle_cry",
+    "anthem_id": "chips_chahiye",
+    "anthem": "Chips chahiye!",
+    "title": "Chips Chahiye!",
+    "title_en": "I Want Chips!",
+    "card_label": "Chips chahiye!",
+    "card_subtitle": "Battle cry: ek packet mil gaya",
+    "description": "Battle cry: ek packet mil gaya",
+    "description_en": "Battle cry: an Indian kid wants chips before dinner",
+    "lyrics": "[verse 1]\nSchool khatam, hum aaye\n*Dhadaam* bag tham gaye\nMaa boli, khaana le lo\nHum boli, chips chahiye!\n\n[chorus]\nChips chahiye, chips chahiye!\nCrunchy crunchy chips chahiye!\nMaa do na, please de na\nChips chahiye, chips chahiye!\n\n[verse 2]\nMaa kahti, pehle daal\nHum kahte, chips abhi laal\n*Khat khat* fridge khulta\nPacket bhi nikalta\n\n[chorus]\nChips chahiye, chips chahiye!\nCrunchy crunchy chips chahiye!\nMaa do na, please de na\nChips chahiye, chips chahiye!\n\n[ending]\nMaa hansi, packet diya\nCrunch crunch, neend aayi\n",
+    "lyrics_deva": "स्कूल खत्म, हम आए\n*धड़ाम* बैग थम गए\nमाँ बोली, खाना ले लो\nहम बोली, चिप्स चाहिए!\n\nचिप्स चाहिए, चिप्स चाहिए!\nक्रंची क्रंची चिप्स चाहिए!\nमाँ दो ना, प्लीज़ दे ना\nचिप्स चाहिए, चिप्स चाहिए!\n\nमाँ कहती, पहले दाल\nहम कहते, चिप्स अभी लाल\n*खट खट* फ्रिज खुलता\nपैकेट भी निकलता\n\nचिप्स चाहिए, चिप्स चाहिए!\nक्रंची क्रंची चिप्स चाहिए!\nमाँ दो ना, प्लीज़ दे ना\nचिप्स चाहिए, चिप्स चाहिए!\n\nमाँ हँसी, पैकेट दिया\nक्रंच क्रंच, नींद आई\n",
+    "raw_lyrics": "[verse 1]\nSchool khatam, hum aaye\n*Dhadaam* bag tham gaye\nMaa boli, khaana le lo\nHum boli, chips chahiye!\n\n[chorus]\nChips chahiye, chips chahiye!\nCrunchy crunchy chips chahiye!\nMaa do na, please de na\nChips chahiye, chips chahiye!\n\n[verse 2]\nMaa kahti, pehle daal\nHum kahte, chips abhi laal\n*Khat khat* fridge khulta\nPacket bhi nikalta\n\n[chorus]\nChips chahiye, chips chahiye!\nCrunchy crunchy chips chahiye!\nMaa do na, please de na\nChips chahiye, chips chahiye!\n\n[ending]\nMaa hansi, packet diya\nCrunch crunch, neend aayi\n",
+    "age_group": "2-5",
+    "ageGroup": "2-5",
+    "age_min": 2,
+    "age_max": 5,
+    "target_age": "2-5",
+    "mood": "wired",
+    "instruments": "ukulele, dholki, and hand claps",
+    "tempo": 124,
+    "char_count": 472,
+    "line_count": 18,
+    "audio_file": "/audio/silly-songs/hi-chips_chahiye-2-5-a8f2.mp3",
+    "audio_url": "/audio/silly-songs/hi-chips_chahiye-2-5-a8f2.mp3",
+    "audio_variants": [
+      {
+        "voice": "minimax_v2.5_hi_ref",
+        "url": "/audio/silly-songs/hi-chips_chahiye-2-5-a8f2.mp3",
+        "duration_seconds": 44,
+        "provider": "minimax-music-v2.5-fal"
+      }
+    ],
+    "cover": "/covers/hi-chips_chahiye-2-5-a8f2.webp",
+    "cover_file": "/covers/silly-songs/hi-chips_chahiye-2-5-a8f2_cover.webp",
+    "cover_context": "A small Indian child sitting cross-legged on a sunlit kitchen floor at golden hour, school bag flopped open beside them, holding up a single potato chip with a delighted face, a smiling mom watching from a stove behind a pressure cooker, warm cozy kitchen with a ceiling fan and chai cup, bold cartoon style",
+    "duration_seconds": 44,
+    "durationSec": 44,
+    "audio_engine": "minimax-music-v2.5-fal",
+    "tts_engine": "minimax-music-v2.5-fal",
+    "reference_audio": "https://dreamvalley.app/audio/reference/hindi_lullaby_ref.m4a",
+    "experimental_v2": false,
+    "has_baked_music": true,
+    "is_generated": true,
+    "author_id": "system",
+    "categories": [
+      "Bedtime",
+      "Silly Song"
+    ],
+    "created_at": "2026-04-27T10:28:43",
+    "updated_at": "2026-04-27T10:28:43"
+  }
+]

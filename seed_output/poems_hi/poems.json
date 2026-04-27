@@ -1,0 +1,58 @@
+[
+  {
+    "id": "hi-sound-2-5-b3c7",
+    "lang": "hi",
+    "language": "hi",
+    "type": "poem",
+    "story_type": "poem",
+    "storyType": "poem",
+    "content_type": "poem",
+    "poem_type": "sound",
+    "title": "Baarish Ki Awaaz",
+    "title_en": "The Sound of Rain",
+    "description": "Hindi onomatopoeia poem about rain at bedtime",
+    "description_en": "Hindi onomatopoeia poem about rain at bedtime",
+    "poem_text": "Tap tap tap, baadal hai\nChhap chhap chhap, paani hai\nPatak patak, chhat pe sab\nThak thak thak, darwaaze ab\nSarr sarr, hawa chali\nGunghun gunghun, neend chali\nChip chip chip, boondein hain\nTip tip tip, sapne hain\nTap tap tap, neend aaye\nChhap chhap chhap, so jaaye\n",
+    "poem_text_deva": "टप टप टप, बादल है\nछप छप छप, पानी है\nपटक पटक, छत पे सब\nथक थक थक, दरवाज़े अब\nसर्र सर्र, हवा चली\nगुनगुन गुनगुन, नींद चली\nचिप चिप चिप, बूंदें हैं\nटिप टिप टिप, सपने हैं\nटप टप टप, नींद आए\nछप छप छप, सो जाए\n",
+    "text": "Tap tap tap, baadal hai\nChhap chhap chhap, paani hai\nPatak patak, chhat pe sab\nThak thak thak, darwaaze ab\nSarr sarr, hawa chali\nGunghun gunghun, neend chali\nChip chip chip, boondein hain\nTip tip tip, sapne hain\nTap tap tap, neend aaye\nChhap chhap chhap, so jaaye\n",
+    "raw_text": "Tap tap tap, baadal hai\nChhap chhap chhap, paani hai\nPatak patak, chhat pe sab\nThak thak thak, darwaaze ab\nSarr sarr, hawa chali\nGunghun gunghun, neend chali\nChip chip chip, boondein hain\nTip tip tip, sapne hain\nTap tap tap, neend aaye\nChhap chhap chhap, so jaaye\n",
+    "age_group": "2-5",
+    "ageGroup": "2-5",
+    "age_min": 2,
+    "age_max": 5,
+    "target_age": "2-5",
+    "mood": "calm",
+    "instruments": "soft harmonium and gentle tabla",
+    "tempo": 92,
+    "char_count": 264,
+    "line_count": 10,
+    "audio_file": "/audio/poems-hi/hi-sound-2-5-b3c7.mp3",
+    "audio_url": "/audio/poems-hi/hi-sound-2-5-b3c7.mp3",
+    "audio_variants": [
+      {
+        "voice": "minimax_v2.5_hi_ref",
+        "url": "/audio/poems-hi/hi-sound-2-5-b3c7.mp3",
+        "duration_seconds": 29,
+        "provider": "minimax-music-v2.5-fal"
+      }
+    ],
+    "cover": "/covers/hi-sound-2-5-b3c7.webp",
+    "cover_file": "/covers/poems-hi/hi-sound-2-5-b3c7_cover.webp",
+    "cover_context": "A small Indian rooftop in soft watercolor twilight, raindrops falling on banana leaves, warm yellow window glow, a cozy lantern on a windowsill, blue-grey monsoon clouds gentle and hazy, no people, abstract dreamy atmosphere, children's book illustration",
+    "duration_seconds": 29,
+    "durationSec": 29,
+    "audio_engine": "minimax-music-v2.5-fal",
+    "tts_engine": "minimax-music-v2.5-fal",
+    "reference_audio": "https://dreamvalley.app/audio/reference/hindi_lullaby_ref.m4a",
+    "experimental_v2": false,
+    "has_baked_music": true,
+    "is_generated": true,
+    "author_id": "system",
+    "categories": [
+      "Bedtime",
+      "Poem"
+    ],
+    "created_at": "2026-04-27T10:28:43",
+    "updated_at": "2026-04-27T10:28:43"
+  }
+]
