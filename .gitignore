@@ -50,3 +50,4 @@ voice_references/*.mp3
 
 # Temp scripts
 add_annotations.py
+.venv-test/
