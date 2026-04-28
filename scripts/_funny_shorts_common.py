@@ -475,10 +475,13 @@ You have full creative freedom WITHIN these constraints:
 - Exactly two characters speaking, no narrator
 - 6-20 dialogue lines total (vary the length — short shorts are good)
 - Max 12 words per line
-- Total under 500 characters
+- Total STRICTLY under 500 characters across all lines combined.
+  AIM for 350-450 chars (count carefully — going over 500 is rejected).
 - Use audio tags ONLY from this list: {approved_tags}
-- Bedtime-appropriate ending (not amped up; sigh, quiet realization, yawn,
-  thoughtful pause, soft laughter all work)
+- The FINAL LINE must include one of these settling cues to be valid:
+  [laughs together], [laughs], [grinning], [sigh], [yawns],
+  [thoughtful], [hmm], or [whispers]; OR contain a soft word
+  ("yeah", "okay", "guess", "maybe", "fine"). NOT optional.
 
 WHAT YOU MUST AVOID:
 - Repeating the comedic structure of recent funny shorts (listed below)
@@ -554,9 +557,13 @@ You have full creative freedom WITHIN these constraints:
 - Exactly two characters speaking, no narrator
 - 6-20 dialogue lines total (vary the length)
 - Max 12 words per line
-- Total under 500 characters
+- Total STRICTLY under 500 characters across all lines combined.
+  AIM for 350-450 chars (count carefully — going over 500 is rejected).
 - Use audio tags ONLY from this list: {approved_tags}
-- Bedtime-appropriate ending
+- The FINAL LINE must include one of these settling cues:
+  [laughs together], [laughs], [grinning], [sigh], [yawns],
+  [thoughtful], [hmm], [whispers]; OR a soft Hindi/Hinglish closing word
+  ("theek hai", "achha", "haan", "okay", "fine", "yaar"). NOT optional.
 
 WHAT YOU MUST AVOID:
 - Repeating the comedic structure of recent shorts (listed below)

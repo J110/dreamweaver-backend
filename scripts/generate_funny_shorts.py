@@ -234,7 +234,9 @@ def main() -> int:
 
     script = None
     last_errors: list[str] = []
-    for attempt in range(3):
+    for attempt in range(5):
+        if attempt > 0:
+            time.sleep(35)  # free tier 2 req/min, leave buffer
         print(f"Mistral attempt {attempt + 1}...")
         try:
             candidate = request_mistral_script(prompt)
