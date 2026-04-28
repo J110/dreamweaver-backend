@@ -626,6 +626,97 @@ OUTPUT FORMAT (JSON):
 Just the JSON. No commentary."""
 
 
+# ────────────────────────────────────────────────────────────────────────
+#  ElevenLabs v3 Text-to-Dialogue + sting frame assembler
+# ────────────────────────────────────────────────────────────────────────
+
+import io
+import os
+from pathlib import Path
+
+ELEVENLABS_V3_URL = "https://api.elevenlabs.io/v1/text-to-dialogue"
+
+ELEVENLABS_V3_FUNNY_SHORT_SETTINGS = {
+    "stability": 0.4,
+    "similarity_boost": 0.75,
+    "style": 0.5,
+    "use_speaker_boost": True,
+}
+
+
+def render_dialogue_v3(
+    inputs: list[dict],
+    voice_a_id: str,
+    voice_b_id: str,
+    api_key: str | None = None,
+    timeout: float = 90.0,
+) -> bytes:
+    """Call ElevenLabs v3 Text-to-Dialogue and return MP3 bytes."""
+    import httpx
+
+    api_key = api_key or os.environ.get("ELEVENLABS_API_KEY")
+    if not api_key:
+        # Fallback to baked default in _elevenlabs_common.py
+        try:
+            from _elevenlabs_common import ELEVENLABS_API_KEY  # type: ignore
+        except ImportError:
+            from scripts._elevenlabs_common import ELEVENLABS_API_KEY  # type: ignore
+        api_key = ELEVENLABS_API_KEY
+
+    payload_inputs = [
+        {
+            "text": line["text"],
+            "voice_id": voice_a_id if line["voice"] == "A" else voice_b_id,
+        }
+        for line in inputs
+    ]
+    body = {
+        "inputs": payload_inputs,
+        "model_id": "eleven_v3",
+        "settings": ELEVENLABS_V3_FUNNY_SHORT_SETTINGS,
+    }
+    with httpx.Client(timeout=timeout) as client:
+        r = client.post(
+            ELEVENLABS_V3_URL,
+            headers={"xi-api-key": api_key, "Content-Type": "application/json"},
+            json=body,
+        )
+        r.raise_for_status()
+        return r.content
+
+
+def frame_dialogue_with_stings(
+    dialogue_bytes: bytes,
+    intro_sting_path: Path | str,
+    outro_sting_path: Path | str,
+    gap_ms: int = 1000,
+) -> bytes:
+    """Assemble final MP3: intro + silence + dialogue + silence + outro."""
+    from pydub import AudioSegment
+
+    intro_p = Path(intro_sting_path)
+    outro_p = Path(outro_sting_path)
+    if not intro_p.exists():
+        raise FileNotFoundError(f"Intro sting missing at {intro_p}")
+    if not outro_p.exists():
+        raise FileNotFoundError(f"Outro sting missing at {outro_p}")
+
+    intro = AudioSegment.from_mp3(str(intro_p))
+    outro = AudioSegment.from_mp3(str(outro_p))
+    dialogue = AudioSegment.from_mp3(io.BytesIO(dialogue_bytes))
+
+    silence = AudioSegment.silent(
+        duration=gap_ms,
+        frame_rate=dialogue.frame_rate or 44100,
+    )
+
+    full = intro + silence + dialogue + silence + outro
+
+    out = io.BytesIO()
+    full.export(out, format="mp3", bitrate="192k")
+    return out.getvalue()
+
+
 def build_prompt(
     *,
     lang: str,
