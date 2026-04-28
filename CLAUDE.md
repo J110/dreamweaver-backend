@@ -219,6 +219,17 @@ Never proceed past a violation without explicit approval. Pre-existing violation
 - Funny shorts: `type=song`, `subtype=funny_short`.
 - Musical poems: `type=poem`.
 
+### Subtype semantics — UI must NEVER treat `type=song` as "lullaby"
+
+Three distinct user-visible categories share `type=song`:
+- `subtype=funny_short` → Funny Shorts (have baked dialogue audio + visual emphasis)
+- `subtype=silly_song` → Silly Songs (MiniMax-generated music)
+- `subtype` absent or `lullaby` → actual Lullabies
+
+**Generators MUST set `subtype` on every emitted item.** Items missing `subtype` are inferred to be lullabies (legacy behavior), so any generator that emits a non-lullaby `type=song` without a `subtype` will silently render as a lullaby on the frontend. This was the root cause of the 2026-04-28 production bug where 5 funny shorts appeared in the Loriyaan / Lullabies row.
+
+Frontend mirror: `dreamweaver-web/src/utils/contentTypes.js` is the single source of truth for predicates (`isLullaby`, `isFunnyShort`, `isSillySong`) and display labels. UI code never checks `item.type === 'song'` directly. Adding a new subtype requires updating that file plus updating the relevant generator to set the field.
+
 `SEED_PREFERRED_FIELDS` (in `app/services/local_store.py`) — these are force-synced from `seed_output/content.json` on each boot, overwriting runtime values:
 
 ```python
