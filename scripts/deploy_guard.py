@@ -165,43 +165,55 @@ def capture_state(api: str) -> dict:
         state["story_count"] = 0
         state["stories_error"] = str(e)
 
-    # 2. Silly songs (per age group)
+    # The /silly-songs, /lullabies, /poems endpoints all default to lang=en when
+    # no lang param is given, so we must call once per language to cover Hindi
+    # variants. Without this loop, broken Hindi covers/audio go unflagged
+    # (Apr 28 2026: missed hi-question-6-8-ad89 entirely).
+    LANGS = ["en", "hi"]
+
+    # 2. Silly songs (per age group × lang)
     state["silly_songs"] = {}
     for age in ["2-5", "6-8", "9-12"]:
-        try:
-            resp = client.get(f"{api}/api/v1/silly-songs", params={"age_group": age})
-            data = resp.json()
-            items = data.get("data", {}).get("items", [])
-            state["silly_songs"][age] = {
-                item["id"]: {
-                    "title": item.get("title"),
-                    "has_audio": bool(item.get("audio_file")),
-                    "audio_url": f"/audio/silly-songs/{item['audio_file']}" if item.get("audio_file") else "",
-                    "cover_url": f"/covers/silly-songs/{item['cover_file']}" if item.get("cover_file") else "",
-                }
-                for item in items
-            }
-        except Exception:
-            state["silly_songs"][age] = {}
+        bucket = {}
+        for lang in LANGS:
+            try:
+                resp = client.get(f"{api}/api/v1/silly-songs",
+                                  params={"age_group": age, "lang": lang})
+                data = resp.json()
+                items = data.get("data", {}).get("items", [])
+                for item in items:
+                    bucket[item["id"]] = {
+                        "title": item.get("title"),
+                        "lang": lang,
+                        "has_audio": bool(item.get("audio_file")),
+                        "audio_url": f"/audio/silly-songs/{item['audio_file']}" if item.get("audio_file") else "",
+                        "cover_url": f"/covers/silly-songs/{item['cover_file']}" if item.get("cover_file") else "",
+                    }
+            except Exception:
+                pass
+        state["silly_songs"][age] = bucket
 
-    # 3. Poems (per age group)
+    # 3. Poems (per age group × lang)
     state["poems"] = {}
     for age in ["2-5", "6-8", "9-12"]:
-        try:
-            resp = client.get(f"{api}/api/v1/poems", params={"age_group": age})
-            data = resp.json()
-            items = data.get("data", {}).get("items", [])
-            state["poems"][age] = {
-                item["id"]: {
-                    "title": item.get("title"),
-                    "has_audio": bool(item.get("audio_file")),
-                    "audio_url": f"/audio/poems/{item['audio_file']}" if item.get("audio_file") else "",
-                    "cover_url": f"/covers/poems/{item['cover_file']}" if item.get("cover_file") else "",
-                }
-                for item in items
-            }
-        except Exception:
-            state["poems"][age] = {}
+        bucket = {}
+        for lang in LANGS:
+            try:
+                resp = client.get(f"{api}/api/v1/poems",
+                                  params={"age_group": age, "lang": lang})
+                data = resp.json()
+                items = data.get("data", {}).get("items", [])
+                for item in items:
+                    bucket[item["id"]] = {
+                        "title": item.get("title"),
+                        "lang": lang,
+                        "has_audio": bool(item.get("audio_file")),
+                        "audio_url": f"/audio/poems/{item['audio_file']}" if item.get("audio_file") else "",
+                        "cover_url": f"/covers/poems/{item['cover_file']}" if item.get("cover_file") else "",
+                    }
+            except Exception:
+                pass
+        state["poems"][age] = bucket
 
     return state
 
