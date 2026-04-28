@@ -1,5 +1,5 @@
 {
-  "captured_at": "2026-04-26T13:18:40.820559",
+  "captured_at": "2026-04-28T12:36:00.969090",
   "api": "https://api.dreamvalley.app",
   "stories": {
     "counting-2-5-4f65": {
@@ -2676,218 +2676,396 @@
       ],
       "cover_url": "/covers/gen-466919aaf983.svg",
       "mood": "wired"
+    },
+    "gen-d785f05f65d5": {
+      "id": "gen-d785f05f65d5",
+      "title": "Tuktu and the Garden",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/d785f05f_mixed.mp3"
+      ],
+      "cover_url": "/covers/gen-d785f05f65d5.svg",
+      "mood": "calm"
+    },
+    "warning-2-5-0ee8": {
+      "id": "warning-2-5-0ee8",
+      "title": "Mira and the Fluttering Dreams",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/warning-2-5-0ee8_female_1.mp3"
+      ],
+      "cover_url": "/covers/warning-2-5-0ee8.svg",
+      "mood": "curious"
+    },
+    "gen-e19f23639df1": {
+      "id": "gen-e19f23639df1",
+      "title": "Comet and the Glowing Dust Trail",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-e19f_simran.mp3"
+      ],
+      "cover_url": "/covers/gen-e19f23639df1.svg",
+      "mood": "curious"
+    },
+    "gen-01f8d5ad1a28": {
+      "id": "gen-01f8d5ad1a28",
+      "title": "Tavi and Lumi and the Kitchen",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/01f8d5ad_mixed.mp3"
+      ],
+      "cover_url": "/covers/gen-01f8d5ad1a28.svg",
+      "mood": "anxious"
+    },
+    "gen-95f565423997": {
+      "id": "gen-95f565423997",
+      "title": "Pearl and the Whispering Tidepool",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-95f5_monika.mp3"
+      ],
+      "cover_url": "/covers/gen-95f565423997.svg",
+      "mood": "anxious"
+    },
+    "gen-a0e68041a047": {
+      "id": "gen-a0e68041a047",
+      "title": "Tavi and Lumi and the Kitchen",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/a0e68041_mixed.mp3"
+      ],
+      "cover_url": "/covers/gen-a0e68041a047.svg",
+      "mood": "anxious"
+    },
+    "warning-2-5-c7f7": {
+      "id": "warning-2-5-c7f7",
+      "title": "Pippa and the Winged Dreams",
+      "type": "song",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/warning-2-5-c7f7_female_1.mp3"
+      ],
+      "cover_url": "/covers/warning-2-5-c7f7.svg",
+      "mood": "wired"
+    },
+    "gen-88018a9d7d49": {
+      "id": "gen-88018a9d7d49",
+      "title": "Rusty and the Moon That Wobbled",
+      "type": "story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/gen-8801_male_2.mp3",
+        "/audio/pre-gen/gen-8801_female_3.mp3"
+      ],
+      "cover_url": "/covers/gen-88018a9d7d49.svg",
+      "mood": "wired"
+    },
+    "gen-0b4b8705931d": {
+      "id": "gen-0b4b8705931d",
+      "title": "Zuri and Tembo and the Workshop",
+      "type": "long_story",
+      "has_audio": true,
+      "has_cover": true,
+      "audio_urls": [
+        "/audio/pre-gen/0b4b8705_mixed.mp3"
+      ],
+      "cover_url": "/covers/gen-0b4b8705931d.svg",
+      "mood": "wired"
     }
   },
-  "story_count": 193,
+  "story_count": 202,
   "silly_songs": {
     "2-5": {
       "not_tired_2_5": {
         "title": "I'm Not Tired",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/silly-songs/not_tired_2_5.mp3",
         "cover_url": "/covers/silly-songs/not_tired_2_5.webp"
       },
       "socks-dont-match": {
         "title": "My Socks Don't Match",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/silly-songs/socks-dont-match.mp3",
         "cover_url": "/covers/silly-songs/socks-dont-match.webp"
       },
       "five-more-minutes": {
         "title": "Five More Minutes",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/silly-songs/five-more-minutes.mp3",
         "cover_url": "/covers/silly-songs/five-more-minutes.webp"
       },
       "five_minutes_2_5": {
         "title": "Five More Minutes",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/silly-songs/five_minutes_2_5.mp3",
         "cover_url": "/covers/silly-songs/five_minutes_2_5.webp"
       },
       "my_birthday_2_5": {
         "title": "It'S My Birthday!",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/silly-songs/my_birthday_2_5.mp3",
         "cover_url": "/covers/silly-songs/my_birthday_2_5.webp"
       },
       "not_sleepy_2_5": {
         "title": "I'M Not Sleepy",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/silly-songs/not_sleepy_2_5.mp3",
         "cover_url": "/covers/silly-songs/not_sleepy_2_5.webp"
       },
       "no_bath_2_5": {
         "title": "No Bath",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/silly-songs/no_bath_2_5.mp3",
         "cover_url": "/covers/silly-songs/no_bath_2_5.webp"
       },
       "dont_like_it_2_5": {
         "title": "I Don'T Like It",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/silly-songs/dont_like_it_2_5.mp3",
         "cover_url": "/covers/silly-songs/dont_like_it_2_5.webp"
       },
       "no_no_no_2_5": {
         "title": "No No No",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/silly-songs/no_no_no_2_5.mp3",
         "cover_url": "/covers/silly-songs/no_no_no_2_5.webp"
       },
       "puddles_2_5": {
         "title": "Puddles!",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/silly-songs/puddles_2_5.mp3",
         "cover_url": "/covers/silly-songs/puddles_2_5.webp"
       },
       "why_dark_2_5": {
         "title": "Why Is It Dark?",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/silly-songs/why_dark_2_5.mp3",
         "cover_url": "/covers/silly-songs/why_dark_2_5.webp"
       },
       "pyjama_day_2_5": {
         "title": "Pyjama Day!",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/silly-songs/pyjama_day_2_5.mp3",
         "cover_url": "/covers/silly-songs/pyjama_day_2_5.webp"
       },
       "where_socks_2_5": {
         "title": "Where Do Socks Go?",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/silly-songs/where_socks_2_5.mp3",
         "cover_url": "/covers/silly-songs/where_socks_2_5.webp"
       },
       "ice_cream_2_5": {
         "title": "Ice Cream!",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/silly-songs/ice_cream_2_5.mp3",
         "cover_url": "/covers/silly-songs/ice_cream_2_5.webp"
       },
       "belly_button_2_5": {
         "title": "What'S My Belly Button For?",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/silly-songs/belly_button_2_5.mp3",
         "cover_url": "/covers/silly-songs/belly_button_2_5.webp"
       },
       "bubbles_2_5": {
         "title": "Bubbles!",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/silly-songs/bubbles_2_5.mp3",
         "cover_url": "/covers/silly-songs/bubbles_2_5.webp"
       },
       "dont_wanna_2_5": {
         "title": "I Don'T Wanna",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/silly-songs/dont_wanna_2_5.mp3",
         "cover_url": "/covers/silly-songs/dont_wanna_2_5.webp"
+      },
+      "hi-chips_chahiye-2-5-a8f2": {
+        "title": "Chips Chahiye!",
+        "lang": "hi",
+        "has_audio": true,
+        "audio_url": "/audio/silly-songs/hi-chips_chahiye-2-5-a8f2.mp3",
+        "cover_url": "/covers/silly-songs/hi-chips_chahiye-2-5-a8f2_cover.webp"
       }
     },
     "6-8": {
       "not_fair_6_8": {
         "title": "That's Not Fair",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/silly-songs/not_fair_6_8.mp3",
         "cover_url": "/covers/silly-songs/not_fair_6_8.webp"
       },
       "backpack-too-heavy": {
         "title": "My Backpack Is Too Heavy",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/silly-songs/backpack-too-heavy.mp3",
         "cover_url": "/covers/silly-songs/backpack-too-heavy.webp"
       },
       "vegetables-plotting": {
         "title": "Vegetables Are Plotting Against Me",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/silly-songs/vegetables-plotting.mp3",
         "cover_url": "/covers/silly-songs/vegetables-plotting.webp"
       },
       "five_minutes_6_8": {
         "title": "Five More Minutes",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/silly-songs/five_minutes_6_8.mp3",
         "cover_url": "/covers/silly-songs/five_minutes_6_8.webp"
       },
       "grownups_weird_6_8": {
         "title": "Grown-Ups Are Weird",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/silly-songs/grownups_weird_6_8.mp3",
         "cover_url": "/covers/silly-songs/grownups_weird_6_8.webp"
       },
       "not_my_fault_6_8": {
         "title": "It'S Not My Fault",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/silly-songs/not_my_fault_6_8.mp3",
         "cover_url": "/covers/silly-songs/not_my_fault_6_8.webp"
       },
       "one_more_6_8": {
         "title": "One More",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/silly-songs/one_more_6_8.mp3",
         "cover_url": "/covers/silly-songs/one_more_6_8.webp"
       },
       "no_school_6_8": {
         "title": "No School Tomorrow!",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/silly-songs/no_school_6_8.mp3",
         "cover_url": "/covers/silly-songs/no_school_6_8.webp"
       },
       "new_pet_6_8": {
         "title": "We Got A Pet!",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/silly-songs/new_pet_6_8.mp3",
         "cover_url": "/covers/silly-songs/new_pet_6_8.webp"
       },
       "snow_day_6_8": {
         "title": "Snow Day!",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/silly-songs/snow_day_6_8.mp3",
         "cover_url": "/covers/silly-songs/snow_day_6_8.webp"
       },
       "pizza_night_6_8": {
         "title": "Pizza Night!",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/silly-songs/pizza_night_6_8.mp3",
         "cover_url": "/covers/silly-songs/pizza_night_6_8.webp"
       },
       "sleepover_6_8": {
         "title": "Sleepover!",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/silly-songs/sleepover_6_8.mp3",
         "cover_url": "/covers/silly-songs/sleepover_6_8.webp"
+      },
+      "hi-ulta_ulta_hoon-6-8-e897": {
+        "title": "Ulta Ulta Hoon Masti Mein",
+        "lang": "hi",
+        "has_audio": true,
+        "audio_url": "/audio/silly-songs/hi-ulta_ulta_hoon-6-8-e897.mp3",
+        "cover_url": "/covers/silly-songs/hi-ulta_ulta_hoon-6-8-e897_cover.webp"
       }
     },
     "9-12": {
       "i_forgot_9_12": {
         "title": "I Forgot",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/silly-songs/i_forgot_9_12.mp3",
         "cover_url": "/covers/silly-songs/i_forgot_9_12.webp"
       },
       "goodnight-already": {
         "title": "I Said Goodnight Already",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/silly-songs/goodnight-already.mp3",
         "cover_url": "/covers/silly-songs/goodnight-already.webp"
       },
       "homework-ate-itself": {
         "title": "My Homework Ate Itself",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/silly-songs/homework-ate-itself.mp3",
         "cover_url": "/covers/silly-songs/homework-ate-itself.webp"
       },
       "in_a_minute_9_12": {
         "title": "In A Minute",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/silly-songs/in_a_minute_9_12.mp3",
         "cover_url": "/covers/silly-songs/in_a_minute_9_12.webp"
       },
       "one_more_9_12": {
         "title": "One More",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/silly-songs/one_more_9_12.mp3",
         "cover_url": "/covers/silly-songs/one_more_9_12.webp"
+      },
+      "last_day_9_12": {
+        "title": "Last Day Of School!",
+        "lang": "en",
+        "has_audio": true,
+        "audio_url": "/audio/silly-songs/last_day_9_12.mp3",
+        "cover_url": "/covers/silly-songs/last_day_9_12.webp"
+      },
+      "new_game_9_12": {
+        "title": "New Game!",
+        "lang": "en",
+        "has_audio": true,
+        "audio_url": "/audio/silly-songs/new_game_9_12.mp3",
+        "cover_url": "/covers/silly-songs/new_game_9_12.webp"
+      },
+      "staying_up_9_12": {
+        "title": "I Can Stay Up Late!",
+        "lang": "en",
+        "has_audio": true,
+        "audio_url": "/audio/silly-songs/staying_up_9_12.mp3",
+        "cover_url": "/covers/silly-songs/staying_up_9_12.webp"
       }
     }
   },
@@ -2895,151 +3073,217 @@
     "2-5": {
       "sound_2_5_52b1": {
         "title": "Soft Night Sounds",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/poems/sound_2_5_52b1.mp3",
         "cover_url": "/covers/poems/sound_2_5_52b1_cover.webp"
       },
       "sound_2_5_b65c": {
         "title": "Soft Night Sounds",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/poems/sound_2_5_b65c.mp3",
         "cover_url": "/covers/poems/sound_2_5_b65c_cover.webp"
       },
       "sound_2_5_128f": {
         "title": "Hush Now, Little Heart",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/poems/sound_2_5_128f.mp3",
         "cover_url": "/covers/poems/sound_2_5_128f_cover.webp"
       },
       "sound_2_5_d174": {
         "title": "Zip Zoom Zing",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/poems/sound_2_5_d174.mp3",
         "cover_url": "/covers/poems/sound_2_5_d174_cover.webp"
       },
       "sound_2_5_da48": {
         "title": "Puddle Steps",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/poems/sound_2_5_da48.mp3",
         "cover_url": "/covers/poems/sound_2_5_da48_cover.webp"
       },
       "sound_2_5_f0a3": {
         "title": "Bubble Drift",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/poems/sound_2_5_f0a3.mp3",
         "cover_url": "/covers/poems/sound_2_5_f0a3_cover.webp"
       },
       "sound_2_5_f9a3": {
         "title": "Tick Tock Safe",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/poems/sound_2_5_f9a3.mp3",
         "cover_url": "/covers/poems/sound_2_5_f9a3_cover.webp"
       },
       "sound_2_5_0826": {
         "title": "Whisper of the Pond",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/poems/sound_2_5_0826.mp3",
         "cover_url": "/covers/poems/sound_2_5_0826_cover.webp"
+      },
+      "sound_2_5_2976": {
+        "title": "Bounce Beat Boom",
+        "lang": "en",
+        "has_audio": true,
+        "audio_url": "/audio/poems/sound_2_5_2976.mp3",
+        "cover_url": "/covers/poems/sound_2_5_2976_cover.webp"
+      },
+      "sound_2_5_c952": {
+        "title": "Storm in My Chest",
+        "lang": "en",
+        "has_audio": true,
+        "audio_url": "/audio/poems/sound_2_5_c952.mp3",
+        "cover_url": "/covers/poems/sound_2_5_c952_cover.webp"
+      },
+      "hi-sound-2-5-b3c7": {
+        "title": "Baarish Ki Awaaz",
+        "lang": "hi",
+        "has_audio": true,
+        "audio_url": "/audio/poems/hi-sound-2-5-b3c7.mp3",
+        "cover_url": "/covers/poems/hi-sound-2-5-b3c7_cover.webp"
       }
     },
     "6-8": {
       "nonsense_6_8_526b": {
         "title": "Zizzle Zing Zoom",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/poems/nonsense_6_8_526b.mp3",
         "cover_url": "/covers/poems/nonsense_6_8_526b_cover.webp"
       },
       "nonsense_6_8_b5f5": {
         "title": "Zippy Zingers",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/poems/nonsense_6_8_b5f5.mp3",
         "cover_url": "/covers/poems/nonsense_6_8_b5f5_cover.webp"
       },
       "nonsense_6_8_5d10": {
         "title": "Snickety Snap",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/poems/nonsense_6_8_5d10.mp3",
         "cover_url": "/covers/poems/nonsense_6_8_5d10_cover.webp"
       },
       "nonsense_6_8_21d1": {
         "title": "Glimmer Glow Glee",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/poems/nonsense_6_8_21d1.mp3",
         "cover_url": "/covers/poems/nonsense_6_8_21d1_cover.webp"
       },
       "nonsense_6_8_2802": {
         "title": "Tizzle Twirl Tick",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/poems/nonsense_6_8_2802.mp3",
         "cover_url": "/covers/poems/nonsense_6_8_2802_cover.webp"
       },
       "nonsense_6_8_3e10": {
         "title": "Fizzle Flip Flop",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/poems/nonsense_6_8_3e10.mp3",
         "cover_url": "/covers/poems/nonsense_6_8_3e10_cover.webp"
       },
       "nonsense_6_8_4b24": {
         "title": "Wobble Wump Whirl",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/poems/nonsense_6_8_4b24.mp3",
         "cover_url": "/covers/poems/nonsense_6_8_4b24_cover.webp"
       },
       "nonsense_6_8_5249": {
         "title": "Bibble Bobble Boom",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/poems/nonsense_6_8_5249.mp3",
         "cover_url": "/covers/poems/nonsense_6_8_5249_cover.webp"
+      },
+      "nonsense_6_8_0fcc": {
+        "title": "Luma Lull Loom",
+        "lang": "en",
+        "has_audio": true,
+        "audio_url": "/audio/poems/nonsense_6_8_0fcc.mp3",
+        "cover_url": "/covers/poems/nonsense_6_8_0fcc_cover.webp"
+      },
+      "hi-question-6-8-ad89": {
+        "title": "Kyun Kyun Kyun",
+        "lang": "hi",
+        "has_audio": true,
+        "audio_url": "/audio/poems/hi-question-6-8-ad89.mp3",
+        "cover_url": "/covers/poems/hi-question-6-8-ad89_cover.webp"
       }
     },
     "9-12": {
       "question_9_12_52d7": {
         "title": "Why Does the Moon?",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/poems/question_9_12_52d7.mp3",
         "cover_url": "/covers/poems/question_9_12_52d7_cover.webp"
       },
       "question_9_12_bf17": {
         "title": "How Does the Sea?",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/poems/question_9_12_bf17.mp3",
         "cover_url": "/covers/poems/question_9_12_bf17_cover.webp"
       },
       "question_9_12_7428": {
         "title": "Why Do Cats Wear Hats?",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/poems/question_9_12_7428.mp3",
         "cover_url": "/covers/poems/question_9_12_7428_cover.webp"
       },
       "question_9_12_8734": {
         "title": "Where Do Dreams Go",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/poems/question_9_12_8734.mp3",
         "cover_url": "/covers/poems/question_9_12_8734_cover.webp"
       },
       "question_9_12_8efe": {
         "title": "Why Do Shadows Dance?",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/poems/question_9_12_8efe.mp3",
         "cover_url": "/covers/poems/question_9_12_8efe_cover.webp"
       },
       "question_9_12_9017": {
         "title": "Why Do Socks Run Off?",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/poems/question_9_12_9017.mp3",
         "cover_url": "/covers/poems/question_9_12_9017_cover.webp"
       },
       "question_9_12_a2b9": {
         "title": "What If the Sky",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/poems/question_9_12_a2b9.mp3",
         "cover_url": "/covers/poems/question_9_12_a2b9_cover.webp"
       },
       "question_9_12_ae00": {
         "title": "Why Do Whispers Fly?",
+        "lang": "en",
         "has_audio": true,
         "audio_url": "/audio/poems/question_9_12_ae00.mp3",
         "cover_url": "/covers/poems/question_9_12_ae00_cover.webp"
+      },
+      "hi-nonsense-9-12-dfcd": {
+        "title": "Dhama Chauk Chidiya",
+        "lang": "hi",
+        "has_audio": true,
+        "audio_url": "/audio/poems/hi-nonsense-9-12-dfcd.mp3",
+        "cover_url": "/covers/poems/hi-nonsense-9-12-dfcd_cover.webp"
       }
     }
   }
