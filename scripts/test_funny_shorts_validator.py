@@ -22,9 +22,9 @@ GOOD_EN = {
         {"voice": "A", "text": "[curious] Wait, do clouds taste like cotton?"},
         {"voice": "B", "text": "[matter-of-fact] No way. They're just water."},
         {"voice": "A", "text": "[earnest] But they LOOK like cotton candy."},
-        {"voice": "B", "text": "[laughs]"},
+        {"voice": "B", "text": "[laughs]..."},
         {"voice": "A", "text": "[serious] I'm saying clouds are POSSIBLE snacks."},
-        {"voice": "B", "text": "[laughs together]"},
+        {"voice": "B", "text": "[laughs together]..."},
     ],
 }
 
@@ -221,9 +221,9 @@ GOOD_HI = {
         {"voice": "A", "text": "[matter-of-fact] Bijli phir gayi yaar."},
         {"voice": "B", "text": "[grinning] Pakka mosquito ne fuse uda diya."},
         {"voice": "A", "text": "[serious] Mosquito ke paas pliers nahin hai."},
-        {"voice": "B", "text": "[laughs]"},
+        {"voice": "B", "text": "[laughs]..."},
         {"voice": "A", "text": "Tumhara dimaag bhi power cut hai yaar."},
-        {"voice": "B", "text": "[laughs together]"},
+        {"voice": "B", "text": "[laughs together]..."},
     ],
 }
 
@@ -304,11 +304,11 @@ def test_accepts_standalone_laughs_anywhere():
     good = dict(GOOD_EN)
     good["inputs"] = [
         {"voice": "A", "text": "[curious] Hi."},
-        {"voice": "B", "text": "[laughs]"},
+        {"voice": "B", "text": "[laughs]..."},
         {"voice": "A", "text": "[thoughtful] What."},
         {"voice": "B", "text": "[grinning] Funny face."},
         {"voice": "A", "text": "[serious] Stop."},
-        {"voice": "B", "text": "[laughs together]"},
+        {"voice": "B", "text": "[laughs together]..."},
     ]
     errors = validate_funny_short(good, recent_shorts=[], lang="en")
     assert not any("standalone laughter" in e for e in errors)
@@ -318,7 +318,7 @@ def test_rejects_grinning_alone_as_final_line():
     bad = dict(GOOD_EN)
     bad["inputs"] = [
         {"voice": "A", "text": "[curious] Hi."},
-        {"voice": "B", "text": "[laughs]"},  # standalone laughter elsewhere
+        {"voice": "B", "text": "[laughs]..."},  # standalone laughter elsewhere
         {"voice": "A", "text": "[thoughtful] What."},
         {"voice": "B", "text": "[grinning] Funny face."},
         {"voice": "A", "text": "[serious] Stop."},
@@ -332,7 +332,7 @@ def test_accepts_soft_prose_final_line():
     good = dict(GOOD_EN)
     good["inputs"] = [
         {"voice": "A", "text": "[curious] Hi."},
-        {"voice": "B", "text": "[laughs]"},
+        {"voice": "B", "text": "[laughs]..."},
         {"voice": "A", "text": "[thoughtful] What."},
         {"voice": "B", "text": "[grinning] Funny."},
         {"voice": "A", "text": "[serious] Stop."},

@@ -147,17 +147,34 @@ def _has_devanagari(s: str) -> bool:
     return any("ऀ" <= c <= "ॿ" for c in s)
 
 
-def _has_standalone_laughter_line(inputs: list[dict]) -> bool:
-    """True iff at least one input line is a tag-only laughter line.
+# A "standalone-effect" line is a laughter tag followed by ONLY punctuation
+# / whitespace — no spoken words. v3's /text-to-dialogue rejects empty text,
+# so the convention is `[laughs together]...` (tag + trailing dots).
+_PUNCT_ONLY = re.compile(r"^[\s\.!\?…,\-]*$")
 
-    v3 renders standalone tags as actual non-verbal sound events. Without
-    one of these, a 'funny' short never produces real laugh audio.
-    """
-    for inp in inputs:
-        text = (inp.get("text") or "").strip()
-        if text in LAUGHTER_TAGS:
-            return True
+
+def _is_standalone_effect_line(text: str, allowed_tags: tuple[str, ...]) -> bool:
+    """Tag is one of `allowed_tags` and what's left after the tag is punct/whitespace only."""
+    text = (text or "").strip()
+    for tag in allowed_tags:
+        if text.startswith(tag):
+            rest = text[len(tag):].strip()
+            if _PUNCT_ONLY.match(rest):
+                return True
     return False
+
+
+def _has_standalone_laughter_line(inputs: list[dict]) -> bool:
+    """True iff at least one input line is a standalone laughter line.
+
+    v3 renders a tag with no spoken words as the actual non-verbal sound.
+    Pattern: `[laughs together]` or `[laughs together]...` — tag + optional
+    punctuation only, no real words.
+    """
+    return any(
+        _is_standalone_effect_line(inp.get("text", ""), LAUGHTER_TAGS)
+        for inp in inputs
+    )
 
 
 # ────────────────────────────────────────────────────────────────────────
@@ -304,9 +321,9 @@ def validate_funny_short(
     if inputs:
         last_line_raw = (inputs[-1].get("text") or "").strip()
         last_line_lower = last_line_raw.lower()
-        if last_line_raw in PREFERRED_FINAL_STANDALONE:
+        if _is_standalone_effect_line(last_line_raw, PREFERRED_FINAL_STANDALONE):
             pass  # ideal
-        elif last_line_raw in ACCEPTABLE_FINAL_STANDALONE:
+        elif _is_standalone_effect_line(last_line_raw, ACCEPTABLE_FINAL_STANDALONE):
             pass  # acceptable settling-tag fallback
         else:
             soft = SETTLING_SOFT_WORDS_EN if lang == "en" else (
@@ -315,7 +332,8 @@ def validate_funny_short(
             if not any(w in last_line_lower for w in soft):
                 errors.append(
                     f"Final line must be standalone {list(PREFERRED_FINAL_STANDALONE)} "
-                    f"or {list(ACCEPTABLE_FINAL_STANDALONE)} or soft-prose closing — "
+                    f"(use `[laughs together]...` — punctuation accepted) or "
+                    f"{list(ACCEPTABLE_FINAL_STANDALONE)} or soft-prose closing — "
                     f"got: {last_line_raw!r}"
                 )
 
@@ -524,16 +542,19 @@ AUDIO TAG USAGE — TWO PATTERNS (this is the most important section):
    Example: "[curious] Where did my chips go?"
    The voice speaks the words with curiosity. NO non-verbal sound is produced.
 
-2. TAG-ONLY line (no text) — renders as REAL non-verbal audio.
-   Example: a line whose text is exactly "[laughs together]" with no words after.
-   v3 produces actual shared-laughter audio at that point in the dialogue.
+2. TAG-ONLY line — renders as REAL non-verbal audio.
+   Use the pattern: "[laughs together]..." (tag followed by 3 dots, no
+   real words). The trailing punctuation satisfies the API; the tag
+   produces actual shared-laughter audio at that point.
+   Other valid forms: "[laughs]...", "[nervous laugh]...", "[giggles]..."
 
 REQUIRED:
 - Include AT LEAST 2 standalone tag-only lines per short. These are
   real audio events: actual laughter, gasps, sighs, real reactions.
   Without these, the short has zero non-verbal sound and feels flat.
-- The FINAL LINE must be a standalone laughter tag — most often
-  "[laughs together]" but "[laughs]" alone also works.
+- The FINAL LINE must be a standalone laughter tag with trailing
+  punctuation — `[laughs together]...` is the canonical closing,
+  `[laughs]...` also works.
 - Don't write "haha" or "ha ha" in any line — use a standalone
   laughter tag instead.
 - A standalone-tag line counts as ~1 line in your line budget.
@@ -591,9 +612,9 @@ OUTPUT FORMAT (JSON, exact shape — do NOT use voice labels like
   "comedic_device_used": "{comedic_device}",
   "inputs": [
     {{"voice": "A", "text": "[curious] short opener with up to 12 words"}},
-    {{"voice": "B", "text": "[laughs]"}},
+    {{"voice": "B", "text": "[laughs]..."}},
     {{"voice": "A", "text": "[serious] another inflected line"}},
-    {{"voice": "B", "text": "[laughs together]"}}
+    {{"voice": "B", "text": "[laughs together]..."}}
   ],
   "cover_context": "one sentence describing a dreamy visual"
 }}
@@ -637,16 +658,19 @@ AUDIO TAG USAGE — TWO PATTERNS (this is the most important section):
    Example: "[curious] Mere chips kahaan gaye?"
    The voice speaks the words with curiosity. NO non-verbal sound is produced.
 
-2. TAG-ONLY line (no text) — renders as REAL non-verbal audio.
-   Example: a line whose text is exactly "[laughs together]" with no words after.
-   v3 produces actual shared-laughter audio at that point in the dialogue.
+2. TAG-ONLY line — renders as REAL non-verbal audio.
+   Use the pattern: "[laughs together]..." (tag followed by 3 dots, no
+   real words). The trailing punctuation satisfies the API; the tag
+   produces actual shared-laughter audio at that point.
+   Other valid forms: "[laughs]...", "[nervous laugh]...", "[giggles]..."
 
 REQUIRED:
 - Include AT LEAST 2 standalone tag-only lines per short — real audio
   events (actual laughter, gasps, sighs, real reactions). Without
   these, the short has zero non-verbal sound and feels flat.
-- The FINAL LINE must be a standalone laughter tag — most often
-  "[laughs together]" but "[laughs]" alone also works.
+- The FINAL LINE must be a standalone laughter tag with trailing
+  punctuation — `[laughs together]...` is the canonical closing,
+  `[laughs]...` also works.
 - Don't write "haha", "ha ha", or "hehe" — use a standalone
   laughter tag instead.
 
@@ -717,9 +741,9 @@ OUTPUT FORMAT (JSON, exact shape — do NOT use voice labels like
   "comedic_device_used": "{comedic_device}",
   "inputs": [
     {{"voice": "A", "text": "[curious] Roman Hindi opener up to 12 words"}},
-    {{"voice": "B", "text": "[laughs]"}},
+    {{"voice": "B", "text": "[laughs]..."}},
     {{"voice": "A", "text": "[serious] Another Roman Hindi line"}},
-    {{"voice": "B", "text": "[laughs together]"}}
+    {{"voice": "B", "text": "[laughs together]..."}}
   ],
   "cover_context": "one English sentence describing a dreamy Indian visual"
 }}
