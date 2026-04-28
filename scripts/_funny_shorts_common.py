@@ -513,7 +513,9 @@ You have full creative freedom WITHIN these constraints:
 - 6-20 dialogue lines total (vary the length — short shorts are good)
 - Max 12 words per line
 - Total STRICTLY under 500 characters across all lines combined.
-  AIM for 350-450 chars (count carefully — going over 500 is rejected).
+  AIM for 300-400 chars (going over 500 is auto-rejected).
+  Standalone tag-only lines like "[laughs together]" still count toward
+  the 500-char budget — leave room for 2 of them.
 - Use audio tags ONLY from this list: {approved_tags}
 
 AUDIO TAG USAGE — TWO PATTERNS (this is the most important section):
@@ -581,15 +583,24 @@ WHAT FALLS FLAT:
 - Adult-style wit
 - Sarcasm directed at the listener
 
-OUTPUT FORMAT (JSON):
+OUTPUT FORMAT (JSON, exact shape — do NOT use voice labels like
+"{voice_a_label}", use ONLY "A" or "B"):
+
 {{
   "title": "evocative title under 5 words",
   "comedic_device_used": "{comedic_device}",
   "inputs": [
-    {{"voice": "A" or "B", "text": "line with audio tags inline"}}
+    {{"voice": "A", "text": "[curious] short opener with up to 12 words"}},
+    {{"voice": "B", "text": "[laughs]"}},
+    {{"voice": "A", "text": "[serious] another inflected line"}},
+    {{"voice": "B", "text": "[laughs together]"}}
   ],
   "cover_context": "one sentence describing a dreamy visual"
 }}
+
+The shape above is illustrative — DO NOT COPY the example text. Only
+copy the structure: voice fields are "A" or "B", standalone laughter
+lines have no text after the tag, the final line is standalone laughter.
 
 Just the JSON. No commentary."""
 
@@ -615,7 +626,9 @@ You have full creative freedom WITHIN these constraints:
 - 6-20 dialogue lines total (vary the length)
 - Max 12 words per line
 - Total STRICTLY under 500 characters across all lines combined.
-  AIM for 350-450 chars (count carefully — going over 500 is rejected).
+  AIM for 300-400 chars (going over 500 is auto-rejected).
+  Standalone tag-only lines like "[laughs together]" still count toward
+  the 500-char budget — leave room for 2 of them.
 - Use audio tags ONLY from this list: {approved_tags}
 
 AUDIO TAG USAGE — TWO PATTERNS (this is the most important section):
@@ -695,16 +708,25 @@ WHAT FALLS FLAT:
 - Adult sarcasm
 - Bollywood references
 
-OUTPUT FORMAT (JSON):
+OUTPUT FORMAT (JSON, exact shape — do NOT use voice labels like
+"{voice_a_label}", use ONLY "A" or "B"):
+
 {{
   "title": "evocative Roman Hindi title under 5 words",
   "title_en": "English translation for tooling",
   "comedic_device_used": "{comedic_device}",
   "inputs": [
-    {{"voice": "A" or "B", "text": "line with audio tags inline"}}
+    {{"voice": "A", "text": "[curious] Roman Hindi opener up to 12 words"}},
+    {{"voice": "B", "text": "[laughs]"}},
+    {{"voice": "A", "text": "[serious] Another Roman Hindi line"}},
+    {{"voice": "B", "text": "[laughs together]"}}
   ],
   "cover_context": "one English sentence describing a dreamy Indian visual"
 }}
+
+The shape above is illustrative — DO NOT COPY the example text. Only
+copy the structure: voice fields are "A" or "B", standalone laughter
+lines have no text after the tag, the final line is standalone laughter.
 
 Just the JSON. No commentary."""
 
