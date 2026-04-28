@@ -122,15 +122,26 @@ def _llm_with_retry(*, system: str, user: str, validator_key: str,
                      max_retries: int = 3, log_prefix: str = "  ",
                      post_process=None, max_tokens: int = 4096) -> dict:
     """Generate JSON, validate, retry on failure. post_process optionally
-    transforms the LLM JSON into the validator-shape."""
+    transforms the LLM JSON into the validator-shape.
+
+    Retry hint now ACCUMULATES errors across all prior attempts (not just
+    the most recent), so the LLM doesn't forget about prior issues when
+    fixing the latest. Critical for long stories where structural
+    requirements (BREATHE count, onomatopoeia count, etc.) are independent
+    and the LLM tends to whack-a-mole between them otherwise.
+    """
+    all_errors_seen: set[str] = set()
     last_errors: list[str] = []
     for attempt in range(max_retries):
         retry_hint = ""
-        if attempt > 0 and last_errors:
+        if attempt > 0 and (last_errors or all_errors_seen):
+            cumulative = sorted(set(last_errors) | all_errors_seen)
             retry_hint = (
-                "\n\nPREVIOUS ATTEMPT FAILED VALIDATION:\n"
-                + "\n".join(f"- {e}" for e in last_errors[:8])
-                + "\nFix these issues. Output ONLY corrected JSON."
+                "\n\nPREVIOUS ATTEMPTS FAILED VALIDATION (across all retries — "
+                "fix ALL of these in your next attempt, do NOT regress on items "
+                "fixed earlier):\n"
+                + "\n".join(f"- {e}" for e in cumulative[:15])
+                + "\n\nOutput ONLY corrected JSON. Re-check every requirement before submitting."
             )
         try:
             data = generate_json(
@@ -153,9 +164,10 @@ def _llm_with_retry(*, system: str, user: str, validator_key: str,
             return data
         print(f"{log_prefix}validator fail (attempt {attempt+1}): {errors[:5]}")
         last_errors = errors
+        all_errors_seen.update(errors)
     raise RuntimeError(
         f"validator failed after {max_retries} attempts; "
-        f"last errors: {last_errors}"
+        f"last errors: {last_errors}; cumulative seen: {sorted(all_errors_seen)[:10]}"
     )
 
 
@@ -1098,10 +1110,12 @@ def generate_long_story(axes: dict, log_prefix: str = "  ") -> dict:
     data = _llm_with_retry(
         system=sys_msg, user=user_msg,
         validator_key="long_story", log_prefix=log_prefix, post_process=shape,
-        max_retries=3,
-        max_tokens=12_000,   # full_text_roman alone is ~1500 tokens; JSON
-                              # wrapping + characters list + phase splits
-                              # need ~8-10k tokens of headroom
+        max_retries=5,        # long stories often need multiple retries to
+                              # converge on all structural requirements
+                              # simultaneously (BREATHE count, onomatopoeia,
+                              # phase tags, conversational markers, etc.)
+        max_tokens=12_000,    # full_text_roman + full_text_deva together
+                              # need ~8-12k tokens of headroom
     )
 
     # ── Render via existing publish_hindi_long_day1 helpers
