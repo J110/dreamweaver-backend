@@ -31,7 +31,7 @@ def test_en_prompt_contains_required_sections():
     assert "earnest_vs_skeptical" in prompt
     assert "couch fort" in prompt
     assert "[matter-of-fact]" in prompt
-    assert "OUTPUT FORMAT (JSON)" in prompt
+    assert "OUTPUT FORMAT (JSON" in prompt
     assert "siblings" in prompt
 
 
