@@ -133,6 +133,19 @@ generate_poem(pick_poem_axes())
 - Cron exit code 1 (failure mode) → cron may also trigger a separate email alert depending on the system.
 - Monthly: ~$50 across MiniMax + ElevenLabs + Together + Mistral. Mostly ElevenLabs (long-story narration is ~70% of total).
 
+## Known failure-mode decoder
+
+| Symptom | Likely cause | Fix |
+|---|---|---|
+| `FileNotFoundError: _reference_28s.m4a` | Hindi reference audio not on prod (it's gitignored) | scp from local; mirror to `/opt/audio-store/reference/` |
+| `Groq 401 Invalid API Key` | Stale GROQ_API_KEY in `.env` | replace with the current key; verify with a tiny test call |
+| `Mistral non-JSON response: Unterminated string` | LLM hit `max_tokens` mid-output | bump `max_tokens` for that generator (long stories are most prone) |
+| `re.search() expected string or bytes-like object` (long story) | LLM returned `full_text_roman` as null/list/dict | `shape()` already coerces to str; if it persists, log and inspect raw output |
+| `religious content: 'ram '` flagged on benign Hindi prose | Validator FP — substring match catches naram/garam/aaram/devar | Already fixed via word-boundary regex (`\bram\b`) |
+| `fal.ai 403 Forbidden on rest.fal.ai/storage/auth/token` | **fal.ai out of credits** (the error message is misleading; it's a billing block, not a permission issue) | Top up fal.ai credits at fal.ai/dashboard |
+| Hindi silly song / poem shows broken cover or unplayable audio | Generator wrote to web public/ instead of backend public/ + cover-store | Already fixed in `_hindi_generators.py` (ON_PROD detection writes to nginx-aliased paths) |
+| `KeyError: 'lullaby'` (or any type) on `--types <subset>` runs | display/state loop iterated all 5 types | Already fixed (`if t in results`) |
+
 ## Related
 
 - `pipeline_run.py` — English daily pipeline
