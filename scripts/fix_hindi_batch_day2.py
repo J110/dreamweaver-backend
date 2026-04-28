@@ -73,7 +73,33 @@ HINDI_TTS_PARAMS = {
 }
 
 FAL_ENDPOINT = "fal-ai/minimax-music/v2.5"
-MINIMAX_REFERENCE_FILE = BASE_DIR / "seed_output" / "hindi_lullaby_test_v26_reference" / "_reference_28s.m4a"
+# Resolve at use-time so the helper survives the seed-path file getting
+# displaced by git operations. Order: seed-path (legacy), audio-store
+# (v2.1 spec resilience), env override.
+_REFERENCE_CANDIDATES = [
+    Path(p) for p in [
+        BASE_DIR / "seed_output" / "hindi_lullaby_test_v26_reference" / "_reference_28s.m4a",
+        Path("/opt/audio-store/reference/hindi_lullaby_ref.m4a"),
+    ]
+]
+def _resolve_minimax_reference() -> Path:
+    env_override = os.getenv("MINIMAX_REFERENCE_FILE")
+    if env_override and Path(env_override).exists():
+        return Path(env_override)
+    for p in _REFERENCE_CANDIDATES:
+        if p.exists():
+            return p
+    raise FileNotFoundError(
+        f"MiniMax Hindi reference audio missing from any of: "
+        f"{[str(p) for p in _REFERENCE_CANDIDATES]}"
+    )
+
+# Backwards-compat constant: existing callers still reference
+# MINIMAX_REFERENCE_FILE.stat() in error paths. Lazy resolution would
+# require touching every call site, so we keep the constant pointing at
+# the primary path for type compatibility but the actual upload logic
+# (in minimax_lullaby below) uses _resolve_minimax_reference().
+MINIMAX_REFERENCE_FILE = _REFERENCE_CANDIDATES[0]
 
 # Canonical 11 → cover-generator's 12-key taxonomy (CHAR_TYPE_TO_VISUAL).
 CHAR_TYPE_CANONICAL_TO_COVER = {
@@ -467,8 +493,9 @@ def assemble_story_audio(text_deva: str, hook_deva: str, voice_label: str, mood:
 
 def minimax_lullaby(style, lyrics_deva):
     import fal_client
-    print(f"  Uploading reference ({MINIMAX_REFERENCE_FILE.stat().st_size:,} bytes)...")
-    ref_url = fal_client.upload_file(str(MINIMAX_REFERENCE_FILE))
+    ref_path = _resolve_minimax_reference()
+    print(f"  Uploading reference {ref_path.name} ({ref_path.stat().st_size:,} bytes)...")
+    ref_url = fal_client.upload_file(str(ref_path))
     args = {"prompt": style, "lyrics": lyrics_deva, "reference_audio_url": ref_url}
     print(f"  fal-ai/minimax-music/v2.5 + Devanagari lyrics (len={len(lyrics_deva)})")
     result = fal_client.subscribe(FAL_ENDPOINT, arguments=args, with_logs=False)
