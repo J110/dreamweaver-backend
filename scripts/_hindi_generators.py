@@ -224,9 +224,11 @@ Return JSON with exactly this shape:
   "title": "Roman Hindi title with character name",
   "title_en": "English translation",
   "hook": "One-line tease in Roman Hindi (under 80 chars) for the audio intro",
+  "hook_deva": "EXACT same hook in Devanagari script for TTS engine input",
   "description": "2-line description in Roman Hindi",
   "description_en": "English description",
   "text": "Full Roman Hindi story with [MUSIC], [PAUSE: ms], [PHRASE] tags inline",
+  "text_deva": "EXACT same story content in Devanagari script (same tags inline) — used as TTS engine input for cleaner Hindi phonemes. MUST be a single string, NOT a JSON object or nested dict. Match `text` line-by-line.",
   "repeated_phrase": "Roman Hindi (≤5 words)",
   "morals": ["one or two short morals in English"],
   "categories": ["Bedtime", "<Hindi label>"],
@@ -284,9 +286,15 @@ def generate_short_story(axes: dict, log_prefix: str = "  ") -> dict:
         "anxious": "meher",
         "angry":   "anika",
     }[axes["mood"]]
+    # Engine input is Devanagari for cleaner Hindi phoneme rendering
+    # (ElevenLabs Multilingual v2 produces sharper retroflex consonants and
+    # matra-distinguished vowels from Devanagari than from Roman). Falls
+    # back to Roman if the LLM didn't return text_deva.
+    text_for_engine = data.get("text_deva") or data["text"]
+    hook_for_engine = data.get("hook_deva") or data["hook"]
     audio = assemble_story_audio(
-        text_deva=data["text"],          # Roman in, ElevenLabs handles it
-        hook_deva=data["hook"],
+        text_deva=text_for_engine,
+        hook_deva=hook_for_engine,
         voice_label=voice_for_mood,
         mood=axes["mood"],
     )
@@ -353,7 +361,8 @@ def generate_short_story(axes: dict, log_prefix: str = "  ") -> dict:
         "duration_seconds": duration,
         "durationSec": duration,
         "tts_engine": "elevenlabs_multilingual_v2",
-        "tts_input_script": "roman",
+        "tts_input_script": "devanagari",
+        "text_deva": data.get("text_deva", ""),
         "has_baked_music": True,
         "diversityFingerprint": data.get("diversityFingerprint", {}),
         "is_generated": True,
@@ -418,6 +427,7 @@ Return JSON with exactly this shape:
   "card_label": "Roman Hindi label (under 4 words)",
   "card_subtitle": "Roman Hindi subtitle (under 8 words)",
   "lyrics": "Roman Hindi lyrics, line-separated, no section tags",
+  "lyrics_deva": "EXACT same lyrics in Devanagari script — used as MiniMax v2.5 engine input for cleaner Hindi phonemes. Single string, not nested.",
   "instruments": "<short Indian-instrument phrase, e.g. 'soft harmonium and gentle hum'>",
   "tempo": 60,
   "cover_context": "ONE English sentence for FLUX (Indian child sleeping, watercolor)"
@@ -451,14 +461,16 @@ def generate_lullaby(axes: dict, log_prefix: str = "  ") -> dict:
         f"smiling maternal voice, major key, native Hindi pronunciation, "
         f"gentle Indian bedtime feel, {LULLABY_TYPE_FLAVORS[axes['lullaby_type']]}"
     )
+    # Devanagari for engine input (cleaner Hindi phonemes), Roman in display field.
+    lyrics_for_engine = data.get("lyrics_deva") or data["lyrics"]
     composed = (
         f"{style}.\n\n"
-        "Sing the following Hindi lyrics clearly, in a native North Indian "
-        "female voice, with conversational mother-tongue pronunciation — "
-        "not a Western or Chinese vocal lens.\n\n"
-        f"Lyrics:\n{data['lyrics']}"
+        "Sing the following Hindi (Devanagari) lyrics clearly, in a native "
+        "North Indian female voice, with conversational mother-tongue "
+        "pronunciation — not a Western or Chinese vocal lens.\n\n"
+        f"Lyrics:\n{lyrics_for_engine}"
     )
-    audio_bytes = minimax_lullaby(composed, data["lyrics"])
+    audio_bytes = minimax_lullaby(composed, lyrics_for_engine)
     audio = AudioSegment.from_file(io.BytesIO(audio_bytes), format="mp3")
     duration = round(len(audio) / 1000)
 
@@ -503,7 +515,9 @@ def generate_lullaby(axes: dict, log_prefix: str = "  ") -> dict:
         "instruments": data.get("instruments", ""),
         "tempo": data.get("tempo", 60),
         "text": data["lyrics"],
+        "text_deva": data.get("lyrics_deva", ""),
         "lyrics": data["lyrics"],
+        "lyrics_deva": data.get("lyrics_deva", ""),
         "characterType": "human_child",
         "lead_character_type": "human_child",
         "audio_url": f"/audio/lullabies/{sid}.mp3",
@@ -580,7 +594,8 @@ Return JSON:
   "title_en": "English translation",
   "card_label": "Roman Hindi label",
   "card_subtitle": "One-line scene-setting in Roman Hindi",
-  "lyrics": "Full lyrics with [verse 1]/[chorus]/etc section tags",
+  "lyrics": "Full Roman Hindi lyrics with [verse 1]/[chorus]/etc section tags",
+  "lyrics_deva": "EXACT same lyrics in Devanagari script (same section tags inline) — used as ElevenLabs Music engine input per HINDI_SILLY_SONGS_GUIDELINES (1) §6.",
   "instruments": "Indian-fusion instrument phrase, e.g. 'ukulele, dholki, and hand claps'",
   "tempo": 120,
   "cover_context": "ONE English sentence for FLUX, Indian-kid-cartoon vibe"
@@ -611,12 +626,15 @@ def generate_silly_song(axes: dict, log_prefix: str = "  ") -> dict:
         "Bollywood-nursery lilt, warm major key, native Hindi "
         "pronunciation, strong singalong chorus."
     )[:295]
+    # Devanagari for engine input per HINDI_SILLY_SONGS_GUIDELINES (1) §6 lock-in.
+    lyrics_for_engine = data.get("lyrics_deva") or data["lyrics"]
     composed = (
         f"{style_prompt}\n\n"
-        "Sing the following Hindi lyrics clearly, in a native North Indian "
-        "female child voice, with conversational mother-tongue pronunciation. "
+        "Sing the following Hindi (Devanagari) lyrics clearly, in a native "
+        "North Indian female child voice, with conversational mother-tongue "
+        "pronunciation — not a Western or Chinese vocal lens. "
         "Verses are bouncy; the chorus is the singalong hook.\n\n"
-        f"Lyrics:\n{data['lyrics']}"
+        f"Lyrics:\n{lyrics_for_engine}"
     )
     body = {
         "prompt": composed,
@@ -685,6 +703,7 @@ def generate_silly_song(axes: dict, log_prefix: str = "  ") -> dict:
         "description": data["card_subtitle"],
         "description_en": data["title_en"],
         "lyrics": data["lyrics"],
+        "lyrics_deva": data.get("lyrics_deva", ""),
         "raw_lyrics": data["lyrics"],
         "age_group": axes["age_group"],
         "ageGroup": axes["age_group"],
@@ -794,6 +813,7 @@ Return JSON:
   "title": "Roman Hindi title (under 5 words)",
   "title_en": "English translation",
   "poem_text": "Full Roman Hindi poem, lines newline-separated, no tags",
+  "poem_text_deva": "EXACT same poem in Devanagari script — used as MiniMax v2.5 engine input. Single string, line-separated, no tags.",
   "instruments": "Indian-fusion gentle instruments",
   "tempo": 100,
   "cover_context": "ONE English sentence for FLUX (abstract, no people, no faces)"
@@ -831,14 +851,16 @@ def generate_poem(axes: dict, log_prefix: str = "  ") -> dict:
         "every word crystal clear, like a parent reciting a poem at bedtime, "
         "not sung — spoken to a beat. Not Western."
     )[:300]
+    # Devanagari for engine input.
+    poem_for_engine = data.get("poem_text_deva") or data["poem_text"]
     composed = (
         f"{style}.\n\n"
-        "Recite the following Hindi poem rhythmically, in a native North "
-        "Indian female voice, with conversational mother-tongue "
+        "Recite the following Hindi (Devanagari) poem rhythmically, in a "
+        "native North Indian female voice, with conversational mother-tongue "
         "pronunciation — spoken to a beat, not sung.\n\n"
-        f"Poem:\n{data['poem_text']}"
+        f"Poem:\n{poem_for_engine}"
     )
-    audio_bytes = minimax_lullaby(composed, data["poem_text"])
+    audio_bytes = minimax_lullaby(composed, poem_for_engine)
     audio = AudioSegment.from_file(io.BytesIO(audio_bytes), format="mp3")
     duration = round(len(audio) / 1000)
 
@@ -887,7 +909,9 @@ def generate_poem(axes: dict, log_prefix: str = "  ") -> dict:
         "description": "Hindi children's musical poem",
         "description_en": "Hindi children's musical poem",
         "poem_text": data["poem_text"],
+        "poem_text_deva": data.get("poem_text_deva", ""),
         "text": data["poem_text"],
+        "text_deva": data.get("poem_text_deva", ""),
         "raw_text": data["poem_text"],
         "age_group": axes["age_group"],
         "ageGroup": axes["age_group"],
@@ -1028,8 +1052,10 @@ Return JSON:
     ...
   ],
   "song_seed": "ONE English sentence describing the mid-story song's mood + imagery",
+  "song_lyrics_deva": "Short Devanagari lyrics (3-5 lines) for the embedded mid-story song",
   "cover_context": "ONE English sentence for FLUX",
-  "full_text_roman": "FULL Roman Hindi story with all the tags above"
+  "full_text_roman": "FULL Roman Hindi story as A SINGLE STRING. Tags ([INTRO], [PHASE_1], [BREATHE], [PHRASE]...[/PHRASE], [SONG_SEED:], [POST_SONG], [PHASE_2], [PHASE_3], [WHISPER]...[/WHISPER]) MUST appear inline as text within the string, NEVER as JSON keys or nested objects. Example shape: \\"[CHARACTER: ...]\\\\n[INTRO]\\\\nSuno na...\\\\n[PHASE_1]\\\\nTara dheere dheere chal rahi thi...\\". DO NOT return this field as a dict like {{\\"intro\\": \\"...\\", \\"phase_1\\": \\"...\\"}} — that breaks the renderer.",
+  "full_text_deva": "EXACT same content as full_text_roman but in Devanagari script. Same tags inline (tags themselves stay as Latin: [INTRO], [PHASE_1], etc. — only the prose between tags is Devanagari). Used as TTS engine input for cleaner Hindi phonemes. SINGLE STRING, NEVER a nested object."
 }}
 """
     return system, user
@@ -1041,17 +1067,24 @@ def generate_long_story(axes: dict, log_prefix: str = "  ") -> dict:
 
     def shape(d: dict) -> dict:
         # Validator wants phase splits — extract them from full_text_roman.
-        # Coerce to str defensively: Mistral / Groq sometimes return null or
-        # an array of paragraphs for `full_text_roman` instead of a single
-        # string, which would then crash re.search downstream.
+        # If the LLM returned a dict (a known Mistral failure mode where it
+        # interprets "tags inline" as "tags as JSON keys"), force string
+        # coercion to "" so the validator immediately fails on missing
+        # [PHASE_1] etc. and triggers a retry with the corrected prompt.
+        # That's better than shipping JSON-as-text with str(dict) repr.
         full = d.get("full_text_roman")
-        if full is None:
-            full = ""
+        if isinstance(full, dict):
+            full = ""  # validator will reject; retry will fix
         elif isinstance(full, list):
-            full = "\n\n".join(str(x) for x in full)
-        elif not isinstance(full, str):
-            full = str(full)
-        d["full_text_roman"] = full  # write back so render path also gets str
+            full = "\n\n".join(str(x) for x in full if isinstance(x, str))
+        elif full is None or not isinstance(full, str):
+            full = ""
+        d["full_text_roman"] = full
+        # Same hardening for the Devanagari engine input field
+        full_deva = d.get("full_text_deva")
+        if not isinstance(full_deva, str):
+            full_deva = ""
+        d["full_text_deva"] = full_deva
         p1 = re.search(r"\[PHASE_1\](.*?)\[PHASE_2\]", full, re.DOTALL)
         p2 = re.search(r"\[PHASE_2\](.*?)\[PHASE_3\]", full, re.DOTALL)
         p3 = re.search(r"\[PHASE_3\](.*)", full, re.DOTALL)
@@ -1080,23 +1113,29 @@ def generate_long_story(axes: dict, log_prefix: str = "  ") -> dict:
     from audio_assembly import normalize_for_tts, MUSIC_DIR  # type: ignore
     from fix_hindi_batch_day2 import minimax_lullaby  # type: ignore
 
-    # Devanagari version: use Roman directly for engine input. ElevenLabs
-    # multilingual handles Roman with slight phoneme penalty. Acceptable v1.
-    full_text = data["full_text_roman"]
-    segments = parse_long_segments(full_text)
+    # Engine input: Devanagari for cleaner Hindi phonemes (ElevenLabs Multilingual
+    # v2 produces sharper retroflex consonants and matra-distinguished vowels
+    # from Devanagari). The Roman version stays in user-facing text fields.
+    # Falls back to Roman if the LLM didn't return full_text_deva.
+    full_text_for_engine = data.get("full_text_deva") or data["full_text_roman"]
+    full_text_for_display = data["full_text_roman"]  # used by content.json text fields
+    segments = parse_long_segments(full_text_for_engine)
 
-    # Generate the embedded song
+    # Generate the embedded song. Prefer LLM-provided Devanagari lyrics if
+    # present; else hand-build from repeated_phrase as a safe fallback.
     song_style = (
         "Sweet Hindi lori, solo female vocal humming an intimate riverbank "
         "lullaby, soft harmonium and bansuri, 60 BPM, warm and loving, "
         "smiling maternal voice, major key, native Hindi pronunciation"
     )
     print(f"{log_prefix}generating mid-story song…")
-    song_lyrics = (
-        f"{data['repeated_phrase']}, {data['repeated_phrase']}\n"
-        f"Dheere dheere, bas dheere dheere\n"
-        f"{data['repeated_phrase']}"
-    )
+    song_lyrics = (data.get("song_lyrics_deva") or "").strip()
+    if not song_lyrics:
+        song_lyrics = (
+            f"{data['repeated_phrase']}, {data['repeated_phrase']}\n"
+            f"Dheere dheere, bas dheere dheere\n"
+            f"{data['repeated_phrase']}"
+        )
     song_bytes = minimax_lullaby(song_style, song_lyrics)
     song = AudioSegment.from_file(io.BytesIO(song_bytes), format="mp3")
     if len(song) > 45000:
@@ -1254,9 +1293,9 @@ def generate_long_story(axes: dict, log_prefix: str = "  ") -> dict:
             BASE_DIR / "seed_output" / "hindi_long" / f"{sid}_cover.webp",
         )
 
-    # Strip tags for display text
+    # Strip tags for display text (use the Roman version for human readability)
     from publish_hindi_long_day1 import strip_long_story_tags  # type: ignore
-    display_text = strip_long_story_tags(full_text)
+    display_text = strip_long_story_tags(full_text_for_display)
 
     entry = {
         "id": sid,
@@ -1283,7 +1322,10 @@ def generate_long_story(axes: dict, log_prefix: str = "  ") -> dict:
         "phase_2_text": shape(data)["phase_2_text_roman"],
         "phase_3_text": shape(data)["phase_3_text_roman"],
         "text": display_text,
-        "raw_text": full_text,
+        "text_deva": data.get("full_text_deva", ""),
+        "raw_text": full_text_for_display,
+        "raw_text_deva": data.get("full_text_deva", ""),
+        "tts_input_script": "devanagari",
         "character": {
             "name": chars[0]["name"] if chars else "",
             "identity": chars[0].get("identity", "") if chars else "",
