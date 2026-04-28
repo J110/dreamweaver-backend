@@ -28,6 +28,35 @@ This file is the operating contract for any Claude session working in `dreamweav
 
 ---
 
+## Production Path Routing
+
+nginx aliases override the default cover/audio path mapping for specific content subpaths. **Repo state does not equal production state.**
+
+**Default:**
+- `/covers/` → `/opt/dreamweaver-web/public/covers/`
+- `/audio/` → `/opt/dreamweaver-web/public/audio/`
+
+**Overrides** (covers/audio served from `/opt/cover-store/` and `/opt/audio-store/`, which persist across deploys and re-clones):
+- `/covers/funny-shorts/` → `/opt/cover-store/funny-shorts/`
+- `/covers/funny-shorts-hi/` → `/opt/cover-store/funny-shorts-hi/`
+- `/covers/poems/` → `/opt/cover-store/poems/`
+- `/audio/funny-shorts/` → `/opt/audio-store/funny-shorts/` (verify against nginx config; subdir name may differ)
+- `/audio/pre-gen/` → check nginx config before assuming
+
+### Diagnostic rule
+
+Before claiming a file is missing or broken in production, check the **live serving path**:
+
+1. Read the relevant nginx site config (`/etc/nginx/sites-enabled/*`) to find the actual alias
+2. `ls` the aliased directory on prod
+3. `curl -I` the public URL to confirm 200 response
+
+The repo's `public/` tree is **volatile** for covers/audio of the override-listed content types — files there get deleted by pipelines, regenerated, or never tracked. The cover-store and audio-store directories on prod are the **source of truth** for what's actually serving.
+
+`scripts/deploy_guard.py` knows about these stores (`COVER_STORE = "/opt/cover-store"`, `AUDIO_STORE`) and auto-recovers missing files from them during `verify`.
+
+---
+
 ## Content Invariants — Hindi
 
 - **Roman script ONLY** in user-facing fields (title, dialogue text, card labels, descriptions).
