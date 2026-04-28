@@ -36,15 +36,21 @@ def _entry_to_mirror(short: dict) -> dict:
     }
 
 
-def _load_content() -> dict:
+def _load_content():
     if SEED_CONTENT.exists():
         return json.loads(SEED_CONTENT.read_text())
-    return {"items": []}
+    return []
 
 
-def _save_content(c: dict) -> None:
+def _save_content(c) -> None:
     SEED_CONTENT.parent.mkdir(parents=True, exist_ok=True)
     SEED_CONTENT.write_text(json.dumps(c, indent=2, ensure_ascii=False))
+
+
+def _items_view(content):
+    if isinstance(content, dict):
+        return content.setdefault("items", []), True
+    return content, False
 
 
 def add_one(short_id: str) -> int:
@@ -55,23 +61,30 @@ def add_one(short_id: str) -> int:
     short = json.loads(src.read_text())
     mirror = _entry_to_mirror(short)
     content = _load_content()
-    items = content.setdefault("items", [])
+    items, is_dict = _items_view(content)
     items = [i for i in items if i.get("id") != short_id]
     items.append(mirror)
-    content["items"] = items
-    _save_content(content)
+    if is_dict:
+        content["items"] = items
+        _save_content(content)
+    else:
+        _save_content(items)
     print(f"✓ Mirrored {short_id} into {SEED_CONTENT}")
     return 0
 
 
 def rebuild() -> int:
     content = _load_content()
-    items = [i for i in content.get("items", []) if i.get("subtype") != "funny_short"]
+    raw_items, is_dict = _items_view(content)
+    items = [i for i in raw_items if i.get("subtype") != "funny_short"]
     if DATA_DIR.exists():
         for f in sorted(DATA_DIR.glob("*.json")):
             items.append(_entry_to_mirror(json.loads(f.read_text())))
-    content["items"] = items
-    _save_content(content)
+    if is_dict:
+        content["items"] = items
+        _save_content(content)
+    else:
+        _save_content(items)
     print(f"✓ Rebuilt funny_short mirrors in {SEED_CONTENT}")
     return 0
 

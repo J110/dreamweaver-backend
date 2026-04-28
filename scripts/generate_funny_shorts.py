@@ -143,7 +143,7 @@ def request_mistral_script(prompt: str) -> dict:
 
 
 def _auto_mirror(short_id: str) -> None:
-    """Append entry into seed_output/content.json. Replaces if id exists."""
+    """Append entry into seed_output/content.json (flat list). Replaces if id exists."""
     src = DATA_DIR / f"{short_id}.json"
     short = json.loads(src.read_text())
     seed_content = BASE / "seed_output" / "content.json"
@@ -151,7 +151,11 @@ def _auto_mirror(short_id: str) -> None:
         print(f"  (no {seed_content} — skipping mirror)")
         return
     content = json.loads(seed_content.read_text())
-    items = content.setdefault("items", [])
+    # content.json is a flat list of entries, not a dict
+    if isinstance(content, dict):
+        items = content.setdefault("items", [])
+    else:
+        items = content
     items = [i for i in items if i.get("id") != short_id]
     items.append({
         "id": short["id"],
@@ -168,8 +172,12 @@ def _auto_mirror(short_id: str) -> None:
         "cover": short.get("cover"),
         "created_at": short.get("created_at", ""),
     })
-    content["items"] = items
-    seed_content.write_text(json.dumps(content, indent=2, ensure_ascii=False))
+    if isinstance(content, dict):
+        content["items"] = items
+        out = content
+    else:
+        out = items
+    seed_content.write_text(json.dumps(out, indent=2, ensure_ascii=False))
     print(f"  Mirrored into {seed_content}")
 
 
