@@ -78,19 +78,30 @@ PROMPTS = {
 
 
 def _generate_one(lang: str, kind: str, ref_url: str | None) -> str:
-    """Call fal.ai once and return the audio URL."""
+    """Call fal.ai once and return the audio URL.
+
+    v2 (English) uses `lyrics_prompt`; v2.5 (Hindi) uses `lyrics` +
+    `is_instrumental: True` for instrumental output.
+    """
     import fal_client
 
     endpoint = FAL_ENDPOINT_HI if lang == "hi" else FAL_ENDPOINT_EN
-    args: dict = {
-        "prompt": PROMPTS[(lang, kind)],
-        "lyrics_prompt": "[Instrumental]",
-        "audio_setting": {
-            "sample_rate": 44100,
-            "bitrate": 256000,
-            "format": "mp3",
-        },
-    }
+    if lang == "hi":
+        args: dict = {
+            "prompt": PROMPTS[(lang, kind)],
+            "lyrics": "",
+            "is_instrumental": True,
+        }
+    else:
+        args = {
+            "prompt": PROMPTS[(lang, kind)],
+            "lyrics_prompt": "[Instrumental]",
+            "audio_setting": {
+                "sample_rate": 44100,
+                "bitrate": 256000,
+                "format": "mp3",
+            },
+        }
     if ref_url:
         args["reference_audio_url"] = ref_url
 
