@@ -663,17 +663,40 @@ def verify_all_live_urls(api: str, frontend: str) -> list[str]:
 
     print(f"\n  🔍 HEAD-checking cover + audio for {len(all_items)} live items (all langs, all subtypes)...")
 
-    def head_check(label: str, base: str, path: str):
+    def head_check_either(label: str, path: str):
+        """Try frontend first, then backend. Accept 200 from either.
+
+        Different content categories serve from different bases (e.g., funny
+        shorts audio is backend-served, lullaby audio is frontend-served, and
+        the routing has changed historically). Trying both eliminates false
+        positives from a brittle category→base mapping.
+        """
         if not path:
             return None
-        full = f"{base}{path}" if path.startswith("/") else path
+        if not path.startswith("/"):
+            # Absolute URL — just check it as-is
+            try:
+                resp = client.head(path)
+                if resp.status_code == 200:
+                    return None
+                return f"  ❌ {label} ({resp.status_code}): {path}"
+            except Exception as e:
+                return f"  ❌ {label} UNREACHABLE: {path} ({type(e).__name__})"
+        # Relative path — try frontend, then backend
+        for base in (frontend, api):
+            try:
+                resp = client.head(f"{base}{path}")
+                if resp.status_code == 200:
+                    return None
+            except Exception:
+                continue
+        # If we reach here, neither base served it — re-issue against frontend
+        # to capture the status code for the error message
         try:
-            resp = client.head(full)
-            if resp.status_code == 200:
-                return None
-            return f"  ❌ {label} ({resp.status_code}): {path}"
+            resp = client.head(f"{frontend}{path}")
+            return f"  ❌ {label} ({resp.status_code} on both fe+be): {path}"
         except Exception as e:
-            return f"  ❌ {label} UNREACHABLE: {path} ({type(e).__name__})"
+            return f"  ❌ {label} UNREACHABLE on both fe+be: {path} ({type(e).__name__})"
 
     ok = 0
     failed_issues = []
@@ -684,18 +707,15 @@ def verify_all_live_urls(api: str, frontend: str) -> list[str]:
         item_lang = item.get("lang", "?")
         label = f"{item_id} [{item_type}{('/'+item_subtype) if item_subtype else ''}/{item_lang}]"
 
-        # Cover always served via frontend nginx (with subdir aliases per CLAUDE.md
-        # Production Path Routing — funny-shorts, funny-shorts-hi, poems alias to /opt/cover-store/)
-        cover_issue = head_check(f"COVER {label}", frontend, item.get("cover") or item.get("cover_url"))
+        cover_path = item.get("cover") or item.get("cover_url")
+        cover_issue = head_check_either(f"COVER {label}", cover_path)
         if cover_issue:
             failed_issues.append(cover_issue)
-        elif item.get("cover") or item.get("cover_url"):
+        elif cover_path:
             ok += 1
 
-        # Audio: silly_songs and poems served by API; everything else by frontend
-        audio_base = api if (item_subtype == "silly_song" or item_type == "poem") else frontend
         audio_path = item.get("audio_url") or item.get("audio")
-        audio_issue = head_check(f"AUDIO {label}", audio_base, audio_path)
+        audio_issue = head_check_either(f"AUDIO {label}", audio_path)
         if audio_issue:
             failed_issues.append(audio_issue)
         elif audio_path:
