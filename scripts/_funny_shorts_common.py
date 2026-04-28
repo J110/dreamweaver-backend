@@ -459,3 +459,204 @@ def sample_voice_pair(
     recent_set = {tuple(p) for p in recent_pairs[-3:]}
     eligible = [p for p in pairings if tuple(p) not in recent_set]
     return rng.choice(eligible) if eligible else rng.choice(pairings)
+
+
+# ────────────────────────────────────────────────────────────────────────
+#  Mistral prompt builder (§8 in both spec docs)
+# ────────────────────────────────────────────────────────────────────────
+
+_APPROVED_TAGS_LIST = ", ".join(sorted(APPROVED_TAGS))
+
+
+_EN_TEMPLATE = """You are writing a 60-second comedic dialogue between two child characters
+for a bedtime app. The dialogue should make a kid laugh, then settle.
+
+You have full creative freedom WITHIN these constraints:
+- Exactly two characters speaking, no narrator
+- 6-20 dialogue lines total (vary the length — short shorts are good)
+- Max 12 words per line
+- Total under 500 characters
+- Use audio tags ONLY from this list: {approved_tags}
+- Bedtime-appropriate ending (not amped up; sigh, quiet realization, yawn,
+  thoughtful pause, soft laughter all work)
+
+WHAT YOU MUST AVOID:
+- Repeating the comedic structure of recent funny shorts (listed below)
+- Starting with [curious] unless the orchestrator chose it
+- Defaulting to "A accuses → B denies → evidence" pattern
+- Using the same opening tag as the last 3 shorts
+- Predictable structures — surprise is funnier than formula
+
+CHARACTER VOICES:
+A: {voice_a_label} — {voice_a_personality}
+B: {voice_b_label} — {voice_b_personality}
+
+THIS SHORT'S CREATIVE PARAMETERS:
+- Comedic device: {comedic_device}
+- Emotional dynamic: {emotional_dynamic}
+- Setting: {setting}
+- Tone: {tone}
+- Character age dynamic: {character_age_dynamic}
+- Required opening tag: {required_opening_tag}
+  (use this exactly as your first tag — diversity enforcement)
+
+RECENT FUNNY SHORTS TO NOT REPEAT:
+{recent_shorts_summary}
+
+WHAT MAKES KIDS ACTUALLY LAUGH:
+- Specific concrete details over generic ones
+- Surprising small reactions over big dramatic ones
+- One character earnest while the other is skeptical
+- Logic taken too seriously about silly things
+- A kid stating an obvious thing as if it's profound
+- An adult-style argument about kid stuff
+- Misunderstanding the listener catches before the characters do
+- The conversation veering somewhere unexpected
+- A small detail in the world becoming the whole point
+
+WHAT FALLS FLAT:
+- Setup → punchline structure (kids' comedy is conversational)
+- Big reactions to small things (unless that's the point)
+- Forced "lessons" or morals
+- Adult-style wit
+- Sarcasm directed at the listener
+
+OUTPUT FORMAT (JSON):
+{{
+  "title": "evocative title under 5 words",
+  "comedic_device_used": "{comedic_device}",
+  "inputs": [
+    {{"voice": "A" or "B", "text": "line with audio tags inline"}}
+  ],
+  "cover_context": "one sentence describing a dreamy visual"
+}}
+
+Just the JSON. No commentary."""
+
+
+_HI_TEMPLATE = """You are writing a 60-second comedic Hindi dialogue between two Indian
+child characters for a bedtime app. The dialogue should make an Indian
+kid laugh, then settle.
+
+ROMAN HINDI ONLY:
+Write all dialogue in Roman script. Not Devanagari.
+"Mujhe chips chahiye" — Roman only, never Devanagari.
+Audio tags stay in English (delivery cues, not text).
+
+CONVERSATIONAL REGISTER:
+Bolchaal ki Hindi — way Indian siblings actually talk.
+Hinglish is natural — "school", "phone", "okay", "actually",
+"literally", "homework", "cousin" all stay in English.
+"Tum" between characters (kids don't use formal aap).
+NEVER literary Hindi: nidra, nakshatra, shayan, pushp, van.
+
+You have full creative freedom WITHIN these constraints:
+- Exactly two characters speaking, no narrator
+- 6-20 dialogue lines total (vary the length)
+- Max 12 words per line
+- Total under 500 characters
+- Use audio tags ONLY from this list: {approved_tags}
+- Bedtime-appropriate ending
+
+WHAT YOU MUST AVOID:
+- Repeating the comedic structure of recent shorts (listed below)
+- Defaulting to "chips ka theft" / "Maa ko bataaunga" pattern
+- Starting with [curious] unless required
+- Using over-used Hindi tropes that appeared in recent shorts
+- Predictable structures
+
+NO RELIGIOUS CONTENT:
+No deity names, no puja/aarti/prasad, no ritual references.
+Festival mentions atmospheric only.
+
+NO CASTE OR REGIONAL STEREOTYPES:
+No surname jokes, no Bihari/Punjabi/Madrasi humor, no body-shaming
+("motu", "lambu" forbidden).
+
+NO BRANDS OR CELEBRITIES:
+"Biscuit" not "Parle-G", "chocolate" not "Cadbury", no cricketers,
+no film stars, no YouTubers.
+
+CHARACTER VOICES:
+A: {voice_a_label} — {voice_a_personality}
+B: {voice_b_label} — {voice_b_personality}
+
+THIS SHORT'S CREATIVE PARAMETERS:
+- Comedic device: {comedic_device}
+- Emotional dynamic: {emotional_dynamic}
+- Setting: {setting}
+- Tone: {tone}
+- Character age dynamic: {character_age_dynamic}
+- Required opening tag: {required_opening_tag}
+
+RECENT HINDI FUNNY SHORTS TO NOT REPEAT:
+{recent_shorts_summary}
+
+OVER-USED HINDI PHRASES TO AVOID THIS WEEK:
+{over_used_phrases_to_avoid}
+
+WHAT MAKES INDIAN KIDS LAUGH:
+- Specific Indian-household details (ceiling fan, pressure cooker
+  whistle, mosquito coil, chappal arrangement) used as comedic detail
+- Sibling dynamics every Indian kid recognizes
+- Mock-serious philosophical debates about silly things
+- One kid earnest, other skeptical
+- Hinglish naturally mixed
+- Surprise reactions to small Indian-life moments
+
+WHAT FALLS FLAT:
+- Translated English humor
+- Setup-punchline structure
+- Forced Hinglish
+- Tropes used in EVERY short (chips ka theft, Maa ko bataaunga)
+- Adult sarcasm
+- Bollywood references
+
+OUTPUT FORMAT (JSON):
+{{
+  "title": "evocative Roman Hindi title under 5 words",
+  "title_en": "English translation for tooling",
+  "comedic_device_used": "{comedic_device}",
+  "inputs": [
+    {{"voice": "A" or "B", "text": "line with audio tags inline"}}
+  ],
+  "cover_context": "one English sentence describing a dreamy Indian visual"
+}}
+
+Just the JSON. No commentary."""
+
+
+def build_prompt(
+    *,
+    lang: str,
+    voice_a_label: str,
+    voice_a_personality: str,
+    voice_b_label: str,
+    voice_b_personality: str,
+    comedic_device: str,
+    emotional_dynamic: str,
+    setting: str,
+    tone: str,
+    required_opening_tag: str | None,
+    recent_shorts_summary: str,
+    over_used_phrases_to_avoid: str,
+    character_age_dynamic: str = "siblings",
+) -> str:
+    """Build the Mistral system prompt per spec §8."""
+    template = _HI_TEMPLATE if lang == "hi" else _EN_TEMPLATE
+    opening = required_opening_tag if required_opening_tag else "(no tag — start mid-thought)"
+    return template.format(
+        approved_tags=_APPROVED_TAGS_LIST,
+        voice_a_label=voice_a_label,
+        voice_a_personality=voice_a_personality,
+        voice_b_label=voice_b_label,
+        voice_b_personality=voice_b_personality,
+        comedic_device=comedic_device,
+        emotional_dynamic=emotional_dynamic,
+        setting=setting,
+        tone=tone,
+        character_age_dynamic=character_age_dynamic,
+        required_opening_tag=opening,
+        recent_shorts_summary=recent_shorts_summary,
+        over_used_phrases_to_avoid=over_used_phrases_to_avoid or "(none)",
+    )
