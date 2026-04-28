@@ -463,3 +463,123 @@ VALIDATORS = {
     "silly_song":  validate_silly_song,
     "poem":        validate_poem,
 }
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# SEVERITY CLASSIFICATION (for the QA critic layer)
+#
+# MAJOR  → can't be safely patched by a critic; trigger full regen
+# MINOR  → mechanical issue that targeted edits can fix
+#
+# Per user feedback:
+#   - missing diversityFingerprint fields → MAJOR (feeds anti-duplication;
+#     wrong values cascade for the next 10 stories)
+#   - primary character with no dialogue → MAJOR (would require fabricating
+#     content, not editing)
+#   - religious / Devanagari / blacklisted name / phase structure → MAJOR
+#   - dict-shape full_text_roman → MAJOR (handled upstream by shape() now)
+#   - dialogue embedded in narration → MINOR (reformatting only; word count
+#     must not increase >10%)
+#   - tag count off by 1-3 → MINOR
+#   - onomatopoeia / conversational markers / matras / word count → MINOR
+# ═══════════════════════════════════════════════════════════════════════
+
+# Substring patterns mapped to severity. First match wins.
+_MAJOR_PATTERNS = [
+    "Devanagari in",
+    "missing [PHASE_",
+    "religious content:",
+    "blacklisted name:",
+    "characterType",
+    "section tag found:",          # poem with [verse]/[chorus] is structurally wrong
+    "primary character has no dialogue",
+    "missing diversityFingerprint",
+    "literary Hindi:",             # cascades — register slip is a creative defect
+    "Choruses must be identical",  # silly-song chorus identity is structural
+]
+
+# Everything else defaults to MINOR. List below is for clarity / docs.
+_MINOR_PATTERNS = [
+    "[MUSIC] count",
+    "[BREATHE] count",
+    "[PHRASE] count",
+    "[BREATHE_GUIDE]",
+    "[SONG_SEED:",
+    "[WHISPER]",
+    "onomatopoeia",
+    "conversational markers",
+    "word count",
+    "matras >",
+    "too short:",
+    "too many lines",
+    "too few lyric lines",
+    "lyrics body too long",
+    "lyrics too long:",
+    "Missing asterisked sound effect",
+    "missing title_en",
+    "missing morals",
+    "forbidden tag:",
+    "Missing [COVER:]",
+    "secondary character has no dialogue",
+    "NAME: \"...\" dialogue lines",
+    "declared character",          # character no-dialogue (severity refined below)
+    "banned simile:",
+    "empty [PHRASE]",
+    "invalid lullaby_type:",
+    "too many words",
+    "too long:",                   # poem char limit
+]
+
+
+def _classify(message: str, content_type: str, raw_data: dict) -> str:
+    """Return 'major' or 'minor' for an error message string.
+
+    Special case: 'declared character X has no dialogue' depends on whether
+    X is the primary character (≥2 mentions in full text) or secondary.
+    """
+    if "declared character" in message and "has no dialogue" in message:
+        # Extract character name and count mentions in full text body
+        m = re.search(r"declared character ['\"]?([A-Za-z][A-Za-z0-9 _-]+)", message)
+        if m:
+            char_name = m.group(1).strip()
+            text = (
+                raw_data.get("full_text_roman", "")
+                or raw_data.get("text", "")
+                or ""
+            )
+            mentions = len(re.findall(rf"\b{re.escape(char_name)}\b", text))
+            return "major" if mentions >= 2 else "minor"
+        return "minor"
+
+    for pat in _MAJOR_PATTERNS:
+        if pat in message:
+            return "major"
+    return "minor"  # default — most regex-flagged issues are mechanical
+
+
+def validate_structured(content_type: str, data: dict) -> list[dict]:
+    """Run the type-specific validator and tag each error with severity.
+
+    Returns list of dicts: {severity, rule, detail}. Empty list means OK.
+    Used by the QA critic layer to decide minor-fix vs full-regen.
+    """
+    if content_type not in VALIDATORS:
+        return []
+    raw_messages = VALIDATORS[content_type](data)
+    out = []
+    for msg in raw_messages:
+        out.append({
+            "severity": _classify(msg, content_type, data),
+            "rule": msg.split(":")[0].strip()[:60],   # short identifier
+            "detail": msg,
+        })
+    return out
+
+
+def has_major(structured_errors: list[dict]) -> bool:
+    return any(e.get("severity") == "major" for e in structured_errors)
+
+
+def only_minor(structured_errors: list[dict]) -> bool:
+    return bool(structured_errors) and not has_major(structured_errors)
+

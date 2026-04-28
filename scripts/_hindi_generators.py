@@ -49,7 +49,8 @@ ON_PROD = PROD_BACKEND_PUBLIC.exists()
 sys.path.insert(0, str(Path(__file__).parent))
 
 from _hindi_llm import generate_json, LLMError  # type: ignore
-from _hindi_validators import VALIDATORS  # type: ignore
+from _hindi_validators import VALIDATORS, validate_structured, has_major  # type: ignore
+from _hindi_qa_critic import critic_review, is_qa_enabled  # type: ignore
 
 
 TOGETHER_KEY = os.getenv("TOGETHER_API_KEY", "")
@@ -138,20 +139,47 @@ def _upsert_content(entry: dict) -> None:
     cj.write_text(json.dumps(data, ensure_ascii=False, indent=2))
 
 
+def _attach_qa_changes(entry: dict, llm_data: dict) -> None:
+    """If the critic touched llm_data, surface a sanitized audit record on
+    the saved entry (visible in seed/runtime content.json + daily email).
+    Never leak internal scaffolding to user-facing fields."""
+    qa = llm_data.get("_qa_changes")
+    if qa:
+        entry["qa_changes"] = {
+            "action": qa.get("action"),
+            "summary_of_changes": qa.get("summary_of_changes", []),
+            "validator_errors": qa.get("validator_errors", []),
+            "justification": qa.get("justification"),
+            "elapsed_ms": qa.get("elapsed_ms"),
+        }
+
+
 def _llm_with_retry(*, system: str, user: str, validator_key: str,
                      max_retries: int = 3, log_prefix: str = "  ",
                      post_process=None, max_tokens: int = 4096) -> dict:
-    """Generate JSON, validate, retry on failure. post_process optionally
-    transforms the LLM JSON into the validator-shape.
+    """Generate JSON, validate, optionally critic-review, retry on failure.
 
-    Retry hint now ACCUMULATES errors across all prior attempts (not just
-    the most recent), so the LLM doesn't forget about prior issues when
-    fixing the latest. Critical for long stories where structural
-    requirements (BREATHE count, onomatopoeia count, etc.) are independent
-    and the LLM tends to whack-a-mole between them otherwise.
+    Flow per attempt (when HINDI_QA_ENABLED for this content_type):
+      1. Mistral generate
+      2. Regex validator
+      3. If errors and ALL are minor → ONE Groq critic attempt:
+            - action="fix"            → re-validate; pass → return
+            - action="pass_override"  → log + return (with qa_changes audit)
+            - action="regenerate"     → continue loop (no second Groq call)
+      4. If MAJOR errors or critic-rejected → continue loop with cumulative
+         retry hint
+
+    Retry hint accumulates errors across all prior attempts so the LLM
+    doesn't whack-a-mole between independent structural requirements.
+
+    Returns the final (validated) content dict. The dict carries a
+    `_qa_changes` key when the critic edited it — strip before saving
+    to user-facing seed entries; keep for audit/email summary.
     """
     all_errors_seen: set[str] = set()
     last_errors: list[str] = []
+    qa_enabled = is_qa_enabled(validator_key)
+    qa_attempted = False  # one critic attempt per generation, not per retry
     for attempt in range(max_retries):
         retry_hint = ""
         if attempt > 0 and (last_errors or all_errors_seen):
@@ -178,10 +206,59 @@ def _llm_with_retry(*, system: str, user: str, validator_key: str,
 
         # Optional shape transform before validation
         validator_input = post_process(data) if post_process else data
-        errors = VALIDATORS[validator_key](validator_input)
+        # Structured (severity-tagged) view of validator errors — drives the
+        # critic decision below. The bare-string list is preserved for the
+        # retry-hint accumulator below.
+        structured_errors = validate_structured(validator_key, validator_input)
+        errors = [e["detail"] for e in structured_errors]
+
         if not errors:
             print(f"{log_prefix}validator passed")
             return data
+
+        # ── QA critic layer (one attempt per generation, only if all errors
+        #    are minor AND HINDI_QA_ENABLED). Skip when major errors are
+        #    present — those need full regen, not patching.
+        if (qa_enabled and not qa_attempted
+                and not has_major(structured_errors)):
+            qa_attempted = True
+            print(f"{log_prefix}critic review (all {len(structured_errors)} errors are minor)")
+            qa_result = critic_review(
+                content=validator_input,
+                errors=structured_errors,
+                content_type=validator_key,
+                log_prefix=log_prefix + "  ",
+            )
+
+            if qa_result["action"] == "fix":
+                fixed = qa_result["fixed_content"]
+                fixed["_qa_changes"] = {
+                    "action": "fix",
+                    "summary_of_changes": qa_result["summary_of_changes"],
+                    "elapsed_ms": qa_result["elapsed_ms"],
+                }
+                print(f"{log_prefix}critic fixed: {qa_result['summary_of_changes'][:3]}")
+                return fixed
+
+            if qa_result["action"] == "pass_override":
+                # Critic disagrees with validator — ship with audit flag.
+                # Human review can later confirm whether validator was wrong.
+                data["_qa_changes"] = {
+                    "action": "pass_override",
+                    "validator_errors": errors,
+                    "justification": qa_result["justification"],
+                    "elapsed_ms": qa_result["elapsed_ms"],
+                }
+                print(f"{log_prefix}critic OVERRIDE: {qa_result['justification']}")
+                return data
+
+            # action == "regenerate" or "skip" or "invalid" → fall through
+            # to retry. Surface the regen reason in the next prompt.
+            if qa_result.get("regen_reason"):
+                errors = errors + [f"(critic flagged for regen: {qa_result['regen_reason']})"]
+            for d in qa_result.get("diagnostics", []):
+                print(f"{log_prefix}  diagnostic: {d}")
+
         print(f"{log_prefix}validator fail (attempt {attempt+1}): {errors[:5]}")
         last_errors = errors
         all_errors_seen.update(errors)
@@ -408,6 +485,7 @@ def generate_short_story(axes: dict, log_prefix: str = "  ") -> dict:
         "created_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "updated_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
     }
+    _attach_qa_changes(entry, data)
     _upsert_content(entry)
     print(f"{log_prefix}✓ short story published: {sid} ({duration}s)")
     return entry
@@ -578,6 +656,7 @@ def generate_lullaby(axes: dict, log_prefix: str = "  ") -> dict:
         "created_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "updated_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
     }
+    _attach_qa_changes(entry, data)
     _upsert_content(entry)
     print(f"{log_prefix}✓ lullaby published: {sid} ({duration}s)")
     return entry
@@ -800,6 +879,7 @@ def generate_silly_song(axes: dict, log_prefix: str = "  ") -> dict:
     rp.parent.mkdir(parents=True, exist_ok=True)
     rp.write_text(json.dumps(runtime_entry, ensure_ascii=False, indent=2))
 
+    _attach_qa_changes(entry, data)
     _upsert_content(entry)
     print(f"{log_prefix}✓ silly song published: {sid} ({duration}s)")
     return entry
@@ -1008,6 +1088,7 @@ def generate_poem(axes: dict, log_prefix: str = "  ") -> dict:
     rp.parent.mkdir(parents=True, exist_ok=True)
     rp.write_text(json.dumps(runtime_entry, ensure_ascii=False, indent=2))
 
+    _attach_qa_changes(entry, data)
     _upsert_content(entry)
     print(f"{log_prefix}✓ poem published: {sid} ({duration}s)")
     return entry
@@ -1465,6 +1546,7 @@ def generate_long_story(axes: dict, log_prefix: str = "  ") -> dict:
         "created_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "updated_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
     }
+    _attach_qa_changes(entry, data)
     _upsert_content(entry)
     print(f"{log_prefix}✓ long story published: {sid} ({duration}s)")
     return entry

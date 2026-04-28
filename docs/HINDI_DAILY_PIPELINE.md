@@ -23,6 +23,98 @@ Generates one fresh piece of each Hindi content type per day, validates against 
 
 Monthly: ~$50.
 
+## QA Layer (Mistral → Groq critic → audio render)
+
+A second-pass LLM critic sits between the regex validator and the audio render. The regex validator catches encodable rules (tag counts, blacklisted words, Devanagari leaks); the critic catches semantic gaps the regex misses (embedded dialogue vs `NAME: "..."` form, register slips, whether onomatopoeia sounds natural in context).
+
+```
+Mistral content → regex validator → IF errors:
+  ├─ any MAJOR severity   → full regen (continue retry loop)
+  └─ all errors are MINOR → ONE Groq critic attempt:
+                              ├─ action="fix"            → re-validate; pass → ship; else regen
+                              ├─ action="pass_override"  → log + ship + flag for human audit
+                              └─ action="regenerate"     → regen with reason
+```
+
+**One critic attempt per generation.** If Groq's fix introduces new errors or doesn't resolve everything, we regenerate without trying Groq a second time. Avoids whack-a-mole patching loops.
+
+### Severity classification
+
+| Severity | Examples | Why |
+|---|---|---|
+| **MAJOR** (regenerate) | Devanagari leak in user-facing field · religious content · blacklisted name · missing `[PHASE_*]` · primary character has no dialogue (≥2 mentions in body) · `characterType` not in canonical 11 · literary Hindi (`shayan`, `pushp`, …) · missing `diversityFingerprint` (cascades to next 10 stories' sampling) · choruses non-identical (silly song) · poem section tags (structurally wrong type) | Surgical edits would cascade or fabricate content. Cheaper to regen. |
+| **MINOR** (Groq fixes) | Tag counts off by 1-3 · onomatopoeia count low · conversational markers low · word count off by ≤15% · embedded dialogue (reformat only, no new lines) · missing `morals` · missing `[BREATHE_GUIDE]`/`[SONG_SEED:]`/`[WHISPER]` · matra over-count (poem) · forbidden tag leak (`[GENTLE]` in v2 short story) · secondary character has no dialogue | Targeted mechanical edits don't change story essence. |
+
+### Allow/deny enforcement
+
+Per-content-type allow-list governs which fields the critic may touch. Deny-list is global and unconditional (id, lang, title, world_name, characters[].name, voice_routing, audio_*, cover_*, mood, age_group, …). After Groq returns a fix, we diff against the original; any path not in allow-list or matching deny-list rejects the fix → regenerate.
+
+**Hard cap**: aggregate edit ratio ≤ 30 % of JSON-serialized content length, regardless of which fields changed. Belt-and-suspenders against runaway edits even within allowed fields.
+
+### Pass-override (Groq disagrees with the validator)
+
+When the critic believes a flagged error is a false positive (e.g. validator flagged `"ram "` but the context is `"naram"`/soft, not the deity), it may return `action: "pass_override"` with a justification. The pipeline ships the content unchanged but logs the override on the entry's `qa_changes.action` field for weekly human audit.
+
+### Model choice — Groq Llama 3.3 70B
+
+| Option | Cost/call | Latency | Decision |
+|---|---|---|---|
+| **Groq llama-3.3-70b-versatile** | ~$0.001 | 2-3s | **chosen** |
+| Claude Haiku | ~$0.05 | 8-15s | rejected: 50× cost for marginal capability gain |
+| Mixtral 8x7B (Groq) | ~$0.0005 | 1-2s | rejected: under-powered on multi-rule instruction following |
+| Mistral Large (re-call) | ~$0.05 | 5-10s | rejected: same model as generator → inherits same blind spots, defeats the second-pass purpose |
+
+The critic's job is rule-keeping, not creative generation. Llama 3.3 70B is sufficient for instruction-following on a bounded JSON-edit task.
+
+### Env-var gates
+
+```
+HINDI_QA_ENABLED=true         # master switch (default false)
+HINDI_QA_TYPES=short_story    # comma-separated content types (default: short_story)
+```
+
+Rollout plan: enable for `short_story` first (smaller surface area, easier to audit), expand to other types after 3-5 days of clean weekly reports. Long stories last because they have the largest creative content where critic edits could most plausibly go wrong undetected.
+
+### Audit trail
+
+Every fixed/overridden item carries `qa_changes` on its content.json entry:
+
+```json
+"qa_changes": {
+  "action": "fix" | "pass_override" | "regenerate",
+  "summary_of_changes": ["Added 'tap tap' onomatopoeia at line 14", ...],
+  "validator_errors": [...],     // only for pass_override
+  "justification": "...",         // only for pass_override
+  "elapsed_ms": 2340
+}
+```
+
+### Weekly QA report
+
+`scripts/weekly_qa_report.py` runs Mondays at 09:00 UTC and emails an aggregated summary:
+
+- Total items / fix rate / override count
+- Top fix categories (e.g. "Added onomatopoeia: 18 stories (38%)")
+- Pass-override audit list
+
+The fix-category histogram is the highest-leverage signal. Rules Groq fixes consistently are rules the Mistral prompt isn't steering hard enough on. Use the report to prioritize prompt improvements.
+
+```
+0 9 * * 1  cd /opt/dreamweaver-backend && python3 scripts/weekly_qa_report.py >> logs/weekly_qa.log 2>&1
+```
+
+### System prompt (the heart of the critic)
+
+The critic's system prompt lives in `scripts/_hindi_qa_critic.py:SYSTEM_PROMPT`. It explicitly enumerates:
+- What the critic MAY edit (tag insertion, dialogue reformatting, onomatopoeia/marker insertion, missing-field fills)
+- What it MUST NEVER edit (rename characters, change title/world/repeated_phrase, invent dialogue, change diversityFingerprint values)
+- Decision rules (`fix` / `pass_override` / `regenerate` triggers)
+- Edit magnitude cap (≤ 30 % total content length)
+
+The prompt is reviewed before any implementation lands. Updating it requires a code review.
+
+---
+
 ## Modules
 
 ```
