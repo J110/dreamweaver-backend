@@ -635,10 +635,15 @@ _HI_TEMPLATE = """You are writing a 60-second comedic Hindi dialogue between two
 child characters for a bedtime app. The dialogue should make an Indian
 kid laugh, then settle.
 
-ROMAN HINDI ONLY:
-Write all dialogue in Roman script. Not Devanagari.
-"Mujhe chips chahiye" — Roman only, never Devanagari.
-Audio tags stay in English (delivery cues, not text).
+ROMAN HINDI + DEVANAGARI (BOTH REQUIRED):
+For EACH dialogue line, produce TWO fields:
+- "text": Roman script (for app display/storage; NEVER Devanagari here)
+- "text_deva": EXACT same line in Devanagari (used as TTS engine input
+  for cleaner Hindi phonemes — Hindi voices on ElevenLabs render
+  Devanagari more accurately than transliterated Roman)
+Audio tags stay in English ([curious], [laughs together], etc.) in
+BOTH fields — they're delivery cues, not text.
+Both fields must contain the same tags in the same positions.
 
 CONVERSATIONAL REGISTER:
 Bolchaal ki Hindi — way Indian siblings actually talk.
@@ -746,10 +751,10 @@ OUTPUT FORMAT (JSON, exact shape — do NOT use voice labels like
   "title_en": "English translation for tooling",
   "comedic_device_used": "{comedic_device}",
   "inputs": [
-    {{"voice": "A", "text": "[curious] Roman Hindi opener up to 12 words"}},
-    {{"voice": "B", "text": "[laughs]..."}},
-    {{"voice": "A", "text": "[serious] Another Roman Hindi line"}},
-    {{"voice": "B", "text": "[laughs together] hahaha"}}
+    {{"voice": "A", "text": "[curious] Roman Hindi opener.", "text_deva": "[curious] रोमन हिंदी ओपनर।"}},
+    {{"voice": "B", "text": "[laughs]...", "text_deva": "[laughs]..."}},
+    {{"voice": "A", "text": "[serious] Another Roman line.", "text_deva": "[serious] एक और लाइन।"}},
+    {{"voice": "B", "text": "[laughs together] hahaha", "text_deva": "[laughs together] hahaha"}}
   ],
   "cover_context": "one English sentence describing a dreamy Indian visual"
 }}

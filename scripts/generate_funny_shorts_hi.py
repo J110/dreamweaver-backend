@@ -284,8 +284,13 @@ def main() -> int:
         print(json.dumps(script, indent=2, ensure_ascii=False))
         return 0
 
-    print("\nRendering v3 dialogue...")
-    dialogue_bytes = render_dialogue_v3(script["inputs"], voice_a_id, voice_b_id)
+    print("\nRendering v3 dialogue (Devanagari engine input)...")
+    # Use Devanagari for the TTS engine — cleaner Hindi phonemes than Roman
+    engine_inputs = [
+        {"voice": l["voice"], "text": l.get("text_deva") or l["text"]}
+        for l in script["inputs"]
+    ]
+    dialogue_bytes = render_dialogue_v3(engine_inputs, voice_a_id, voice_b_id)
 
     intro_path, outro_path = _resolve_stings()
     print(f"Framing with stings: {intro_path.name}, {outro_path.name}")

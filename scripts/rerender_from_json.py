@@ -48,7 +48,15 @@ def rerender(short_id: str) -> None:
         return
 
     print(f"  Rendering {short_id} ({lang}, {voice_pair[0]}+{voice_pair[1]}, {len(inputs)} lines)...")
-    dialogue_bytes = render_dialogue_v3(inputs, voice_a_id, voice_b_id)
+    # Hindi uses Devanagari (text_deva) when present for cleaner phonemes
+    if lang == "hi":
+        engine_inputs = [
+            {"voice": l["voice"], "text": l.get("text_deva") or l["text"]}
+            for l in inputs
+        ]
+    else:
+        engine_inputs = inputs
+    dialogue_bytes = render_dialogue_v3(engine_inputs, voice_a_id, voice_b_id)
 
     intro = STINGS / f"funny_short_intro_{lang}.mp3"
     outro = STINGS / f"funny_short_outro_{lang}.mp3"
