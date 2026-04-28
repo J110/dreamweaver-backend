@@ -176,7 +176,7 @@ def _log_failure(content_type: str, error: str) -> None:
         }) + "\n")
 
 
-def main() -> int:
+def main(only_types: list[str] | None = None) -> int:
     print(f"\n══════ Hindi Daily Pipeline — {datetime.now():%Y-%m-%d %H:%M} ══════\n")
     pipeline_start = time.time()
 
@@ -194,8 +194,12 @@ def main() -> int:
     catalog = load_hindi_catalog()
     print(f"  Hindi catalog: {len(catalog)} items")
 
+    types_to_run = only_types if only_types else CONTENT_TYPES_ORDER
+    if only_types:
+        print(f"  filtered run: {types_to_run}")
+
     results: dict[str, dict] = {}
-    for content_type in CONTENT_TYPES_ORDER:
+    for content_type in types_to_run:
         print(f"\n→ {content_type.upper()}")
         try:
             axes = PICKERS[content_type](catalog)
@@ -264,4 +268,12 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    import argparse
+    p = argparse.ArgumentParser()
+    p.add_argument(
+        "--types", nargs="+", default=None,
+        choices=CONTENT_TYPES_ORDER,
+        help="Run only these types (default: all 5). Use for retry of failed types.",
+    )
+    args = p.parse_args()
+    sys.exit(main(only_types=args.types))
