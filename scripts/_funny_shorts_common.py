@@ -287,3 +287,175 @@ def validate_funny_short(
         errors.append("Title too long")
 
     return errors
+
+
+# ────────────────────────────────────────────────────────────────────────
+#  Voice library (resolved IDs from ElevenLabs shared marketplace)
+# ────────────────────────────────────────────────────────────────────────
+
+VOICE_LIBRARY_EN: dict[str, str] = {
+    "mini":           "hO2yZ8lxM3axUxL8OeKX",  # Lively cute young female
+    "jerry":          "MDLAMJ0jxkpYkjXbmG4t",  # Jolly Santa Claus
+    "suhana":         "9vP6R7VVxNwGIGLnpl17",  # Very young & joyful narrator
+    "tashi":          "YIXhzp6l2M0ddzOGIbJ3",  # Expressive Hindi-kids narrator (English variant)
+    "monika_creepy":  "6aO1exAR9bDruq155LzQ",  # Sinister creepy
+    "leo":            "UKvDHTUpXOC66VwQ3n2w",  # Calm yet firm recovery agent
+}
+
+VOICE_LIBRARY_HI: dict[str, str] = {
+    "bunty":          "7b9mYhmnp0y2qSH1FnBL",  # Funny best friend
+    "anika":          "Sm1seazb4gs7RSlUVw7c",  # Animated, friendly and engaging
+    "riya":           "4RloeZf2FRvGiu4uoKOf",  # Children storytelling
+    "kiran":          "ss0PMu3rEfIwrYgOOl5S",  # Very young, cute & engaging
+    "gappu":          "psk8YLODv4ETdKheNwwz",  # Kids cartoon character voice
+    "gappu_bhai":     "tBPQ3sUKpdLEVpyeCHyk",  # Lazy cartoon voice
+}
+
+APPROVED_PAIRINGS_EN: list[tuple[str, str]] = [
+    ("mini", "leo"),                    # bright + dry
+    ("suhana", "monika_creepy"),        # innocent + sinister (contrast)
+    ("jerry", "mini"),                  # jolly + cheeky
+    ("tashi", "leo"),                   # expressive + steady
+    ("suhana", "jerry"),                # young + jolly
+    ("mini", "tashi"),                  # lively + dramatic
+    ("monika_creepy", "leo"),           # sinister + steady
+    ("tashi", "suhana"),                # dramatic + innocent
+]
+
+APPROVED_PAIRINGS_HI: list[tuple[str, str]] = [
+    ("bunty", "kiran"),
+    ("anika", "gappu"),
+    ("riya", "gappu_bhai"),
+    ("kiran", "gappu"),
+    ("bunty", "anika"),
+    ("riya", "kiran"),
+    ("gappu", "gappu_bhai"),
+    ("bunty", "gappu_bhai"),
+]
+
+
+# ────────────────────────────────────────────────────────────────────────
+#  Sampler axes (§3.5 in both spec docs)
+# ────────────────────────────────────────────────────────────────────────
+
+OPENING_TAGS: list[str | None] = [
+    "[curious]", "[matter-of-fact]", "[excited]", "[whispers]",
+    "[thoughtful]", "[grinning]", "[confused]", "[serious]",
+    "[sigh]", "[singing]", None,  # None = no-tag opener (in-medias-res)
+]
+
+COMEDIC_DEVICES: list[str] = [
+    "conflict_turn_taking", "conflict_ownership", "conflict_fairness",
+    "discovery_weird_object", "discovery_misremembered", "discovery_old_artifact",
+    "pretend_play_grownup", "pretend_play_animal", "pretend_play_news_anchor",
+    "earnest_vs_skeptical", "wildly_wrong_explanation", "deadpan_absurd",
+    "negotiation_trade", "mock_philosophical_debate", "absurd_ranking",
+    "observation_quiet", "observation_what_if", "comparing_experiences",
+    "surreal_grounded", "casual_acceptance_absurd",
+    "misunderstanding_word", "diverging_conversation",
+]
+
+CHARACTER_AGE_DYNAMICS: list[str] = [
+    "siblings", "cousins", "best friends", "classmates", "neighbors",
+    "older-younger pair", "twin energy",
+]
+
+EMOTIONAL_DYNAMICS_EN: list[str] = [
+    "one earnest, one skeptical",
+    "both excited about different things",
+    "both very serious about something silly",
+    "one trying to convince, one resisting",
+    "both reacting to a third unseen thing",
+    "one explaining, one questioning",
+    "both equally confused, working it out",
+    "one curious, one already knows",
+    "one teaching, one teasing",
+    "one defensive, one accusing",
+    "both bored, becoming silly",
+    "one tired, one wired",
+    "both pretending something",
+    "both observing the same thing differently",
+]
+
+EMOTIONAL_DYNAMICS_HI: list[str] = [
+    "ek earnest, doosra skeptical",
+    "dono alag alag cheez ke baare mein excited",
+    "dono kisi silly cheez ko bahut serious le rahe hain",
+    "ek convince karne ki koshish, doosra resist kar raha",
+    "dono kisi teesri unseen cheez pe react kar rahe",
+    "ek samjha raha, doosra sawal pooch raha",
+    "dono confused, saath mein figure out kar rahe",
+    "ek curious, doosre ko already pata hai",
+    "ek teach kar raha, doosra tease kar raha",
+    "ek defensive, doosra accusing",
+    "dono bored, silly hone lage",
+    "ek thaka, doosra wired",
+    "dono kuch pretend kar rahe",
+    "dono ek hi cheez alag alag tarike se observe kar rahe",
+]
+
+SETTINGS_EN: list[str] = [
+    "kitchen", "bedroom", "backyard", "school cafeteria",
+    "playground", "back of a car", "couch fort", "bathtub",
+    "treehouse", "library corner", "park bench", "kitchen table",
+    "bus stop", "doctor's waiting room", "supermarket aisle",
+    "during a thunderstorm", "while waiting for dinner",
+    "during a long car ride", "on a swing", "under a blanket",
+]
+
+SETTINGS_HI: list[str] = [
+    "kitchen", "drawing room", "bedroom", "balcony",
+    "school cafeteria", "playground", "auto rickshaw",
+    "market", "school bus stop", "nani-ke-ghar",
+    "during a power cut", "during monsoon rain",
+    "Sunday morning", "while waiting for dinner",
+    "during a long car ride", "on a swing", "under a quilt",
+    "in the back seat of a car", "rooftop after dark",
+]
+
+TONES: list[str] = [
+    "deadpan", "energetic", "whispered", "mock-serious",
+    "rambling", "fast", "slow-burn", "interrupting each other",
+    "long pauses", "rapid-fire", "one-sided", "balanced",
+]
+
+
+# ────────────────────────────────────────────────────────────────────────
+#  Sampler functions
+# ────────────────────────────────────────────────────────────────────────
+
+import random
+
+
+def sample_axis_excluding_recent(
+    options: list,
+    recent: list,
+    exclude_n: int,
+    seed: int | None = None,
+):
+    """Sample from `options` excluding the last `exclude_n` items in `recent`.
+
+    Falls back to least-recently-used choice if everything is excluded.
+    """
+    rng = random.Random(seed)
+    excluded = set(recent[-exclude_n:]) if recent else set()
+    eligible = [o for o in options if o not in excluded]
+    if eligible:
+        return rng.choice(eligible)
+    by_recency: dict = {}
+    for i, item in enumerate(recent):
+        by_recency[item] = i
+    candidates = sorted(options, key=lambda o: by_recency.get(o, -1))
+    return candidates[0]
+
+
+def sample_voice_pair(
+    pairings: list[tuple[str, str]],
+    recent_pairs: list[tuple[str, str]],
+    seed: int | None = None,
+) -> tuple[str, str]:
+    """Pick a voice pair excluding the last 3 used."""
+    rng = random.Random(seed)
+    recent_set = {tuple(p) for p in recent_pairs[-3:]}
+    eligible = [p for p in pairings if tuple(p) not in recent_set]
+    return rng.choice(eligible) if eligible else rng.choice(pairings)
