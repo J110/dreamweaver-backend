@@ -67,6 +67,26 @@ def _hex(n: int = 4) -> str:
     return uuid.uuid4().hex[:n]
 
 
+_SHORT_STORY_TAG_RE = re.compile(
+    r"""
+    \[/?PHRASE\]                # phrase wrappers (keep inner content)
+    | \[MUSIC\]                  # 6s swell marker (drop)
+    | \[PAUSE:\s*\d+\s*\]        # pause directive (drop)
+    """,
+    re.VERBOSE,
+)
+
+
+def strip_short_story_tags(text: str) -> str:
+    """Remove v2 short-story structural tags ([MUSIC], [PAUSE: ms], [PHRASE]/[/PHRASE])
+    from the displayed text. PHRASE wrappers are stripped but their inner
+    content stays — the repeated phrase IS user-readable prose."""
+    out = _SHORT_STORY_TAG_RE.sub("", text or "")
+    out = re.sub(r"\n{3,}", "\n\n", out)
+    out = "\n".join(line.rstrip() for line in out.splitlines())
+    return out.strip()
+
+
 def _flux_cover(prompt: str, w: int = 1024, h: int = 1024) -> bytes | None:
     if not TOGETHER_KEY:
         print("  TOGETHER_API_KEY missing, skipping cover")
@@ -332,6 +352,10 @@ def generate_short_story(axes: dict, log_prefix: str = "  ") -> dict:
             BASE_DIR / "seed_output" / "stories_hi" / f"{sid}_cover.webp",
         )
 
+    # text field is the user-facing display version (tags stripped).
+    # raw_text keeps the tagged form for any pipeline that re-renders audio.
+    display_text = strip_short_story_tags(data["text"])
+    display_text_deva = strip_short_story_tags(data.get("text_deva", "") or "")
     entry = {
         "id": sid,
         "type": "story",
@@ -342,7 +366,9 @@ def generate_short_story(axes: dict, log_prefix: str = "  ") -> dict:
         "hook": data["hook"],
         "description": data["description"],
         "description_en": data["description_en"],
-        "text": data["text"],
+        "text": display_text,
+        "raw_text": data["text"],
+        "raw_text_deva": data.get("text_deva", ""),
         "repeated_phrase": data["repeated_phrase"],
         "morals": data.get("morals", []),
         "categories": data.get("categories", ["Bedtime"]),
@@ -374,7 +400,7 @@ def generate_short_story(axes: dict, log_prefix: str = "  ") -> dict:
         "durationSec": duration,
         "tts_engine": "elevenlabs_multilingual_v2",
         "tts_input_script": "devanagari",
-        "text_deva": data.get("text_deva", ""),
+        "text_deva": display_text_deva,
         "has_baked_music": True,
         "diversityFingerprint": data.get("diversityFingerprint", {}),
         "is_generated": True,
