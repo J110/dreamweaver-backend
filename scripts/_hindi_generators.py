@@ -1067,6 +1067,27 @@ REQUIRED tags throughout:
 - ≥5 conversational markers (na, toh, pata hai, bas, suno, dekho, achha)
 - ≥3 onomatopoeia (sarr, tap tap, chhap chhap, dheere dheere, gunghun, jhoom, tip tip, khat khat)
 
+DIALOGUE FORMAT — MANDATORY (do NOT embed dialogue in narration):
+
+✓ CORRECT:
+    MEENU: "Chaand kahaan gaya hai?"
+    BULBUL: "Khoya nahin hai. Suno zara."
+
+✗ WRONG (forbidden):
+    Meenu ne kaha ki chaand kahaan gaya hai.
+    Bulbul ne dheere se kaha, "Khoya nahin hai."  ← embedded in narration
+
+Rules:
+- Each dialogue line starts with the character's name in UPPERCASE,
+  followed by a colon, followed by the quoted line in Roman Hindi.
+- At least 3 such NAME: "..." lines per story.
+- Every [CHARACTER:] you declare MUST have at least one dialogue line.
+  (Each character gets a distinct voice; characters without dialogue lines
+  contribute nothing to the audio.)
+- Solo characters can speak to themselves, the moon, the wind, the
+  listening child — but they MUST use the NAME: "..." form, not
+  embedded narration.
+
 The mystery's reveal is ALWAYS rest: "khoya nahin, so raha tha".
 Mechanic is an object that activates with slow breath (diya, patang, leaf, talaab).
 
@@ -1182,18 +1203,47 @@ def generate_long_story(axes: dict, log_prefix: str = "  ") -> dict:
         song = song[:45000].fade_out(2000)
 
     # Assemble Part A / B / C with bed + swells (port of publish_hindi_long_day1)
+    # Voices: tripti and roohi are RESERVED for narrator and whisper. Every
+    # character gets a DISTINCT non-narrator voice so the audio never collapses
+    # to single-voice narration.
     NARRATOR_VOICE = "tripti"
     WHISPER_VOICE = "roohi"
+    FEMALE_CHAR_VOICES = ["anika", "meher", "gudiya"]
+    MALE_CHAR_VOICES = ["kuber_j", "raghav", "kiran"]
+    # Cross-gender fallback if the gender pool is exhausted (more characters
+    # of one gender than voices). Still excludes tripti.
+    ANY_CHAR_VOICE_FALLBACK = MALE_CHAR_VOICES + FEMALE_CHAR_VOICES
+
     chars = data.get("characters", [])
-    char_voice = {}
-    for ch in chars:
-        gender = ch.get("gender", "neutral")
+    char_voice: dict[str, str] = {}
+    used_voices: set[str] = set()
+
+    def _pick_voice(gender: str) -> str:
+        gender = (gender or "neutral").lower()
         if gender == "female":
-            char_voice[ch["name"].upper()] = "anika"
+            primary = FEMALE_CHAR_VOICES
         elif gender == "male":
-            char_voice[ch["name"].upper()] = "kuber_j"
-        else:
-            char_voice[ch["name"].upper()] = "tripti"
+            primary = MALE_CHAR_VOICES
+        else:  # neutral — tilt toward male (more contrast vs the female narrator)
+            primary = MALE_CHAR_VOICES + FEMALE_CHAR_VOICES
+        for v in primary:
+            if v not in used_voices:
+                return v
+        # Out of gender-preferred voices; spill to the cross-gender pool
+        for v in ANY_CHAR_VOICE_FALLBACK:
+            if v not in used_voices:
+                return v
+        # Truly exhausted (>6 characters in one story) — duplicate is the
+        # least-bad option, but never tripti
+        return ANY_CHAR_VOICE_FALLBACK[0]
+
+    for ch in chars:
+        name = ch.get("name", "").upper()
+        if not name:
+            continue
+        v = _pick_voice(ch.get("gender", "neutral"))
+        char_voice[name] = v
+        used_voices.add(v)
 
     text_segs = [(i, s) for i, s in enumerate(segments)
                  if s["kind"] in ("narration", "dialogue", "phrase",
@@ -1215,7 +1265,16 @@ def generate_long_story(axes: dict, log_prefix: str = "  ") -> dict:
         prev, nxt = neighbor.get(idx, ("", ""))
         phase = seg.get("phase", 1)
         if kind == "dialogue":
-            voice_label = char_voice.get(seg["character"], NARRATOR_VOICE)
+            # Hard rule: dialogue NEVER falls back to the narrator. If the
+            # LLM uses a name not in [CHARACTER:] declarations, assign a
+            # fresh non-narrator voice on the fly (warns + extends char_voice).
+            char_name = seg["character"]
+            voice_label = char_voice.get(char_name)
+            if voice_label is None:
+                voice_label = _pick_voice("neutral")
+                char_voice[char_name] = voice_label
+                used_voices.add(voice_label)
+                print(f"      warning: undeclared char {char_name!r} → {voice_label}")
             preset = PHASE_TTS[phase]
             text = _ensure_terminal(seg["content"])
         elif kind == "phrase":

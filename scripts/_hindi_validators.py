@@ -255,6 +255,34 @@ def validate_long_story(d: dict) -> list[str]:
     if n < 3:
         errors.append(f"only {n} onomatopoeia (need ≥3 for long story)")
 
+    # Dialogue format: must use NAME: "..." form, not embedded prose.
+    # Without this check, the LLM produces single-voice narrative and the
+    # parser tags everything as narration → only narrator voice ever fires.
+    # NAME is uppercase, may contain spaces and dashes, ends with colon.
+    name_dialogue = re.findall(
+        r'^\s*[A-Z][A-Z _-]{1,30}:\s*"[^"\n]+"',
+        full,
+        re.MULTILINE,
+    )
+    if len(name_dialogue) < 3:
+        errors.append(
+            f"only {len(name_dialogue)} NAME: \"...\" dialogue lines "
+            f"(need ≥3); do not embed dialogue inside narration prose"
+        )
+
+    # Additionally: every declared [CHARACTER:] should have at least one
+    # dialogue line, so character voices actually get used.
+    declared = re.findall(r"\[CHARACTER:\s*([A-Za-z][A-Za-z0-9 _-]{1,30})\b", full)
+    for name in declared:
+        upper = name.upper().strip()
+        # Look for that exact name as a dialogue prefix
+        pattern = rf'^\s*{re.escape(upper)}\s*:\s*"'
+        if not re.search(pattern, full, re.MULTILINE):
+            errors.append(
+                f"declared character {name!r} has no dialogue line "
+                f"(no '{upper}: \"...\"' found) — give them at least one quote"
+            )
+
     return errors
 
 
