@@ -1010,8 +1010,18 @@ def generate_long_story(axes: dict, log_prefix: str = "  ") -> dict:
     sys_msg, user_msg = _long_story_prompt(axes)
 
     def shape(d: dict) -> dict:
-        # Validator wants phase splits — extract them from full_text_roman
-        full = d.get("full_text_roman", "")
+        # Validator wants phase splits — extract them from full_text_roman.
+        # Coerce to str defensively: Mistral / Groq sometimes return null or
+        # an array of paragraphs for `full_text_roman` instead of a single
+        # string, which would then crash re.search downstream.
+        full = d.get("full_text_roman")
+        if full is None:
+            full = ""
+        elif isinstance(full, list):
+            full = "\n\n".join(str(x) for x in full)
+        elif not isinstance(full, str):
+            full = str(full)
+        d["full_text_roman"] = full  # write back so render path also gets str
         p1 = re.search(r"\[PHASE_1\](.*?)\[PHASE_2\]", full, re.DOTALL)
         p2 = re.search(r"\[PHASE_2\](.*?)\[PHASE_3\]", full, re.DOTALL)
         p3 = re.search(r"\[PHASE_3\](.*)", full, re.DOTALL)
