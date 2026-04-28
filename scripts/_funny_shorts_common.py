@@ -147,19 +147,23 @@ def _has_devanagari(s: str) -> bool:
     return any("ऀ" <= c <= "ॿ" for c in s)
 
 
-# A "standalone-effect" line is a laughter tag followed by ONLY punctuation
-# / whitespace — no spoken words. v3's /text-to-dialogue rejects empty text,
-# so the convention is `[laughs together]...` (tag + trailing dots).
-_PUNCT_ONLY = re.compile(r"^[\s\.!\?…,\-]*$")
+# A "standalone-effect" line is a tag followed by punctuation OR pure laugh
+# onomatopoeia — no real spoken content. v3 rejects empty text, so we use
+# `[laughs together] hahaha` (longer laugh) or `[laughs together]...` (shorter).
+_LAUGH_ONOMATOPOEIA = re.compile(
+    r"^(?:[\s\.!\?…,\-]|hahaha+|haha+|ha\s|ha,|hehe+|heh+|hee\s*hee|tehee+)*$",
+    re.IGNORECASE,
+)
 
 
 def _is_standalone_effect_line(text: str, allowed_tags: tuple[str, ...]) -> bool:
-    """Tag is one of `allowed_tags` and what's left after the tag is punct/whitespace only."""
+    """Tag is one of `allowed_tags` and what's after it is punctuation or
+    laugh onomatopoeia (hahaha/hehe/etc.) only — no real spoken words."""
     text = (text or "").strip()
     for tag in allowed_tags:
         if text.startswith(tag):
             rest = text[len(tag):].strip()
-            if _PUNCT_ONLY.match(rest):
+            if _LAUGH_ONOMATOPOEIA.match(rest):
                 return True
     return False
 
@@ -552,9 +556,10 @@ REQUIRED:
 - Include AT LEAST 2 standalone tag-only lines per short. These are
   real audio events: actual laughter, gasps, sighs, real reactions.
   Without these, the short has zero non-verbal sound and feels flat.
-- The FINAL LINE must be a standalone laughter tag with trailing
-  punctuation — `[laughs together]...` is the canonical closing,
-  `[laughs]...` also works.
+- The FINAL LINE must be a standalone laughter line. Use this exact
+  canonical pattern: `[laughs together] hahaha` — the trailing
+  "hahaha" gets v3 to sustain the laugh long enough that it doesn't
+  feel cut off. `[laughs] hahaha` is acceptable too.
 - Don't write "haha" or "ha ha" in any line — use a standalone
   laughter tag instead.
 - A standalone-tag line counts as ~1 line in your line budget.
@@ -614,7 +619,7 @@ OUTPUT FORMAT (JSON, exact shape — do NOT use voice labels like
     {{"voice": "A", "text": "[curious] short opener with up to 12 words"}},
     {{"voice": "B", "text": "[laughs]..."}},
     {{"voice": "A", "text": "[serious] another inflected line"}},
-    {{"voice": "B", "text": "[laughs together]..."}}
+    {{"voice": "B", "text": "[laughs together] hahaha"}}
   ],
   "cover_context": "one sentence describing a dreamy visual"
 }}
@@ -668,9 +673,10 @@ REQUIRED:
 - Include AT LEAST 2 standalone tag-only lines per short — real audio
   events (actual laughter, gasps, sighs, real reactions). Without
   these, the short has zero non-verbal sound and feels flat.
-- The FINAL LINE must be a standalone laughter tag with trailing
-  punctuation — `[laughs together]...` is the canonical closing,
-  `[laughs]...` also works.
+- The FINAL LINE must be a standalone laughter line. Use this exact
+  canonical pattern: `[laughs together] hahaha` — the trailing
+  "hahaha" gets v3 to sustain the laugh long enough that it doesn't
+  feel cut off. `[laughs] hahaha` is acceptable too.
 - Don't write "haha", "ha ha", or "hehe" — use a standalone
   laughter tag instead.
 
@@ -743,7 +749,7 @@ OUTPUT FORMAT (JSON, exact shape — do NOT use voice labels like
     {{"voice": "A", "text": "[curious] Roman Hindi opener up to 12 words"}},
     {{"voice": "B", "text": "[laughs]..."}},
     {{"voice": "A", "text": "[serious] Another Roman Hindi line"}},
-    {{"voice": "B", "text": "[laughs together]..."}}
+    {{"voice": "B", "text": "[laughs together] hahaha"}}
   ],
   "cover_context": "one English sentence describing a dreamy Indian visual"
 }}
@@ -818,10 +824,20 @@ def frame_dialogue_with_stings(
     dialogue_bytes: bytes,
     intro_sting_path: Path | str,
     outro_sting_path: Path | str,
-    gap_ms: int = 1000,
+    pre_gap_ms: int = 1000,
+    post_gap_ms: int = 2500,
+    gap_ms: int | None = None,  # legacy param; if set, applies to both gaps
 ) -> bytes:
-    """Assemble final MP3: intro + silence + dialogue + silence + outro."""
+    """Assemble final MP3: intro + pre-gap + dialogue + post-gap + outro.
+
+    Asymmetric framing by default: 1s before dialogue (just enough to
+    transition out of the intro chord), 2.5s after (lets the laughter
+    decay naturally before the outro sting starts).
+    """
     from pydub import AudioSegment
+
+    if gap_ms is not None:
+        pre_gap_ms = post_gap_ms = gap_ms
 
     intro_p = Path(intro_sting_path)
     outro_p = Path(outro_sting_path)
@@ -834,12 +850,11 @@ def frame_dialogue_with_stings(
     outro = AudioSegment.from_mp3(str(outro_p))
     dialogue = AudioSegment.from_mp3(io.BytesIO(dialogue_bytes))
 
-    silence = AudioSegment.silent(
-        duration=gap_ms,
-        frame_rate=dialogue.frame_rate or 44100,
-    )
+    fr = dialogue.frame_rate or 44100
+    pre_silence = AudioSegment.silent(duration=pre_gap_ms, frame_rate=fr)
+    post_silence = AudioSegment.silent(duration=post_gap_ms, frame_rate=fr)
 
-    full = intro + silence + dialogue + silence + outro
+    full = intro + pre_silence + dialogue + post_silence + outro
 
     out = io.BytesIO()
     full.export(out, format="mp3", bitrate="192k")
