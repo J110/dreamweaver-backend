@@ -2921,10 +2921,10 @@ def main():
             "You use plain text only — NO markdown bold (**), NO italic (*), "
             "NO horizontal rules (---). Only use the tags specified in the prompt."
         )
-        # Generate + validate with one retry if validation errors occur.
-        # Mistral occasionally emits malformed tags (bare [PHRASE], missing
-        # sections); a second attempt with explicit error feedback usually fixes it.
-        MAX_GEN_ATTEMPTS = 2
+        # 2 attempts was insufficient once the catalog grew — daily runs started
+        # losing their long story when Mistral produced two consecutive
+        # repeated_phrase values that both collided with the recency blocklist.
+        MAX_GEN_ATTEMPTS = 4
         parsed = None
         issues = []
         for gen_attempt in range(MAX_GEN_ATTEMPTS):
