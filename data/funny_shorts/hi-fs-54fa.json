@@ -1,0 +1,84 @@
+{
+  "id": "hi-fs-54fa",
+  "lang": "hi",
+  "language": "hi",
+  "type": "song",
+  "subtype": "funny_short",
+  "title": "Bus ka Captain Kaun",
+  "title_en": "Who is the Bus Captain",
+  "age_group": "6-8",
+  "duration_seconds": 41,
+  "voice_pair": [
+    "omar_hi",
+    "kiran"
+  ],
+  "comedic_device": "conflict_ownership",
+  "emotional_dynamic": "dono kuch pretend kar rahe",
+  "setting": "school bus stop",
+  "tone": "energetic",
+  "opening_tag": null,
+  "closing_pattern": "laughs_together",
+  "character_age_dynamic": "siblings",
+  "line_count": 10,
+  "inputs": [
+    {
+      "voice": "A",
+      "text": "Arre, yeh mera seat hai! Main har roz yahaan baithta hoon.",
+      "text_deva": "\u0905\u0930\u0947, \u092f\u0947 \u092e\u0947\u0930\u093e \u0938\u0940\u091f \u0939\u0948! \u092e\u0948\u0902 \u0939\u0930 \u0930\u094b\u095b \u092f\u0939\u093e\u0901 \u092c\u0948\u0920\u0924\u093e \u0939\u0942\u0901\u0964"
+    },
+    {
+      "voice": "B",
+      "text": "[skeptical] Tera seat? Yeh toh mera lucky spot hai!",
+      "text_deva": "[skeptical] \u0924\u0947\u0930\u093e \u0938\u0940\u091f? \u092f\u0947 \u0924\u094b \u092e\u0947\u0930\u093e \u0932\u0915\u0940 \u0938\u094d\u092a\u0949\u091f \u0939\u0948!"
+    },
+    {
+      "voice": "A",
+      "text": "[dramatic] Lucky spot? Main toh bus ka captain hoon!",
+      "text_deva": "[dramatic] \u0932\u0915\u0940 \u0938\u094d\u092a\u0949\u091f? \u092e\u0948\u0902 \u0924\u094b \u092c\u0938 \u0915\u093e \u0915\u0948\u092a\u094d\u091f\u0928 \u0939\u0942\u0901!"
+    },
+    {
+      "voice": "B",
+      "text": "[gasp]...",
+      "text_deva": "[gasp]..."
+    },
+    {
+      "voice": "B",
+      "text": "[mischievous] Captain? Toh main toh bus ki queen hoon!",
+      "text_deva": "[mischievous] \u0915\u0948\u092a\u094d\u091f\u0928? \u0924\u094b \u092e\u0948\u0902 \u0924\u094b \u092c\u0938 \u0915\u0940 \u0915\u094d\u0935\u0940\u0928 \u0939\u0942\u0901!"
+    },
+    {
+      "voice": "A",
+      "text": "[shocked] Queen?!",
+      "text_deva": "[shocked] \u0915\u094d\u0935\u0940\u0928?!"
+    },
+    {
+      "voice": "A",
+      "text": "[short pause]... Toh phir main bus ka superhero!",
+      "text_deva": "[short pause]... \u0924\u094b \u092b\u093f\u0930 \u092e\u0948\u0902 \u092c\u0938 \u0915\u093e \u0938\u0941\u092a\u0930\u0939\u0940\u0930\u094b!"
+    },
+    {
+      "voice": "B",
+      "text": "[laughs]...",
+      "text_deva": "[laughs]..."
+    },
+    {
+      "voice": "B",
+      "text": "[playful] Superhero? Toh main toh bus ka alien!",
+      "text_deva": "[playful] \u0938\u0941\u092a\u0930\u0939\u0940\u0930\u094b? \u0924\u094b \u092e\u0948\u0902 \u0924\u094b \u092c\u0938 \u0915\u093e \u090f\u0932\u093f\u092f\u0928!"
+    },
+    {
+      "voice": "A",
+      "text": "[laughs together] hahaha",
+      "text_deva": "[laughs together] \u0939\u093e\u0939\u093e\u0939\u093e"
+    }
+  ],
+  "audio_file": "hi-fs-54fa.mp3",
+  "audio_url": "/audio/funny-shorts-hi/hi-fs-54fa.mp3",
+  "cover": "/covers/funny-shorts-hi/hi-fs-54fa_cover.webp",
+  "cover_context": "Two kids standing at a school bus stop, playfully arguing over who gets to sit in the same seat, with a colorful bus in the background.",
+  "audio_engine": "elevenlabs-v3-dialogue",
+  "created_at": "2026-04-28T11:38:00.417795+00:00",
+  "play_count": 1,
+  "replay_count": 1,
+  "cover_file": "hi-fs-54fa_cover.webp"
+}
