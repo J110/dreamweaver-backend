@@ -22,9 +22,9 @@ GOOD_EN = {
         {"voice": "A", "text": "[curious] Wait, do clouds taste like cotton?"},
         {"voice": "B", "text": "[matter-of-fact] No way. They're just water."},
         {"voice": "A", "text": "[earnest] But they LOOK like cotton candy."},
-        {"voice": "B", "text": "[grinning] You're saying clouds are snacks?"},
+        {"voice": "B", "text": "[laughs]"},
         {"voice": "A", "text": "[serious] I'm saying clouds are POSSIBLE snacks."},
-        {"voice": "B", "text": "[laughs together] Possible snacks. Okay, dreamer."},
+        {"voice": "B", "text": "[laughs together]"},
     ],
 }
 
@@ -187,7 +187,7 @@ def test_rejects_unsettled_ending():
     bad = _make_short("[curious]", "device_x", "park")
     bad["inputs"][-1] = {"voice": "B", "text": "[shouts] AAAARGH"}
     errors = validate_funny_short(bad, recent_shorts=[], lang="en")
-    assert any("not bedtime-settled" in e for e in errors)
+    assert any("Final line must be standalone" in e for e in errors)
 
 
 def test_accepts_settled_ending_via_soft_word():
@@ -221,9 +221,9 @@ GOOD_HI = {
         {"voice": "A", "text": "[matter-of-fact] Bijli phir gayi yaar."},
         {"voice": "B", "text": "[grinning] Pakka mosquito ne fuse uda diya."},
         {"voice": "A", "text": "[serious] Mosquito ke paas pliers nahin hai."},
-        {"voice": "B", "text": "[earnest] Maybe usne electrician ko bula liya."},
-        {"voice": "A", "text": "[laughs] Tumhara dimaag bhi power cut hai."},
-        {"voice": "B", "text": "[thoughtful] Hmm, theek hai."},
+        {"voice": "B", "text": "[laughs]"},
+        {"voice": "A", "text": "Tumhara dimaag bhi power cut hai yaar."},
+        {"voice": "B", "text": "[laughs together]"},
     ],
 }
 
@@ -279,3 +279,64 @@ def test_rejects_indian_brand_hindi():
     bad["inputs"][0] = {"voice": "A", "text": "[curious] Parle-G de do."}
     errors = validate_funny_short(bad, recent_shorts=[], lang="hi")
     assert any("brand" in e.lower() or "forbidden" in e.lower() for e in errors)
+
+
+# ────────────────────────────────────────────────────────────────────────
+#  Real-laughter rules (added after user feedback that v3 needs
+#  standalone tag-only lines to produce actual non-verbal audio)
+# ────────────────────────────────────────────────────────────────────────
+
+def test_rejects_no_standalone_laughter_line():
+    bad = dict(GOOD_EN)
+    bad["inputs"] = [
+        {"voice": "A", "text": "[curious] Hi there friend."},
+        {"voice": "B", "text": "[grinning] Hi back."},
+        {"voice": "A", "text": "[thoughtful] How are you."},
+        {"voice": "B", "text": "[matter-of-fact] Doing well."},
+        {"voice": "A", "text": "[grinning] Cool cool."},
+        {"voice": "B", "text": "yeah okay fine."},
+    ]
+    errors = validate_funny_short(bad, recent_shorts=[], lang="en")
+    assert any("standalone laughter" in e for e in errors), errors
+
+
+def test_accepts_standalone_laughs_anywhere():
+    good = dict(GOOD_EN)
+    good["inputs"] = [
+        {"voice": "A", "text": "[curious] Hi."},
+        {"voice": "B", "text": "[laughs]"},
+        {"voice": "A", "text": "[thoughtful] What."},
+        {"voice": "B", "text": "[grinning] Funny face."},
+        {"voice": "A", "text": "[serious] Stop."},
+        {"voice": "B", "text": "[laughs together]"},
+    ]
+    errors = validate_funny_short(good, recent_shorts=[], lang="en")
+    assert not any("standalone laughter" in e for e in errors)
+
+
+def test_rejects_grinning_alone_as_final_line():
+    bad = dict(GOOD_EN)
+    bad["inputs"] = [
+        {"voice": "A", "text": "[curious] Hi."},
+        {"voice": "B", "text": "[laughs]"},  # standalone laughter elsewhere
+        {"voice": "A", "text": "[thoughtful] What."},
+        {"voice": "B", "text": "[grinning] Funny face."},
+        {"voice": "A", "text": "[serious] Stop."},
+        {"voice": "B", "text": "[grinning]"},  # standalone grinning — not allowed as final
+    ]
+    errors = validate_funny_short(bad, recent_shorts=[], lang="en")
+    assert any("Final line must be standalone" in e for e in errors)
+
+
+def test_accepts_soft_prose_final_line():
+    good = dict(GOOD_EN)
+    good["inputs"] = [
+        {"voice": "A", "text": "[curious] Hi."},
+        {"voice": "B", "text": "[laughs]"},
+        {"voice": "A", "text": "[thoughtful] What."},
+        {"voice": "B", "text": "[grinning] Funny."},
+        {"voice": "A", "text": "[serious] Stop."},
+        {"voice": "B", "text": "Yeah okay fine I guess."},  # soft prose — accepted
+    ]
+    errors = validate_funny_short(good, recent_shorts=[], lang="en")
+    assert not any("Final line must be standalone" in e for e in errors)

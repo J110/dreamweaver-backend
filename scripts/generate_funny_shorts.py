@@ -127,12 +127,12 @@ def _new_id() -> str:
 
 def _voice_personality(label: str) -> str:
     return {
-        "mini":          "lively cute young female, bright and cheerful",
-        "jerry":         "jolly older energy, warm and grandfatherly",
-        "suhana":        "very young, joyful, full of innocence",
-        "tashi":         "expressive bright dramatic kid energy",
-        "monika_creepy": "slow eerie creeping delivery, deadpan",
-        "leo":           "calm yet firm, steady and matter-of-fact",
+        "mini":      "lively cute young female, bright and cheerful",
+        "katherine": "eccentric mad-scientist energy, comedic-villain playful",
+        "suhana":    "very young, joyful, full of innocence",
+        "tashi":     "expressive bright dramatic kid energy",
+        "kiran_en":  "very young, cute, sweet, warmly engaging",
+        "omar":      "very young storyteller, innocent and wise",
     }.get(label, "")
 
 

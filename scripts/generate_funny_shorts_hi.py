@@ -121,8 +121,8 @@ def _new_id() -> str:
 
 def _voice_personality(label: str) -> str:
     return {
-        "bunty":      "funny best friend, charming and witty",
-        "anika":      "animated, friendly and high-energy",
+        "omar_hi":    "energetic, engaging, animated kid storyteller",
+        "suhana_hi":  "very young, expressive, sweet and natural",
         "riya":       "soft children-storytelling voice",
         "kiran":      "very young, cute, engaging",
         "gappu":      "loud kids cartoon character voice",
