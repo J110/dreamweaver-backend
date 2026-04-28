@@ -257,8 +257,10 @@ def main(only_types: list[str] | None = None) -> int:
 
     # ── Summary
     print(f"\n══════ Done in {elapsed:.0f}s ══════")
-    print(f"  successes: {len(successes)}/5")
-    for content_type in CONTENT_TYPES_ORDER:
+    print(f"  successes: {len(successes)}/{len(types_to_run)}")
+    for content_type in types_to_run:
+        if content_type not in results:
+            continue
         r = results[content_type]
         icon = "✓" if r.get("status") == "ok" else "✗"
         suffix = r.get("id", r.get("error", ""))[:60]

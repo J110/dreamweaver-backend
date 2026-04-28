@@ -1065,7 +1065,7 @@ def generate_long_story(axes: dict, log_prefix: str = "  ") -> dict:
     data = _llm_with_retry(
         system=sys_msg, user=user_msg,
         validator_key="long_story", log_prefix=log_prefix, post_process=shape,
-        max_retries=2,       # long stories are expensive — fewer retries
+        max_retries=3,
         max_tokens=12_000,   # full_text_roman alone is ~1500 tokens; JSON
                               # wrapping + characters list + phase splits
                               # need ~8-10k tokens of headroom

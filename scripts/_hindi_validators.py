@@ -24,11 +24,18 @@ LITERARY = [
     "aagaman", "jalashay", "nayan", "vidyalay", "kreeda",
 ]
 
+# Deity names use word-boundary regex (compiled below) to avoid false
+# positives on common Hindi words: "ram " would otherwise match naram (soft),
+# garam (warm), aaram (rest), param (supreme); "deva " would match devar
+# (brother-in-law); "shiv" would match shivling (which IS religious — kept
+# as substring) but also "shivay" forms.
 DEITY_NAMES = [
-    "bhagwaan", "ishvar", "deva ", "devi ", "lakshmi", "ganesh",
-    "shiv", "krishn", "ram ", "hanuman", "durga", "saraswati",
+    "bhagwaan", "ishvar", "lakshmi", "ganesh",
+    "shiv", "krishn", "hanuman", "durga", "saraswati",
     "vishnu", "kali", "allah", "khuda", "rabb", "yesu", "jesus",
 ]
+# Word-boundary-checked deities (catch the standalone form, not as substring)
+DEITY_WORD_BOUNDARY = ["ram", "deva", "devi"]
 RITUAL_VERBS = [
     "puja", "aarti", "prarthana", "bhajan karna", "yajna", "havan",
     "prasad", "bhog", "tilak", "darshan", "namaz", "ibadat",
@@ -72,6 +79,20 @@ def _has_devanagari(s: str) -> bool:
     return any("ऀ" <= c <= "ॿ" for c in (s or ""))
 
 
+def _religious_hits(text_lower: str) -> list[str]:
+    """Return list of religious-content matches.
+    Substring match for most terms; word-boundary regex for common-word
+    deities (ram/deva/devi) to avoid false positives on naram/garam/aaram/devar etc."""
+    hits = []
+    for w in sorted(set(DEITY_NAMES + RITUAL_VERBS + RELIGIOUS_OBJECTS)):
+        if w in text_lower:
+            hits.append(w)
+    for w in DEITY_WORD_BOUNDARY:
+        if re.search(rf"\b{w}\b", text_lower):
+            hits.append(w)
+    return hits
+
+
 def _check_simile_constructions(text_lower: str) -> list[str]:
     """All 5 Hindi simile patterns vs banned nouns."""
     errors = []
@@ -113,9 +134,8 @@ def validate_short_story(d: dict) -> list[str]:
             errors.append(f"literary Hindi: '{w}'")
 
     # Religious
-    for w in RELIGIOUS_ALL:
-        if w in text_lower:
-            errors.append(f"religious content: '{w}'")
+    for w in _religious_hits(text_lower):
+        errors.append(f"religious content: '{w}'")
 
     # Conversational markers ≥2
     n = sum(1 for m in CONVERSATIONAL_MARKERS if m in text_lower)
@@ -190,9 +210,8 @@ def validate_long_story(d: dict) -> list[str]:
             errors.append(f"literary Hindi: '{w}'")
 
     # Religious
-    for w in RELIGIOUS_ALL:
-        if w in text_lower:
-            errors.append(f"religious content: '{w}'")
+    for w in _religious_hits(text_lower):
+        errors.append(f"religious content: '{w}'")
 
     # Conversational markers ≥5 for long stories
     n = sum(1 for m in CONVERSATIONAL_MARKERS if m in text_lower)
@@ -259,9 +278,8 @@ def validate_lullaby(d: dict) -> list[str]:
             errors.append(f"literary Hindi: '{w}'")
 
     # Religious
-    for w in RELIGIOUS_ALL:
-        if w in lyrics_lower:
-            errors.append(f"religious content: '{w}'")
+    for w in _religious_hits(lyrics_lower):
+        errors.append(f"religious content: '{w}'")
 
     # Lullaby type valid
     if d.get("lullaby_type") not in (
@@ -302,9 +320,8 @@ def validate_silly_song(d: dict) -> list[str]:
             errors.append(f"literary Hindi: '{w}'")
 
     # Religious (hardened)
-    for w in RELIGIOUS_ALL:
-        if w in lyrics_lower:
-            errors.append(f"religious content: '{w}'")
+    for w in _religious_hits(lyrics_lower):
+        errors.append(f"religious content: '{w}'")
 
     # Sound effect required
     if "*" not in lyrics:
@@ -359,9 +376,8 @@ def validate_poem(d: dict) -> list[str]:
             errors.append(f"literary Hindi: '{w}'")
 
     # Religious (hardened)
-    for w in RELIGIOUS_ALL:
-        if w in text_lower:
-            errors.append(f"religious content: '{w}'")
+    for w in _religious_hits(text_lower):
+        errors.append(f"religious content: '{w}'")
 
     # title_en
     if not d.get("title_en"):
