@@ -55,6 +55,22 @@ The repo's `public/` tree is **volatile** for covers/audio of the override-liste
 
 `scripts/deploy_guard.py` knows about these stores (`COVER_STORE = "/opt/cover-store"`, `AUDIO_STORE`) and auto-recovers missing files from them during `verify`.
 
+### Structural-first principle for large data-file diffs
+
+For large data-file diffs (>1000 lines), **check structural deltas first** — item counts, ID set differences, schema changes — before sampling individual hunks. Sampling tells you about changes you saw; it cannot tell you about changes the sample missed. The `content.json` reconciliation of 2026-04-28 missed 92 new entries because the sample saw only encoding-style differences.
+
+Concretely, for any JSON list/map under `data/` or `seed_output/`:
+
+```python
+old = json.loads(subprocess.check_output(["git", "show", f"{old_ref}:{path}"]))
+new = json.loads(subprocess.check_output(["git", "show", f"{new_ref}:{path}"]))
+print(f"old items: {len(old)}, new items: {len(new)}")
+old_ids = {x['id'] for x in old}; new_ids = {x['id'] for x in new}
+print(f"only in old: {len(old_ids - new_ids)}, only in new: {len(new_ids - old_ids)}")
+```
+
+Run that **before** sampling hunks. If the structural delta is non-trivial, the diff isn't what it looks like at the line level.
+
 ---
 
 ## Content Invariants — Hindi
