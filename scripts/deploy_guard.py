@@ -619,6 +619,93 @@ def recover_json_files(missing_items: list[dict]) -> tuple[int, int]:
     return recovered, failed
 
 
+def verify_all_live_urls(api: str, frontend: str) -> list[str]:
+    """HEAD-check every cover and audio URL for every item in the live API,
+    across all languages and subtypes.
+
+    Independent of snapshot/golden state — operates on whatever the API serves
+    right now. Catches user-visible 404s that the snapshot-diff path can miss
+    (e.g., pre-existing broken files, items in language buckets the snapshot
+    doesn't capture, items added after snapshot but before verify).
+
+    This is the canonical "are users actually seeing working content" gate.
+    Added 2026-04-28 after 7 HI covers slipped through verify because
+    capture_state() only fetched lang=en.
+    """
+    issues = []
+    client = httpx.Client(timeout=10, follow_redirects=True)
+
+    # Pull every item across both languages, paginated
+    all_items = []
+    for lang in ("en", "hi"):
+        page = 1
+        while True:
+            try:
+                resp = client.get(
+                    f"{api}/api/v1/content",
+                    params={"page_size": 100, "page": page, "lang": lang},
+                )
+                data = resp.json()
+                page_data = data.get("data", data) if isinstance(data, dict) else data
+                items = page_data.get("items", []) if isinstance(page_data, dict) else page_data
+                if not items:
+                    break
+                all_items.extend(it for it in items if isinstance(it, dict))
+                if len(items) < 100:
+                    break
+                page += 1
+            except Exception as e:
+                issues.append(f"  ❌ Failed to fetch lang={lang} page {page}: {e}")
+                break
+
+    if not all_items:
+        return issues
+
+    print(f"\n  🔍 HEAD-checking cover + audio for {len(all_items)} live items (all langs, all subtypes)...")
+
+    def head_check(label: str, base: str, path: str):
+        if not path:
+            return None
+        full = f"{base}{path}" if path.startswith("/") else path
+        try:
+            resp = client.head(full)
+            if resp.status_code == 200:
+                return None
+            return f"  ❌ {label} ({resp.status_code}): {path}"
+        except Exception as e:
+            return f"  ❌ {label} UNREACHABLE: {path} ({type(e).__name__})"
+
+    ok = 0
+    failed_issues = []
+    for item in all_items:
+        item_id = item.get("id", "?")
+        item_type = item.get("type", "?")
+        item_subtype = item.get("subtype") or ""
+        item_lang = item.get("lang", "?")
+        label = f"{item_id} [{item_type}{('/'+item_subtype) if item_subtype else ''}/{item_lang}]"
+
+        # Cover always served via frontend nginx (with subdir aliases per CLAUDE.md
+        # Production Path Routing — funny-shorts, funny-shorts-hi, poems alias to /opt/cover-store/)
+        cover_issue = head_check(f"COVER {label}", frontend, item.get("cover") or item.get("cover_url"))
+        if cover_issue:
+            failed_issues.append(cover_issue)
+        elif item.get("cover") or item.get("cover_url"):
+            ok += 1
+
+        # Audio: silly_songs and poems served by API; everything else by frontend
+        audio_base = api if (item_subtype == "silly_song" or item_type == "poem") else frontend
+        audio_path = item.get("audio_url") or item.get("audio")
+        audio_issue = head_check(f"AUDIO {label}", audio_base, audio_path)
+        if audio_issue:
+            failed_issues.append(audio_issue)
+        elif audio_path:
+            ok += 1
+
+    print(f"  Results: {ok} URLs OK, {len(failed_issues)} broken")
+    issues.extend(failed_issues)
+    return issues
+
+
 def verify_new_items_serving(added_items: list[dict], frontend: str, api: str) -> list[str]:
     """For each newly added item, verify its audio and cover URLs are reachable.
 
@@ -1246,6 +1333,25 @@ def cmd_verify(args):
                 msg = f"{len(golden_removed)} item(s) missing vs golden baseline"
                 unresolved.append(msg)
             print(f"{'='*60}")
+
+    # ── Comprehensive live-URL reachability check (all langs, all subtypes) ──
+    # This catches issues independent of snapshot — the canonical "what users
+    # see right now is actually serving" gate. Added after 7 HI covers slipped
+    # through because the snapshot only captured lang=en.
+    if not args.skip_files:
+        live_issues = verify_all_live_urls(api, frontend)
+        print(f"\n{'='*60}")
+        if not live_issues:
+            print("  ✅ All live cover + audio URLs reachable across both languages.")
+        else:
+            msg = f"{len(live_issues)} live URL(s) broken (cover or audio 404)"
+            print(f"  ❌ {msg}:")
+            for issue in live_issues[:30]:  # cap at 30 to keep output readable
+                print(issue)
+            if len(live_issues) > 30:
+                print(f"  ... and {len(live_issues) - 30} more")
+            unresolved.append(msg)
+        print(f"{'='*60}")
 
     # ── File reachability check ──
     if not args.skip_files:
