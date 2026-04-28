@@ -139,7 +139,7 @@ def capture_state(api: str) -> dict:
             lang = item.get("lang", "en")
             if lang != "en":
                 continue  # Skip non-English stories entirely
-            if item.get("type") == "poem":
+            if item.get("type") == "poem" or item.get("subtype") == "funny_short":
                 continue  # Poem content type removed — skip to prevent accidental restoration
             audio_urls = []
             for av in (item.get("audio_variants") or []):

@@ -49,6 +49,14 @@ SETTLING_TAGS = (
 )
 SETTLING_SOFT_WORDS_EN = ("yeah", "okay", "guess", "maybe", "fine")
 
+# Tags that produce REAL non-verbal audio when used standalone (tag-only line).
+# v3 renders these as actual sound events (laughter, gasps, sighs).
+LAUGHTER_TAGS = ("[laughs together]", "[laughs]", "[nervous laugh]", "[giggles]")
+
+# Standalone tag-only lines that are valid as a final closing beat.
+PREFERRED_FINAL_STANDALONE = ("[laughs together]", "[laughs]")
+ACCEPTABLE_FINAL_STANDALONE = ("[sigh]", "[yawns]", "[thoughtful]")
+
 
 # ────────────────────────────────────────────────────────────────────────
 #  Hindi-specific rules
@@ -137,6 +145,40 @@ def _detect_closing_pattern(inputs: list[dict]) -> str:
 
 def _has_devanagari(s: str) -> bool:
     return any("ऀ" <= c <= "ॿ" for c in s)
+
+
+# A "standalone-effect" line is a tag followed by punctuation OR pure laugh
+# onomatopoeia — no real spoken content. v3 rejects empty text, so we use
+# `[laughs together] hahaha` (longer laugh) or `[laughs together]...` (shorter).
+_LAUGH_ONOMATOPOEIA = re.compile(
+    r"^(?:[\s\.!\?…,\-]|hahaha+|haha+|ha\s|ha,|hehe+|heh+|hee\s*hee|tehee+)*$",
+    re.IGNORECASE,
+)
+
+
+def _is_standalone_effect_line(text: str, allowed_tags: tuple[str, ...]) -> bool:
+    """Tag is one of `allowed_tags` and what's after it is punctuation or
+    laugh onomatopoeia (hahaha/hehe/etc.) only — no real spoken words."""
+    text = (text or "").strip()
+    for tag in allowed_tags:
+        if text.startswith(tag):
+            rest = text[len(tag):].strip()
+            if _LAUGH_ONOMATOPOEIA.match(rest):
+                return True
+    return False
+
+
+def _has_standalone_laughter_line(inputs: list[dict]) -> bool:
+    """True iff at least one input line is a standalone laughter line.
+
+    v3 renders a tag with no spoken words as the actual non-verbal sound.
+    Pattern: `[laughs together]` or `[laughs together]...` — tag + optional
+    punctuation only, no real words.
+    """
+    return any(
+        _is_standalone_effect_line(inp.get("text", ""), LAUGHTER_TAGS)
+        for inp in inputs
+    )
 
 
 # ────────────────────────────────────────────────────────────────────────
@@ -272,15 +314,32 @@ def validate_funny_short(
                         f"Over-used phrase '{phrase}' ({recent_uses}+ in last 10)"
                     )
 
-    # — Bedtime-settled ending —
+    # — Standalone laughter line required (real audio event, not inflected delivery) —
+    if not _has_standalone_laughter_line(inputs):
+        errors.append(
+            "Must include >=1 standalone laughter tag line (tag-only, no text — "
+            f"one of {list(LAUGHTER_TAGS)})"
+        )
+
+    # — Final line: must be standalone laughter / settling tag, or soft-prose closing —
     if inputs:
-        last_line = inputs[-1].get("text", "").lower()
-        if not any(t in last_line for t in SETTLING_TAGS):
+        last_line_raw = (inputs[-1].get("text") or "").strip()
+        last_line_lower = last_line_raw.lower()
+        if _is_standalone_effect_line(last_line_raw, PREFERRED_FINAL_STANDALONE):
+            pass  # ideal
+        elif _is_standalone_effect_line(last_line_raw, ACCEPTABLE_FINAL_STANDALONE):
+            pass  # acceptable settling-tag fallback
+        else:
             soft = SETTLING_SOFT_WORDS_EN if lang == "en" else (
                 SETTLING_SOFT_WORDS_EN + SETTLING_SOFT_WORDS_HI
             )
-            if not any(w in last_line for w in soft):
-                errors.append("Final line not bedtime-settled")
+            if not any(w in last_line_lower for w in soft):
+                errors.append(
+                    f"Final line must be standalone {list(PREFERRED_FINAL_STANDALONE)} "
+                    f"(use `[laughs together]...` — punctuation accepted) or "
+                    f"{list(ACCEPTABLE_FINAL_STANDALONE)} or soft-prose closing — "
+                    f"got: {last_line_raw!r}"
+                )
 
     # — Title length —
     if len(script.get("title", "")) > 30:
@@ -294,43 +353,43 @@ def validate_funny_short(
 # ────────────────────────────────────────────────────────────────────────
 
 VOICE_LIBRARY_EN: dict[str, str] = {
-    "mini":           "hO2yZ8lxM3axUxL8OeKX",  # Lively cute young female
-    "jerry":          "MDLAMJ0jxkpYkjXbmG4t",  # Jolly Santa Claus
-    "suhana":         "9vP6R7VVxNwGIGLnpl17",  # Very young & joyful narrator
-    "tashi":          "YIXhzp6l2M0ddzOGIbJ3",  # Expressive Hindi-kids narrator (English variant)
-    "monika_creepy":  "6aO1exAR9bDruq155LzQ",  # Sinister creepy
-    "leo":            "UKvDHTUpXOC66VwQ3n2w",  # Calm yet firm recovery agent
+    "mini":      "hO2yZ8lxM3axUxL8OeKX",  # Lively cute young female
+    "katherine": "342hpGp7PKo7DsTTVSdr",  # Eccentric Mad Scientist
+    "suhana":    "9vP6R7VVxNwGIGLnpl17",  # Very young & joyful narrator
+    "tashi":     "YIXhzp6l2M0ddzOGIbJ3",  # Expressive Hindi-kids narrator (English variant)
+    "kiran_en":  "o80picuztV1xYiPeIrpa",  # Very young adorable story narrator
+    "omar":      "S7IsvAvEoDfui6GSZK3A",  # Very young storyteller
 }
 
 VOICE_LIBRARY_HI: dict[str, str] = {
-    "bunty":          "7b9mYhmnp0y2qSH1FnBL",  # Funny best friend
-    "anika":          "Sm1seazb4gs7RSlUVw7c",  # Animated, friendly and engaging
-    "riya":           "4RloeZf2FRvGiu4uoKOf",  # Children storytelling
-    "kiran":          "ss0PMu3rEfIwrYgOOl5S",  # Very young, cute & engaging
-    "gappu":          "psk8YLODv4ETdKheNwwz",  # Kids cartoon character voice
-    "gappu_bhai":     "tBPQ3sUKpdLEVpyeCHyk",  # Lazy cartoon voice
+    "omar_hi":    "srEfhy4AF67Mw9SpTVFd",  # Energetic, engaging, animated
+    "suhana_hi":  "A2VREc2wjqtSZloENLHe",  # Very young & expressive narrator
+    "riya":       "4RloeZf2FRvGiu4uoKOf",  # Children storytelling
+    "kiran":      "ss0PMu3rEfIwrYgOOl5S",  # Very young, cute & engaging
+    "gappu":      "psk8YLODv4ETdKheNwwz",  # Kids cartoon character voice
+    "gappu_bhai": "tBPQ3sUKpdLEVpyeCHyk",  # Lazy cartoon voice
 }
 
 APPROVED_PAIRINGS_EN: list[tuple[str, str]] = [
-    ("mini", "leo"),                    # bright + dry
-    ("suhana", "monika_creepy"),        # innocent + sinister (contrast)
-    ("jerry", "mini"),                  # jolly + cheeky
-    ("tashi", "leo"),                   # expressive + steady
-    ("suhana", "jerry"),                # young + jolly
-    ("mini", "tashi"),                  # lively + dramatic
-    ("monika_creepy", "leo"),           # sinister + steady
-    ("tashi", "suhana"),                # dramatic + innocent
+    ("mini", "omar"),
+    ("suhana", "tashi"),
+    ("katherine", "suhana"),
+    ("omar", "kiran_en"),
+    ("mini", "tashi"),
+    ("kiran_en", "omar"),
+    ("suhana", "omar"),
+    ("katherine", "mini"),
 ]
 
 APPROVED_PAIRINGS_HI: list[tuple[str, str]] = [
-    ("bunty", "kiran"),
-    ("anika", "gappu"),
+    ("omar_hi", "kiran"),
+    ("suhana_hi", "gappu"),
     ("riya", "gappu_bhai"),
+    ("omar_hi", "suhana_hi"),
     ("kiran", "gappu"),
-    ("bunty", "anika"),
     ("riya", "kiran"),
     ("gappu", "gappu_bhai"),
-    ("bunty", "gappu_bhai"),
+    ("omar_hi", "gappu_bhai"),
 ]
 
 
@@ -476,12 +535,38 @@ You have full creative freedom WITHIN these constraints:
 - 6-20 dialogue lines total (vary the length — short shorts are good)
 - Max 12 words per line
 - Total STRICTLY under 500 characters across all lines combined.
-  AIM for 350-450 chars (count carefully — going over 500 is rejected).
+  AIM for 300-400 chars (going over 500 is auto-rejected).
+  Standalone tag-only lines like "[laughs together]" still count toward
+  the 500-char budget — leave room for 2 of them.
 - Use audio tags ONLY from this list: {approved_tags}
-- The FINAL LINE must include one of these settling cues to be valid:
-  [laughs together], [laughs], [grinning], [sigh], [yawns],
-  [thoughtful], [hmm], or [whispers]; OR contain a soft word
-  ("yeah", "okay", "guess", "maybe", "fine"). NOT optional.
+
+AUDIO TAG USAGE — TWO PATTERNS (this is the most important section):
+
+1. INLINE with text — inflects delivery only.
+   Example: "[curious] Where did my chips go?"
+   The voice speaks the words with curiosity. NO non-verbal sound is produced.
+
+2. TAG-ONLY line — renders as REAL non-verbal audio.
+   Use the pattern: "[laughs together]..." (tag followed by 3 dots, no
+   real words). The trailing punctuation satisfies the API; the tag
+   produces actual shared-laughter audio at that point.
+   Other valid forms: "[laughs]...", "[nervous laugh]...", "[giggles]..."
+
+REQUIRED:
+- Include AT LEAST 2 standalone tag-only lines per short. These are
+  real audio events: actual laughter, gasps, sighs, real reactions.
+  Without these, the short has zero non-verbal sound and feels flat.
+- The FINAL LINE must be a standalone laughter line. Use this exact
+  canonical pattern: `[laughs together] hahaha` — the trailing
+  "hahaha" gets v3 to sustain the laugh long enough that it doesn't
+  feel cut off. `[laughs] hahaha` is acceptable too.
+- Don't write "haha" or "ha ha" in any line — use a standalone
+  laughter tag instead.
+- A standalone-tag line counts as ~1 line in your line budget.
+
+Why this matters: tag-only lines produce real audio events. Inline
+tags only inflect spoken text. A funny short without standalone tags
+has no actual laugh sounds — it just sounds like dialogue.
 
 WHAT YOU MUST AVOID:
 - Repeating the comedic structure of recent funny shorts (listed below)
@@ -524,15 +609,24 @@ WHAT FALLS FLAT:
 - Adult-style wit
 - Sarcasm directed at the listener
 
-OUTPUT FORMAT (JSON):
+OUTPUT FORMAT (JSON, exact shape — do NOT use voice labels like
+"{voice_a_label}", use ONLY "A" or "B"):
+
 {{
   "title": "evocative title under 5 words",
   "comedic_device_used": "{comedic_device}",
   "inputs": [
-    {{"voice": "A" or "B", "text": "line with audio tags inline"}}
+    {{"voice": "A", "text": "[curious] short opener with up to 12 words"}},
+    {{"voice": "B", "text": "[laughs]..."}},
+    {{"voice": "A", "text": "[serious] another inflected line"}},
+    {{"voice": "B", "text": "[laughs together] hahaha"}}
   ],
   "cover_context": "one sentence describing a dreamy visual"
 }}
+
+The shape above is illustrative — DO NOT COPY the example text. Only
+copy the structure: voice fields are "A" or "B", standalone laughter
+lines have no text after the tag, the final line is standalone laughter.
 
 Just the JSON. No commentary."""
 
@@ -541,10 +635,15 @@ _HI_TEMPLATE = """You are writing a 60-second comedic Hindi dialogue between two
 child characters for a bedtime app. The dialogue should make an Indian
 kid laugh, then settle.
 
-ROMAN HINDI ONLY:
-Write all dialogue in Roman script. Not Devanagari.
-"Mujhe chips chahiye" — Roman only, never Devanagari.
-Audio tags stay in English (delivery cues, not text).
+ROMAN HINDI + DEVANAGARI (BOTH REQUIRED):
+For EACH dialogue line, produce TWO fields:
+- "text": Roman script (for app display/storage; NEVER Devanagari here)
+- "text_deva": EXACT same line in Devanagari (used as TTS engine input
+  for cleaner Hindi phonemes — Hindi voices on ElevenLabs render
+  Devanagari more accurately than transliterated Roman)
+Audio tags stay in English ([curious], [laughs together], etc.) in
+BOTH fields — they're delivery cues, not text.
+Both fields must contain the same tags in the same positions.
 
 CONVERSATIONAL REGISTER:
 Bolchaal ki Hindi — way Indian siblings actually talk.
@@ -558,12 +657,37 @@ You have full creative freedom WITHIN these constraints:
 - 6-20 dialogue lines total (vary the length)
 - Max 12 words per line
 - Total STRICTLY under 500 characters across all lines combined.
-  AIM for 350-450 chars (count carefully — going over 500 is rejected).
+  AIM for 300-400 chars (going over 500 is auto-rejected).
+  Standalone tag-only lines like "[laughs together]" still count toward
+  the 500-char budget — leave room for 2 of them.
 - Use audio tags ONLY from this list: {approved_tags}
-- The FINAL LINE must include one of these settling cues:
-  [laughs together], [laughs], [grinning], [sigh], [yawns],
-  [thoughtful], [hmm], [whispers]; OR a soft Hindi/Hinglish closing word
-  ("theek hai", "achha", "haan", "okay", "fine", "yaar"). NOT optional.
+
+AUDIO TAG USAGE — TWO PATTERNS (this is the most important section):
+
+1. INLINE with text — inflects delivery only.
+   Example: "[curious] Mere chips kahaan gaye?"
+   The voice speaks the words with curiosity. NO non-verbal sound is produced.
+
+2. TAG-ONLY line — renders as REAL non-verbal audio.
+   Use the pattern: "[laughs together]..." (tag followed by 3 dots, no
+   real words). The trailing punctuation satisfies the API; the tag
+   produces actual shared-laughter audio at that point.
+   Other valid forms: "[laughs]...", "[nervous laugh]...", "[giggles]..."
+
+REQUIRED:
+- Include AT LEAST 2 standalone tag-only lines per short — real audio
+  events (actual laughter, gasps, sighs, real reactions). Without
+  these, the short has zero non-verbal sound and feels flat.
+- The FINAL LINE must be a standalone laughter line. Use this exact
+  canonical pattern: `[laughs together] hahaha` — the trailing
+  "hahaha" gets v3 to sustain the laugh long enough that it doesn't
+  feel cut off. `[laughs] hahaha` is acceptable too.
+- Don't write "haha", "ha ha", or "hehe" — use a standalone
+  laughter tag instead.
+
+Why this matters: tag-only lines produce real audio events. Inline
+tags only inflect spoken text. Hindi listeners notice this even more —
+real laugh audio is what makes the short land as funny.
 
 WHAT YOU MUST AVOID:
 - Repeating the comedic structure of recent shorts (listed below)
@@ -619,16 +743,25 @@ WHAT FALLS FLAT:
 - Adult sarcasm
 - Bollywood references
 
-OUTPUT FORMAT (JSON):
+OUTPUT FORMAT (JSON, exact shape — do NOT use voice labels like
+"{voice_a_label}", use ONLY "A" or "B"):
+
 {{
   "title": "evocative Roman Hindi title under 5 words",
   "title_en": "English translation for tooling",
   "comedic_device_used": "{comedic_device}",
   "inputs": [
-    {{"voice": "A" or "B", "text": "line with audio tags inline"}}
+    {{"voice": "A", "text": "[curious] Roman Hindi opener.", "text_deva": "[curious] रोमन हिंदी ओपनर।"}},
+    {{"voice": "B", "text": "[laughs]...", "text_deva": "[laughs]..."}},
+    {{"voice": "A", "text": "[serious] Another Roman line.", "text_deva": "[serious] एक और लाइन।"}},
+    {{"voice": "B", "text": "[laughs together] hahaha", "text_deva": "[laughs together] hahaha"}}
   ],
   "cover_context": "one English sentence describing a dreamy Indian visual"
 }}
+
+The shape above is illustrative — DO NOT COPY the example text. Only
+copy the structure: voice fields are "A" or "B", standalone laughter
+lines have no text after the tag, the final line is standalone laughter.
 
 Just the JSON. No commentary."""
 
@@ -696,10 +829,20 @@ def frame_dialogue_with_stings(
     dialogue_bytes: bytes,
     intro_sting_path: Path | str,
     outro_sting_path: Path | str,
-    gap_ms: int = 1000,
+    pre_gap_ms: int = 1000,
+    post_gap_ms: int = 2500,
+    gap_ms: int | None = None,  # legacy param; if set, applies to both gaps
 ) -> bytes:
-    """Assemble final MP3: intro + silence + dialogue + silence + outro."""
+    """Assemble final MP3: intro + pre-gap + dialogue + post-gap + outro.
+
+    Asymmetric framing by default: 1s before dialogue (just enough to
+    transition out of the intro chord), 2.5s after (lets the laughter
+    decay naturally before the outro sting starts).
+    """
     from pydub import AudioSegment
+
+    if gap_ms is not None:
+        pre_gap_ms = post_gap_ms = gap_ms
 
     intro_p = Path(intro_sting_path)
     outro_p = Path(outro_sting_path)
@@ -712,12 +855,11 @@ def frame_dialogue_with_stings(
     outro = AudioSegment.from_mp3(str(outro_p))
     dialogue = AudioSegment.from_mp3(io.BytesIO(dialogue_bytes))
 
-    silence = AudioSegment.silent(
-        duration=gap_ms,
-        frame_rate=dialogue.frame_rate or 44100,
-    )
+    fr = dialogue.frame_rate or 44100
+    pre_silence = AudioSegment.silent(duration=pre_gap_ms, frame_rate=fr)
+    post_silence = AudioSegment.silent(duration=post_gap_ms, frame_rate=fr)
 
-    full = intro + silence + dialogue + silence + outro
+    full = intro + pre_silence + dialogue + post_silence + outro
 
     out = io.BytesIO()
     full.export(out, format="mp3", bitrate="192k")

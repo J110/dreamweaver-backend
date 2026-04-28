@@ -218,12 +218,32 @@ def pick_poem_axes(catalog: list[dict] | None = None) -> dict:
     }
 
 
+def pick_funny_short_axes(catalog: list[dict] | None = None) -> dict:
+    """Funny shorts do their own internal diversity sampling (voice pair,
+    comedic device, setting, tone, opening tag, etc.) — see
+    generate_funny_shorts_hi.py. Picker only chooses age_group at this
+    level."""
+    catalog = catalog if catalog is not None else load_hindi_catalog()
+    same_type = [
+        i for i in catalog
+        if i.get("subtype") == "funny_short" and i.get("lang") == "hi"
+    ]
+    recent = _last_n(same_type, 14)
+    return {
+        "age_group": _avoid_collisions(AGE_GROUPS, [r.get("age_group") for r in recent]),
+        # mood unused by funny_short orchestrator; keep for state-shape compat
+        "mood": _avoid_collisions(MOODS, [r.get("mood") for r in recent]),
+        "recent_titles": [r.get("title") for r in recent[:10]],
+    }
+
+
 PICKERS = {
     "short_story": pick_short_story_axes,
     "long_story":  pick_long_story_axes,
     "lullaby":     pick_lullaby_axes,
     "silly_song":  pick_silly_song_axes,
     "poem":        pick_poem_axes,
+    "funny_short": pick_funny_short_axes,
 }
 
 

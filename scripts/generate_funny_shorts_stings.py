@@ -146,10 +146,13 @@ def generate_candidates(lang: str, kind: str, count: int) -> list[Path]:
 
 
 def trim_intro_to_3s(src: Path, dst: Path) -> None:
-    """Intro: hard cut at 3s — preserves resolved-chord ending."""
+    """Intro: 4.5s hard cut — let the sting breathe before dialogue.
+
+    (Function name kept for compat; actual length is 4.5s.)
+    """
     cmd = [
         "ffmpeg", "-y", "-i", str(src),
-        "-t", "3.0",
+        "-t", "4.5",
         "-ar", "44100", "-b:a", "192k",
         str(dst),
     ]
@@ -157,11 +160,14 @@ def trim_intro_to_3s(src: Path, dst: Path) -> None:
 
 
 def trim_outro_to_3s(src: Path, dst: Path) -> None:
-    """Outro: 0.5s fade-out from 2.5s — soft, settled ending."""
+    """Outro: 4.5s with 1.5s fade-out from 3.0s — long, gentle taper.
+
+    (Name kept for backward compat; actual length is 4.5s.)
+    """
     cmd = [
         "ffmpeg", "-y", "-i", str(src),
-        "-t", "3.0",
-        "-af", "afade=t=out:st=2.5:d=0.5",
+        "-t", "4.5",
+        "-af", "afade=t=out:st=3.0:d=1.5",
         "-ar", "44100", "-b:a", "192k",
         str(dst),
     ]

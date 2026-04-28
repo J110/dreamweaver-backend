@@ -44,8 +44,9 @@ FAILURES_LOG = BASE_DIR / "seed_output" / "_hindi_failures.jsonl"
 
 CONTENT_TYPES_ORDER = [
     # Cheaper / faster first (so partial failure on the long story still
-    # ships the easy stuff)
-    "lullaby", "poem", "silly_song", "short_story", "long_story",
+    # ships the easy stuff). Funny shorts go alongside silly_song +
+    # poem in the before-bed tab.
+    "lullaby", "poem", "funny_short", "silly_song", "short_story", "long_story",
 ]
 
 
@@ -57,7 +58,7 @@ def _git_commit_and_push(generated_ids: list[str]) -> bool:
         subprocess.run(
             ["git", "add",
              "seed_output/content.json",
-             "data/silly_songs", "data/poems",
+             "data/silly_songs", "data/poems", "data/funny_shorts",
              "seed_output/lullabies", "seed_output/stories_hi",
              "seed_output/silly_songs", "seed_output/poems_hi",
              "seed_output/hindi_long"],
@@ -124,7 +125,7 @@ def _build_state(results: dict, elapsed: float) -> dict:
     failures = [r for r in results.values() if r.get("status") != "ok"]
 
     state = {
-        "status": "completed" if len(successes) >= 3 else "partial",
+        "status": "completed" if len(successes) >= 4 else "partial",
         "lang": "hi",
         "generated_ids": [r["id"] for r in successes if r.get("id")],
         "qa_passed": [r["id"] for r in successes if r.get("id")],
@@ -141,6 +142,7 @@ def _build_state(results: dict, elapsed: float) -> dict:
         "generated_poems": sum(1 for r in successes if r.get("type") == "poem"),
         "generated_lullabies": sum(1 for r in successes if r.get("type") == "lullaby"),
         "generated_silly_songs": sum(1 for r in successes if r.get("type") == "silly_song"),
+        "generated_funny_shorts": sum(1 for r in successes if r.get("type") == "funny_short"),
         "hindi_per_type": {
             t: results[t].get("status") for t in CONTENT_TYPES_ORDER
             if t in results
@@ -227,7 +229,7 @@ def main(only_types: list[str] | None = None) -> int:
             }
 
     successes = [r for r in results.values() if r.get("status") == "ok"]
-    print(f"\n══ Generation done: {len(successes)}/5 succeeded ══")
+    print(f"\n══ Generation done: {len(successes)}/{len(types_to_run)} succeeded ══")
 
     # ── Deploy: git push + admin reload
     if successes:
@@ -267,7 +269,7 @@ def main(only_types: list[str] | None = None) -> int:
         print(f"  {icon} {content_type:12s}  {suffix}")
 
     # Exit 0 if ≥3 of 5 succeeded; 1 otherwise (alerts cron)
-    return 0 if len(successes) >= 3 else 1
+    return 0 if len(successes) >= 4 else 1
 
 
 if __name__ == "__main__":
