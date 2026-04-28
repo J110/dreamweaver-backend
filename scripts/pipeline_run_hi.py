@@ -143,6 +143,7 @@ def _build_state(results: dict, elapsed: float) -> dict:
         "generated_silly_songs": sum(1 for r in successes if r.get("type") == "silly_song"),
         "hindi_per_type": {
             t: results[t].get("status") for t in CONTENT_TYPES_ORDER
+            if t in results
         },
         "hindi_failures": [
             {"type": r["type"], "error": r.get("error", "")[:300]}

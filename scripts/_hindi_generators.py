@@ -110,7 +110,7 @@ def _upsert_content(entry: dict) -> None:
 
 def _llm_with_retry(*, system: str, user: str, validator_key: str,
                      max_retries: int = 3, log_prefix: str = "  ",
-                     post_process=None) -> dict:
+                     post_process=None, max_tokens: int = 4096) -> dict:
     """Generate JSON, validate, retry on failure. post_process optionally
     transforms the LLM JSON into the validator-shape."""
     last_errors: list[str] = []
@@ -127,7 +127,7 @@ def _llm_with_retry(*, system: str, user: str, validator_key: str,
                 system=system,
                 user=user + retry_hint,
                 temperature=0.85,
-                max_tokens=4096,
+                max_tokens=max_tokens,
                 log_prefix=log_prefix,
             )
         except LLMError as e:
@@ -1035,7 +1035,10 @@ def generate_long_story(axes: dict, log_prefix: str = "  ") -> dict:
     data = _llm_with_retry(
         system=sys_msg, user=user_msg,
         validator_key="long_story", log_prefix=log_prefix, post_process=shape,
-        max_retries=2,  # long stories are expensive — fewer retries
+        max_retries=2,       # long stories are expensive — fewer retries
+        max_tokens=12_000,   # full_text_roman alone is ~1500 tokens; JSON
+                              # wrapping + characters list + phase splits
+                              # need ~8-10k tokens of headroom
     )
 
     # ── Render via existing publish_hindi_long_day1 helpers
