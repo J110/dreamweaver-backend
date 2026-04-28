@@ -17,5 +17,6 @@
   "cover_context": "A glowing crescent moon floating above a tiny Indian village at dusk, with fireflies dancing like scattered stars.",
   "duration_seconds": 32,
   "audio_engine": "minimax-music-v2.5-fal",
-  "created_at": "2026-04-28"
+  "created_at": "2026-04-28",
+  "play_count": 2
 }

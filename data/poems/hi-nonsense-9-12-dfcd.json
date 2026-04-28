@@ -17,5 +17,6 @@
   "cover_context": "A surreal moonlit square where oversized birds juggle glowing, floating objects against a starry sky.",
   "duration_seconds": 44,
   "audio_engine": "minimax-music-v2.5-fal",
-  "created_at": "2026-04-27"
+  "created_at": "2026-04-27",
+  "play_count": 1
 }
