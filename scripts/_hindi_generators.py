@@ -36,6 +36,16 @@ BASE_DIR = Path(__file__).parent.parent
 REPO_ROOT = BASE_DIR.parent
 WEB_ROOT = REPO_ROOT / "dreamweaver-web"
 
+# When running on the GCP VM these prod paths exist and ARE the nginx-aliased
+# served roots — write directly to them so cron runs don't need a separate
+# scp step. On local Mac these don't exist and the writes are silently
+# skipped (the seed/web copies still happen, and a manual deploy can scp
+# from those).
+PROD_BACKEND_PUBLIC = Path("/opt/dreamweaver-backend/public")
+PROD_COVER_STORE   = Path("/opt/cover-store")
+PROD_AUDIO_STORE   = Path("/opt/audio-store")
+ON_PROD = PROD_BACKEND_PUBLIC.exists()
+
 sys.path.insert(0, str(Path(__file__).parent))
 
 from _hindi_llm import generate_json, LLMError  # type: ignore
@@ -630,23 +640,32 @@ def generate_silly_song(axes: dict, log_prefix: str = "  ") -> dict:
 
     sid = f"hi-{data['anthem_id']}-{axes['age_group']}-{_hex()}"
 
-    # SILLY-SONG paths (per HINDI_SILLY_SONGS_GUIDELINES (1) §12)
-    _save_audio(
-        audio,
-        WEB_ROOT / "public" / "audio" / "silly-songs" / f"{sid}.mp3",
-        WEB_ROOT / "public" / "audio" / "pre-gen" / f"{sid}.mp3",
-        BASE_DIR / "seed_output" / "silly_songs" / f"{sid}.mp3",
-    )
+    # SILLY-SONG paths.
+    # Frontend hits api.dreamvalley.app/audio/silly-songs/  → backend public.
+    # Frontend hits dreamvalley.app/covers/silly-songs/     → /opt/cover-store/silly-songs.
+    # See HINDI_SILLY_SONGS_GUIDELINES (1) §12 — corrected v2.1 file layout.
+    audio_paths = [
+        WEB_ROOT / "public" / "audio" / "silly-songs" / f"{sid}.mp3",  # legacy duplicate
+        WEB_ROOT / "public" / "audio" / "pre-gen" / f"{sid}.mp3",      # legacy duplicate
+        BASE_DIR / "seed_output" / "silly_songs" / f"{sid}.mp3",       # debug master
+    ]
+    if ON_PROD:
+        audio_paths.extend([
+            PROD_BACKEND_PUBLIC / "audio" / "silly-songs" / f"{sid}.mp3",  # api-served
+            PROD_AUDIO_STORE / "silly-songs-hi" / f"{sid}.mp3",            # backup
+        ])
+    _save_audio(audio, *audio_paths)
 
     cover = _flux_cover(data.get("cover_context", "Indian kid in cozy kitchen"), 512, 512)
     if cover:
-        _save_cover(
-            cover,
-            WEB_ROOT / "public" / "covers" / f"{sid}.webp",
-            WEB_ROOT / "public" / "covers" / "silly-songs" / f"{sid}_cover.webp",
-            BASE_DIR / "seed_output" / "silly_songs" / f"{sid}_cover.webp",
-            size=(512, 512),
-        )
+        cover_paths = [
+            WEB_ROOT / "public" / "covers" / f"{sid}.webp",                          # home reference
+            WEB_ROOT / "public" / "covers" / "silly-songs" / f"{sid}_cover.webp",   # legacy duplicate
+            BASE_DIR / "seed_output" / "silly_songs" / f"{sid}_cover.webp",         # debug master
+        ]
+        if ON_PROD:
+            cover_paths.append(PROD_COVER_STORE / "silly-songs" / f"{sid}_cover.webp")  # frontend-served
+        _save_cover(cover, *cover_paths, size=(512, 512))
 
     entry = {
         "id": sid,
@@ -825,22 +844,33 @@ def generate_poem(axes: dict, log_prefix: str = "  ") -> dict:
 
     sid = f"hi-{axes['poem_type']}-{axes['age_group']}-{_hex()}"
 
-    # POEM paths use language-agnostic /poems/ at served URL level
-    _save_audio(
-        audio,
-        WEB_ROOT / "public" / "audio" / "poems-hi" / f"{sid}.mp3",
-        WEB_ROOT / "public" / "audio" / "pre-gen" / f"{sid}.mp3",
-        BASE_DIR / "seed_output" / "poems_hi" / f"{sid}.mp3",
-    )
+    # POEM paths.
+    # Frontend hits api.dreamvalley.app/audio/poems/   → backend public/audio/poems/.
+    # Frontend hits dreamvalley.app/covers/poems/      → backend public/covers/poems/.
+    # NOTE: served URL is /poems/ (no -hi suffix); lang filtering is via the
+    # `lang` field on the JSON, not the path. See HINDI_MUSICAL_POEMS §12 (v2.1).
+    audio_paths = [
+        WEB_ROOT / "public" / "audio" / "poems-hi" / f"{sid}.mp3",  # legacy debug
+        WEB_ROOT / "public" / "audio" / "pre-gen" / f"{sid}.mp3",   # legacy duplicate
+        BASE_DIR / "seed_output" / "poems_hi" / f"{sid}.mp3",       # debug master
+    ]
+    if ON_PROD:
+        audio_paths.extend([
+            PROD_BACKEND_PUBLIC / "audio" / "poems" / f"{sid}.mp3",  # api-served
+            PROD_AUDIO_STORE / "poems-hi" / f"{sid}.mp3",            # backup
+        ])
+    _save_audio(audio, *audio_paths)
 
     cover = _flux_cover(data.get("cover_context", "Indian abstract watercolor"))
     if cover:
-        _save_cover(
-            cover,
-            WEB_ROOT / "public" / "covers" / f"{sid}.webp",
-            WEB_ROOT / "public" / "covers" / "poems-hi" / f"{sid}_cover.webp",
-            BASE_DIR / "seed_output" / "poems_hi" / f"{sid}_cover.webp",
-        )
+        cover_paths = [
+            WEB_ROOT / "public" / "covers" / f"{sid}.webp",                       # home reference
+            WEB_ROOT / "public" / "covers" / "poems-hi" / f"{sid}_cover.webp",    # legacy duplicate
+            BASE_DIR / "seed_output" / "poems_hi" / f"{sid}_cover.webp",          # debug master
+        ]
+        if ON_PROD:
+            cover_paths.append(PROD_BACKEND_PUBLIC / "covers" / "poems" / f"{sid}_cover.webp")  # frontend-served
+        _save_cover(cover, *cover_paths)
 
     text_lines = [l for l in data["poem_text"].split("\n") if l.strip()]
     entry = {
