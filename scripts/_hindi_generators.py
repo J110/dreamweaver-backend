@@ -1553,6 +1553,75 @@ def generate_long_story(axes: dict, log_prefix: str = "  ") -> dict:
 
 
 # ───────────────────────────────────────────────────────────────────────
+# Funny short (v3 dialogue) — wraps the standalone orchestrator
+# ───────────────────────────────────────────────────────────────────────
+
+def generate_funny_short(axes: dict, log_prefix: str = "  ") -> dict:
+    """Hindi funny short — wraps the standalone
+    generate_funny_shorts_hi.py orchestrator. The orchestrator handles
+    its own internal diversity sampling (voice pair, comedic device,
+    setting, tone, opening tag, character age dynamic), validates
+    Devanagari + standalone-laughter requirements, renders via v3
+    Text-to-Dialogue with Devanagari engine input, frames with stings,
+    auto-mirrors into content.json, and syncs audio to nginx + audio-store.
+    """
+    import subprocess as _sp
+    base = Path(__file__).resolve().parents[1]
+    age = axes.get("age_group", "6-8")
+
+    # 1. Script + audio + auto-mirror
+    print(f"{log_prefix}generate_funny_shorts_hi --age {age}…")
+    r = _sp.run(
+        ["python3", "scripts/generate_funny_shorts_hi.py", "--age", age],
+        cwd=base, capture_output=True, text=True, timeout=600,
+    )
+    if r.returncode != 0:
+        raise RuntimeError(
+            f"generate_funny_shorts_hi failed (exit {r.returncode}):\n"
+            f"  stdout tail: {(r.stdout or '')[-400:]}\n"
+            f"  stderr tail: {(r.stderr or '')[-400:]}"
+        )
+    short_id = None
+    for line in (r.stdout or "").splitlines():
+        line = line.strip()
+        if "data/funny_shorts/" in line and ".json" in line:
+            fname = line.split("data/funny_shorts/")[-1].split(".json")[0]
+            if fname.startswith("hi-fs-"):
+                short_id = fname
+                break
+    if not short_id:
+        raise RuntimeError(
+            "generate_funny_shorts_hi succeeded but no id parsed from stdout"
+        )
+
+    # 2. Cover via FLUX (best-effort — audio is the primary deliverable)
+    print(f"{log_prefix}generate_funny_short_cover for {short_id}…")
+    cov = _sp.run(
+        ["python3", "scripts/generate_funny_short_cover.py",
+         "--story-json", f"data/funny_shorts/{short_id}.json"],
+        cwd=base, capture_output=True, text=True, timeout=180,
+    )
+    if cov.returncode != 0:
+        print(f"{log_prefix}cover failed (audio ok): {(cov.stderr or '')[-200:]}")
+
+    # 3. Build entry from the persisted JSON
+    short = json.loads(
+        (base / "data" / "funny_shorts" / f"{short_id}.json").read_text()
+    )
+    return {
+        "id": short["id"],
+        "type": "funny_short",
+        "subtype": "funny_short",
+        "lang": "hi",
+        "title": short.get("title", ""),
+        "title_en": short.get("title_en", ""),
+        "duration_seconds": short.get("duration_seconds", 0),
+        "audio_url": short.get("audio_url"),
+        "cover": short.get("cover"),
+    }
+
+
+# ───────────────────────────────────────────────────────────────────────
 # Dispatcher
 # ───────────────────────────────────────────────────────────────────────
 
@@ -1562,4 +1631,5 @@ GENERATORS = {
     "lullaby":     generate_lullaby,
     "silly_song":  generate_silly_song,
     "poem":        generate_poem,
+    "funny_short": generate_funny_short,
 }

@@ -1647,7 +1647,7 @@ def step_before_bed(args, state: dict) -> bool:
     mood = _pick_before_bed_mood()
     logger.info("  Today's age group: %s  |  Mood: %s", age, mood)
 
-    before_bed_results = {"age": age, "mood": mood, "silly_song": None, "poem": None}
+    before_bed_results = {"age": age, "mood": mood, "silly_song": None, "poem": None, "funny_short": None}
     all_ok = True
 
     # ── 1. Silly Song ─────────────────────────────────────────────────
@@ -1698,13 +1698,58 @@ def step_before_bed(args, state: dict) -> bool:
         logger.warning("  Musical poem generation failed")
         all_ok = False
 
+    # Rate limit pause before next Mistral call
+    logger.info("  Waiting 35s for Mistral rate limit...")
+    time.sleep(35)
+
+    # ── 3. Funny Short (English, ElevenLabs v3 Text-to-Dialogue) ──────
+    logger.info("\n  ── Funny Short (EN) ──")
+    funny_short_id = None
+    ok, stdout, stderr, elapsed = run_command(
+        [sys.executable, str(SCRIPTS_DIR / "generate_funny_shorts.py"),
+         "--age", age],
+        "Before Bed: generate funny short",
+        timeout=600,  # script gen + v3 dialogue render + framing
+    )
+    if ok:
+        # Parse the new short_id from "Wrote: data/funny_shorts/en-fs-XXXX.json"
+        for line in (stdout or "").split("\n"):
+            line = line.strip()
+            if "data/funny_shorts/" in line and ".json" in line:
+                fname = line.split("data/funny_shorts/")[-1].split(".json")[0]
+                if fname.startswith("en-fs-"):
+                    funny_short_id = fname
+                    break
+        if funny_short_id:
+            logger.info("  Funny short script: OK (%s)", funny_short_id)
+            # Cover generation (FLUX fallback chain)
+            cov_ok, cov_out, cov_err, _ = run_command(
+                [sys.executable, str(SCRIPTS_DIR / "generate_funny_short_cover.py"),
+                 "--story-json", f"data/funny_shorts/{funny_short_id}.json"],
+                "Before Bed: generate funny short cover",
+                timeout=120,
+            )
+            if cov_ok:
+                logger.info("  Funny short cover: OK")
+                before_bed_results["funny_short"] = funny_short_id
+            else:
+                logger.warning("  Funny short cover failed (audio still generated)")
+                before_bed_results["funny_short"] = funny_short_id  # audio is ok
+        else:
+            logger.warning("  Funny short generation completed but no id parsed")
+            all_ok = False
+    else:
+        logger.warning("  Funny short generation failed")
+        all_ok = False
+
     state["before_bed"] = before_bed_results
     state["step_before_bed"] = "done" if all_ok else "partial"
     save_state(state)
 
     generated = sum(1 for v in [before_bed_results["silly_song"],
-                                 before_bed_results["poem"]] if v)
-    logger.info("\n  Before Bed: %d/2 generated for ages %s", generated, age)
+                                 before_bed_results["poem"],
+                                 before_bed_results["funny_short"]] if v)
+    logger.info("\n  Before Bed: %d/3 generated for ages %s", generated, age)
     return True  # Non-fatal — don't block the rest of the pipeline
 
 
@@ -1847,7 +1892,7 @@ def step_sync(args, state: dict) -> bool:
 
         # ── Sync non-story audio (silly-songs, poems, lullabies) to web public ──
         # Radio reads from web public dir; backend may have files web doesn't
-        for audio_subdir in ["silly-songs", "poems", "lullabies"]:
+        for audio_subdir in ["silly-songs", "poems", "lullabies", "funny-shorts", "funny-shorts-hi"]:
             backend_sub = BASE_DIR / "public" / "audio" / audio_subdir
             web_sub = WEB_DIR / "public" / "audio" / audio_subdir
             if not backend_sub.exists():
@@ -1870,7 +1915,7 @@ def step_sync(args, state: dict) -> bool:
                 logger.info("  Synced %d %s audio files to web public", synced, audio_subdir)
 
         # ── Sync before-bed covers (backend → web) so nginx can serve them ──
-        for cover_subdir in ["silly-songs", "poems"]:
+        for cover_subdir in ["silly-songs", "poems", "funny-shorts", "funny-shorts-hi"]:
             backend_sub = BASE_DIR / "public" / "covers" / cover_subdir
             web_sub = WEB_DIR / "public" / "covers" / cover_subdir
             if not backend_sub.exists():
@@ -1909,7 +1954,7 @@ def step_sync(args, state: dict) -> bool:
             logger.info("  Backed up %d cover files to persistent store", covers_backed_up)
 
         # ── Sync content-type covers to cover-store subdirs (nginx serves from these) ──
-        for subdir in ["silly-songs", "poems", "lullabies"]:
+        for subdir in ["silly-songs", "poems", "lullabies", "funny-shorts", "funny-shorts-hi"]:
             src_dir = BASE_DIR / "public" / "covers" / subdir
             store_subdir = COVER_STORE / subdir
             store_subdir.mkdir(parents=True, exist_ok=True)
@@ -2445,7 +2490,7 @@ def print_summary(state: dict, total_elapsed: float):
                 len(state.get("covers_failed", [])))
     logger.info("  Lullabies:  %s", state.get("step_lullabies", "not run"))
     bb = state.get("before_bed", {})
-    bb_count = sum(1 for k in ["silly_song", "poem"] if bb.get(k))
+    bb_count = sum(1 for k in ["silly_song", "poem", "funny_short"] if bb.get(k))
     logger.info("  Before Bed: %s (%d/2 for ages %s)",
                 state.get("step_before_bed", "not run"), bb_count, bb.get("age", "?"))
     logger.info("  Enriched:   %s", state.get("step_enrich", "not run"))
