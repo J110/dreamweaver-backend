@@ -54,8 +54,19 @@ AUDIO_DIR = BASE / "public" / "audio" / "funny-shorts-hi"
 STINGS = Path("/opt/audio-store/stings")
 STINGS_LOCAL_FALLBACK = BASE / "public" / "audio" / "stings"
 
+WEB_AUDIO_DIR = Path("/opt/dreamweaver-web/public/audio/funny-shorts-hi")
+AUDIO_STORE_DIR = Path("/opt/audio-store/funny-shorts-hi")
+
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 AUDIO_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def _sync_to_prod_paths(audio_path: Path) -> None:
+    import shutil
+    for dst_dir in (WEB_AUDIO_DIR, AUDIO_STORE_DIR):
+        if dst_dir.exists():
+            shutil.copy2(audio_path, dst_dir / audio_path.name)
+            print(f"  synced → {dst_dir / audio_path.name}")
 
 
 def _resolve_stings() -> tuple[Path, Path]:
@@ -325,6 +336,7 @@ def main() -> int:
     print(f"  {json_path}")
     print(f"  {audio_path}  ({duration_seconds}s)")
 
+    _sync_to_prod_paths(audio_path)
     _auto_mirror(short_id)
 
     print(f"\nNext steps:")

@@ -88,6 +88,13 @@ def main() -> int:
     save_as_webp(image_bytes, out_path, quality=80)
     print(f"\n✓ Wrote {out_path}")
 
+    # Sync to nginx-served path on prod (no-op locally if absent)
+    nginx_dir = Path(f"/opt/cover-store/funny-shorts{'-hi' if lang == 'hi' else ''}")
+    if nginx_dir.exists():
+        import shutil
+        shutil.copy2(out_path, nginx_dir / out_path.name)
+        print(f"✓ Synced to {nginx_dir / out_path.name}")
+
     # Update entry to record cover_file (string only — `cover` URL is set by orchestrator)
     short["cover_file"] = f"{short_id}_cover.webp"
     src.write_text(json.dumps(short, indent=2, ensure_ascii=False))
