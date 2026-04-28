@@ -1,0 +1,30 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "f=$(jq -r '.tool_input.file_path // .tool_response.filePath' 2>/dev/null); case \"$f\" in *.py) python3 -m py_compile \"$f\" 2>&1 | head -10 ;; esac; exit 0"
+          },
+          {
+            "type": "command",
+            "command": "f=$(jq -r '.tool_input.file_path // .tool_response.filePath' 2>/dev/null); case \"$f\" in */scripts/_*.py) base=$(basename \"$f\" .py); test_file=\"$(dirname \"$f\")/test_${base#_}.py\"; if [ -f \"$test_file\" ]; then echo \"\\u2192 Running $(basename \"$test_file\")...\"; python3 -m pytest \"$test_file\" -x --tb=short 2>&1 | tail -25; fi ;; esac; exit 0"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cmd=$(jq -r '.tool_input.command' 2>/dev/null); if echo \"$cmd\" | grep -qE 'git push.*(main|master)|gcloud[[:space:]].*delete|rm -rf /opt|DROP TABLE|TRUNCATE TABLE'; then echo '\\ud83d\\udeab BLOCKED: production-affecting command. If intentional, run manually outside Claude Code.' >&2; exit 1; fi; exit 0"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -51,3 +51,9 @@ voice_references/*.mp3
 # Temp scripts
 add_annotations.py
 .venv-test/
+
+# deploy_guard transient snapshot (regenerated per deploy)
+data/deploy_snapshot.json
+
+# Test outputs
+seed_output/funny_shorts_test/
