@@ -1,0 +1,22 @@
+{
+  "id": "nonsense_6_8_5d10",
+  "title": "Snickety Snap",
+  "content_type": "poem",
+  "poem_type": "nonsense",
+  "age_group": "6-8",
+  "mood": "wired",
+  "instruments": "ukulele and soft bongos",
+  "tempo": 115,
+  "poem_text": "Jitter jig the wobble woo,\nBounce the bump and tickle true.\nFizzle pop the snickety snap,\nZip the zap and flip the flap.\nDizzy dazzle whirligig,\nSpin the sprock and twirl the twig.\nPitter pat the sleepy snug,\nDream the hug in fuzzy rug.",
+  "char_count": 236,
+  "line_count": 8,
+  "audio_file": "nonsense_6_8_5d10.mp3",
+  "cover_file": "nonsense_6_8_5d10_cover.webp",
+  "cover_context": "A glowing, swirling night sky where tiny, bouncing creatures made of light play among the stars before curling up in a cozy, moonlit nest.",
+  "style_prompt": "Children's musical poem, ukulele and soft bongos, 115 BPM, bouncy and playful, fun energy that channels into rhythm, clear warm vocal, every word easy to understand",
+  "duration_seconds": 30,
+  "audio_engine": "minimax-music-v2-fal",
+  "created_at": "2026-04-10",
+  "play_count": 6,
+  "replay_count": 2
+}

@@ -22345,5 +22345,133 @@
     ],
     "mood": "curious",
     "lullaby_type": "warning"
+  },
+  {
+    "id": "hi-ulta_ulta_hoon-6-8-e897",
+    "type": "song",
+    "subtype": "silly_song",
+    "story_type": "silly_song",
+    "storyType": "silly_song",
+    "lang": "hi",
+    "language": "hi",
+    "category": "celebration",
+    "anthem_id": "ulta_ulta_hoon",
+    "anthem": "Ulta ulta hoon!",
+    "title": "Ulta Ulta Hoon Masti Mein",
+    "title_en": "I'm Upside Down in Fun!",
+    "card_label": "GUBBARE JAISE!",
+    "card_subtitle": "Baccha sabko chidha ke khud hi khush ho jaata hai",
+    "description": "Baccha sabko chidha ke khud hi khush ho jaata hai",
+    "description_en": "I'm Upside Down in Fun!",
+    "lyrics": "[verse 1]\nDoodh piyega ulta glass\n*chhapaak* gir gaya pass\nChappal peheni left foot\n*thapp* ye kya hua boot?\n\n[chorus]\nUlta ulta hoon masti mein\nSabko chidha ke hansi mein\nDuniya dekhe aise jaise\nMain hoon gubbare jaisa!\n\n[verse 2]\nPapa ka moochh banana\n*dhadaam* gir gaya banana\nSchool bag utha ke dhokha\n*phiss* bhookhe pet ka jhoka!\n\n[chorus]\nUlta ulta hoon masti mein\nSabko chidha ke hansi mein\nDuniya dekhe aise jaise\nMain hoon gubbare jaisa!\n\n[ending]\nAb thak gaya *haaah*\nUlta hi so jaaun *ghurrr*",
+    "raw_lyrics": "[verse 1]\nDoodh piyega ulta glass\n*chhapaak* gir gaya pass\nChappal peheni left foot\n*thapp* ye kya hua boot?\n\n[chorus]\nUlta ulta hoon masti mein\nSabko chidha ke hansi mein\nDuniya dekhe aise jaise\nMain hoon gubbare jaisa!\n\n[verse 2]\nPapa ka moochh banana\n*dhadaam* gir gaya banana\nSchool bag utha ke dhokha\n*phiss* bhookhe pet ka jhoka!\n\n[chorus]\nUlta ulta hoon masti mein\nSabko chidha ke hansi mein\nDuniya dekhe aise jaise\nMain hoon gubbare jaisa!\n\n[ending]\nAb thak gaya *haaah*\nUlta hi so jaaun *ghurrr*",
+    "age_group": "6-8",
+    "ageGroup": "6-8",
+    "age_min": 6,
+    "age_max": 8,
+    "mood": "angry",
+    "instruments": "kazoos, dholki, and foot stomps",
+    "tempo": 130,
+    "audio_url": "/audio/silly-songs/hi-ulta_ulta_hoon-6-8-e897.mp3",
+    "audio_variants": [
+      {
+        "voice": "elevenlabs_music_v1",
+        "url": "/audio/silly-songs/hi-ulta_ulta_hoon-6-8-e897.mp3",
+        "duration_seconds": 70,
+        "provider": "elevenlabs-music"
+      }
+    ],
+    "cover": "/covers/hi-ulta_ulta_hoon-6-8-e897.webp",
+    "cover_file": "/covers/silly-songs/hi-ulta_ulta_hoon-6-8-e897_cover.webp",
+    "cover_context": "A cartoon kid in a bright red kurta floating upside-down like a balloon, laughing with arms wide open, surrounded by confused but smiling animals.",
+    "duration_seconds": 70,
+    "durationSec": 70,
+    "audio_engine": "elevenlabs-music",
+    "tts_engine": "elevenlabs-music",
+    "has_baked_music": true,
+    "is_generated": true,
+    "author_id": "system",
+    "categories": [
+      "Bedtime",
+      "Silly Song"
+    ],
+    "created_at": "2026-04-28T04:00:58",
+    "updated_at": "2026-04-28T04:00:58"
+  },
+  {
+    "id": "hi-katha-9-12-boon",
+    "type": "story",
+    "lang": "hi",
+    "language": "hi",
+    "title": "Boond aur Unki Anokhi Duniya",
+    "title_en": "Boond and Her Unique World",
+    "hook": "Ek chhoti si boond jo aasmaan se zameen tak ka safar alag hi samajhti thi",
+    "description": "Boond ka ek din ka safar, jisme woh samajhti hai ki har kadam par kuchh naya milta hai. Par kya woh apni jagah dhundh paayegi?",
+    "description_en": "Boond's journey from the sky to the earth, where she learns that every step brings something new. But will she find her place?",
+    "text": "Kehte hain ki bahut purani baat hai, jab ek chhoti si boond, jiska naam Boond tha, aasmaan se neeche utar rahi thi. [MUSIC] Us waqt shaam ka waqt tha, aasmaan pe laal-peeli dhoop phaili hui thi. Boond ne socha, 'Arre, main toh bas gir rahi hoon, par yeh safar itna lambi kyun lag raha hai?' [PHRASE]Girte hue, girte hue[/PHRASE], woh dheere dheere neeche aa rahi thi. [PAUSE: 1200] Tap tap, tap tap, uske saath aur bhi boondein gir rahi thi, par Boond unse alag thi. Uski duniya sirf uske aas paas thi—ek chhota sa gol ghar jisme woh rehti thi. [MUSIC]\n\nBoond ne dekha ki zameen nazdeek aa rahi hai. Usne socha, 'Pata hai, wahan kya hoga?' Par jab woh zameen pe pahunchi, toh sab kuchh badal gaya. [PHRASE]Girte hue, girte hue[/PHRASE], woh ek patte pe baith gayi. Patta zara sa hil raha tha, aur Boond bhi uske saath jhoom rahi thi. 'Achha, yahan toh bahut achha lag raha hai,' usne khud se kaha. [MUSIC] Par dheere dheere, patta sukha hone laga, aur Boond bhi kamzor hone lagi. Usne socha, 'Kya main yahin reh jaaungi?' Par tabhi uske paas ek chhota sa keeda aaya. 'Suno, tumhara ghar toh yahan nahi hai,' usne kaha. 'Tumhara ghar toh wahan hai, jahan tumhara safar shuru hua tha.'\n\nBoond ne socha, 'Toh kya main wapas aasmaan pe jaa sakti hoon?' Keeda ne muskurate hue kaha, 'Haan, bas tumhe thoda intezaar karna hoga.' [PAUSE: 1500] Aur sach mein, dheere dheere, dhoop nikal aayi. Boond ka ghar—uska chhota sa gol ghar—phir se ban gaya. [PHRASE]Girte hue, girte hue[/PHRASE], woh ab udd rahi thi, par ab woh samajh gayi thi ki har jagah ka apna maza hai. [MUSIC] Aur jab woh aasmaan pe pahunchi, toh usne apne saathiyon ko dekha, aur unse kaha, 'Zara suno, zameen ka safar bhi bahut anokha hai.' Sarr, ek halki si hawa chali, aur Boond apne ghar mein chain se so gayi.",
+    "repeated_phrase": "Girte hue, girte hue",
+    "morals": [
+      "Every journey has its own beauty and lessons.",
+      "Sometimes, you need to wait to find your way back home."
+    ],
+    "categories": [
+      "Bedtime",
+      "Kahani"
+    ],
+    "character": {
+      "name": "Boond",
+      "identity": "chhoti si paani ki boond",
+      "special": "apne aap mein ek poori duniya rakhti hai",
+      "personality_tags": [
+        "Curious",
+        "Gentle"
+      ]
+    },
+    "character_name": "Boond",
+    "characterType": "celestial_weather",
+    "lead_character_type": "celestial_weather",
+    "story_type": "katha",
+    "storyType": "katha",
+    "age_group": "9-12",
+    "ageGroup": "9-12",
+    "age_min": 9,
+    "age_max": 12,
+    "target_age": 10,
+    "mood": "sad",
+    "cover": "/covers/hi-katha-9-12-boon.webp",
+    "cover_context": "A tiny dewdrop resting on a leaf at dusk, with a soft golden glow reflecting the setting sun, while other dewdrops scatter around in a gentle breeze.",
+    "audio_url": "/audio/pre-gen/hi-katha-9-12-boon_meher.mp3",
+    "audio_variants": [
+      {
+        "voice": "meher",
+        "url": "/audio/pre-gen/hi-katha-9-12-boon_meher.mp3",
+        "duration_seconds": 259,
+        "provider": "elevenlabs-multilingual-v2"
+      }
+    ],
+    "duration_seconds": 259,
+    "durationSec": 259,
+    "tts_engine": "elevenlabs_multilingual_v2",
+    "tts_input_script": "roman",
+    "has_baked_music": true,
+    "diversityFingerprint": {
+      "characterType": "celestial_weather",
+      "setting": "meadow",
+      "plotShape": "journey_home",
+      "timeOfDay": "dusk",
+      "weather": "mist",
+      "theme": "comfort",
+      "scale": "tiny_intimate",
+      "companion": "object_pair",
+      "movement": "floating",
+      "magicType": "glow",
+      "season": "autumn",
+      "senseEmphasis": "visual",
+      "characterTrait": "gentle"
+    },
+    "is_generated": true,
+    "author_id": "system",
+    "created_at": "2026-04-28T04:04:36",
+    "updated_at": "2026-04-28T04:04:36"
   }
 ]

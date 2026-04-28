@@ -1235,5 +1235,42 @@
     ],
     "created_at": "2026-04-27T11:58:35",
     "updated_at": "2026-04-27T11:58:35"
+  },
+  {
+    "id": "warning-2-5-0ee8",
+    "title": "Mira and the Fluttering Dreams",
+    "content_type": "lullaby",
+    "lullaby_type": "warning",
+    "card_label": "Dream Catcher",
+    "card_subtitle": "The dreams are waiting",
+    "age_group": "2-5",
+    "mood": "curious",
+    "language": "en",
+    "instrument": "woodwind",
+    "imagery": "wings",
+    "audio_file": "warning-2-5-0ee8.mp3",
+    "cover_file": "warning-2-5-0ee8_cover.svg",
+    "cover_prompt": "A small, round dream-catcher named Mira with delicate silver wings, perched on a child’s windowsill. Soft moonlight spills through the window, illuminating her as she watches over a sleeping child. Tiny glowing dreams flutter around her like fireflies, their wings shimmering in pastel blues and golds. The scene is warm, cozy, and bathed in a dreamy watercolor glow.",
+    "duration_seconds": 81,
+    "lyrics": "The dreams are out tonight\nSoftly flutter, soft and light\nWings like whispers, silver bright\nLooking for a sleepy sight\n\nOne just tapped upon your pane\nDanced a jig then flew again\nAlmost stayed but heard the rain\nTurned and waved and off it ran\n\n[chorus]\nClose your eyes and they will come\nDreams will tiptoe, soft and numb\nWrap you up so safe and warm\nBetter close your eyes, my one\n\nSee that dream with golden threads\nBraided clouds inside its head\nIt will weave you stories spread\nIf you rest your sleepy head\n\n[chorus]\nClose your eyes and they will come\nDreams will tiptoe, soft and numb\nWrap you up so safe and warm\nBetter close your eyes, my one\n\nBetter close your eyes",
+    "style_prompt": "Playful mysterious lullaby, warm female vocal, soft woodwind and low flute, 64 BPM, mischievous, conspiratorial, whimsical, fairy tale energy, like sharing a secret, mysterious but gentle, storytelling melody, soft woodwind accompaniment",
+    "engine": "minimax-music-v2-fal",
+    "fingerprint": {
+      "lullabyType": "warning",
+      "instrument": "woodwind",
+      "imagery": "wings",
+      "mood": "curious"
+    },
+    "created_at": "2026-04-28",
+    "character": {
+      "name": "Mira",
+      "identity": "A gentle dream-catcher who guards the night and invites dreams to visit sleeping children.",
+      "special": "She knows every dream by name and guides them to the right child with her soft, whispering wings.",
+      "personality_tags": [
+        "Gentle",
+        "Sleepy"
+      ]
+    },
+    "about": "A playful, conspiratorial lullaby where dreams flutter just out of reach, encouraging little ones to close their eyes to invite them in. The gentle rhythm of curiosity and warmth helps ease the fear of missing out (FOMO) by promising that dreams will come—if only they drift off first. Perfect for children who need a little nudge to let go of the day."
   }
 ]

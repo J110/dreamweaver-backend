@@ -1,0 +1,20 @@
+{
+  "id": "question_9_12_a2b9",
+  "title": "What If the Sky",
+  "content_type": "poem",
+  "poem_type": "question",
+  "age_group": "9-12",
+  "mood": "curious",
+  "instruments": "guitar and gentle beatbox",
+  "tempo": 112,
+  "poem_text": "What if the sky forgets to shine?\nAnd leaves the stars all out of line?\nWhy does the wind hum lullabies\nBut never sings them to the skies?\nHow does a cloud know when to cry?\nOr hold its tears and float on by?\nCan shadows dance when lights go out?\nOr do they just stand there and pout?\nWhat if the dark is just a door\nThat leads to dreams we’ve seen before?\nAnd if I whisper, soft and low—\nWill morning hear the words I know?",
+  "char_count": 424,
+  "line_count": 12,
+  "audio_file": "question_9_12_a2b9.mp3",
+  "cover_file": "question_9_12_a2b9_cover.webp",
+  "cover_context": "A child lying on their back in a field at dusk, staring up at swirling clouds that slowly turn into shapes of questions.",
+  "style_prompt": "Children's musical poem, guitar and gentle beatbox, 112 BPM, dreamy and wondering, spacious, leaves room to think, clear warm vocal, every word easy to understand",
+  "duration_seconds": 42,
+  "audio_engine": "minimax-music-v2-fal",
+  "created_at": "2026-04-14"
+}

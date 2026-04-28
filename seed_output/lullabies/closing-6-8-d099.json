@@ -1,0 +1,37 @@
+{
+  "id": "closing-6-8-d099",
+  "title": "Mira's Draining Day",
+  "content_type": "lullaby",
+  "lullaby_type": "closing",
+  "card_label": "Day Is Done",
+  "card_subtitle": "Wrapping up today",
+  "age_group": "6-8",
+  "mood": "angry",
+  "language": "en",
+  "instrument": "guitar",
+  "imagery": "bath",
+  "audio_file": "closing-6-8-d099.mp3",
+  "cover_file": "closing-6-8-d099_cover.svg",
+  "cover_prompt": "A small girl with damp curls sits in a deep porcelain tub, bubbles clinging to her shoulders as the water swirls down the drain. The room glows with warm lamplight, steam curling like dreams above the water.",
+  "duration_seconds": 101,
+  "lyrics": "[verse]\nWhat a day, what a day\nWater splashed and soap would sting\nTowel so warm, it wrapped away\nAll the noise that stung my skin\n\n[verse]\nWhat a day, what a day\nLoudest voices, sharpest words\nToys all scattered, rules all blurred\nI just wanted to be heard\n\n[chorus]\nThe day is done, the day is done\nBubbles pop and fade to none\nDrain the tub, the fight is gone\nThe day is done, the day is done\n\n[verse]\nWhat a day, what a day\nPajamas soft, the lights burn low\nStories whispered, not too slow\nNow the stars will watch me go\n\n[chorus]\nThe day is done, the day is done\nBubbles pop and fade to none\nDrain the tub, the fight is gone\nThe day is done, the day is done\n\n[chorus]\nThe day is done, the day is done\nBubbles pop and fade to none\nDrain the tub, the fight is gone\nThe day is done, and the day is done",
+  "style_prompt": "Intimate domestic lullaby, warm female vocal, soft acoustic guitar, 64 BPM, cozy, familiar, conversational, almost speaking melodically, not performative, kitchen-to-bedroom energy, end of day warmth, fingerpicked acoustic guitar accompaniment",
+  "engine": "minimax-music-v2-fal",
+  "fingerprint": {
+    "lullabyType": "closing",
+    "instrument": "guitar",
+    "imagery": "bath",
+    "mood": "angry"
+  },
+  "created_at": "2026-04-24",
+  "character": {
+    "name": "Mira",
+    "identity": "A spirited little girl who finds peace in her evening bath after a long, loud day.",
+    "special": "She lets the water carry away her frustrations, leaving only quiet behind.",
+    "personality_tags": [
+      "Gentle",
+      "Sleepy"
+    ]
+  },
+  "about": "A soothing lullaby for children who struggle to let go of the day’s chaos. The rhythmic draining of the bath water mirrors the release of tension, helping young minds find closure. The repeated chorus gently reinforces that the day is over, making it easier to drift into sleep."
+}

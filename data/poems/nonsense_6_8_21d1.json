@@ -1,0 +1,20 @@
+{
+  "id": "nonsense_6_8_21d1",
+  "title": "Glimmer Glow Glee",
+  "content_type": "poem",
+  "poem_type": "nonsense",
+  "age_group": "6-8",
+  "mood": "curious",
+  "instruments": "ukulele and soft bongos",
+  "tempo": 105,
+  "poem_text": "Dapple dip the mizzle moon,\nWobble wisp in silver swoon.\nFlicker flit the snickle sea,\nTumble tum the bumble bee.\nPipple pop the fluffernut,\nWhisper whirl the zizzle shut.\nGlimmer glow the dreamy deep,\nWhere the wondrous wonders sleep.",
+  "char_count": 235,
+  "line_count": 8,
+  "audio_file": "nonsense_6_8_21d1.mp3",
+  "cover_file": "nonsense_6_8_21d1_cover.webp",
+  "cover_context": "A swirling night sky with a glowing moon, tiny floating lights, and a curious child peeking through a window.",
+  "style_prompt": "Children's musical poem, ukulele and soft bongos, 105 BPM, dreamy and wondering, spacious, leaves room to think, clear warm vocal, every word easy to understand",
+  "duration_seconds": 19,
+  "audio_engine": "minimax-music-v2-fal",
+  "created_at": "2026-04-25"
+}

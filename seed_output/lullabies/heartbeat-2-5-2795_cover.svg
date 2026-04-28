@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#1a1a3e"/>
+      <stop offset="100%" stop-color="#0d0d1a"/>
+    </radialGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <circle cx="256" cy="200" r="60" fill="#2a2a5e" opacity="0.5">
+    <animate attributeName="r" values="58;62;58" dur="4s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="256" cy="200" r="30" fill="#3a3a7e" opacity="0.4">
+    <animate attributeName="r" values="28;32;28" dur="3s" repeatCount="indefinite"/>
+  </circle>
+  <text x="256" y="350" text-anchor="middle" fill="#8888bb" font-family="Georgia" font-size="28">Humming</text>
+  <text x="256" y="385" text-anchor="middle" fill="#6666aa" font-family="Georgia" font-size="16">Just a gentle hum</text>
+</svg>

@@ -1,0 +1,21 @@
+{
+  "id": "nonsense_6_8_3e10",
+  "title": "Fizzle Flip Flop",
+  "content_type": "poem",
+  "poem_type": "nonsense",
+  "age_group": "6-8",
+  "mood": "wired",
+  "instruments": "piano and light brush drums",
+  "tempo": 117,
+  "poem_text": "Fizzle flip the snickety snaps,\nBumble bump the zippy zaps.\nWiggle woo the jitter jig,\nDibble dab the frisky fig.\nTumble tum the licky loo,\nGiggle gush the wobbly woo.\nPitter pat the tickle tap,\nDozing now\u2014just shut the flap.",
+  "char_count": 225,
+  "line_count": 8,
+  "audio_file": "nonsense_6_8_3e10.mp3",
+  "cover_file": "nonsense_6_8_3e10_cover.webp",
+  "cover_context": "A glowing, swirling night sky filled with playful, bouncing blobs of light and color, like fireflies dancing in a dream.",
+  "style_prompt": "Children's musical poem, piano and light brush drums, 117 BPM, bouncy and playful, fun energy that channels into rhythm, clear warm vocal, every word easy to understand",
+  "duration_seconds": 17,
+  "audio_engine": "minimax-music-v2-fal",
+  "created_at": "2026-04-19",
+  "play_count": 1
+}

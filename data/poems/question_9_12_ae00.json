@@ -1,0 +1,20 @@
+{
+  "id": "question_9_12_ae00",
+  "title": "Why Do Whispers Fly?",
+  "content_type": "poem",
+  "poem_type": "question",
+  "age_group": "9-12",
+  "mood": "wired",
+  "instruments": "acoustic guitar and lo-fi beat",
+  "tempo": 116,
+  "poem_text": "Why do whispers fly so high?\nDo they tickle clouds up in the sky?\n\nCan a giggle shake the trees?\nDoes it bounce off buzzing bees?\n\nWhy won’t shadows hold still?\nDo they dance on window sills?\n\nIf a star could sneeze so bright,\nWould the night turn pink and light?\n\nTell me, why do dreams take flight?\nDo they ride the moon all night?",
+  "char_count": 333,
+  "line_count": 14,
+  "audio_file": "question_9_12_ae00.mp3",
+  "cover_file": "question_9_12_ae00_cover.webp",
+  "cover_context": "A glowing bedroom where shadows stretch like dancers and whispers float upward as tiny, sparkling fireflies.",
+  "style_prompt": "Children's musical poem, acoustic guitar and lo-fi beat, 116 BPM, bouncy and playful, fun energy that channels into rhythm, clear warm vocal, every word easy to understand",
+  "duration_seconds": 25,
+  "audio_engine": "minimax-music-v2-fal",
+  "created_at": "2026-04-11"
+}

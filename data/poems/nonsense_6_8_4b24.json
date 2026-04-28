@@ -1,0 +1,21 @@
+{
+  "id": "nonsense_6_8_4b24",
+  "title": "Wobble Wump Whirl",
+  "content_type": "poem",
+  "poem_type": "nonsense",
+  "age_group": "6-8",
+  "mood": "wired",
+  "instruments": "ukulele and soft bongos",
+  "tempo": 111,
+  "poem_text": "Dibble dap the jiggly jar,\nWobble wump the twirly star.\nFizzle flop the bouncy bee,\nZippy zing the tickly tree.\nSnickery snap the giggle glow,\nTumble tum the wibbly woe.\nPip the pop and snuggle deep,\nDream the wibble-wobble sleep.",
+  "char_count": 230,
+  "line_count": 8,
+  "audio_file": "nonsense_6_8_4b24.mp3",
+  "cover_file": "nonsense_6_8_4b24_cover.webp",
+  "cover_context": "A swirling night sky filled with glowing, wobbly stars and a giggling bee bouncing on a tickly tree branch.",
+  "style_prompt": "Children's musical poem, ukulele and soft bongos, 111 BPM, bouncy and playful, fun energy that channels into rhythm, clear warm vocal, every word easy to understand",
+  "duration_seconds": 25,
+  "audio_engine": "minimax-music-v2-fal",
+  "created_at": "2026-04-16",
+  "play_count": 1
+}

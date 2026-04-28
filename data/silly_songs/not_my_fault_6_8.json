@@ -1,0 +1,22 @@
+{
+  "id": "not_my_fault_6_8",
+  "title": "It'S Not My Fault",
+  "age_group": "6-8",
+  "mood": "wired",
+  "lyrics": "[verse 1]\nMom put the cup right by my seat\nIt wobbled like a dancing feet\n*splat!* went juice across the floor\nNow I can\u2019t walk out the door\n\n[chorus]\nIt\u2019s not my fault\nIt\u2019s not my fault\nI didn\u2019t mean to spill at all\nIt\u2019s not my fault\n\n[verse 2]\nThe cup was full, it tipped too fast\n*crash!* went glass\u2014oh what a blast!\nMy socks are squishy, toes are cold\nBut I\u2019m not bad, I\u2019m six years old\n\n[chorus]\nIt\u2019s not my fault\nIt\u2019s not my fault\nI didn\u2019t mean to spill at all\nIt\u2019s not my fault\n\n[ending]\nIt\u2019s not my fault... okay, fine\nI\u2019ll grab a towel, make it shine",
+  "style_prompt": "Catchy children's song, acoustic guitar and beatbox, 121 BPM, super bouncy, high energy, impossible to sit still, clear warm vocal, every word easy to understand",
+  "instruments": "acoustic guitar and beatbox",
+  "tempo": 121,
+  "scene": "The kitchen floor at 5:17 PM is slick with spilled apple juice, your socked feet skidding as you knock over the half-full glass Mom just set down\u2014her sigh cuts sharp: \"Who did this?\" before your voice cracks, \"It's not my fault!",
+  "cover_description": "A kid in socks skids on a puddle of apple juice, arms flying, while a tipped cup spills.",
+  "animation_preset": "bounce_rhythmic",
+  "created_at": "2026-04-03",
+  "play_count": 3,
+  "replay_count": 1,
+  "battle_cry_id": "not_my_fault",
+  "battle_cry": "It's not my fault",
+  "generation_method": "battlecry_v3",
+  "duration_seconds": 36,
+  "audio_file": "not_my_fault_6_8.mp3",
+  "cover_file": "not_my_fault_6_8.webp"
+}

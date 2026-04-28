@@ -1,0 +1,37 @@
+{
+  "id": "origin-6-8-d9d1",
+  "title": "Mira and the Sky's First Dream",
+  "content_type": "lullaby",
+  "lullaby_type": "origin",
+  "card_label": "How Dreams Began",
+  "card_subtitle": "Where dreams come from",
+  "age_group": "6-8",
+  "mood": "curious",
+  "language": "en",
+  "instrument": "drone",
+  "imagery": "ancient_sky",
+  "audio_file": "origin-6-8-d9d1.mp3",
+  "cover_file": "origin-6-8-d9d1_cover.svg",
+  "cover_prompt": "A small girl with long, flowing hair stands on a hill at dusk, her hands cupped gently around a glowing spark. The ancient sky swirls with soft purples and blues, stars peeking through like distant eyes, while the moon watches warmly from above.",
+  "duration_seconds": 116,
+  "lyrics": "Long before you were born\nThe world was dark and deep\nNo whispers soft, no silver thread\nNo dreams to drift or creep\n\nThe stars all hummed a hollow tune\nThe moon just watched and sighed\nTill ancient sky began to yawn\nAnd stretched the night so wide\n\n[chorus]\nOh, that was the first dream\nA spark in endless blue\nA breath of light, a fleeting sigh\nThe sky dreamed you\n\n[verse]\nThen came a girl named Mira bright\nWith hands so small and wise\nShe cupped the dark and caught the spark\nThat danced before her eyes\n\nShe blew it soft on evening’s breeze\nAnd watched it float and gleam\nThe stars all leaned to see it glow\nThe first and sweetest dream\n\n[chorus]\nOh, that was the first dream\nA spark in endless blue\nA breath of light, a fleeting sigh\nThe sky dreamed you\n\nAnd it's still true tonight",
+  "style_prompt": "Ancient storytelling lullaby, warm resonant female vocal, singing bowl and soft cello drone, 60 BPM, mythological, vast, reverent, timeless, the voice of someone very old and very kind, starts spacious and narrows to intimate, wonder without weight, low drone pad accompaniment",
+  "engine": "minimax-music-v2-fal",
+  "fingerprint": {
+    "lullabyType": "origin",
+    "instrument": "drone",
+    "imagery": "ancient_sky",
+    "mood": "curious"
+  },
+  "created_at": "2026-04-21",
+  "character": {
+    "name": "Mira",
+    "identity": "A gentle girl who caught the very first dream in the palm of her hand",
+    "special": "She carries the wonder of the night and shares its magic with the world",
+    "personality_tags": [
+      "Gentle",
+      "Sleepy"
+    ]
+  },
+  "about": "A curious lullaby about the origin of dreams, where the first spark of wonder was born in the ancient sky. The soft, rhythmic storytelling and gentle imagery help children drift into sleep, knowing the night still holds that same magic for them."
+}

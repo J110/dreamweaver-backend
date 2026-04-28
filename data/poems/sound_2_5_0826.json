@@ -1,0 +1,22 @@
+{
+  "id": "sound_2_5_0826",
+  "title": "Whisper of the Pond",
+  "content_type": "poem",
+  "poem_type": "sound",
+  "age_group": "2-5",
+  "mood": "calm",
+  "instruments": "xylophone and soft claps",
+  "tempo": 90,
+  "poem_text": "Plip plop, gentle rain,\nDrip drop on the lane.\nRipple round the stone,\nSplash soft, all alone.\nBuzz hum, little bee,\nFizz float on the sea.\nCrunch step, tiny feet,\nSquelch squish, cool and sweet.\nHush now, night is near,\nWhoosh wind, calm and clear.",
+  "char_count": 249,
+  "line_count": 10,
+  "audio_file": "sound_2_5_0826.mp3",
+  "cover_file": "sound_2_5_0826_cover.webp",
+  "cover_context": "A moonlit pond at dusk, raindrops creating ripples, fireflies glowing softly, and a child\u2019s tiny footprints in the mud.",
+  "style_prompt": "Children's musical poem, xylophone and soft claps, 90 BPM, soft and settling, warm steady rhythm, almost a lullaby, clear warm vocal, every word easy to understand",
+  "duration_seconds": 18,
+  "audio_engine": "minimax-music-v2-fal",
+  "created_at": "2026-04-12",
+  "play_count": 4,
+  "replay_count": 1
+}

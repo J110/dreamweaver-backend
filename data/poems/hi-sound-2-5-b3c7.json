@@ -15,8 +15,9 @@
   "audio_file": "hi-sound-2-5-b3c7.mp3",
   "cover_file": "hi-sound-2-5-b3c7_cover.webp",
   "cover_context": "A small Indian rooftop in soft watercolor twilight, raindrops falling on banana leaves, warm yellow window glow, blue-grey monsoon clouds gentle and hazy",
-  "style_prompt": "Children's Hindi musical poem, soft harmonium and gentle tabla, 92 BPM, soft and settling, warm steady rhythm, almost a lullaby, warm clear North Indian female vocal speaking each word rhythmically, native Hindi pronunciation, every word crystal clear, like a parent reciting a poem at bedtime, not sung — spoken to a beat. Not Western.",
+  "style_prompt": "Children's Hindi musical poem, soft harmonium and gentle tabla, 92 BPM, soft and settling, warm steady rhythm, almost a lullaby, warm clear North Indian female vocal speaking each word rhythmically, native Hindi pronunciation, every word crystal clear, like a parent reciting a poem at bedtime, not sung \u2014 spoken to a beat. Not Western.",
   "duration_seconds": 29,
   "audio_engine": "minimax-music-v2.5-fal",
-  "created_at": "2026-04-27"
+  "created_at": "2026-04-27",
+  "play_count": 2
 }

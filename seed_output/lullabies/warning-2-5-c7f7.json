@@ -1,0 +1,37 @@
+{
+  "id": "warning-2-5-c7f7",
+  "title": "Pippa and the Winged Dreams",
+  "content_type": "lullaby",
+  "lullaby_type": "warning",
+  "card_label": "Dream Catcher",
+  "card_subtitle": "The dreams are waiting",
+  "age_group": "2-5",
+  "mood": "wired",
+  "language": "en",
+  "instrument": "woodwind",
+  "imagery": "wings",
+  "audio_file": "warning-2-5-c7f7.mp3",
+  "cover_file": "warning-2-5-c7f7_cover.svg",
+  "cover_prompt": "A small, round creature with soft feathered wings, Pippa, peeking through a moonlit window with glowing dreams fluttering like moths around her. The scene is painted in warm watercolors, with deep blues and gentle golds, and a cozy bedroom softly lit by a nightlight.",
+  "duration_seconds": 73,
+  "lyrics": "The dreams are out tonight\nSoftly tapping on the pane\nWings like whispers, light as rain\nLooking for a sleepy sight\n\nOne just brushed your window sill\nDancing on a silver thread\nAlmost tucked you into bed\nBut you stirred and made it still\n\n[chorus]\nClose your eyes and they will come\nDreams will find their way to you\nTuck you in with skies of blue\nBetter close them, little one\n\nOne dream wore a coat of gold\nTried to tell you stories sweet\nBut you wiggled tiny feet\nNow it waits out in the cold\n\n[chorus]\nClose your eyes and they will come\nDreams will find their way to you\nTuck you in with skies of blue\nBetter close them, little one\n\nBetter close your eyes",
+  "style_prompt": "Playful mysterious lullaby, warm female vocal, soft woodwind and low flute, 64 BPM, mischievous, conspiratorial, whimsical, fairy tale energy, like sharing a secret, mysterious but gentle, storytelling melody, soft woodwind accompaniment",
+  "engine": "minimax-music-v2-fal",
+  "fingerprint": {
+    "lullabyType": "warning",
+    "instrument": "woodwind",
+    "imagery": "wings",
+    "mood": "wired"
+  },
+  "created_at": "2026-04-27",
+  "character": {
+    "name": "Pippa",
+    "identity": "A tiny, gentle dream-catcher who watches over children as they sleep.",
+    "special": "She knows every dream by name and helps them find the right little one to visit.",
+    "personality_tags": [
+      "Gentle",
+      "Sleepy"
+    ]
+  },
+  "about": "A playful, conspiratorial lullaby where dreams flutter just out of reach, waiting for little ones to close their eyes. The gentle fear of missing out (FOMO) on magical dreams encourages children to settle in, while Pippa’s warm presence reassures them that sleep will bring the best adventures."
+}

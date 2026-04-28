@@ -1,0 +1,21 @@
+{
+  "id": "sound_2_5_c952",
+  "title": "Storm in My Chest",
+  "content_type": "poem",
+  "poem_type": "sound",
+  "age_group": "2-5",
+  "mood": "angry",
+  "instruments": "xylophone and soft claps",
+  "tempo": 105,
+  "poem_text": "Bang bang, slam the door,\nCrash crash, shake the floor.\nHiss hiss, snake so mean,\nGrowl growl, loud and lean.\nBoom boom, thunder deep,\nRumble rumble, won\u2019t let sleep.\nSizzle sizzle, spark so bright,\nFizzle fizzle, fade from sight.\nPitter patter, soft now rain,\nDrip drop, wash the pain.",
+  "char_count": 286,
+  "line_count": 10,
+  "audio_file": "sound_2_5_c952.mp3",
+  "cover_file": "sound_2_5_c952_cover.webp",
+  "cover_context": "A small child stands in a dark room, fists clenched, while storm clouds swirl inside an open chest, lightning flickering softly.",
+  "style_prompt": "Children's musical poem, xylophone and soft claps, 105 BPM, firm then softening, strong rhythm that gradually settles, clear warm vocal, every word easy to understand",
+  "duration_seconds": 23,
+  "audio_engine": "minimax-music-v2-fal",
+  "created_at": "2026-04-27",
+  "play_count": 1
+}

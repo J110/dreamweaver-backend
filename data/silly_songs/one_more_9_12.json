@@ -1,0 +1,22 @@
+{
+  "id": "one_more_9_12",
+  "title": "One More",
+  "age_group": "9-12",
+  "mood": "calm",
+  "lyrics": "[verse 1]\nDad says my arms are noodles\nI say they're strong like a tree\n*Splat!* I hit the floor again\nWhy can't I do twenty-three?\n\n[chorus]\nOne more! One more!\nI'm not beat yet\nOne more! *Crash!*\nI won't forget\n\n[verse 2]\nFloor's lava, hot and mean\nMy face is stuck in flame\nI'll do a hundred\u2014*whoa!*\nCall me Push-Up King, okay?\n\n[chorus]\nOne more! One more!\nI'm not beat yet\nOne more! *Crash!*\nI won't forget\n\n[ending]\nOne more... *wobble*...\nMy arms say no...\nOne more... night-night...",
+  "style_prompt": "Catchy children's song, piano and drums, 106 BPM, gentle bounce, warm and easy, swaying not jumping, clear warm vocal, every word easy to understand",
+  "instruments": "piano and drums",
+  "tempo": 106,
+  "scene": "The living room carpet smells like sweat and dust at 7:47 p.m., the TV glow flickering off the half-empty water bottle and your dad\u2019s crossed arms\u2014he just sighed, *\"Okay, last push-up, then bed,\"* so you drop your chest to the floor one more time and gasp, *\"One more.\"*",
+  "cover_description": "Kid mid-push-up, face red, arms shaking like noodles, Dad\u2019s foot tapping, clock spinning fast.",
+  "animation_preset": "bounce_rhythmic",
+  "created_at": "2026-04-03",
+  "play_count": 1,
+  "replay_count": 0,
+  "battle_cry_id": "one_more",
+  "battle_cry": "One more",
+  "generation_method": "battlecry_v3",
+  "duration_seconds": 46,
+  "audio_file": "one_more_9_12.mp3",
+  "cover_file": "one_more_9_12.webp"
+}

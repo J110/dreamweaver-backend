@@ -1,0 +1,22 @@
+{
+  "id": "sound_2_5_f0a3",
+  "title": "Bubble Drift",
+  "content_type": "poem",
+  "poem_type": "sound",
+  "age_group": "2-5",
+  "mood": "calm",
+  "instruments": "xylophone and soft claps",
+  "tempo": 94,
+  "poem_text": "Puff puff, soft and round,\nBloop bloop, float above ground.\nSwish swish, gentle breeze,\nTink tink, shake the trees.\nPop pop, tiny bright,\nGlow glow, fade from sight.\nHush hush, night is near,\nWhat sounds will you hear?",
+  "char_count": 218,
+  "line_count": 8,
+  "audio_file": "sound_2_5_f0a3.mp3",
+  "cover_file": "sound_2_5_f0a3_cover.webp",
+  "cover_context": "A moonlit room where soap bubbles drift like glowing orbs, each popping silently into stardust.",
+  "style_prompt": "Children's musical poem, xylophone and soft claps, 94 BPM, soft and settling, warm steady rhythm, almost a lullaby, clear warm vocal, every word easy to understand",
+  "duration_seconds": 22,
+  "audio_engine": "minimax-music-v2-fal",
+  "created_at": "2026-04-18",
+  "play_count": 8,
+  "replay_count": 4
+}

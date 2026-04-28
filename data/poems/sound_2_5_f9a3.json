@@ -1,0 +1,21 @@
+{
+  "id": "sound_2_5_f9a3",
+  "title": "Tick Tock Safe",
+  "content_type": "poem",
+  "poem_type": "sound",
+  "age_group": "2-5",
+  "mood": "anxious",
+  "instruments": "music box and light tambourine",
+  "tempo": 93,
+  "poem_text": "Tick tock, tick tock steady,\nClick clack, click clack ready.\nWhoosh goes the wind so mild,\nHush now, my sleepy child.\n\nPitter pat, the rain so light,\nDrip drop, soft through the night.\nCreak says the floor below,\nStep step, I\u2019m here you know.\n\nBreathe in, breathe out slow,\nShhh now, let the worries go.",
+  "char_count": 303,
+  "line_count": 12,
+  "audio_file": "sound_2_5_f9a3.mp3",
+  "cover_file": "sound_2_5_f9a3_cover.webp",
+  "cover_context": "A cozy nightlight glows on a wooden bedside table, casting gentle shadows of a ticking clock and raindrops on the window.",
+  "style_prompt": "Children's musical poem, music box and light tambourine, 93 BPM, cozy and reassuring, steady predictable rhythm, safe and warm, clear warm vocal, every word easy to understand",
+  "duration_seconds": 26,
+  "audio_engine": "minimax-music-v2-fal",
+  "created_at": "2026-04-15",
+  "play_count": 5
+}

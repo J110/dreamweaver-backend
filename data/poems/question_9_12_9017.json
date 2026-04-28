@@ -1,0 +1,20 @@
+{
+  "id": "question_9_12_9017",
+  "title": "Why Do Socks Run Off?",
+  "content_type": "poem",
+  "poem_type": "question",
+  "age_group": "9-12",
+  "mood": "wired",
+  "instruments": "acoustic guitar and lo-fi beat",
+  "tempo": 113,
+  "poem_text": "Why do socks run off in pairs?\nDo they race the washing stairs?\nHow does toast know when to pop?\nWhy won’t cereal ever stop?\nCan a cloud forget to rain?\nDoes a shadow feel the pain?\nWhy do stars all twinkle slow?\nDo they whisper where to go?\nHow does time decide to stay?\nWhy won’t bedtime float away?",
+  "char_count": 301,
+  "line_count": 10,
+  "audio_file": "question_9_12_9017.mp3",
+  "cover_file": "question_9_12_9017_cover.webp",
+  "cover_context": "A pair of giggling socks sprinting down a rainbow slide while toast somersaults in mid-air.",
+  "style_prompt": "Children's musical poem, acoustic guitar and lo-fi beat, 113 BPM, bouncy and playful, fun energy that channels into rhythm, clear warm vocal, every word easy to understand",
+  "duration_seconds": 39,
+  "audio_engine": "minimax-music-v2-fal",
+  "created_at": "2026-04-17"
+}

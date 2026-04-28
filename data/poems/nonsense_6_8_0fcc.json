@@ -1,0 +1,20 @@
+{
+  "id": "nonsense_6_8_0fcc",
+  "title": "Luma Lull Loom",
+  "content_type": "poem",
+  "poem_type": "nonsense",
+  "age_group": "6-8",
+  "mood": "curious",
+  "instruments": "ukulele and soft bongos",
+  "tempo": 101,
+  "poem_text": "Pipple pop the wispy weave,\nDrifty droom the dreams believe.\nSnickle snee the fluffly air,\nGlimmer glint the whispers there.\nTizzle tup the softest sound,\nFloating feathers all around.\nWill the luma lull tonight,\nSpin the stars in silver light?",
+  "char_count": 244,
+  "line_count": 8,
+  "audio_file": "nonsense_6_8_0fcc.mp3",
+  "cover_file": "nonsense_6_8_0fcc_cover.webp",
+  "cover_context": "A child lying on a cloud-like bed, watching glowing threads weave patterns in the dark blue sky.",
+  "style_prompt": "Children's musical poem, ukulele and soft bongos, 101 BPM, dreamy and wondering, spacious, leaves room to think, clear warm vocal, every word easy to understand",
+  "duration_seconds": 31,
+  "audio_engine": "minimax-music-v2-fal",
+  "created_at": "2026-04-28"
+}

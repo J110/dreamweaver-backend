@@ -1,0 +1,22 @@
+{
+  "id": "not_sleepy_2_5",
+  "title": "I'M Not Sleepy",
+  "age_group": "2-5",
+  "mood": "wired",
+  "lyrics": "[verse 1]\nMy toes go wiggle-wig\nMy knees go bounce-bounce\nThe dog just licked my sock\n*Splat!* Right on my pants!\n\n[chorus]\nI\u2019m not sleepy, no way\nI\u2019m not sleepy, no sir\nNot one little bit yet\nYou can\u2019t make me\u2014*grrr!*\n\n[verse 2]\nBlanket fell on the floor\nBear\u2019s stuck in the chair\nThe clock goes tick-tock loud\n*Crash!* Oh no\u2014my bear!\n\n[chorus]\nI\u2019m not sleepy, no way\nI\u2019m not sleepy, no sir\nNot one little bit yet\nYou can\u2019t make me\u2014*grrr!*\n\n[ending]\nI\u2019m not sleepy\u2026 maybe\u2026\nMy eyes feel kind of heavy\u2026\nOkay\u2026 just one more hug\u2026",
+  "style_prompt": "Catchy children's song, xylophone and tambourine, 124 BPM, super bouncy, high energy, impossible to sit still, clear warm vocal, every word easy to understand",
+  "instruments": "xylophone and tambourine",
+  "tempo": 124,
+  "scene": "The dim glow of the *Cars* nightlight flickers on the blue walls of your bedroom at 8:17 PM, as you clutch your *Elmo* blanket and kick your feet against the mattress\u2014Mom just tucked you in and whispered, *\"Close your eyes, sweetie.\"* You bolt upright, eyes wide, and declare, *\"I'm not sleepy!\"* before she even turns off the hallway light.",
+  "cover_description": "A wide-eyed kid in dinosaur pajamas clutches a stuffed bear while a dog licks their sock, and a blanket splats on the floor.",
+  "animation_preset": "bounce_rhythmic",
+  "created_at": "2026-04-03",
+  "play_count": 2,
+  "replay_count": 0,
+  "battle_cry_id": "not_sleepy",
+  "battle_cry": "I'm not sleepy",
+  "generation_method": "battlecry_v3",
+  "duration_seconds": 31,
+  "audio_file": "not_sleepy_2_5.mp3",
+  "cover_file": "not_sleepy_2_5.webp"
+}

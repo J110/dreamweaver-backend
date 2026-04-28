@@ -1,0 +1,22 @@
+{
+  "id": "nonsense_6_8_2802",
+  "title": "Tizzle Twirl Tick",
+  "content_type": "poem",
+  "poem_type": "nonsense",
+  "age_group": "6-8",
+  "mood": "wired",
+  "instruments": "ukulele and soft bongos",
+  "tempo": 108,
+  "poem_text": "Tizzle twirl the glimpy glock,\nBop the bizzle, flick the clock.\nWhipple woo the zingy zang,\nDibble dap the jitter jang.\nSnick the snazzle, pop the plink,\nFlibber flatch the wibbly wink.\nGlim the glozzle, tick the tock\u2014\nWho\u2019s still zizzling in the sock?",
+  "char_count": 252,
+  "line_count": 8,
+  "audio_file": "nonsense_6_8_2802.mp3",
+  "cover_file": "nonsense_6_8_2802_cover.webp",
+  "cover_context": "A swirling galaxy of glowing, wobbly shapes spinning around a child tucked in bed, toes wiggling under the covers.",
+  "style_prompt": "Children's musical poem, ukulele and soft bongos, 108 BPM, bouncy and playful, fun energy that channels into rhythm, clear warm vocal, every word easy to understand",
+  "duration_seconds": 18,
+  "audio_engine": "minimax-music-v2-fal",
+  "created_at": "2026-04-22",
+  "play_count": 2,
+  "replay_count": 1
+}

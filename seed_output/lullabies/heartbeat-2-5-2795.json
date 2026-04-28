@@ -1,0 +1,37 @@
+{
+  "id": "heartbeat-2-5-2795",
+  "title": "Mira's Humming Heart",
+  "content_type": "lullaby",
+  "lullaby_type": "heartbeat",
+  "card_label": "Humming",
+  "card_subtitle": "Just a gentle hum",
+  "age_group": "2-5",
+  "mood": "anxious",
+  "language": "en",
+  "instrument": "acapella",
+  "imagery": "none",
+  "audio_file": "heartbeat-2-5-2795.mp3",
+  "cover_file": "heartbeat-2-5-2795_cover.svg",
+  "cover_prompt": "A small, round-faced child with rosy cheeks curled up in a nest of blankets, eyes half-closed, while soft golden light glows around them like a heartbeat. The room is dim, with gentle shadows shaped like wings.",
+  "duration_seconds": 74,
+  "lyrics": "[verse]\nMmm, la la, hush now, dear\nMmm, the night is almost here\nShh, na na, close your eyes\nMmm, the dark is soft surprise\n\n[verse]\nLa la, shh, the wind is low\nMmm, just feel the gentle glow\nNa na, hmm, the world is small\nMmm, and safe inside it all\n\n[verse]\nShh, la la\nMmm",
+  "style_prompt": "Solo female vocal lullaby, humming only, no instruments, no melody variation, sustained warm tones, 58 BPM, extremely intimate, breathy, mouth-closed humming, monotone drone, like breathing set to pitch, meditative, hypnotic, no percussion, pure voice",
+  "engine": "minimax-music-v2-fal",
+  "fingerprint": {
+    "lullabyType": "heartbeat",
+    "instrument": "acapella",
+    "imagery": "none",
+    "mood": "anxious"
+  },
+  "created_at": "2026-04-22",
+  "character": {
+    "name": "Mira",
+    "identity": "A little girl who hums the world to sleep with her steady, warm heartbeat song.",
+    "special": "Her voice carries the rhythm of safety, wrapping every worry in a quiet, loving hum.",
+    "personality_tags": [
+      "Gentle",
+      "Sleepy"
+    ]
+  },
+  "about": "A soothing humming lullaby that mimics the steady rhythm of a heartbeat, helping little ones sync their breathing to the sound. The gentle, wordless melody eases anxiety by creating a sense of warmth and closeness, guiding restless minds into peaceful sleep."
+}

@@ -1,0 +1,29 @@
+{
+  "id": "heartbeat-0-1-867d",
+  "title": "Humming",
+  "content_type": "lullaby",
+  "lullaby_type": "heartbeat",
+  "card_label": "Humming",
+  "card_subtitle": "Just a gentle hum",
+  "age_group": "0-1",
+  "mood": "sad",
+  "language": "en",
+  "instrument": "acapella",
+  "imagery": "none",
+  "audio_file": "heartbeat-0-1-867d.mp3",
+  "cover_file": "heartbeat-0-1-867d_cover.svg",
+  "cover_prompt": "Watercolor, extremely soft, single gentle curve suggesting breath, dark blue and purple, abstract, warmth and stillness",
+  "duration_seconds": 73,
+  "lyrics": "[verse]\nMmm... aah... mmm...\nHmm... ooh... hmm...\nMmm... eeh... mmm...\nAah... ooh... aah...\n\n[verse]\nMmm... ooh... mmm...\nHmm... aah... hmm...\nMmm... eeh... aah...\nOoh... mmm...\n\n[verse]\nMmm... aah...\nHmm...\nMmm...",
+  "style_prompt": "Solo female vocal lullaby, humming only, no instruments, no melody variation, sustained warm tones, 58 BPM, extremely intimate, breathy, mouth-closed humming, monotone drone, like breathing set to pitch, meditative, hypnotic, no percussion, pure voice",
+  "engine": "minimax-music-v2-fal",
+  "fingerprint": {
+    "lullabyType": "heartbeat",
+    "instrument": "acapella",
+    "imagery": "none",
+    "mood": "sad"
+  },
+  "created_at": "2026-04-23",
+  "character": null,
+  "about": ""
+}

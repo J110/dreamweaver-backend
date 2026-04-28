@@ -1,0 +1,37 @@
+{
+  "id": "origin-6-8-20eb",
+  "title": "Lumi and the First Dream",
+  "content_type": "lullaby",
+  "lullaby_type": "origin",
+  "card_label": "How Dreams Began",
+  "card_subtitle": "Where dreams come from",
+  "age_group": "6-8",
+  "mood": "curious",
+  "language": "en",
+  "instrument": "drone",
+  "imagery": "stars",
+  "audio_file": "origin-6-8-20eb.mp3",
+  "cover_file": "origin-6-8-20eb_cover.svg",
+  "cover_prompt": "A small, glowing creature with silver-blue fur sits on a crescent moon, weaving starlight into delicate threads that drift down like fireflies over a sleeping village below. Soft watercolor hues of deep blues, purples, and warm golden glows create a dreamy, cozy night sky.",
+  "duration_seconds": 90,
+  "lyrics": "[verse]\nLong before you were born\nNo dreams lit the sky\nOnly stars watched the world\nWith their quiet bright eye\n\n[chorus]\nOh, that was the first dream\nSoft as a sigh\nA spark in the dark\nWhere the dreamers lie\n\n[verse]\nThen Lumi woke up\nIn the heart of the night\nShe wove all the stars\nInto threads of light\n\n[chorus]\nOh, that was the first dream\nSoft as a sigh\nA spark in the dark\nWhere the dreamers lie",
+  "style_prompt": "Ancient storytelling lullaby, warm resonant female vocal, singing bowl and soft cello drone, 60 BPM, mythological, vast, reverent, timeless, the voice of someone very old and very kind, starts spacious and narrows to intimate, wonder without weight, low drone pad accompaniment",
+  "engine": "minimax-music-v2-fal",
+  "fingerprint": {
+    "lullabyType": "origin",
+    "instrument": "drone",
+    "imagery": "stars",
+    "mood": "curious"
+  },
+  "created_at": "2026-04-25",
+  "character": {
+    "name": "Lumi",
+    "identity": "A gentle starlight weaver who created the very first dream.",
+    "special": "She turns the quiet glow of stars into dreams for every sleeping child.",
+    "personality_tags": [
+      "Gentle",
+      "Sleepy"
+    ]
+  },
+  "about": "A curious lullaby about the origin of dreams, where a tiny creature named Lumi weaves starlight into the first dream. The wonder of creation and the soft, repeating chorus help children drift into sleep with a sense of magic and comfort."
+}
