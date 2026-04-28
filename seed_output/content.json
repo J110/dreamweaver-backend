@@ -21966,7 +21966,7 @@
       {
         "voice": "mixed",
         "url": "/audio/pre-gen/a0e68041_mixed.mp3",
-        "duration_seconds": 615.55,
+        "duration_seconds": 602.0,
         "provider": "chatterbox"
       }
     ],
@@ -21998,9 +21998,9 @@
     "repeated_phrase": "Just a little longer",
     "voice_map": {
       "Tavi": "male_ranbir",
-      "Lumi": "male_harshit"
+      "Lumi": "male_prem"
     },
-    "narrator_voice": "female_maya",
+    "narrator_voice": "female_monika",
     "mood": "anxious",
     "created_at": "2026-04-27T09:08:55.782577",
     "updated_at": "2026-04-27T09:08:55.782577",
@@ -22050,9 +22050,9 @@
     "music_type": "baked",
     "audio_variants": [
       {
-        "voice": "maya",
-        "url": "/audio/pre-gen/gen-95f5_maya.mp3",
-        "duration_seconds": 180.25,
+        "voice": "monika",
+        "url": "/audio/pre-gen/gen-95f5_monika.mp3",
+        "duration_seconds": 181.33,
         "provider": "chatterbox"
       }
     ],
@@ -22107,6 +22107,243 @@
     "hook": "I'm going to tell you something... even the darkest water holds a little light.",
     "repeated_phrase": "The tidepool hums when it's scared too",
     "raw_text": "There was a seahorse, and Pearl had one tiny problem.\n\nEvery night, when the sun dipped low, Pearl would curl her tail tight. [PAUSE: 800] The tidepool looked different in the dark. The rocks cast long shadows. The water made soft, slippery sounds. [EMPHASIS]Something[/EMPHASIS] might be hiding there.\n\nPearl’s heart beat fast like little bubbles popping. [PHRASE]The tidepool hums when it’s scared too[/PHRASE]. She whispered to herself. [PAUSE: 1200] But she didn’t move.\n\nThen—[MUSIC]—a sound. Not the scary kind. A tiny *plink*. Like a pebble dropping into water. Pearl peeked. [PAUSE: 800] There, in the [EMPHASIS]dark corner[/EMPHASIS], was a hermit crab tapping his shell against a stone. [PHRASE]The tidepool hums when it’s scared too[/PHRASE].\n\nThe crab didn’t see her. He just kept tapping. *Plink. Plink.* Pearl’s heart slowed. The water felt warmer. [PAUSE: 1500] She swam closer. The crab stopped. He waved a tiny claw. [MUSIC]\n\nPearl curled her tail around a smooth rock. The tidepool wasn’t scary anymore. It was just the tidepool, humming its quiet song. [PHRASE]The tidepool hums when it’s scared too[/PHRASE]. She closed her eyes. The water rocked her gently.\n\nThe stars blinked above. The waves whispered. And Pearl fell asleep, warm and still.",
-    "duration": 4
+    "duration": 3
+  },
+  {
+    "id": "gen-01f8d5ad1a28",
+    "type": "long_story",
+    "lang": "en",
+    "title": "Tavi and Lumi and the Kitchen",
+    "description": "A bedtime story episode where Tavi and Lumi discovers a magical kitchen.",
+    "text": "Close your eyes and smell the air—warm like fresh bread, sweet like honey, rich like slow-cooked berries. That’s the scent of the Night Pot, a great iron kettle bigger than a house, where sleep is stirred every evening by the Moon Cook. The fire never burns too hot, the spoon never stops turning, and the steam that rises is the softest blanket in the world. Tonight, something is missing. The steam isn’t rising. And that’s where you are—Tavi, a small fox kit with ears too big for your head and paws that twitch when you’re curious.\n\nThe Night Pot hums low, like a sleepy cat. You pad closer, your nose twitching. The usual golden glow is dim tonight. Only a faint shimmer flickers near the rim.\n\nTAVI: \"Lumi?\"\nA small copper ladle near your paw trembles. Its handle is shaped like a curled leaf, and it glows when you look at it.\n\nLUMI: \"I—I can’t stir. The light’s too weak.\"\nTAVI: \"Why?\"\nLUMI: \"The fire’s gone quiet. And the recipe says… it needs breath. Slow breath.\"\n\nYou tilt your head. The ladle’s glow pulses faintly, like a heartbeat.\n\nTAVI: \"What kind of breath?\"\nLUMI: \"Like this. Watch.\"\nThe ladle brightens just a little as Lumi’s voice steadies.\n\nYou breathe in through your nose, slow and deep. Then out through your mouth, soft as a whisper.\n\nThe ladle glows brighter. A warm hum fills the air.\n\nTAVI: \"It worked!\"\nLUMI: \"But only for a moment. The fire needs more.\"\nTAVI: \"Just a little longer.\"\n\nYou press your paws against the cool iron of the Night Pot. The steam should be rising by now, thick and golden, wrapping around the trees like a hug. But the air is still.\n\nTAVI: \"What if the Moon Cook forgot?\"\nLUMI: \"She never forgets. Maybe… maybe she’s waiting for someone.\"\nYou look up. The Moon Cook isn’t there. Only the empty spoon, swaying gently.\n\nTAVI: \"Waiting for who?\"\nLUMI: \"For someone to keep her company. While the sleep is stirred.\"\n\nA soft chime rings out, like a spoon tapping the edge of a bowl. The sound curls around you, warm and sweet. The Night Pot begins to hum, not just with the fire, but with music—tiny bells and the whisper of a lullaby.\n\nThe melody wraps around your ears, soft as a scarf. You hum along, even though you don’t know the words. The ladle glows brighter in your paw.\n\nThe music fades, but the air is warmer now. The ladle in your paw glows steady, like a small sun. The Night Pot hums softly, as if it’s remembering how to breathe. You look up—the Moon Cook still isn’t there. But the steam is beginning to rise, thin and golden, curling toward the sky.\n\nThe ladle is warm in your paw. You stir the air gently, and the glow spreads, soft and golden. The fire beneath the Night Pot flickers, then steadies, like a heartbeat.\n\nLUMI: \"You’re doing it, Tavi.\"\nTAVI: \"It’s easy now.\"\nLUMI: \"Because you’re calm. The recipe likes calm.\"\n\nYou stir again, slow circles. The steam rises higher, wrapping around your legs like a blanket. The air smells like warm milk and honey.\n\nIn through the nose, out through the mouth. Slow. Steady.\n\nLumi yawns, a tiny sound. The ladle’s glow dims just a little, as if it’s getting sleepy too.\n\nLUMI: \"I think… I think the Moon Cook is already asleep.\"\nTAVI: \"Where?\"\nLUMI: \"Up there. In the steam. She’s resting while you stir.\"\n\nYou look up. The steam is thick now, swirling like clouds. You can almost see shapes in it—a spoon, a fox, a moon with closed eyes.\n\nTAVI: \"Just a little longer.\"\n\nThe ladle grows heavier in your paw. Your eyelids feel warm. The fire beneath the Night Pot is just embers now, glowing softly, like coals under a blanket.\n\nThe steam curls around your ears, warm and quiet. The air is still. The ladle’s glow is soft, like a nightlight. You stir one last time, slow and gentle. The music is gone, but the hum of the Night Pot remains, steady and low.\n\nLumi’s voice is a whisper now.\n\nLUMI: \"Tavi… I’m going to sleep.\"\nTAVI: \"Okay.\"\nLUMI: \"Will you stay?\"\nTAVI: \"Yes.\"\n\nThe ladle slips from your paw, landing softly in the grass. It doesn’t glow anymore. It’s just a ladle now, curled up like a leaf. The steam wraps around you, warm and thick. You lie down beside the Night Pot, your paws tucked under your chin. The fire beneath it is almost out, but the warmth remains, like a hug.\n\nThe steam rises higher, swirling around the trees. The Moon Cook’s spoon sways gently, as if someone is still stirring. You close your eyes. The air smells like sleep.\n\nThe steam is thick.\nIt wraps around your legs.\nIt curls around your ears.\nIt feels like a blanket.\n\nThe Night Pot hums.\nLow and steady.\nLike a lullaby.\n\nYour paws are still.\nYour ears are warm.\nYour nose twitches once.\n\nThe fire is embers.\nGlowing softly.\nLike tiny stars.\n\nThe ladle is quiet.\nCurled in the grass.\nLike a sleeping leaf.\n\nThe steam rises higher.\nIt swirls around the trees.\nIt wraps around the moon.\n\nYour breath is slow.\nIn through your nose.\nOut through your mouth.\n\nThe air is warm.\nThe air is still.\nThe air is sleep.\n\nThe hum fades.\nThe steam settles.\nThe world is quiet.\n\nYour paws are heavy.\nYour ears are soft.\nYour eyes are closed.\n\nThe Moon Cook rests.\nThe Night Pot rests.\nYou rest.\n\nJust a little\n\nThe steam wraps tighter.\nThe hum is gone.\nThe world is still.\n\nWarm.\nSoft.\nQuiet.\n\nStill.\nStill.\nStill.\n\nSleep\nNow\nDream\n\nstill",
+    "annotated_text": "Close your eyes and smell the air—warm like fresh bread, sweet like honey, rich like slow-cooked berries. That’s the scent of the Night Pot, a great iron kettle bigger than a house, where sleep is stirred every evening by the Moon Cook. The fire never burns too hot, the spoon never stops turning, and the steam that rises is the softest blanket in the world. Tonight, something is missing. The steam isn’t rising. And that’s where you are—Tavi, a small fox kit with ears too big for your head and paws that twitch when you’re curious.\n\nThe Night Pot hums low, like a sleepy cat. You pad closer, your nose twitching. The usual golden glow is dim tonight. Only a faint shimmer flickers near the rim.\n\nTAVI: \"Lumi?\"\nA small copper ladle near your paw trembles. Its handle is shaped like a curled leaf, and it glows when you look at it.\n\nLUMI: \"I—I can’t stir. The light’s too weak.\"\nTAVI: \"Why?\"\nLUMI: \"The fire’s gone quiet. And the recipe says… it needs breath. Slow breath.\"\n\nYou tilt your head. The ladle’s glow pulses faintly, like a heartbeat.\n\nTAVI: \"What kind of breath?\"\nLUMI: \"Like this. Watch.\"\nThe ladle brightens just a little as Lumi’s voice steadies.\n\n[BREATHE_GUIDE]You breathe in through your nose, slow and deep. Then out through your mouth, soft as a whisper.[/BREATHE_GUIDE]\n[BREATHE]\n\nThe ladle glows brighter. A warm hum fills the air.\n\nTAVI: \"It worked!\"\nLUMI: \"But only for a moment. The fire needs more.\"\nTAVI: \"[PHRASE]Just a little longer[/PHRASE].\"\n\nYou press your paws against the cool iron of the Night Pot. The steam should be rising by now, thick and golden, wrapping around the trees like a hug. But the air is still.\n\nTAVI: \"What if the Moon Cook forgot?\"\nLUMI: \"She never forgets. Maybe… maybe she’s waiting for someone.\"\nYou look up. The Moon Cook isn’t there. Only the empty spoon, swaying gently.\n\nTAVI: \"Waiting for who?\"\nLUMI: \"For someone to keep her company. While the sleep is stirred.\"\n\nA soft chime rings out, like a spoon tapping the edge of a bowl. The sound curls around you, warm and sweet. The Night Pot begins to hum, not just with the fire, but with music—tiny bells and the whisper of a lullaby.\n\n[PAUSE: 800]\nThe melody wraps around your ears, soft as a scarf. You hum along, even though you don’t know the words. The ladle glows brighter in your paw.\n\n[SONG_SEED: A lullaby about a fox kit who stirs the sleep with slow breaths, while the Moon Cook rests her eyes.]\n\nThe music fades, but the air is warmer now. The ladle in your paw glows steady, like a small sun. The Night Pot hums softly, as if it’s remembering how to breathe. You look up—the Moon Cook still isn’t there. But the steam is beginning to rise, thin and golden, curling toward the sky.\n\nThe ladle is warm in your paw. You stir the air gently, and the glow spreads, soft and golden. The fire beneath the Night Pot flickers, then steadies, like a heartbeat.\n\nLUMI: \"You’re doing it, Tavi.\"\nTAVI: \"It’s easy now.\"\nLUMI: \"Because you’re calm. The recipe likes calm.\"\n\nYou stir again, slow circles. The steam rises higher, wrapping around your legs like a blanket. The air smells like warm milk and honey.\n\n[BREATHE_GUIDE]In through the nose, out through the mouth. Slow. Steady.[/BREATHE_GUIDE]\n[BREATHE]\n\nLumi yawns, a tiny sound. The ladle’s glow dims just a little, as if it’s getting sleepy too.\n\nLUMI: \"I think… I think the Moon Cook is already asleep.\"\nTAVI: \"Where?\"\nLUMI: \"Up there. In the steam. She’s resting while you stir.\"\n\nYou look up. The steam is thick now, swirling like clouds. You can almost see shapes in it—a spoon, a fox, a moon with closed eyes.\n\nTAVI: \"[PHRASE]Just a little longer[/PHRASE].\"\n\nThe ladle grows heavier in your paw. Your eyelids feel warm. The fire beneath the Night Pot is just embers now, glowing softly, like coals under a blanket.\n\n[PAUSE: 1500]\nThe steam curls around your ears, warm and quiet. The air is still. The ladle’s glow is soft, like a nightlight. You stir one last time, slow and gentle. The music is gone, but the hum of the Night Pot remains, steady and low.\n\n[BREATHE]\n[PAUSE: 1500]\n\nLumi’s voice is a whisper now.\n\nLUMI: \"Tavi… I’m going to sleep.\"\nTAVI: \"Okay.\"\nLUMI: \"Will you stay?\"\nTAVI: \"Yes.\"\n\nThe ladle slips from your paw, landing softly in the grass. It doesn’t glow anymore. It’s just a ladle now, curled up like a leaf. The steam wraps around you, warm and thick. You lie down beside the Night Pot, your paws tucked under your chin. The fire beneath it is almost out, but the warmth remains, like a hug.\n\n[BREATHE]\n[PAUSE: 1500]\n\nThe steam rises higher, swirling around the trees. The Moon Cook’s spoon sways gently, as if someone is still stirring. You close your eyes. The air smells like sleep.\n\nThe steam is thick.\nIt wraps around your legs.\nIt curls around your ears.\nIt feels like a blanket.\n\nThe Night Pot hums.\nLow and steady.\nLike a lullaby.\n\nYour paws are still.\nYour ears are warm.\nYour nose twitches once.\n\nThe fire is embers.\nGlowing softly.\nLike tiny stars.\n\nThe ladle is quiet.\nCurled in the grass.\nLike a sleeping leaf.\n\nThe steam rises higher.\nIt swirls around the trees.\nIt wraps around the moon.\n\nYour breath is slow.\nIn through your nose.\nOut through your mouth.\n\nThe air is warm.\nThe air is still.\nThe air is sleep.\n\nThe hum fades.\nThe steam settles.\nThe world is quiet.\n\nYour paws are heavy.\nYour ears are soft.\nYour eyes are closed.\n\nThe Moon Cook rests.\nThe Night Pot rests.\nYou rest.\n\n[PHRASE]Just a little[/PHRASE]\n\nThe steam wraps tighter.\nThe hum is gone.\nThe world is still.\n\nWarm.\nSoft.\nQuiet.\n\nStill.\nStill.\nStill.\n\n[WHISPER]Sleep[/WHISPER]\n[WHISPER]Now[/WHISPER]\n[WHISPER]Dream[/WHISPER]\n\nstill",
+    "lullaby_lyrics": "Soft leaf ladle,\ndreamer’s paddle.\nTavi breathes slow,\nstirs the glow.\n\nMoon Cook sighs,\nrests her eyes.\nJust a little longer—\nlight grows stronger.",
+    "target_age": 3,
+    "age_min": 2,
+    "age_max": 5,
+    "age_group": "2-5",
+    "length": "LONG",
+    "word_count": 951,
+    "duration_seconds": 594,
+    "duration": 9,
+    "categories": [
+      "Bedtime",
+      "Kitchen"
+    ],
+    "theme": "family",
+    "geography": "east_asia",
+    "plot_archetype": "discovery",
+    "lead_gender": "male",
+    "characterType": "land_mammal",
+    "morals": [],
+    "cover": "/covers/gen-01f8d5ad1a28.svg",
+    "musicProfile": null,
+    "musicParams": null,
+    "musicalBrief": null,
+    "music_type": "baked",
+    "audio_variants": [
+      {
+        "voice": "mixed",
+        "url": "/audio/pre-gen/01f8d5ad_mixed.mp3",
+        "duration_seconds": 594.05,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "experimental_v2",
+    "has_baked_music": true,
+    "experimental_v2": true,
+    "episode_format": "v2",
+    "world_type": "kitchen",
+    "mystery_type": "someone_needs_help",
+    "breathing_mechanic": "lantern",
+    "lead_character_type": "animal",
+    "name_culture": "East Asia",
+    "characters": [
+      {
+        "name": "Tavi",
+        "personality": "curious",
+        "voice_style": "small",
+        "gender": "neutral"
+      },
+      {
+        "name": "Lumi",
+        "personality": "nervous",
+        "voice_style": "gentle",
+        "gender": "neutral"
+      }
+    ],
+    "repeated_phrase": "Just a little longer",
+    "voice_map": {
+      "Tavi": "male_ranbir",
+      "Lumi": "male_harshit"
+    },
+    "narrator_voice": "female_maya",
+    "mood": "anxious",
+    "created_at": "2026-04-27T11:21:21.830246",
+    "updated_at": "2026-04-27T11:21:21.830246",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "character": {
+      "name": "Tavi",
+      "identity": "A young animal who discovers a kitchen — A place where sleep/calm/warmth is cooked or brewed or baked",
+      "special": "Uses a lantern to solve the mystery",
+      "personality_tags": [
+        "Curious",
+        "Small"
+      ]
+    },
+    "is_saved": false,
+    "story_type": "nature",
+    "language_level": "intermediate"
+  },
+  {
+    "id": "gen-e19f23639df1",
+    "type": "story",
+    "lang": "en",
+    "title": "Comet and the Glowing Dust Trail",
+    "description": "Comet loves to race through the night, but tonight she notices something new—tiny glowing specks following her. Where do they come from, and why do they feel so warm?",
+    "text": "There was a comet, and Comet had a trail that sparkled like tiny stars. Every night, she zoomed past the moon. The moon always waved. Her dust glowed like fireflies. One evening, Comet slowed down. She looked back. Her dust glowed like fireflies. But tonight, the dust stayed. It floated. It shimmered. It made a path right behind her. Shhh... listen... can you see the little lights? Comet turned around. She flew back through her own trail. The dust tickled her tail. It felt warm. It felt happy. Her dust glowed like fireflies. She stopped. She hovered. The dust settled on her like soft snow. Now, here’s the thing about Comet... she loved to move. But tonight, she didn’t want to. The dust was too pretty. The night was too quiet. She curled her tail around herself. The dust wrapped her up like a blanket. The stars watched. The moon smiled. Comet closed her eyes. The dust still glowed. Her dust glowed like fireflies. And Comet fell asleep, warm and still.",
+    "annotated_text": "There was a comet, and Comet had a trail that sparkled like tiny stars.\n\nEvery night, she zoomed past the moon. [PAUSE: 800] The moon always waved. [PHRASE]Her dust glowed like fireflies.[/PHRASE] [MUSIC]\n\nOne evening, Comet slowed down. [PAUSE: 1200] She looked back. [PHRASE]Her dust glowed like fireflies.[/PHRASE] But tonight, the dust stayed. It floated. It shimmered. It made a path right behind her.\n\nShhh... listen... can you see the little lights? [MUSIC]\n\nComet turned around. She flew back through her own trail. [PAUSE: 1500] The dust tickled her tail. It felt warm. It felt happy. [PHRASE]Her dust glowed like fireflies.[/PHRASE]\n\nShe stopped. She hovered. The dust settled on her like soft snow. [MUSIC]\n\nNow, here’s the thing about Comet... she loved to move. But tonight, she didn’t want to. The dust was too pretty. The night was too quiet.\n\nShe curled her tail around herself. [PAUSE: 2000] The dust wrapped her up like a blanket. The stars watched. The moon smiled.\n\nComet closed her eyes. The dust still glowed. [PHRASE]Her dust glowed like fireflies.[/PHRASE]\n\nAnd Comet fell asleep, warm and still.",
+    "target_age": 3,
+    "age_min": 2,
+    "age_max": 5,
+    "age_group": "2-5",
+    "length": "MEDIUM",
+    "word_count": 179,
+    "duration_seconds": 0,
+    "categories": [
+      "Family",
+      "Adventure",
+      "Celestial"
+    ],
+    "theme": "family",
+    "morals": [
+      "Even the fastest things need to rest sometimes.",
+      "What you leave behind can be beautiful too."
+    ],
+    "cover": "/covers/gen-e19f23639df1.svg",
+    "musicProfile": "",
+    "music_type": "baked",
+    "audio_variants": [
+      {
+        "voice": "simran",
+        "url": "/audio/pre-gen/gen-e19f_simran.mp3",
+        "duration_seconds": 162.35,
+        "provider": "chatterbox"
+      }
+    ],
+    "author_id": "system",
+    "is_generated": true,
+    "generation_quality": "pending_review",
+    "lead_gender": "female",
+    "character": {
+      "name": "Comet",
+      "identity": "A bright comet who races through the night sky with a sparkling trail.",
+      "special": "She leaves behind glowing dust that feels warm and happy.",
+      "personality_tags": [
+        "Adventurous",
+        "Gentle"
+      ]
+    },
+    "cover_context": "A dark night sky filled with tiny glowing specks floating in a soft trail, like fireflies caught in the wind. The moon watches from above, smiling.",
+    "lead_character_type": "celestial",
+    "character_name": "Comet",
+    "universe": "historical",
+    "geography": "europe",
+    "life_aspect": "play_discovery",
+    "plot_archetype": "quest_journey",
+    "diversityFingerprint": {
+      "characterType": "celestial_weather",
+      "setting": "sky_space",
+      "mood": null,
+      "storyType": null,
+      "plotShape": "discovery_reveal",
+      "languageLevel": null,
+      "scale": null,
+      "companion": null,
+      "movement": "flying_swimming",
+      "timeOfDay": "deep_night_starlight",
+      "weather": "clear_calm",
+      "theme": "rest_stillness",
+      "characterTrait": null,
+      "magicType": "glowing_bioluminescent",
+      "season": null,
+      "senseEmphasis": null
+    },
+    "mood": "curious",
+    "story_type": "folk_tale",
+    "language_level": "basic",
+    "created_at": "2026-04-28T01:33:53.010456",
+    "updated_at": "2026-04-28T01:33:53.010456",
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "has_baked_music": true,
+    "experimental_v2": true,
+    "hook": "Have you ever wondered what a comet leaves behind when she dances across the sky?",
+    "repeated_phrase": "Her dust glowed like fireflies.",
+    "raw_text": "There was a comet, and Comet had a trail that sparkled like tiny stars.\n\nEvery night, she zoomed past the moon. [PAUSE: 800] The moon always waved. [PHRASE]Her dust glowed like fireflies.[/PHRASE] [MUSIC]\n\nOne evening, Comet slowed down. [PAUSE: 1200] She looked back. [PHRASE]Her dust glowed like fireflies.[/PHRASE] But tonight, the dust stayed. It floated. It shimmered. It made a path right behind her.\n\nShhh... listen... can you see the little lights? [MUSIC]\n\nComet turned around. She flew back through her own trail. [PAUSE: 1500] The dust tickled her tail. It felt warm. It felt happy. [PHRASE]Her dust glowed like fireflies.[/PHRASE]\n\nShe stopped. She hovered. The dust settled on her like soft snow. [MUSIC]\n\nNow, here’s the thing about Comet... she loved to move. But tonight, she didn’t want to. The dust was too pretty. The night was too quiet.\n\nShe curled her tail around herself. [PAUSE: 2000] The dust wrapped her up like a blanket. The stars watched. The moon smiled.\n\nComet closed her eyes. The dust still glowed. [PHRASE]Her dust glowed like fireflies.[/PHRASE]\n\nAnd Comet fell asleep, warm and still.",
+    "duration": 3
+  },
+  {
+    "id": "warning-2-5-0ee8",
+    "type": "song",
+    "lang": "en",
+    "title": "Mira and the Fluttering Dreams",
+    "card_label": "Dream Catcher",
+    "cover": "/covers/warning-2-5-0ee8.svg",
+    "description": "A playful, conspiratorial lullaby where dreams flutter just out of reach, encouraging little ones to close their eyes to invite them in. The gentle rhythm of curiosity and warmth helps ease the fear of missing out (FOMO) by promising that dreams will come—if only they drift off first. Perfect for children who need a little nudge to let go of the day.",
+    "text": "The dreams are out tonight\nSoftly flutter, soft and light\nWings like whispers, silver bright\nLooking for a sleepy sight\n\nOne just tapped upon your pane\nDanced a jig then flew again\nAlmost stayed but heard the rain\nTurned and waved and off it ran\n\n[chorus]\nClose your eyes and they will come\nDreams will tiptoe, soft and numb\nWrap you up so safe and warm\nBetter close your eyes, my one\n\nSee that dream with golden threads\nBraided clouds inside its head\nIt will weave you stories spread\nIf you rest your sleepy head\n\n[chorus]\nClose your eyes and they will come\nDreams will tiptoe, soft and numb\nWrap you up so safe and warm\nBetter close your eyes, my one\n\nBetter close your eyes",
+    "annotated_text": "The dreams are out tonight\nSoftly flutter, soft and light\nWings like whispers, silver bright\nLooking for a sleepy sight\n\nOne just tapped upon your pane\nDanced a jig then flew again\nAlmost stayed but heard the rain\nTurned and waved and off it ran\n\n[chorus]\nClose your eyes and they will come\nDreams will tiptoe, soft and numb\nWrap you up so safe and warm\nBetter close your eyes, my one\n\nSee that dream with golden threads\nBraided clouds inside its head\nIt will weave you stories spread\nIf you rest your sleepy head\n\n[chorus]\nClose your eyes and they will come\nDreams will tiptoe, soft and numb\nWrap you up so safe and warm\nBetter close your eyes, my one\n\nBetter close your eyes",
+    "cover_context": "A small, round dream-catcher named Mira with delicate silver wings, perched on a child’s windowsill. Soft moonlight spills through the window, illuminating her as she watches over a sleeping child. Tiny glowing dreams flutter around her like fireflies, their wings shimmering in pastel blues and golds. The scene is warm, cozy, and bathed in a dreamy watercolor glow.",
+    "target_age": 3,
+    "age_min": 2,
+    "age_max": 5,
+    "age_group": "2-5",
+    "duration": 1,
+    "duration_seconds": 81,
+    "author_id": "system",
+    "created_at": "2026-04-28T01:36:40.516671",
+    "updated_at": "2026-04-28T01:36:40.516692",
+    "audio_url": null,
+    "album_art_url": null,
+    "view_count": 0,
+    "like_count": 0,
+    "save_count": 0,
+    "categories": [
+      "Lullabies"
+    ],
+    "theme": "curiosity",
+    "geography": "east_asia",
+    "plot_archetype": "quest_journey",
+    "lead_gender": "neutral",
+    "characterType": "land_mammal",
+    "is_generated": true,
+    "generation_quality": "good",
+    "music_genre": "lullaby",
+    "lead_character_type": "animal",
+    "character": {
+      "name": "Mira",
+      "identity": "A gentle dream-catcher who guards the night and invites dreams to visit sleeping children.",
+      "special": "She knows every dream by name and guides them to the right child with her soft, whispering wings.",
+      "personality_tags": [
+        "Gentle",
+        "Sleepy"
+      ]
+    },
+    "about": "A playful, conspiratorial lullaby where dreams flutter just out of reach, encouraging little ones to close their eyes to invite them in. The gentle rhythm of curiosity and warmth helps ease the fear of missing out (FOMO) by promising that dreams will come—if only they drift off first. Perfect for children who need a little nudge to let go of the day.",
+    "audio_variants": [
+      {
+        "voice": "female_1",
+        "url": "/audio/pre-gen/warning-2-5-0ee8_female_1.mp3",
+        "duration_seconds": 81,
+        "provider": "minimax-music-v2"
+      }
+    ],
+    "mood": "curious",
+    "lullaby_type": "warning"
   }
 ]
