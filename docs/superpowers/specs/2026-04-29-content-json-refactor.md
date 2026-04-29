@@ -154,28 +154,39 @@ def _walk_per_content(self) -> dict[str, dict]:
                 continue
             entry["type"] = default_type
             # Subtype is derived from directory at load time.
-            # Per-content files MUST NOT contain a subtype field
-            # (per Open Question 3 decision — walker-stamped, not on-disk).
-            # If a legacy file does carry subtype, log a warning and
-            # overwrite with the directory-derived value; load still succeeds.
+            # Per-content files MUST NOT contain a subtype field (Open
+            # Question 3 — walker-stamped, not on-disk). Tightened: only
+            # add the field when the directory provides subtype info
+            # (silly_song / funny_short / lullaby). For stories / poems /
+            # long_stories where default_subtype is None, don't add the
+            # field at all — preserves source data shape (no spurious
+            # "subtype": null entries in the regenerated snapshot).
+            # Legacy files with on-disk subtype get stripped + warned.
             if "subtype" in entry and entry.get("subtype") != default_subtype:
                 logger.warning(
                     "subtype field present in %s — ignoring on-disk value %r, "
                     "stamping directory-derived value %r",
                     fp, entry.get("subtype"), default_subtype,
                 )
-            entry["subtype"] = default_subtype  # may be None for stories/poems/long_stories
-            # Lang is fully directory-derived (every dir has a definite lang
-            # under the per-(type, lang) split). Stamp unconditionally; if an
-            # entry already carries a contradictory lang, log and prefer the
-            # directory — the directory is the source of truth post-refactor.
+            if default_subtype is not None:
+                entry["subtype"] = default_subtype
+            else:
+                entry.pop("subtype", None)
+            # Lang is canonical, always directory-derived. Stamp
+            # unconditionally; if entry carries contradictory lang, log
+            # and prefer the directory.
             if entry.get("lang") not in (None, default_lang):
                 logger.warning(
                     "lang mismatch for %s: file says %s, dir says %s — using dir",
                     fp, entry.get("lang"), default_lang,
                 )
             entry["lang"] = default_lang
-            entry["language"] = default_lang
+            # 'language' is redundant with 'lang'. Tightened: only normalize
+            # when the source already carried it. Items that lacked language
+            # don't gain it. When present, value is normalized to match lang
+            # (resolves any historical drift between the two fields).
+            if "language" in entry:
+                entry["language"] = default_lang
             item_id = entry.get("id") or fp.stem
             entry["id"] = item_id
             if item_id in items_by_id:
@@ -490,7 +501,14 @@ No directory-derived fields beyond what's already in the entry.
 
 ##### Cross-type derivation rules (apply to all three)
 
-- **Verbatim copy with EXACTLY ONE transformation: strip `subtype`.** The backfill helper writes each content.json entry to its per-content file VERBATIM with no other modifications — no field renames, no canonical-schema cleanup, no field dropping, no field synthesis. The only mutation is removal of the `subtype` key (per Open Question 3). The round-trip property must hold: `content.json → per-content files → walker → content.json` produces byte-identical output (modulo regeneration timestamp and key ordering). Cleanup of stale or unused fields is a separate, per-field decision — not a backfill side effect.
+- **Verbatim copy with EXACTLY ONE transformation: strip `subtype`.** The backfill helper writes each content.json entry to its per-content file VERBATIM with no other modifications — no field renames, no canonical-schema cleanup, no field dropping, no field synthesis. The only mutation is removal of the `subtype` key (per Open Question 3). The round-trip property: `content.json → per-content files → walker → content.json` produces output byte-identical to the source, modulo:
+  - **(a) `subtype` field stripped on disk per OQ3,** then re-added by the walker only for types where the directory carries a non-None default subtype (silly_song / funny_short / lullaby). Stories / poems / long_stories never have a `subtype` field anywhere — not in source, not on disk, not in the regenerated snapshot.
+  - **(b) `lang` value normalized** to the directory-derived value. Source entries with mismatched `lang` (e.g., `lang: en` in a `data/poems_hi/` file) are normalized to the directory's lang on regeneration, with a logged warning at walk time.
+  - **(c) `language` value normalized** to match `lang` when the source had a `language` field. Source entries that lacked `language` do NOT gain it — the walker preserves the source's field-set.
+  - **(d) Sort order normalized** to deterministic ordering by id (the walker's snapshot writer sorts).
+  - **(e) `ensure_ascii=False` applied uniformly** (already enforced by `_atomic_write_json` and `local_store.py:219` per the 2026-04-29 fix).
+
+  No other field additions, removals, or modifications. Cleanup of stale or unused fields is a separate, per-field decision — not a backfill or walker side effect.
 - **Filename**: always `<id>.json` (lowercase, slashes/colons forbidden — `id` values audited and confirmed safe). Validated by the script.
 - **`audio_file` reconstruction**: NOT performed. Per-content files for stories/lullabies/long_stories continue to carry the `audio_url` field (full URL/path) verbatim from content.json. Do not invent an `audio_file` shorthand for these types.
 - **`cover_file` reconstruction**: same. Keep whatever the source entry has; don't add or rename.

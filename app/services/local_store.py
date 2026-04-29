@@ -231,7 +231,14 @@ class LocalStore:
                     skipped.append((fp, str(e)))
                     continue
 
-                # Subtype: walker-stamped, never on-disk (OQ3).
+                # Subtype: walker-stamped from directory, never on-disk (OQ3).
+                # Only stamp when directory provides subtype info (songs with
+                # silly_song / funny_short / lullaby subtypes). For stories /
+                # poems / long_stories where the directory has default_subtype
+                # is None, don't add the field at all — preserves source data
+                # shape (no spurious "subtype": null entries). If a legacy
+                # file has subtype on disk and the directory disagrees, log
+                # and strip.
                 if "subtype" in entry and entry.get("subtype") != default_subtype:
                     logger.warning(
                         "subtype field present in %s — ignoring on-disk value %r, "
@@ -239,16 +246,28 @@ class LocalStore:
                         fp, entry.get("subtype"), default_subtype,
                     )
                 entry["type"] = default_type
-                entry["subtype"] = default_subtype  # may be None for stories/poems/long_stories
+                if default_subtype is not None:
+                    entry["subtype"] = default_subtype
+                else:
+                    # Stories / poems / long_stories: no subtype concept.
+                    # Drop any on-disk subtype defensively.
+                    entry.pop("subtype", None)
 
-                # Lang: directory-derived. Warn on mismatch; directory wins.
+                # Lang: always directory-derived (canonical source of truth).
+                # Warn on mismatch; directory wins.
                 if entry.get("lang") not in (None, default_lang):
                     logger.warning(
                         "lang mismatch for %s: file says %s, dir says %s — using dir",
                         fp, entry.get("lang"), default_lang,
                     )
                 entry["lang"] = default_lang
-                entry["language"] = default_lang
+                # 'language' field is redundant with 'lang'. Only normalize
+                # when the source already carried it (preserves source data
+                # shape — items that lacked language don't gain it). When
+                # present, normalize to match lang (resolves any historical
+                # drift between the two fields).
+                if "language" in entry:
+                    entry["language"] = default_lang
 
                 item_id = entry.get("id") or fp.stem
                 entry["id"] = item_id
