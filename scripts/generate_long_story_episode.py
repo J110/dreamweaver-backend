@@ -2758,6 +2758,14 @@ def publish_episode(output_dir, params, metadata, duration_seconds):
         "language_level": "intermediate",
     }
 
+    # Per spec §2g.1: write per-content file (additive — walker reads this
+    # post-cutover). Existing content.json upsert below stays for rollback
+    # safety until post-cutover §4 step 15 deletion.
+    from app.services.local_store import _atomic_write_json, _content_target_dir
+    _pc_target = _content_target_dir(BASE_DIR / "data", entry)
+    if _pc_target is not None:
+        _atomic_write_json(_pc_target / f"{entry['id']}.json", entry, strip_subtype=True)
+
     # Merge into content.json
     content_path = BASE_DIR / "seed_output" / "content.json"
     with open(content_path) as f:

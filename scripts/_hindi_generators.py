@@ -126,6 +126,21 @@ def _save_audio(seg: AudioSegment, *paths: Path):
         seg.export(p, format="mp3", bitrate="192k")
 
 
+def _write_per_content_file(entry: dict) -> None:
+    """Write per-content file for a generated HI item (spec §2g.1, additive).
+
+    Walker reads from data/<type>[_hi]/<id>.json post-cutover. Coexists with
+    the _upsert_content call below until post-cutover §4 step 15 deletes the
+    upsert. lang is read from the entry; routing handled by _content_target_dir.
+    """
+    sys.path.insert(0, str(BASE_DIR))
+    from app.services.local_store import _atomic_write_json, _content_target_dir
+    target_dir = _content_target_dir(BASE_DIR / "data", entry)
+    if target_dir is None:
+        return
+    _atomic_write_json(target_dir / f"{entry['id']}.json", entry, strip_subtype=True)
+
+
 def _upsert_content(entry: dict) -> None:
     cj = BASE_DIR / "seed_output" / "content.json"
     data = json.loads(cj.read_text())
@@ -488,6 +503,9 @@ def generate_short_story(axes: dict, log_prefix: str = "  ") -> dict:
         "updated_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
     }
     _attach_qa_changes(entry, data)
+    # Per spec §2g.1: per-content file write (additive — walker reads this
+    # post-cutover). _upsert_content below stays until post-cutover §4 step 15.
+    _write_per_content_file(entry)
     _upsert_content(entry)
     print(f"{log_prefix}✓ short story published: {sid} ({duration}s)")
     return entry
@@ -662,6 +680,9 @@ def generate_lullaby(axes: dict, log_prefix: str = "  ") -> dict:
         "updated_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
     }
     _attach_qa_changes(entry, data)
+    # Per spec §2g.1: per-content file write (additive — walker reads this
+    # post-cutover). _upsert_content below stays until post-cutover §4 step 15.
+    _write_per_content_file(entry)
     _upsert_content(entry)
     print(f"{log_prefix}✓ lullaby published: {sid} ({duration}s)")
     return entry
@@ -880,7 +901,10 @@ def generate_silly_song(axes: dict, log_prefix: str = "  ") -> dict:
         "replay_count": 0,
         "created_at": time.strftime("%Y-%m-%d"),
     }
-    rp = BASE_DIR / "data" / "silly_songs" / f"{sid}.json"
+    # Hindi silly_songs land in the _hi bucket. Walker stamps lang from
+    # directory placement (spec §2c, OQ3); writing here means the walker
+    # correctly stamps lang=hi at boot. EN bucket would mis-stamp to lang=en.
+    rp = BASE_DIR / "data" / "silly_songs_hi" / f"{sid}.json"
     rp.parent.mkdir(parents=True, exist_ok=True)
     rp.write_text(json.dumps(runtime_entry, ensure_ascii=False, indent=2))
 
@@ -1090,7 +1114,10 @@ def generate_poem(axes: dict, log_prefix: str = "  ") -> dict:
         "audio_engine": "minimax-music-v2.5-fal",
         "created_at": time.strftime("%Y-%m-%d"),
     }
-    rp = BASE_DIR / "data" / "poems" / f"{sid}.json"
+    # Hindi poems land in the _hi bucket. Walker stamps lang from
+    # directory placement (spec §2c, OQ3); writing here means the walker
+    # correctly stamps lang=hi at boot. EN bucket would mis-stamp to lang=en.
+    rp = BASE_DIR / "data" / "poems_hi" / f"{sid}.json"
     rp.parent.mkdir(parents=True, exist_ok=True)
     rp.write_text(json.dumps(runtime_entry, ensure_ascii=False, indent=2))
 
@@ -1555,6 +1582,9 @@ def generate_long_story(axes: dict, log_prefix: str = "  ") -> dict:
         "updated_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
     }
     _attach_qa_changes(entry, data)
+    # Per spec §2g.1: per-content file write (additive — walker reads this
+    # post-cutover). _upsert_content below stays until post-cutover §4 step 15.
+    _write_per_content_file(entry)
     _upsert_content(entry)
     print(f"{log_prefix}✓ long story published: {sid} ({duration}s)")
     return entry
