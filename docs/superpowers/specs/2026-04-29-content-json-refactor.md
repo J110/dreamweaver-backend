@@ -553,9 +553,9 @@ After the backfill loop completes, before the script exits zero:
 1. **Strict count match (per bucket AND total).** Walk `data/<type>/*.json` across all 12 directories in `PER_CONTENT_DIRS`. For each `(dir, type, subtype, lang)` bucket, the file count MUST equal the count of `content.json` items matching that `(type, subtype, lang)` exactly; the total across all buckets MUST equal `len(content.json items)`. Per-bucket mismatch catches a routing bug (e.g., HI lullabies miswritten to `data/lullabies/`) that a global-total-only check would mask. Any mismatch is a **HARD ERROR** — abort cutover, do not flip the API. Investigate the delta (likely an `id`/type routing bug or a content.json entry with `type`/`subtype`/`lang` outside the known map).
 2. **Per-item presence check.** For every item in `content.json`, compute its expected per-content path and assert the file exists. Logs every miss. Even one miss aborts.
 3. **Optional deep-equality check.** For each content.json item, load the corresponding per-content file and compare field-by-field. Allow documented schema differences (per 3.1a — e.g., the explicit `subtype="lullaby"` stamping). All other fields must match byte-for-byte. Differences logged loudly; this check is informational at first, but should be promoted to a hard gate once the schema map is locked.
-4. **Orphan-files quarantine.** Walk `data/<type>/*.json` (live dirs only — `data/_quarantine/` is excluded) and identify any per-content file whose `id` is **not** present in `content.json`. Per the Open Question 2 decision (§3.2), these are physically moved to `data/_quarantine/<type>[_hi]/<id>.json` (preserving the bucket subdirectory name) and listed in the script's report with their original on-disk path. The walker (§2c) does not load `_quarantine/`, so quarantined items do not appear in the API. Triage is performed before cutover via `scripts/triage_quarantine.py` per §3.2 / §4 step 5.
+4. **Orphan-files quarantine.** Walk `data/<type>/*.json` (live dirs only — `data/_quarantine/` is excluded) and identify any per-content file whose `id` is **not** present in `content.json`. Per the Open Question 2 decision (§3.2), these are physically moved to `data/_quarantine/<type>[_hi]/<id>.json` (preserving the bucket subdirectory name) and listed in the script's report with their original on-disk path. The walker (§2c) does not load `_quarantine/`, so quarantined items do not appear in the API. Triage is performed before cutover via `scripts/triage_quarantine.py` per §3.2 / §4 step 6.
 
-The validation gate is a separate function from the backfill loop. The backfill exits zero only after gates 1–3 pass. Gate 4 always runs (it physically moves orphans to quarantine) but does not block the script's exit code — it surfaces work for the human triage step in §4 step 5.
+The validation gate is a separate function from the backfill loop. The backfill exits zero only after gates 1–3 pass. Gate 4 always runs (it physically moves orphans to quarantine) but does not block the script's exit code — it surfaces work for the human triage step in §4 step 6.
 
 ### 3.2. Orphan quarantine + triage workflow
 
@@ -662,7 +662,7 @@ This expands the high-level steps above into a numbered runbook. Execute top-to-
 
 1. **Window.** Cutover **after the 04:00 HI cron completes** successfully (~04:30 UTC) — see §4 "Cutover window" above for the rationale. Confirm the HI cron's last-run log line before starting.
 2. **Pre-cutover snapshot.** `python3 scripts/deploy_guard.py snapshot` — captures the baseline for §4-style verify after cutover. Mandatory per CLAUDE.md.
-3. **Working tree update — pull merged refactor onto prod (no container action).** The backfill script (step 4) and triage CLI (step 7) only exist on the post-merge code, so the working tree must advance before any new-code operations. The container is still running the old code in memory; pulling new code to disk does not affect the running container until step 9 rebuilds it.
+3. **Working tree update — pull merged refactor onto prod (no container action).** The backfill script (step 4) and triage CLI (step 6) only exist on the post-merge code, so the working tree must advance before any new-code operations. The container is still running the old code in memory; pulling new code to disk does not affect the running container until step 9 rebuilds it.
    ```bash
    cd /opt/dreamweaver-backend
    git status                          # confirm clean before pull (modulo daily pipeline state in data/, public/, seed_output/)
@@ -674,62 +674,96 @@ This expands the high-level steps above into a numbered runbook. Execute top-to-
    ls -la scripts/backfill_per_content.py scripts/triage_quarantine.py  # confirm new scripts on disk
    ```
    Hard error if pull fails (merge conflict, ff blocked, scripts missing). NEVER use `sudo git pull` — would change file ownership to root and break the pipeline cron user (per MEMORY.md and `feedback_chown_after_sudo_cp.md`).
-4. **Backfill.** Run `python3 scripts/backfill_per_content.py` (no `--dry-run`). Idempotent per §3.1b — safe to re-run if it errors partway. Confirm the script exits zero and prints `created=<N>, skipped_exists=<M>, errors=0` plus `gate1_pass=True, gate2_pass=True`.
-5. **Migrate HI items from EN buckets to `_hi` buckets.**
+4. **Backfill.** Run `python3 scripts/backfill_per_content.py` (no `--dry-run`). Idempotent per §3.1b — safe to re-run if it errors partway. Confirm the script exits zero and prints `errors=0`. Note: `gate1_pass=False` is **expected at this point** (orphans not yet triaged + HI duplicates not yet resolved); gate 1 is meaningfully checked at step 7 (post-triage). `gate2_pass=True` is required.
+5. **Migrate HI items from EN buckets to `_hi` buckets — handle backfill duplicates.**
 
-   Pre-existing HI silly_songs and poems exist in EN buckets due to a historical bug in `scripts/_hindi_generators.py` (fixed in this PR's generators commit). These files MUST move before the API container restarts on the new code (step 9) — otherwise the walker stamps `lang=en` on Hindi content (directory placement is canonical per OQ3, §2c).
+   Pre-existing HI silly_songs, poems, **and funny_shorts** exist in EN buckets due to a historical bug in `scripts/_hindi_generators.py` (fixed in this PR's generators commit). These files MUST be resolved before the API container restarts on the new code (step 9) — otherwise the walker stamps `lang=en` on Hindi content (directory placement is canonical per OQ3, §2c).
 
-   **Items to migrate** (verified via local audit on 2026-04-29):
-   ```
-   data/silly_songs/hi-chips_chahiye-2-5-a8f2.json    → data/silly_songs_hi/
-   data/silly_songs/hi-ulta_ulta_hoon-6-8-e897.json   → data/silly_songs_hi/
-   data/poems/hi-nonsense-9-12-dfcd.json              → data/poems_hi/
-   data/poems/hi-question-6-8-ad89.json               → data/poems_hi/
-   data/poems/hi-sound-2-5-b3c7.json                  → data/poems_hi/
-   ```
+   **Two cases to handle (post-backfill state):**
 
-   **Procedure** (mechanical move; backfill at step 3 already created `*_hi/` dirs if any HI content was in `content.json`, but `mkdir -p` covers the case where it didn't):
+   - **Case A — HI-bucket copy already exists** (backfill at step 4 created the correct `_hi` copy from `content.json`, leaving the misplaced EN-bucket copy in place as a duplicate).
+     - Verify content equivalence with `diff -q`.
+     - Identical → **delete the EN-bucket copy** (the HI-bucket copy is authoritative; identical duplicates don't need quarantine).
+     - Different → **WARN and skip — flag for human review**, do NOT auto-resolve. Likely indicates the EN-bucket file is newer/older or has divergent state; needs eyeball.
+   - **Case B — no HI-bucket copy** (HI item exists only in EN bucket, never made it into `content.json` at backfill time).
+     - `mkdir -p` the HI bucket, `mv` the EN-bucket file to it.
+
+   **Procedure** (covers all three affected buckets — `silly_songs`, `poems`, `funny_shorts`):
    ```bash
-   for src in \
-     data/silly_songs/hi-chips_chahiye-2-5-a8f2.json \
-     data/silly_songs/hi-ulta_ulta_hoon-6-8-e897.json \
-     data/poems/hi-nonsense-9-12-dfcd.json \
-     data/poems/hi-question-6-8-ad89.json \
-     data/poems/hi-sound-2-5-b3c7.json
-   do
-     target=$(echo "$src" | sed 's|silly_songs/|silly_songs_hi/|; s|poems/|poems_hi/|')
-     mkdir -p "$(dirname "$target")"
-     mv "$src" "$target"
+   warn_count=0
+   moved_count=0
+   deleted_count=0
+
+   for bucket in silly_songs poems funny_shorts; do
+     [ -d "data/$bucket" ] || continue
+     for f in data/$bucket/*.json; do
+       [ -f "$f" ] || continue
+       lang=$(python3 -c "import json; print(json.load(open('$f')).get('lang',''))" 2>/dev/null)
+       [ "$lang" = "hi" ] || continue
+
+       id=$(basename "$f" .json)
+       target_dir="data/${bucket}_hi"
+       target="$target_dir/${id}.json"
+
+       if [ -f "$target" ]; then
+         # Case A: duplicate exists in HI bucket
+         if diff -q "$f" "$target" > /dev/null 2>&1; then
+           echo "DELETE (identical duplicate): $f"
+           rm "$f"
+           deleted_count=$((deleted_count + 1))
+         else
+           echo "WARN (content differs from $target): $f — skipping, needs human review"
+           warn_count=$((warn_count + 1))
+         fi
+       else
+         # Case B: no HI-bucket copy
+         mkdir -p "$target_dir"
+         echo "MOVE: $f → $target"
+         mv "$f" "$target"
+         moved_count=$((moved_count + 1))
+       fi
+     done
    done
+
+   echo "Summary: deleted=$deleted_count moved=$moved_count warned=$warn_count"
    ```
+
+   Hard error if `warned > 0`. Do NOT proceed to step 6 (triage) until all WARN items are resolved by human review (manual `diff` + decision: `mv` or `rm` or escalate).
 
    **Verification** — re-audit after migration; zero HI items must remain in EN buckets:
    ```bash
-   for bucket in silly_songs poems; do
+   for bucket in silly_songs poems funny_shorts; do
      for f in data/$bucket/*.json; do
-       lang=$(python3 -c "import json; print(json.load(open('$f')).get('lang',''))")
+       [ -f "$f" ] || continue
+       lang=$(python3 -c "import json; print(json.load(open('$f')).get('lang',''))" 2>/dev/null)
        [ "$lang" = "hi" ] && echo "FAIL: $f still in $bucket"
      done
    done
    ```
-   Hard error if any `FAIL` line is printed. Do NOT proceed to step 6 (count-match gate) until clean.
+   Hard error if any `FAIL` line is printed.
 
-   **Pre-cutover audit caveat:** the list above was captured against local data on 2026-04-29. **Re-audit on prod immediately before cutover.** Production may have additional items in this state from cron runs that fired between the audit date and cutover. Regenerate the migration script from a fresh prod audit; do not use the verbatim list from this spec.
+   **Audit caveat:** prod state may have items beyond what was seen during cutover preparation. The 2026-04-29 audit captured silly_songs (2), poems (4), and funny_shorts (2) — total 8 items. Re-run audit at cutover time and confirm the bucket list above (`silly_songs poems funny_shorts`) still covers all affected buckets; add any other type names to the loop if a new pattern emerges.
 
-6. **Pre-flight gate: count match.** Per §3.1d gate 1: per-content file count across `PER_CONTENT_DIRS` MUST equal `len(content.json items)` exactly. If not — **abort, do not proceed.** Investigate before retrying. The script's exit code already encodes this; double-check manually:
+6. **Triage quarantined orphans.** Review `data/_quarantine/` via `python3 scripts/triage_quarantine.py --list`. For each item, decide `--publish` or `--discard` (per §3.2). After triage, `data/_quarantine/` MUST be empty. The cutover is **blocked** until this is true — verify with `find data/_quarantine -name '*.json' 2>/dev/null | wc -l` returning `0`. (Step 5's `wrong_bucket/` subdir is not used in the current procedure — duplicates are auto-deleted, not quarantined — but the triage CLI walks `data/_quarantine/` recursively and would handle anything found there.)
+7. **Pre-flight gate: count match (post-triage).** Final state check after migration (step 5) and triage (step 6):
    ```bash
    python3 -c "import json; print(len(json.load(open('seed_output/content.json'))))"
    find data/{stories,stories_hi,long_stories,long_stories_hi,lullabies,lullabies_hi,silly_songs,silly_songs_hi,funny_shorts,funny_shorts_hi,poems,poems_hi} -maxdepth 1 -name '*.json' 2>/dev/null | wc -l
+   find data/_quarantine -name '*.json' 2>/dev/null | wc -l
    ```
-   These two numbers must be equal. (12 directories — full per-(type, lang) split.)
-7. **Triage quarantined orphans.** Review `data/_quarantine/` via `python3 scripts/triage_quarantine.py --list`. For each item, decide `--publish` or `--discard` (per §3.2). After triage, `data/_quarantine/` MUST be empty. The cutover is **blocked** until this is true — verify with `find data/_quarantine -name '*.json' 2>/dev/null | wc -l` returning `0`.
+   Required state:
+   - **Total** per-content file count across all 12 buckets MUST equal `len(content.json items)`. Hard error on mismatch — abort, investigate before retrying.
+   - `data/_quarantine/` MUST be empty (triage processed everything; no leftover `wrong_bucket/` either).
+   - **Per-bucket count** matches expected derivation from content.json (each item's `(type, lang)` routes to exactly one bucket). A per-bucket mismatch with matching total is a **warning** (some item's type/lang doesn't match its expected derivation) — investigate but proceed only if the operator understands the cause; total-count match is the hard gate.
+
+   The script-reported `gate1_pass=False` from step 4 was expected pre-triage; gate 1 is meaningful only at this point in the sequence.
 8. **Stop API container.** `sudo docker-compose down` from `/opt/dreamweaver-backend/`. Brief downtime begins here; minimize subsequent steps.
 9. **Start container against new code.** `sudo docker-compose up -d --build`. Container rebuilds against the working tree pulled in step 3; LocalStore boots via the new `_walk_per_content` path. (No git operation here — the working tree is already advanced.)
 10. **First-boot validation.** Tail logs immediately:
     ```bash
     sudo docker logs -f dreamweaver-backend 2>&1 | head -200
     ```
-    Look for: a log line like `LocalStore: loaded N items from per-content files` (add this log if absent) and confirm `N` matches the expected count from step 6 (~240 ± a few). Any `corrupt per-content files` warning means a file failed to parse — investigate but note that the boot succeeded with reduced count (per §6 "Corrupt per-content file" mitigation).
+    Look for: a log line like `LocalStore: loaded N items from per-content files` (add this log if absent) and confirm `N` matches the expected count from step 7 (~240 ± a few). Any `corrupt per-content files` warning means a file failed to parse — investigate but note that the boot succeeded with reduced count (per §6 "Corrupt per-content file" mitigation).
 11. **Snapshot diff.** Confirm the regenerated `data/content.json` matches the pre-cutover backup, modulo the round-trip transformations enumerated in §3.1a:
     ```bash
     diff <(jq -S . data/content.json.bak.<timestamp>) <(jq -S . data/content.json)
@@ -857,7 +891,7 @@ The refactor is considered successfully shipped only when **all** of the followi
   ```
   Expected output: empty or only the "skipped corrupt files" warning if any (which itself should be empty in steady state).
 - **Pipeline never invokes `git push`.** Confirm post-§2f that `step_publish` and `_git_commit_and_push` are gone and a 24-hour cron cycle does not produce any pushed commits to `J110/dreamweaver-backend` or `J110/dreamweaver-web` from the cron user.
-- **Quarantine directory is empty at cutover.** `find data/_quarantine -name '*.json' 2>/dev/null | wc -l` returns `0`. Every orphan surfaced by the audit script (§3.2) was either published or discarded via `scripts/triage_quarantine.py` before the API was flipped to the new code. Cutover is gated on this per §4 step 5.
+- **Quarantine directory is empty at cutover.** `find data/_quarantine -name '*.json' 2>/dev/null | wc -l` returns `0`. Every orphan surfaced by the audit script (§3.2) was either published or discarded via `scripts/triage_quarantine.py` before the API was flipped to the new code. Cutover is gated on this per §4 step 6 (triage) and verified at §4 step 7 (count match).
 - **No `subtype` fields present in `data/<type>[_hi]/*.json` files post-cutover** (warnings would indicate legacy state, per Open Question 3 decision — walker-stamped, not on-disk). Verifiable via:
   ```bash
   find data/ -name "*.json" -not -path "*/quarantine/*" -exec jq -e 'has("subtype")' {} + 2>/dev/null
@@ -920,7 +954,7 @@ Explicitly deferred to follow-up tasks:
 
 - **`seedData.js` migration to a backend API endpoint.** Per `docs/follow-ups.md`, this is a separate half-day session — frontend bootstrap + `/api/v1/seed-manifest` endpoint + delete file. Touching frontend is its own surface.
 - **deploy_guard improvements** (orphan scan, expected-vs-delivered, cron output surfacing, subtype-aware classification, snapshot-vs-current bug). All listed in `docs/follow-ups.md` "deploy_guard improvements". These become **simpler** after this refactor lands because there's no orphan-vs-mirror divergence to detect — every per-content file *is* a published item by definition. Defer until after cutover.
-- **Historical-orphan triage** (the ~6 existing files in `data/silly_songs/` and `data/poems/` that aren't in content.json) is now **in-scope for this spec**, handled via the quarantine + CLI triage workflow specified in §3.2. The audit script moves orphans to `data/_quarantine/`, the triage CLI publishes-or-discards each one, and cutover is gated on the directory being empty (§4 step 5 / §6.5).
+- **Historical-orphan triage** (the ~6 existing files in `data/silly_songs/` and `data/poems/` that aren't in content.json) is now **in-scope for this spec**, handled via the quarantine + CLI triage workflow specified in §3.2. The audit script moves orphans to `data/_quarantine/`, the triage CLI publishes-or-discards each one, and cutover is gated on the directory being empty (§4 step 6 / §6.5).
 - **Removing `data/content.json` and `seed_output/content.json` entirely.** Currently they remain as derived snapshots for the analytics module and frontend sync. Eliminating them requires updating those consumers — separate task once we're confident the per-content path is stable.
 - **Hot-reload trigger redesign.** `app/main.py:61` polls `seed_output/content.json` mtime. Could be replaced with watching `data/<type>/*.json` mtimes (more correct), but the current approach keeps working since we still write the seed snapshot. Defer.
 - **`SEED_PREFERRED_FIELDS` cleanup** in `local_store.py`. The constant becomes dead code post-refactor (no seed-vs-runtime split). Remove in the same PR if cleanly possible; otherwise follow-up.
@@ -935,7 +969,7 @@ Explicitly deferred to follow-up tasks:
 
 1. **✓ DECIDED — Hindi vs English in same per-content directory, or split?** Split per `(type, lang)` — every content type gets a separate `*_hi` directory. 12 directories total (see §2a "Per-content directory map" and §2c `PER_CONTENT_DIRS`). Rationale: matches `dreamweaver-backend/CLAUDE.md` "Parallel Scripts Pattern"; mirrors existing `seed_output/<type>_hi/` audio-master layout; isolates EN and HI bug surfaces at the directory level.
 
-2. **✓ DECIDED — quarantine + human ack via CLI.** Orphans surfaced during the migration's audit-script dry-run are physically moved to `data/_quarantine/<type>[_hi]/<id>.json` and require explicit per-item human review before being published to live state. Triage is performed via `scripts/triage_quarantine.py` (`--list`, `--publish <id>`, `--discard <id>`, plus `--publish-all --confirm` and `--discard-all --confirm` for bulk). Cutover is blocked until `data/_quarantine/` is empty. Full design in §3.2; cutover gate at §4 step 5; success criterion in §6.5.
+2. **✓ DECIDED — quarantine + human ack via CLI.** Orphans surfaced during the migration's audit-script dry-run are physically moved to `data/_quarantine/<type>[_hi]/<id>.json` and require explicit per-item human review before being published to live state. Triage is performed via `scripts/triage_quarantine.py` (`--list`, `--publish <id>`, `--discard <id>`, plus `--publish-all --confirm` and `--discard-all --confirm` for bulk). Cutover is blocked until `data/_quarantine/` is empty. Full design in §3.2; cutover gate at §4 step 6; success criterion in §6.5.
 
 3. **✓ DECIDED — walker-stamped from directory, not on-disk.** `subtype` is derived from the directory name by the walker at load time. Per-content files MUST NOT contain a `subtype` field. The migration backfill helper strips `subtype` before writing. If a legacy per-content file does carry `subtype`, the walker logs a warning and overwrites with the directory-derived value (load still succeeds — informational, not blocking). See §2c walker pseudocode, §3.1a schema mappings (lullaby table + cross-type derivation rules), §6 risk row, and §6.5 success criterion.
 
