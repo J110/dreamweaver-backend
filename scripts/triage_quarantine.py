@@ -51,6 +51,48 @@ DEFAULT_HOST = "https://dreamvalley.app"
 QUARANTINE_DIR_NAME = "_quarantine"
 
 
+# ── URL resolution (both schemas) ──────────────────────────────────────────
+#
+# Two schema patterns coexist in prod:
+#
+#   New schema: body["audio_url"] = "/audio/silly-songs/foo.mp3"
+#               body["cover"]     = "/covers/silly-songs/foo_cover.webp"
+#
+#   Legacy schema: body["audio_file"] = "foo.mp3"
+#                  body["cover_file"] = "foo.webp"
+#                  (URL is derived at serve-time from bucket name + filename)
+#
+# Resolvers below fall back from new → legacy. Bucket name underscores convert
+# to hyphens (silly_songs → silly-songs) per CLAUDE.md path routing.
+
+
+def _bucket_to_url_prefix(bucket: str) -> str:
+    """Convert bucket directory name to URL path segment.
+
+    silly_songs → silly-songs, poems_hi → poems-hi, etc.
+    Mirrors nginx alias conventions in CLAUDE.md "Production Path Routing".
+    """
+    return bucket.replace("_", "-")
+
+
+def _resolve_audio_url(body: dict, bucket: str) -> Optional[str]:
+    """Return URL-prefixed audio path, or None if neither schema applies."""
+    if body.get("audio_url"):
+        return body["audio_url"]
+    if body.get("audio_file"):
+        return f"/audio/{_bucket_to_url_prefix(bucket)}/{body['audio_file']}"
+    return None
+
+
+def _resolve_cover_url(body: dict, bucket: str) -> Optional[str]:
+    """Return URL-prefixed cover path, or None if neither schema applies."""
+    if body.get("cover"):
+        return body["cover"]
+    if body.get("cover_file"):
+        return f"/covers/{_bucket_to_url_prefix(bucket)}/{body['cover_file']}"
+    return None
+
+
 # ── URL verification ───────────────────────────────────────────────────────
 
 
@@ -144,8 +186,8 @@ def list_orphans(data_dir: Path) -> list[dict]:
                 "type": default_type,
                 "lang": default_lang,
                 "title": body.get("title", ""),
-                "audio_url": body.get("audio_url", "") or body.get("audio_file", ""),
-                "cover": body.get("cover", ""),
+                "audio_url": _resolve_audio_url(body, subdir) or "",
+                "cover": _resolve_cover_url(body, subdir) or "",
             })
     return out
 
@@ -217,13 +259,13 @@ def publish_one(
     except Exception as e:
         return (False, f"malformed JSON in {src_path}: {e}")
 
-    audio_path = body.get("audio_url") or body.get("audio_file") or ""
-    cover_path = body.get("cover") or ""
+    audio_path = _resolve_audio_url(body, bucket)
+    cover_path = _resolve_cover_url(body, bucket)
 
     if not audio_path:
-        return (False, "no audio_url field in JSON; cannot verify")
+        return (False, "no audio_url or audio_file field in JSON; cannot verify")
     if not cover_path:
-        return (False, "no cover field in JSON; cannot verify")
+        return (False, "no cover or cover_file field in JSON; cannot verify")
 
     audio_url = f"{host}{audio_path}" if audio_path.startswith("/") else audio_path
     cover_url = f"{host}{cover_path}" if cover_path.startswith("/") else cover_path
@@ -277,7 +319,7 @@ def discard_one(
     try:
         body = json.loads(src_path.read_text(encoding="utf-8"))
         title = body.get("title", title)
-        audio_path = body.get("audio_url") or body.get("audio_file") or ""
+        audio_path = _resolve_audio_url(body, bucket) or ""
     except Exception:
         pass
 
