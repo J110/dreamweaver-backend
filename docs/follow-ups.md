@@ -165,22 +165,11 @@ deploy_guard flags `❌ REMOVED story: gen-b70846bfc0eb — "Tali and Moss and t
 - Regenerate from scratch (real API costs)
 - Strike from `data/deploy_golden.json` (one-line edit, baseline acknowledges it's gone)
 
-### Historical orphan backfill
+### ~~Historical orphan backfill~~ (RESOLVED 2026-04-29 cutover)
 
-After tonight's `_auto_mirror` fix, future orphans are prevented at source. But there are still historical orphans on disk:
+~~After tonight's `_auto_mirror` fix, future orphans are prevented at source. But there are still historical orphans on disk: ...~~
 
-```
-data/silly_songs/cat_talk_2_5.json     (rescued tonight)
-data/silly_songs/last_day_9_12.json
-data/silly_songs/moon_follow_2_5.json
-data/silly_songs/new_game_9_12.json
-data/silly_songs/new_pet_6_8.json
-data/silly_songs/five-more-minutes.json
-data/poems/question_9_12_92a6.json     (rescued tonight)
-data/funny_shorts/hi-fs-* (multiple)
-```
-
-Each needs human triage: was it intended for production, or was it a dev/test artifact? After triage, real ones get rescued via `_auto_mirror`, dev ones get deleted. Separate session.
+**Resolved 2026-04-29:** during the per-content-file cutover, `scripts/backfill_per_content.py` quarantined 66 historical orphans (38 silly_songs + 28 poems). All 66 were verified via HEAD checks (audio + cover serving 200) and published via `scripts/triage_quarantine.py --publish-all --confirm`. Items now appear in `seed_output/content.json` and the canonical buckets. The HI funny_shorts mentioned in the original list (hi-fs-*) were also resolved separately during step 5b. Future orphans are now structurally impossible (per-content files are the source of truth, content.json is derived).
 
 ---
 
@@ -207,6 +196,98 @@ The 2026-04-29 Render/Vercel teardown updated the spec-pinned files (`CLAUDE.md`
 ### PR #1 — yesterday's reconciliation
 
 The `reconcile/prod-state-2026-04-28` branch on origin is from yesterday's incomplete reconciliation. Tonight's architecture work supersedes it. Likely stale; verify and close.
+
+---
+
+## Cutover follow-ups (2026-04-29 — content.json refactor)
+
+Items surfaced during the per-content-file cutover that aren't covered above. Cutover itself succeeded (PR #2 merged, walker active, all 306 items reachable, HI Before Bed serving correctly). These are post-cutover loose ends.
+
+### YouTube broadcast restart (deploy_guard's only remaining blocker)
+
+`deploy_guard verify` fails on: `❌ YouTube broadcast is OFFLINE — ffmpeg may still be pushing into a dead stream key`. Pre-existing radio/streaming issue, not refactor-induced. Resolution per the radio runbook (restart radio process). Until restarted, deploy_guard exits non-zero — but the cutover-relevant checks all pass.
+
+### Today's HI cron failures (pre-existing, surfaced during step 1 audit)
+
+The 04:00 UTC HI cron on 2026-04-29 produced 3/6 successes:
+
+| Type | Result | Cause |
+|---|---|---|
+| short_story | ✓ hi-lok_katha-6-8-bulb | OK |
+| long_story | ✓ hi-long-9-12-meer | OK |
+| lullaby | ✓ hi-heartbeat-9-12-chan | OK |
+| poem | ✗ PermissionError | overwrite of `/opt/dreamweaver-web/public/audio/poems-hi/...` blocked |
+| funny_short | ✗ PermissionError | overwrite of `/opt/dreamweaver-web/public/audio/funny-shorts-hi/hi-fs-2956.mp3` blocked at `sync_to_prod_paths` (file was already there with different ownership) |
+| silly_song | ✗ validator: lyrics body too long | already tracked above (#silly_song lyrics body length) |
+
+The poem and funny_short PermissionErrors are the `sudo cp without chown` anti-pattern (`feedback_chown_after_sudo_cp.md`). Need to audit `/opt/dreamweaver-web/public/audio/funny-shorts-hi/` and `/opt/dreamweaver-web/public/audio/poems-hi/` for root-owned files and chown back to `anmolmohan:anmolmohan`. Note: the cutover Phase 1 work (Option A architectural fix) chowned the files we copied, but doesn't help if older root-owned files are still there from before.
+
+### EN cron git merge conflicts in per-content files
+
+EN cron log shows: `data/funny_shorts/en-fs-ec06.json: needs merge` and `data/funny_shorts/hi-fs-54fa.json: needs merge`. The cron's `git pull` step (still present pre-step-15-cleanup) hits conflicts when local working tree has uncommitted state. After post-cutover step 16 deletes the generator-side `_auto_mirror` / `_upsert_content` calls and the publish-step is fully removed, this should disappear. But pre-step-16 it's noisy. Worth confirming the cron behavior post-cleanup.
+
+### `/api/v1/lullabies` endpoint bypasses walker
+
+`app/api/v1/lullabies.py` reads `seed_output/lullabies/lullabies.json` directly via `_load_lullabies()` — completely bypassing LocalStore + the new walker. Result: 7 HI lullabies served by API vs 9 in `data/lullabies_hi/`. Two-of-disk gap is pre-existing drift between the two storage paths. Migrating `/api/v1/lullabies` to read from LocalStore (mirror of how silly_songs / poems / funny_shorts now work) would close the architectural gap and let walker be the single source of truth across all content types.
+
+### HI funny_short content.json schema gap
+
+The HI funny_short JSON (in `data/funny_shorts_hi/`) has 28 fields including `subtype`, `comedic_device`, `setting`, `voice_pair`, `closing_pattern`, `opening_tag`, `character_age_dynamic`, `tone`, `emotional_dynamic` — generator-local metadata used by anti-template rotation. **None of these are in `seed_output/content.json`** (only 12 fields propagate via the mirror). If anti-template rotation depends on reading prior items' metadata via the API or content.json, the lean view would degrade rotation quality. Worth verifying the rotation logic reads from per-content files (which preserves all 28 fields) vs content.json (the lean 12).
+
+### Walker boots: 7 items lacking audio
+
+After walker boot, `seed_output/content.json` has 306 items; **7 lack audio_url AND audio_file**:
+```
+gen-d785f05f65d5    no audio
+gen-f52ccb91767c    no audio
+gen-ffc731157f8c    no audio
+gen-56e0eb178411    no audio
+gen-f979b2293b94    no audio
+heartbeat-0-1-61e7  no audio   (atypical 0-1 age range lullaby)
+permission-0-1-91d2 no audio   (atypical 0-1 age range lullaby)
+```
+
+The 5 `gen-*` UUID-format IDs look like draft/preview generations that leaked into the per-content dirs. The 2 `0-1` lullabies are an atypical age range. Pre-existing content quality drift, not refactor-induced (these were already in the prod content.json pre-cutover when content.json had 240 items). Triage decisions:
+- Regenerate audio for the 5 `gen-*` items if they're real
+- Delete the `gen-*` items from `data/<bucket>/` if they're abandoned drafts
+- Determine if 0-1 lullabies are intentional (different cohort) or test artifacts
+
+### Stale recovery watcher process on prod
+
+PID 351105 (`bash -c 'until ! pgrep -f "pipeline_run_hi.py.*types" >/dev/null; do sleep 5; done; ...'`) is orphaned (parent PID 1, ELAPSED 1d+) from yesterday's interactive recovery session. It's stuck in a self-match loop (its own bash command line contains `pipeline_run_hi.py.*types`, so `pgrep -f` always finds at least itself → loop never exits). Harmless but should be killed:
+
+```bash
+kill 351105
+```
+
+### Cleanup one-shot scripts on prod
+
+The cutover left several ad-hoc scripts on prod that aren't tracked in git:
+- `/opt/dreamweaver-backend/scripts/merge_hi_bucket_duplicates.py` — step 5a EN→HI merge
+- `/tmp/cutover_hi_diagnose.py`, `/tmp/cutover_hi_assets_diag.py`, `/tmp/cutover_step11_diff.py`, `/tmp/cutover_fix_audio_file.py`, `/tmp/cutover_normalize_hi_schema.py` — diagnostic/fix scripts run during the cutover
+
+These can be deleted post-cutover:
+```bash
+rm /opt/dreamweaver-backend/scripts/merge_hi_bucket_duplicates.py
+rm /tmp/cutover_*.py
+```
+
+### Spec §4 step 16+ — generator de-upsert (post-24h-window)
+
+Per spec §4 step 16: after 24h clean observation, delete the `_auto_mirror` / `_upsert_content` calls from generators that now write per-content files directly. Audit list in spec; primary files:
+- `scripts/generate_funny_shorts.py` — `_auto_mirror` call
+- `scripts/generate_silly_songs_battlecry.py` — `_auto_mirror` call
+- `scripts/generate_experimental_poems.py` — `_auto_mirror` call
+- `scripts/_hindi_generators.py` — `_upsert_content` calls (5 functions)
+- `scripts/generate_long_story_episode.py:2761`, `scripts/generate_short_story_experiment.py:596+`, `scripts/generate_experimental_v2.py:900+`
+
+### Spec §4 step 17 — clean crontab
+
+Remove `SKIP_PUBLISH_STEP=1` from both cron lines (EN at `30 1 * * *`, HI at `0 4 * * *`). The env var is now unreferenced in code; the crontab should not reference variables that don't exist.
+
+### Spec §4 step 18 — declare success
+
+After 24h clean observation, delete rollback branches and `*.bak.*` snapshots; mark this content.json refactor entry as RESOLVED.
 
 ---
 
