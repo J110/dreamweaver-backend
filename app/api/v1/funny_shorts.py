@@ -14,8 +14,14 @@ from app.utils.logger import get_logger
 logger = get_logger(__name__)
 router = APIRouter()
 
-# Data directory for funny shorts JSON files
-DATA_DIR = Path(__file__).resolve().parents[3] / "data" / "funny_shorts"
+# Per-(type, lang) bucket layout, matching PER_CONTENT_DIRS in
+# app.services.local_store. EN items live in funny_shorts/, HI items
+# in funny_shorts_hi/. List/load helpers walk both buckets;
+# _save_short preserves an item's existing bucket or routes new
+# items by lang.
+_BASE = Path(__file__).resolve().parents[3] / "data"
+DATA_DIRS = [_BASE / "funny_shorts", _BASE / "funny_shorts_hi"]
+DATA_DIR = DATA_DIRS[0]  # backwards-compat alias if any external code references it
 
 
 class FunnyShortsListResponse(BaseModel):
@@ -31,44 +37,60 @@ class FunnyShortResponse(BaseModel):
 
 
 def _load_all_shorts() -> list[dict]:
-    """Load all funny short JSON files from the data directory."""
+    """Load all funny short JSON files from every bucket."""
     shorts = []
-    if not DATA_DIR.exists():
-        return shorts
-    for f in sorted(DATA_DIR.glob("*.json")):
-        try:
-            with open(f) as fh:
-                short = json.load(fh)
-                short.setdefault("id", f.stem)
-                shorts.append(short)
-        except Exception as e:
-            logger.error(f"Failed to load funny short {f}: {e}")
+    for d in DATA_DIRS:
+        if not d.exists():
+            continue
+        for f in sorted(d.glob("*.json")):
+            try:
+                with open(f) as fh:
+                    short = json.load(fh)
+                    short.setdefault("id", f.stem)
+                    shorts.append(short)
+            except Exception as e:
+                logger.error(f"Failed to load funny short {f}: {e}")
     return shorts
 
 
 def _load_short(short_id: str) -> Optional[dict]:
-    """Load a single funny short by ID."""
-    path = DATA_DIR / f"{short_id}.json"
-    if not path.exists():
-        return None
-    try:
-        with open(path) as f:
-            short = json.load(f)
-            short.setdefault("id", short_id)
-            return short
-    except Exception as e:
-        logger.error(f"Failed to load funny short {short_id}: {e}")
-        return None
+    """Load a single funny short by ID, searching every bucket."""
+    for d in DATA_DIRS:
+        path = d / f"{short_id}.json"
+        if not path.exists():
+            continue
+        try:
+            with open(path) as f:
+                short = json.load(f)
+                short.setdefault("id", short_id)
+                return short
+        except Exception as e:
+            logger.error(f"Failed to load funny short {short_id} from {path}: {e}")
+    return None
 
 
 def _save_short(short: dict) -> None:
-    """Persist a funny short back to disk."""
+    """Persist a funny short back to disk.
+
+    If the short already exists in one of the buckets, write to that
+    bucket. Otherwise route by lang: HI items go to funny_shorts_hi/,
+    everything else to funny_shorts/.
+    """
     short_id = short.get("id")
     if not short_id:
         return
-    path = DATA_DIR / f"{short_id}.json"
-    DATA_DIR.mkdir(parents=True, exist_ok=True)
-    with open(path, "w") as f:
+    # Preserve existing bucket if the short is already on disk
+    for d in DATA_DIRS:
+        existing = d / f"{short_id}.json"
+        if existing.exists():
+            d.mkdir(parents=True, exist_ok=True)
+            with open(existing, "w") as f:
+                json.dump(short, f, indent=2)
+            return
+    # New short — route by lang
+    target_dir = DATA_DIRS[1] if short.get("lang") == "hi" else DATA_DIRS[0]
+    target_dir.mkdir(parents=True, exist_ok=True)
+    with open(target_dir / f"{short_id}.json", "w") as f:
         json.dump(short, f, indent=2)
 
 
