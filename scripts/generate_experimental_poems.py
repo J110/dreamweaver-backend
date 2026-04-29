@@ -848,7 +848,63 @@ def generate_poem(age_group: str, poem_type: str, mood: str = "calm",
     data_path.write_text(json.dumps(meta, indent=2, ensure_ascii=False))
     print(f"  ✓ Published: {data_path.name}")
 
+    _auto_mirror(poem_id)
     return meta
+
+
+def _auto_mirror(poem_id: str) -> None:
+    """Append entry into seed_output/content.json (flat list). Replaces if id exists.
+
+    Mirrors the pattern used by generate_funny_shorts.py — without this call,
+    musical poems land in data/poems/<id>.json but never appear in the live
+    API or in deploy_guard's reachability check.
+    """
+    poem_json = DATA_DIR / f"{poem_id}.json"
+    if not poem_json.exists():
+        print(f"  (no {poem_json} — skipping mirror)")
+        return
+    meta = json.loads(poem_json.read_text())
+    seed_content = BASE_DIR / "seed_output" / "content.json"
+    if not seed_content.exists():
+        print(f"  (no {seed_content} — skipping mirror)")
+        return
+    content = json.loads(seed_content.read_text())
+    if isinstance(content, dict):
+        items = content.setdefault("items", [])
+    else:
+        items = content
+    items = [i for i in items if i.get("id") != poem_id]
+    items.append({
+        "id": meta["id"],
+        "type": "poem",
+        "story_type": "poem",
+        "storyType": "poem",
+        "content_type": "poem",
+        "poem_type": meta.get("poem_type"),
+        "lang": meta.get("lang", "en"),
+        "language": meta.get("language", "en"),
+        "title": meta.get("title", ""),
+        "age_group": meta.get("age_group", ""),
+        "mood": meta.get("mood"),
+        "instruments": meta.get("instruments"),
+        "tempo": meta.get("tempo"),
+        "poem_text": meta.get("poem_text"),
+        "text": meta.get("poem_text"),
+        "duration_seconds": meta.get("duration_seconds", 0),
+        "audio_file": meta.get("audio_file"),
+        "audio_url": f"/audio/poems/{poem_id}.mp3",
+        "cover": f"/covers/poems/{poem_id}_cover.webp",
+        "cover_file": f"/covers/poems/{poem_id}_cover.webp",
+        "audio_engine": meta.get("audio_engine"),
+        "created_at": meta.get("created_at", str(date.today())),
+    })
+    if isinstance(content, dict):
+        content["items"] = items
+        out = content
+    else:
+        out = items
+    seed_content.write_text(json.dumps(out, indent=2, ensure_ascii=False))
+    print(f"  Mirrored into {seed_content}")
 
 
 TEST_MOOD_POEMS = [

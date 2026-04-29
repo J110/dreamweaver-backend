@@ -1652,7 +1652,62 @@ def generate_silly_song(
         print(f"  ✗ Cover generation failed")
 
     print(f"\n  ✓ Complete: {song_id}")
+    _auto_mirror(song_id)
     return song
+
+
+def _auto_mirror(song_id: str) -> None:
+    """Append entry into seed_output/content.json (flat list). Replaces if id exists.
+
+    Mirrors the pattern used by generate_funny_shorts.py — without this call,
+    silly_songs land in data/silly_songs/<id>.json but never appear in the
+    live API or in deploy_guard's reachability check.
+    """
+    song_json = DATA_DIR / f"{song_id}.json"
+    if not song_json.exists():
+        print(f"  (no {song_json} — skipping mirror)")
+        return
+    song = json.loads(song_json.read_text())
+    seed_content = BASE_DIR / "seed_output" / "content.json"
+    if not seed_content.exists():
+        print(f"  (no {seed_content} — skipping mirror)")
+        return
+    content = json.loads(seed_content.read_text())
+    if isinstance(content, dict):
+        items = content.setdefault("items", [])
+    else:
+        items = content
+    items = [i for i in items if i.get("id") != song_id]
+    items.append({
+        "id": song["id"],
+        "type": "song",
+        "subtype": "silly_song",
+        "story_type": "silly_song",
+        "storyType": "silly_song",
+        "lang": song.get("lang", "en"),
+        "language": song.get("language", "en"),
+        "title": song.get("title", ""),
+        "age_group": song.get("age_group", ""),
+        "category": song.get("category"),
+        "mood": song.get("mood"),
+        "anthem_id": song.get("anthem_id"),
+        "anthem": song.get("anthem"),
+        "lyrics": song.get("lyrics"),
+        "instruments": song.get("instruments"),
+        "tempo": song.get("tempo"),
+        "duration_seconds": song.get("duration_seconds", 0),
+        "audio_file": song.get("audio_file"),
+        "audio_url": f"/audio/silly-songs/{song_id}.mp3",
+        "cover": f"/covers/silly-songs/{song_id}.webp",
+        "created_at": song.get("created_at", str(date.today())),
+    })
+    if isinstance(content, dict):
+        content["items"] = items
+        out = content
+    else:
+        out = items
+    seed_content.write_text(json.dumps(out, indent=2, ensure_ascii=False))
+    print(f"  Mirrored into {seed_content}")
 
 
 def main():
