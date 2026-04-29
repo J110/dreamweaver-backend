@@ -773,15 +773,15 @@ This is acceptable because the per-content files persist on the VM filesystem ac
 
 ### Rollback
 
-PR [#2](https://github.com/J110/dreamweaver-backend/pull/2) is a **single squash-merge** so revert is one git op. The merge SHA is unknown until merge completes — capture it as `<merge_sha>` at the top of the cutover sequence (step 0, below) and substitute throughout.
+PR [#2](https://github.com/J110/dreamweaver-backend/pull/2) was a **single squash-merge** so revert is one git op. Merge commit on `main`: `7a109a389b485746c351c255f0a50cfef3ccec75` (parent: `62caab2`).
 
 ```bash
 # On dreamvalley-prod, in /opt/dreamweaver-backend
-git checkout <prior-commit>            # or: git revert <merge_sha> && git push
+git checkout 62caab2            # or: git revert 7a109a389b485746c351c255f0a50cfef3ccec75 && git push
 sudo docker-compose down && sudo docker-compose up -d --build
 ```
 
-(Step 0 of the cutover sequence is "fill in the actual merge SHA from PR #2 before starting." The agent / operator running the cutover replaces every `<merge_sha>` placeholder once the merge lands.)
+(Merge SHAs pinned 2026-04-29 by the docs commit immediately following PR #2. No further substitution needed at cutover time.)
 
 After revert: per-content files remain on disk (no harm done — old code ignores `data/<type>/*.json`). The backed-up `data/content.json` snapshot is restored from `data/content.json.bak.*` and the old code reads it.
 
