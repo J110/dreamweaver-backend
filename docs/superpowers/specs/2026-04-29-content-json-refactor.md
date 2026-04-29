@@ -662,10 +662,22 @@ This expands the high-level steps above into a numbered runbook. Execute top-to-
 
 1. **Window.** Cutover **after the 04:00 HI cron completes** successfully (~04:30 UTC) — see §4 "Cutover window" above for the rationale. Confirm the HI cron's last-run log line before starting.
 2. **Pre-cutover snapshot.** `python3 scripts/deploy_guard.py snapshot` — captures the baseline for §4-style verify after cutover. Mandatory per CLAUDE.md.
-3. **Backfill.** Run `python3 scripts/backfill_per_content.py` (no `--dry-run`). Idempotent per §3.1b — safe to re-run if it errors partway. Confirm the script exits zero and prints `created=<N>, skipped_exists=<M>, errors=0` plus `gate1_pass=True, gate2_pass=True`.
-4. **Migrate HI items from EN buckets to `_hi` buckets.**
+3. **Working tree update — pull merged refactor onto prod (no container action).** The backfill script (step 4) and triage CLI (step 7) only exist on the post-merge code, so the working tree must advance before any new-code operations. The container is still running the old code in memory; pulling new code to disk does not affect the running container until step 9 rebuilds it.
+   ```bash
+   cd /opt/dreamweaver-backend
+   git status                          # confirm clean before pull (modulo daily pipeline state in data/, public/, seed_output/)
+   git fetch origin main
+   git log HEAD..origin/main --oneline | head -20  # show commits being pulled
+   git checkout main 2>&1 || git checkout -b main origin/main
+   git pull --ff-only origin main      # NO sudo — keeps anmolmohan ownership for the cron user
+   git log -1 --oneline                # should show the pinned merge SHA's docs commit
+   ls -la scripts/backfill_per_content.py scripts/triage_quarantine.py  # confirm new scripts on disk
+   ```
+   Hard error if pull fails (merge conflict, ff blocked, scripts missing). NEVER use `sudo git pull` — would change file ownership to root and break the pipeline cron user (per MEMORY.md and `feedback_chown_after_sudo_cp.md`).
+4. **Backfill.** Run `python3 scripts/backfill_per_content.py` (no `--dry-run`). Idempotent per §3.1b — safe to re-run if it errors partway. Confirm the script exits zero and prints `created=<N>, skipped_exists=<M>, errors=0` plus `gate1_pass=True, gate2_pass=True`.
+5. **Migrate HI items from EN buckets to `_hi` buckets.**
 
-   Pre-existing HI silly_songs and poems exist in EN buckets due to a historical bug in `scripts/_hindi_generators.py` (fixed in this PR's generators commit). These files MUST move before the API container restarts on the new code (step 8) — otherwise the walker stamps `lang=en` on Hindi content (directory placement is canonical per OQ3, §2c).
+   Pre-existing HI silly_songs and poems exist in EN buckets due to a historical bug in `scripts/_hindi_generators.py` (fixed in this PR's generators commit). These files MUST move before the API container restarts on the new code (step 9) — otherwise the walker stamps `lang=en` on Hindi content (directory placement is canonical per OQ3, §2c).
 
    **Items to migrate** (verified via local audit on 2026-04-29):
    ```
@@ -700,25 +712,24 @@ This expands the high-level steps above into a numbered runbook. Execute top-to-
      done
    done
    ```
-   Hard error if any `FAIL` line is printed. Do NOT proceed to step 5 (count-match gate) until clean.
+   Hard error if any `FAIL` line is printed. Do NOT proceed to step 6 (count-match gate) until clean.
 
    **Pre-cutover audit caveat:** the list above was captured against local data on 2026-04-29. **Re-audit on prod immediately before cutover.** Production may have additional items in this state from cron runs that fired between the audit date and cutover. Regenerate the migration script from a fresh prod audit; do not use the verbatim list from this spec.
 
-5. **Pre-flight gate: count match.** Per §3.1d gate 1: per-content file count across `PER_CONTENT_DIRS` MUST equal `len(content.json items)` exactly. If not — **abort, do not proceed.** Investigate before retrying. The script's exit code already encodes this; double-check manually:
+6. **Pre-flight gate: count match.** Per §3.1d gate 1: per-content file count across `PER_CONTENT_DIRS` MUST equal `len(content.json items)` exactly. If not — **abort, do not proceed.** Investigate before retrying. The script's exit code already encodes this; double-check manually:
    ```bash
    python3 -c "import json; print(len(json.load(open('seed_output/content.json'))))"
    find data/{stories,stories_hi,long_stories,long_stories_hi,lullabies,lullabies_hi,silly_songs,silly_songs_hi,funny_shorts,funny_shorts_hi,poems,poems_hi} -maxdepth 1 -name '*.json' 2>/dev/null | wc -l
    ```
    These two numbers must be equal. (12 directories — full per-(type, lang) split.)
-6. **Triage quarantined orphans.** Review `data/_quarantine/` via `python3 scripts/triage_quarantine.py --list`. For each item, decide `--publish` or `--discard` (per §3.2). After triage, `data/_quarantine/` MUST be empty. The cutover is **blocked** until this is true — verify with `find data/_quarantine -name '*.json' 2>/dev/null | wc -l` returning `0`.
-7. **Stop API container.** `sudo docker-compose down` from `/opt/dreamweaver-backend/`. Brief downtime begins here; minimize subsequent steps.
-8. **Switch code.** `git fetch && git checkout feature/content-json-derived` (or whichever feature branch carries the merged refactor). NO `sudo git pull` — would change file ownership to root and break the pipeline cron user (per MEMORY.md).
-9. **Start container.** `sudo docker-compose up -d --build`. Container rebuilds with new code; LocalStore boots via the new `_walk_per_content` path.
+7. **Triage quarantined orphans.** Review `data/_quarantine/` via `python3 scripts/triage_quarantine.py --list`. For each item, decide `--publish` or `--discard` (per §3.2). After triage, `data/_quarantine/` MUST be empty. The cutover is **blocked** until this is true — verify with `find data/_quarantine -name '*.json' 2>/dev/null | wc -l` returning `0`.
+8. **Stop API container.** `sudo docker-compose down` from `/opt/dreamweaver-backend/`. Brief downtime begins here; minimize subsequent steps.
+9. **Start container against new code.** `sudo docker-compose up -d --build`. Container rebuilds against the working tree pulled in step 3; LocalStore boots via the new `_walk_per_content` path. (No git operation here — the working tree is already advanced.)
 10. **First-boot validation.** Tail logs immediately:
     ```bash
     sudo docker logs -f dreamweaver-backend 2>&1 | head -200
     ```
-    Look for: a log line like `LocalStore: loaded N items from per-content files` (add this log if absent) and confirm `N` matches the expected count from step 5 (~240 ± a few). Any `corrupt per-content files` warning means a file failed to parse — investigate but note that the boot succeeded with reduced count (per §6 "Corrupt per-content file" mitigation).
+    Look for: a log line like `LocalStore: loaded N items from per-content files` (add this log if absent) and confirm `N` matches the expected count from step 6 (~240 ± a few). Any `corrupt per-content files` warning means a file failed to parse — investigate but note that the boot succeeded with reduced count (per §6 "Corrupt per-content file" mitigation).
 11. **Snapshot diff.** Confirm the regenerated `data/content.json` matches the pre-cutover backup, modulo the round-trip transformations enumerated in §3.1a:
     ```bash
     diff <(jq -S . data/content.json.bak.<timestamp>) <(jq -S . data/content.json)
