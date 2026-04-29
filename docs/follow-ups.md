@@ -20,6 +20,17 @@ These remove root causes that produced multiple incidents tonight. Worth priorit
 
 **Estimate:** Half-day session. Touches LocalStore boot, `_auto_mirror` callsites (which can be deleted), and deploy_guard's content-source assumptions.
 
+### Walker minting `lang` from `default_language` — document explicit minting case
+
+When a source `content.json` entry has neither a `lang` nor a `language` field, the walker mints `lang` from the directory's `default_language` (e.g., `data/stories/` → `lang=en`). This is **correct behavior** — directory placement is canonical (OQ3, §2c) — but it's an explicit *minting* case rather than a *normalization* case (which only fires when the source field already exists).
+
+Worth documenting in the walker pseudocode comments inside `app/services/local_store.py` so a future reader doesn't read the tightened walker (Option C, "preserve source field-set") and assume `lang` would be missing for items whose source had no `lang`. The two cases coexist:
+
+- **Normalize**: source has `lang` (or `language`) → walker overrides with directory-derived value.
+- **Mint**: source has neither → walker adds the directory-derived value.
+
+Surfaced during PR #2 HI bucket migration audit (2026-04-29). Five-minute doc-comment edit; not a code change.
+
 ### `seedData.js` migration — backend serves it via API
 
 **The problem:** `dreamweaver-web/src/utils/seedData.js` is the frontend's seed manifest, regenerated daily by the pipeline's `sync_seed_data.py`. Tonight we removed `public/covers/` from git via `SKIP_PUBLISH_STEP=1`, but `seedData.js` is still in `src/utils/` so it's the last reason the pipeline would ever want to commit on prod. Nothing to do for tonight (cron skips publish entirely now), but the data file is still authored alongside JS code, which is the wrong shape.

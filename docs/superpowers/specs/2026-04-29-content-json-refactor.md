@@ -51,7 +51,7 @@ The orphan bugs all share the same shape: generator writes `data/<type>/<id>.jso
 
 ### 2a. Scripts that currently write `content.json` (delete the upsert) — POST-CUTOVER
 
-**Timing:** these deletions run AFTER cutover (§4 step 15), not pre-cutover. Rationale: rollback safety. If cutover is aborted at §4 step 14, the rollback path expects generators to still write `content.json` directly. De-upserting before cutover would orphan any new content if rollback fires. Pre-cutover commits leave generators alone; post-cutover cleanup deletes the now-redundant upserts.
+**Timing:** these deletions run AFTER cutover (§4 step 16), not pre-cutover. Rationale: rollback safety. If cutover is aborted at §4 step 15, the rollback path expects generators to still write `content.json` directly. De-upserting before cutover would orphan any new content if rollback fires. Pre-cutover commits leave generators alone; post-cutover cleanup deletes the now-redundant upserts.
 
 | Script | Function | Line | Action |
 |---|---|---|---|
@@ -638,11 +638,11 @@ Cutover is **not "complete"** until `data/_quarantine/` is empty (every quaranti
 - Removal of `step_publish` / `_git_commit_and_push` (§2f) and the dead `/api/v1/generate` endpoint (§2h)
 - New `scripts/backfill_per_content.py` (§2d, §3.1)
 - New `scripts/triage_quarantine.py` (§3.2)
-- Per-content file writes ADDED to all generators that previously wrote only to content.json — additive, coexists with the existing content.json upsert until §4 step 15
+- Per-content file writes ADDED to all generators that previously wrote only to content.json — additive, coexists with the existing content.json upsert until §4 step 16
 
 NOT in this branch (deferred to post-cutover):
-- Deletion of `_auto_mirror` / `_upsert_content` calls from generators — §4 step 15
-- `SKIP_PUBLISH_STEP=1` removal from production crontab — §4 step 16
+- Deletion of `_auto_mirror` / `_upsert_content` calls from generators — §4 step 16
+- `SKIP_PUBLISH_STEP=1` removal from production crontab — §4 step 17
 
 ### Pre-cutover checklist
 
@@ -663,22 +663,63 @@ This expands the high-level steps above into a numbered runbook. Execute top-to-
 1. **Window.** Cutover **after the 04:00 HI cron completes** successfully (~04:30 UTC) — see §4 "Cutover window" above for the rationale. Confirm the HI cron's last-run log line before starting.
 2. **Pre-cutover snapshot.** `python3 scripts/deploy_guard.py snapshot` — captures the baseline for §4-style verify after cutover. Mandatory per CLAUDE.md.
 3. **Backfill.** Run `python3 scripts/backfill_per_content.py` (no `--dry-run`). Idempotent per §3.1b — safe to re-run if it errors partway. Confirm the script exits zero and prints `created=<N>, skipped_exists=<M>, errors=0` plus `gate1_pass=True, gate2_pass=True`.
-4. **Pre-flight gate: count match.** Per §3.1d gate 1: per-content file count across `PER_CONTENT_DIRS` MUST equal `len(content.json items)` exactly. If not — **abort, do not proceed.** Investigate before retrying. The script's exit code already encodes this; double-check manually:
+4. **Migrate HI items from EN buckets to `_hi` buckets.**
+
+   Pre-existing HI silly_songs and poems exist in EN buckets due to a historical bug in `scripts/_hindi_generators.py` (fixed in this PR's generators commit). These files MUST move before the API container restarts on the new code (step 8) — otherwise the walker stamps `lang=en` on Hindi content (directory placement is canonical per OQ3, §2c).
+
+   **Items to migrate** (verified via local audit on 2026-04-29):
+   ```
+   data/silly_songs/hi-chips_chahiye-2-5-a8f2.json    → data/silly_songs_hi/
+   data/silly_songs/hi-ulta_ulta_hoon-6-8-e897.json   → data/silly_songs_hi/
+   data/poems/hi-nonsense-9-12-dfcd.json              → data/poems_hi/
+   data/poems/hi-question-6-8-ad89.json               → data/poems_hi/
+   data/poems/hi-sound-2-5-b3c7.json                  → data/poems_hi/
+   ```
+
+   **Procedure** (mechanical move; backfill at step 3 already created `*_hi/` dirs if any HI content was in `content.json`, but `mkdir -p` covers the case where it didn't):
+   ```bash
+   for src in \
+     data/silly_songs/hi-chips_chahiye-2-5-a8f2.json \
+     data/silly_songs/hi-ulta_ulta_hoon-6-8-e897.json \
+     data/poems/hi-nonsense-9-12-dfcd.json \
+     data/poems/hi-question-6-8-ad89.json \
+     data/poems/hi-sound-2-5-b3c7.json
+   do
+     target=$(echo "$src" | sed 's|silly_songs/|silly_songs_hi/|; s|poems/|poems_hi/|')
+     mkdir -p "$(dirname "$target")"
+     mv "$src" "$target"
+   done
+   ```
+
+   **Verification** — re-audit after migration; zero HI items must remain in EN buckets:
+   ```bash
+   for bucket in silly_songs poems; do
+     for f in data/$bucket/*.json; do
+       lang=$(python3 -c "import json; print(json.load(open('$f')).get('lang',''))")
+       [ "$lang" = "hi" ] && echo "FAIL: $f still in $bucket"
+     done
+   done
+   ```
+   Hard error if any `FAIL` line is printed. Do NOT proceed to step 5 (count-match gate) until clean.
+
+   **Pre-cutover audit caveat:** the list above was captured against local data on 2026-04-29. **Re-audit on prod immediately before cutover.** Production may have additional items in this state from cron runs that fired between the audit date and cutover. Regenerate the migration script from a fresh prod audit; do not use the verbatim list from this spec.
+
+5. **Pre-flight gate: count match.** Per §3.1d gate 1: per-content file count across `PER_CONTENT_DIRS` MUST equal `len(content.json items)` exactly. If not — **abort, do not proceed.** Investigate before retrying. The script's exit code already encodes this; double-check manually:
    ```bash
    python3 -c "import json; print(len(json.load(open('seed_output/content.json'))))"
    find data/{stories,stories_hi,long_stories,long_stories_hi,lullabies,lullabies_hi,silly_songs,silly_songs_hi,funny_shorts,funny_shorts_hi,poems,poems_hi} -maxdepth 1 -name '*.json' 2>/dev/null | wc -l
    ```
    These two numbers must be equal. (12 directories — full per-(type, lang) split.)
-5. **Triage quarantined orphans.** Review `data/_quarantine/` via `python3 scripts/triage_quarantine.py --list`. For each item, decide `--publish` or `--discard` (per §3.2). After triage, `data/_quarantine/` MUST be empty. The cutover is **blocked** until this is true — verify with `find data/_quarantine -name '*.json' 2>/dev/null | wc -l` returning `0`.
-6. **Stop API container.** `sudo docker-compose down` from `/opt/dreamweaver-backend/`. Brief downtime begins here; minimize subsequent steps.
-7. **Switch code.** `git fetch && git checkout feature/content-json-derived` (or whichever feature branch carries the merged refactor). NO `sudo git pull` — would change file ownership to root and break the pipeline cron user (per MEMORY.md).
-8. **Start container.** `sudo docker-compose up -d --build`. Container rebuilds with new code; LocalStore boots via the new `_walk_per_content` path.
-9. **First-boot validation.** Tail logs immediately:
-   ```bash
-   sudo docker logs -f dreamweaver-backend 2>&1 | head -200
-   ```
-   Look for: a log line like `LocalStore: loaded N items from per-content files` (add this log if absent) and confirm `N` matches the expected count from step 4 (~240 ± a few). Any `corrupt per-content files` warning means a file failed to parse — investigate but note that the boot succeeded with reduced count (per §6 "Corrupt per-content file" mitigation).
-10. **Snapshot diff.** Confirm the regenerated `data/content.json` matches the pre-cutover backup, modulo the round-trip transformations enumerated in §3.1a:
+6. **Triage quarantined orphans.** Review `data/_quarantine/` via `python3 scripts/triage_quarantine.py --list`. For each item, decide `--publish` or `--discard` (per §3.2). After triage, `data/_quarantine/` MUST be empty. The cutover is **blocked** until this is true — verify with `find data/_quarantine -name '*.json' 2>/dev/null | wc -l` returning `0`.
+7. **Stop API container.** `sudo docker-compose down` from `/opt/dreamweaver-backend/`. Brief downtime begins here; minimize subsequent steps.
+8. **Switch code.** `git fetch && git checkout feature/content-json-derived` (or whichever feature branch carries the merged refactor). NO `sudo git pull` — would change file ownership to root and break the pipeline cron user (per MEMORY.md).
+9. **Start container.** `sudo docker-compose up -d --build`. Container rebuilds with new code; LocalStore boots via the new `_walk_per_content` path.
+10. **First-boot validation.** Tail logs immediately:
+    ```bash
+    sudo docker logs -f dreamweaver-backend 2>&1 | head -200
+    ```
+    Look for: a log line like `LocalStore: loaded N items from per-content files` (add this log if absent) and confirm `N` matches the expected count from step 5 (~240 ± a few). Any `corrupt per-content files` warning means a file failed to parse — investigate but note that the boot succeeded with reduced count (per §6 "Corrupt per-content file" mitigation).
+11. **Snapshot diff.** Confirm the regenerated `data/content.json` matches the pre-cutover backup, modulo the round-trip transformations enumerated in §3.1a:
     ```bash
     diff <(jq -S . data/content.json.bak.<timestamp>) <(jq -S . data/content.json)
     ```
@@ -690,24 +731,24 @@ This expands the high-level steps above into a numbered runbook. Execute top-to-
     - **(e) `ensure_ascii=False` consistency** — uniformly applied (2026-04-29 fix per `local_store.py:219`).
 
     Item-level field differences OUTSIDE this list are NOT acceptable — investigate any such delta before proceeding.
-11. **Deploy guard verify.** `python3 scripts/deploy_guard.py verify` — must be clean modulo known-ignored items (Tali, YouTube content per CLAUDE.md). Per CLAUDE.md "DEPLOY_GUARD VIOLATIONS" rule: **any new violation is a blocker.** Do not proceed past verify until clean.
-12. **Smoke test.** `curl` 5 random content URLs across types, confirming 200 + correct cover and audio:
+12. **Deploy guard verify.** `python3 scripts/deploy_guard.py verify` — must be clean modulo known-ignored items (Tali, YouTube content per CLAUDE.md). Per CLAUDE.md "DEPLOY_GUARD VIOLATIONS" rule: **any new violation is a blocker.** Do not proceed past verify until clean.
+13. **Smoke test.** `curl` 5 random content URLs across types, confirming 200 + correct cover and audio:
     ```bash
     for id in <pick 1 story> <1 long_story> <1 lullaby> <1 silly_song> <1 poem>; do
       curl -sI "https://api.dreamvalley.app/api/v1/content/$id" | head -1
     done
     ```
     Then spot-check the cover and audio URLs returned for each (HEAD request, expect 200).
-13. **24-hour observation window.** Watch one full EN+HI cron cycle:
+14. **24-hour observation window.** Watch one full EN+HI cron cycle:
     - 01:30 UTC EN cron → check `data/stories/*.json` and `data/lullabies/*.json` (and any other EN dirs the EN cron writes) for new files; verify they appear in `/api/v1/content` after the post-cron admin-reload (manual today; see CLAUDE.md "Definition of Shipped").
     - 04:00 UTC HI cron → check `data/stories_hi/*.json`, `data/lullabies_hi/*.json`, `data/silly_songs_hi/*.json`, `data/poems_hi/*.json` (per Hindi pipeline coverage). New HI items must land in the `*_hi` dirs, NOT in their EN siblings — a HI-into-EN miswrite is the kind of routing bug §3.1d gate 1 is designed to catch.
     - `python3 scripts/deploy_guard.py verify` should remain clean throughout.
     - No "orphan" alerts (the failure class this refactor is designed to eliminate; see §6.5 "Success criteria").
-14. **Success or rollback.**
-    - **Clean for 24h** → proceed to post-cutover cleanup steps 15–16, then declare success at step 17.
+15. **Success or rollback.**
+    - **Clean for 24h** → proceed to post-cutover cleanup steps 16–17, then declare success at step 18.
     - **Issues observed** → roll back per "Rollback" subsection below.
 
-15. **Post-cutover cleanup: generator de-upsert.** Delete `_auto_mirror` calls and equivalent `_upsert_content` calls from every generator identified in §2a — they are now harmless duplication (the walker overwrites the snapshot anyway) but they should not stay in the codebase. Audit-driven list:
+16. **Post-cutover cleanup: generator de-upsert.** Delete `_auto_mirror` calls and equivalent `_upsert_content` calls from every generator identified in §2a — they are now harmless duplication (the walker overwrites the snapshot anyway) but they should not stay in the codebase. Audit-driven list:
     - `scripts/generate_funny_shorts.py` — `_auto_mirror(short_id)` call site at the end of `main()`
     - `scripts/generate_silly_songs_battlecry.py` — `_auto_mirror(song_id)` call inside `generate_silly_song()`
     - `scripts/generate_experimental_poems.py` — `_auto_mirror(poem_id)` call inside `generate_poem()`
@@ -715,11 +756,11 @@ This expands the high-level steps above into a numbered runbook. Execute top-to-
     - `scripts/generate_long_story_episode.py:2761`, `scripts/generate_short_story_experiment.py:596+`, `scripts/generate_experimental_v2.py:900+` — content.json upserts
     - Any other content.json writers found via `grep -rE "content\.json" scripts/`
 
-    For each deletion: `py_compile` the file + run a smoke test (single-item generation in dry-run if supported) before committing. **Reason this happens post-cutover, not pre:** rollback safety — if the cutover is aborted at step 14, the rollback path expects generators to still write content.json directly. De-upserting before cutover would orphan any new content if rollback fires.
+    For each deletion: `py_compile` the file + run a smoke test (single-item generation in dry-run if supported) before committing. **Reason this happens post-cutover, not pre:** rollback safety — if the cutover is aborted at step 15, the rollback path expects generators to still write content.json directly. De-upserting before cutover would orphan any new content if rollback fires.
 
-16. **Cutover finalization: clean crontab.** Edit the production crontab on `dreamvalley-prod`; remove `SKIP_PUBLISH_STEP=1` from both cron lines (EN at `30 1 * * *`, HI at `0 4 * * *`). The env var is now unreferenced in code (deleted in §2f); the crontab should not reference variables that don't exist. Verify with `crontab -l | grep SKIP_PUBLISH_STEP` returning empty.
+17. **Cutover finalization: clean crontab.** Edit the production crontab on `dreamvalley-prod`; remove `SKIP_PUBLISH_STEP=1` from both cron lines (EN at `30 1 * * *`, HI at `0 4 * * *`). The env var is now unreferenced in code (deleted in §2f); the crontab should not reference variables that don't exist. Verify with `crontab -l | grep SKIP_PUBLISH_STEP` returning empty.
 
-17. **Declare success.** Delete the rollback branches and the `*.bak.*` snapshot files (or archive them off-VM). Close the follow-up ticket. Update `docs/follow-ups.md` to mark the content.json refactor entry as RESOLVED.
+18. **Declare success.** Delete the rollback branches and the `*.bak.*` snapshot files (or archive them off-VM). Close the follow-up ticket. Update `docs/follow-ups.md` to mark the content.json refactor entry as RESOLVED.
 
 ### Testing strategy (no staging)
 
@@ -746,7 +787,7 @@ After revert: per-content files remain on disk (no harm done — old code ignore
 
 The `./data:/app/data` bind mount means per-content files persist across the container down/up cycle by default — no extra preservation step required.
 
-Generators retain their `_auto_mirror` / `_upsert_content` calls in the cutover branch (those deletions are post-cutover §4 step 15), so post-revert the cron continues writing to content.json directly — no generator-side rollback needed.
+Generators retain their `_auto_mirror` / `_upsert_content` calls in the cutover branch (those deletions are post-cutover §4 step 16), so post-revert the cron continues writing to content.json directly — no generator-side rollback needed.
 
 **Caveat:** items generated by the cron *during* the new-code window land in BOTH per-content files AND content.json (additive dual-write). After revert, content.json is restored from `*.bak.*` — losing items added during the window FROM CONTENT.JSON, but the per-content files survive. To preserve those items post-revert, re-derive content.json from per-content files using a one-off script BEFORE the revert (or accept losing whatever the cron added in the window — typically zero if cutover happens during a quiet hour and the EN/HI crons are disabled for the window).
 
@@ -812,7 +853,7 @@ The refactor is considered successfully shipped only when **all** of the followi
   ```
   Expected output: empty (no file matches). Any file that returns `true` here is a legacy artifact and should be rewritten without the field; the walker's warning logs make the surface visible.
 
-If any of the above fails within the 24-hour observation window, the cutover is **not successful** — initiate rollback per §4 step 14 and amend this spec with the specific failure mode before re-attempting.
+If any of the above fails within the 24-hour observation window, the cutover is **not successful** — initiate rollback per §4 step 15 and amend this spec with the specific failure mode before re-attempting.
 
 ---
 
