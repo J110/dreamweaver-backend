@@ -13,9 +13,8 @@ Pipeline flow:
   6. COVERS      → FLUX.1 Schnell (HuggingFace free tier, 3 retries) → 2-layer covers (Mistral SVG fallback)
   7. SYNC        → sync content.json → seedData.js + copy audio/covers to web (BEFORE clips)
   8. CLIPS       → FFmpeg (cairosvg + Ken Burns) → 60s vertical video clips for social media
-  9. PUBLISH     → git push → Render/Vercel auto-deploy (test only)
-  10. DEPLOY PROD → rebuild frontend + restart backend on local GCP VM
-  11. NOTIFY      → email via Resend (success or failure)
+  9. DEPLOY PROD → admin reload + nginx serves new static files (zero-downtime, no rebuild needed)
+  10. NOTIFY     → email via Resend (success or failure)
 
 Usage:
     python3 scripts/pipeline_run.py                           # Full pipeline
@@ -23,7 +22,6 @@ Usage:
     python3 scripts/pipeline_run.py --count-stories 2         # Generate 2 stories
     python3 scripts/pipeline_run.py --count-poems 1           # Generate 1 poem
     python3 scripts/pipeline_run.py --lang en                 # English only
-    python3 scripts/pipeline_run.py --skip-publish             # Don't git push
     python3 scripts/pipeline_run.py --resume                   # Resume from last checkpoint
     python3 scripts/pipeline_run.py --step generate            # Run only one step
 """
@@ -85,7 +83,7 @@ logging.basicConfig(
 logger = logging.getLogger("pipeline")
 
 # ── Pipeline steps ───────────────────────────────────────────────────────
-STEPS = ["generate", "audio", "qa", "enrich", "mood", "covers", "lullabies", "before_bed", "sync", "clips", "publish", "deploy_prod"]
+STEPS = ["generate", "audio", "qa", "enrich", "mood", "covers", "lullabies", "before_bed", "sync", "clips", "deploy_prod"]
 
 CHATTERBOX_HEALTH = "https://mohan-32314--dreamweaver-chatterbox-health.modal.run"
 
@@ -1991,102 +1989,6 @@ def step_sync(args, state: dict) -> bool:
     return True
 
 
-def step_publish(args, state: dict) -> bool:
-    """Step 7: Git commit + push to trigger auto-deploy (Render/Vercel ONLY)."""
-    logger.info("\n╔══════════════════════════════════════╗")
-    logger.info("║  STEP 7: PUBLISH (git push)          ║")
-    logger.info("╚══════════════════════════════════════╝")
-
-    if args.skip_publish or args.dry_run:
-        logger.info("  Skipping publish (--skip-publish or --dry-run)")
-        state["step_publish"] = "skipped"
-        save_state(state)
-        return True
-
-    if os.getenv("SKIP_PUBLISH_STEP") == "1":
-        logger.info("  Skipping publish (SKIP_PUBLISH_STEP=1) — content goes "
-                    "live via step_deploy_prod admin reload, not git push.")
-        state["step_publish"] = "skipped"
-        state["publish_skip_reason"] = "SKIP_PUBLISH_STEP env var"
-        save_state(state)
-        return True
-
-    # Publish all stories with audio, not just QA-passed
-    new_ids = state.get("generated_ids", [])
-    audio_failures = state.get("audio_failures", [])
-    publish_ids = [sid for sid in new_ids if sid not in audio_failures]
-    if not publish_ids:
-        logger.info("  No content with audio to publish. Skipping.")
-        state["step_publish"] = "skipped"
-        save_state(state)
-        return True
-
-    date_str = datetime.now().strftime("%Y-%m-%d")
-    commit_msg = f"pipeline: add {len(publish_ids)} new content items ({date_str})"
-
-    # Ensure git identity is configured (required for commit on server)
-    for repo_dir in [str(BASE_DIR), str(WEB_DIR)]:
-        if Path(repo_dir).exists():
-            subprocess.run(["git", "config", "user.email", "pipeline@dreamvalley.app"],
-                           cwd=repo_dir, capture_output=True)
-            subprocess.run(["git", "config", "user.name", "Dream Valley Pipeline"],
-                           cwd=repo_dir, capture_output=True)
-
-    backend_ok = False
-    frontend_ok = False
-
-    # ── Commit and push backend (triggers Render auto-deploy) ──
-    logger.info("  Committing backend changes...")
-    # Stage content files FIRST, then stash unstaged runtime data (data/content.json etc.)
-    # with --keep-index so the staged content.json changes are preserved in the commit.
-    run_command(["git", "add", "seed_output/content.json",
-                 "seed_output/content_expanded.json", "audio/"], "Backend: git add", timeout=60)
-    run_command(["git", "stash", "--keep-index"], "Backend: git stash --keep-index", timeout=30)
-    backend_cmds = [
-        (["git", "commit", "-m", commit_msg, "--allow-empty"], "Backend: git commit", 60),
-        (["git", "pull", "--rebase", "origin", "main"], "Backend: git pull --rebase", 60),
-        (["git", "push", "origin", "main"], "Backend: git push", 300),
-    ]
-    for cmd, label, cmd_timeout in backend_cmds:
-        ok, _, stderr, _ = run_command(cmd, label, timeout=cmd_timeout)
-        if not ok and "nothing to commit" not in str(stderr):
-            logger.warning("  %s failed", label)
-            break
-    else:
-        backend_ok = True
-    # Restore stashed runtime data files
-    run_command(["git", "stash", "pop"], "Backend: git stash pop", timeout=30)
-
-    # ── Commit and push frontend (triggers Vercel auto-deploy) ──
-    if WEB_DIR.exists() and state.get("step_sync") == "done":
-        logger.info("  Committing frontend changes...")
-        web_cwd = str(WEB_DIR)
-        frontend_cmds = [
-            (["git", "add", "src/utils/seedData.js"], "Frontend: git add"),
-            (["git", "commit", "-m", commit_msg, "--allow-empty"], "Frontend: git commit"),
-            (["git", "pull", "--rebase", "origin", "main"], "Frontend: git pull --rebase"),
-            (["git", "push", "origin", "main"], "Frontend: git push"),
-        ]
-        for cmd, label in frontend_cmds:
-            ok, _, stderr, _ = run_command(cmd, label, timeout=60, cwd=web_cwd)
-            if not ok and "nothing to commit" not in str(stderr):
-                logger.warning("  %s failed", label)
-                break
-        else:
-            frontend_ok = True
-
-    if backend_ok or frontend_ok:
-        state["step_publish"] = "done"
-        state["publish_backend"] = "ok" if backend_ok else "failed"
-        state["publish_frontend"] = "ok" if frontend_ok else "failed"
-    else:
-        state["step_publish"] = "failed"
-        logger.error("  Both backend and frontend publish failed!")
-
-    save_state(state)
-    return backend_ok or frontend_ok
-
-
 def _deploy_guard_snapshot() -> dict | None:
     """Capture production state before deploy for verification."""
     try:
@@ -2503,7 +2405,6 @@ def print_summary(state: dict, total_elapsed: float):
                 state.get("step_before_bed", "not run"), bb_count, bb.get("age", "?"))
     logger.info("  Enriched:   %s", state.get("step_enrich", "not run"))
     logger.info("  Synced:     %s", state.get("step_sync", "not run"))
-    logger.info("  Published:  %s", state.get("step_publish", "not run"))
     logger.info("  Deployed:   %s", state.get("step_deploy_prod", "not run"))
     logger.info("  Cost:       %s (Modal %s + GCP %s/day)",
                 state.get("cost_this_run", "?"),
@@ -2535,8 +2436,6 @@ def main():
                         help="Language to generate (default: en)")
     parser.add_argument("--dry-run", action="store_true",
                         help="Show plan without making API calls")
-    parser.add_argument("--skip-publish", action="store_true",
-                        help="Skip git push step")
     parser.add_argument("--skip-deploy-prod", action="store_true",
                         help="Skip production deployment step")
     parser.add_argument("--resume", action="store_true",
@@ -2595,7 +2494,7 @@ def main():
         logger.info("  Language level (manual): %s", args.language_level)
     else:
         logger.info("  Language level: auto (deficit-based)")
-    logger.info("  Dry run: %s | Skip publish: %s", args.dry_run, args.skip_publish)
+    logger.info("  Dry run: %s", args.dry_run)
     logger.info("")
 
     # Check required env vars
@@ -2638,7 +2537,6 @@ def main():
         "before_bed": step_before_bed,
         "sync": step_sync,         # sync BEFORE clips so new audio/covers are available
         "clips": step_clips,
-        "publish": step_publish,
         "deploy_prod": step_deploy_prod,
     }
 

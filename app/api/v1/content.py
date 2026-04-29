@@ -159,15 +159,16 @@ async def get_content(
             )
         
         content_data = content_doc.to_dict()
-        
-        # Increment view count
+
+        # Increment view count — response only, no persistence.
+        # Per content.json refactor spec §2g.2, view_count is ephemeral
+        # analytics state. The previous .update() call was the hottest write
+        # path on the API (every content GET flushed the entire content.json
+        # snapshot). A proper analytics counter (rollup from analytics.db,
+        # Redis, or dedicated SQLite) is tracked as a follow-up — see
+        # docs/follow-ups.md. For now the response shows an incremented
+        # value but the increment doesn't survive process restart.
         current_views = content_data.get("view_count", 0)
-        db_client.collection("content").document(content_id).update({
-            "view_count": current_views + 1,
-            "updated_at": datetime.utcnow().isoformat(),
-        })
-        
-        # Update local copy
         content_data["view_count"] = current_views + 1
 
         # Add user interaction status if authenticated

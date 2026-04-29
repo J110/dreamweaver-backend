@@ -50,54 +50,6 @@ CONTENT_TYPES_ORDER = [
 ]
 
 
-def _git_commit_and_push(generated_ids: list[str]) -> bool:
-    """Commit fresh seed + per-item-runtime + audio bytes, push."""
-    if not generated_ids:
-        return False
-    if os.getenv("SKIP_PUBLISH_STEP") == "1":
-        print(f"  skipped git commit/push (SKIP_PUBLISH_STEP=1) — "
-              f"{len(generated_ids)} items go live via _admin_reload.")
-        return True
-    try:
-        subprocess.run(
-            ["git", "add",
-             "seed_output/content.json",
-             "data/silly_songs", "data/poems", "data/funny_shorts",
-             "seed_output/lullabies", "seed_output/stories_hi",
-             "seed_output/silly_songs", "seed_output/poems_hi",
-             "seed_output/hindi_long"],
-            cwd=BASE_DIR, check=False,
-        )
-        msg = (
-            f"hindi-daily {datetime.now():%Y-%m-%d}: +{len(generated_ids)} items "
-            f"({', '.join(generated_ids)})"
-        )
-        r = subprocess.run(
-            ["git", "commit", "-m", msg],
-            cwd=BASE_DIR, capture_output=True, text=True,
-        )
-        if r.returncode != 0 and "nothing to commit" not in r.stdout:
-            print(f"  git commit failed: {r.stderr[:300]}")
-            return False
-        # Pull-rebase first to handle daily English commits
-        subprocess.run(
-            ["git", "pull", "--rebase", "origin", "main"],
-            cwd=BASE_DIR, check=False, capture_output=True,
-        )
-        r = subprocess.run(
-            ["git", "push", "origin", "main"],
-            cwd=BASE_DIR, capture_output=True, text=True,
-        )
-        if r.returncode != 0:
-            print(f"  git push failed: {r.stderr[:300]}")
-            return False
-        print(f"  ✓ pushed {len(generated_ids)} items to origin/main")
-        return True
-    except Exception as e:
-        print(f"  git operation failed: {e}")
-        return False
-
-
 def _admin_reload() -> bool:
     """Trigger backend admin reload so new items go live immediately."""
     try:
@@ -235,13 +187,10 @@ def main(only_types: list[str] | None = None) -> int:
     successes = [r for r in results.values() if r.get("status") == "ok"]
     print(f"\n══ Generation done: {len(successes)}/{len(types_to_run)} succeeded ══")
 
-    # ── Deploy: git push + admin reload
+    # ── Deploy: admin reload (audio + covers already written to prod paths
+    # during generation — no git push, no staging environment).
     if successes:
         print("\n→ Deploying…")
-        # scp audio + covers to prod paths handled by pipeline_run_hi_deploy
-        # (separate script — runs after this on the GCP VM where files are
-        # already on disk under /opt/dreamweaver-web/public/...)
-        _git_commit_and_push([r["id"] for r in successes if r.get("id")])
         _admin_reload()
 
     # ── deploy_guard verify
