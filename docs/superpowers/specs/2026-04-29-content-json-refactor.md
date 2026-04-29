@@ -632,12 +632,17 @@ Cutover is **not "complete"** until `data/_quarantine/` is empty (every quaranti
 
 ### Branch
 
-`feature/content-json-derived` — single branch carrying:
-- New `LocalStore._walk_per_content` + `_write_snapshots`
-- Deletion of `_auto_mirror` / `_upsert_content` from all generators in §2a
-- Generator updates to write per-content files for stories/lullabies/long_stories (new dirs)
-- `scripts/migrate_content_to_per_file.py`
-- Removal of `step_publish` / `_git_commit_and_push` per §2f (or as an immediate follow-up PR — sequencing is at the implementer's discretion, but neither change has a hard dependency on the other)
+`refactor/content-json-per-file-persistence` (PR [J110/dreamweaver-backend#2](https://github.com/J110/dreamweaver-backend/pull/2)) — single branch carrying the pre-cutover code:
+- New `LocalStore._walk_per_content` + `_write_snapshots` (§2c, §2e)
+- Per-item runtime mutation routing via `_persist_content_item` (§2g.1) and view_count no-op (§2g.2)
+- Removal of `step_publish` / `_git_commit_and_push` (§2f) and the dead `/api/v1/generate` endpoint (§2h)
+- New `scripts/backfill_per_content.py` (§2d, §3.1)
+- New `scripts/triage_quarantine.py` (§3.2)
+- Per-content file writes ADDED to all generators that previously wrote only to content.json — additive, coexists with the existing content.json upsert until §4 step 15
+
+NOT in this branch (deferred to post-cutover):
+- Deletion of `_auto_mirror` / `_upsert_content` calls from generators — §4 step 15
+- `SKIP_PUBLISH_STEP=1` removal from production crontab — §4 step 16
 
 ### Pre-cutover checklist
 
@@ -657,7 +662,7 @@ This expands the high-level steps above into a numbered runbook. Execute top-to-
 
 1. **Window.** Cutover **after the 04:00 HI cron completes** successfully (~04:30 UTC) — see §4 "Cutover window" above for the rationale. Confirm the HI cron's last-run log line before starting.
 2. **Pre-cutover snapshot.** `python3 scripts/deploy_guard.py snapshot` — captures the baseline for §4-style verify after cutover. Mandatory per CLAUDE.md.
-3. **Backfill.** Run `python3 scripts/migrate_content_to_per_file.py` (no `--dry-run`). Idempotent per §3.1b — safe to re-run if it errors partway. Confirm the script exits zero and prints `created=<N>, skipped_exists=<M>, skipped_other_type=<K>, errors=0`.
+3. **Backfill.** Run `python3 scripts/backfill_per_content.py` (no `--dry-run`). Idempotent per §3.1b — safe to re-run if it errors partway. Confirm the script exits zero and prints `created=<N>, skipped_exists=<M>, errors=0` plus `gate1_pass=True, gate2_pass=True`.
 4. **Pre-flight gate: count match.** Per §3.1d gate 1: per-content file count across `PER_CONTENT_DIRS` MUST equal `len(content.json items)` exactly. If not — **abort, do not proceed.** Investigate before retrying. The script's exit code already encodes this; double-check manually:
    ```bash
    python3 -c "import json; print(len(json.load(open('seed_output/content.json'))))"
@@ -673,11 +678,18 @@ This expands the high-level steps above into a numbered runbook. Execute top-to-
    sudo docker logs -f dreamweaver-backend 2>&1 | head -200
    ```
    Look for: a log line like `LocalStore: loaded N items from per-content files` (add this log if absent) and confirm `N` matches the expected count from step 4 (~240 ± a few). Any `corrupt per-content files` warning means a file failed to parse — investigate but note that the boot succeeded with reduced count (per §6 "Corrupt per-content file" mitigation).
-10. **Snapshot diff.** Confirm the regenerated `data/content.json` matches the pre-cutover backup byte-for-byte, modulo encoding normalization:
+10. **Snapshot diff.** Confirm the regenerated `data/content.json` matches the pre-cutover backup, modulo the round-trip transformations enumerated in §3.1a:
     ```bash
     diff <(jq -S . data/content.json.bak.<timestamp>) <(jq -S . data/content.json)
     ```
-    Differences should be limited to (a) ordering (we now sort by id; old file may not be sorted — `jq -S` normalizes both), (b) `ensure_ascii=False` consistency (already applied 2026-04-29 per `local_store.py:219`), (c) trailing whitespace. Item-level field differences are NOT acceptable here — investigate any such delta before proceeding.
+    Differences should be limited to:
+    - **(a) `subtype` field changes** — stripped on disk per OQ3, re-added by walker only for types where directory has a non-None default subtype (silly_song / funny_short / lullaby). Stories / poems / long_stories never carry the field.
+    - **(b) `lang` value normalization** — directory-derived value wins over any source mismatch.
+    - **(c) `language` value normalization** — only normalized to match `lang` when source had `language`. Items without it do NOT gain it.
+    - **(d) Sort order** — walker sorts by id; original may not be sorted (`jq -S` normalizes both).
+    - **(e) `ensure_ascii=False` consistency** — uniformly applied (2026-04-29 fix per `local_store.py:219`).
+
+    Item-level field differences OUTSIDE this list are NOT acceptable — investigate any such delta before proceeding.
 11. **Deploy guard verify.** `python3 scripts/deploy_guard.py verify` — must be clean modulo known-ignored items (Tali, YouTube content per CLAUDE.md). Per CLAUDE.md "DEPLOY_GUARD VIOLATIONS" rule: **any new violation is a blocker.** Do not proceed past verify until clean.
 12. **Smoke test.** `curl` 5 random content URLs across types, confirming 200 + correct cover and audio:
     ```bash
@@ -720,7 +732,7 @@ This is acceptable because the per-content files persist on the VM filesystem ac
 
 ### Rollback
 
-`feature/content-json-derived` is a **single-commit-on-merge** so revert is one git op.
+PR [#2](https://github.com/J110/dreamweaver-backend/pull/2) is a **single squash-merge** so revert is one git op. The merge SHA is unknown until merge completes — capture it as `<merge_sha>` at the top of the cutover sequence (step 0, below) and substitute throughout.
 
 ```bash
 # On dreamvalley-prod, in /opt/dreamweaver-backend
@@ -728,11 +740,15 @@ git checkout <prior-commit>            # or: git revert <merge_sha> && git push
 sudo docker-compose down && sudo docker-compose up -d --build
 ```
 
-After revert: per-content files remain on disk (no harm done — old code ignores `data/<type>/*.json`). The backed-up `data/content.json` snapshot is restored from `data/content.json.bak.*` and the old code reads it. Old generators (with `_auto_mirror` re-introduced) resume mirror-writes.
+(Step 0 of the cutover sequence is "fill in the actual merge SHA from PR #2 before starting." The agent / operator running the cutover replaces every `<merge_sha>` placeholder once the merge lands.)
+
+After revert: per-content files remain on disk (no harm done — old code ignores `data/<type>/*.json`). The backed-up `data/content.json` snapshot is restored from `data/content.json.bak.*` and the old code reads it.
 
 The `./data:/app/data` bind mount means per-content files persist across the container down/up cycle by default — no extra preservation step required.
 
-**Caveat:** anything generated *during* the new-code window won't be in the backed-up content.json. If we need to roll back, we'd have to re-derive content.json from the per-content files using a one-off script before the revert (or accept losing whatever was generated in the window — typically nothing if we cutover during a quiet hour and disable cron temporarily).
+Generators retain their `_auto_mirror` / `_upsert_content` calls in the cutover branch (those deletions are post-cutover §4 step 15), so post-revert the cron continues writing to content.json directly — no generator-side rollback needed.
+
+**Caveat:** items generated by the cron *during* the new-code window land in BOTH per-content files AND content.json (additive dual-write). After revert, content.json is restored from `*.bak.*` — losing items added during the window FROM CONTENT.JSON, but the per-content files survive. To preserve those items post-revert, re-derive content.json from per-content files using a one-off script BEFORE the revert (or accept losing whatever the cron added in the window — typically zero if cutover happens during a quiet hour and the EN/HI crons are disabled for the window).
 
 ---
 
