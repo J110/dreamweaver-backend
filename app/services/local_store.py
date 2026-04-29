@@ -216,7 +216,7 @@ class LocalStore:
         path = self._data_dir / f"{name}.json"
         items = list(self.collections.get(name, {}).values())
         with open(path, "w") as f:
-            json.dump(items, f, indent=2, default=_json_serial)
+            json.dump(items, f, indent=2, default=_json_serial, ensure_ascii=False)
 
     def _persist(self, collection_name: str):
         """Thread-safe persist after write operations."""
