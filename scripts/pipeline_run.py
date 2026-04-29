@@ -2003,6 +2003,14 @@ def step_publish(args, state: dict) -> bool:
         save_state(state)
         return True
 
+    if os.getenv("SKIP_PUBLISH_STEP") == "1":
+        logger.info("  Skipping publish (SKIP_PUBLISH_STEP=1) — content goes "
+                    "live via step_deploy_prod admin reload, not git push.")
+        state["step_publish"] = "skipped"
+        state["publish_skip_reason"] = "SKIP_PUBLISH_STEP env var"
+        save_state(state)
+        return True
+
     # Publish all stories with audio, not just QA-passed
     new_ids = state.get("generated_ids", [])
     audio_failures = state.get("audio_failures", [])

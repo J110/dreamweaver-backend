@@ -54,6 +54,10 @@ def _git_commit_and_push(generated_ids: list[str]) -> bool:
     """Commit fresh seed + per-item-runtime + audio bytes, push."""
     if not generated_ids:
         return False
+    if os.getenv("SKIP_PUBLISH_STEP") == "1":
+        print(f"  skipped git commit/push (SKIP_PUBLISH_STEP=1) — "
+              f"{len(generated_ids)} items go live via _admin_reload.")
+        return True
     try:
         subprocess.run(
             ["git", "add",
