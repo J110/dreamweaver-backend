@@ -49,7 +49,9 @@ The orphan bugs all share the same shape: generator writes `data/<type>/<id>.jso
 
 ## 2. Code changes required
 
-### 2a. Scripts that currently write `content.json` (delete the upsert)
+### 2a. Scripts that currently write `content.json` (delete the upsert) — POST-CUTOVER
+
+**Timing:** these deletions run AFTER cutover (§4 step 15), not pre-cutover. Rationale: rollback safety. If cutover is aborted at §4 step 14, the rollback path expects generators to still write `content.json` directly. De-upserting before cutover would orphan any new content if rollback fires. Pre-cutover commits leave generators alone; post-cutover cleanup deletes the now-redundant upserts.
 
 | Script | Function | Line | Action |
 |---|---|---|---|
@@ -488,11 +490,12 @@ No directory-derived fields beyond what's already in the entry.
 
 ##### Cross-type derivation rules (apply to all three)
 
+- **Verbatim copy with EXACTLY ONE transformation: strip `subtype`.** The backfill helper writes each content.json entry to its per-content file VERBATIM with no other modifications — no field renames, no canonical-schema cleanup, no field dropping, no field synthesis. The only mutation is removal of the `subtype` key (per Open Question 3). The round-trip property must hold: `content.json → per-content files → walker → content.json` produces byte-identical output (modulo regeneration timestamp and key ordering). Cleanup of stale or unused fields is a separate, per-field decision — not a backfill side effect.
 - **Filename**: always `<id>.json` (lowercase, slashes/colons forbidden — `id` values audited and confirmed safe). Validated by the script.
-- **`audio_file` reconstruction**: NOT performed during backfill. Per-content files for stories/lullabies/long_stories continue to use the `audio_url` field (full URL/path) inherited from content.json, mirroring the existing convention. Do not invent an `audio_file` shorthand for these types — that field is specific to poems/silly_songs/funny_shorts and would create schema drift.
-- **`cover_file` reconstruction**: same — keep `cover` (full URL/path), don't add `cover_file`.
-- **`subtype` is never written to disk** (per Open Question 3 decision — walker-stamped from directory). The backfill helper MUST strip `subtype` from every entry before writing, regardless of source type. The walker re-derives it from `PER_CONTENT_DIRS` at load time. This applies uniformly to stories (subtype=None), lullabies/silly_songs/funny_shorts (subtype derived from directory), poems (subtype=None), and long_stories (subtype=None). If a legacy per-content file is encountered with `subtype` present, the walker logs an informational warning and overwrites with the directory-derived value; load still succeeds.
-- **Ordering**: write keys in a stable order (alphabetical, or follow the source ordering) for diff stability. Recommend: don't reorder; `json.dumps(entry, indent=2, ensure_ascii=False, sort_keys=False)` to preserve content.json's key order.
+- **`audio_file` reconstruction**: NOT performed. Per-content files for stories/lullabies/long_stories continue to carry the `audio_url` field (full URL/path) verbatim from content.json. Do not invent an `audio_file` shorthand for these types.
+- **`cover_file` reconstruction**: same. Keep whatever the source entry has; don't add or rename.
+- **`subtype` is never written to disk** (the one transformation). Walker re-derives from `PER_CONTENT_DIRS` at load time. Applies uniformly across all 12 buckets. Legacy per-content files containing `subtype` log an informational warning at load time and the walker overwrites with the directory-derived value — load still succeeds.
+- **Ordering**: write keys in source order. `json.dumps(entry, indent=2, ensure_ascii=False, sort_keys=False)` preserves content.json's key order.
 
 #### 3.1b. Idempotency rules
 
@@ -671,8 +674,22 @@ This expands the high-level steps above into a numbered runbook. Execute top-to-
     - `python3 scripts/deploy_guard.py verify` should remain clean throughout.
     - No "orphan" alerts (the failure class this refactor is designed to eliminate; see §6.5 "Success criteria").
 14. **Success or rollback.**
-    - **Clean for 24h** → declare success. Delete the rollback branches and the `*.bak.*` snapshot files (or archive them off-VM). Close the follow-up ticket.
+    - **Clean for 24h** → proceed to post-cutover cleanup steps 15–16, then declare success at step 17.
     - **Issues observed** → roll back per "Rollback" subsection below.
+
+15. **Post-cutover cleanup: generator de-upsert.** Delete `_auto_mirror` calls and equivalent `_upsert_content` calls from every generator identified in §2a — they are now harmless duplication (the walker overwrites the snapshot anyway) but they should not stay in the codebase. Audit-driven list:
+    - `scripts/generate_funny_shorts.py` — `_auto_mirror(short_id)` call site at the end of `main()`
+    - `scripts/generate_silly_songs_battlecry.py` — `_auto_mirror(song_id)` call inside `generate_silly_song()`
+    - `scripts/generate_experimental_poems.py` — `_auto_mirror(poem_id)` call inside `generate_poem()`
+    - `scripts/_hindi_generators.py` — `_upsert_content(entry)` calls inside each Hindi generator function (short_story, long_story, lullaby, silly_song, poem)
+    - `scripts/generate_long_story_episode.py:2761`, `scripts/generate_short_story_experiment.py:596+`, `scripts/generate_experimental_v2.py:900+` — content.json upserts
+    - Any other content.json writers found via `grep -rE "content\.json" scripts/`
+
+    For each deletion: `py_compile` the file + run a smoke test (single-item generation in dry-run if supported) before committing. **Reason this happens post-cutover, not pre:** rollback safety — if the cutover is aborted at step 14, the rollback path expects generators to still write content.json directly. De-upserting before cutover would orphan any new content if rollback fires.
+
+16. **Cutover finalization: clean crontab.** Edit the production crontab on `dreamvalley-prod`; remove `SKIP_PUBLISH_STEP=1` from both cron lines (EN at `30 1 * * *`, HI at `0 4 * * *`). The env var is now unreferenced in code (deleted in §2f); the crontab should not reference variables that don't exist. Verify with `crontab -l | grep SKIP_PUBLISH_STEP` returning empty.
+
+17. **Declare success.** Delete the rollback branches and the `*.bak.*` snapshot files (or archive them off-VM). Close the follow-up ticket. Update `docs/follow-ups.md` to mark the content.json refactor entry as RESOLVED.
 
 ### Testing strategy (no staging)
 
