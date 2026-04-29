@@ -31,6 +31,19 @@ These remove root causes that produced multiple incidents tonight. Worth priorit
 
 **Estimate:** Half-day. Frontend bootstrap change + a small backend endpoint + delete the file.
 
+### Migrate `view_count` to a proper analytics path
+
+**The problem:** `view_count` on content documents is currently the hottest write path — incremented on every `GET /content/{id}` and persisting via the full content.json snapshot flush. The 2026-04-29 content.json refactor (§2g.2) makes the LocalStore write a no-op as a stopgap; the in-memory increment still runs but doesn't survive process restart. Net effect: per-process ephemeral view counts. Fine for a few days, not a long-term answer.
+
+**Proposed shape:**
+- View tracking moves to a proper counter store. Three options worth weighing:
+  - **Rollup from `data/analytics.db`** — session-event records likely already log content plays / views. A nightly aggregation job updates a `content_views` table; the API reads from there. Zero new infra; small SQL.
+  - **Redis counter** — INCR on a `views:{content_id}` key per request, periodically flushed to durable storage. Lowest latency, but requires running Redis (new dependency on the prod VM).
+  - **SQLite WAL counter** — a dedicated lightweight `views.db` with a single-table schema. INCR via `UPDATE ... RETURNING`. No new dependency; sufficient throughput for this app's traffic.
+- The API response shape stays the same; the read source changes.
+
+**Estimate:** Half-day. Smaller if the rollup option is taken (the analytics DB likely already has the events).
+
 ---
 
 ## deploy_guard improvements (close behind — prevents future incidents)

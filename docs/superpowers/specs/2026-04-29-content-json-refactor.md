@@ -325,6 +325,75 @@ Concrete deletions, in this same PR (or an immediate follow-up):
 
 After this change, the pipeline's terminal step is `step_deploy_prod`. The pipeline never invokes `git push` against any remote.
 
+### 2g. Runtime mutation routing
+
+The audit (2026-04-29) found two distinct mutation paths on the content collection. The new architecture splits content-collection mutations by the *type* of mutation, not by the calling endpoint. Three rules:
+
+#### 2g.1. Persistent user-visible state — write through to per-content file
+
+Fields: `like_count`, `save_count`, and any future field that represents durable user-visible state on a content item.
+
+When the LocalStore API mutates such a field on a content document:
+
+1. Update the in-memory store synchronously (existing behavior — `self.collections["content"][id][field] = new_value`).
+2. **Atomically write the per-content file** at `data/<type>[_hi]/{id}.json` using the tempfile + `os.fsync` + `os.replace` pattern from §2e.1.
+3. **Do NOT** touch `data/content.json` snapshot. The snapshot is regenerated on next admin-reload or boot.
+
+Concrete: a new method `LocalStore._persist_content_item(item_id: str)` looks up the in-memory item, derives the target directory from `(type, subtype, lang)` per `PER_CONTENT_DIRS` in §2c, and writes atomically. `CollectionRef.add(...)`, `DocumentRef.set(...)`, `DocumentRef.update(...)`, `DocumentRef.delete(...)` invoked on the content collection route through `_persist_content_item` instead of `_persist_collection("content")`.
+
+For collections OTHER than content (subscriptions, voices, users, interactions, tokens, blog_posts, blog_comments), the existing `_persist_collection` path remains unchanged.
+
+#### 2g.2. Ephemeral analytics state — in-memory only, no LocalStore writes
+
+Fields: `view_count` (today's worst offender — flushes the entire snapshot on every content GET), and any future field whose loss across reload is acceptable.
+
+- **`view_count`:** stop writing on every GET. The current `app/api/v1/content.py:165` `db_client.collection("content").document(content_id).update({"view_count": ..., "updated_at": ...})` becomes a no-op (delete the call). The in-memory increment in the local copy used for the response (`content_data["view_count"] = current_views + 1`) stays — the response shows the incremented count, but it doesn't persist.
+- **`play_count` / `replay_count`** (silly_songs, poems, funny_shorts via `_save_song`/`_save_poem`/`_save_short` in `app/api/v1/silly_songs.py`, `poems.py`, `funny_shorts.py`): leave as-is. These already write to per-content files at `data/<type>/<id>.json` directly, bypassing LocalStore. They satisfy 2g.1's behavior incidentally and don't need changes.
+
+A separate follow-up tracks the migration of `view_count` to a proper analytics store (analytics SQLite DB, Redis counter, or rollup from `data/analytics.db`'s session events). Until that lands, view_count is per-process ephemeral.
+
+#### 2g.3. Snapshot writes — only at boot and admin-reload
+
+Snapshot writes (`data/content.json` and `seed_output/content.json`) happen ONLY in two places:
+
+1. `LocalStore.__init__` → `_load_data()` — at backend boot
+2. `LocalStore.reload_content()` — when `POST /api/v1/admin/reload` is called
+
+Both call `_walk_per_content()` to build in-memory state, then `_write_snapshots()` to derive the snapshot files. Atomic rename per §2e.1. Walker pattern per §2c.
+
+No other code path writes to the snapshot files. Generators write per-content files only (§2a, §2c). Runtime mutations write per-content files only (§2g.1). Read-only reaches into `data/content.json` from external consumers (`app/api/v1/analytics.py:597`, `app/main.py:61` mtime poller, `scripts/sync_seed_data.py`, `scripts/deploy_guard.py`) see whatever the last snapshot write produced — eventually-consistent with in-memory state until the next reload regenerates it.
+
+#### 2g.4. Rationale
+
+Why split this way:
+- **Per-content files are source of truth.** Every persistent write lands in a per-content file, never the snapshot. The snapshot is purely derivative — the output of "walk all per-content files."
+- **Hot-path writes don't fan out.** Today, every content GET writes `data/content.json` (~2 MB, 240+ items). After the refactor, like/save mutations write a single ~2–10 KB file; view writes nothing. Net I/O reduction is significant on the hottest endpoint.
+- **Boot is consistent by construction.** Walk + snapshot at boot produces a snapshot byte-equal (modulo sort order) to the union of per-content files. No drift possible.
+- **Crash safety.** Atomic rename per §2e.1 ensures partially-written files are never visible to readers.
+
+### 2h. Delete the dead `/api/v1/generate` endpoint
+
+Audit (2026-04-29) confirmed the generation endpoint is unreachable from any user-facing path:
+- Frontend wrapper `api.generateContent` in `dreamweaver-web/src/utils/api.js` has zero callers
+- `/create` page (`dreamweaver-web/src/app/create/page.js`) is a redirect-only stub
+- Last commit touching the wrapper was the initial frontend commit (`c016e78`)
+- nginx access logs over the past 7 days show **zero hits** to `/api/v1/generate`
+- Implementation uses Groq + a daily-quota system that don't match production reality
+
+Concrete deletions:
+
+- **`dreamweaver-backend/app/api/v1/generation.py`** — delete the entire file (~330 lines)
+- **`dreamweaver-backend/app/api/v1/router.py`:**
+  - Delete the import at line 12: `from .generation import router as generation_router`
+  - Delete the `include_router` line at line 38: `router.include_router(generation_router, prefix="/generate", tags=["Generation"])`
+- **`dreamweaver-web/src/utils/api.js`** — delete the `generateContent` method (~37 lines, around line 189)
+- **`dreamweaver-web/src/app/create/`** — delete the directory (page.js + page.module.css)
+- **`dreamweaver-web/src/app/robots.js`** — remove `/create` from the disallow list (becomes unnecessary once the directory is gone)
+
+Frontend deletions land in a separate commit on the `dreamweaver-web` repo. Backend deletions land in this refactor's branch.
+
+This deletion removes the only mutation path on the content collection that uses `set()` (full document write) — every remaining content-collection mutation post-refactor is an `update()` on existing items, which simplifies §2g's routing implementation.
+
 ---
 
 ## 3. Migration approach
