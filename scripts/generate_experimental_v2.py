@@ -943,6 +943,15 @@ def main():
         "experimental_v2": True,
     }
 
+    # Per spec §2g.1: write per-content file (additive — walker reads this
+    # post-cutover). Existing content.json upsert below stays for rollback
+    # safety until post-cutover §4 step 15 deletion.
+    sys.path.insert(0, str(BASE_DIR))
+    from app.services.local_store import _atomic_write_json, _content_target_dir
+    _pc_target = _content_target_dir(BASE_DIR / "data", entry)
+    if _pc_target is not None:
+        _atomic_write_json(_pc_target / f"{entry['id']}.json", entry, strip_subtype=True)
+
     with open(CONTENT_PATH, "r", encoding="utf-8") as f:
         all_content = json.load(f)
 

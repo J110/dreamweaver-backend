@@ -860,6 +860,14 @@ Return ONLY the Phase 3 text (starting with [PHASE_3]). No JSON wrapper — just
         f.write("\n")
     logger.info("Saved standalone: %s", standalone_path.name)
 
+    # Per spec §2g.1: write per-content file (additive — walker reads this
+    # post-cutover). Existing content.json upsert below stays for rollback
+    # safety until post-cutover §4 step 15 deletion.
+    from app.services.local_store import _atomic_write_json, _content_target_dir
+    _pc_target = _content_target_dir(BASE_DIR / "data", content_obj)
+    if _pc_target is not None:
+        _atomic_write_json(_pc_target / f"{content_obj['id']}.json", content_obj, strip_subtype=True)
+
     # Add to content.json
     if CONTENT_PATH.exists():
         with open(CONTENT_PATH, "r", encoding="utf-8") as f:

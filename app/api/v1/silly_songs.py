@@ -13,8 +13,13 @@ from app.utils.logger import get_logger
 logger = get_logger(__name__)
 router = APIRouter()
 
-# Data directory for silly song JSON files
-DATA_DIR = Path(__file__).resolve().parents[3] / "data" / "silly_songs"
+# Per-(type, lang) bucket layout, matching PER_CONTENT_DIRS in
+# app.services.local_store. EN items live in silly_songs/, HI items in
+# silly_songs_hi/. List/load helpers walk both buckets; _save_song
+# preserves the existing bucket of an item or routes new items by lang.
+_BASE = Path(__file__).resolve().parents[3] / "data"
+DATA_DIRS = [_BASE / "silly_songs", _BASE / "silly_songs_hi"]
+DATA_DIR = DATA_DIRS[0]  # backwards-compat alias if any external code references it
 
 
 class SillySongsListResponse(BaseModel):
@@ -30,44 +35,60 @@ class SillySongResponse(BaseModel):
 
 
 def _load_all_songs() -> list[dict]:
-    """Load all silly song JSON files from the data directory."""
+    """Load all silly song JSON files from every bucket."""
     songs = []
-    if not DATA_DIR.exists():
-        return songs
-    for f in sorted(DATA_DIR.glob("*.json")):
-        try:
-            with open(f) as fh:
-                song = json.load(fh)
-                song.setdefault("id", f.stem)
-                songs.append(song)
-        except Exception as e:
-            logger.error(f"Failed to load silly song {f}: {e}")
+    for d in DATA_DIRS:
+        if not d.exists():
+            continue
+        for f in sorted(d.glob("*.json")):
+            try:
+                with open(f) as fh:
+                    song = json.load(fh)
+                    song.setdefault("id", f.stem)
+                    songs.append(song)
+            except Exception as e:
+                logger.error(f"Failed to load silly song {f}: {e}")
     return songs
 
 
 def _load_song(song_id: str) -> Optional[dict]:
-    """Load a single silly song by ID."""
-    path = DATA_DIR / f"{song_id}.json"
-    if not path.exists():
-        return None
-    try:
-        with open(path) as f:
-            song = json.load(f)
-            song.setdefault("id", song_id)
-            return song
-    except Exception as e:
-        logger.error(f"Failed to load silly song {song_id}: {e}")
-        return None
+    """Load a single silly song by ID, searching every bucket."""
+    for d in DATA_DIRS:
+        path = d / f"{song_id}.json"
+        if not path.exists():
+            continue
+        try:
+            with open(path) as f:
+                song = json.load(f)
+                song.setdefault("id", song_id)
+                return song
+        except Exception as e:
+            logger.error(f"Failed to load silly song {song_id} from {path}: {e}")
+    return None
 
 
 def _save_song(song: dict) -> None:
-    """Persist a silly song back to disk."""
+    """Persist a silly song back to disk.
+
+    If the song already exists in one of the buckets, write to that bucket.
+    Otherwise route by lang: HI items go to silly_songs_hi/, everything else
+    to silly_songs/.
+    """
     song_id = song.get("id")
     if not song_id:
         return
-    path = DATA_DIR / f"{song_id}.json"
-    DATA_DIR.mkdir(parents=True, exist_ok=True)
-    with open(path, "w") as f:
+    # Preserve existing bucket if the song is already on disk
+    for d in DATA_DIRS:
+        existing = d / f"{song_id}.json"
+        if existing.exists():
+            d.mkdir(parents=True, exist_ok=True)
+            with open(existing, "w") as f:
+                json.dump(song, f, indent=2)
+            return
+    # New song — route by lang
+    target_dir = DATA_DIRS[1] if song.get("lang") == "hi" else DATA_DIRS[0]
+    target_dir.mkdir(parents=True, exist_ok=True)
+    with open(target_dir / f"{song_id}.json", "w") as f:
         json.dump(song, f, indent=2)
 
 
