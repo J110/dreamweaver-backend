@@ -16,8 +16,7 @@ GCP VM (dreamvalley-prod) runs pipeline_run.py daily via cron (7 days/week):
   4. ENRICH    → Mistral Large (free tier)          → musicParams (skipped for v2 stories)
   5. COVERS    → Mistral Large (free tier)          → animated SVG cover per story
   6. SYNC      → content.json → seedData.js + copy audio/covers to web public/
-  7. PUBLISH   → git push both repos → Render/Vercel auto-deploy
-  8. DEPLOY    → Backend hot-reload (admin API) + nginx serves new static files (zero-downtime)
+  7. DEPLOY    → Backend hot-reload (admin API) + nginx serves new static files (zero-downtime)
   POSTFLIGHT → Cost estimate + disk usage summary
   NOTIFY     → Email via Resend (ALWAYS — success, partial, or failure)
 ```
@@ -52,8 +51,6 @@ The pipeline's `step_deploy_prod()` calls the admin API automatically. The `ADMI
 |----------|------|-----------|
 | GCP VM | e2-small (2 vCPU shared, 2GB RAM), asia-south1 | $14.69 |
 | GCP Disk | 30GB standard persistent disk | $1.44 |
-| Render (backend) | Free tier | $0.00 |
-| Vercel (frontend) | Free tier | $0.00 |
 | **Infrastructure total** | | **$16.13/mo** |
 
 #### Monthly Total (daily runs, 7 days/week)
@@ -62,7 +59,7 @@ The pipeline's `step_deploy_prod()` calls the admin API automatically. The `ADMI
 |-----------|-------------|
 | GCP infrastructure (VM + disk) | $16.13 |
 | Modal GPU (~30 runs × $0.68) | ~$20.40 (from $30 free credits) |
-| Mistral, Resend, Render, Vercel | $0.00 |
+| Mistral, Resend | $0.00 |
 | **Total** | **~$36.53/mo** ($16.13 cash + ~$20.40 free credits) |
 
 > **Note**: Modal provides $30/month in free credits. The ~$20.40 Modal cost is covered by free credits, so actual cash spend is **~$16.13/month** (GCP only). Consider a 1-year CUD commitment to reduce GCP to ~$10.69/mo.
@@ -576,12 +573,6 @@ Pipeline generates content (runs daily at 2 AM IST, 1 story + 1 poem + 1 lullaby
        │         + copy audio MP3s to web/public/audio/pre-gen/
        │         + cover paths read from content.json (AI-generated or default.svg)
        │
-       ├── PUBLISH (test):
-       │     ├── git push backend → Render auto-deploys backend API
-       │     │     (includes: seed_output/content.json, audio/ files)
-       │     └── git push frontend → Vercel auto-deploys web app
-       │           (includes: seedData.js, public/audio/pre-gen/*.mp3, public/covers/*.svg)
-       │
        ├── DEPLOY PROD (GCP, zero-downtime):
        │     ├── Backend: POST /api/v1/admin/reload (hot-reload content from content.json)
        │     │     Falls back to docker restart if HTTP call fails
@@ -593,10 +584,10 @@ Pipeline generates content (runs daily at 2 AM IST, 1 story + 1 poem + 1 lullaby
        └── NOTIFY: Email sent (SUCCESS / PARTIAL / FAIL, with cost estimate)
 ```
 
-**Pipeline deploys to both test (Render/Vercel) AND production (GCP)**. Production deploy is fully zero-downtime:
+**Pipeline deploys directly to production (GCP), zero-downtime. No staging environment is involved.**
 - **Backend**: hot-reloads content via admin API (serves new data immediately)
 - **Frontend**: nginx serves `/covers/` and `/audio/` directly from `public/` via alias directives — new files are available instantly without any build or restart
-- **seedData.js**: synced and pushed for Vercel test deployment, but production frontend fetches content from API at runtime
+- **seedData.js**: synced to the frontend repo on disk so the frontend bundle picks it up on next build. Migration to a backend-served seed manifest is tracked as a follow-up (see `docs/follow-ups.md`).
 
 **IMPORTANT**: Never do `npm build` + `pm2 restart` for daily content updates. This causes downtime and is unnecessary. Only rebuild frontend for code changes (new components, CSS, etc.).
 

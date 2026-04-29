@@ -162,14 +162,23 @@ Each needs human triage: was it intended for production, or was it a dev/test ar
 
 ## Observability (for later)
 
-### Staging environment re-sync strategy
+### ~~Staging environment re-sync strategy~~ (RESOLVED — staging removed)
 
-Vercel preview + Render test backend no longer get daily content updates because tonight's `SKIP_PUBLISH_STEP=1` removed the `git push` from the cron. Production (`dreamvalley.app`) is unaffected — it lives on the GCP VM and updates via admin/reload. But staging is now stale. Decide:
+~~Vercel preview + Render test backend no longer get daily content updates because tonight's `SKIP_PUBLISH_STEP=1` removed the `git push` from the cron.~~ **Resolved 2026-04-29:** Render and Vercel decommissioned entirely. No staging environment exists. Production-only architecture: GitHub holds code, GCP VM holds production state, no sync needed. See `docs/decommissioned/render-vercel-2026-04-29.md` for the config snapshot taken before tear-down.
 
-- GitHub Actions on a schedule that mirrors the prod content delta back to GitHub
-- Manual `cherry-pick` from a personal laptop weekly
-- A separate non-prod cron that pulls from prod and pushes to GitHub
-- Accept that staging diverges from prod (acceptable if staging is just for code review, not content review)
+### Broader doc cleanup — staging references in non-spec'd docs
+
+The 2026-04-29 Render/Vercel teardown updated the spec-pinned files (`CLAUDE.md` and `docs/DAILY_PIPELINE_GUIDE.md`). Phase A audit identified **~25 additional doc files** with staging / Render / Vercel references outside that pinned set. They likely range from "outdated narrative that should be edited" to "the word 'staging' used as a generic verb" (e.g., "staging area"); requires per-file inspection.
+
+**Backend repo (18 files):**
+- `API_QUICK_REFERENCE.md`, `REWRITE_SUMMARY.md`, `DEPLOYMENT_GUIDE.md`, `COMPLETION_REPORT.md`, `README_DEPLOYMENT.md`, `DEPLOYMENT_CHECKLIST.md`
+- `docs/ENVIRONMENT_CONFIG.md`, `docs/HINDI_DAILY_PIPELINE.md`, `docs/AUDIO_GENERATION_GUIDELINES.md`, `docs/FUNNY_SHORTS_V2_GUIDE.md`, `docs/funny_shorts_production_notes.md`, `docs/SILLY_SONGS_BATTLECRY_GUIDE.md`, `docs/CONTENT_GENERATION_GUIDELINES.md`, `docs/SILLY_SONGS_DEPLOY_GUIDE.md`, `docs/CONTENT_PUBLISHING_GUIDELINES.md`, `docs/FUNNY_SHORTS_MUSIC_SPEC.md`, `docs/FUNNY_SHORTS_SPEC.md`
+- `docs/follow-ups.md` (self-referential — this file's earlier "Staging environment re-sync strategy" entry was updated in this same pass)
+
+**Frontend repo (7 files):**
+- `START_HERE.md`, `QUICKSTART.md`, `DEPLOYMENT.md`, `PROJECT_INDEX.md`, `README.md`, `INSTALLATION.md`, `docs/UI_DISPLAY_GUIDELINES.md`
+
+**Approach:** quick pass per file — `grep -nE "render|vercel|staging" <file>`, decide per match: delete entirely, edit to match production-only architecture, or skip if "staging" is generic English. Batch-commit at the end. Estimate: 60–90 minutes for the full sweep across both repos.
 
 ### PR #1 — yesterday's reconciliation
 

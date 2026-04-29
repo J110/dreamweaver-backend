@@ -159,7 +159,9 @@ Other subcommands: `check`, `seal`, `audit`, `recover --dry-run`, `invariants --
 
 ### Frontend deploys are NOT automatic for dreamvalley.app
 
-Pushing to `dreamweaver-web` GitHub triggers a Vercel preview deploy only. **Production at `dreamvalley.app` is served from PM2 + Next.js standalone on the GCP VM** and requires manual deploy:
+Production-only architecture. GitHub is the code repository. Prod pulls from GitHub. No staging environment.
+
+**Production at `dreamvalley.app` is served from PM2 + Next.js standalone on the GCP VM** and requires a manual deploy after pushing code:
 
 ```bash
 gcloud compute ssh dreamvalley-prod --project=strong-harbor-472607-n4 --zone=asia-south1-c
@@ -170,7 +172,7 @@ sudo cp -r .next/static .next/standalone/.next/static
 sudo pm2 restart dreamweaver-web
 ```
 
-Do not claim a frontend fix is "deployed" until these steps complete. Vercel deployment proves the code builds, not that users see it.
+Do not claim a frontend fix is "deployed" until these steps complete. A successful `git push` proves the code is on GitHub, not that users see it.
 
 ## DEPLOY_GUARD VIOLATIONS
 
