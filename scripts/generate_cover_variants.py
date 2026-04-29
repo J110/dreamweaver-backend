@@ -35,7 +35,11 @@ VARIANT_CONTENT_TYPES = {"story", "long_story", "lullaby"}
 
 # Directories to scan in pipeline mode
 BASE_DIR = Path(__file__).resolve().parent.parent
-COVERS_DIR = BASE_DIR / "public" / "covers"
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _paths import COVER_OUTPUT_DIR  # noqa: E402
+
+COVERS_DIR = COVER_OUTPUT_DIR
 SEED_COVERS = BASE_DIR / "seed_output" / "covers_experimental"
 DATA_DIR = BASE_DIR / "data"
 CONTENT_PATH = DATA_DIR / "content.json"

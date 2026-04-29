@@ -52,7 +52,11 @@ logging.basicConfig(level=logging.INFO, format="%(message)s")
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 DATA_DIR = BASE_DIR / "data" / "silly_songs"
-COVERS_DIR = BASE_DIR / "public" / "covers" / "silly-songs"
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _paths import COVER_OUTPUT_DIR  # noqa: E402
+
+COVERS_DIR = COVER_OUTPUT_DIR / "silly-songs"
 
 # ── FLUX Prompt ─────────────────────────────────────────────
 

@@ -119,9 +119,12 @@ def _apply_recent_penalty(weights: dict[str, float], recent_values: list[str]) -
 
 BASE_DIR = Path(__file__).parent.parent
 sys.path.insert(0, str(BASE_DIR))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from dotenv import load_dotenv
 load_dotenv(BASE_DIR / ".env", override=True)
+
+from _paths import COVER_OUTPUT_DIR  # noqa: E402
 
 try:
     import httpx
@@ -3872,13 +3875,13 @@ def main():
     combined_size = combined_path.stat().st_size
     logger.info("Saved combined SVG: %s (%d KB)", combined_path.name, combined_size // 1024)
 
-    # Copy combined SVG to frontend public/covers/
-    web_covers = BASE_DIR.parent / "dreamweaver-web" / "public" / "covers"
-    if web_covers.exists():
-        import shutil
-        dest = web_covers / f"{story_id}.svg"
-        shutil.copy2(combined_path, dest)
-        logger.info("Copied to frontend: %s", dest)
+    # Copy combined SVG to cover output dir (env-controlled — defaults to
+    # public/covers/, prod cron sets COVER_OUTPUT_DIR=/opt/cover-store).
+    import shutil
+    COVER_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    dest = COVER_OUTPUT_DIR / f"{story_id}.svg"
+    shutil.copy2(combined_path, dest)
+    logger.info("Copied cover to: %s", dest)
 
     # Update cover path in content.json
     content_path = SEED_OUTPUT / "content.json"

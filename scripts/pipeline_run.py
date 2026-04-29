@@ -1187,7 +1187,8 @@ def step_covers(args, state: dict) -> bool:
       1. Generates a FLUX AI background (WebP) via Hugging Face free tier
       2. Creates an animated SVG overlay (particles, glows, mist)
       3. Combines into a single SVG (embedded WebP + overlay animations)
-      4. Copies to frontend public/covers/ and updates content.json
+      4. Writes to COVER_OUTPUT_DIR (defaults to public/covers/, prod
+         cron sets COVER_OUTPUT_DIR=/opt/cover-store) and updates content.json
 
     Each cover uses 7 diversity axes (world, palette, composition, character,
     light, texture, time) auto-selected from story metadata to ensure
@@ -2053,8 +2054,7 @@ def step_publish(args, state: dict) -> bool:
         logger.info("  Committing frontend changes...")
         web_cwd = str(WEB_DIR)
         frontend_cmds = [
-            (["git", "add", "src/utils/seedData.js",
-              "public/covers/"], "Frontend: git add"),
+            (["git", "add", "src/utils/seedData.js"], "Frontend: git add"),
             (["git", "commit", "-m", commit_msg, "--allow-empty"], "Frontend: git commit"),
             (["git", "pull", "--rebase", "origin", "main"], "Frontend: git pull --rebase"),
             (["git", "push", "origin", "main"], "Frontend: git push"),

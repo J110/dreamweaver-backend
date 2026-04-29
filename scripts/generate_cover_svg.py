@@ -31,11 +31,14 @@ except ImportError:
 
 from mistralai import Mistral
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _paths import COVER_OUTPUT_DIR  # noqa: E402
+
 MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY", "")
 MODEL = "mistral-large-latest"
 
 CONTENT_JSON = BASE_DIR / "seed_output" / "content.json"
-WEB_COVERS_DIR = BASE_DIR.parent / "dreamweaver-web" / "public" / "covers"
+WEB_COVERS_DIR = COVER_OUTPUT_DIR
 
 # Rate limit: 35s between Mistral calls (free tier = 2 req/min)
 RATE_LIMIT_DELAY = 35
