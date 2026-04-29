@@ -423,11 +423,13 @@ def generate_short_story(axes: dict, log_prefix: str = "  ") -> dict:
     # Generate + save cover
     cover = _flux_cover(data.get("cover_context", "Indian bedtime watercolor"))
     if cover:
-        _save_cover(
-            cover,
-            WEB_ROOT / "public" / "covers" / f"{sid}.webp",
-            BASE_DIR / "seed_output" / "stories_hi" / f"{sid}_cover.webp",
-        )
+        cover_paths = [
+            WEB_ROOT / "public" / "covers" / f"{sid}.webp",                          # legacy duplicate
+            BASE_DIR / "seed_output" / "stories_hi" / f"{sid}_cover.webp",           # debug master
+        ]
+        if ON_PROD:
+            cover_paths.append(PROD_COVER_STORE / f"{sid}.webp")                     # frontend-served
+        _save_cover(cover, *cover_paths)
 
     # text field is the user-facing display version (tags stripped).
     # raw_text keeps the tagged form for any pipeline that re-renders audio.
@@ -601,12 +603,15 @@ def generate_lullaby(axes: dict, log_prefix: str = "  ") -> dict:
 
     cover = _flux_cover(data.get("cover_context", "Indian baby sleeping under a quilt"))
     if cover:
-        _save_cover(
-            cover,
-            WEB_ROOT / "public" / "covers" / f"{sid}.webp",
-            WEB_ROOT / "public" / "covers" / "lullabies" / f"{sid}_cover.webp",
-            BASE_DIR / "seed_output" / "lullabies" / f"{sid}_cover.webp",
-        )
+        cover_paths = [
+            WEB_ROOT / "public" / "covers" / f"{sid}.webp",                          # legacy duplicate
+            WEB_ROOT / "public" / "covers" / "lullabies" / f"{sid}_cover.webp",      # legacy duplicate
+            BASE_DIR / "seed_output" / "lullabies" / f"{sid}_cover.webp",            # debug master
+        ]
+        if ON_PROD:
+            cover_paths.append(PROD_COVER_STORE / f"{sid}.webp")                              # frontend-served (root)
+            cover_paths.append(PROD_COVER_STORE / "lullabies" / f"{sid}_cover.webp")          # frontend-served (subtype)
+        _save_cover(cover, *cover_paths)
 
     entry = {
         "id": sid,
@@ -1004,12 +1009,13 @@ def generate_poem(axes: dict, log_prefix: str = "  ") -> dict:
     cover = _flux_cover(data.get("cover_context", "Indian abstract watercolor"))
     if cover:
         cover_paths = [
-            WEB_ROOT / "public" / "covers" / f"{sid}.webp",                       # home reference
+            WEB_ROOT / "public" / "covers" / f"{sid}.webp",                       # legacy duplicate (home reference)
             WEB_ROOT / "public" / "covers" / "poems-hi" / f"{sid}_cover.webp",    # legacy duplicate
             BASE_DIR / "seed_output" / "poems_hi" / f"{sid}_cover.webp",          # debug master
         ]
         if ON_PROD:
-            cover_paths.append(PROD_BACKEND_PUBLIC / "covers" / "poems" / f"{sid}_cover.webp")  # frontend-served
+            cover_paths.append(PROD_COVER_STORE / f"{sid}.webp")                              # frontend-served (root)
+            cover_paths.append(PROD_COVER_STORE / "poems" / f"{sid}_cover.webp")              # frontend-served (subtype)
         _save_cover(cover, *cover_paths)
 
     text_lines = [l for l in data["poem_text"].split("\n") if l.strip()]
@@ -1467,11 +1473,13 @@ def generate_long_story(axes: dict, log_prefix: str = "  ") -> dict:
 
     cover = _flux_cover(data.get("cover_context", "Indian dreamy bedtime watercolor"))
     if cover:
-        _save_cover(
-            cover,
-            WEB_ROOT / "public" / "covers" / f"{sid}.webp",
-            BASE_DIR / "seed_output" / "hindi_long" / f"{sid}_cover.webp",
-        )
+        cover_paths = [
+            WEB_ROOT / "public" / "covers" / f"{sid}.webp",                          # legacy duplicate
+            BASE_DIR / "seed_output" / "hindi_long" / f"{sid}_cover.webp",           # debug master
+        ]
+        if ON_PROD:
+            cover_paths.append(PROD_COVER_STORE / f"{sid}.webp")                     # frontend-served
+        _save_cover(cover, *cover_paths)
 
     # Strip tags for display text (use the Roman version for human readability)
     from publish_hindi_long_day1 import strip_long_story_tags  # type: ignore
