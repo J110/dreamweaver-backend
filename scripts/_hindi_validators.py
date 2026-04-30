@@ -128,6 +128,13 @@ def validate_short_story(d: dict) -> list[str]:
         if _has_devanagari(char.get(sub, "") or ""):
             errors.append(f"Devanagari in character.{sub}")
 
+    # Devanagari requirement on TTS-engine input fields. If absent or
+    # Roman-only, audio renders with degraded Hindi phonemes (silent
+    # fallback in _hindi_generators.py).
+    for f in ("text_deva", "hook_deva"):
+        if not _has_devanagari(d.get(f, "") or ""):
+            errors.append(f"missing Devanagari in '{f}' (TTS engine input)")
+
     # Literary
     for w in LITERARY:
         if w in text_lower:
@@ -203,6 +210,12 @@ def validate_long_story(d: dict) -> list[str]:
               "mystery", "resolution", "repeated_phrase"):
         if _has_devanagari(d.get(f, "") or ""):
             errors.append(f"Devanagari in '{f}'")
+
+    # Devanagari requirement on TTS-engine input. If absent or Roman-only,
+    # audio renders with degraded Hindi phonemes (silent fallback in
+    # _hindi_generators.py).
+    if not _has_devanagari(d.get("full_text_deva", "") or ""):
+        errors.append("missing Devanagari in 'full_text_deva' (TTS engine input)")
 
     # Literary
     for w in LITERARY:
@@ -300,6 +313,12 @@ def validate_lullaby(d: dict) -> list[str]:
         if _has_devanagari(d.get(f, "") or ""):
             errors.append(f"Devanagari in '{f}'")
 
+    # Devanagari requirement on TTS-engine input. If absent or Roman-only,
+    # MiniMax v2.5 renders with degraded Hindi phonemes (silent fallback
+    # in _hindi_generators.py:601).
+    if not _has_devanagari(d.get("lyrics_deva", "") or ""):
+        errors.append("missing Devanagari in 'lyrics_deva' (TTS engine input)")
+
     # Literary
     for w in LITERARY:
         if w in lyrics_lower:
@@ -341,6 +360,12 @@ def validate_silly_song(d: dict) -> list[str]:
     for f in ("title", "lyrics", "card_label", "card_subtitle", "anthem"):
         if _has_devanagari(d.get(f, "") or ""):
             errors.append(f"Devanagari in '{f}'")
+
+    # Devanagari requirement on TTS-engine input. If absent or Roman-only,
+    # ElevenLabs Music renders with degraded Hindi phonemes (silent
+    # fallback in _hindi_generators.py:773).
+    if not _has_devanagari(d.get("lyrics_deva", "") or ""):
+        errors.append("missing Devanagari in 'lyrics_deva' (TTS engine input)")
 
     # Literary (silly songs include vidyalay)
     for w in LITERARY:
@@ -397,6 +422,12 @@ def validate_poem(d: dict) -> list[str]:
     for f in ("title", "poem_text"):
         if _has_devanagari(d.get(f, "") or ""):
             errors.append(f"Devanagari in '{f}'")
+
+    # Devanagari requirement on TTS-engine input. If absent or Roman-only,
+    # MiniMax v2.5 renders with degraded Hindi phonemes (silent fallback
+    # in _hindi_generators.py:976).
+    if not _has_devanagari(d.get("poem_text_deva", "") or ""):
+        errors.append("missing Devanagari in 'poem_text_deva' (TTS engine input)")
 
     # Literary
     for w in LITERARY:

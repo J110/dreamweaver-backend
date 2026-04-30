@@ -238,6 +238,16 @@ def validate_funny_short(
                 errors.append(f"Line {i}: Devanagari detected")
         if not script.get("title_en"):
             errors.append("Missing title_en")
+        # Devanagari requirement on TTS-engine input (per-line text_deva).
+        # ElevenLabs v3 renders cleaner Hindi phonemes from Devanagari;
+        # generate_funny_shorts_hi.py:289 prefers text_deva over text.
+        # Tag-only / laughter lines are exempt — they have no spoken words.
+        for i, inp in enumerate(inputs):
+            spoken = TAG_REGEX.sub("", inp.get("text", "")).strip()
+            if not spoken:
+                continue  # tag-only line (e.g. "[laughs]") — no phonemes to render
+            if not _has_devanagari(inp.get("text_deva", "") or ""):
+                errors.append(f"Line {i}: missing Devanagari in 'text_deva' (TTS engine input)")
 
     # — Anti-template: opening tag (last 3) —
     if inputs:
