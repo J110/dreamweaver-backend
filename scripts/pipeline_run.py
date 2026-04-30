@@ -67,6 +67,47 @@ WEB_DIR = BASE_DIR.parent / "dreamweaver-web"
 AUDIO_STORE = Path("/opt/audio-store/pre-gen")
 COVER_STORE = Path("/opt/cover-store")
 
+DATA_DIR = BASE_DIR / "data"
+
+# Per-content directory routing — mirrors app/services/local_store.py.
+# After the 2026-04-29 refactor, data/<type>/<id>.json is the source of truth;
+# seed_output/content.json is a derived snapshot. Generators must write per-
+# content files or items get dropped on the next admin reload.
+def _per_content_target(item: dict):
+    typ = item.get("type")
+    subtype = item.get("subtype")
+    lang = item.get("lang") or item.get("language") or "en"
+    suffix = "_hi" if lang == "hi" else ""
+    if typ == "story":      return DATA_DIR / f"stories{suffix}"
+    if typ == "long_story": return DATA_DIR / f"long_stories{suffix}"
+    if typ == "poem":       return DATA_DIR / f"poems{suffix}"
+    if typ == "song":
+        if subtype == "silly_song":  return DATA_DIR / f"silly_songs{suffix}"
+        if subtype == "funny_short": return DATA_DIR / f"funny_shorts{suffix}"
+        return DATA_DIR / f"lullabies{suffix}"
+    return None
+
+
+def _write_per_content_file(item: dict) -> bool:
+    """Write data/<type>/<id>.json atomically. Returns True on success."""
+    target = _per_content_target(item)
+    if target is None:
+        logger.warning("no per-content rule for id=%s type=%r subtype=%r lang=%r",
+                       item.get("id"), item.get("type"), item.get("subtype"),
+                       item.get("lang"))
+        return False
+    if not item.get("id"):
+        logger.warning("skipping per-content write: item has no id")
+        return False
+    target.mkdir(parents=True, exist_ok=True)
+    path = target / f"{item['id']}.json"
+    tmp = path.with_suffix(".json.tmp")
+    payload = {k: v for k, v in item.items() if k != "subtype"}
+    tmp.write_text(json.dumps(payload, ensure_ascii=False, indent=2))
+    tmp.replace(path)
+    return True
+
+
 # ── Logging ──────────────────────────────────────────────────────────────
 LOG_DIR = BASE_DIR / "logs"
 LOG_DIR.mkdir(exist_ok=True)
@@ -209,7 +250,9 @@ def merge_expanded_to_content(new_ids: list) -> int:
 
     for sid in new_ids:
         if sid not in existing_ids and sid in expanded_map:
-            content.append(expanded_map[sid])
+            item = expanded_map[sid]
+            content.append(item)
+            _write_per_content_file(item)
             added += 1
 
     if added > 0:
@@ -1538,6 +1581,7 @@ def step_lullabies(args, state: dict) -> bool:
                     "lullaby_type": ll.get("lullaby_type", ""),
                 }
                 content.append(entry)
+                _write_per_content_file(entry)
                 existing_ids.add(lid)
                 lullaby_ids.append(lid)
                 added += 1
