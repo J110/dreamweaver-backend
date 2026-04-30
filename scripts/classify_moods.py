@@ -285,11 +285,26 @@ def main():
                 "output_tokens": 0,
             })
 
-    # Save modified content.json
+    # Save modified content.json (snapshot — derived) and per-content files
+    # (source of truth post 2026-04-29 refactor). The snapshot is regenerated
+    # from per-content files on every backend reload, so mood updates that
+    # only land in the snapshot are silently dropped.
     if not args.dry_run and errors < len(content):
         with open(content_path, "w", encoding="utf-8") as f:
             json.dump(content, f, indent=2, ensure_ascii=False)
         print(f"\n✅ Saved {content_path}")
+
+        try:
+            sys.path.insert(0, str(Path(__file__).resolve().parent))
+            from _per_content_io import update_per_content_fields
+            mood_updates = 0
+            for item in content:
+                if item.get("mood") and item.get("id"):
+                    if update_per_content_fields(item["id"], mood=item["mood"]):
+                        mood_updates += 1
+            print(f"✅ Synced mood to {mood_updates} per-content files")
+        except Exception as e:
+            print(f"⚠️  Per-content mood sync failed: {e}")
 
     # Write CSV log
     log_path = Path(args.log)

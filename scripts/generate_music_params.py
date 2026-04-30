@@ -988,6 +988,21 @@ def run():
             json.dump(all_content, f, ensure_ascii=False, indent=2)
         print(f"\n✓ Updated {updated_count} stories in {CONTENT_JSON}")
 
+        # Per-content files are the source of truth post 2026-04-29 refactor.
+        # The snapshot above gets rebuilt from per-content dirs on the next
+        # admin reload, so brief updates that only land in the snapshot are
+        # silently dropped. Mirror them to per-content files too.
+        try:
+            sys.path.insert(0, str(Path(__file__).resolve().parent))
+            from _per_content_io import update_per_content_fields
+            pcf_updates = 0
+            for sid, brief in results.items():
+                if update_per_content_fields(sid, musicalBrief=brief):
+                    pcf_updates += 1
+            print(f"✓ Synced musicalBrief to {pcf_updates} per-content files")
+        except Exception as e:
+            print(f"⚠️  Per-content musicalBrief sync failed: {e}")
+
     tracker.summary()
 
 

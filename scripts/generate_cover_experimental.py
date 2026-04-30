@@ -3883,7 +3883,11 @@ def main():
     shutil.copy2(combined_path, dest)
     logger.info("Copied cover to: %s", dest)
 
-    # Update cover path in content.json
+    # Update cover path in content.json (snapshot — derived) and per-content
+    # file (source of truth post 2026-04-29 refactor). Both must be written:
+    # downstream pipeline steps read the snapshot, but the next admin reload
+    # rebuilds the snapshot from per-content files, so a snapshot-only write
+    # is wiped on reload.
     content_path = SEED_OUTPUT / "content.json"
     if content_path.exists():
         try:
@@ -3899,6 +3903,15 @@ def main():
                 f.write("\n")
         except Exception as e:
             logger.warning("Could not update content.json: %s", e)
+
+    try:
+        from _per_content_io import update_per_content_fields
+        if update_per_content_fields(story_id, cover=f"/covers/{story_id}.svg"):
+            logger.info("Updated cover in per-content file: %s", story_id)
+        else:
+            logger.warning("Per-content file not found for %s — cover update skipped", story_id)
+    except Exception as e:
+        logger.warning("Per-content cover update failed for %s: %s", story_id, e)
 
     # Generate preview HTML
     logger.info("Generating preview HTML...")
