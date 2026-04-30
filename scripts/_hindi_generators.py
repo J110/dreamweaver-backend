@@ -877,38 +877,11 @@ def generate_silly_song(axes: dict, log_prefix: str = "  ") -> dict:
         "updated_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
     }
 
-    # Per-item runtime file for /api/v1/silly-songs
-    runtime_entry = {
-        "id": sid,
-        "lang": "hi",
-        "title": data["title"],
-        "title_en": data["title_en"],
-        "category": axes["category"],
-        "anthem_id": data["anthem_id"],
-        "anthem": data["anthem"],
-        "card_label": data["card_label"],
-        "card_subtitle": data["card_subtitle"],
-        "age_group": axes["age_group"],
-        "mood": axes["mood"],
-        "instruments": data.get("instruments", ""),
-        "tempo": data.get("tempo", 120),
-        "lyrics": data["lyrics"],
-        "duration_seconds": duration,
-        "audio_engine": "elevenlabs-music",
-        "audio_file": f"{sid}.mp3",
-        "cover_file": f"{sid}_cover.webp",
-        "play_count": 0,
-        "replay_count": 0,
-        "created_at": time.strftime("%Y-%m-%d"),
-    }
-    # Hindi silly_songs land in the _hi bucket. Walker stamps lang from
-    # directory placement (spec §2c, OQ3); writing here means the walker
-    # correctly stamps lang=hi at boot. EN bucket would mis-stamp to lang=en.
-    rp = BASE_DIR / "data" / "silly_songs_hi" / f"{sid}.json"
-    rp.parent.mkdir(parents=True, exist_ok=True)
-    rp.write_text(json.dumps(runtime_entry, ensure_ascii=False, indent=2))
-
     _attach_qa_changes(entry, data)
+    # Per spec §2g.1: per-content file write (walker reads this post-cutover —
+    # must hold the rich entry, not a slim subset, or audio_url/cover are
+    # stripped from the API response). _upsert_content stays until post-cutover §4 step 15.
+    _write_per_content_file(entry)
     _upsert_content(entry)
     print(f"{log_prefix}✓ silly song published: {sid} ({duration}s)")
     return entry
@@ -1092,36 +1065,11 @@ def generate_poem(axes: dict, log_prefix: str = "  ") -> dict:
         "updated_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
     }
 
-    # Per-item runtime file for /api/v1/poems
-    runtime_entry = {
-        "id": sid,
-        "lang": "hi",
-        "title": data["title"],
-        "title_en": data["title_en"],
-        "content_type": "poem",
-        "poem_type": axes["poem_type"],
-        "age_group": axes["age_group"],
-        "mood": axes["mood"],
-        "instruments": data.get("instruments", ""),
-        "tempo": data.get("tempo", 100),
-        "poem_text": data["poem_text"],
-        "char_count": len(data["poem_text"]),
-        "line_count": len(text_lines),
-        "audio_file": f"{sid}.mp3",
-        "cover_file": f"{sid}_cover.webp",
-        "cover_context": data.get("cover_context", ""),
-        "duration_seconds": duration,
-        "audio_engine": "minimax-music-v2.5-fal",
-        "created_at": time.strftime("%Y-%m-%d"),
-    }
-    # Hindi poems land in the _hi bucket. Walker stamps lang from
-    # directory placement (spec §2c, OQ3); writing here means the walker
-    # correctly stamps lang=hi at boot. EN bucket would mis-stamp to lang=en.
-    rp = BASE_DIR / "data" / "poems_hi" / f"{sid}.json"
-    rp.parent.mkdir(parents=True, exist_ok=True)
-    rp.write_text(json.dumps(runtime_entry, ensure_ascii=False, indent=2))
-
     _attach_qa_changes(entry, data)
+    # Per spec §2g.1: per-content file write (walker reads this post-cutover —
+    # must hold the rich entry, not a slim subset, or audio_url/cover are
+    # stripped from the API response). _upsert_content stays until post-cutover §4 step 15.
+    _write_per_content_file(entry)
     _upsert_content(entry)
     print(f"{log_prefix}✓ poem published: {sid} ({duration}s)")
     return entry
