@@ -812,8 +812,8 @@ def generate_silly_song(axes: dict, log_prefix: str = "  ") -> dict:
     ]
     if ON_PROD:
         audio_paths.extend([
-            PROD_BACKEND_PUBLIC / "audio" / "silly-songs" / f"{sid}.mp3",  # api-served
-            PROD_AUDIO_STORE / "silly-songs-hi" / f"{sid}.mp3",            # backup
+            PROD_BACKEND_PUBLIC / "audio" / "silly-songs" / f"{sid}.mp3",  # legacy duplicate
+            PROD_AUDIO_STORE / "silly-songs" / f"{sid}.mp3",               # api-served (frontend hits api.dreamvalley.app/audio/silly-songs/<file>)
         ])
     _save_audio(audio, *audio_paths)
 
@@ -863,7 +863,7 @@ def generate_silly_song(axes: dict, log_prefix: str = "  ") -> dict:
             "provider": "elevenlabs-music",
         }],
         "cover": f"/covers/{sid}.webp" if cover else "/covers/default.svg",
-        "cover_file": f"/covers/silly-songs/{sid}_cover.webp",
+        "cover_file": f"{sid}_cover.webp",
         "cover_context": data.get("cover_context", ""),
         "duration_seconds": duration,
         "durationSec": duration,
@@ -998,8 +998,8 @@ def generate_poem(axes: dict, log_prefix: str = "  ") -> dict:
     ]
     if ON_PROD:
         audio_paths.extend([
-            PROD_BACKEND_PUBLIC / "audio" / "poems" / f"{sid}.mp3",  # api-served
-            PROD_AUDIO_STORE / "poems-hi" / f"{sid}.mp3",            # backup
+            PROD_BACKEND_PUBLIC / "audio" / "poems" / f"{sid}.mp3",  # legacy duplicate
+            PROD_AUDIO_STORE / "poems" / f"{sid}.mp3",               # api-served (frontend hits api.dreamvalley.app/audio/poems/<file>)
         ])
     _save_audio(audio, *audio_paths)
 
@@ -1051,7 +1051,7 @@ def generate_poem(axes: dict, log_prefix: str = "  ") -> dict:
             "provider": "minimax-music-v2.5-fal",
         }],
         "cover": f"/covers/{sid}.webp" if cover else "/covers/default.svg",
-        "cover_file": f"/covers/poems-hi/{sid}_cover.webp",
+        "cover_file": f"{sid}_cover.webp",
         "cover_context": data.get("cover_context", ""),
         "duration_seconds": duration,
         "durationSec": duration,
