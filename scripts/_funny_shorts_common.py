@@ -222,10 +222,14 @@ def validate_funny_short(
         if _word_count_text_only(inp.get("text", "")) > 12:
             errors.append(f"Line {i}: too many words")
 
-    # — Total chars ≤500 —
+    # — Total chars: ≤500 for EN, ≤800 for HI (HI naturally longer per word) —
     total_chars = sum(len(inp.get("text", "")) for inp in inputs)
-    if total_chars > 500:
-        errors.append(f"Too long: {total_chars} chars")
+    if lang == "hi":
+        if total_chars > 800:
+            errors.append(f"Too long: {total_chars} chars (HI hard ceiling: 800)")
+    else:
+        if total_chars > 500:
+            errors.append(f"Too long: {total_chars} chars")
 
     # — Tag whitelist —
     for i, inp in enumerate(inputs):
@@ -832,10 +836,12 @@ You have full creative freedom WITHIN these constraints:
 - Exactly two characters speaking, no narrator
 - 6-20 dialogue lines total (vary the length)
 - Max 12 words per line
-- Total STRICTLY under 500 characters across all lines combined.
-  AIM for 300-400 chars (going over 500 is auto-rejected).
-  Standalone tag-only lines like "[laughs together]" still count toward
-  the 500-char budget — leave room for 2 of them.
+- Target around 500 characters total. Slightly longer is fine if the
+  comedy needs it; slightly shorter is fine if the punchline lands
+  earlier. These are funny shorts — stay short, but don't sacrifice
+  the joke for an arbitrary count. Hard ceiling: don't go over 800
+  characters. Standalone tag-only lines like "[laughs together]" still
+  count toward the budget.
 - Use audio tags ONLY from this list: {approved_tags}
 
 AUDIO TAG USAGE — TWO PATTERNS (this is the most important section):
