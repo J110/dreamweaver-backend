@@ -561,8 +561,6 @@ def step_generate(args, state: dict) -> bool:
         cmd += ["--story-type", effective_story_type]
     if args.age:
         cmd += ["--age", args.age]
-    if args.language_level:
-        cmd += ["--language-level", args.language_level]
     if args.dry_run:
         cmd += ["--dry-run"]
 
@@ -2305,7 +2303,7 @@ def preflight_checks(args) -> bool:
             logger.error("  Mistral API check failed: %s", e)
             all_ok = False
 
-    # 5. Git pull to ensure we have the latest content.json (with language_level classifications etc.)
+    # 5. Git pull to ensure we have the latest content.json
     logger.info("  Pulling latest backend changes...")
     # Stash dirty runtime files (analytics.db, tokens.json, etc.) so pull --rebase works
     run_command(["git", "stash", "--quiet"], "Preflight: git stash", timeout=30)
@@ -2491,9 +2489,6 @@ def main():
     parser.add_argument("--story-type",
                         choices=["folk_tale", "mythological", "fable", "nature", "slice_of_life", "dream"],
                         default=None, help="Target story type (narrative tradition) for content generation")
-    parser.add_argument("--language-level",
-                        choices=["basic", "intermediate", "advanced"],
-                        default=None, help="Target language level (auto-selects from deficit if omitted)")
     parser.add_argument("--age", default=None,
                         help="Force specific age group (e.g. 6-8) for --mood runs")
     parser.add_argument("--type", dest="content_type",
@@ -2534,10 +2529,6 @@ def main():
         logger.info("  Story type (auto): %s", args.story_type)
     else:
         logger.info("  Story type (manual): %s", args.story_type)
-    if args.language_level:
-        logger.info("  Language level (manual): %s", args.language_level)
-    else:
-        logger.info("  Language level: auto (deficit-based)")
     logger.info("  Dry run: %s", args.dry_run)
     logger.info("")
 

@@ -2755,7 +2755,6 @@ def publish_episode(output_dir, params, metadata, duration_seconds):
         "character": char_card,
         "is_saved": False,
         "story_type": "nature",
-        "language_level": "intermediate",
     }
 
     # Per spec §2g.1: write per-content file (additive — walker reads this
