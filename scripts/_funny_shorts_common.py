@@ -666,6 +666,22 @@ Audio tags stay in English ([curious], [laughs together], etc.) in
 BOTH fields — they're delivery cues, not text.
 Both fields must contain the same tags in the same positions.
 
+HARD RULE — text_deva MUST contain Devanagari (U+0900–U+097F) on EVERY
+line that has spoken words after the audio tag. This includes:
+- Lines that are pure Hindi: "Phone kahaan hai?" → "फ़ोन कहाँ है?"
+- Hinglish lines: "[curious] School ka homework done?" →
+  "[curious] स्कूल का होमवर्क डन?" (transliterate the English words
+  too: school→स्कूल, phone→फ़ोन, okay→ओके, homework→होमवर्क,
+  actually→ऐक्चुअली, literally→लिटरली, cousin→कज़न)
+- Even one-word lines: "Sach?" → "सच?"
+
+The ONLY lines exempt from Devanagari in text_deva are tag-only lines
+with no spoken words (e.g. "[laughs]...", "[laughs together] hahaha",
+"[giggles]"). For those, text_deva = text (identical, no Devanagari needed).
+
+The validator REJECTS the entire script if ANY non-tag-only line is
+missing Devanagari in text_deva. Double-check every line before output.
+
 CONVERSATIONAL REGISTER:
 Bolchaal ki Hindi — way Indian siblings actually talk.
 Hinglish is natural — "school", "phone", "okay", "actually",
