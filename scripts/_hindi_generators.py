@@ -855,6 +855,7 @@ def generate_silly_song(axes: dict, log_prefix: str = "  ") -> dict:
         "mood": axes["mood"],
         "instruments": data.get("instruments", ""),
         "tempo": data.get("tempo", 120),
+        "audio_file": f"{sid}.mp3",
         "audio_url": f"/audio/silly-songs/{sid}.mp3",
         "audio_variants": [{
             "voice": "elevenlabs_music_v1",
@@ -1043,6 +1044,7 @@ def generate_poem(axes: dict, log_prefix: str = "  ") -> dict:
         "tempo": data.get("tempo", 100),
         "char_count": len(data["poem_text"]),
         "line_count": len(text_lines),
+        "audio_file": f"{sid}.mp3",
         "audio_url": f"/audio/poems-hi/{sid}.mp3",
         "audio_variants": [{
             "voice": "minimax_v2.5_hi_ref",
