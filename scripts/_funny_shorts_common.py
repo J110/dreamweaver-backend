@@ -217,9 +217,10 @@ def validate_funny_short(
     if len(inputs) < 6 or len(inputs) > 20:
         errors.append(f"Line count {len(inputs)} out of 6-20 range")
 
-    # — Per-line ≤12 words —
+    # — Per-line word cap: ≤12 for EN, ≤15 for HI (HI runs longer per word) —
+    max_words_per_line = 15 if lang == "hi" else 12
     for i, inp in enumerate(inputs):
-        if _word_count_text_only(inp.get("text", "")) > 12:
+        if _word_count_text_only(inp.get("text", "")) > max_words_per_line:
             errors.append(f"Line {i}: too many words")
 
     # — Total chars: ≤500 for EN, ≤800 for HI (HI naturally longer per word) —
@@ -403,20 +404,21 @@ def repair_devanagari(
     script: dict,
     errors: list[str],
     request_mistral: Callable[[str], dict],
+    recent_shorts: list[dict],
+    lang: str,
     log_prefix: str = "  ",
 ) -> dict | None:
     """Targeted repair pass for missing-Devanagari validation failures.
 
     Returns:
-      - repaired script dict if errors were ALL Devanagari-only and the
-        repair pass produced Devanagari text for every affected line.
-        Caller MUST re-run the validator before trusting the result —
-        Mistral can return Roman in the 'deva' field, which only
-        re-validation will catch.
+      - repaired script dict if errors were ALL Devanagari-only, the
+        repair pass produced Devanagari text for every affected line,
+        AND a fresh full validation pass came back clean. Caller does
+        not need to re-validate.
       - None if errors include non-Devanagari issues, the repair pass
         itself failed (Mistral error, malformed output, missing line),
-        or any input precondition fails. Caller should fall through to
-        the next generation attempt.
+        or post-repair revalidation still flagged any error. Caller
+        should fall through to the next generation attempt.
     """
     inputs = script.get("inputs") or []
     if not inputs:
@@ -491,9 +493,37 @@ def repair_devanagari(
             return None
         repaired["inputs"][script_idx]["text_deva"] = deva
 
+    # Revalidate fully — Mistral can return Roman in the 'deva' field
+    # even on the narrower repair task. Helper's contract is "return a
+    # fully-validated script or None".
+    post_errors = validate_funny_short(
+        repaired, recent_shorts=recent_shorts, lang=lang,
+    )
+    if post_errors:
+        still_missing: list[str] = []
+        for e in post_errors:
+            m = re.match(r"^Line (\d+):.*missing Devanagari", e)
+            if not m:
+                continue
+            idx = int(m.group(1))
+            inputs_post = repaired.get("inputs", [])
+            if 0 <= idx < len(inputs_post):
+                roman = inputs_post[idx].get("text", "")
+                still_missing.append(f"line {idx}: {roman!r}")
+            else:
+                still_missing.append(f"line {idx} (out of range)")
+        if still_missing:
+            print(
+                f"{log_prefix}Devanagari repair: post-repair revalidation "
+                f"failed — {len(still_missing)} line(s) still missing "
+                f"Devanagari: {still_missing}"
+            )
+        return None
+
     print(
         f"{log_prefix}Devanagari repair: success "
-        f"(repaired {len(lines_to_convert)} lines via Mistral)"
+        f"(repaired {len(lines_to_convert)} lines via Mistral, "
+        f"revalidation clean)"
     )
     return repaired
 
@@ -835,7 +865,7 @@ NEVER literary Hindi: nidra, nakshatra, shayan, pushp, van.
 You have full creative freedom WITHIN these constraints:
 - Exactly two characters speaking, no narrator
 - 6-20 dialogue lines total (vary the length)
-- Max 12 words per line
+- Max 15 words per line
 - Target around 500 characters total. Slightly longer is fine if the
   comedy needs it; slightly shorter is fine if the punchline lands
   earlier. These are funny shorts — stay short, but don't sacrifice

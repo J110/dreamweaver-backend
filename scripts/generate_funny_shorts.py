@@ -281,24 +281,13 @@ def main() -> int:
         candidate["required_opening_tag"] = opening_tag
         last_errors = validate_funny_short(candidate, recent_shorts=recent, lang=lang)
         if last_errors and lang == "hi":
-            repaired = repair_devanagari(candidate, last_errors, request_mistral_script)
+            repaired = repair_devanagari(
+                candidate, last_errors, request_mistral_script,
+                recent_shorts=recent, lang=lang,
+            )
             if repaired is not None:
-                post_errors = validate_funny_short(repaired, recent_shorts=recent, lang=lang)
-                if not post_errors:
-                    candidate = repaired
-                    last_errors = []
-                else:
-                    still_missing = [
-                        e for e in post_errors
-                        if e.startswith("Line ") and "missing Devanagari" in e
-                    ]
-                    if still_missing:
-                        print(
-                            f"  Devanagari repair: post-repair revalidation failed — "
-                            f"{len(still_missing)} line(s) still missing Devanagari: "
-                            f"{still_missing}"
-                        )
-                    last_errors = post_errors
+                candidate = repaired
+                last_errors = []
         if not last_errors:
             script = candidate
             break
