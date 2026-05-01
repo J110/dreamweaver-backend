@@ -6,8 +6,9 @@ See:
 """
 from __future__ import annotations
 
+import copy
 import re
-from typing import Iterable
+from typing import Callable, Iterable
 
 # ────────────────────────────────────────────────────────────────────────
 #  Approved audio tag vocabulary (§4 in both spec docs — identical)
@@ -353,6 +354,144 @@ def validate_funny_short(
         errors.append("Title too long")
 
     return errors
+
+
+# ────────────────────────────────────────────────────────────────────────
+#  Devanagari repair pass (Hindi only)
+# ────────────────────────────────────────────────────────────────────────
+
+_DEVA_ERROR_RE = re.compile(
+    r"^Line (\d+): missing Devanagari in 'text_deva'"
+)
+
+
+def _build_devanagari_repair_prompt(lines_to_convert: list[tuple[int, str]]) -> str:
+    """Build the narrow repair prompt.
+
+    lines_to_convert: list of (script_line_index, roman_text) tuples.
+    The prompt numbers lines 1..N for human readability; the helper
+    maps prompt-line-number back to script_line_index after the call.
+    """
+    numbered = "\n".join(
+        f"{n}. {text}" for n, (_, text) in enumerate(lines_to_convert, start=1)
+    )
+    return (
+        "Convert the following Hindi/Hinglish lines from Roman script to "
+        "Devanagari. Preserve audio tags exactly as-is (e.g. [curious], "
+        "[laughs together]). Hindi register is bolchaal (conversational), "
+        "not literary. Hinglish words like 'school', 'phone', 'okay', "
+        "'homework' must also be transliterated to Devanagari "
+        "(स्कूल, फ़ोन, "
+        "ओके, होमवर्क).\n\n"
+        "Lines to convert:\n"
+        f"{numbered}\n\n"
+        "Output JSON only, no commentary:\n"
+        "{\n"
+        '  "converted": [\n'
+        '    {"line": 1, "deva": "..."},\n'
+        '    {"line": 2, "deva": "..."}\n'
+        "  ]\n"
+        "}"
+    )
+
+
+def repair_devanagari(
+    script: dict,
+    errors: list[str],
+    request_mistral: Callable[[str], dict],
+    log_prefix: str = "  ",
+) -> dict | None:
+    """Targeted repair pass for missing-Devanagari validation failures.
+
+    Returns:
+      - repaired script dict if errors were ALL Devanagari-only and the
+        repair pass produced Devanagari text for every affected line.
+        Caller MUST re-run the validator before trusting the result —
+        Mistral can return Roman in the 'deva' field, which only
+        re-validation will catch.
+      - None if errors include non-Devanagari issues, the repair pass
+        itself failed (Mistral error, malformed output, missing line),
+        or any input precondition fails. Caller should fall through to
+        the next generation attempt.
+    """
+    inputs = script.get("inputs") or []
+    if not inputs:
+        print(f"{log_prefix}Devanagari repair: failed (no inputs in script)")
+        return None
+
+    # 1. Filter — every error must match the Devanagari-only shape.
+    line_indices: list[int] = []
+    for err in errors:
+        m = _DEVA_ERROR_RE.match(err)
+        if not m:
+            return None  # mixed errors → skip repair, no log noise
+        line_indices.append(int(m.group(1)))
+
+    if not line_indices:
+        return None
+
+    # 2. Extract the Roman text for each affected line.
+    lines_to_convert: list[tuple[int, str]] = []
+    for idx in line_indices:
+        if idx < 0 or idx >= len(inputs):
+            print(
+                f"{log_prefix}Devanagari repair: failed "
+                f"(line {idx} out of range, inputs len={len(inputs)})"
+            )
+            return None
+        roman_text = inputs[idx].get("text", "")
+        lines_to_convert.append((idx, roman_text))
+
+    print(
+        f"{log_prefix}Devanagari repair: {len(lines_to_convert)} lines "
+        f"need conversion (script lines: {[i for i, _ in lines_to_convert]})"
+    )
+
+    # 3. ONE Mistral call — no internal retry.
+    try:
+        prompt = _build_devanagari_repair_prompt(lines_to_convert)
+        result = request_mistral(prompt)
+    except Exception as e:
+        print(f"{log_prefix}Devanagari repair: failed (Mistral error: {e})")
+        return None
+
+    # 4. Parse + splice. Map prompt-line-number (1-based) → script index.
+    converted = result.get("converted") if isinstance(result, dict) else None
+    if not isinstance(converted, list):
+        print(
+            f"{log_prefix}Devanagari repair: failed "
+            f"(malformed output, no 'converted' list)"
+        )
+        return None
+
+    by_prompt_line: dict[int, str] = {}
+    for entry in converted:
+        if not isinstance(entry, dict):
+            continue
+        pn = entry.get("line")
+        deva = entry.get("deva")
+        if isinstance(pn, int) and isinstance(deva, str):
+            by_prompt_line[pn] = deva
+
+    repaired = copy.deepcopy(script)
+    for prompt_line_num, (script_idx, roman_text) in enumerate(
+        lines_to_convert, start=1
+    ):
+        deva = by_prompt_line.get(prompt_line_num)
+        if not deva:
+            print(
+                f"{log_prefix}Devanagari repair: failed (no conversion for "
+                f"prompt line {prompt_line_num} → script line {script_idx}, "
+                f"text: {roman_text!r})"
+            )
+            return None
+        repaired["inputs"][script_idx]["text_deva"] = deva
+
+    print(
+        f"{log_prefix}Devanagari repair: success "
+        f"(repaired {len(lines_to_convert)} lines via Mistral)"
+    )
+    return repaired
 
 
 # ────────────────────────────────────────────────────────────────────────
