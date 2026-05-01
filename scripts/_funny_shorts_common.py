@@ -22,7 +22,7 @@ APPROVED_TAGS: set[str] = {
     "[earnest]", "[skeptical]", "[tired]", "[hopeful]",
     "[disappointed]", "[delighted]", "[conspiratorial]", "[embarrassed]",
     "[long pause]", "[short pause]",
-    "[laughs]", "[nervous laugh]", "[giggles]",
+    "[laughs]", "[nervous laugh]", "[giggles]", "[chuckles]",
     "[gasp]", "[sigh]", "[hmm]",
     "[laughs together]", "[whispers]", "[shouts]",
     "[yawns]", "[singing]", "[humming]",
@@ -54,7 +54,10 @@ SETTLING_SOFT_WORDS_EN = ("yeah", "okay", "guess", "maybe", "fine")
 LAUGHTER_TAGS = ("[laughs together]", "[laughs]", "[nervous laugh]", "[giggles]")
 
 # Standalone tag-only lines that are valid as a final closing beat.
-PREFERRED_FINAL_STANDALONE = ("[laughs together]", "[laughs]")
+PREFERRED_FINAL_STANDALONE = (
+    "[laughs together]", "[laughs]", "[giggles]",
+    "[chuckles]", "[grinning]",
+)
 ACCEPTABLE_FINAL_STANDALONE = ("[sigh]", "[yawns]", "[thoughtful]")
 
 
@@ -267,12 +270,6 @@ def validate_funny_short(
     recent_settings = [s.get("setting") for s in recent_shorts[-3:]]
     if setting and recent_settings.count(setting) >= 2:
         errors.append(f"Setting '{setting}' used in 2+ of last 3 shorts")
-
-    # — Anti-template: closing pattern (last 10) —
-    closing = _detect_closing_pattern(inputs)
-    recent_closings = [s.get("closing_pattern") for s in recent_shorts[-10:]]
-    if recent_closings.count(closing) >= 4:
-        errors.append(f"Closing pattern {closing} used 4+ times in last 10")
 
     # — Anti-template: character age dynamic (last 3) —
     age_dyn = script.get("character_age_dynamic")
@@ -566,10 +563,24 @@ REQUIRED:
 - Include AT LEAST 2 standalone tag-only lines per short. These are
   real audio events: actual laughter, gasps, sighs, real reactions.
   Without these, the short has zero non-verbal sound and feels flat.
-- The FINAL LINE must be a standalone laughter line. Use this exact
-  canonical pattern: `[laughs together] hahaha` — the trailing
-  "hahaha" gets v3 to sustain the laugh long enough that it doesn't
-  feel cut off. `[laughs] hahaha` is acceptable too.
+- The FINAL LINE must be a standalone tag-only line that resolves
+  the comedic beat. The default is `[laughs together] hahaha` —
+  the trailing "hahaha" gets v3 to sustain the laugh long enough
+  that it doesn't feel cut off. This works for most shorts because
+  shared laughter is the natural resolution to a punchline two
+  characters land on together.
+
+  Acceptable alternatives when the script earns them:
+  - `[laughs] hahaha` — when only one character laughs (e.g. one
+    delivers the punchline, the other reacts differently)
+  - `[giggles]` — for smaller comedic moments, gentler resolution
+  - `[chuckles]` — for understated reactions
+  - `[grinning]` — when the comedy lands as a shared knowing look
+    rather than out-loud laughter
+
+  Choose the closing based on what the script earned. Don't choose
+  it for variety's sake. If the script built to shared laughter,
+  `[laughs together] hahaha` is the right answer.
 - Don't write "haha" or "ha ha" in any line — use a standalone
   laughter tag instead.
 - A standalone-tag line counts as ~1 line in your line budget.
@@ -688,10 +699,24 @@ REQUIRED:
 - Include AT LEAST 2 standalone tag-only lines per short — real audio
   events (actual laughter, gasps, sighs, real reactions). Without
   these, the short has zero non-verbal sound and feels flat.
-- The FINAL LINE must be a standalone laughter line. Use this exact
-  canonical pattern: `[laughs together] hahaha` — the trailing
-  "hahaha" gets v3 to sustain the laugh long enough that it doesn't
-  feel cut off. `[laughs] hahaha` is acceptable too.
+- The FINAL LINE must be a standalone tag-only line that resolves
+  the comedic beat. The default is `[laughs together] hahaha` —
+  the trailing "hahaha" gets v3 to sustain the laugh long enough
+  that it doesn't feel cut off. This works for most shorts because
+  shared laughter is the natural resolution to a punchline two
+  characters land on together.
+
+  Acceptable alternatives when the script earns them:
+  - `[laughs] hahaha` — when only one character laughs (e.g. one
+    delivers the punchline, the other reacts differently)
+  - `[giggles]` — for smaller comedic moments, gentler resolution
+  - `[chuckles]` — for understated reactions
+  - `[grinning]` — when the comedy lands as a shared knowing look
+    rather than out-loud laughter
+
+  Choose the closing based on what the script earned. Don't choose
+  it for variety's sake. If the script built to shared laughter,
+  `[laughs together] hahaha` is the right answer.
 - Don't write "haha", "ha ha", or "hehe" — use a standalone
   laughter tag instead.
 
