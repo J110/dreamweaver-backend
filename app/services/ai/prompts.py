@@ -5,6 +5,41 @@ from typing import Dict
 
 logger = logging.getLogger(__name__)
 
+# ── Comprehensibility floor (Phase 2.1) ───────────────────────────────
+# Universal block — applies to every story regardless of age. Hard rules,
+# imperative voice. Mistral has shown it ignores hedged guidance.
+
+_COMPREHENSIBILITY_UNIVERSAL = """
+COMPREHENSIBILITY (UNIVERSAL — applies to every story):
+
+A bedtime story is heard, not read. The listening child can rewind nothing.
+Every sentence MUST fit working memory. Every word MUST belong in a kid's
+spoken vocabulary at the target age.
+
+BANNED WORDS — never use these in any story, any age, any form:
+  perhaps, however, indeed, rather, shall, nevertheless, furthermore,
+  accordingly, sophisticated, particularly, fundamentally, essentially,
+  profound, magnificent, exquisite, peculiar, contemplated, pondered,
+  ascertained, endeavored, possibility, misunderstood, atmosphere,
+  realization, loneliness, threatening, acceptance, agreement, ambiguous,
+  benevolent, malevolent, precarious, indubitably.
+
+-ING DESCRIPTORS — at most ONE per sentence:
+  whispering, shimmering, fluttering, listening, stretching, gathering,
+  flickering, scattering, drifting.
+Stacked participles make narration mushy. Prefer concrete verbs.
+
+CONCRETE OVER ABSTRACT — when a concrete word works, use it:
+  GOOD:   moon, river, blanket, owl, branch, hum, tap, drift, glow.
+  AVOID:  atmosphere, sense, feeling, presence, essence, aura.
+
+TITLE OVERRIDE: If the user-provided title contains a banned word for the
+target age, DO NOT echo it in the story body. Use the substitute pattern
+defined in the age-specific block below. The title is metadata; the story
+text is the listening experience.
+"""
+
+
 # System prompts for different content types
 STORY_SYSTEM_PROMPT = """You are a creative children's story writer specializing in bedtime stories.
 Your stories are engaging, age-appropriate, safe, and designed to help children relax and fall asleep.
@@ -76,7 +111,7 @@ PARAGRAPH FORMATTING (CRITICAL):
 - NEVER write the entire story as one continuous block of text
 - Each paragraph should be a natural scene break, dialogue beat, or emotional shift
 - Aim for 4-8 paragraphs depending on story length
-- This is essential for readability on mobile screens"""
+- This is essential for readability on mobile screens""" + _COMPREHENSIBILITY_UNIVERSAL
 
 # ── Phase-structured prompt for LONG stories (fully age-specific) ──────
 #
@@ -283,11 +318,212 @@ Phase 3 is the contemplative aftermath — the character resting in the world af
 [/PHASE_3]
 """
 
-# Pre-built per age group (fully age-specific Phase 1 + Phase 2 + Phase 3)
+# Age-specific comprehensibility blocks (Phase 2.1). Selected at prompt
+# assembly time and appended to the tail of the system prompt — Mistral
+# attends most strongly to the last instructions before the user message.
+
+_COMPREHENSIBILITY_AGE_BLOCKS = {
+    "0-1": """
+AGE-SPECIFIC COMPREHENSIBILITY (READ THIS LAST — APPLIES NOW):
+
+═══════════ AGE 0-1 ═══════════
+
+HARD SENTENCE CAP: 8 words maximum, every sentence, no exceptions.
+Aim for 3-6. Count words; if you hit 8, the next sentence starts.
+Examples that PASS:    "Moon was bright."  (3)
+                       "The little one watched the moon."  (6)
+                       "Mama held her close in the warm night."  (8)
+Examples that FAIL:    "The little one watched the bright moon as it climbed."  (10 — split)
+
+VOCABULARY — EXACT MATCH TO THIS REGISTER:
+The example list earlier in this prompt — "moon, stars, mama, papa, sleep, hush" —
+is not an inspiration. It defines the level EXACTLY. Your story's vocabulary
+MUST match it. If a word would feel out of place next to "mama" or "hush",
+do not use it.
+
+Allowed at this age: moon, star, sun, sky, mama, papa, baby, milk, bed,
+pillow, blanket, hum, song, soft, warm, cozy, slow, still, gentle, hush,
+shh, tap, drip, pat, yes, no, here, there, big, small, up, down.
+
+BANNED at this age (not because they are bad words — they are wrong for an
+infant's listening register):
+  somersaulted, strawberries, strawberry, dandelion, dandelions,
+  butterflies, butterfly, ladybugs, ladybug, overrated, lullaby,
+  agreement, rhythmic, melody, twinkled, scattered, gathering, fluttered,
+  rainbows, rainbow, sparkles, sparkle.
+Any 4+ syllable word is suspect — replace with a 1-2 syllable equivalent.
+
+NAMING THINGS AT THIS AGE — KEY RULE:
+A 1-year-old does not know species names. Name creatures by SENSORY FEATURE,
+not by category. Substitute pattern:
+  Want to write about a butterfly?     → "the soft wing", "the little flutter",
+                                          "the small thing", "the tiny one"
+  Want to write about a strawberry?    → "the red fruit", "the sweet bite"
+  Want to write about a dandelion?     → "the yellow flower", "the soft puff"
+  Want to write about a ladybug?       → "the little dot", "the small one"
+  Want to write about somersaulting?   → "rolled and rolled", "tipped and tipped"
+
+The protagonist of a 0-1 story is rarely named by species. It's "the little
+one", "baby owl", "small fox" — concrete, 1-2 syllable, sensory.
+""",
+
+    "2-5": """
+AGE-SPECIFIC COMPREHENSIBILITY (READ THIS LAST — APPLIES NOW):
+
+═══════════ AGE 2-5 ═══════════
+
+HARD SENTENCE CAP: 12 words maximum, every sentence.
+Aim for 6-9. Preschoolers can hold a 12-word sentence; 19-word sentences
+get lost in the middle.
+Examples that PASS:
+  "Tuck the rabbit found a shiny clover."  (7)
+  "The clover ticked softly, like a tiny clock."  (9)
+  "Mama said the sound was the tree's heartbeat going slow."  (11)
+Example that FAILS (19 — split):
+  "Tuck wandered through the meadow looking for butterflies and ladybugs and
+   shiny ticking clovers."
+
+VOCABULARY: simple, familiar, repeated. Concrete imagery.
+Picture-book vocabulary IS welcome at this age:
+  butterfly, strawberry, dandelion, rainbow, ladybug, sparkle, shimmer,
+  meadow, river, garden, owl, fox, mouse, snail.
+
+BANNED at this age (4+ syllable abstract nouns — kids 2-5 do not use these):
+  realization, possibility, atmosphere, acceptance, loneliness, agreement,
+  misunderstood, somersaulted, overrated, contemplation.
+
+DON'T STACK LONG WORDS: at most one 4+ syllable word per sentence.
+  GOOD: "The butterflies danced over the meadow."  (1 long word)
+  BAD:  "The butterflies fluttered over the dandelion meadow under the
+         shimmering rainbow."  (4 long words; will get cut at the cap)
+
+REPETITION IS GOOD AT THIS AGE: repeat key phrases 2-3 times. The same
+short phrase ("the clover ticked, tick tick tick") appearing across the
+story is a feature, not filler.
+
+SUBSTITUTE PATTERN — for the banned abstract nouns:
+  Want to express "realization"?     → "she suddenly knew"
+  Want to express "loneliness"?      → "she was all alone"
+  Want to express "agreement"?       → "they nodded yes"
+  Want to express "misunderstood"?   → "got it wrong"
+The CONCEPT is welcome at 2-5; the abstract noun is not.
+""",
+
+    "6-8": """
+AGE-SPECIFIC COMPREHENSIBILITY (READ THIS LAST — APPLIES NOW):
+
+═══════════ AGE 6-8 ═══════════
+
+GOAL: engaging, descriptive language for early readers — readable aloud
+at bedtime.
+
+HARD SENTENCE CAP: 16 words maximum, every sentence.
+Examples that PASS:
+  "Bubble had been alone in the night sky for as long as she could remember."  (16)
+  "The first firefly blinked twice, then once more, and waited."  (10)
+Example that FAILS (24 — split):
+  "When the comet swept across the sky, leaving a trail of frosty dust
+   behind her, she finally noticed the small light blinking back."
+
+VOCABULARY: descriptive but plain. 6-8-year-olds reading aloud should not
+stumble. Sophistication = vivid concrete imagery, not Latinate words.
+
+  RICH + PLAIN (aim):  "The workshop smelled of warm metal and old oil.
+                        Mira pressed her ear to the cold pipe. A tap, then
+                        another, then a small whir like a question."
+  FANCY (avoid):       "The atmosphere of the workshop was redolent with
+                        the scent of warm metal, and a sense of mystery
+                        permeated the shimmering, flickering shadows."
+
+DISCOURAGED — use at most ONCE per story (Mistral over-uses these):
+  smokestacks, candyfloss, crisscrossed, nightlight, heartbeats,
+  flickering, shimmering.
+None are banned. But if you use "shimmering" three times in one story,
+the prose feels formulaic. Pick varied concrete imagery instead.
+
+The universal banned-word list still applies (perhaps, atmosphere,
+realization, etc.). Concept rewrites:
+  "she felt a sense of mystery"  →  "she wondered what it was"
+  "the atmosphere was tense"     →  "the room felt tight"
+  "perhaps it was magic"         →  "maybe it was magic"
+
+EMOTIONS LIKE WORRY OR LONELINESS: welcome at this age, but use plain
+language: "she felt alone" not "a sense of loneliness".
+""",
+
+    "9-12": """
+AGE-SPECIFIC COMPREHENSIBILITY (READ THIS LAST — APPLIES NOW):
+
+═══════════ AGE 9-12 ═══════════
+
+GOAL: rich storytelling kids 9-12 can read aloud and follow easily.
+
+KEY FRAMING — read this twice:
+  "Sophisticated" does NOT mean Latinate vocabulary or compound-clause
+  sentences. It means rich scenes, distinct character voices, real stakes,
+  and unexpected moments. The prose stays plain. The story is full.
+  Goal: COMPLEX STORYTELLING in PLAIN SENTENCES.
+
+This is NOT permission to write thin or babyish prose. A story can be
+plain-worded and substantive at once. The difference:
+
+  THIN (avoid):       "She went to the lake. She saw a fish. It was nice."
+  PLAIN + RICH (aim): "She crouched at the lake's edge until her knees
+                       went numb. The fish came close, then closer, until
+                       she could see the silver of its scales."
+
+Both have the same vocabulary level. The second has stakes, sensation,
+and a character with a body.
+
+HARD SENTENCE CAP: 22 words maximum.
+Compound sentences are ALLOWED — most 22-word sentences will be compound.
+The cap is on length, not on grammatical complexity. Examples that PASS:
+  "When the wind picked up and the lantern light spilled across the wet
+   stones, she finally understood why he had stayed."  (22 — compound, plain)
+  "The fox waited at the edge of the field, ears tilted, and listened
+   for a sound that did not come."  (21 — compound, plain)
+Example that FAILS (28 words — split):
+  "When the wind picked up and the lantern light spilled across the wet
+   stones, she felt a sudden realization sink in about the strange
+   stillness she had been carrying for days."
+
+VOCABULARY — RICHER THAN 6-8 BUT NOT COLLEGE-LEVEL.
+Test: a 10-year-old reads it aloud at bedtime without stumbling.
+Allowed: scientific names, place names, folkloric terms, slightly archaic
+words IF anchored by context (e.g. "the old word for it was hearth").
+
+ABSTRACT NOUNS — EXPRESS THE CONCEPT, NEVER THE WORD.
+The banned-word list (universal block above) blocks the LATINATE NOUN.
+The CONCEPT is still welcome. Use plain rewrites:
+
+  CONCEPT             →  USE INSTEAD OF
+  "realization"        →  "she finally understood"  /  "it clicked"  /
+                          "she saw it now"
+  "loneliness"         →  "she felt alone"  /  "no one was there to ask"  /
+                          "the room was too quiet"
+  "atmosphere"         →  "the air felt"  /  "the room felt"  /  "the night was"
+  "threatening"        →  "dark and low"  /  "the kind of clouds that mean rain"
+  "possibility"        →  "maybe"  /  "it could be"  /  "she wondered if"
+  "misunderstood"      →  "got it wrong"  /  "didn't see what she meant"  /
+                          "took it the other way"
+  "acceptance"         →  "she let it be"  /  "she stopped fighting it"
+  "agreement"          →  "she nodded"  /  "they both said yes"
+  "destination"        →  "where she was going"  /  "the place at the end"
+
+The rule is NEVER skip the concept to dodge the word. A 9-12 story without
+inner life is the regression we are trying to avoid.
+""",
+}
+
+
+# Pre-built per age group (fully age-specific Phase 1 + Phase 2 + Phase 3).
+# Age-specific comprehensibility block appended at tail. Universal block is
+# NOT injected here — it lives in STORY_SYSTEM_PROMPT (base_prompt) which the
+# long-story assembly already uses; double-injecting would be wasteful.
 LONG_STORY_PHASE_INSTRUCTIONS = {
-    "2-5": _LONG_STORY_PHASES_2_5 + _LONG_STORY_PHASE_FOOTER,
-    "6-8": _LONG_STORY_PHASES_6_8 + _LONG_STORY_PHASE_FOOTER,
-    "9-12": _LONG_STORY_PHASES_9_12 + _LONG_STORY_PHASE_FOOTER,
+    "2-5":  _LONG_STORY_PHASES_2_5  + _LONG_STORY_PHASE_FOOTER + _COMPREHENSIBILITY_AGE_BLOCKS["2-5"],
+    "6-8":  _LONG_STORY_PHASES_6_8  + _LONG_STORY_PHASE_FOOTER + _COMPREHENSIBILITY_AGE_BLOCKS["6-8"],
+    "9-12": _LONG_STORY_PHASES_9_12 + _LONG_STORY_PHASE_FOOTER + _COMPREHENSIBILITY_AGE_BLOCKS["9-12"],
 }
 
 POEM_SYSTEM_PROMPT = """You are a talented children's poet specializing in bedtime poetry.
@@ -497,21 +733,26 @@ AGE_GROUP_INSTRUCTIONS = {
         - Gentle rhythm and rhyme when possible
         """,
     "6-8": """AGE GROUP: 6-8 years (Explorer)
-        - Engaging, descriptive language for early readers
+        - Engaging, descriptive language for early readers — readable aloud at bedtime
+        - Sentence cap: 16 words maximum (hard rule, see COMPREHENSIBILITY block)
         - Plot development with character growth
         - Mild suspense that resolves positively
         - Multiple characters with distinct personalities
         - More complex magical or fantasy elements
-        - Can explore emotions like worry, loneliness (with positive resolution)
+        - Can explore emotions like worry, loneliness (with positive resolution),
+          but use plain language: "she felt alone" not "a sense of loneliness"
         - Clear themes without being preachy
         - Themes: friendship, courage, identity, teamwork, perseverance
-        - World-building: describe settings vividly
+        - World-building: describe settings vividly through concrete sensory detail
         """,
     "9-12": """AGE GROUP: 9-12 years (Adventurer)
-        - Sophisticated vocabulary and complex sentences
-        - Rich, detailed world-building
+        - Rich storytelling kids age 9-12 can read aloud and follow easily
+        - Sentence cap: 22 words maximum (hard rule, see COMPREHENSIBILITY block)
+        - Vivid scenes, distinct character voices, vocabulary slightly richer
+          than 6-8 — but never college-level abstract nouns
+        - Rich, detailed world-building through concrete sensory imagery
         - Complex plots with multiple threads
-        - Nuanced character development and emotions
+        - Nuanced character emotions, expressed in plain language
         - Mythology, legends, history, or advanced fantasy
         - Can include real suspense with satisfying resolution
         - Deeper exploration: identity, belonging, growth, resilience
@@ -533,6 +774,19 @@ def get_age_group_instructions(age_group: str) -> str:
         Age-specific instruction string
     """
     return AGE_GROUP_INSTRUCTIONS.get(age_group, AGE_GROUP_INSTRUCTIONS["6-8"])
+
+
+def get_comprehensibility_age_block(age_group: str) -> str:
+    """Return the age-specific comprehensibility block for prompt assembly.
+
+    Designed to be appended at the TAIL of the system prompt — Mistral
+    attends most strongly to the last instructions before the user message.
+
+    For long stories, the universal + age block are already injected into
+    LONG_STORY_PHASE_INSTRUCTIONS. Callers should not call this for
+    long-story prompts; they'd double-inject.
+    """
+    return _COMPREHENSIBILITY_AGE_BLOCKS.get(age_group, _COMPREHENSIBILITY_AGE_BLOCKS["6-8"])
 
 
 def get_theme_instructions(theme: str) -> str:

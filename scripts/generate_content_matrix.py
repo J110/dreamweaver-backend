@@ -56,7 +56,9 @@ from app.services.ai.prompts import (
     SAFETY_GUIDELINES,
     SONG_SYSTEM_PROMPT,
     STORY_SYSTEM_PROMPT,
+    _COMPREHENSIBILITY_UNIVERSAL,
     get_age_group_instructions,
+    get_comprehensibility_age_block,
     get_theme_instructions,
 )
 
@@ -544,7 +546,7 @@ amused.
 - Do NOT use [DELIVERY: tag] tags
 - Do NOT use [EMPHASIS] tags
 - Only use [MUSIC], [PAUSE: ms], and [PHRASE]...[/PHRASE] tags
-"""
+""" + _COMPREHENSIBILITY_UNIVERSAL
 
 HOOK_FORMATS = {
     "wired":   'Did you know... {surprising fact from this story}?',
@@ -858,6 +860,12 @@ Do NOT abbreviate, summarize, or write a short version. Each phase must be subst
         if safety_text:
             mood_block += f"\n{safety_text}\n"
 
+    # Age-specific comprehensibility block — placed at the very end of the
+    # system prompt where Mistral's attention is strongest. Long stories
+    # already have universal+age blocks baked into LONG_STORY_PHASE_INSTRUCTIONS,
+    # so skip the tail block to avoid double-injection.
+    comprehensibility_age_block = "" if length == "LONG" else get_comprehensibility_age_block(age_group)
+
     # Select format block based on v2 vs legacy
     format_block = V2_FORMAT_JSON if is_v2_story else FORMAT_JSON
 
@@ -892,6 +900,7 @@ LENGTH: {length_desc}
 
 {format_block}
 {hook_instruction}
+{comprehensibility_age_block}
 
 Now generate a {content_type} following ALL the above instructions. Return ONLY the JSON object."""
 
