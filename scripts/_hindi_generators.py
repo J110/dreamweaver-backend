@@ -342,6 +342,39 @@ REQUIRED in `text`:
 - Word count strictly within {word_band} (excluding tags)
 - NO emotion markers ([GENTLE], [SLEEPY], etc.)
 
+COMPREHENSIBILITY (per-sentence caps — hard rules):
+
+Roman Hindi packs more syllables per word than English. The caps below
+are calibrated for matras, not just word count.
+
+  Ages 2-5:   max 10 words OR 18 matras per sentence (whichever is shorter)
+  Ages 6-8:   max 14 words OR 24 matras per sentence
+  Ages 9-12:  max 18 words OR 32 matras per sentence
+
+Examples that PASS for ages 2-5:
+  "Meenu ne chaand ko dekha."         (5 words, 9 matras)
+  "Bulbul ne dheere se kahaa, suno."  (7 words, 12 matras)
+
+Example that FAILS for ages 2-5 (matra-heavy — split):
+  "Meenu ne aasmaan mein ud rahi titliyon ko dheere dheere dekhte
+   hue muskuraayi."  (12 words, ~26 matras — too dense)
+
+AVOID matra-stacking words that fill a sentence with 3-syllable nouns:
+  AVOID:  kahaani, ghoomega, sundarta, raunaq, kaaynaat, samvedna.
+  PREFER: 1-2 syllable bolchaal: chaand, paani, aankh, dil, raat,
+          ghar, dheere, suno, dekho, achha.
+
+ABSTRACT NOUNS — concept welcome, abstract noun not:
+  AVOID NOUN  →  USE BOLCHAAL EQUIVALENT
+  bhavna       →  "dil ne kaha"  /  "achha laga"
+  sthithi      →  "yeh waqt"  /  "yeh raat"
+  vichaar      →  "soch raha tha"  /  "yeh sochkar"
+  anubhav      →  "aisa laga"  /  "mehsoos kiya"
+  ehsaas       →  "lagne laga"  /  "dil mein"
+
+The literary-Hindi ban (nidra, nakshatra, shayan, pushp, van, nayan,
+vidyalay) remains in force.
+
 Return JSON with exactly this shape:
 {{
   "id": "hi-{axes['story_type']}-{age}-XXXX",
@@ -1130,6 +1163,32 @@ REQUIRED tags throughout:
 - [WHISPER]...[/WHISPER] for the final 3-4 lines
 - ≥5 conversational markers (na, toh, pata hai, bas, suno, dekho, achha)
 - ≥3 onomatopoeia (sarr, tap tap, chhap chhap, dheere dheere, gunghun, jhoom, tip tip, khat khat)
+
+COMPREHENSIBILITY (per-sentence caps — hard rules):
+
+Same caps as Hindi short stories:
+  Ages 2-5:   max 10 words / 18 matras per sentence
+  Ages 6-8:   max 14 words / 24 matras per sentence
+  Ages 9-12:  max 18 words / 32 matras per sentence
+
+PHASE 3 (VILAY) — DESCEND BELOW THE CAP:
+The dissolution phase already removes dialogue. It must also shrink
+sentences. Start P3 near the cap; end at 3-5 words per sentence. The
+listener's breathing slows; the prose breathes with it.
+
+  Phase 3 opening sentence (near cap):
+    "Chaand ab dheere dheere apni jagah par tham gaya tha."  (10 words)
+  Phase 3 closing sentences (well below cap):
+    "Sab kuch shaant.  Hawa thami.  Aankh band.  Saans dheere."  (3-2-2-2)
+
+ABSTRACT NOUNS — same rule as short stories:
+  bhavna   →  "dil ne kaha"
+  sthithi  →  "yeh waqt"
+  anubhav  →  "aisa laga"
+  ehsaas   →  "lagne laga"
+
+The literary-Hindi ban (nidra, nakshatra, shayan, pushp, van, nayan,
+vidyalay) remains in force.
 
 DIALOGUE FORMAT — MANDATORY (do NOT embed dialogue in narration):
 
