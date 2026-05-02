@@ -1402,10 +1402,19 @@ def validate_batch_diversity(new_params: dict, batch_songs: list) -> tuple[bool,
 
 
 def extract_cover_from_lyrics(lyrics_response: str) -> str:
-    """Extract [COVER: description] from lyrics LLM response."""
-    m = re.search(r'\[COVER:\s*(.+?)\]', lyrics_response, re.IGNORECASE)
+    """Extract [COVER: description] from lyrics LLM response.
+
+    Tolerant of a missing closing bracket (LLM occasionally omits it). Falls
+    back to capturing until the next blank line or end-of-string so a malformed
+    tag doesn't silently degrade to a generic prompt and produce duplicate
+    Pollinations covers across songs.
+    """
+    m = re.search(r'\[COVER:\s*(.+?)\]', lyrics_response, re.IGNORECASE | re.DOTALL)
     if m:
         return m.group(1).strip()
+    m = re.search(r'\[COVER:\s*(.+?)(?:\n\s*\n|\Z)', lyrics_response, re.IGNORECASE | re.DOTALL)
+    if m:
+        return m.group(1).strip().rstrip(']').strip()
     return ""
 
 
