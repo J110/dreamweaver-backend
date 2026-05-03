@@ -253,8 +253,11 @@ def validate_funny_short(
         # Tag-only / laughter lines are exempt — they have no spoken words.
         for i, inp in enumerate(inputs):
             spoken = TAG_REGEX.sub("", inp.get("text", "")).strip()
-            if not spoken:
-                continue  # tag-only line (e.g. "[laughs]") — no phonemes to render
+            # Strip non-word characters too — punctuation/ellipsis after a tag
+            # (e.g. "[laughs]..." → "...") has no phonemes to render. Only
+            # actual word characters require Devanagari.
+            if not re.sub(r"[\W_]+", "", spoken):
+                continue
             if not _has_devanagari(inp.get("text_deva", "") or ""):
                 errors.append(f"Line {i}: missing Devanagari in 'text_deva' (TTS engine input)")
 
