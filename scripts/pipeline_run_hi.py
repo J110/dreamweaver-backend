@@ -33,6 +33,12 @@ from pathlib import Path
 BASE_DIR = Path(__file__).parent.parent
 sys.path.insert(0, str(Path(__file__).parent))
 
+try:
+    from dotenv import load_dotenv  # type: ignore
+    load_dotenv(BASE_DIR / ".env", override=True)
+except Exception:
+    pass
+
 # Local imports (after sys.path tweak)
 from _hindi_diversity import PICKERS, load_hindi_catalog  # type: ignore
 from _hindi_generators import GENERATORS  # type: ignore

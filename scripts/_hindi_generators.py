@@ -88,29 +88,66 @@ def strip_short_story_tags(text: str) -> str:
     return out.strip()
 
 
+_PERSON_WORDS_RE = re.compile(
+    r"\b(young |little |sleeping |peaceful |sweet |gentle |smiling |warm )?"
+    r"(indian |hindi |asian |brown |dark |fair |bright )?"
+    r"(boy|girl|child|children|baby|babies|kid|kids|toddler|infant|woman|man|"
+    r"mother|father|maternal|paternal|nanny|family|people|person|figure|silhouette)\b",
+    flags=re.IGNORECASE,
+)
+
+
+def _sanitize_flux_prompt(prompt: str) -> str:
+    """Strip people-references for FLUX NSFW retries (child-sleeping false positives)."""
+    cleaned = _PERSON_WORDS_RE.sub("", prompt).strip()
+    cleaned = re.sub(r"\s{2,}", " ", cleaned)
+    return (
+        "Watercolor children's-storybook illustration, soft pastel hues, dreamy "
+        "bedtime atmosphere, no people, no faces, no figures, no characters — "
+        + cleaned
+    )
+
+
 def _flux_cover(prompt: str, w: int = 1024, h: int = 1024) -> bytes | None:
     if not TOGETHER_KEY:
         print("  TOGETHER_API_KEY missing, skipping cover")
         return None
-    try:
-        resp = httpx.post(
-            "https://api.together.xyz/v1/images/generations",
-            headers={"Authorization": f"Bearer {TOGETHER_KEY}"},
-            json={
-                "model": "black-forest-labs/FLUX.1-schnell",
-                "prompt": prompt[:1000],
-                "width": w, "height": h, "n": 1,
-                "response_format": "b64_json",
-            },
-            timeout=180,
-        )
-        if resp.status_code != 200:
-            print(f"  FLUX {resp.status_code}: {resp.text[:200]}")
+
+    def _call(p: str):
+        try:
+            resp = httpx.post(
+                "https://api.together.xyz/v1/images/generations",
+                headers={"Authorization": f"Bearer {TOGETHER_KEY}"},
+                json={
+                    "model": "black-forest-labs/FLUX.1-schnell",
+                    "prompt": p[:1000],
+                    "width": w, "height": h, "n": 1,
+                    "response_format": "b64_json",
+                },
+                timeout=180,
+            )
+            return resp
+        except Exception as e:
+            print(f"  FLUX error: {e}")
             return None
-        return base64.b64decode(resp.json()["data"][0]["b64_json"])
-    except Exception as e:
-        print(f"  FLUX error: {e}")
+
+    resp = _call(prompt)
+    if resp is None:
         return None
+    if resp.status_code == 200:
+        return base64.b64decode(resp.json()["data"][0]["b64_json"])
+
+    body = resp.text[:200]
+    print(f"  FLUX {resp.status_code}: {body}")
+    if resp.status_code == 422 and "NSFW" in body.upper():
+        sanitized = _sanitize_flux_prompt(prompt)
+        print("  FLUX NSFW false-positive — retrying with no-people prompt")
+        retry = _call(sanitized)
+        if retry is not None and retry.status_code == 200:
+            return base64.b64decode(retry.json()["data"][0]["b64_json"])
+        if retry is not None:
+            print(f"  FLUX retry {retry.status_code}: {retry.text[:200]}")
+    return None
 
 
 def _save_cover(png_bytes: bytes, *paths: Path, size: tuple[int, int] = (1024, 1024)):
