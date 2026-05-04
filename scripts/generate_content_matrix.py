@@ -70,6 +70,10 @@ from scripts.diversity_sampler import (
     sample_plot_archetype,
 )
 
+from scripts._english_validators import (
+    validate_structured as _en_validate_structured,
+)
+
 # ── Paths ──────────────────────────────────────────────────────────────
 
 OUTPUT_PATH = BASE_DIR / "seed_output" / "content_expanded.json"
@@ -1322,6 +1326,42 @@ def generate_one(client, item: Dict, existing_titles: List[str],
                 if attempt < max_retries - 1:
                     time.sleep(retry_delay)
                     continue
+
+            # Phase 2.3 — comprehensibility validator (EN stories only).
+            # Major errors trigger retry; warnings logged but don't block.
+            # On final-attempt unresolved majors: skip the item (return None)
+            # rather than ship — never loosen the validator (CLAUDE.md rule).
+            # Diverges from EN's existing lenient "accept anyway" convention
+            # specifically for comprehensibility validation.
+            if item["lang"] == "en" and item["type"] == "story":
+                _en_input = {
+                    "title": title,
+                    "text": text,
+                    "age_group": item["age_group"],
+                    "type": "long_story" if item["length"] == "LONG" else "story",
+                }
+                _en_validator_key = (
+                    "long_story" if item["length"] == "LONG" else "short_story"
+                )
+                _en_errors = _en_validate_structured(_en_validator_key, _en_input)
+                _en_majors = [e for e in _en_errors if e["severity"] == "major"]
+                _en_warnings = [e for e in _en_errors if e["severity"] == "minor"]
+                for _w in _en_warnings[:3]:
+                    logger.info("    comprehensibility warning: %s", _w["detail"][:120])
+                if _en_majors:
+                    _err_summary = [e["rule"] for e in _en_majors[:3]]
+                    if attempt < max_retries - 1:
+                        logger.warning(
+                            "  Attempt %d: comprehensibility validator failed (%d major): %s — retrying",
+                            attempt + 1, len(_en_majors), _err_summary,
+                        )
+                        time.sleep(retry_delay)
+                        continue
+                    logger.error(
+                        "  Final attempt: %d major comprehensibility errors unresolved — skipping item: %s",
+                        len(_en_majors), _err_summary,
+                    )
+                    return None
 
             # Build content object
             content_id = f"gen-{uuid.uuid4().hex[:12]}"

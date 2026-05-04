@@ -48,6 +48,12 @@ print = functools.partial(print, flush=True)
 BASE_DIR = Path(__file__).parent.parent
 load_dotenv(BASE_DIR / ".env", override=True)
 
+# Phase 2.3 — EN comprehensibility validator
+sys.path.insert(0, str(BASE_DIR / "scripts"))
+from _english_validators import (  # noqa: E402
+    validate_structured as _en_validate_structured,
+)
+
 # Ensure ffmpeg is in PATH (homebrew on macOS)
 for ffmpeg_dir in ["/opt/homebrew/bin", "/usr/local/bin"]:
     if os.path.exists(os.path.join(ffmpeg_dir, "ffmpeg")):
@@ -2979,6 +2985,27 @@ def main():
             # Validate
             print("3. Validating...")
             issues = validate_story(parsed, params)
+
+            # Phase 2.3 — comprehensibility validator (EN long_story).
+            # Append major errors to the issues list; existing retry loop
+            # picks them up. Warnings logged separately, don't block.
+            _en_phase_text = (
+                f"[INTRO]\n{parsed.get('intro','')}\n"
+                f"[PHASE_1]\n{parsed.get('phase_1','')}\n[/PHASE_1]\n"
+                f"[PHASE_2]\n{parsed.get('phase_2','')}\n[/PHASE_2]\n"
+                f"[PHASE_3]\n{parsed.get('phase_3','')}\n[/PHASE_3]\n"
+            )
+            _en_input = {
+                "title": parsed.get("title", ""),
+                "full_text_roman": _en_phase_text,
+                "age_group": params["age_group"],
+                "type": "long_story",
+            }
+            _en_errors = _en_validate_structured("long_story", _en_input)
+            for _w in [e for e in _en_errors if e["severity"] == "minor"][:3]:
+                print(f"   ⚠ comprehensibility warning: {_w['detail'][:120]}")
+            for _m in [e for e in _en_errors if e["severity"] == "major"][:5]:
+                issues.append(f"ERROR: comprehensibility — {_m['detail']}")
 
             # Phrase-similarity check against recent catalog
             new_phrase = parsed.get("repeated_phrase") or ""
