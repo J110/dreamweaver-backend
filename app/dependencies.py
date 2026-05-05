@@ -5,6 +5,7 @@ Supports both Firebase mode and local development mode.
 
 import os
 import time
+import uuid
 import hashlib
 from typing import Dict, Optional
 
@@ -183,6 +184,33 @@ def local_login(username: str, password: str) -> Optional[dict]:
     return None
 
 
+def _ensure_family_id(db_client, uid: str, user_data: dict) -> str:
+    """Mint family_id (UUIDv4) if missing on the user record and persist.
+
+    Returns the family_id (existing or newly minted).
+
+    Benign race: two concurrent reads for the same user without family_id can
+    both mint UUIDs; the second persistent write wins. Brief identity
+    divergence on emitted events resolves on the next read; PostHog's alias
+    model handles the rare merge case. Not worth a lock.
+    """
+    fid = user_data.get("family_id")
+    if fid:
+        return fid
+    fid = str(uuid.uuid4())
+    try:
+        # Update both the persistent users collection AND the in-memory cache,
+        # so subsequent token-verifications see the new field without a disk hit.
+        db_client.collection("users").document(uid).update({"family_id": fid})
+        if uid in _local_users:
+            _local_users[uid]["family_id"] = fid
+        # Annotate the caller's dict so they don't need to re-read.
+        user_data["family_id"] = fid
+    except Exception as e:
+        logger.warning(f"family_id backfill persist failed for uid={uid}: {e}")
+    return fid
+
+
 def local_verify_token(token: str) -> Optional[dict]:
     _load_persisted_tokens()
     uid = _local_tokens.get(token)
@@ -217,7 +245,25 @@ async def get_current_user(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid or expired token",
             )
-        return {"uid": user["uid"], "email": user.get("email", ""), "username": user.get("username", "")}
+        # Lazy backfill family_id for tokens minted pre-1.2.
+        # If the in-memory cache already has it (post-login refresh), this is
+        # a no-op. Otherwise we hit disk once and self-heal.
+        family_id = user.get("family_id")
+        if not family_id:
+            try:
+                db = get_db_client()
+                user_doc = db.collection("users").document(user["uid"]).get()
+                if user_doc.exists:
+                    user_data = user_doc.to_dict()
+                    family_id = _ensure_family_id(db, user["uid"], user_data)
+            except Exception as e:
+                logger.warning(f"family_id backfill in get_current_user failed: {e}")
+        return {
+            "uid": user["uid"],
+            "email": user.get("email", ""),
+            "username": user.get("username", ""),
+            "family_id": family_id or "",
+        }
     else:
         try:
             from firebase_admin import auth as firebase_auth

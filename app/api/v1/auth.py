@@ -1,6 +1,7 @@
 """Authentication endpoints for signup, login, and token management."""
 
 import hashlib
+import uuid
 from datetime import datetime
 from typing import Optional
 
@@ -13,6 +14,11 @@ from app.dependencies import (
     _check_local_mode,
     local_create_user,
     local_login,
+    _ensure_family_id,
+)
+from app.services.analytics_posthog import (
+    emit_event as ph_emit,
+    identify as ph_identify,
 )
 from app.utils.logger import get_logger
 
@@ -86,6 +92,8 @@ async def signup(
             token = auth_result["token"]
             
             # Create user document in database (include password hash for login persistence)
+            family_id = str(uuid.uuid4())
+            created_at = datetime.utcnow()
             user_data = {
                 "id": uid,
                 "uid": uid,
@@ -93,21 +101,48 @@ async def signup(
                 "password": hashlib.sha256(request.password.encode()).hexdigest(),
                 "child_age": request.child_age,
                 "subscription_tier": "free",
-                "created_at": datetime.utcnow(),
+                "created_at": created_at,
                 "daily_usage": 0,
                 "preferences": {},
+                "family_id": family_id,
             }
-            
+
             users_collection.document(uid).set(user_data)
-            
-            logger.info(f"New user created: {request.username} (uid: {uid})")
-            
+
+            logger.info(f"New user created: {request.username} (uid: {uid}, family_id: {family_id})")
+
+            # Seed PostHog Person profile and emit family_signup.
+            # Both calls log+swallow internally — never raise.
+            ph_identify(
+                family_id,
+                {
+                    "$set": {
+                        "username": request.username,
+                        "child_age": request.child_age,
+                        "subscription_tier": "free",
+                    },
+                    "$set_once": {
+                        "first_seen_at": created_at.isoformat(),
+                    },
+                },
+            )
+            ph_emit(
+                family_id,
+                "family_signup",
+                {
+                    "child_age": request.child_age,
+                    "subscription_tier": "free",
+                    "created_at": created_at.isoformat(),
+                },
+            )
+
             return AuthResponse(
                 success=True,
                 data={
                     "uid": uid,
                     "username": request.username,
                     "child_age": request.child_age,
+                    "family_id": family_id,
                     "token": token,
                 },
                 message="Signup successful"
@@ -167,15 +202,20 @@ async def login(
                 )
             
             user_data = user_doc.to_dict()
-            
-            logger.info(f"User logged in: {request.username} (uid: {uid})")
-            
+
+            # Lazy backfill: existing users predate family_id. Mint and persist
+            # on first login post-deploy so the web client can re-key identity.
+            family_id = _ensure_family_id(db_client, uid, user_data)
+
+            logger.info(f"User logged in: {request.username} (uid: {uid}, family_id: {family_id})")
+
             return AuthResponse(
                 success=True,
                 data={
                     "uid": uid,
                     "username": user_data.get("username"),
                     "child_age": user_data.get("child_age"),
+                    "family_id": family_id,
                     "token": token,
                 },
                 message="Login successful"
