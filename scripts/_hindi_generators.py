@@ -795,7 +795,8 @@ REQUIREMENTS:
   [verse 2] (4 lines) / [chorus] (IDENTICAL to first) / [ending] (2-3 lines, fading)
 - Section tags KEPT in lyrics (silly songs include them)
 - ≥1 asterisked sound effect like *dhadaam*, *khat khat*, *chhapaak*, *thapp*
-- Body text (excluding tags) ≤500 chars
+- Body text (excluding section tags) MUST be ≤450 chars — count yourself
+  before submitting. Hard ceiling: 500 chars. If close, drop a verse line.
 - Hinglish OK ("Mom", "okay", "school")
 - NO emotion markers, NO simile-with-banned-noun
 

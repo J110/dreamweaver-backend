@@ -770,10 +770,18 @@ as openings — only avoid the content words listed above.
 
 === STRUCTURE ===
 
+=== HARD SENTENCE CAP — APPLIES TO EVERY SECTION ===
+
+For ages {age_group}, NO sentence anywhere in the story may exceed
+{sentence_cap} words. This includes [INTRO], [PHASE_1], [POST_SONG],
+[PHASE_2], and [PHASE_3]. Count words in every sentence before
+submitting. Long compound sentences split with commas/em-dashes still
+count as one sentence and still must be ≤{sentence_cap} words.
+
 [INTRO]
 The narrator talks to the child directly. 2-3 sentences.
 Describe the world in one vivid image that makes the child
-want to be there.
+want to be there. Each sentence ≤{sentence_cap} words.
 
 [PHASE_1] — {phase_1_words} words
 The character enters the world. Discovers the mystery.
@@ -785,7 +793,7 @@ Simple words only. Nothing a {age_group} year old wouldn't
 understand or use themselves.
 
 Ages {age_group} Phase 1 rules:
-- Maximum 12 words per sentence
+- Maximum {sentence_cap} words per sentence
 - Dialogue between characters (short exchanges,
   not monologues — 1-2 lines each, back and forth)
 - The mystery is discovered — the character finds
@@ -856,7 +864,7 @@ Ages {age_group} Phase 2 rules:
   images, during the transition from awake to dreaming).
   These create musical swell moments where the bed
   rises and the world breathes.
-- Maximum 15 words per sentence (they flow, not rush)
+- Maximum {sentence_cap} words per sentence (they flow, not rush)
 
 [PHASE_3] — {phase_3_words} words
 The character sits or lies down. Everything is still.
@@ -1049,9 +1057,13 @@ def build_long_story_prompt(params):
     example_pool = [n for n in EXAMPLE_NAMES if n.title() not in recent_names] or EXAMPLE_NAMES
     example_name = random.choice(example_pool)
 
+    from _english_validators import SENTENCE_CAP as _EN_SENTENCE_CAP
+    sentence_cap = _EN_SENTENCE_CAP.get(age, 16)
+
     return LONG_STORY_EPISODE_PROMPT.format(
         age_group=age,
         mood=params["mood"],
+        sentence_cap=sentence_cap,
         world_concept=params["world_concept"],
         world_sleep=params["world_sleep"],
         mystery_setup=params["mystery_setup"],
@@ -2947,14 +2959,30 @@ def main():
             attempt_prompt = prompt
             if gen_attempt > 0 and issues:
                 error_summary = "\n".join(f"- {i}" for i in issues if i.startswith("ERROR:"))
+                hints = []
+                if any("comprehensibility" in i for i in issues):
+                    hints.append(
+                        "SENTENCE LENGTH: split every long sentence so NO sentence "
+                        f"in any section exceeds the cap stated above. Count words."
+                    )
+                if any("repeated_phrase" in i for i in issues):
+                    hints.append(
+                        "REPEATED PHRASE: invent a brand-new phrase. Do NOT echo the "
+                        "rejected phrase or any phrase in the recent-phrases blocklist. "
+                        "Different opening word, different rhythm, different image."
+                    )
+                if any("missing" in i.lower() or "tag" in i.lower() or "PHASE_" in i for i in issues):
+                    hints.append(
+                        "TAG FORMAT: every [PHRASE] must be closed with [/PHRASE], and "
+                        "every section tag ([INTRO], [PHASE_1], etc.) must be present."
+                    )
+                hint_block = "\n\n".join(hints) if hints else "Fix every listed issue before re-submitting."
                 attempt_prompt = (
                     prompt
                     + "\n\n=== PREVIOUS ATTEMPT FAILED ===\n"
                     + "Your previous response had these problems:\n"
                     + error_summary
-                    + "\n\nFix these issues. Pay special attention to tag formatting — "
-                    "every [PHRASE] must be closed with [/PHRASE], and every section "
-                    "tag ([INTRO], [PHASE_1], etc.) must be present."
+                    + "\n\n" + hint_block
                 )
                 time.sleep(31)  # rate limit: 2 req/min
 
