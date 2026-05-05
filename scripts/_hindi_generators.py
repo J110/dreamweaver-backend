@@ -896,7 +896,8 @@ def generate_silly_song(axes: dict, log_prefix: str = "  ") -> dict:
             BASE_DIR / "seed_output" / "silly_songs" / f"{sid}_cover.webp",         # debug master
         ]
         if ON_PROD:
-            cover_paths.append(PROD_COVER_STORE / "silly-songs" / f"{sid}_cover.webp")  # frontend-served
+            cover_paths.append(PROD_COVER_STORE / "silly-songs" / f"{sid}_cover.webp")  # legacy subtype path
+            cover_paths.append(PROD_COVER_STORE / f"{sid}.webp")  # nginx /covers/{sid}.webp alias
         _save_cover(cover, *cover_paths, size=(512, 512))
 
     entry = {
