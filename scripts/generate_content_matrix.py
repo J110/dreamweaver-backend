@@ -72,6 +72,8 @@ from scripts.diversity_sampler import (
 
 from scripts._english_validators import (
     validate_structured as _en_validate_structured,
+    over_cap_sentences as _en_over_cap_sentences,
+    SENTENCE_CAP as _EN_SENTENCE_CAP,
 )
 
 # ── Paths ──────────────────────────────────────────────────────────────
@@ -1166,8 +1168,11 @@ def generate_one(client, item: Dict, existing_titles: List[str],
     # Poems are trickier (stanza structure, word count variability) — more attempts
     if item.get("type") == "poem":
         max_retries = max(max_retries, 5)
-    # LONG stories need more attempts — models struggle with high word counts
-    if item.get("length") == "LONG" and item.get("type") == "story":
+    # Stories need a 5-attempt budget. Diversity collisions routinely
+    # consume attempts 1-3 before comprehensibility ever fires (observed
+    # May 6/7 2026: caps validated only on the final attempt). Was LONG
+    # only; widened to all story lengths.
+    if item.get("type") == "story":
         max_retries = max(max_retries, 5)
 
     # Skip story_type for lullabies
@@ -1349,17 +1354,61 @@ def generate_one(client, item: Dict, existing_titles: List[str],
                 for _w in _en_warnings[:3]:
                     logger.info("    comprehensibility warning: %s", _w["detail"][:120])
                 if _en_majors:
-                    _err_summary = [e["rule"] for e in _en_majors[:3]]
+                    # Fix C: log full e["detail"] (rule + word count + 80-char
+                    # preview) for every major error, not just the rule name.
+                    # This signal must always be in cron logs for diagnosis.
+                    for _e in _en_majors:
+                        logger.error("    comprehensibility error: %s", _e["detail"])
                     if attempt < max_retries - 1:
-                        logger.warning(
-                            "  Attempt %d: comprehensibility validator failed (%d major): %s — retrying",
-                            attempt + 1, len(_en_majors), _err_summary,
+                        # Fix A: surgical retry hint for cap violations,
+                        # mirroring the Devanagari repair pattern. Build a
+                        # REVISION REQUIRED block with the actual offending
+                        # sentences (full text, not the 80-char preview) and
+                        # append at the end of the prompt for highest
+                        # recency-weighted attention. Other major error
+                        # classes (banned words, -ing stacking, etc.) still
+                        # trigger retry but without specialized hint —
+                        # extends in future commits.
+                        cap_violations = _en_over_cap_sentences(
+                            text, item["age_group"]
                         )
+                        if cap_violations:
+                            cap = _EN_SENTENCE_CAP[item["age_group"]]
+                            numbered = "\n".join(
+                                f"{i+1}. ({n} words) \"{s}\""
+                                for i, (n, s) in enumerate(cap_violations)
+                            )
+                            revision_block = (
+                                f"\n\nREVISION REQUIRED — your previous attempt "
+                                f"produced these sentences over the {cap}-word "
+                                f"cap for age {item['age_group']}:\n{numbered}\n\n"
+                                f"Split each into two or more sentences, each "
+                                f"≤{cap} words. Keep the same meaning and tone."
+                            )
+                            prompt = build_generation_prompt(
+                                item, existing_titles,
+                                recent_fingerprints=recent_fingerprints,
+                                catalog_gaps=catalog_gaps,
+                                mood=mood,
+                                story_type=effective_story_type,
+                                recent_phrases=recent_phrases,
+                            ) + revision_block
+                            logger.warning(
+                                "  Attempt %d: comprehensibility validator failed (%d major), "
+                                "retrying with surgical hint (%d cap violations surfaced)",
+                                attempt + 1, len(_en_majors), len(cap_violations),
+                            )
+                        else:
+                            logger.warning(
+                                "  Attempt %d: comprehensibility validator failed "
+                                "(%d major, no cap violations), retrying with original prompt",
+                                attempt + 1, len(_en_majors),
+                            )
                         time.sleep(retry_delay)
                         continue
                     logger.error(
-                        "  Final attempt: %d major comprehensibility errors unresolved — skipping item: %s",
-                        len(_en_majors), _err_summary,
+                        "  Final attempt: %d major comprehensibility errors unresolved — skipping item",
+                        len(_en_majors),
                     )
                     return None
 

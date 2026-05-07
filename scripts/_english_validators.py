@@ -313,6 +313,27 @@ def validate_long_story(d: dict) -> list[str]:
     return errors
 
 
+# ── Retry-hint helpers ───────────────────────────────────────────────
+
+def over_cap_sentences(text: str, age: str) -> list[tuple[int, str]]:
+    """Return [(word_count, full_sentence), ...] for sentences over the
+    age-appropriate cap. Used by retry-hint construction in
+    generate_content_matrix.py to surface the actual offending text
+    to Mistral on the next attempt — validator's e["detail"] only
+    carries an 80-char preview, which truncates the worst offenders.
+    """
+    if not text:
+        return []
+    cap = SENTENCE_CAP.get(age, 16)
+    clean = _strip_tags(text)
+    out = []
+    for s in _split_sentences(clean):
+        n = len(_words(s))
+        if n > cap:
+            out.append((n, s))
+    return out
+
+
 # ── Dispatch ─────────────────────────────────────────────────────────
 
 VALIDATORS = {
