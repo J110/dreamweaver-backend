@@ -154,70 +154,22 @@ async def get_current_subscription(
         )
 
 
-@router.post("/upgrade", response_model=SubscriptionResponse, status_code=status.HTTP_200_OK)
-async def upgrade_subscription(
-    request: UpgradeRequest,
-    current_user: dict = Depends(get_current_user),
-    db_client=Depends(get_db_client),
-) -> SubscriptionResponse:
+@router.post("/upgrade", status_code=status.HTTP_410_GONE)
+async def upgrade_subscription_deprecated() -> dict:
+    """Deprecated. Replaced by Stripe Checkout flow.
+
+    Phase 0 step 1.4b security fix. The previous handler accepted a
+    tier_id and directly wrote subscription_tier='premium' on the user
+    record with NO payment, NO admin guard — any logged-in user could
+    grant themselves premium. The endpoint now returns 410 Gone.
+
+    Replacement: POST /api/v1/billing/checkout/start
     """
-    Upgrade user's subscription tier.
-    
-    Args:
-        request: UpgradeRequest with tier_id to upgrade to
-        current_user: Current authenticated user
-        db_client: Database client
-        
-    Returns:
-        SubscriptionResponse with updated tier information
-        
-    Raises:
-        HTTPException: If tier invalid or user not found
-    """
-    try:
-        user_id = current_user["uid"]
-        tier_id = request.tier_id
-        
-        # Verify tier exists
-        tier = next((t for t in SUBSCRIPTION_TIERS if t["id"] == tier_id), None)
-        if not tier:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Invalid tier ID"
-            )
-        
-        # Get user document
-        user_doc = db_client.collection("users").document(user_id).get()
-        if not user_doc.exists:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="User not found"
-            )
-        
-        # Update subscription tier
-        db_client.collection("users").document(user_id).update({
-            "subscription_tier": tier_id,
-            "daily_limit": tier["daily_limit"],
-            "subscription_start_date": datetime.utcnow(),
-            "updated_at": datetime.utcnow(),
-        })
-        
-        logger.info(f"User {user_id} upgraded to {tier_id}")
-        
-        return SubscriptionResponse(
-            success=True,
-            data={
-                "upgraded_tier": tier,
-                "effective_from": datetime.utcnow().isoformat(),
-            },
-            message="Subscription upgraded successfully"
-        )
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Error upgrading subscription: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Upgrade failed: {str(e)}"
-        )
+    raise HTTPException(
+        status_code=status.HTTP_410_GONE,
+        detail={
+            "code": "endpoint_removed",
+            "message": "Replaced by Stripe Checkout flow.",
+            "replacement": "POST /api/v1/billing/checkout/start",
+        },
+    )

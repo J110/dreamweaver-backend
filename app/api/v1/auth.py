@@ -15,6 +15,7 @@ from app.dependencies import (
     local_create_user,
     local_login,
     _ensure_family_id,
+    _ensure_subscription_fields,
 )
 from app.services.analytics_posthog import (
     emit_event as ph_emit,
@@ -206,6 +207,8 @@ async def login(
             # Lazy backfill: existing users predate family_id. Mint and persist
             # on first login post-deploy so the web client can re-key identity.
             family_id = _ensure_family_id(db_client, uid, user_data)
+            # Backfill subscription fields (1.4b) so checkout endpoint sees them.
+            _ensure_subscription_fields(db_client, uid, user_data)
 
             logger.info(f"User logged in: {request.username} (uid: {uid}, family_id: {family_id})")
 

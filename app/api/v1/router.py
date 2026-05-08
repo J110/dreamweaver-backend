@@ -19,6 +19,7 @@ from .silly_songs import router as silly_songs_router
 from .lullabies import router as lullabies_router
 from .poems import router as poems_router
 from .funny_shorts import router as funny_shorts_router
+from .billing import router as billing_router
 
 # Main v1 router
 router = APIRouter(prefix="/api/v1")
@@ -41,5 +42,6 @@ router.include_router(silly_songs_router, prefix="/silly-songs", tags=["Silly So
 router.include_router(lullabies_router, prefix="/lullabies", tags=["Lullabies"])
 router.include_router(poems_router, prefix="/poems", tags=["Poems"])
 router.include_router(funny_shorts_router, prefix="/funny-shorts", tags=["Funny Shorts"])
+router.include_router(billing_router, prefix="/billing", tags=["Billing"])
 
 __all__ = ["router"]

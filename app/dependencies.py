@@ -211,6 +211,40 @@ def _ensure_family_id(db_client, uid: str, user_data: dict) -> str:
     return fid
 
 
+SUBSCRIPTION_FIELD_DEFAULTS = {
+    "stripe_customer_id": None,
+    "stripe_subscription_id": None,
+    "subscription_status": "free",
+    "current_period_end": None,
+    "billing_email": None,
+}
+
+
+def _ensure_subscription_fields(db_client, uid: str, user_data: dict) -> None:
+    """Idempotent: add any missing subscription fields with defaults.
+
+    Persists only the diff. No-op when all five fields already exist.
+    Same race semantics as _ensure_family_id (last-write-wins, brief
+    divergence acceptable).
+    """
+    missing = {
+        k: v
+        for k, v in SUBSCRIPTION_FIELD_DEFAULTS.items()
+        if k not in user_data
+    }
+    if not missing:
+        return
+    user_data.update(missing)
+    try:
+        db_client.collection("users").document(uid).update(missing)
+        if uid in _local_users:
+            _local_users[uid].update(missing)
+    except Exception as e:
+        logger.warning(
+            f"subscription field backfill failed for uid={uid}: {e}"
+        )
+
+
 def local_verify_token(token: str) -> Optional[dict]:
     _load_persisted_tokens()
     uid = _local_tokens.get(token)
@@ -256,6 +290,7 @@ async def get_current_user(
                 if user_doc.exists:
                     user_data = user_doc.to_dict()
                     family_id = _ensure_family_id(db, user["uid"], user_data)
+                    _ensure_subscription_fields(db, user["uid"], user_data)
             except Exception as e:
                 logger.warning(f"family_id backfill in get_current_user failed: {e}")
         return {
