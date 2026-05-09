@@ -280,6 +280,34 @@ def _ensure_credit_fields(db_client, uid: str, user_data: dict) -> None:
         logger.warning(f"credit field backfill failed for uid={uid}: {e}")
 
 
+def _ensure_onboarding_complete(db_client, uid: str, user_data: dict) -> None:
+    """Lazy-backfill onboarding_complete bool.
+
+    Phase 0 onboarding gate fix. Existing 53 records have username +
+    child_age from the legacy hardcoded-password signup flow → marked
+    complete=true on first read so AppShell doesn't bounce them.
+
+    New magic-link signup_new users have neither field populated →
+    marked complete=false so AppShell routes them to /onboarding to
+    pick username + child_age + language preference.
+
+    Same race semantics as the other ensure_* helpers (last-write-wins,
+    brief divergence acceptable). Idempotent.
+    """
+    if "onboarding_complete" in user_data:
+        return
+    has_username = bool(user_data.get("username"))
+    has_child_age = user_data.get("child_age") is not None
+    complete = bool(has_username and has_child_age)
+    user_data["onboarding_complete"] = complete
+    try:
+        db_client.collection("users").document(uid).update({"onboarding_complete": complete})
+        if uid in _local_users:
+            _local_users[uid]["onboarding_complete"] = complete
+    except Exception as e:
+        logger.warning(f"onboarding_complete backfill failed uid={uid}: {e}")
+
+
 def _ensure_username_lowercase(db_client, uid: str, user_data: dict) -> None:
     """Lazy-backfill username_lowercase on user records.
 
@@ -439,6 +467,7 @@ async def get_current_user(
                     _ensure_email_field(db, user["uid"], user_data)
                     _ensure_credit_fields(db, user["uid"], user_data)
                     _ensure_username_lowercase(db, user["uid"], user_data)
+                    _ensure_onboarding_complete(db, user["uid"], user_data)
             except Exception as e:
                 logger.warning(f"backfill chain in get_current_user failed: {e}")
         return {
@@ -450,6 +479,10 @@ async def get_current_user(
             # subscription_tier surfaced so backlog gating can read it without
             # an extra disk hit. May be None for legacy records prior to 1.4b.
             "subscription_tier": user.get("subscription_tier") or "free",
+            # Onboarding gate signal — frontend AppShell reads via /users/me.
+            "onboarding_complete": bool(user.get("onboarding_complete")),
+            "child_age": user.get("child_age"),
+            "preferred_lang": user.get("preferred_lang"),
             # _token passes the bearer through so /auth/logout can revoke it.
             "_token": token,
         }

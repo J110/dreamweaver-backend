@@ -4,9 +4,9 @@ from datetime import datetime
 from typing import Optional
 
 from fastapi import APIRouter, HTTPException, Depends, status
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
-from app.dependencies import get_current_user, get_db_client
+from app.dependencies import _local_users, get_current_user, get_db_client
 from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -24,6 +24,21 @@ class UpdatePreferencesRequest(BaseModel):
     language: Optional[str] = None
     notifications_enabled: Optional[bool] = None
     theme: Optional[str] = None
+
+
+class CompleteOnboardingRequest(BaseModel):
+    """Onboarding completion. Sets username + child_age + preferred_lang
+    on the authenticated user's record and flips onboarding_complete=true.
+
+    Idempotent for the same user — submitting their own existing username
+    re-registers it without 409. Different user with the same lowercase
+    username → 409 with code=username_taken.
+    """
+    # Server-side trim happens before validation; the regex permits
+    # space inside the username (e.g. "Little ki" exists in prod).
+    username: str = Field(..., min_length=2, max_length=24, pattern=r"^[A-Za-z0-9_ ]+$")
+    child_age: int = Field(..., ge=0, le=18)
+    lang: str = Field(default="en", pattern=r"^(en|hi)$")
 
 
 # Response Models
@@ -86,6 +101,92 @@ async def get_current_user_profile(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to get profile: {str(e)}"
         )
+
+
+@router.post("/me/complete-onboarding", response_model=UserResponse)
+async def complete_onboarding(
+    request: CompleteOnboardingRequest,
+    current_user: dict = Depends(get_current_user),
+    db_client=Depends(get_db_client),
+) -> UserResponse:
+    """Set username + child_age + preferred_lang on the current user record.
+
+    Phase 0 onboarding fix. Magic-link signup_new no longer derives
+    username from email local-part; users land on /onboarding to choose
+    their own. This endpoint persists the choice and flips
+    onboarding_complete=true so AppShell stops gating them.
+
+    Username collision check is case-insensitive via username_lowercase
+    (Phase 0 step 1.5e). Self-match excluded — re-submitting the same
+    username for the same user is idempotent. Tombstoned records
+    (archived=true) are skipped so freed-up usernames are reusable.
+
+    Returns 409 with detail.code='username_taken' on collision.
+    """
+    uid = current_user["uid"]
+
+    # Server-side trim; reject empties
+    username = (request.username or "").strip()
+    if not username:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Username is empty after trim",
+        )
+    username_lc = username.lower()
+
+    # Collision check — case-insensitive, exclude self + tombstones
+    try:
+        rows = db_client.collection("users").where("username_lowercase", "==", username_lc).get()
+    except Exception:
+        rows = []
+    for doc in rows:
+        data = doc.to_dict() if hasattr(doc, "to_dict") else doc
+        if not isinstance(data, dict):
+            continue
+        if data.get("archived"):
+            continue
+        other_uid = data.get("uid") or data.get("id")
+        if other_uid and other_uid != uid:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail={"code": "username_taken", "username": username},
+            )
+
+    # All clear; persist
+    update = {
+        "username": username,
+        "username_lowercase": username_lc,
+        "child_age": request.child_age,
+        "preferred_lang": request.lang,
+        "onboarding_complete": True,
+    }
+    try:
+        db_client.collection("users").document(uid).update(update)
+        if uid in _local_users:
+            _local_users[uid].update(update)
+    except Exception as e:
+        logger.error(f"complete_onboarding persist failed uid={uid}: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Could not save onboarding selections",
+        )
+
+    logger.info(
+        "Onboarding completed: uid=%s username=%s child_age=%d lang=%s",
+        uid, username, request.child_age, request.lang,
+    )
+
+    return UserResponse(
+        success=True,
+        data={
+            "uid": uid,
+            "username": username,
+            "child_age": request.child_age,
+            "preferred_lang": request.lang,
+            "onboarding_complete": True,
+        },
+        message="Onboarding completed",
+    )
 
 
 @router.put("/me", response_model=UserResponse)

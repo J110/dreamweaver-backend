@@ -199,31 +199,34 @@ def _derive_unique_username(store, email_lc: str) -> str:
 def _create_user_with_email(store, email_lc: str) -> dict:
     """Mint a brand-new user record. signup_new path.
 
-    Username derived from email local-part with collision suffix.
-    family_id minted upfront (consistent with auth.py:signup pattern).
+    Splits identity (signup) from product configuration (onboarding) per
+    framework Phase 1 spec. Sets only auth-related fields here:
+    email + email_verified + family_id + tier defaults +
+    onboarding_complete=false. The user's chosen username, child_age,
+    and preferred_lang are collected at /onboarding via
+    POST /users/me/complete-onboarding.
+
+    AppShell gates the user to /onboarding while
+    onboarding_complete=false (legacy records auto-marked true via
+    _ensure_onboarding_complete backfill).
+
     Password field intentionally absent (Phase 1 drops password storage).
     """
     uid = hashlib.sha256(f"{email_lc}:{secrets.token_hex(8)}".encode()).hexdigest()[:28]
-    username = _derive_unique_username(store, email_lc)
     family_id = str(uuid.uuid4())
     created_at = _now_iso()
     user_data = {
         "id": uid,
         "uid": uid,
-        "username": username,
-        # Phase 0 step 1.5e: username_lowercase is the canonical
-        # case-insensitive lookup key. Derived usernames are already
-        # lowercase (from email local-part), but write explicitly for
-        # consistency with future case-mixed signup paths.
-        "username_lowercase": username.lower(),
+        # No username, no username_lowercase, no child_age, no preferred_lang —
+        # collected at /onboarding.
         "email": email_lc,
         "email_verified": True,
-        "child_age": 5,  # default; updated via /users/me later
         "subscription_tier": "free",
         "created_at": created_at,
-        "daily_usage": 0,
         "preferences": {},
         "family_id": family_id,
+        "onboarding_complete": False,
     }
     store.collection("users").document(uid).set(user_data)
     # Update in-memory cache too, so subsequent token-verify reads see it.
@@ -232,7 +235,10 @@ def _create_user_with_email(store, email_lc: str) -> dict:
         _local_users[uid] = user_data
     except Exception:
         pass
-    logger.info("New user created via magic-link: username=%s uid=%s family_id=%s", username, uid, family_id)
+    logger.info(
+        "New user created via magic-link: uid=%s family_id=%s email=%s onboarding_complete=False",
+        uid, family_id, email_lc,
+    )
     return user_data
 
 
