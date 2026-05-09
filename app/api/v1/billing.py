@@ -316,6 +316,57 @@ async def start_checkout(
     return {"checkout_url": url}
 
 
+@router.post("/portal/start")
+async def start_portal(
+    current_user: dict = Depends(get_current_user),
+    db_client=Depends(get_db_client),
+) -> dict:
+    """Create a Stripe Customer Portal session for subscription management.
+
+    User must already have a stripe_customer_id (i.e. has gone through
+    checkout at least once). Returns 503 if no customer exists.
+
+    Phase 0 step 1.4d. Bundled here rather than 1.4c so settings UI
+    doesn't ship with a placeholder 'Manage subscription' button.
+    """
+    uid = current_user["uid"]
+    user_doc = db_client.collection("users").document(uid).get()
+    if not user_doc.exists:
+        raise HTTPException(status_code=404, detail="User not found")
+    user_data = user_doc.to_dict()
+
+    customer_id = user_data.get("stripe_customer_id")
+    if not customer_id:
+        raise HTTPException(
+            status_code=503,
+            detail="No subscription found — start a checkout first",
+        )
+
+    from app.services.stripe_client import _get_client
+    stripe = _get_client()
+    if stripe is None:
+        raise HTTPException(
+            status_code=503,
+            detail="Billing temporarily unavailable",
+        )
+
+    base = os.getenv("WEB_BASE_URL", "https://dreamvalley.app").rstrip("/")
+    try:
+        session = stripe.billing_portal.Session.create(
+            customer=customer_id,
+            return_url=f"{base}/settings",
+        )
+    except Exception as e:
+        logger.warning("Stripe billing_portal.Session.create failed: %s", e)
+        raise HTTPException(
+            status_code=503,
+            detail="Could not create portal session",
+        )
+
+    logger.info("portal session created uid=%s customer=%s", uid, customer_id)
+    return {"portal_url": session.url}
+
+
 @router.post("/webhook")
 async def webhook(request: Request, db_client=Depends(get_db_client)) -> dict:
     payload = await request.body()
