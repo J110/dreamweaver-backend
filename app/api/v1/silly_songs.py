@@ -3,11 +3,13 @@
 import json
 import os
 from pathlib import Path
-from typing import Optional
+from typing import Dict, Optional
 
-from fastapi import APIRouter, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel
 
+from app.dependencies import get_optional_user
+from app.utils.backlog import filter_by_backlog
 from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -96,6 +98,7 @@ def _save_song(song: dict) -> None:
 async def list_silly_songs(
     age_group: Optional[str] = Query(None, description="Filter by age group: '2-5', '6-8', '9-12'"),
     lang: Optional[str] = Query("en", description="Filter by language: 'en' or 'hi'"),
+    current_user: Optional[Dict[str, str]] = Depends(get_optional_user),
 ) -> SillySongsListResponse:
     """List all silly songs, optionally filtered by age group and language."""
     songs = _load_all_songs()
@@ -112,6 +115,9 @@ async def list_silly_songs(
     # Sort by created_at descending (newest first)
     songs.sort(key=lambda x: x.get("created_at", ""), reverse=True)
 
+    # Phase 0 step 1.4e: backlog gating per tier (Free 3d / Premium 30d).
+    songs, tier_window_cutoff_at = filter_by_backlog(songs, current_user)
+
     # Strip lyrics from list response (not needed for browsing)
     items = []
     for s in songs:
@@ -120,7 +126,11 @@ async def list_silly_songs(
 
     return SillySongsListResponse(
         success=True,
-        data={"items": items, "total": len(items)},
+        data={
+            "items": items,
+            "total": len(items),
+            "tier_window_cutoff_at": tier_window_cutoff_at,
+        },
         message="Silly songs retrieved successfully",
     )
 

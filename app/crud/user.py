@@ -66,80 +66,13 @@ class UserCRUD(BaseCRUD):
         """
         return await self.update(uid, {"preferences": preferences.to_dict()})
     
-    async def increment_daily_usage(self, uid: str) -> int:
-        """
-        Increment daily usage count.
-        
-        Args:
-            uid: User ID
-            
-        Returns:
-            Updated usage count
-        """
-        doc_ref = self.get_collection().document(uid)
-        
-        # Get current user
-        user_doc = await doc_ref.get()
-        if not user_doc.exists:
-            return 0
-        
-        user_data = user_doc.to_dict()
-        today = datetime.utcnow().date()
-        last_usage = user_data.get("last_usage_date")
-        
-        # Reset if last usage was different day
-        if last_usage and last_usage.date() != today:
-            count = 1
-        else:
-            count = user_data.get("daily_usage_count", 0) + 1
-        
-        await doc_ref.update({
-            "daily_usage_count": count,
-            "last_usage_date": datetime.utcnow()
-        })
-        
-        return count
-    
-    async def reset_daily_usage(self, uid: str) -> bool:
-        """
-        Reset daily usage count.
-        
-        Args:
-            uid: User ID
-            
-        Returns:
-            True if successful
-        """
-        return await self.update(uid, {"daily_usage_count": 0})
-    
-    async def get_daily_usage(self, uid: str) -> Dict[str, Any]:
-        """
-        Get daily usage information.
-        
-        Args:
-            uid: User ID
-            
-        Returns:
-            Dictionary with used count and reset time
-        """
-        user_data = await self.get_by_id(uid)
-        if not user_data:
-            return {"used": 0, "reset_at": None}
-        
-        last_usage = user_data.get("last_usage_date")
-        today = datetime.utcnow().date()
-        
-        # Calculate reset time (next day at UTC midnight)
-        if last_usage and last_usage.date() == today:
-            reset_at = datetime.combine(today + timedelta(days=1), datetime.min.time())
-        else:
-            reset_at = datetime.combine(today + timedelta(days=1), datetime.min.time())
-        
-        return {
-            "used": user_data.get("daily_usage_count", 0),
-            "reset_at": reset_at
-        }
-    
+    # Phase 0 step 1.4e: removed increment_daily_usage / reset_daily_usage /
+    # get_daily_usage. They were Firestore-shaped CRUD methods on a
+    # collection that LocalStore is the actual store for; never called by
+    # production code. The credit pool model (credits_remaining,
+    # credits_period_end, credits_frozen on user record) replaces the
+    # daily_usage_count counter. See app/dependencies.py:_ensure_credit_fields.
+
     async def update_subscription(self, uid: str, tier: str, expires_at: Optional[datetime] = None) -> bool:
         """
         Update user subscription tier.

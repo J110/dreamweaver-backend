@@ -4,11 +4,13 @@ import json
 import os
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
+from typing import Dict, Optional
 
-from fastapi import APIRouter, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel
 
+from app.dependencies import get_optional_user
+from app.utils.backlog import filter_by_backlog
 from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -98,6 +100,7 @@ def _save_short(short: dict) -> None:
 async def list_funny_shorts(
     age_group: Optional[str] = Query(None, description="Filter by age group: '2-5', '6-8', '9-12'"),
     lang: Optional[str] = Query("en", description="Filter by language: 'en' or 'hi'"),
+    current_user: Optional[Dict[str, str]] = Depends(get_optional_user),
 ) -> FunnyShortsListResponse:
     """List all funny shorts, optionally filtered by age group and language."""
     shorts = _load_all_shorts()
@@ -111,6 +114,9 @@ async def list_funny_shorts(
     # Sort by created_at descending (newest first)
     shorts.sort(key=lambda x: x.get("created_at", ""), reverse=True)
 
+    # Phase 0 step 1.4e: backlog gating per tier (Free 3d / Premium 30d).
+    shorts, tier_window_cutoff_at = filter_by_backlog(shorts, current_user)
+
     # Strip script from list response (it's large and not needed for browsing)
     items = []
     for s in shorts:
@@ -119,7 +125,11 @@ async def list_funny_shorts(
 
     return FunnyShortsListResponse(
         success=True,
-        data={"items": items, "total": len(items)},
+        data={
+            "items": items,
+            "total": len(items),
+            "tier_window_cutoff_at": tier_window_cutoff_at,
+        },
         message="Funny shorts retrieved successfully",
     )
 

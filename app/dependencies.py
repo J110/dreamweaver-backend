@@ -233,6 +233,53 @@ def _ensure_subscription_fields(db_client, uid: str, user_data: dict) -> None:
         )
 
 
+CREDIT_FIELD_DEFAULTS = {
+    "lifetime_free_remaining": 3,
+    "credits_remaining": 0,
+    "topup_credits_remaining": 0,
+    "credits_period_start": None,
+    "credits_period_end": None,
+    "credits_frozen": False,
+}
+
+
+def _ensure_credit_fields(db_client, uid: str, user_data: dict) -> None:
+    """Idempotent: lazy-add credit machinery fields with defaults.
+
+    Phase 0 step 1.4e narrow build. Schema only — Phase 1 ships the
+    consumer (POST /content/generate) that reads credits_remaining and
+    decrements per generation. Lazy backfill mirrors _ensure_family_id
+    / _ensure_subscription_fields / _ensure_email_field shapes.
+
+    Defaults:
+      lifetime_free_remaining = 3   (everyone gets the onboarding burst,
+                                     even existing users — they've never
+                                     been gated, so 3 fresh starts is
+                                     fair)
+      credits_remaining       = 0   (premium users get 30 seeded by
+                                     subscription.created webhook)
+      topup_credits_remaining = 0
+      credits_period_*        = null
+      credits_frozen          = false
+
+    Same race semantics as the other ensure helpers.
+    """
+    missing = {
+        k: v
+        for k, v in CREDIT_FIELD_DEFAULTS.items()
+        if k not in user_data
+    }
+    if not missing:
+        return
+    user_data.update(missing)
+    try:
+        db_client.collection("users").document(uid).update(missing)
+        if uid in _local_users:
+            _local_users[uid].update(missing)
+    except Exception as e:
+        logger.warning(f"credit field backfill failed for uid={uid}: {e}")
+
+
 def _ensure_email_field(db_client, uid: str, user_data: dict) -> None:
     """Idempotent: lazy-add email=null on records missing the field.
 
@@ -364,6 +411,7 @@ async def get_current_user(
                     family_id = _ensure_family_id(db, user["uid"], user_data)
                     _ensure_subscription_fields(db, user["uid"], user_data)
                     _ensure_email_field(db, user["uid"], user_data)
+                    _ensure_credit_fields(db, user["uid"], user_data)
             except Exception as e:
                 logger.warning(f"backfill chain in get_current_user failed: {e}")
         return {
@@ -372,6 +420,9 @@ async def get_current_user(
             "username": user.get("username", ""),
             "family_id": family_id or "",
             "email_verified": bool(user.get("email_verified")),
+            # subscription_tier surfaced so backlog gating can read it without
+            # an extra disk hit. May be None for legacy records prior to 1.4b.
+            "subscription_tier": user.get("subscription_tier") or "free",
             # _token passes the bearer through so /auth/logout can revoke it.
             "_token": token,
         }
@@ -398,29 +449,10 @@ async def get_optional_user(
         return None
 
 
-class RateLimiter:
-    def __init__(self, max_requests: int = 100, window_seconds: int = 60):
-        self.max_requests = max_requests
-        self.window_seconds = window_seconds
-        self.requests: Dict[str, list] = {}
-
-    def is_allowed(self, key: str) -> bool:
-        now = time.time()
-        cutoff = now - self.window_seconds
-        if key not in self.requests:
-            self.requests[key] = []
-        self.requests[key] = [t for t in self.requests[key] if t > cutoff]
-        if len(self.requests[key]) < self.max_requests:
-            self.requests[key].append(now)
-            return True
-        return False
-
-
-_rate_limiter = RateLimiter()
-
-
-def check_rate_limit(user: Dict[str, str] = Depends(get_current_user)) -> Dict[str, str]:
-    uid = user.get("uid", "anonymous")
-    if not _rate_limiter.is_allowed(uid):
-        raise HTTPException(status_code=status.HTTP_429_TOO_MANY_REQUESTS, detail="Rate limit exceeded")
-    return user
+# Phase 0 step 1.4e: dropped RateLimiter class and check_rate_limit
+# Depends function. Both were defined but never wired to any endpoint —
+# pure dead code. Per-tier enforcement now lives in:
+#   - app/utils/backlog.py (backlog window gating, the live enforcement)
+#   - credit gating helpers (Phase 1 ships POST /content/generate that
+#     consumes credits — the credit machinery is in place via webhook
+#     hooks + _ensure_credit_fields below)

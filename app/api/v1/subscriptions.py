@@ -12,53 +12,54 @@ logger = get_logger(__name__)
 router = APIRouter()
 
 
-# Hardcoded subscription tiers
+# Hardcoded subscription tiers — Phase 0 step 1.4e rewrite per framework
+# (docs/superpowers/specs/2026-04-27-monetization-marketing-framework.md
+# §3). Replaces the legacy 3-tier daily_limit shape with credit pools and
+# backlog windows. Family tier dropped (gate #4 deferred until ≥30% of
+# Premium users fill all 3 voice slots in Phase 2.1).
 SUBSCRIPTION_TIERS = [
     {
         "id": "free",
         "name": "Free",
-        "description": "Perfect for getting started",
+        "description": "Tonight's bedtime bundle, 3 free personalized stories",
         "price": 0,
+        "price_annual": 0,
         "currency": "USD",
-        "daily_limit": 3,
+        # Credit model
+        "credits_per_period": None,   # Free has no monthly pool
+        "lifetime_free_credits": 3,   # 3-burst onboarding
+        "backlog_days": 3,            # Free sees last 3 days of ritual content
         "features": [
-            "3 stories per day",
-            "Basic themes",
-            "Standard voice",
+            "Tonight's bedtime bundle (silly song, story, poem, lullaby)",
+            "Last 3 days of stories saved",
+            "3 free personalized stories",
+            "Default narration voices",
         ],
     },
     {
         "id": "premium",
         "name": "Premium",
-        "description": "Unlimited stories for families",
-        "price": 9.99,
+        "description": "30 personalized story credits per month + voice cloning",
+        "price": 6,
+        "price_annual": 40,
         "currency": "USD",
         "billing_period": "monthly",
-        "daily_limit": 50,
+        "trial_days_annual": 7,
+        # Credit model
+        "credits_per_period": 30,     # Premium pool, resets each renewal
+        "lifetime_free_credits": None,
+        "backlog_days": 30,           # Premium sees last 30 days
+        "top_up_pack": {
+            "credits": 10,
+            "price_usd": 2,
+        },
         "features": [
-            "Unlimited stories per day",
-            "All themes and categories",
-            "Multiple voice options",
-            "Ad-free experience",
-            "Custom music",
-        ],
-    },
-    {
-        "id": "family",
-        "name": "Family",
-        "description": "Everything for the whole family",
-        "price": 14.99,
-        "currency": "USD",
-        "billing_period": "monthly",
-        "daily_limit": 100,
-        "features": [
-            "Unlimited stories per day",
-            "All themes and categories",
-            "All voice options",
-            "Ad-free experience",
-            "Custom music and sounds",
-            "Up to 5 child profiles",
-            "Parental controls",
+            "Voice cloning — stories in your voice (3 voice slots)",
+            "30 personalized story credits every month",
+            "Last 30 days of stories saved",
+            "Episodic memory — your kid's character remembers their adventures",
+            "Karaoke mode + bookmark resume + offline downloads",
+            "Up to 3 kid profiles",
         ],
     },
 ]
@@ -140,6 +141,14 @@ async def get_current_subscription(
                 "current_tier": tier,
                 "since": user_data.get("subscription_start_date"),
                 "next_billing_date": user_data.get("next_billing_date"),
+                # Phase 0 step 1.4e: surface credit machinery for settings UI.
+                "subscription_status": user_data.get("subscription_status", "free"),
+                "current_period_end": user_data.get("current_period_end"),
+                "credits_remaining": user_data.get("credits_remaining", 0),
+                "topup_credits_remaining": user_data.get("topup_credits_remaining", 0),
+                "credits_period_end": user_data.get("credits_period_end"),
+                "credits_frozen": bool(user_data.get("credits_frozen")),
+                "lifetime_free_remaining": user_data.get("lifetime_free_remaining", 3),
             },
             message="Current subscription retrieved successfully"
         )

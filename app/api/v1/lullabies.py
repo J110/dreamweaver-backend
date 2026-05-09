@@ -2,11 +2,13 @@
 
 import json
 from pathlib import Path
-from typing import Optional
+from typing import Dict, Optional
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
 
+from app.dependencies import get_optional_user
+from app.utils.backlog import filter_by_backlog
 from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -45,6 +47,7 @@ async def list_lullabies(
     mood: Optional[str] = Query(None, description="Filter by mood (calm, wired, curious, sad, anxious, angry)"),
     lullaby_type: Optional[str] = Query(None, description="Filter by lullaby type"),
     lang: Optional[str] = Query("en", description="Filter by language: 'en' or 'hi'"),
+    current_user: Optional[Dict[str, str]] = Depends(get_optional_user),
 ):
     """List lullabies with optional mood, age, and language filtering."""
     lullabies = _load_lullabies()
@@ -61,9 +64,16 @@ async def list_lullabies(
     if lang:
         lullabies = [l for l in lullabies if l.get("lang", "en") == lang]
 
+    # Phase 0 step 1.4e: backlog gating per tier (Free 3d / Premium 30d).
+    lullabies, tier_window_cutoff_at = filter_by_backlog(lullabies, current_user)
+
     return {
         "success": True,
-        "data": {"items": lullabies, "total": len(lullabies)},
+        "data": {
+            "items": lullabies,
+            "total": len(lullabies),
+            "tier_window_cutoff_at": tier_window_cutoff_at,
+        },
         "message": f"Found {len(lullabies)} lullabies",
     }
 

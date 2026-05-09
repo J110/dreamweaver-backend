@@ -42,9 +42,10 @@ class Settings:
         cors_raw = os.getenv("CORS_ORIGINS", "*")
         self.cors_origins: List[str] = [s.strip() for s in cors_raw.split(",")]
 
-        # Quotas
-        self.max_content_per_day_free: int = int(os.getenv("MAX_CONTENT_PER_DAY_FREE", "1"))
-        self.max_content_per_day_premium: int = int(os.getenv("MAX_CONTENT_PER_DAY_PREMIUM", "5"))
+        # Phase 0 step 1.4e: dropped MAX_CONTENT_PER_DAY_FREE / _PREMIUM
+        # env vars. Daily content cap was the v1 quota model; framework
+        # uses credit pools (Premium = 30/month) and backlog windows
+        # (Free 3d / Premium 30d). See app/utils/backlog.py.
 
         # Cache
         self.tts_cache_dir: str = os.getenv("TTS_CACHE_DIR", "./cache/tts")

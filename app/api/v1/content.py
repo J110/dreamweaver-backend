@@ -1,12 +1,13 @@
 """Content browsing endpoints."""
 
 from datetime import datetime
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from fastapi import APIRouter, HTTPException, Depends, status, Query
 from pydantic import BaseModel
 
 from app.dependencies import get_db_client, get_optional_user
+from app.utils.backlog import filter_by_backlog
 from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -47,6 +48,7 @@ async def list_content(
     page_size: int = Query(20, ge=1, le=100),
     sort_by: str = Query("created_at"),
     db_client=Depends(get_db_client),
+    current_user: Optional[Dict[str, str]] = Depends(get_optional_user),
 ) -> ContentListResponse:
     """
     List all content with optional filtering and pagination.
@@ -86,12 +88,15 @@ async def list_content(
             items.sort(key=lambda x: x.get("like_count", 0), reverse=True)
         else:  # created_at
             items.sort(key=lambda x: x.get("created_at") or "1970-01-01T00:00:00", reverse=True)
-        
+
+        # Phase 0 step 1.4e: backlog gating per tier (Free 3d / Premium 30d).
+        items, tier_window_cutoff_at = filter_by_backlog(items, current_user)
+
         # Paginate
         start = (page - 1) * page_size
         end = start + page_size
         paginated_items = items[start:end]
-        
+
         return ContentListResponse(
             success=True,
             data={
@@ -100,6 +105,7 @@ async def list_content(
                 "page": page,
                 "page_size": page_size,
                 "pages": (len(items) + page_size - 1) // page_size,
+                "tier_window_cutoff_at": tier_window_cutoff_at,
             },
             message="Content retrieved successfully"
         )

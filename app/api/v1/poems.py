@@ -3,11 +3,13 @@
 import json
 import os
 from pathlib import Path
-from typing import Optional
+from typing import Dict, Optional
 
-from fastapi import APIRouter, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel
 
+from app.dependencies import get_optional_user
+from app.utils.backlog import filter_by_backlog
 from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -96,6 +98,7 @@ def _save_poem(poem: dict) -> None:
 async def list_poems(
     age_group: Optional[str] = Query(None, description="Filter by age group: '2-5', '6-8', '9-12'"),
     lang: Optional[str] = Query("en", description="Filter by language: 'en' or 'hi'"),
+    current_user: Optional[Dict[str, str]] = Depends(get_optional_user),
 ) -> PoemsListResponse:
     """List all poems, optionally filtered by age group and language."""
     poems = _load_all_poems()
@@ -112,6 +115,9 @@ async def list_poems(
     # Sort by created_at descending (newest first)
     poems.sort(key=lambda x: x.get("created_at", ""), reverse=True)
 
+    # Phase 0 step 1.4e: backlog gating per tier (Free 3d / Premium 30d).
+    poems, tier_window_cutoff_at = filter_by_backlog(poems, current_user)
+
     # Strip heavy fields from list response
     items = []
     for p in poems:
@@ -120,7 +126,11 @@ async def list_poems(
 
     return PoemsListResponse(
         success=True,
-        data={"items": items, "total": len(items)},
+        data={
+            "items": items,
+            "total": len(items),
+            "tier_window_cutoff_at": tier_window_cutoff_at,
+        },
         message="Poems retrieved successfully",
     )
 
