@@ -55,8 +55,13 @@ def main() -> int:
     args = parser.parse_args()
 
     from app.services.local_store import get_local_store
-    from app.dependencies import _local_users
 
+    # In-memory _local_users cache lives inside the running Docker
+    # container; updating it from a host-run script requires importing
+    # app.dependencies which transitively pulls fastapi (not installed
+    # on host). LocalStore writes hit disk; the container's cache
+    # rebuilds from disk on next restart. For an archive operation,
+    # that's the right semantic — no urgent live-state update needed.
     store = get_local_store()
     try:
         doc = store.collection("users").document(args.uid).get()
@@ -98,8 +103,6 @@ def main() -> int:
 
     try:
         store.collection("users").document(args.uid).update(update)
-        if args.uid in _local_users:
-            _local_users[args.uid].update(update)
     except Exception as e:
         print(f"ERROR: archive persist failed: {e}")
         logger.warning("archive_user persist failed uid=%s: %s", args.uid, e)
