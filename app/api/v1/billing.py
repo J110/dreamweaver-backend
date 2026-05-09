@@ -258,11 +258,170 @@ def _handle_invoice_failed(db_client, event) -> None:
     )
 
 
+def _handle_invoice_paid(db_client, event) -> None:
+    """Renewal happy path. Fired on every successful subscription invoice."""
+    invoice = event["data"]["object"]
+    customer_id = invoice.get("customer")
+    user = _find_user_by_customer(db_client, customer_id)
+    if not user:
+        logger.warning(
+            "invoice.payment_succeeded: no user found for customer=%s", customer_id
+        )
+        return
+
+    # Period end + plan from the first subscription line item.
+    period_end_ts = None
+    plan_id = None
+    try:
+        lines = (invoice.get("lines") or {}).get("data") or []
+        if lines:
+            period = lines[0].get("period") or {}
+            period_end_ts = period.get("end")
+            price = lines[0].get("price") or {}
+            plan_id = price.get("id")
+    except Exception:
+        pass
+
+    fields = {
+        "subscription_status": "active",
+        "subscription_tier": "premium",
+    }
+    iso_end = _iso_from_ts(period_end_ts)
+    if iso_end:
+        fields["current_period_end"] = iso_end
+
+    # Stripe occasionally surfaces an updated email on the invoice — sync it.
+    customer_email = invoice.get("customer_email")
+    if customer_email and user.get("billing_email") != customer_email:
+        fields["billing_email"] = customer_email
+
+    _persist_user_update(db_client, user["uid"], fields)
+
+    ph_emit(
+        user.get("family_id") or "",
+        "subscription_renewed",
+        {
+            "invoice_id": invoice.get("id"),
+            "amount_paid": invoice.get("amount_paid"),
+            "currency": invoice.get("currency"),
+            "plan": plan_id,
+            "current_period_end": iso_end,
+        },
+    )
+
+
+def _handle_trial_will_end(db_client, event) -> None:
+    """Informational. Fired ~3 days before trial ends. No state change here.
+
+    Future hook: this is where a 'your trial ends in 3 days' email via
+    Resend would fire. Not implemented in 1.4c — log + PostHog only.
+    """
+    sub = event["data"]["object"]
+    customer_id = sub.get("customer")
+    user = _find_user_by_customer(db_client, customer_id)
+    if not user:
+        logger.warning(
+            "subscription.trial_will_end: no user found for customer=%s", customer_id
+        )
+        return
+
+    trial_end_iso = _iso_from_ts(sub.get("trial_end"))
+    plan_id = None
+    try:
+        item = ((sub.get("items") or {}).get("data") or [{}])[0]
+        plan_id = (item.get("price") or {}).get("id")
+    except Exception:
+        pass
+
+    logger.info(
+        "trial_will_end customer=%s sub=%s trial_end=%s plan=%s — informational only",
+        customer_id, sub.get("id"), trial_end_iso, plan_id,
+    )
+
+    ph_emit(
+        user.get("family_id") or "",
+        "subscription_trial_ending",
+        {
+            "trial_end": trial_end_iso,
+            "plan": plan_id,
+        },
+    )
+
+
+def _handle_charge_dispute(db_client, event) -> None:
+    """Defensive: revoke premium access immediately on dispute.
+
+    Stripe doesn't put `customer` directly on the dispute object; we fetch
+    the underlying charge to resolve it. Auto-cancellation of the Stripe
+    subscription is NOT performed — that's a manual decision after review.
+    """
+    dispute = event["data"]["object"]
+    charge_id = dispute.get("charge")
+    dispute_id = dispute.get("id")
+
+    customer_id = None
+    try:
+        from app.services.stripe_client import _get_client
+        stripe = _get_client()
+        if stripe is not None and charge_id:
+            charge = stripe.Charge.retrieve(charge_id)
+            if charge:
+                customer_id = charge.get("customer")
+    except Exception as e:
+        logger.warning(
+            "dispute charge fetch failed dispute=%s charge=%s: %s",
+            dispute_id, charge_id, e,
+        )
+
+    if not customer_id:
+        logger.warning(
+            "charge.dispute.created: could not resolve customer for charge=%s dispute=%s",
+            charge_id, dispute_id,
+        )
+        return
+
+    user = _find_user_by_customer(db_client, customer_id)
+    if not user:
+        logger.warning(
+            "charge.dispute.created: no user found for customer=%s dispute=%s",
+            customer_id, dispute_id,
+        )
+        return
+
+    fields = {
+        "subscription_tier": "free",
+        "subscription_status": "disputed",
+        "disputed_at": datetime.now(timezone.utc).isoformat(),
+    }
+    _persist_user_update(db_client, user["uid"], fields)
+
+    logger.warning(
+        "DISPUTE: customer=%s dispute=%s reason=%s amount=%s — premium revoked, "
+        "manual review required (Stripe subscription NOT auto-cancelled)",
+        customer_id, dispute_id, dispute.get("reason"), dispute.get("amount"),
+    )
+
+    ph_emit(
+        user.get("family_id") or "",
+        "subscription_disputed",
+        {
+            "dispute_id": dispute_id,
+            "amount": dispute.get("amount"),
+            "currency": dispute.get("currency"),
+            "reason": dispute.get("reason"),
+            "status": dispute.get("status"),
+        },
+    )
+
+
 _HANDLERS = {
     "customer.subscription.created": _handle_sub_created,
     "customer.subscription.updated": _handle_sub_updated,
     "customer.subscription.deleted": _handle_sub_deleted,
     "invoice.payment_failed": _handle_invoice_failed,
+    "invoice.payment_succeeded": _handle_invoice_paid,
+    "customer.subscription.trial_will_end": _handle_trial_will_end,
+    "charge.dispute.created": _handle_charge_dispute,
 }
 
 
