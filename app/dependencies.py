@@ -126,28 +126,33 @@ def _load_persisted_tokens():
         pass  # Don't crash on load failure
 
 
-def local_create_user(username: str, password: str) -> dict:
+# NOTE: Phase 0 step 1.5 (magic-link auth migration) deleted local_login()
+# entirely and dropped password storage from local_create_user(). Three
+# critical security holes closed:
+#   - "not stored_pw" accept branch (records w/ empty password were
+#     accessible by username alone)
+#   - plaintext-password fallback branch
+#   - new-user records minted with sha256(plain) instead of bcrypt/argon2
+# The magic-link service (app/services/magic_link.py) is the new mint path
+# for both new users and existing-user re-auth. local_create_user remains
+# only for backward-compat callers; it now mints without a password and is
+# slated for removal once those callers are gone.
+
+
+def local_create_user(username: str, password: str = "") -> dict:
+    """DEPRECATED — use app.services.magic_link instead.
+
+    Phase 0 step 1.5 dropped password storage. Signature kept for backward
+    compat with existing imports (none expected post-migration). The
+    `password` argument is ignored; the user record is created without a
+    password field.
+    """
     uid = hashlib.sha256(username.encode()).hexdigest()[:28]
-    pw_hash = hashlib.sha256(password.encode()).hexdigest()
     _local_users[uid] = {
         "uid": uid,
         "username": username,
-        "password": pw_hash,
-        "email": f"{username}@dreamweaver.app",
+        "email": f"{username}@dreamweaver.app",  # vestigial synthetic; cleaned post-migration
     }
-    # Also persist password hash to the users collection so login
-    # survives Docker restarts (LocalStore reloads from disk).
-    try:
-        from app.services.local_store import get_local_store
-        store = get_local_store()
-        user_doc = store.collection("users").document(uid).get()
-        if user_doc.exists:
-            store.collection("users").document(uid).set({
-                **user_doc.to_dict(),
-                "password": pw_hash,
-            })
-    except Exception:
-        pass
     token = hashlib.sha256(f"{uid}:{time.time()}".encode()).hexdigest()
     _local_tokens[token] = uid
     _persist_token(token, uid)
@@ -155,33 +160,16 @@ def local_create_user(username: str, password: str) -> dict:
 
 
 def local_login(username: str, password: str) -> Optional[dict]:
-    _load_persisted_tokens()
-    pw_hash = hashlib.sha256(password.encode()).hexdigest()
-    for uid, user in _local_users.items():
-        if user.get("username") != username:
-            continue
-        stored_pw = user.get("password", "")
+    """REMOVED — Phase 0 step 1.5.
 
-        # Match: hashed pw, plaintext pw, OR no stored password (pre-fix user)
-        if stored_pw == pw_hash or stored_pw == password or not stored_pw:
-            # Persist/upgrade password hash for this user
-            if stored_pw != pw_hash:
-                user["password"] = pw_hash
-                try:
-                    from app.services.local_store import get_local_store
-                    store = get_local_store()
-                    doc = store.collection("users").document(uid).get()
-                    if doc.exists:
-                        store.collection("users").document(uid).set({
-                            **doc.to_dict(), "password": pw_hash,
-                        })
-                except Exception:
-                    pass
-            token = hashlib.sha256(f"{uid}:{time.time()}".encode()).hexdigest()
-            _local_tokens[token] = uid
-            _persist_token(token, uid)
-            return {"uid": uid, "token": token, "username": username}
-    return None
+    Password-based login is gone. The magic-link flow
+    (app/services/magic_link.py) replaces it. Calling this function now
+    raises NotImplementedError to surface any forgotten callers loudly.
+    """
+    raise NotImplementedError(
+        "local_login was removed in Phase 0 step 1.5. "
+        "Use app.services.magic_link.request_magic_link / verify_code instead."
+    )
 
 
 def _ensure_family_id(db_client, uid: str, user_data: dict) -> str:
@@ -245,12 +233,98 @@ def _ensure_subscription_fields(db_client, uid: str, user_data: dict) -> None:
         )
 
 
+def _ensure_email_field(db_client, uid: str, user_data: dict) -> None:
+    """Idempotent: lazy-add email=null on records missing the field.
+
+    CRITICAL: does NOT add email_verified. The absence of email_verified is
+    the legacy-tolerance signal the AppShell gate relies on (see spec
+    section "Frontend surface > AppShell.js"). email_verified is set true
+    ONLY by app.services.magic_link.verify_code.
+    """
+    if "email" in user_data:
+        return
+    user_data["email"] = None
+    try:
+        db_client.collection("users").document(uid).update({"email": None})
+        if uid in _local_users:
+            _local_users[uid]["email"] = None
+    except Exception as e:
+        logger.warning(f"email field backfill failed for uid={uid}: {e}")
+
+
+# Phase 0 step 1.5: token TTL + sliding refresh.
+# Tokens minted pre-1.5 lack expires_at — treated as legacy until the
+# migration script revokes them en masse.
+_SESSION_TTL_SECONDS = 30 * 24 * 3600
+_SESSION_REFRESH_GATE_SECONDS = 24 * 3600
+
+
+def _utcnow_iso() -> str:
+    from datetime import datetime, timezone
+    return datetime.now(timezone.utc).isoformat()
+
+
+def _iso_to_dt(iso: Optional[str]):
+    if not iso:
+        return None
+    from datetime import datetime
+    try:
+        return datetime.fromisoformat(iso)
+    except Exception:
+        return None
+
+
 def local_verify_token(token: str) -> Optional[dict]:
+    """Verify a bearer token.
+
+    Rules:
+      - Token must exist in tokens collection.
+      - revoked_at must be null (revocation enforced).
+      - expires_at, if present, must be in the future (legacy tokens
+        without expires_at fall through — they're tolerated until the
+        migration script revokes them).
+      - Sliding refresh: if last_used_at > 24h ago, extend expires_at by
+        30 days and bump last_used_at. Skipped on legacy tokens.
+    """
     _load_persisted_tokens()
     uid = _local_tokens.get(token)
-    if uid and uid in _local_users:
-        return _local_users[uid]
-    return None
+    if not uid or uid not in _local_users:
+        return None
+
+    # Read the persistent token row for status fields.
+    try:
+        from app.services.local_store import get_local_store
+        store = get_local_store()
+        token_doc = store.collection("tokens").document(token).get()
+        token_row = token_doc.to_dict() if token_doc.exists else None
+    except Exception:
+        token_row = None
+
+    if token_row:
+        if token_row.get("revoked_at"):
+            # Hard reject + scrub cache so subsequent requests don't re-hit disk.
+            _local_tokens.pop(token, None)
+            return None
+        from datetime import datetime, timezone, timedelta
+        now = datetime.now(timezone.utc)
+        expires_dt = _iso_to_dt(token_row.get("expires_at"))
+        if expires_dt is not None:
+            if expires_dt < now:
+                _local_tokens.pop(token, None)
+                return None
+            # Sliding refresh gate
+            last_used_dt = _iso_to_dt(token_row.get("last_used_at"))
+            if last_used_dt is None or (now - last_used_dt).total_seconds() > _SESSION_REFRESH_GATE_SECONDS:
+                try:
+                    store.collection("tokens").document(token).update({
+                        "last_used_at": now.isoformat(),
+                        "expires_at": (now + timedelta(seconds=_SESSION_TTL_SECONDS)).isoformat(),
+                    })
+                except Exception as e:
+                    logger.warning(f"sliding refresh failed for token: {e}")
+        # Else: legacy token (no expires_at) — accepted until migration revokes.
+
+    return _local_users[uid]
 
 
 async def get_current_user(
@@ -279,11 +353,9 @@ async def get_current_user(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid or expired token",
             )
-        # Lazy backfill family_id for tokens minted pre-1.2.
-        # If the in-memory cache already has it (post-login refresh), this is
-        # a no-op. Otherwise we hit disk once and self-heal.
+        # Lazy backfill chain. Each helper is idempotent and fast on cached records.
         family_id = user.get("family_id")
-        if not family_id:
+        if not family_id or "email" not in user:
             try:
                 db = get_db_client()
                 user_doc = db.collection("users").document(user["uid"]).get()
@@ -291,13 +363,17 @@ async def get_current_user(
                     user_data = user_doc.to_dict()
                     family_id = _ensure_family_id(db, user["uid"], user_data)
                     _ensure_subscription_fields(db, user["uid"], user_data)
+                    _ensure_email_field(db, user["uid"], user_data)
             except Exception as e:
-                logger.warning(f"family_id backfill in get_current_user failed: {e}")
+                logger.warning(f"backfill chain in get_current_user failed: {e}")
         return {
             "uid": user["uid"],
-            "email": user.get("email", ""),
+            "email": user.get("email") or "",
             "username": user.get("username", ""),
             "family_id": family_id or "",
+            "email_verified": bool(user.get("email_verified")),
+            # _token passes the bearer through so /auth/logout can revoke it.
+            "_token": token,
         }
     else:
         try:

@@ -1,234 +1,161 @@
-"""Authentication endpoints for signup, login, and token management."""
+"""Authentication endpoints — magic-link auth (Phase 0 step 1.5).
 
-import hashlib
-import uuid
-from datetime import datetime
+Replaces the legacy username + hardcoded-password signup/login flow.
+
+New endpoints:
+  POST /auth/request_link       — issue magic link, send via Resend
+  POST /auth/verify_link        — consume code, mint session token (Pattern A)
+  GET  /auth/poll               — initiator polls for claimed token
+  POST /auth/logout             — revoke current bearer token
+  POST /auth/claim_existing     — auth'd user adds email to claim record
+
+Removed:
+  POST /auth/signup → 410 Gone (replacement pointer)
+  POST /auth/login  → 410 Gone (replacement pointer)
+
+Spec: docs/specs/auth-magic-link-v1.md
+"""
+
 from typing import Optional
 
-from fastapi import APIRouter, HTTPException, Depends, status
-from pydantic import BaseModel, Field
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
+from pydantic import BaseModel, EmailStr, Field
 
-from app.config import get_settings
-from app.dependencies import (
-    get_db_client,
-    _check_local_mode,
-    local_create_user,
-    local_login,
-    _ensure_family_id,
-    _ensure_subscription_fields,
-)
-from app.services.analytics_posthog import (
-    emit_event as ph_emit,
-    identify as ph_identify,
-)
+from app.dependencies import get_current_user
+from app.services import magic_link as ml
+from app.services.analytics_posthog import emit_event as ph_emit
 from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
 router = APIRouter()
 
 
-# Request Models
-class SignupRequest(BaseModel):
-    """Request model for user signup."""
-    username: str = Field(..., min_length=3, max_length=50)
-    password: str = Field(..., min_length=6)
-    child_age: int = Field(..., ge=0, le=12)
+# ── Models ───────────────────────────────────────────────────
 
 
-class LoginRequest(BaseModel):
-    """Request model for user login."""
-    username: str
-    password: str
+class RequestLinkBody(BaseModel):
+    email: EmailStr
+    lang: str = Field(default="en", pattern="^(en|hi)$")
+    context: str = Field(default="login_existing", pattern="^(signup_new|login_existing)$")
 
 
-# Response Models
-class UserData(BaseModel):
-    """User data response."""
-    uid: str
-    username: str
-    child_age: int
+class VerifyLinkBody(BaseModel):
+    code: str = Field(min_length=10, max_length=128)
 
 
-class AuthResponse(BaseModel):
-    """Response model for auth endpoints."""
-    success: bool
-    data: Optional[dict] = None
-    message: Optional[str] = None
+class ClaimExistingBody(BaseModel):
+    email: EmailStr
+    lang: str = Field(default="en", pattern="^(en|hi)$")
 
 
-@router.post("/signup", response_model=AuthResponse, status_code=status.HTTP_201_CREATED)
-async def signup(
-    request: SignupRequest,
-    db_client=Depends(get_db_client),
-    settings=Depends(get_settings),
-) -> AuthResponse:
+# ── New endpoints ────────────────────────────────────────────
+
+
+@router.post("/request_link")
+async def request_link(body: RequestLinkBody, request: Request) -> dict:
+    """Send a magic-link email to the supplied address.
+
+    Anti-enumeration: always returns {status:'sent'}. The actual email may
+    or may not have been sent (rate-limited, missing user, send failure) —
+    no signal leaks to the wire.
     """
-    Create a new user account.
-    
-    Args:
-        request: SignupRequest with username, password, and child_age
-        db_client: Database client (Firestore or LocalStore)
-        settings: Application settings
-        
-    Returns:
-        AuthResponse with success status and user data including token
-        
-    Raises:
-        HTTPException: If user already exists or validation fails
-    """
+    initiator_ip = (request.client.host if request.client else None)
     try:
-        if _check_local_mode():
-            # Check if user already exists
-            users_collection = db_client.collection("users")
-            existing_users = users_collection.where("username", "==", request.username).get()
-            if existing_users:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="Username already exists"
-                )
-            
-            # Create local user and get auth token
-            auth_result = local_create_user(request.username, request.password)
-            uid = auth_result["uid"]
-            token = auth_result["token"]
-            
-            # Create user document in database (include password hash for login persistence)
-            family_id = str(uuid.uuid4())
-            created_at = datetime.utcnow()
-            user_data = {
-                "id": uid,
-                "uid": uid,
-                "username": request.username,
-                "password": hashlib.sha256(request.password.encode()).hexdigest(),
-                "child_age": request.child_age,
-                "subscription_tier": "free",
-                "created_at": created_at,
-                "daily_usage": 0,
-                "preferences": {},
-                "family_id": family_id,
-            }
-
-            users_collection.document(uid).set(user_data)
-
-            logger.info(f"New user created: {request.username} (uid: {uid}, family_id: {family_id})")
-
-            # Seed PostHog Person profile and emit family_signup.
-            # Both calls log+swallow internally — never raise.
-            ph_identify(
-                family_id,
-                {
-                    "$set": {
-                        "username": request.username,
-                        "child_age": request.child_age,
-                        "subscription_tier": "free",
-                    },
-                    "$set_once": {
-                        "first_seen_at": created_at.isoformat(),
-                    },
-                },
-            )
-            ph_emit(
-                family_id,
-                "family_signup",
-                {
-                    "child_age": request.child_age,
-                    "subscription_tier": "free",
-                    "created_at": created_at.isoformat(),
-                },
-            )
-
-            return AuthResponse(
-                success=True,
-                data={
-                    "uid": uid,
-                    "username": request.username,
-                    "child_age": request.child_age,
-                    "family_id": family_id,
-                    "token": token,
-                },
-                message="Signup successful"
-            )
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Signup error: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Signup failed: {str(e)}"
+        return await ml.request_magic_link(
+            email=str(body.email),
+            lang=body.lang,
+            context=body.context,
+            initiator_ip=initiator_ip,
         )
-
-
-@router.post("/login", response_model=AuthResponse)
-async def login(
-    request: LoginRequest,
-    db_client=Depends(get_db_client),
-    settings=Depends(get_settings),
-) -> AuthResponse:
-    """
-    Authenticate user with username and password.
-    
-    Args:
-        request: LoginRequest with username and password
-        db_client: Database client (Firestore or LocalStore)
-        settings: Application settings
-        
-    Returns:
-        AuthResponse with success status and user data including token
-        
-    Raises:
-        HTTPException: If credentials are invalid
-    """
-    try:
-        if _check_local_mode():
-            # Authenticate user locally
-            auth_result = local_login(request.username, request.password)
-            
-            if not auth_result:
-                logger.warning(f"Failed login attempt for user: {request.username}")
-                raise HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Invalid credentials"
-                )
-            
-            uid = auth_result["uid"]
-            token = auth_result["token"]
-            
-            # Get user document to return full user data
-            user_doc = db_client.collection("users").document(uid).get()
-            if not user_doc.exists:
-                raise HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="User not found"
-                )
-            
-            user_data = user_doc.to_dict()
-
-            # Lazy backfill: existing users predate family_id. Mint and persist
-            # on first login post-deploy so the web client can re-key identity.
-            family_id = _ensure_family_id(db_client, uid, user_data)
-            # Backfill subscription fields (1.4b) so checkout endpoint sees them.
-            _ensure_subscription_fields(db_client, uid, user_data)
-
-            logger.info(f"User logged in: {request.username} (uid: {uid}, family_id: {family_id})")
-
-            return AuthResponse(
-                success=True,
-                data={
-                    "uid": uid,
-                    "username": user_data.get("username"),
-                    "child_age": user_data.get("child_age"),
-                    "family_id": family_id,
-                    "token": token,
-                },
-                message="Login successful"
-            )
-        
-    except HTTPException:
-        raise
     except Exception as e:
-        logger.error(f"Login error: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=f"Login failed: {str(e)}"
-        )
+        logger.warning("request_link error: %s", e)
+        # Still anti-enumerate on error.
+        return {"initiator_session_id": ml.generate_session_id(), "status": "sent"}
+
+
+@router.post("/verify_link")
+async def verify_link(body: VerifyLinkBody) -> dict:
+    """Consume a magic-link code. Returns status + context.
+
+    Never returns the session token here — the clicker device must not log
+    itself in. Token is fetched by the initiator via /auth/poll.
+    """
+    return ml.verify_code(body.code)
+
+
+@router.get("/poll")
+async def poll(session_id: str = Query(..., min_length=8)) -> dict:
+    """Initiator polls for token claim.
+
+    Returns {status:'waiting'|'ready'|'expired', ...}. On 'ready', also
+    returns token + uid + username + family_id + email_verified + context.
+    First successful read scrubs the auth_codes row so token cannot be
+    re-fetched.
+    """
+    return ml.poll_session(session_id)
+
+
+@router.post("/logout")
+async def logout(current_user: dict = Depends(get_current_user)) -> dict:
+    """Revoke the current bearer token.
+
+    Sets revoked_at on the tokens row. Subsequent requests with this token
+    return 401 from local_verify_token's revocation check.
+    """
+    token = current_user.get("_token", "")
+    family_id = current_user.get("family_id", "")
+    revoked = ml.revoke_token(token, reason="logout")
+    if revoked:
+        ph_emit(family_id, "auth_logout", {})
+    return {"success": revoked}
+
+
+@router.post("/claim_existing")
+async def claim_existing(
+    body: ClaimExistingBody,
+    request: Request,
+    current_user: dict = Depends(get_current_user),
+) -> dict:
+    """Authenticated user requests a claim_existing magic-link.
+
+    Used during the migration window: a user with a valid (legacy or new)
+    token who needs to associate an email with their record. The verify
+    step will set email + email_verified=true on the existing user record
+    identified by current_user['uid'] — does NOT create a new user.
+    """
+    initiator_ip = (request.client.host if request.client else None)
+    return await ml.request_claim(
+        target_uid=current_user["uid"],
+        target_email=str(body.email),
+        lang=body.lang,
+        initiator_ip=initiator_ip,
+    )
+
+
+# ── Deprecated endpoints — 410 Gone ──────────────────────────
+
+
+@router.post("/signup", status_code=status.HTTP_410_GONE)
+async def signup_deprecated() -> dict:
+    """Removed in Phase 0 step 1.5. Replaced by magic-link auth."""
+    raise HTTPException(
+        status_code=status.HTTP_410_GONE,
+        detail={
+            "code": "endpoint_removed",
+            "message": "Replaced by magic-link auth.",
+            "replacement": "POST /api/v1/auth/request_link with context=signup_new",
+        },
+    )
+
+
+@router.post("/login", status_code=status.HTTP_410_GONE)
+async def login_deprecated() -> dict:
+    """Removed in Phase 0 step 1.5. Replaced by magic-link auth."""
+    raise HTTPException(
+        status_code=status.HTTP_410_GONE,
+        detail={
+            "code": "endpoint_removed",
+            "message": "Replaced by magic-link auth.",
+            "replacement": "POST /api/v1/auth/request_link with context=login_existing",
+        },
+    )
