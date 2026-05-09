@@ -29,7 +29,11 @@ from datetime import datetime, timedelta, timezone
 from typing import Optional
 
 
-FREE_BACKLOG_DAYS = 3
+# Set to 30 (same as Premium) for Phase 0 scaffolding state.
+# Tighten to 3 when paywall flips on in Phase 1, or earlier per framework
+# gate #6 (≥1000 activated families with conversion math demanding it).
+# The gating infrastructure stays live so the Phase 1 flip is one-line.
+FREE_BACKLOG_DAYS = 30
 PREMIUM_BACKLOG_DAYS = 30
 
 

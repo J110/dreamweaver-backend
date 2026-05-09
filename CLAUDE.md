@@ -157,6 +157,21 @@ python3 scripts/deploy_guard.py verify     # after
 
 Other subcommands: `check`, `seal`, `audit`, `recover --dry-run`, `invariants --auto-recover`.
 
+### State-mutating script invocations require snapshot + verify
+
+The same discipline as code deploys. A script that changes prod data is the same class of risk as deploying code that runs against prod data.
+
+Examples requiring `snapshot` BEFORE and `verify` AFTER:
+
+- `merge_username_collisions.py --merge`
+- `invalidate_old_tokens.py`
+- `downgrade_canceled_subscriptions.py` (when run manually outside cron)
+- `reconcile_stripe_state.py --apply`
+- `prune_stripe_webhook_events.py` (when run manually)
+- Future migration / data-fix scripts
+
+Cron-driven invocations are exempt — the cron schedule is the deployment, and these scripts are designed to be idempotent. Manual invocations of the same scripts get the snapshot+verify treatment.
+
 ### Frontend deploys are NOT automatic for dreamvalley.app
 
 Production-only architecture. GitHub is the code repository. Prod pulls from GitHub. No staging environment.
