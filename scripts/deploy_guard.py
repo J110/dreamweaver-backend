@@ -110,6 +110,29 @@ def get_frontend(use_local: bool = False) -> str:
     return LOCAL_FRONTEND if use_local else PROD_FRONTEND
 
 
+def _load_admin_key_from_env_file() -> str:
+    """Self-contained .env reader. deploy_guard is typically invoked
+    without env-sourcing (`python3 scripts/deploy_guard.py verify`),
+    so os.environ may lack ADMIN_API_KEY. Parse .env directly.
+    """
+    env_path = BASE_DIR / ".env"
+    if not env_path.exists():
+        return ""
+    try:
+        for line in env_path.read_text().splitlines():
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            if "=" not in line:
+                continue
+            k, _, v = line.partition("=")
+            if k.strip() == "ADMIN_API_KEY":
+                return v.strip().strip('"').strip("'")
+    except Exception:
+        pass
+    return ""
+
+
 def capture_state(api: str) -> dict:
     """Capture full production state from API, English content only.
 
@@ -121,7 +144,10 @@ def capture_state(api: str) -> dict:
     runtime — when missing (e.g. local dev), the header is empty and the
     gate applies normally (degraded but non-blocking).
     """
-    admin_key = os.getenv("ADMIN_API_KEY", "").strip()
+    admin_key = (
+        os.getenv("ADMIN_API_KEY", "").strip()
+        or _load_admin_key_from_env_file()
+    )
     headers = {"X-Admin-Key": admin_key} if admin_key else {}
     client = httpx.Client(timeout=30, headers=headers)
     state = {
