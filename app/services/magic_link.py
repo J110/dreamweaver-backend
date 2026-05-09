@@ -675,6 +675,13 @@ def poll_session(initiator_session_id: str) -> dict:
         "username": user_data.get("username", ""),
         "family_id": user_data.get("family_id", ""),
         "email_verified": bool(user_data.get("email_verified")),
+        # Onboarding gate fields. Without these, AppShell's gate gets
+        # undefined and falls through (legacy tolerance), letting
+        # fresh signups skip /onboarding. Frontend setUser must also
+        # forward these to localStorage cache.
+        "onboarding_complete": bool(user_data.get("onboarding_complete")),
+        "child_age": user_data.get("child_age"),
+        "preferred_lang": user_data.get("preferred_lang"),
         "context": row.get("context"),
     }
 
