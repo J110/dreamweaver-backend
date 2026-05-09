@@ -157,6 +157,24 @@ def _lookup_user_by_email(store, email_lc: str) -> Optional[dict]:
 
 
 def _username_taken(store, username: str) -> bool:
+    """Case-insensitive existence check via username_lowercase.
+
+    Phase 0 step 1.5e. Falls back to a case-sensitive scan over the
+    original `username` field for legacy records that lack
+    username_lowercase (the lazy backfill in get_current_user populates
+    it on next read; this fallback ensures a fresh signup can't false-
+    negative against an un-backfilled record).
+    """
+    target = (username or "").lower()
+    if not target:
+        return False
+    try:
+        rows = store.collection("users").where("username_lowercase", "==", target).get()
+        if any(doc.exists for doc in rows):
+            return True
+    except Exception:
+        pass
+    # Fallback: case-sensitive scan for un-backfilled records.
     try:
         rows = store.collection("users").where("username", "==", username).get()
         return any(doc.exists for doc in rows)
@@ -193,6 +211,11 @@ def _create_user_with_email(store, email_lc: str) -> dict:
         "id": uid,
         "uid": uid,
         "username": username,
+        # Phase 0 step 1.5e: username_lowercase is the canonical
+        # case-insensitive lookup key. Derived usernames are already
+        # lowercase (from email local-part), but write explicitly for
+        # consistency with future case-mixed signup paths.
+        "username_lowercase": username.lower(),
         "email": email_lc,
         "email_verified": True,
         "child_age": 5,  # default; updated via /users/me later

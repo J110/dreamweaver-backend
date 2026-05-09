@@ -280,6 +280,32 @@ def _ensure_credit_fields(db_client, uid: str, user_data: dict) -> None:
         logger.warning(f"credit field backfill failed for uid={uid}: {e}")
 
 
+def _ensure_username_lowercase(db_client, uid: str, user_data: dict) -> None:
+    """Lazy-backfill username_lowercase on user records.
+
+    Phase 0 step 1.5e (case-insensitive lookup fix). Original `username`
+    field preserved for display; `username_lowercase` becomes the
+    canonical case-insensitive lookup key. Idempotent — no-op when the
+    field is already present.
+
+    Same race semantics as the other ensure_* helpers (last-write-wins,
+    brief divergence acceptable).
+    """
+    if "username_lowercase" in user_data:
+        return
+    username = user_data.get("username") or ""
+    if not username:
+        return
+    lc = username.lower()
+    user_data["username_lowercase"] = lc
+    try:
+        db_client.collection("users").document(uid).update({"username_lowercase": lc})
+        if uid in _local_users:
+            _local_users[uid]["username_lowercase"] = lc
+    except Exception as e:
+        logger.warning(f"username_lowercase backfill failed uid={uid}: {e}")
+
+
 def _ensure_email_field(db_client, uid: str, user_data: dict) -> None:
     """Idempotent: lazy-add email=null on records missing the field.
 
@@ -412,6 +438,7 @@ async def get_current_user(
                     _ensure_subscription_fields(db, user["uid"], user_data)
                     _ensure_email_field(db, user["uid"], user_data)
                     _ensure_credit_fields(db, user["uid"], user_data)
+                    _ensure_username_lowercase(db, user["uid"], user_data)
             except Exception as e:
                 logger.warning(f"backfill chain in get_current_user failed: {e}")
         return {

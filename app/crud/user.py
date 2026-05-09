@@ -24,15 +24,29 @@ class UserCRUD(BaseCRUD):
     
     async def get_by_username(self, username: str) -> Optional[Dict[str, Any]]:
         """
-        Get user by username.
-        
+        Get user by username (case-insensitive).
+
+        Phase 0 step 1.5e. Queries username_lowercase as the canonical
+        lookup key. Falls back to case-sensitive lookup over the legacy
+        `username` field for un-backfilled records.
+
+        Note: this CRUD class is dead Firestore-shaped code per
+        CLAUDE.md (LocalStore is the actual store; magic_link.py is
+        the canonical lookup path). Patched here for consistency only.
+
         Args:
-            username: Username to search for
-            
+            username: Username to search for (case-insensitive)
+
         Returns:
             User document data or None if not found
         """
-        docs = await self.get_collection().where("username", "==", username).get()
+        target = (username or "").lower()
+        if not target:
+            return None
+        docs = await self.get_collection().where("username_lowercase", "==", target).get()
+        if not docs:
+            # Fallback for un-backfilled records.
+            docs = await self.get_collection().where("username", "==", username).get()
         if docs:
             data = docs[0].to_dict()
             data["id"] = docs[0].id

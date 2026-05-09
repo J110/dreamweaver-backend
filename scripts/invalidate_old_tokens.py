@@ -85,23 +85,44 @@ def _monthly_active_usernames() -> list[str]:
 
 
 def _users_missing_email(usernames: list[str]) -> list[tuple[str, str]]:
-    """For each active username, check user record for email. Return list of (username, uid) missing it."""
+    """For each active username, check user record for email. Return list of (username, uid) missing it.
+
+    Phase 0 step 1.5e: case-insensitive lookup via username_lowercase
+    with case-sensitive fallback for un-backfilled records. Without
+    this, an analytics event username 'Meethi' wouldn't match a user
+    record stored under 'meethi' — that mismatch was the latent bug
+    that motivated the case-insensitive fix.
+    """
     from app.services.local_store import get_local_store
 
     store = get_local_store()
     missing: list[tuple[str, str]] = []
     for username in usernames:
+        target = (username or "").lower()
+        rows = []
         try:
-            rows = store.collection("users").where("username", "==", username).get()
-        except Exception as e:
-            logger.warning("user lookup failed for %s: %s", username, e)
-            continue
+            rows = list(store.collection("users").where("username_lowercase", "==", target).get())
+        except Exception:
+            rows = []
+        if not rows:
+            # Fallback for un-backfilled records.
+            try:
+                rows = list(store.collection("users").where("username", "==", username).get())
+            except Exception as e:
+                logger.warning("user lookup failed for %s: %s", username, e)
+                continue
         found = False
         for doc in rows:
             data = doc.to_dict() if hasattr(doc, "to_dict") else doc
             if not isinstance(data, dict):
                 continue
-            if data.get("username") != username:
+            # Match on either canonical or display field; either side may be the legacy gap.
+            uname = data.get("username") or ""
+            ulc = data.get("username_lowercase") or uname.lower()
+            if ulc != target and uname != username:
+                continue
+            # Skip already-tombstoned records (Phase 0 step 1.5e merge tombstones).
+            if data.get("archived"):
                 continue
             found = True
             email = data.get("email")

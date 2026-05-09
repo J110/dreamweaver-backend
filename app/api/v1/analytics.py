@@ -142,6 +142,13 @@ async def ingest_events(request: Request):
             timestamp = event.get("timestamp", datetime.now(timezone.utc).isoformat())
             date = timestamp[:10]
 
+            # Phase 0 step 1.5e: lowercase-normalize username at ingest.
+            # Forward-compat — prevents new case-mixed rows post-deploy.
+            # Existing rows stay until UPDATEd by merge_username_collisions
+            # for known case-collision groups (e.g. Meethi/meethi).
+            uname = event.get("username")
+            uname = uname.lower() if isinstance(uname, str) and uname else uname
+
             conn.execute(
                 """INSERT INTO events (event, user_id, session_id, username, timestamp, date, payload, device, url)
                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
@@ -149,7 +156,7 @@ async def ingest_events(request: Request):
                     event.get("event", "unknown"),
                     event.get("userId", "anonymous"),
                     event.get("sessionId"),
-                    event.get("username"),
+                    uname,
                     timestamp,
                     date,
                     json.dumps(payload) if isinstance(payload, dict) else str(payload),
