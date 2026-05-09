@@ -134,16 +134,38 @@ async def complete_onboarding(
         )
     username_lc = username.lower()
 
-    # Collision check — case-insensitive, exclude self + tombstones
+    # Collision check — case-insensitive via username_lowercase index,
+    # with case-sensitive fallback for un-backfilled records (mirrors
+    # magic_link._username_taken's defense-in-depth pattern). Without
+    # the fallback, records that haven't yet had _ensure_username_lowercase
+    # run on them would slip through the check and a duplicate could mint
+    # — exactly the bug that surfaced when tonight's test artifact
+    # 'Meethi' was created post-merge against canonical 'meethi' that
+    # hadn't been backfilled.
+    rows = []
     try:
-        rows = db_client.collection("users").where("username_lowercase", "==", username_lc).get()
+        rows = list(db_client.collection("users").where("username_lowercase", "==", username_lc).get())
     except Exception:
         rows = []
+    if not rows:
+        # Fallback: case-sensitive scan over the legacy `username` field.
+        # Iterate every variant we might collide with — but in practice
+        # this is bounded by the post-1.5e backfill running on every
+        # authenticated read, so the gap shrinks as users return.
+        try:
+            rows = list(db_client.collection("users").where("username", "==", username).get())
+        except Exception:
+            rows = []
     for doc in rows:
         data = doc.to_dict() if hasattr(doc, "to_dict") else doc
         if not isinstance(data, dict):
             continue
         if data.get("archived"):
+            continue
+        # Match on either canonical or display field; either side may be the legacy gap.
+        u_uname = data.get("username") or ""
+        u_ulc = data.get("username_lowercase") or u_uname.lower()
+        if u_ulc != username_lc and u_uname != username:
             continue
         other_uid = data.get("uid") or data.get("id")
         if other_uid and other_uid != uid:
