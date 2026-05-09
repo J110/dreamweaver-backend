@@ -449,10 +449,35 @@ async def get_optional_user(
         return None
 
 
-# Phase 0 step 1.4e: dropped RateLimiter class and check_rate_limit
-# Depends function. Both were defined but never wired to any endpoint —
-# pure dead code. Per-tier enforcement now lives in:
-#   - app/utils/backlog.py (backlog window gating, the live enforcement)
-#   - credit gating helpers (Phase 1 ships POST /content/generate that
-#     consumes credits — the credit machinery is in place via webhook
-#     hooks + _ensure_credit_fields below)
+# Phase 0 step 1.4e: dropped check_rate_limit Depends function (was
+# defined but never wired to any endpoint as a FastAPI dependency).
+# Kept RateLimiter class — app/api/v1/blog.py instantiates it directly
+# for blog comment/like rate limiting, distinct from the user-auth
+# rate limit path. Per-tier enforcement is now in app/utils/backlog.py
+# (the live backlog gating); credit gating ships with Phase 1's
+# POST /content/generate.
+
+
+class RateLimiter:
+    """In-memory sliding-window rate limiter, keyed on caller-supplied id.
+
+    Used by app/api/v1/blog.py for comment/like rate limiting. Not
+    wired to user-auth flows (those use the magic-link rate limiter
+    in app/services/magic_link.py).
+    """
+
+    def __init__(self, max_requests: int = 100, window_seconds: int = 60):
+        self.max_requests = max_requests
+        self.window_seconds = window_seconds
+        self.requests: Dict[str, list] = {}
+
+    def is_allowed(self, key: str) -> bool:
+        now = time.time()
+        cutoff = now - self.window_seconds
+        if key not in self.requests:
+            self.requests[key] = []
+        self.requests[key] = [t for t in self.requests[key] if t > cutoff]
+        if len(self.requests[key]) < self.max_requests:
+            self.requests[key].append(now)
+            return True
+        return False
