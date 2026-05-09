@@ -76,6 +76,10 @@ def filter_by_backlog(
         except Exception:
             kept.append(item)
             continue
+        # Naive timestamps (some legacy items lack a tz suffix) — assume UTC.
+        # Comparing aware to naive raises TypeError; normalise both to aware.
+        if item_dt.tzinfo is None:
+            item_dt = item_dt.replace(tzinfo=timezone.utc)
         if item_dt >= cutoff_dt:
             kept.append(item)
         else:
