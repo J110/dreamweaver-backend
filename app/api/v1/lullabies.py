@@ -7,7 +7,7 @@ from typing import Dict, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
 
-from app.dependencies import get_optional_user
+from app.dependencies import admin_bypass, get_optional_user
 from app.utils.backlog import filter_by_backlog
 from app.utils.logger import get_logger
 
@@ -48,6 +48,7 @@ async def list_lullabies(
     lullaby_type: Optional[str] = Query(None, description="Filter by lullaby type"),
     lang: Optional[str] = Query("en", description="Filter by language: 'en' or 'hi'"),
     current_user: Optional[Dict[str, str]] = Depends(get_optional_user),
+    bypass: bool = Depends(admin_bypass),
 ):
     """List lullabies with optional mood, age, and language filtering."""
     lullabies = _load_lullabies()
@@ -65,7 +66,7 @@ async def list_lullabies(
         lullabies = [l for l in lullabies if l.get("lang", "en") == lang]
 
     # Phase 0 step 1.4e: backlog gating per tier (Free 3d / Premium 30d).
-    lullabies, tier_window_cutoff_at = filter_by_backlog(lullabies, current_user)
+    lullabies, tier_window_cutoff_at = filter_by_backlog(lullabies, current_user, bypass=bypass)
 
     return {
         "success": True,

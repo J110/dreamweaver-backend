@@ -111,8 +111,19 @@ def get_frontend(use_local: bool = False) -> str:
 
 
 def capture_state(api: str) -> dict:
-    """Capture full production state from API, English content only."""
-    client = httpx.Client(timeout=30)
+    """Capture full production state from API, English content only.
+
+    Phase 0 step 1.4e: list endpoints now apply backlog gating per tier
+    (Free 3d / Premium 30d). deploy_guard probes anonymously, which would
+    clip ~all-but-recent items. We pass X-Admin-Key (matches
+    ADMIN_API_KEY env on prod) to bypass the gate and see the full
+    catalog. ADMIN_API_KEY is read from /opt/dreamweaver-backend/.env at
+    runtime — when missing (e.g. local dev), the header is empty and the
+    gate applies normally (degraded but non-blocking).
+    """
+    admin_key = os.getenv("ADMIN_API_KEY", "").strip()
+    headers = {"X-Admin-Key": admin_key} if admin_key else {}
+    client = httpx.Client(timeout=30, headers=headers)
     state = {
         "captured_at": datetime.now().isoformat(),
         "api": api,

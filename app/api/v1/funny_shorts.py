@@ -9,7 +9,7 @@ from typing import Dict, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel
 
-from app.dependencies import get_optional_user
+from app.dependencies import admin_bypass, get_optional_user
 from app.utils.backlog import filter_by_backlog
 from app.utils.logger import get_logger
 
@@ -101,6 +101,7 @@ async def list_funny_shorts(
     age_group: Optional[str] = Query(None, description="Filter by age group: '2-5', '6-8', '9-12'"),
     lang: Optional[str] = Query("en", description="Filter by language: 'en' or 'hi'"),
     current_user: Optional[Dict[str, str]] = Depends(get_optional_user),
+    bypass: bool = Depends(admin_bypass),
 ) -> FunnyShortsListResponse:
     """List all funny shorts, optionally filtered by age group and language."""
     shorts = _load_all_shorts()
@@ -115,7 +116,7 @@ async def list_funny_shorts(
     shorts.sort(key=lambda x: x.get("created_at", ""), reverse=True)
 
     # Phase 0 step 1.4e: backlog gating per tier (Free 3d / Premium 30d).
-    shorts, tier_window_cutoff_at = filter_by_backlog(shorts, current_user)
+    shorts, tier_window_cutoff_at = filter_by_backlog(shorts, current_user, bypass=bypass)
 
     # Strip script from list response (it's large and not needed for browsing)
     items = []

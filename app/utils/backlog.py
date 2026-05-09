@@ -48,7 +48,9 @@ def backlog_window_days(current_user: Optional[dict]) -> int:
 
 
 def filter_by_backlog(
-    items: list[dict], current_user: Optional[dict]
+    items: list[dict],
+    current_user: Optional[dict],
+    bypass: bool = False,
 ) -> tuple[list[dict], Optional[str]]:
     """Filter items by tier backlog window, return (filtered_items, cutoff_iso).
 
@@ -59,7 +61,14 @@ def filter_by_backlog(
     Items must have a `created_at` field (ISO string). Items missing or
     with unparseable created_at are kept (defensive — never lose content
     to a bad timestamp).
+
+    bypass=True returns the full unfiltered list with cutoff=None. Used
+    by ops tooling (e.g. scripts/deploy_guard.py) that needs the full
+    catalog count regardless of caller tier.
     """
+    if bypass:
+        return list(items), None
+
     days = backlog_window_days(current_user)
     cutoff_dt = datetime.now(timezone.utc) - timedelta(days=days)
     cutoff_iso = cutoff_dt.isoformat()

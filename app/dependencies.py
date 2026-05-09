@@ -436,6 +436,20 @@ async def get_current_user(
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or expired token")
 
 
+def admin_bypass(x_admin_key: Optional[str] = Header(None)) -> bool:
+    """Return True iff caller passes a valid X-Admin-Key matching
+    ADMIN_API_KEY env. Used by ops tooling (deploy_guard, content audit)
+    to bypass tier-gated filters and see the full catalog.
+
+    Anonymous + non-admin callers get False; backlog filter applies
+    normally.
+    """
+    expected = os.getenv("ADMIN_API_KEY", "").strip()
+    if not expected:
+        return False
+    return bool(x_admin_key) and x_admin_key == expected
+
+
 async def get_optional_user(
     authorization: Optional[str] = Header(None),
     settings: Settings = Depends(get_settings),

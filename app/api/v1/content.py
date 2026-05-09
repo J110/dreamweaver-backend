@@ -6,7 +6,7 @@ from typing import Dict, List, Optional
 from fastapi import APIRouter, HTTPException, Depends, status, Query
 from pydantic import BaseModel
 
-from app.dependencies import get_db_client, get_optional_user
+from app.dependencies import admin_bypass, get_db_client, get_optional_user
 from app.utils.backlog import filter_by_backlog
 from app.utils.logger import get_logger
 
@@ -49,6 +49,7 @@ async def list_content(
     sort_by: str = Query("created_at"),
     db_client=Depends(get_db_client),
     current_user: Optional[Dict[str, str]] = Depends(get_optional_user),
+    bypass: bool = Depends(admin_bypass),
 ) -> ContentListResponse:
     """
     List all content with optional filtering and pagination.
@@ -90,7 +91,8 @@ async def list_content(
             items.sort(key=lambda x: x.get("created_at") or "1970-01-01T00:00:00", reverse=True)
 
         # Phase 0 step 1.4e: backlog gating per tier (Free 3d / Premium 30d).
-        items, tier_window_cutoff_at = filter_by_backlog(items, current_user)
+        # bypass=True for ops callers with X-Admin-Key (e.g. deploy_guard).
+        items, tier_window_cutoff_at = filter_by_backlog(items, current_user, bypass=bypass)
 
         # Paginate
         start = (page - 1) * page_size

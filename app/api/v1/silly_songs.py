@@ -8,7 +8,7 @@ from typing import Dict, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel
 
-from app.dependencies import get_optional_user
+from app.dependencies import admin_bypass, get_optional_user
 from app.utils.backlog import filter_by_backlog
 from app.utils.logger import get_logger
 
@@ -99,6 +99,7 @@ async def list_silly_songs(
     age_group: Optional[str] = Query(None, description="Filter by age group: '2-5', '6-8', '9-12'"),
     lang: Optional[str] = Query("en", description="Filter by language: 'en' or 'hi'"),
     current_user: Optional[Dict[str, str]] = Depends(get_optional_user),
+    bypass: bool = Depends(admin_bypass),
 ) -> SillySongsListResponse:
     """List all silly songs, optionally filtered by age group and language."""
     songs = _load_all_songs()
@@ -116,7 +117,7 @@ async def list_silly_songs(
     songs.sort(key=lambda x: x.get("created_at", ""), reverse=True)
 
     # Phase 0 step 1.4e: backlog gating per tier (Free 3d / Premium 30d).
-    songs, tier_window_cutoff_at = filter_by_backlog(songs, current_user)
+    songs, tier_window_cutoff_at = filter_by_backlog(songs, current_user, bypass=bypass)
 
     # Strip lyrics from list response (not needed for browsing)
     items = []
