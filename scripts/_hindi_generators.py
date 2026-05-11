@@ -208,7 +208,8 @@ def _attach_qa_changes(entry: dict, llm_data: dict) -> None:
 
 def _llm_with_retry(*, system: str, user: str, validator_key: str,
                      max_retries: int = 3, log_prefix: str = "  ",
-                     post_process=None, max_tokens: int = 4096) -> dict:
+                     post_process=None, max_tokens: int = 4096,
+                     repair_hint: "Callable[[list[str], dict], str | None] | None" = None) -> dict:
     """Generate JSON, validate, optionally critic-review, retry on failure.
 
     Flow per attempt (when HINDI_QA_ENABLED for this content_type):
@@ -224,12 +225,19 @@ def _llm_with_retry(*, system: str, user: str, validator_key: str,
     Retry hint accumulates errors across all prior attempts so the LLM
     doesn't whack-a-mole between independent structural requirements.
 
+    Optional `repair_hint` callback augments the generic retry hint with
+    a validator-specific surgical instruction. Receives the prior attempt's
+    error strings and the parsed data dict; returns a hint string (appended
+    at the end of the user prompt for highest recency-weighted attention)
+    or None to fall back to the generic block only.
+
     Returns the final (validated) content dict. The dict carries a
     `_qa_changes` key when the critic edited it — strip before saving
     to user-facing seed entries; keep for audit/email summary.
     """
     all_errors_seen: set[str] = set()
     last_errors: list[str] = []
+    last_data: dict | None = None
     qa_enabled = is_qa_enabled(validator_key)
     qa_attempted = False  # one critic attempt per generation, not per retry
     for attempt in range(max_retries):
@@ -243,6 +251,10 @@ def _llm_with_retry(*, system: str, user: str, validator_key: str,
                 + "\n".join(f"- {e}" for e in cumulative[:15])
                 + "\n\nOutput ONLY corrected JSON. Re-check every requirement before submitting."
             )
+            if repair_hint is not None and last_data is not None:
+                surgical = repair_hint(last_errors, last_data)
+                if surgical:
+                    retry_hint = retry_hint + "\n\n" + surgical
         try:
             data = generate_json(
                 system=system,
@@ -313,6 +325,7 @@ def _llm_with_retry(*, system: str, user: str, validator_key: str,
 
         print(f"{log_prefix}validator fail (attempt {attempt+1}): {errors[:5]}")
         last_errors = errors
+        last_data = validator_input
         all_errors_seen.update(errors)
     raise RuntimeError(
         f"validator failed after {max_retries} attempts; "
@@ -762,6 +775,30 @@ def generate_lullaby(axes: dict, log_prefix: str = "  ") -> dict:
 # SILLY SONG
 # ───────────────────────────────────────────────────────────────────────
 
+_SILLY_BODY_CAP_RE = re.compile(r"lyrics body too long: (\d+) chars \(max 500\)")
+
+
+def _silly_song_repair_hint(errors: list[str], last_data: dict) -> str | None:
+    measured: int | None = None
+    for e in errors:
+        m = _SILLY_BODY_CAP_RE.match(e)
+        if m:
+            measured = int(m.group(1))
+            break
+    if measured is None:
+        return None
+    lyrics = last_data.get("lyrics", "") or ""
+    body = re.sub(r"\[[^\]]+\]\s*", "", lyrics).strip()
+    excerpt = body[:200] + ("..." if len(body) > 200 else "")
+    return (
+        f"REVISION REQUIRED — your previous body was {measured} chars "
+        f"(max 500, target ≤450). Quoted below:\n\n"
+        f"{excerpt}\n\n"
+        f"Trim by dropping a line from verse 2. Keep chorus identical. "
+        f"Keep the section tag structure ([CHORUS]/[VERSE]/etc) intact."
+    )
+
+
 def _silly_prompt(axes: dict) -> tuple[str, str]:
     age = axes["age_group"]
     cat = axes["category"]
@@ -825,6 +862,7 @@ def generate_silly_song(axes: dict, log_prefix: str = "  ") -> dict:
     data = _llm_with_retry(
         system=sys_msg, user=user_msg,
         validator_key="silly_song", log_prefix=log_prefix,
+        repair_hint=_silly_song_repair_hint,
     )
 
     # ── Render via ElevenLabs Music

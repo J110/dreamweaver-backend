@@ -1915,6 +1915,8 @@ def main():
     from scripts.diversity import load_recent_fingerprints, find_catalog_gaps
     content_json = BASE_DIR / "seed_output" / "content.json"
     recent_fps = load_recent_fingerprints(content_json, days=14)
+    if args.lang:
+        recent_fps = [s for s in recent_fps if s.get("lang", "en") == args.lang]
     catalog_gaps = find_catalog_gaps(content_json)
     logger.info("Diversity: %d recent fingerprints, gaps in %d dimensions",
                 len(recent_fps), len(catalog_gaps))
