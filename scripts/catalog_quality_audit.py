@@ -63,12 +63,28 @@ def resolve_disk_path(url: str) -> Path | None:
     return None
 
 
+def _legacy_subdir_for(item: dict) -> str:
+    """Map an item's type/subtype to the /audio/<subdir>/ convention used
+    by legacy bare-filename audio_file entries."""
+    subtype = item.get("subtype")
+    if subtype == "silly_song":
+        return "silly-songs"
+    if subtype == "funny_short":
+        return "funny-shorts"
+    if subtype == "lullaby":
+        return "lullabies"
+    if item.get("type") == "poem":
+        return "poems-hi" if item.get("lang") == "hi" else "poems"
+    return "pre-gen"
+
+
 def get_audio_refs(item: dict) -> list[dict]:
     """Normalize audio references into a unified list.
 
     Modern: item.audio_variants[]. Legacy items (silly_song, funny_short,
     poem, some lullabies pre-variants-schema) carry audio_url or audio_file
-    at the top level. Returns list of {voice, url, claimed_dur}.
+    at the top level. audio_file is sometimes a bare filename — route via
+    subtype to the right /audio/<subdir>/ path.
     """
     refs: list[dict] = []
     for v in (item.get("audio_variants") or []):
@@ -82,7 +98,16 @@ def get_audio_refs(item: dict) -> list[dict]:
         return refs
     legacy = item.get("audio_url") or item.get("audio_file")
     if legacy:
-        url = legacy if str(legacy).startswith("/") else "/" + str(legacy)
+        s = str(legacy)
+        if s.startswith("/audio/") or s.startswith("audio/"):
+            url = s if s.startswith("/") else "/" + s
+        elif "/" in s:
+            # Some path-shaped value lacking the /audio/ prefix
+            url = s if s.startswith("/") else "/" + s
+        else:
+            # Bare filename — route via subtype convention.
+            subdir = _legacy_subdir_for(item)
+            url = f"/audio/{subdir}/{s}"
         refs.append({
             "voice": "legacy",
             "url": url,
@@ -189,6 +214,7 @@ def main() -> int:
         "green": [],
         "yellow": [],
         "qa_fail": [],
+        "duration_mismatch": [],
         "red": [],
         "ghost": [],
         "qa_never_run": [],
@@ -223,6 +249,7 @@ def main() -> int:
 
         variant_results = []
         any_broken = False
+        any_duration_mismatch = False
         for v in refs:
             url = v.get("url", "")
             voice = v.get("voice", "")
@@ -242,7 +269,7 @@ def main() -> int:
                     any_broken = True
                 elif claimed_dur is not None and abs(actual_dur - float(claimed_dur)) > DURATION_TOLERANCE_SEC:
                     entry["status"] = "DURATION_MISMATCH"
-                    any_broken = True
+                    any_duration_mismatch = True
                 else:
                     entry["status"] = "OK"
             variant_results.append(entry)
@@ -250,6 +277,14 @@ def main() -> int:
 
         if any_broken:
             categories["red"].append(meta)
+            continue
+        if any_duration_mismatch:
+            # Audio plays but metadata duration is wrong. Often a generation-
+            # time miscalculation (lyric-count × seconds estimate) on legacy
+            # lullabies; the audio itself is fine but progress bar / sort
+            # order based on duration will be off. Keep separate from
+            # genuinely-broken RED.
+            categories["duration_mismatch"].append(meta)
             continue
 
         qa = qa_history.get(sid)
@@ -275,6 +310,7 @@ def main() -> int:
         "green_count": len(categories["green"]),
         "yellow_count": len(categories["yellow"]),
         "qa_fail_count": len(categories["qa_fail"]),
+        "duration_mismatch_count": len(categories["duration_mismatch"]),
         "red_count": len(categories["red"]),
         "ghost_count": len(categories["ghost"]),
         "qa_never_run_count": len(categories["qa_never_run"]),
@@ -298,6 +334,7 @@ def main() -> int:
     print(f"  GREEN   (audio OK + QA PASS):              {summary['green_count']:>4}")
     print(f"  YELLOW  (audio OK + QA WARN):              {summary['yellow_count']:>4}")
     print(f"  QA_FAIL (audio OK + QA FAIL historical):   {summary['qa_fail_count']:>4}")
+    print(f"  DURMISM (audio OK, duration metadata off): {summary['duration_mismatch_count']:>4}")
     print(f"  RED     (missing/broken/unreadable audio): {summary['red_count']:>4}")
     print(f"  GHOST   (no refs but audio on disk):       {summary['ghost_count']:>4}")
     print(f"  NO_QA   (audio OK, no QA report):          {summary['qa_never_run_count']:>4}")
@@ -316,6 +353,13 @@ def main() -> int:
         for it in categories["qa_fail"]:
             qa = it.get("qa") or {}
             print(f"  {it['id']:28} [{it.get('lang','?')}/{it.get('type','?')}] {it.get('title','')[:55]} — fidelity={qa.get('min_fidelity')}")
+    if categories["duration_mismatch"]:
+        print(f"\n--- DURATION_MISMATCH items ({len(categories['duration_mismatch'])}) (audio plays, metadata duration wrong) ---")
+        for it in categories["duration_mismatch"]:
+            mismatches = [v for v in (it.get('variants') or []) if v.get('status') == 'DURATION_MISMATCH']
+            if mismatches:
+                m = mismatches[0]
+                print(f"  {it['id']:28} [{it.get('lang','?')}/{it.get('type','?')}] {it.get('title','')[:45]} — claimed={m.get('claimed_duration')} actual={m.get('actual_duration')}")
 
     print(f"\nFull JSON report: {REPORT_PATH}")
     return 0
