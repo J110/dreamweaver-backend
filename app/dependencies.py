@@ -100,28 +100,34 @@ def _persist_token(token: str, uid: str):
 
 
 def _load_persisted_tokens():
-    """Load persisted tokens from LocalStore on first use."""
+    """Load persisted tokens and users from LocalStore on first use.
+
+    The two caches are gated independently. A single gate on _local_tokens
+    previously caused 401s: if any path seeded _local_tokens (cron
+    pipelines persisting a service token, magic_link._persist_token_row
+    on a verify call) before a user's first authenticated request, the
+    early return skipped loading _local_users. local_verify_token then
+    rejected the new token via `uid not in _local_users`.
+    """
     global _local_tokens, _local_users
-    if _local_tokens:
-        return  # Already loaded
     try:
         from app.services.local_store import get_local_store
         store = get_local_store()
-        token_docs = store.collection("tokens").get()
-        for doc in token_docs:
-            data = doc.to_dict()
-            tok = data.get("token")
-            uid = data.get("uid")
-            if tok and uid:
-                _local_tokens[tok] = uid
-
-        # Also reload users from LocalStore into _local_users cache
-        user_docs = store.collection("users").get()
-        for doc in user_docs:
-            data = doc.to_dict()
-            uid = data.get("uid") or data.get("id")
-            if uid:
-                _local_users[uid] = data
+        if not _local_tokens:
+            token_docs = store.collection("tokens").get()
+            for doc in token_docs:
+                data = doc.to_dict()
+                tok = data.get("token")
+                uid = data.get("uid")
+                if tok and uid:
+                    _local_tokens[tok] = uid
+        if not _local_users:
+            user_docs = store.collection("users").get()
+            for doc in user_docs:
+                data = doc.to_dict()
+                uid = data.get("uid") or data.get("id")
+                if uid:
+                    _local_users[uid] = data
     except Exception:
         pass  # Don't crash on load failure
 

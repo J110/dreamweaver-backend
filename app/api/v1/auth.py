@@ -55,9 +55,15 @@ class ClaimExistingBody(BaseModel):
 async def request_link(body: RequestLinkBody, request: Request) -> dict:
     """Send a magic-link email to the supplied address.
 
-    Anti-enumeration: always returns {status:'sent'}. The actual email may
-    or may not have been sent (rate-limited, missing user, send failure) —
-    no signal leaks to the wire.
+    Returns one of:
+      {"initiator_session_id", "status": "sent"} — link issued (whether or
+        not the email actually exists: missing-email path still writes a
+        real auth_code and silently doesn't send, preserving anti-
+        enumeration on user existence).
+      {"status": "rate_limited", "retry_after_seconds": N} — caller has
+        hit the 3-per-hour budget on this email. Frontend renders an
+        explicit retry-after card instead of routing through the poll
+        path (which would mis-render as 'Link expired').
     """
     initiator_ip = (request.client.host if request.client else None)
     try:
@@ -69,7 +75,7 @@ async def request_link(body: RequestLinkBody, request: Request) -> dict:
         )
     except Exception as e:
         logger.warning("request_link error: %s", e)
-        # Still anti-enumerate on error.
+        # Anti-enumerate on unexpected error: present as a normal sent.
         return {"initiator_session_id": ml.generate_session_id(), "status": "sent"}
 
 
@@ -125,6 +131,9 @@ async def claim_existing(
     token who needs to associate an email with their record. The verify
     step will set email + email_verified=true on the existing user record
     identified by current_user['uid'] — does NOT create a new user.
+
+    Same response shape as /request_link: 'sent' on issue, 'rate_limited'
+    with retry_after_seconds when over the 3-per-hour budget.
     """
     initiator_ip = (request.client.host if request.client else None)
     return await ml.request_claim(

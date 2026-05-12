@@ -103,8 +103,12 @@ def _ts() -> float:
 # ── Rate limiting ────────────────────────────────────────────
 
 
-def check_and_record_rate_limit(email_lc: str) -> bool:
-    """Return True if request is allowed, False if over the 3/hour budget.
+def check_and_record_rate_limit(email_lc: str) -> tuple[bool, int]:
+    """Check budget and record the attempt if allowed.
+
+    Returns (allowed, retry_after_seconds). When allowed, retry_after=0.
+    When denied, retry_after is the seconds until the oldest bucket entry
+    falls off the 1-hour window (+1 to round past the boundary).
 
     Prunes entries > 1h on every call. State loss on container restart is
     acceptable — the window is too small for restart abuse to matter.
@@ -113,9 +117,11 @@ def check_and_record_rate_limit(email_lc: str) -> bool:
     bucket = _link_rate_buckets.setdefault(email_lc, [])
     bucket[:] = [t for t in bucket if now - t < RATE_LIMIT_WINDOW_SECONDS]
     if len(bucket) >= RATE_LIMIT_MAX_REQUESTS:
-        return False
+        oldest = bucket[0]
+        retry_after = int(RATE_LIMIT_WINDOW_SECONDS - (now - oldest)) + 1
+        return False, max(retry_after, 1)
     bucket.append(now)
-    return True
+    return True, 0
 
 
 # ── Migration window detection ──────────────────────────────
@@ -384,10 +390,18 @@ async def request_magic_link(
 ) -> dict:
     """Issue a magic-link code + send the email.
 
-    Always returns {"initiator_session_id", "status": "sent"} regardless of
-    whether email actually exists / was rate-limited / send failed —
-    anti-enumeration. The session_id binds the eventual token to this
-    initiator device via Pattern A polling.
+    On success: {"initiator_session_id", "status": "sent"}. The session_id
+    binds the eventual token to this initiator device via Pattern A polling.
+
+    On rate-limit denial: {"status": "rate_limited",
+    "retry_after_seconds": N}. No session_id is issued — polling against a
+    nonexistent auth_codes row would return 'expired' immediately and
+    mis-render as a stale-link error on the frontend.
+
+    Anti-enumeration is preserved on the existence dimension: missing-email
+    lookups still proceed through the normal-sent path with a real auth_code
+    written and an email NOT actually sent. Rate-limit signal is the
+    requester's own request count and not a user-existence leak.
     """
     if context not in VALID_CONTEXTS or context == "claim_existing":
         # claim_existing routes through request_claim() which adds target_uid
@@ -397,8 +411,9 @@ async def request_magic_link(
     initiator_session_id = generate_session_id()
     lang = "hi" if lang == "hi" else "en"
 
-    # Rate-limit gate — return generic-sent without sending.
-    if not check_and_record_rate_limit(email_lc):
+    # Rate-limit gate — return explicit rate_limited status with retry hint.
+    allowed, retry_after = check_and_record_rate_limit(email_lc)
+    if not allowed:
         ph_emit(
             _email_hash(email_lc),
             "auth_rate_limited",
@@ -414,7 +429,7 @@ async def request_magic_link(
                 "rate_limited": True,
             },
         )
-        return {"initiator_session_id": initiator_session_id, "status": "sent"}
+        return {"status": "rate_limited", "retry_after_seconds": retry_after}
 
     store = get_local_store()
     user = _lookup_user_by_email(store, email_lc)
@@ -481,13 +496,14 @@ async def request_claim(
     initiator_session_id = generate_session_id()
     lang = "hi" if lang == "hi" else "en"
 
-    if not check_and_record_rate_limit(email_lc):
+    allowed, retry_after = check_and_record_rate_limit(email_lc)
+    if not allowed:
         ph_emit(
             _email_hash(email_lc),
             "auth_rate_limited",
             {"email_hash": _email_hash(email_lc), "lang": lang, "context": "claim_existing"},
         )
-        return {"initiator_session_id": initiator_session_id, "status": "sent"}
+        return {"status": "rate_limited", "retry_after_seconds": retry_after}
 
     store = get_local_store()
     code = generate_code()
