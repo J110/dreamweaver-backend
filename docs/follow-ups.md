@@ -102,6 +102,53 @@ deploy_guard's STORIES section reports `cat_talk_2_5` as a story (it's actually 
 
 Tonight's verify reported `❌ NEW story: cat_talk_2_5 — no audio URL` despite the seed entry having `audio_url: "/audio/silly-songs/cat_talk_2_5.mp3"` and the URL returning 200. Possible cause: the new-item-serving check reads from the snapshot blob (which might be from before the rescue), not from the live API/current seed. Investigation needed.
 
+### `seed_output/content.json` gitignore consideration
+
+File is derived from per-content files via the walker at boot and admin reload. Tracking it in git creates divergence on prod when daily cron mutations happen, requiring a stash-pull-strip-reload dance on every backend code merge that includes content.json changes.
+
+**Hit during 2026-05-01 Step 1.7 deploy:** the migration commit included `seed_output/content.json` (post-strip baseline of the local 222-item catalog) as a verification artifact. Prod's content.json had 330 items from today's pipeline mutations; pull conflicted; required `git stash push -- seed_output/content.json`, `git pull`, run migration, drop stash, admin reload. End state was correct but the dance was avoidable.
+
+**Fix:** gitignore `seed_output/content.json` and `data/content.json`. Both are derived snapshots; the canonical state lives in per-content files (`data/<type>[_hi]/<id>.json`). Per the cutover spec (§2c), the walker rebuilds these snapshots at boot and admin reload — git-tracking them is redundant and conflict-prone.
+
+Migration:
+- Add to `.gitignore`
+- `git rm --cached seed_output/content.json data/content.json`
+- One-time commit: "chore(content): gitignore derived snapshots"
+- Backend boot path already regenerates them; no behavior change, just removes the divergence vector.
+
+Worth a separate decision and its own commit. Aligns with the architecture, eliminates a recurring class of merge friction.
+
+### Frontend deploy script silent-failure footgun
+
+`CLAUDE.md`'s frontend-deploy snippet has `git pull origin main 2>&1 | tail -5` which masks the exit code via the pipe. If `git pull` fails (merge conflict, unmerged files, etc.), the rest of the script continues running on old code, and `pm2 restart` loads stale assets. **Same class of incident as the 2026-04-29 backend repo lockup that motivated `SKIP_PUBLISH_STEP` (43517a8); the web deploy snippet never got the equivalent guard.**
+
+Hit during 2026-05-01 Step 1.1 frontend deploy: `git pull` failed with stuck unmerged-paths state on `/opt/dreamweaver-web`, but build continued on `ed019c9` (pre-Step-1.1) and PM2 reloaded the old build. Took a manual `git rm --cached` to resolve. Recovery details in session log.
+
+**Fix:**
+- Add `set -e` at top of the deploy script, **and**
+- Replace pipe-to-tail with `git pull origin main || { echo "FAIL: git pull"; exit 1; }`
+- Add a one-line precondition check that fails the deploy if `git ls-files -u` is non-empty (catches stuck merge state before pull is attempted).
+
+Update `CLAUDE.md` "Frontend deploys are NOT automatic for dreamvalley.app" snippet accordingly. Five-line edit; non-urgent but worth shipping before next merge conflict bites.
+
+### HI silly_song cover URL routing mismatch
+
+`scripts/_hindi_generators.py` silly_song path (lines ~795–830) writes the generated cover to:
+- `WEB_ROOT/public/covers/<sid>.webp` (legacy default route — no longer aliased by nginx)
+- `WEB_ROOT/public/covers/silly-songs/<sid>_cover.webp` (legacy duplicate)
+- `BASE_DIR/seed_output/silly_songs/<sid>_cover.webp` (debug master)
+- `PROD_COVER_STORE/silly-songs/<sid>_cover.webp` (active path, with `_cover` suffix)
+
+But the item's emitted `cover` field is `/covers/<sid>.webp` (bare-id at root). nginx `/covers/` default route now aliases `/opt/cover-store/` (root) — so the bare-id URL resolves to a path that doesn't exist (file is in `silly-songs/` subdir with different filename shape).
+
+**Hit on 2026-05-01:** `hi-gudiya_ka_gherao-2-5-27fb` cover served 404 on `/covers/<id>.webp`. Patched manually with `cp` from the `silly-songs/` subdir to bare-id path at `/opt/cover-store/`.
+
+**Two structural fix options:**
+1. Generator writes the cover to `/opt/cover-store/<sid>.webp` at root (in addition to the subdir), matching the bare-id URL the item emits.
+2. Generator emits cover field as `/covers/silly-songs/<sid>_cover.webp` (subdir path), matching where the file actually lands.
+
+Option 2 is cleaner — no extra disk copies, matches the existing nginx subdir alias `/covers/silly-songs/` → `/opt/cover-store/silly-songs/`. Same fix probably applies to other HI generators (poem, lullaby) that have the same dual-write pattern; audit during the same change.
+
 ---
 
 ## Code defaults / cleanup (smaller, opportunistic)
@@ -297,3 +344,71 @@ For future Claude sessions, durable lessons from this incident are stored in mem
 - `feedback_deploy_guard_required.md` — snapshot before, verify after, every prod change
 - `feedback_chown_after_sudo_cp.md` — pair `sudo cp` into pipeline-write paths with `chown`
 - `feedback_nginx_backup_location.md` — config backups go to `sites-available/`, never `sites-enabled/`
+
+---
+
+## Pending: commit `generate_audio.py` per-content write fix (2026-05-01)
+
+**File**: `scripts/generate_audio.py` — `save_content_json` function (around line 2444)
+
+**Status**: Patched on prod via scp on 2026-05-01 with backup at `/opt/dreamweaver-backend/scripts/generate_audio.py.bak.20260501`. **Not** committed to `origin/main`. Local working tree (`dreamweaver-backend/scripts/generate_audio.py`) holds the same change, also uncommitted.
+
+**What the change does**: After writing `audio_variants` and `duration` into `seed_output/content.json`, also calls `_per_content_io.update_per_content_fields(sid, audio_variants=..., duration=...)` for each story so the per-content file (`data/<type>/<id>.json`) — the source of truth post the 2026-04-29 refactor — stays in sync. Without this, the backend's 60s mtime poller rebuilds the snapshot from per-content and silently wipes the just-written `audio_variants`. That's how *Stripe and the Whispering Stones* got dropped at the pre-publish gate on 2026-05-01 despite a clean MP3 and QA pass.
+
+**Risk while uncommitted**: prod is running code that `origin/main` doesn't reflect. Any redeploy from main (re-clone, fresh checkout, `git reset --hard`) silently regresses the fix and the next pipeline run drops its short story again.
+
+**Resolution after the cutover observation window closes cleanly**:
+1. `git add scripts/generate_audio.py && git commit -m "fix(generate_audio): mirror audio_variants to per-content files"`
+2. `git push origin main`
+3. On prod: `git pull --ff-only origin main` (effective no-op — file already at the patched state, git just reconciles to the committed SHA)
+4. `diff /opt/dreamweaver-backend/scripts/generate_audio.py /opt/dreamweaver-backend/scripts/generate_audio.py.bak.20260501` to confirm only the intended hunks differ
+5. Once verified, remove the `.bak.20260501` backup
+
+**Do not act during cutover observation.** The change is benign and confirmed working on prod (Stripe was successfully recovered today via the same per-content write path); no new breakage if we wait.
+
+**Related**: this is the same class of bug as the architecture follow-up at the top of this file (`data/content.json` refactor — treat as derived artifact). The proposed shape there — generators write only per-content, snapshot fully derived — would make this whole synchronization-bug class structurally impossible. The `generate_audio.py` patch is a targeted fix that aligns this generator with the partial migration that's already happened; the architecture follow-up would finish the migration.
+
+---
+
+## Logging gaps surfaced by 2026-05-03 HI funny short failure
+
+Three small follow-ups discovered while debugging today's failed HI funny short slot. None blocking; batch into a single cleanup commit when convenient.
+
+1. **Cron stdout truncation hides Mistral attempts + repair logs.**
+   `pipeline_hi_cron.log` only captures the `stdout tail` (~100 chars) of each generator subprocess. When `generate_funny_shorts_hi.py` fails after 5 attempts, attempts 1–3 and any `Devanagari repair: ...` log lines are lost from the audit trail. Today's investigation needed a manual `tee /tmp/...` rerun on prod to confirm the repair pass was firing at all.
+   - Workaround: `2>&1 | tee /tmp/...` for ad-hoc reruns.
+   - Real fix: redirect each generator's stdout/stderr to a per-day log file alongside `pipeline_hi_cron.log` (e.g. `pipeline_hi_2026-05-03_funny_short.log`) so attempt-level diagnostics survive past the cron tail window.
+
+2. **Stale "after 3 attempts" message at `scripts/generate_funny_shorts_hi.py:287`.**
+   The error log line says `failed validation after 3 attempts: ...` but the loop at line 249 actually iterates 5 times. Misleading when reading cron output. One-line edit: change `3` to `5` (or interpolate `range_size`).
+
+3. **Silent return path at `scripts/_funny_shorts_common.py:521`.**
+   Inside `repair_devanagari`, post-revalidation builds a `still_missing` list by regex-matching `^Line N:.*missing Devanagari` against `post_errors`. If `post_errors` contains errors that don't match the regex (a brand-new error type introduced by the repair), `still_missing` stays empty and the function returns `None` at line 521 without printing any log line. Add a `print(f"{log_prefix}Devanagari repair: post-repair revalidation surfaced non-Devanagari errors: {post_errors}")` before that return so this branch becomes visible in logs.
+
+---
+
+## Pipeline sync gating + manual-test orphan risk (2026-05-07)
+
+Surfaced during EN short_story retry-hint deploy verification (commit 55c3e7c). Manual `generate_content_matrix.py --count-stories 1` produced a content_expanded.json entry with no audio/cover/QA — would have leaked to `content.json` on next cron sync if not removed manually.
+
+1. **Pipeline sync gating on audio existence.**
+   Should the sync step from `content_expanded.json` → `content.json` gate on per-item audio file existence? Two possible gates:
+   - `sync_seed_data.py` skips items without an audio file at expected path.
+   - `generate_content_matrix.py` does not write to `content_expanded.json` until audio is generated for the item.
+   Investigate which is the right gate. Either eliminates a class of orphan-publish risk that the manual-test path exposed today.
+
+2. **Manual generation pipeline lacks dry-run.**
+   `--count-stories 1` directly via `generate_content_matrix.py` produces content without audio/cover/QA. `SKIP_PUBLISH_STEP=1` is now a no-op (deleted in refactor). For ad-hoc test/debug runs:
+   - Run full `pipeline_run.py` with a dry-run flag (does it support one?), OR
+   - Remember to clean up `content_expanded.json` afterward, OR
+   - Add a `--dry-run` flag to `generate_content_matrix.py` that writes nowhere.
+   Track the `--dry-run` flag addition.
+
+3. **nginx `/audio/` has two duplicate `location` blocks.**
+   `/etc/nginx/sites-enabled/...` declares `location /audio/` twice — one alias to `/opt/audio-store/`, one to `/opt/dreamweaver-web/public/audio/`. nginx uses first match wins; the second block is dead. Both directories currently mirror identical content so no user impact, but the config is misleading. Consolidate to a single `location` block; pick a canonical source-of-truth directory. Confirm one mirror is the legitimate source before removing the other. Low priority, no current user impact.
+
+4. **`data/content.json` is a runtime artifact committed to git.**
+   Pipeline mutates it every run; `git stash`/`git stash pop` cycle in preflight is required only to keep the tree clean before `git pull`. The file should be gitignored and read-only-from-git; the pipeline owns it. Currently the "stash pop FAILED" log line is expected noise. Cleanup requires moving any seed-of-record content elsewhere and adjusting deploy_guard expectations.
+
+5. **Rusty-class `audio_variants` enrichment race.**
+   2026-05-12 EN pipeline dropped "Rusty and the Door That Glowed" at the pre-publish gate with "no audio_variants" — despite QA Phase 2 having transcribed the file (marginal_fidelity 0.58, WARN not FAIL). The AUTO-FIX disk-recovery cross-check at `pipeline_run.py:761-780` is supposed to self-heal missing audio_variants entries by scanning `/audio/pre-gen/` for files matching the `gen-<id>` prefix. Rusty was not recovered. Possible causes: (1) Rusty's audio filename doesn't match the `gen-<id>` prefix convention the recovery loop expects, (2) AUTO-FIX runs at the wrong point in orchestration (after the gate, or before audio is written), (3) genuine missing `audio_variants` entry that should have been written by `step_audio` but wasn't. Investigation needed: read `step_audio` variant-attachment code + AUTO-FIX cross-check logic + verify the actual filename of Rusty's audio on disk. Priority: medium. One story dropped is acceptable; recurring drops would compound into catalog gaps.

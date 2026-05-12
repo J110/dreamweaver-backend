@@ -863,6 +863,10 @@ def generate_silly_song(axes: dict, log_prefix: str = "  ") -> dict:
         system=sys_msg, user=user_msg,
         validator_key="silly_song", log_prefix=log_prefix,
         repair_hint=_silly_song_repair_hint,
+        max_retries=5,        # 6-8/angry/celebration combo overshoots char
+                              # budget on first 2-3 attempts; repair hint
+                              # converges (~717→667→566) but needs headroom
+                              # past 3-attempt default. Matches long-story budget.
     )
 
     # ── Render via ElevenLabs Music
