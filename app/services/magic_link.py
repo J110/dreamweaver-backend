@@ -530,10 +530,25 @@ async def request_claim(
 def verify_code(code: str) -> dict:
     """Consume a magic-link code, mint a session token bound to the initiator.
 
-    Returns {"status": "claimed"|"already_used"|"expired"|"invalid",
-             "context": str|None}.
-    Never returns the token here — the clicker device must not log in.
-    The token is fetched by the initiator via /auth/poll.
+    On status='claimed', returns the full session payload (token + user
+    fields) so the clicker device can log itself in directly. This fixes
+    the mobile flow where the requesting device has no polling tab open
+    (user requests on laptop, clicks link on phone email app).
+
+    The poll path remains intact: the auth_codes row still carries
+    claimed_token, so an originator that *is* still polling /auth/poll
+    will gracefully auto-complete on its end as well. Both devices end
+    up with the same token (same tokens row, same uid) — concurrent
+    sessions on multiple devices is the expected outcome of legitimate
+    cross-device auth.
+
+    Returns one of:
+      {"status": "claimed", "context", "token", "uid", "username",
+       "family_id", "email_verified", "onboarding_complete",
+       "child_age", "preferred_lang"}
+      {"status": "already_used", "context"}
+      {"status": "expired", "context"}
+      {"status": "invalid", "context": None}
     """
     store = get_local_store()
     row = _read_auth_code(store, code)
@@ -623,7 +638,26 @@ def verify_code(code: str) -> dict:
         "is_new_user": is_new_user,
     })
 
-    return {"status": "claimed", "context": context}
+    # Refresh user_data so email_verified update from this call is reflected.
+    try:
+        fresh_doc = store.collection("users").document(uid).get()
+        if fresh_doc.exists:
+            user_data = fresh_doc.to_dict() or user_data
+    except Exception:
+        pass
+
+    return {
+        "status": "claimed",
+        "context": context,
+        "token": token,
+        "uid": uid,
+        "username": user_data.get("username", ""),
+        "family_id": family_id or "",
+        "email_verified": bool(user_data.get("email_verified")),
+        "onboarding_complete": bool(user_data.get("onboarding_complete")),
+        "child_age": user_data.get("child_age"),
+        "preferred_lang": user_data.get("preferred_lang"),
+    }
 
 
 def poll_session(initiator_session_id: str) -> dict:

@@ -75,10 +75,13 @@ async def request_link(body: RequestLinkBody, request: Request) -> dict:
 
 @router.post("/verify_link")
 async def verify_link(body: VerifyLinkBody) -> dict:
-    """Consume a magic-link code. Returns status + context.
+    """Consume a magic-link code.
 
-    Never returns the session token here — the clicker device must not log
-    itself in. Token is fetched by the initiator via /auth/poll.
+    On status='claimed' the response includes the session token and user
+    fields so the clicker device can log itself in directly (fixes the
+    mobile flow where the requesting device has no polling tab open).
+    The /auth/poll path is preserved for graceful auto-completion on a
+    still-open originator tab.
     """
     return ml.verify_code(body.code)
 
