@@ -1,18 +1,22 @@
 #!/usr/bin/env python3
-"""Bulk metadata correction for duration_seconds drift.
+"""Bulk duration_seconds metadata correction (per-content-file SOT).
 
-For every item in seed_output/content.json with audio_variants (or
-top-level legacy audio_url/audio_file), ffprobe the on-disk file and
-update the claimed duration_seconds to match if it differs by more than
-DURATION_TOLERANCE_SEC.
+Per-content files at data/<type-dir>/<id>.json are the source of truth.
+seed_output/content.json and data/content.json are derived snapshots
+regenerated from per-content files by admin reload. Direct edits to the
+snapshots get wiped on the next reload — so this script writes to the
+per-content files and instructs the caller to admin-reload.
 
-For long stories with multiple variants, the item-level duration_seconds
-is also set to the median of the corrected variant durations.
+For each item, ffprobe every audio reference (audio_variants[].url or
+legacy audio_url/audio_file). If a claimed duration_seconds differs from
+the on-disk truth by more than DURATION_TOLERANCE_SEC, update it.
+
+For long stories with multiple variants, item-level duration_seconds is
+set to the median of corrected variant durations.
 
 Modes:
   --dry-run  (default)  Print what would change, write nothing
-  --apply               Write corrections back to seed_output/content.json
-                        and data/content.json (the API serving copy).
+  --apply               Write corrections back to data/<type-dir>/<id>.json
 """
 from __future__ import annotations
 
@@ -26,12 +30,42 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).parent.parent
 SEED_PATH = BASE_DIR / "seed_output" / "content.json"
-DATA_PATH = BASE_DIR / "data" / "content.json"
+DATA_DIR = BASE_DIR / "data"
 WEB_AUDIO_DIR = Path("/opt/dreamweaver-web/public/audio")
 AUDIO_STORE_DIR = Path("/opt/audio-store")
 DURATION_TOLERANCE_SEC = 5.0
 
-AUDIO_SUBDIRS = ("pre-gen", "silly-songs", "funny-shorts", "poems", "poems-hi", "lullabies", "story_music")
+
+def per_content_path(item: dict) -> Path | None:
+    """Resolve the per-content file path from type + subtype + lang.
+
+    Returns None if the item shape isn't recognised; the caller skips it.
+    """
+    sid = item.get("id")
+    if not sid:
+        return None
+    t = item.get("type")
+    st = item.get("subtype")
+    lang = item.get("lang", "en")
+    suffix = "_hi" if lang == "hi" else ""
+
+    if t == "story":
+        sub = f"stories{suffix}"
+    elif t == "long_story":
+        sub = f"long_stories{suffix}"
+    elif t == "poem":
+        sub = f"poems{suffix}"
+    elif t == "song" and st == "silly_song":
+        sub = f"silly_songs{suffix}"
+    elif t == "song" and st == "funny_short":
+        sub = f"funny_shorts{suffix}"
+    elif t == "song" and (st == "lullaby" or st is None):
+        # type=song with no subtype falls back to lullaby (legacy)
+        sub = f"lullabies{suffix}"
+    else:
+        return None
+
+    return DATA_DIR / sub / f"{sid}.json"
 
 
 def _legacy_subdir_for(item: dict) -> str:
@@ -77,8 +111,7 @@ def ffprobe_duration(path: Path) -> float | None:
         return None
 
 
-def legacy_url_from_item(item: dict) -> str | None:
-    """Derive a URL for legacy bare-filename audio_file."""
+def legacy_url(item: dict) -> str | None:
     legacy = item.get("audio_url") or item.get("audio_file")
     if not legacy:
         return None
@@ -90,11 +123,10 @@ def legacy_url_from_item(item: dict) -> str | None:
     return f"/audio/{_legacy_subdir_for(item)}/{s}"
 
 
-def correct_item(item: dict, log: list) -> int:
-    """Mutate item in place. Returns count of variant durations changed."""
+def correct_item_dict(item: dict, log: list) -> int:
+    """Mutate item dict in place. Returns count of field updates applied."""
     changes = 0
     sid = item.get("id", "")
-    title = item.get("title", "")
     corrected_variant_durs: list[float] = []
 
     variants = item.get("audio_variants") or []
@@ -104,11 +136,9 @@ def correct_item(item: dict, log: list) -> int:
         url = v.get("url", "")
         disk = resolve_disk_path(url)
         if not disk:
-            log.append(f"  SKIP {sid} [{v.get('voice')}]: file not found ({url})")
             continue
         actual = ffprobe_duration(disk)
         if actual is None:
-            log.append(f"  SKIP {sid} [{v.get('voice')}]: ffprobe failed ({disk})")
             continue
         actual = round(actual, 2)
         claimed = v.get("duration_seconds")
@@ -123,9 +153,8 @@ def correct_item(item: dict, log: list) -> int:
         changes += 1
         corrected_variant_durs.append(actual)
 
-    # Legacy top-level audio_url/audio_file path (only when no variants).
     if not variants:
-        url = legacy_url_from_item(item)
+        url = legacy_url(item)
         if url:
             disk = resolve_disk_path(url)
             if disk:
@@ -135,22 +164,21 @@ def correct_item(item: dict, log: list) -> int:
                     claimed = item.get("duration_seconds")
                     if claimed is None or abs(float(claimed) - actual) > DURATION_TOLERANCE_SEC:
                         log.append(
-                            f"  FIX  {sid:28} [legacy            ] "
+                            f"  FIX  {sid:28} [legacy        ] "
                             f"claimed={claimed} → actual={actual}"
                         )
                         item["duration_seconds"] = actual
                         changes += 1
                     corrected_variant_durs.append(actual)
 
-    # Long story item-level duration_seconds = median of variants.
     is_long = item.get("type") == "long_story" or str(item.get("length", "")).upper() == "LONG"
     if is_long and corrected_variant_durs:
         median_dur = round(statistics.median(corrected_variant_durs), 2)
-        old_item_dur = item.get("duration_seconds")
-        if old_item_dur is None or abs(float(old_item_dur) - median_dur) > DURATION_TOLERANCE_SEC:
+        old = item.get("duration_seconds")
+        if old is None or abs(float(old) - median_dur) > DURATION_TOLERANCE_SEC:
             log.append(
                 f"  ITEM {sid:28} long_story duration_seconds "
-                f"{old_item_dur} → {median_dur} (median of {len(corrected_variant_durs)} variants)"
+                f"{old} → {median_dur} (median of {len(corrected_variant_durs)} variants)"
             )
             item["duration_seconds"] = median_dur
             changes += 1
@@ -161,9 +189,8 @@ def correct_item(item: dict, log: list) -> int:
 def main() -> int:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--apply", action="store_true",
-                   help="Write corrections back to content.json. Default is dry-run.")
-    p.add_argument("--dry-run", action="store_true",
-                   help="Print changes without writing. Default behavior.")
+                   help="Write corrections to data/<type>/<id>.json. Default is dry-run.")
+    p.add_argument("--dry-run", action="store_true", help="Default behavior — print, no writes.")
     args = p.parse_args()
     do_write = args.apply and not args.dry_run
 
@@ -178,56 +205,55 @@ def main() -> int:
 
     log: list[str] = []
     items_changed = 0
-    variant_changes = 0
+    field_changes = 0
+    skipped_no_path = 0
+    skipped_missing_file = 0
+
     for item in content:
         if not isinstance(item, dict):
             continue
-        before = sum(1 for line in log if line.startswith("  FIX") or line.startswith("  ITEM"))
-        n = correct_item(item, log)
-        if n:
-            items_changed += 1
-            variant_changes += n
+        path = per_content_path(item)
+        if path is None:
+            skipped_no_path += 1
+            continue
+        if not path.exists():
+            skipped_missing_file += 1
+            log.append(f"  SKIP {item.get('id',''):28} per-content file not found: {path}")
+            continue
+
+        # Read SOT and apply correction to the SOT dict.
+        try:
+            sot = json.loads(path.read_text())
+        except Exception as e:
+            log.append(f"  SKIP {item.get('id',''):28} read failed ({path}): {e}")
+            continue
+
+        n = correct_item_dict(sot, log)
+        if n == 0:
+            continue
+        items_changed += 1
+        field_changes += n
+        if do_write:
+            path.write_text(json.dumps(sot, indent=2, ensure_ascii=False))
 
     mode = "APPLY" if do_write else "DRY-RUN"
-    print(f"=== Duration metadata correction — {mode} ===")
-    print(f"Items in content.json: {len(content)}")
+    print(f"=== Duration metadata correction (per-content SOT) — {mode} ===")
+    print(f"Items scanned: {len(content)}")
+    print(f"Skipped (unrecognised type/subtype): {skipped_no_path}")
+    print(f"Skipped (per-content file missing):  {skipped_missing_file}")
     for line in log:
         print(line)
     print()
     print(f"Items changed:    {items_changed}")
-    print(f"Field-level updates: {variant_changes}")
+    print(f"Field-level updates: {field_changes}")
 
     if not do_write:
-        print("\nDry-run only. Re-run with --apply to write changes.")
+        print("\nDry-run only. Re-run with --apply to write per-content files.")
         return 0
 
-    # Write back to seed_output/content.json.
-    SEED_PATH.write_text(json.dumps(content, indent=2, ensure_ascii=False))
-    print(f"\nWrote: {SEED_PATH}")
-
-    # Mirror to data/content.json (API serving copy) if present.
-    if DATA_PATH.exists():
-        try:
-            api_content = json.loads(DATA_PATH.read_text())
-            api_index = {it.get("id"): it for it in api_content if isinstance(it, dict)}
-            api_changes = 0
-            for item in content:
-                sid = item.get("id")
-                if sid in api_index:
-                    target = api_index[sid]
-                    # Sync variant durations + item-level duration_seconds.
-                    if item.get("audio_variants"):
-                        target["audio_variants"] = item["audio_variants"]
-                    if "duration_seconds" in item:
-                        target["duration_seconds"] = item["duration_seconds"]
-                    api_changes += 1
-            DATA_PATH.write_text(json.dumps(api_content, indent=2, ensure_ascii=False))
-            print(f"Mirrored to: {DATA_PATH} ({api_changes} item references touched)")
-        except Exception as e:
-            print(f"WARNING: failed to mirror to data/content.json: {e}", file=sys.stderr)
-
-    print(f"\nDone at {datetime.now(timezone.utc).isoformat()}.")
-    print("Remember to trigger admin reload so the live API picks up the new durations:")
+    print(f"\nWrote {items_changed} per-content files under {DATA_DIR}/")
+    print(f"Done at {datetime.now(timezone.utc).isoformat()}.")
+    print("Trigger admin reload so the snapshots regenerate from per-content files:")
     print('  curl -X POST -H "X-Admin-Key: $ADMIN_KEY" https://api.dreamvalley.app/api/v1/admin/reload')
     return 0
 

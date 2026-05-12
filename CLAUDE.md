@@ -322,3 +322,29 @@ Code defaults should match production behavior. When you find a divergence betwe
 - Cross-edit Hindi and English code in the same commit.
 - Skip the `deploy_guard snapshot` before prod changes.
 - Tighten validator thresholds based on initial test samples (test in 5+ generations before locking).
+
+---
+
+# Content data architecture
+
+Per-content files in `data/<type-dir>/<id>.json` are the **SOURCE OF TRUTH** for content data. `seed_output/content.json` and `data/content.json` are **DERIVED SNAPSHOTS** regenerated from per-content files on every admin reload (`POST /api/v1/admin/reload`). Reload is triggered by the pipeline at end-of-run and on any manual mutation; backend boot also rebuilds the snapshots.
+
+Per-content directories by content type and language:
+
+| type    | subtype       | lang=en              | lang=hi                 |
+|---------|---------------|----------------------|-------------------------|
+| story   | —             | `data/stories/`      | `data/stories_hi/`      |
+| long_story | —          | `data/long_stories/` | `data/long_stories_hi/` |
+| song    | silly_song    | `data/silly_songs/`  | `data/silly_songs_hi/`  |
+| song    | funny_short   | `data/funny_shorts/` | `data/funny_shorts_hi/` |
+| song    | lullaby (or absent) | `data/lullabies/` | `data/lullabies_hi/` |
+| poem    | —             | `data/poems/`        | `data/poems_hi/`        |
+
+When mutating content data (audio_variants, duration_seconds, metadata fixes, cover overrides, etc.):
+
+1. Resolve the per-content file path from `type` + `subtype` + `lang`.
+2. Read, mutate, write back the per-content JSON.
+3. Call admin reload to regenerate `seed_output/content.json` and `data/content.json`.
+4. Verify the change appears in the snapshots after reload.
+
+**Direct edits to `seed_output/content.json` or `data/content.json` will be wiped on the next admin reload.** Always target per-content files. The 2026-05-12 DURMISM bulk correction shipped to the wrong target and was silently reverted on reload — see `scripts/correct_duration_metadata.py` for the corrected pattern.
