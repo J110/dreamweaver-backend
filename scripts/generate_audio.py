@@ -2442,7 +2442,19 @@ def main():
     save_counter = {"count": 0}
 
     def save_content_json(new_results: dict):
-        """Incrementally save audio_variants to content.json (file-locked for concurrency)."""
+        """Incrementally save audio_variants to content.json + per-content files (file-locked for concurrency).
+
+        Per the 2026-04-29 refactor, data/<type>/<id>.json is the source of truth;
+        seed_output/content.json is a derived snapshot rebuilt by the backend's
+        mtime poller within 60 seconds. Snapshot-only writes get silently wiped.
+        We must update both.
+        """
+        try:
+            sys.path.insert(0, str(Path(__file__).resolve().parent))
+            from _per_content_io import update_per_content_fields
+        except Exception:
+            update_per_content_fields = None
+
         with open(lock_path, "w") as lockf:
             fcntl.flock(lockf, fcntl.LOCK_EX)
             try:
@@ -2450,6 +2462,7 @@ def main():
                     all_stories = json.load(f)
 
                 updated = 0
+                per_content_updates: list[tuple[str, dict]] = []
                 for story in all_stories:
                     if story["id"] in new_results:
                         existing_variants = story.get("audio_variants", [])
@@ -2465,13 +2478,28 @@ def main():
                         story["audio_variants"] = existing_variants
                         # Auto-compute duration (minutes) from average audio length
                         durs = [v.get("duration_seconds") for v in existing_variants if v.get("duration_seconds")]
+                        fields = {"audio_variants": existing_variants}
                         if durs:
                             story["duration"] = max(1, math.ceil(sum(durs) / len(durs) / 60))
+                            fields["duration"] = story["duration"]
+                        per_content_updates.append((story["id"], fields))
                         updated += 1
 
                 with open(CONTENT_PATH, "w", encoding="utf-8") as f:
                     json.dump(all_stories, f, ensure_ascii=False, indent=2)
                     f.write("\n")
+
+                # Mirror the same fields into per-content files (source of truth).
+                # Without this, the backend's 60s mtime poller rebuilds the snapshot
+                # from per-content files and wipes audio_variants. The pre-publish
+                # gate then drops the story for "no audio" even though the MP3 exists.
+                if update_per_content_fields is not None:
+                    for sid, fields in per_content_updates:
+                        try:
+                            if not update_per_content_fields(sid, **fields):
+                                logger.warning("  Per-content file not found for %s — audio_variants update skipped", sid)
+                        except Exception as e:
+                            logger.warning("  Per-content audio_variants update failed for %s: %s", sid, e)
 
                 return updated
             finally:
