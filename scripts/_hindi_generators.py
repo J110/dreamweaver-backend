@@ -49,7 +49,7 @@ ON_PROD = PROD_BACKEND_PUBLIC.exists()
 sys.path.insert(0, str(Path(__file__).parent))
 
 from _hindi_llm import generate_json, LLMError  # type: ignore
-from _hindi_validators import VALIDATORS, validate_structured, has_major  # type: ignore
+from _hindi_validators import VALIDATORS, validate_structured, has_major, silly_song_cap_for  # type: ignore
 from _hindi_qa_critic import critic_review, is_qa_enabled  # type: ignore
 
 
@@ -775,27 +775,34 @@ def generate_lullaby(axes: dict, log_prefix: str = "  ") -> dict:
 # SILLY SONG
 # ───────────────────────────────────────────────────────────────────────
 
-_SILLY_BODY_CAP_RE = re.compile(r"lyrics body too long: (\d+) chars \(max 500\)")
+_SILLY_BODY_CAP_RE = re.compile(r"lyrics body too long: (\d+) chars \(max (\d+)\)")
 
 
 def _silly_song_repair_hint(errors: list[str], last_data: dict) -> str | None:
     measured: int | None = None
+    parsed_cap: int | None = None
     for e in errors:
         m = _SILLY_BODY_CAP_RE.match(e)
         if m:
             measured = int(m.group(1))
+            parsed_cap = int(m.group(2))
             break
     if measured is None:
         return None
-    lyrics = last_data.get("lyrics", "") or ""
-    body = re.sub(r"\[[^\]]+\]\s*", "", lyrics).strip()
-    excerpt = body[:200] + ("..." if len(body) > 200 else "")
+    cap = parsed_cap if parsed_cap is not None else silly_song_cap_for(last_data.get("_axes"))
+    target = cap - 50
     return (
-        f"REVISION REQUIRED — your previous body was {measured} chars "
-        f"(max 500, target ≤450). Quoted below:\n\n"
-        f"{excerpt}\n\n"
-        f"Trim by dropping a line from verse 2. Keep chorus identical. "
-        f"Keep the section tag structure ([CHORUS]/[VERSE]/etc) intact."
+        f"REVISION REQUIRED — character budget violated.\n\n"
+        f"FORWARD CONSTRAINTS for your next draft:\n"
+        f"- ≤14 body lines total (not counting [VERSE]/[CHORUS]/[ENDING] tags)\n"
+        f"- Each line ≤8 words\n"
+        f"- Body characters (excluding tags) MUST be ≤{target} chars; "
+        f"hard ceiling {cap} chars\n"
+        f"- Keep chorus identical between its two appearances\n"
+        f"- Count characters yourself before submitting\n\n"
+        f"For reference, your last attempt was {measured} chars and violated "
+        f"this. Your next draft must satisfy the above hard constraints "
+        f"regardless of structural similarity to prior attempts."
     )
 
 
@@ -808,6 +815,8 @@ def _silly_prompt(axes: dict) -> tuple[str, str]:
         "observation": "The child WONDERS — funny philosophical, ends drowsy",
     }[cat]
     avoid_anthems = ", ".join(axes.get("recent_anthem_ids", [])) or "(none yet)"
+    body_cap = silly_song_cap_for(axes)
+    body_target = body_cap - 50
 
     system = (
         "You are a Hindi children's songwriter writing fun, bouncy, catchy "
@@ -832,8 +841,9 @@ REQUIREMENTS:
   [verse 2] (4 lines) / [chorus] (IDENTICAL to first) / [ending] (2-3 lines, fading)
 - Section tags KEPT in lyrics (silly songs include them)
 - ≥1 asterisked sound effect like *dhadaam*, *khat khat*, *chhapaak*, *thapp*
-- Body text (excluding section tags) MUST be ≤450 chars — count yourself
-  before submitting. Hard ceiling: 500 chars. If close, drop a verse line.
+- Body text (excluding section tags) MUST be ≤{body_target} chars — count
+  yourself before submitting. Hard ceiling: {body_cap} chars. If close,
+  drop a verse line.
 - Hinglish OK ("Mom", "okay", "school")
 - NO emotion markers, NO simile-with-banned-noun
 
@@ -859,9 +869,14 @@ def generate_silly_song(axes: dict, log_prefix: str = "  ") -> dict:
     print(f"\n{log_prefix}═══ SILLY SONG: age={axes['age_group']} mood={axes['mood']} cat={axes['category']} ═══")
     sys_msg, user_msg = _silly_prompt(axes)
 
+    _axes_for_validator = {
+        "age_group": axes["age_group"],
+        "category": axes["category"],
+    }
     data = _llm_with_retry(
         system=sys_msg, user=user_msg,
         validator_key="silly_song", log_prefix=log_prefix,
+        post_process=lambda d: {**d, "_axes": _axes_for_validator},
         repair_hint=_silly_song_repair_hint,
         max_retries=5,        # 6-8/angry/celebration combo overshoots char
                               # budget on first 2-3 attempts; repair hint

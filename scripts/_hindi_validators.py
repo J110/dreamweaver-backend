@@ -68,6 +68,24 @@ BANNED_SIMILE_NOUNS = [
     "hawa", "patthar", "sapna", "bhoot", "fusphusahat",
 ]
 
+# Axis-aware char caps for silly_song body. Default 500; combos where the
+# template's structural baseline approaches the cap get extra headroom.
+# Log survey (pipeline_hi_cron.log, 30d): 9-12 + observation moods (calm and
+# anxious) account for 12 of ~27 length failures — borderline by template
+# arithmetic (16-19 lines × ~30 chars + chorus repeat ≈ 500-570 baseline).
+_SILLY_SONG_DEFAULT_CAP = 500
+_SILLY_SONG_CAPS = {
+    ("9-12", "observation"): 550,
+}
+
+
+def silly_song_cap_for(axes: dict | None) -> int:
+    if not axes:
+        return _SILLY_SONG_DEFAULT_CAP
+    key = (axes.get("age_group"), axes.get("category"))
+    return _SILLY_SONG_CAPS.get(key, _SILLY_SONG_DEFAULT_CAP)
+
+
 CANONICAL_CHARACTER_TYPES = [
     "land_mammal", "bird", "sea_creature", "insect", "reptile_amphibian",
     "human_child", "mythical_creature", "object_alive", "plant_tree",
@@ -391,10 +409,12 @@ def validate_silly_song(d: dict) -> list[str]:
         if len(line.split()) > 8:
             errors.append(f"line {i}: too many words ({len(line.split())})")
 
-    # Char limit (body excluding section tags)
+    # Char limit (body excluding section tags). Axis-aware: caller injects
+    # axes via d["_axes"] from generate_silly_song; absent → default 500.
     body = re.sub(r"\[[^\]]+\]\s*", "", lyrics).strip()
-    if len(body) > 500:
-        errors.append(f"lyrics body too long: {len(body)} chars (max 500)")
+    cap = silly_song_cap_for(d.get("_axes"))
+    if len(body) > cap:
+        errors.append(f"lyrics body too long: {len(body)} chars (max {cap})")
 
     # Banned simile constructions (5 patterns)
     errors.extend(_check_simile_constructions(lyrics_lower))

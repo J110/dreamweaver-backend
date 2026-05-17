@@ -334,6 +334,74 @@ def over_cap_sentences(text: str, age: str) -> list[tuple[int, str]]:
     return out
 
 
+def collect_violations(text: str, age: str, title: str = "") -> dict:
+    """Collect major-severity violations for retry-hint construction.
+
+    Returns a dict with keys:
+      - cap_violations:  [{"sentence": str, "words": int, "cap": int}]
+      - banned_universal: [{"word": str}]
+      - banned_age:       [{"word": str}]
+      - abstract_nouns:   [{"word": str, "syllables": int, "per_sent_cap": int}]
+      - title_overrides:  [{"word": str}]
+
+    Each category may be empty. Used by the EN retry loop to surface ALL
+    classes of comprehensibility error (not just sentence-cap) back to the
+    model on the next attempt.
+    """
+    out = {
+        "cap_violations": [],
+        "banned_universal": [],
+        "banned_age": [],
+        "abstract_nouns": [],
+        "title_overrides": [],
+    }
+    if not text:
+        return out
+    clean = _strip_tags(text)
+    body_lower = clean.lower()
+    sents = _split_sentences(clean)
+
+    cap = SENTENCE_CAP.get(age, 16)
+    for s in sents:
+        n = len(_words(s))
+        if n > cap:
+            out["cap_violations"].append({"sentence": s, "words": n, "cap": cap})
+
+    for word, scope in _hard_banned_hits(body_lower, age):
+        if scope == "universal":
+            out["banned_universal"].append({"word": word})
+        else:
+            out["banned_age"].append({"word": word})
+
+    if age in ABSTRACT_NOUN_PER_SENT_CAP:
+        per_sent_cap = ABSTRACT_NOUN_PER_SENT_CAP[age]
+        seen = set()
+        for s in sents:
+            nouns = _abstract_nouns_in(s)
+            if len(nouns) > per_sent_cap:
+                for w in nouns:
+                    if w in seen:
+                        continue
+                    seen.add(w)
+                    out["abstract_nouns"].append({
+                        "word": w,
+                        "syllables": _count_syllables(w),
+                        "per_sent_cap": per_sent_cap,
+                    })
+
+    for w in _title_override_violations(title or "", body_lower, age):
+        out["title_overrides"].append({"word": w})
+
+    return out
+
+
+def banned_word_list_for(age: str) -> list[str]:
+    """Sorted concatenation of universal + per-age banned words for the
+    given age. Used in retry hints to remind the model of the full ban set.
+    """
+    return sorted(BANNED_UNIVERSAL | BANNED_BY_AGE.get(age, set()))
+
+
 # ── Dispatch ─────────────────────────────────────────────────────────
 
 VALIDATORS = {

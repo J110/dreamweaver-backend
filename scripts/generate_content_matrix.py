@@ -72,7 +72,8 @@ from scripts.diversity_sampler import (
 
 from scripts._english_validators import (
     validate_structured as _en_validate_structured,
-    over_cap_sentences as _en_over_cap_sentences,
+    collect_violations as _en_collect_violations,
+    banned_word_list_for as _en_banned_word_list_for,
     SENTENCE_CAP as _EN_SENTENCE_CAP,
 )
 
@@ -1354,56 +1355,109 @@ def generate_one(client, item: Dict, existing_titles: List[str],
                 for _w in _en_warnings[:3]:
                     logger.info("    comprehensibility warning: %s", _w["detail"][:120])
                 if _en_majors:
-                    # Fix C: log full e["detail"] (rule + word count + 80-char
-                    # preview) for every major error, not just the rule name.
-                    # This signal must always be in cron logs for diagnosis.
                     for _e in _en_majors:
                         logger.error("    comprehensibility error: %s", _e["detail"])
                     if attempt < max_retries - 1:
-                        # Fix A: surgical retry hint for cap violations,
-                        # mirroring the Devanagari repair pattern. Build a
-                        # REVISION REQUIRED block with the actual offending
-                        # sentences (full text, not the 80-char preview) and
-                        # append at the end of the prompt for highest
-                        # recency-weighted attention. Other major error
-                        # classes (banned words, -ing stacking, etc.) still
-                        # trigger retry but without specialized hint —
-                        # extends in future commits.
-                        cap_violations = _en_over_cap_sentences(
-                            text, item["age_group"]
-                        )
-                        if cap_violations:
-                            cap = _EN_SENTENCE_CAP[item["age_group"]]
+                        age = item["age_group"]
+                        violations = _en_collect_violations(text, age, title=title)
+                        sections: list[str] = []
+
+                        cap_v = violations["cap_violations"]
+                        if cap_v:
+                            cap = _EN_SENTENCE_CAP[age]
                             numbered = "\n".join(
-                                f"{i+1}. ({n} words) \"{s}\""
-                                for i, (n, s) in enumerate(cap_violations)
+                                f"  {i+1}. ({v['words']} words) \"{v['sentence']}\""
+                                for i, v in enumerate(cap_v)
                             )
-                            revision_block = (
-                                f"\n\nREVISION REQUIRED — your previous attempt "
-                                f"produced these sentences over the {cap}-word "
-                                f"cap for age {item['age_group']}:\n{numbered}\n\n"
-                                f"Split each into two or more sentences, each "
-                                f"≤{cap} words. Keep the same meaning and tone."
+                            sections.append(
+                                f"SENTENCE LENGTH:\n{numbered}\n"
+                                f"Your next draft's longest sentence must be ≤{cap} words. "
+                                f"No sentence may exceed this. Count words in each sentence "
+                                f"before submitting."
                             )
-                            prompt = build_generation_prompt(
-                                item, existing_titles,
-                                recent_fingerprints=recent_fingerprints,
-                                catalog_gaps=catalog_gaps,
-                                mood=mood,
-                                story_type=effective_story_type,
-                                recent_phrases=recent_phrases,
-                            ) + revision_block
-                            logger.warning(
-                                "  Attempt %d: comprehensibility validator failed (%d major), "
-                                "retrying with surgical hint (%d cap violations surfaced)",
-                                attempt + 1, len(_en_majors), len(cap_violations),
+
+                        banned_v = (
+                            violations["banned_universal"] + violations["banned_age"]
+                        )
+                        if banned_v:
+                            quoted_hits = "\n".join(
+                                f"  - \"{v['word']}\"" for v in banned_v
                             )
-                        else:
-                            logger.warning(
-                                "  Attempt %d: comprehensibility validator failed "
-                                "(%d major, no cap violations), retrying with original prompt",
-                                attempt + 1, len(_en_majors),
+                            ban_list = _en_banned_word_list_for(age)
+                            joined_ban = ", ".join(ban_list)
+                            sections.append(
+                                f"BANNED WORDS:\n{quoted_hits}\n"
+                                f"Banned word list for age {age}: [{joined_ban}]\n"
+                                f"Your next draft must not contain any of these words. "
+                                f"Verify before submitting."
                             )
+
+                        abstract_v = violations["abstract_nouns"]
+                        if abstract_v:
+                            quoted_hits = "\n".join(
+                                f"  - \"{v['word']}\" ({v['syllables']} syllables)"
+                                for v in abstract_v
+                            )
+                            if age == "0-1":
+                                rule = (
+                                    "For age 0-1, no noun may exceed 3 syllables.\n"
+                                    "Your next draft's longest noun must be ≤3 syllables. "
+                                    "Check each noun before submitting."
+                                )
+                            else:
+                                per_cap = abstract_v[0]["per_sent_cap"]
+                                rule = (
+                                    f"For age {age}, at most {per_cap} four-syllable-or-longer "
+                                    f"noun per sentence.\n"
+                                    f"Your next draft must respect this cap in every sentence. "
+                                    f"Check each noun before submitting."
+                                )
+                            sections.append(f"WORD COMPLEXITY:\n{quoted_hits}\n{rule}")
+
+                        title_v = violations["title_overrides"]
+                        if title_v:
+                            quoted_hits = "\n".join(
+                                f"  - \"{v['word']}\"" for v in title_v
+                            )
+                            sections.append(
+                                f"TITLE-OVERRIDE WORDS (banned in body even when in title):\n"
+                                f"{quoted_hits}\n"
+                                f"Your next draft must not echo these title words in the body. "
+                                f"Use the substitute pattern from the age block."
+                            )
+
+                        if not sections:
+                            # Major errors that fall outside the collector's
+                            # categories (rare — e.g. body empty, phase 3
+                            # descent). Surface raw validator messages.
+                            sections.append(
+                                "OTHER VIOLATIONS:\n"
+                                + "\n".join(f"  - {_e['detail']}" for _e in _en_majors)
+                                + "\nFix these in your next draft."
+                            )
+
+                        revision_block = (
+                            f"\n\nREVISION REQUIRED — your previous draft violated "
+                            f"comprehensibility for age {age}. Fix ALL of these in your "
+                            f"next draft:\n\n" + "\n\n".join(sections)
+                        )
+
+                        prompt = build_generation_prompt(
+                            item, existing_titles,
+                            recent_fingerprints=recent_fingerprints,
+                            catalog_gaps=catalog_gaps,
+                            mood=mood,
+                            story_type=effective_story_type,
+                            recent_phrases=recent_phrases,
+                        ) + revision_block
+                        logger.warning(
+                            "  Attempt %d: comprehensibility validator failed "
+                            "(%d major), retrying with full violation report "
+                            "(cap=%d, banned=%d, abstract=%d, title=%d)",
+                            attempt + 1, len(_en_majors),
+                            len(cap_v), len(banned_v),
+                            len(abstract_v), len(title_v),
+                        )
                         time.sleep(retry_delay)
                         continue
                     logger.error(
