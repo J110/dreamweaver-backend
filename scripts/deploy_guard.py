@@ -1288,13 +1288,16 @@ def check_radio_health():
 
 
 def check_misrouted_per_content_files() -> list[str]:
-    """Flag per-content files whose filename prefix disagrees with their dir's lang.
+    """Flag per-content files whose `lang` field disagrees with their dir's lang.
 
-    Hindi items use ids prefixed `hi-`. Any `hi-` file in an English per-content
-    dir (data/silly_songs/, data/poems/, etc.) or any non-`hi-` file in a `_hi`
-    dir is a misroute that produces duplicate (id, lang) API rows.
+    The invariant is: a file in `data/<kind>_hi/` must have `lang=='hi'`; a file
+    in the matching English dir must have `lang in {None, '', 'en'}`. Mismatches
+    yield duplicate (id, lang) API rows because the loader keys on (source dir,
+    id) — see commit fc7af04 for context.
 
-    Returns a list of issue messages (empty = clean).
+    The check intentionally trusts the file's `lang` field, not the id prefix:
+    legitimate Hindi items can use ids like `exph-…` (experimental pipeline),
+    so a pure prefix rule produces false positives.
     """
     issues: list[str] = []
     if not ON_PROD_VM:
@@ -1310,19 +1313,31 @@ def check_misrouted_per_content_files() -> list[str]:
         ("funny_shorts", "funny_shorts_hi"),
         ("poems", "poems_hi"),
     )
+
+    def _lang(path: Path) -> "str | None":
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            return None
+        return (data.get("lang") or data.get("language") or "").lower() or None
+
     for en_name, hi_name in pairs:
         en_dir = data_root / en_name
         hi_dir = data_root / hi_name
         if en_dir.is_dir():
-            for p in en_dir.glob("hi-*.json"):
-                issues.append(
-                    f"misrouted Hindi file in English dir: {p.relative_to(data_root.parent)}"
-                )
+            for p in en_dir.glob("*.json"):
+                if _lang(p) == "hi":
+                    issues.append(
+                        f"misrouted Hindi file in English dir: "
+                        f"{p.relative_to(data_root.parent)}"
+                    )
         if hi_dir.is_dir():
             for p in hi_dir.glob("*.json"):
-                if not p.name.startswith("hi-"):
+                lang = _lang(p)
+                if lang and lang != "hi":
                     issues.append(
-                        f"misrouted English file in Hindi dir: {p.relative_to(data_root.parent)}"
+                        f"misrouted non-Hindi file in Hindi dir: "
+                        f"{p.relative_to(data_root.parent)} (lang={lang!r})"
                     )
     return issues
 
