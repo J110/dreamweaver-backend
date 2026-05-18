@@ -50,7 +50,7 @@ from _funny_shorts_common import (  # noqa: E402
 )
 
 BASE = Path(__file__).resolve().parents[1]
-DATA_DIR = BASE / "data" / "funny_shorts"
+DATA_DIR = BASE / "data" / "funny_shorts_hi"
 AUDIO_DIR = BASE / "public" / "audio" / "funny-shorts-hi"
 STINGS = Path("/opt/audio-store/stings")
 STINGS_LOCAL_FALLBACK = BASE / "public" / "audio" / "stings"

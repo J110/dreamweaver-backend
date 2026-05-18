@@ -1727,8 +1727,8 @@ def generate_funny_short(axes: dict, log_prefix: str = "  ") -> dict:
     short_id = None
     for line in (r.stdout or "").splitlines():
         line = line.strip()
-        if "data/funny_shorts/" in line and ".json" in line:
-            fname = line.split("data/funny_shorts/")[-1].split(".json")[0]
+        if "data/funny_shorts_hi/" in line and ".json" in line:
+            fname = line.split("data/funny_shorts_hi/")[-1].split(".json")[0]
             if fname.startswith("hi-fs-"):
                 short_id = fname
                 break
@@ -1741,7 +1741,7 @@ def generate_funny_short(axes: dict, log_prefix: str = "  ") -> dict:
     print(f"{log_prefix}generate_funny_short_cover for {short_id}…")
     cov = _sp.run(
         ["python3", "scripts/generate_funny_short_cover.py",
-         "--story-json", f"data/funny_shorts/{short_id}.json"],
+         "--story-json", f"data/funny_shorts_hi/{short_id}.json"],
         cwd=base, capture_output=True, text=True, timeout=180,
     )
     if cov.returncode != 0:
@@ -1749,7 +1749,7 @@ def generate_funny_short(axes: dict, log_prefix: str = "  ") -> dict:
 
     # 3. Build entry from the persisted JSON
     short = json.loads(
-        (base / "data" / "funny_shorts" / f"{short_id}.json").read_text()
+        (base / "data" / "funny_shorts_hi" / f"{short_id}.json").read_text()
     )
     return {
         "id": short["id"],
