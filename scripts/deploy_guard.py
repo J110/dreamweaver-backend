@@ -100,6 +100,14 @@ BACKEND_AUDIO_POEMS = "/opt/dreamweaver-backend/public/audio/poems"
 BACKEND_COVERS_POEMS = "/opt/dreamweaver-backend/public/covers/poems"
 BACKEND_DATA_SILLY = "/opt/dreamweaver-backend/data/silly_songs"
 BACKEND_DATA_POEMS = "/opt/dreamweaver-backend/data/poems"
+BACKEND_DATA_SILLY_HI = "/opt/dreamweaver-backend/data/silly_songs_hi"
+BACKEND_DATA_POEMS_HI = "/opt/dreamweaver-backend/data/poems_hi"
+
+# Per-content dirs grouped by content kind; each kind has (en_dir, hi_dir).
+PER_CONTENT_DIR_PAIRS = {
+    "silly_songs": (BACKEND_DATA_SILLY, BACKEND_DATA_SILLY_HI),
+    "poems": (BACKEND_DATA_POEMS, BACKEND_DATA_POEMS_HI),
+}
 
 
 def get_api(use_local: bool = False) -> str:
@@ -566,9 +574,12 @@ def backup_json_files():
     Called during snapshot to ensure we have a copy of every JSON before deploy.
     """
     cmds = [
-        f'mkdir -p "{JSON_STORE}/silly_songs" "{JSON_STORE}/poems"',
+        f'mkdir -p "{JSON_STORE}/silly_songs" "{JSON_STORE}/poems" '
+        f'"{JSON_STORE}/silly_songs_hi" "{JSON_STORE}/poems_hi"',
         f'cp -f {BACKEND_DATA_SILLY}/*.json "{JSON_STORE}/silly_songs/" 2>/dev/null; true',
         f'cp -f {BACKEND_DATA_POEMS}/*.json "{JSON_STORE}/poems/" 2>/dev/null; true',
+        f'cp -f {BACKEND_DATA_SILLY_HI}/*.json "{JSON_STORE}/silly_songs_hi/" 2>/dev/null; true',
+        f'cp -f {BACKEND_DATA_POEMS_HI}/*.json "{JSON_STORE}/poems_hi/" 2>/dev/null; true',
         'echo "JSON_BACKUP_OK"',
     ]
     script = " && ".join(cmds)
@@ -580,16 +591,23 @@ def backup_json_files():
     try:
         result = _runner(script, capture_output=True, text=True, timeout=30)
         if "JSON_BACKUP_OK" in result.stdout:
-            # Count backed-up files
+            # Count backed-up files (en + hi for each kind)
             count_cmd = (
                 f'ls "{JSON_STORE}/silly_songs/"*.json 2>/dev/null | wc -l; '
-                f'ls "{JSON_STORE}/poems/"*.json 2>/dev/null | wc -l'
+                f'ls "{JSON_STORE}/poems/"*.json 2>/dev/null | wc -l; '
+                f'ls "{JSON_STORE}/silly_songs_hi/"*.json 2>/dev/null | wc -l; '
+                f'ls "{JSON_STORE}/poems_hi/"*.json 2>/dev/null | wc -l'
             )
             count_result = _runner(count_cmd, capture_output=True, text=True, timeout=15)
             counts = count_result.stdout.strip().split("\n")
-            silly = int(counts[0].strip()) if counts else 0
+            silly = int(counts[0].strip()) if len(counts) > 0 else 0
             poems_count = int(counts[1].strip()) if len(counts) > 1 else 0
-            print(f"  📦 JSON backup: {silly} silly songs, {poems_count} poems → {JSON_STORE}/")
+            silly_hi = int(counts[2].strip()) if len(counts) > 2 else 0
+            poems_hi = int(counts[3].strip()) if len(counts) > 3 else 0
+            print(
+                f"  📦 JSON backup: {silly} silly songs ({silly_hi} hi), "
+                f"{poems_count} poems ({poems_hi} hi) → {JSON_STORE}/"
+            )
             return True
         else:
             print(f"  ⚠️  JSON backup may have failed: {result.stderr[:200]}")
@@ -618,11 +636,13 @@ def recover_json_files(missing_items: list[dict]) -> tuple[int, int]:
     for item in missing_items:
         cat = item["category"]
         item_id = item["item_id"]
-        store_dir = f"{JSON_STORE}/{cat}"
-        if cat == "silly_songs":
-            data_dir = BACKEND_DATA_SILLY
-        else:
-            data_dir = BACKEND_DATA_POEMS
+        # Lang-aware routing: items with hi- prefix live in the _hi store and dir,
+        # never the English ones. Prevents the misroute-then-perpetual-restore loop
+        # that produced duplicate (id, lang=hi) API rows in 2026-05.
+        is_hi = item_id.startswith("hi-")
+        en_dir, hi_dir = PER_CONTENT_DIR_PAIRS[cat]
+        store_dir = f"{JSON_STORE}/{cat}_hi" if is_hi else f"{JSON_STORE}/{cat}"
+        data_dir = hi_dir if is_hi else en_dir
 
         # Try exact match first, then glob for ID prefix
         recover_cmds.append(
@@ -1267,6 +1287,46 @@ def check_radio_health():
     return issues
 
 
+def check_misrouted_per_content_files() -> list[str]:
+    """Flag per-content files whose filename prefix disagrees with their dir's lang.
+
+    Hindi items use ids prefixed `hi-`. Any `hi-` file in an English per-content
+    dir (data/silly_songs/, data/poems/, etc.) or any non-`hi-` file in a `_hi`
+    dir is a misroute that produces duplicate (id, lang) API rows.
+
+    Returns a list of issue messages (empty = clean).
+    """
+    issues: list[str] = []
+    if not ON_PROD_VM:
+        # Local runs don't see prod's data tree; skip rather than warn.
+        return issues
+
+    data_root = Path("/opt/dreamweaver-backend/data")
+    pairs = (
+        ("stories", "stories_hi"),
+        ("long_stories", "long_stories_hi"),
+        ("lullabies", "lullabies_hi"),
+        ("silly_songs", "silly_songs_hi"),
+        ("funny_shorts", "funny_shorts_hi"),
+        ("poems", "poems_hi"),
+    )
+    for en_name, hi_name in pairs:
+        en_dir = data_root / en_name
+        hi_dir = data_root / hi_name
+        if en_dir.is_dir():
+            for p in en_dir.glob("hi-*.json"):
+                issues.append(
+                    f"misrouted Hindi file in English dir: {p.relative_to(data_root.parent)}"
+                )
+        if hi_dir.is_dir():
+            for p in hi_dir.glob("*.json"):
+                if not p.name.startswith("hi-"):
+                    issues.append(
+                        f"misrouted English file in Hindi dir: {p.relative_to(data_root.parent)}"
+                    )
+    return issues
+
+
 def cmd_verify(args):
     """Compare current state against snapshot AND golden, check files, auto-recover.
 
@@ -1494,6 +1554,19 @@ def cmd_verify(args):
         if radio_issues:
             for msg in radio_issues:
                 unresolved.append(msg)
+
+    # ── Per-content dir routing sanity (hi-* in en dir, etc.) ──
+    if not args.local:
+        misrouted = check_misrouted_per_content_files()
+        if misrouted:
+            print(f"\n{'='*60}")
+            print(f"  ❌ Per-content routing: {len(misrouted)} misrouted file(s)")
+            for m in misrouted:
+                print(f"    ⚠️  {m}")
+            for m in misrouted:
+                unresolved.append(m)
+        else:
+            print(f"\n  ✅ Per-content routing: en/hi dirs clean.")
 
     # ── Back up current JSON files (so they're available for next recovery) ──
     if not args.local:
