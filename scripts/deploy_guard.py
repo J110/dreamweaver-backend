@@ -572,17 +572,50 @@ def backup_json_files():
     """Back up all JSON data files (silly_songs, poems) to /opt/json-store/.
 
     Called during snapshot to ensure we have a copy of every JSON before deploy.
+
+    Lang-aware (companion to fc7af04 restore-side fix): each file is routed
+    to the {cat} or {cat}_hi backup dir based on its `lang` field, not its
+    source dir. A misrouted Hindi file in data/silly_songs/ would otherwise
+    be faithfully preserved into json-store/silly_songs/, and `recover` would
+    perpetuate the misroute.
     """
-    cmds = [
-        f'mkdir -p "{JSON_STORE}/silly_songs" "{JSON_STORE}/poems" '
-        f'"{JSON_STORE}/silly_songs_hi" "{JSON_STORE}/poems_hi"',
-        f'cp -f {BACKEND_DATA_SILLY}/*.json "{JSON_STORE}/silly_songs/" 2>/dev/null; true',
-        f'cp -f {BACKEND_DATA_POEMS}/*.json "{JSON_STORE}/poems/" 2>/dev/null; true',
-        f'cp -f {BACKEND_DATA_SILLY_HI}/*.json "{JSON_STORE}/silly_songs_hi/" 2>/dev/null; true',
-        f'cp -f {BACKEND_DATA_POEMS_HI}/*.json "{JSON_STORE}/poems_hi/" 2>/dev/null; true',
-        'echo "JSON_BACKUP_OK"',
-    ]
-    script = " && ".join(cmds)
+    # Python helper runs on the prod VM (direct or via SSH). Walks each
+    # source dir, reads lang per file, copies to the correct backup dir.
+    # Base64-wrap to avoid shell-quoting issues with multi-line source.
+    import base64
+    helper = f"""
+import json, os, shutil
+STORE = {JSON_STORE!r}
+pairs = [
+    ({BACKEND_DATA_SILLY!r}, 'silly_songs'),
+    ({BACKEND_DATA_POEMS!r}, 'poems'),
+    ({BACKEND_DATA_SILLY_HI!r}, 'silly_songs'),
+    ({BACKEND_DATA_POEMS_HI!r}, 'poems'),
+]
+for _, c in pairs:
+    for s in ('', '_hi'):
+        os.makedirs(os.path.join(STORE, c + s), exist_ok=True)
+n = 0
+for src, cat in pairs:
+    if not os.path.isdir(src):
+        continue
+    for name in os.listdir(src):
+        if not name.endswith('.json'):
+            continue
+        path = os.path.join(src, name)
+        try:
+            with open(path) as f:
+                data = json.load(f)
+        except Exception:
+            continue
+        lang = (data.get('lang') or data.get('language') or '').lower()
+        target_cat = cat + ('_hi' if lang == 'hi' else '')
+        shutil.copyfile(path, os.path.join(STORE, target_cat, name))
+        n += 1
+print('JSON_BACKUP_OK', n)
+"""
+    encoded = base64.b64encode(helper.encode()).decode()
+    script = f"echo {encoded} | base64 -d | python3"
     _runner = (
         (lambda c, **kw: subprocess.run(["bash", "-c", c], **kw))
         if ON_PROD_VM
