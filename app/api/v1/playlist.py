@@ -81,11 +81,19 @@ def _load_dir(dir_name: str) -> list[dict]:
 
 
 def _audio_info(item: dict, audio_dir: str) -> tuple[Optional[str], Optional[str]]:
-    """Return (audio_file, audio_url) for an item."""
+    """Return (audio_file, audio_url) for an item.
+
+    Prefers the item's own `audio_url` field — it records where the file
+    actually lives on disk, which can differ from the SLOTS-table audio_dir
+    when cron writes a Hindi item's audio to the unsuffixed English audio
+    dir (drift). Reconstructing `/audio/{audio_dir}/{audio_file}` from the
+    table produced 404s for today's HI silly_song which landed in
+    `/audio/silly-songs/` not `/audio/silly-songs-hi/`.
+    """
+    if item.get("audio_url"):
+        return item.get("audio_file"), item["audio_url"]
     if item.get("audio_file"):
         return item["audio_file"], f"/audio/{audio_dir}/{item['audio_file']}"
-    if item.get("audio_url"):
-        return None, item["audio_url"]
     variants = item.get("audio_variants") or []
     for v in variants:
         url = v.get("url") or v.get("audio_url")
@@ -95,10 +103,13 @@ def _audio_info(item: dict, audio_dir: str) -> tuple[Optional[str], Optional[str
 
 
 def _cover_info(item: dict, cover_dir: str) -> tuple[Optional[str], Optional[str]]:
+    # Same precedence rationale as _audio_info: trust the item's `cover`
+    # field over the reconstructed path, since covers also drift across
+    # the canonical / non-suffixed dirs in cron output.
+    if item.get("cover"):
+        return item.get("cover_file"), item["cover"]
     if item.get("cover_file"):
         return item["cover_file"], f"/covers/{cover_dir}/{item['cover_file']}"
-    if item.get("cover"):
-        return None, item["cover"]
     return None, None
 
 
