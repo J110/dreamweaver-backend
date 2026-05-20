@@ -10,6 +10,19 @@ Sources:
                   enforce same shared rules)
     silly_song  → HINDI_SILLY_SONGS_GUIDELINES (1).md §11 (with hardened religious + 5 simile constructions)
     poem        → HINDI_MUSICAL_POEMS_GUIDELINES (1).md §10
+
+Pending validation calibration follow-ups (see 2026-05-19 cron analysis):
+    1. HI 9-12 short_story word band lower bound (240) may be too tight.
+       Mistral consistently undershoots by 30-40% on Hindi Roman script
+       (which is more lexically compact than English). Per CLAUDE.md,
+       requires 5-gen sample before adjusting. Defer to dedicated
+       calibration session.
+    2. EN poem 8-word-per-line cap consistently exceeded by 1 word.
+    3. EN story banned word "however" not enumerated in initial prompt.
+    4. EN story sentences over per-age cap by 1-3 words.
+    Items 2-4 are model compliance drift; addressing requires adjusting
+    initial generation prompts to surface constraints upfront + tightening
+    retry feedback to be more surgical. Defer to prompt engineering session.
 """
 from __future__ import annotations
 
@@ -25,17 +38,18 @@ LITERARY = [
 ]
 
 # Deity names use word-boundary regex (compiled below) to avoid false
-# positives on common Hindi words: "ram " would otherwise match naram (soft),
-# garam (warm), aaram (rest), param (supreme); "deva " would match devar
-# (brother-in-law); "shiv" would match shivling (which IS religious — kept
-# as substring) but also "shivay" forms.
+# positives on common Hindi/English words: "ram" would otherwise match naram
+# (soft), garam (warm), aaram (rest), param (supreme); "deva" → devar
+# (brother-in-law); "kali" → kalikaal (era), kalindi (river/name); "rabb"
+# → rabbit; "yesu" → yesudaas (composer). "shiv" stays substring on purpose
+# (matches shivling, which IS religious).
 DEITY_NAMES = [
     "bhagwaan", "ishvar", "lakshmi", "ganesh",
     "shiv", "krishn", "hanuman", "durga", "saraswati",
-    "vishnu", "kali", "allah", "khuda", "rabb", "yesu", "jesus",
+    "vishnu", "allah", "khuda", "jesus",
 ]
 # Word-boundary-checked deities (catch the standalone form, not as substring)
-DEITY_WORD_BOUNDARY = ["ram", "deva", "devi"]
+DEITY_WORD_BOUNDARY = ["ram", "deva", "devi", "kali", "rabb", "yesu"]
 RITUAL_VERBS = [
     "puja", "aarti", "prarthana", "bhajan karna", "yajna", "havan",
     "prasad", "bhog", "tilak", "darshan", "namaz", "ibadat",
@@ -52,10 +66,19 @@ NAME_BLACKLIST = [
     "Titu", "Bunty", "Ramu",
 ]
 
-CONVERSATIONAL_MARKERS = [
-    "na ", " toh ", "arre", "pata hai", "chalo", "dekho", "suno",
-    "hai na", "aur phir", "bas ", "achha", "zara",
-]
+# Conversational markers — matched with case-insensitive word boundaries to
+# handle sentence-initial caps and punctuation-terminated tokens uniformly.
+# Substring matching (the previous approach) missed "Toh phir" at sentence
+# start (no leading space) and "Na." / "bas," (no trailing space).
+_CONVERSATIONAL_MARKERS_RE = re.compile(
+    r"\b(?:toh|na|arre|pata hai|chalo|dekho|suno|hai na|"
+    r"aur phir|bas|achha|zara)\b",
+    re.IGNORECASE,
+)
+
+
+def _count_conversational_markers(text: str) -> int:
+    return len(_CONVERSATIONAL_MARKERS_RE.findall(text or ""))
 
 ONOMATOPOEIA = [
     "sarr", "tap tap", "chhap", "khat", "dheere dheere",
@@ -163,7 +186,7 @@ def validate_short_story(d: dict) -> list[str]:
         errors.append(f"religious content: '{w}'")
 
     # Conversational markers ≥2
-    n = sum(1 for m in CONVERSATIONAL_MARKERS if m in text_lower)
+    n = _count_conversational_markers(text)
     if n < 2:
         errors.append(f"only {n} conversational markers (need ≥2)")
 
@@ -245,7 +268,7 @@ def validate_long_story(d: dict) -> list[str]:
         errors.append(f"religious content: '{w}'")
 
     # Conversational markers ≥5 for long stories
-    n = sum(1 for m in CONVERSATIONAL_MARKERS if m in text_lower)
+    n = _count_conversational_markers(text)
     if n < 5:
         errors.append(f"only {n} conversational markers (need ≥5)")
 
