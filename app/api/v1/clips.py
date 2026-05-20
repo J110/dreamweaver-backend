@@ -2,6 +2,12 @@
 Clips API — list, download, preview, and manage social media clips.
 
 Auth: BLOG_SECRET_KEY Bearer token (same as analytics dashboard).
+
+Hindi clips live under ``$CLIPS_DIR/hi/``; English under ``$CLIPS_DIR/``.
+List/download/preview walk ``CLIPS_DIR`` recursively so subdir layout is
+transparent to callers. Each metadata JSON carries a ``lang`` field (the
+list endpoint accepts ``?lang=`` to filter; legacy entries missing the
+field are treated as English).
 """
 
 import json
@@ -35,6 +41,20 @@ def verify_clips_key(authorization: Optional[str] = Header(None)):
         raise HTTPException(status_code=401, detail="Invalid key")
 
 
+# ── Path resolution ──────────────────────────────────────────────────
+
+def _find_clip_path(story_id: str, voice: str, suffix: str) -> Optional[Path]:
+    """Locate a clip artefact across EN (root) and HI (``hi/``) subdirs."""
+    if not CLIPS_DIR.exists():
+        return None
+    target = f"{story_id}_{voice}_clip.{suffix}"
+    direct = CLIPS_DIR / target
+    if direct.exists():
+        return direct
+    matches = list(CLIPS_DIR.rglob(target))
+    return matches[0] if matches else None
+
+
 # ── List clips ───────────────────────────────────────────────────────
 
 @router.get("/")
@@ -45,6 +65,7 @@ async def list_clips(
     voice: Optional[str] = Query(None),
     content_type: Optional[str] = Query(None, alias="contentType"),
     posted: Optional[str] = Query(None),
+    lang: Optional[str] = Query(None, description="Filter by clip language (en/hi)"),
     sort: str = Query("newest"),
 ):
     """List all clips with optional filters."""
@@ -54,14 +75,16 @@ async def list_clips(
         return {"clips": [], "total": 0}
 
     clips = []
-    for meta_file in CLIPS_DIR.glob("*_clip.json"):
+    for meta_file in CLIPS_DIR.rglob("*_clip.json"):
         try:
             with open(meta_file) as f:
                 meta = json.load(f)
         except (json.JSONDecodeError, IOError):
             continue
 
-        # Apply filters
+        meta_lang = meta.get("lang") or "en"
+        if lang and meta_lang != lang:
+            continue
         if mood and meta.get("mood") != mood:
             continue
         if age_group and meta.get("ageGroup") != age_group:
@@ -75,18 +98,16 @@ async def list_clips(
         if posted == "unposted" and any(meta.get("posted", {}).values()):
             continue
 
-        # Verify MP4 exists
-        mp4_path = CLIPS_DIR / meta.get("filename", "")
+        mp4_path = meta_file.parent / meta.get("filename", "")
         if not mp4_path.exists():
             continue
 
-        # Add file size if missing
         if not meta.get("fileSize"):
             meta["fileSize"] = mp4_path.stat().st_size
 
+        meta["lang"] = meta_lang
         clips.append(meta)
 
-    # Sort
     if sort == "newest":
         clips.sort(key=lambda c: c.get("generatedAt", ""), reverse=True)
     elif sort == "oldest":
@@ -108,8 +129,8 @@ async def download_clip(
     """Download a clip MP4."""
     verify_clips_key(authorization)
 
-    mp4_path = CLIPS_DIR / f"{story_id}_{voice}_clip.mp4"
-    if not mp4_path.exists():
+    mp4_path = _find_clip_path(story_id, voice, "mp4")
+    if not mp4_path:
         raise HTTPException(status_code=404, detail="Clip not found")
 
     return FileResponse(
@@ -130,8 +151,8 @@ async def preview_clip(
     """Stream a clip MP4 for preview."""
     verify_clips_key(authorization)
 
-    mp4_path = CLIPS_DIR / f"{story_id}_{voice}_clip.mp4"
-    if not mp4_path.exists():
+    mp4_path = _find_clip_path(story_id, voice, "mp4")
+    if not mp4_path:
         raise HTTPException(status_code=404, detail="Clip not found")
 
     return FileResponse(mp4_path, media_type="video/mp4")
@@ -152,8 +173,8 @@ async def mark_posted(
     if platform not in ("youtube", "instagram", "tiktok"):
         raise HTTPException(status_code=400, detail="Invalid platform")
 
-    meta_path = CLIPS_DIR / f"{story_id}_{voice}_clip.json"
-    if not meta_path.exists():
+    meta_path = _find_clip_path(story_id, voice, "json")
+    if not meta_path:
         raise HTTPException(status_code=404, detail="Clip metadata not found")
 
     with open(meta_path) as f:
@@ -183,8 +204,8 @@ async def unmark_posted(
     if platform not in ("youtube", "instagram", "tiktok"):
         raise HTTPException(status_code=400, detail="Invalid platform")
 
-    meta_path = CLIPS_DIR / f"{story_id}_{voice}_clip.json"
-    if not meta_path.exists():
+    meta_path = _find_clip_path(story_id, voice, "json")
+    if not meta_path:
         raise HTTPException(status_code=404, detail="Clip metadata not found")
 
     with open(meta_path) as f:

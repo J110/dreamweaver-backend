@@ -1,56 +1,43 @@
-#!/usr/bin/env python3
+"""Shared plumbing for generate_clips.py (EN) and generate_clips_hi.py (HI).
+
+Language-agnostic helpers: FFmpeg orchestration, SVG->PNG, Ken Burns motion,
+audio trim, video compositing, daily-plan selection, metadata writes.
+
+Per-language configuration is injected via ``LangConfig``: mood labels,
+type labels, caption templates, voice captions, output directory, content
+filter predicate, and a hook into voice resolution that knows the language.
+
+Per dreamweaver-backend/CLAUDE.md: parallel scripts pattern, not ``--lang``
+flags. This module is the shared substrate, not a unifying layer; it knows
+nothing about Hindi vs English, only about what the caller hands it.
 """
-generate_clips.py — Generate 60-second vertical social media clips for YouTube Shorts / Reels / TikTok.
+from __future__ import annotations
 
-Each clip is 1080×1920 (9:16) containing:
-  - Animated SVG cover rendered as static PNG with Ken Burns zoom effect
-  - 60 seconds of narration audio (trimmed from pre-generated audio)
-  - Text overlays: mood tag, title, branding
-
-Usage:
-    python3 scripts/generate_clips.py                          # Daily 6 clips (3 new + 3 back-catalog)
-    python3 scripts/generate_clips.py --story-id <id>          # Single story clip
-    python3 scripts/generate_clips.py --force                   # Overwrite existing clips
-    python3 scripts/generate_clips.py --dry-run                 # Preview plan only
-    python3 scripts/generate_clips.py --batch                   # All unclipped stories
-    python3 scripts/generate_clips.py --limit 5                 # Limit batch size
-"""
-
-import argparse
 import hashlib
 import json
 import logging
 import os
-import shutil
 import subprocess
 import sys
 import tempfile
 import time
+from dataclasses import dataclass, field
 from datetime import date, datetime
 from pathlib import Path
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
-# ── Paths ────────────────────────────────────────────────────────────────
+# ── Voice service (lang-aware resolve) ────────────────────────────────────
 BASE_DIR = Path(__file__).parent.parent
-CONTENT_PATH = BASE_DIR / "seed_output" / "content.json"
-CLIPS_DIR = BASE_DIR / "clips"
-WEB_DIR = BASE_DIR.parent / "dreamweaver-web"
-COVERS_DIR = WEB_DIR / "public" / "covers"
-AUDIO_DIR = WEB_DIR / "public" / "audio" / "pre-gen"
-
-# ── Load .env ────────────────────────────────────────────────────────────
+sys.path.insert(0, str(BASE_DIR))
 try:
-    from dotenv import load_dotenv
-    load_dotenv(BASE_DIR / ".env", override=True)
+    from app.services.tts.voice_service import (  # type: ignore
+        get_clip_voice,
+        resolve_voice_id,
+    )
+    HAS_VOICE_SELECTION = True
 except ImportError:
-    pass
+    HAS_VOICE_SELECTION = False
 
-# ── Logging ──────────────────────────────────────────────────────────────
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s",
-    datefmt="%H:%M:%S",
-)
-logger = logging.getLogger("clips")
 
 # ── Constants ────────────────────────────────────────────────────────────
 CLIP_DURATION = 60
@@ -58,87 +45,127 @@ FPS = 30
 VIDEO_WIDTH = 1080
 VIDEO_HEIGHT = 1920
 COVER_SIZE = 1080
-BG_COLOR = "0D0B2E"  # hex without #
+BG_COLOR = "0D0B2E"
 TITLE_COLOR = "F5E6D3"
 BRAND_COLOR = "888888"
 
-# ── Resource / safety limits ─────────────────────────────────────────────
-FFMPEG_TIMEOUT = 300          # Max seconds per ffmpeg call (5 min)
-FFMPEG_COMPOSITE_TIMEOUT = 420  # Composite is heavier (7 min)
-MAX_CLIPS_PER_RUN = 6         # Hard cap: 3 new + 3 back-catalog
-FFMPEG_THREADS = 1             # Limit CPU threads on small VMs
-FFMPEG_NICE = 10               # Lower priority to avoid starving other services
+FFMPEG_TIMEOUT = 300
+FFMPEG_COMPOSITE_TIMEOUT = 420
+MAX_CLIPS_PER_RUN = 6
+FFMPEG_THREADS = 1
+FFMPEG_NICE = 10
 
-MOOD_DISPLAY = {
-    "wired":   {"label": "Silly",      "emoji": "😄", "color": "FFB946"},
-    "curious": {"label": "Adventure",  "emoji": "🔮", "color": "7B68EE"},
-    "calm":    {"label": "Gentle",     "emoji": "🌙", "color": "6BB5C9"},
-    "sad":     {"label": "Comfort",    "emoji": "💛", "color": "E8A87C"},
-    "anxious": {"label": "Brave",      "emoji": "🛡️",  "color": "85C88A"},
-    "angry":   {"label": "Let It Out", "emoji": "🌊", "color": "C9896D"},
-}
+CONTENT_PATH = BASE_DIR / "seed_output" / "content.json"
+WEB_DIR = BASE_DIR.parent / "dreamweaver-web"
+COVERS_DIR = WEB_DIR / "public" / "covers"
+AUDIO_DIR = WEB_DIR / "public" / "audio" / "pre-gen"
 
-# Voice label for captions
-VOICE_LABELS = {
-    "female_1": "calm voice",
-    "asmr": "ASMR whisper voice",
-    "default": "",
-}
-
-VOICE_TAGS = {
-    "female_1": "#calmvoice",
-    "asmr": "#asmr #asmrforkids",
-    "default": "#lullaby",
-}
+logger = logging.getLogger("clips")
 
 
-# ── Voice Assignment ─────────────────────────────────────────────────────
+# ── Language configuration ───────────────────────────────────────────────
 
-def get_daily_voice_assignment():
-    """Deterministic daily coin flip — same date = same assignment."""
+@dataclass
+class LangConfig:
+    """Per-language knobs the shared pipeline needs."""
+
+    lang: str
+    output_dir: Path
+    mood_display: Dict[str, Dict[str, str]]
+    type_labels: Dict[str, str]
+    voice_labels: Dict[str, str]
+    voice_tags: Dict[str, str]
+    caption_builder: Callable[..., Dict[str, str]]
+    brand_text: str = "dreamvalley.app"
+    ages_prefix: str = "Ages"
+    fallback_voice_assignment: Dict[str, str] = field(default_factory=dict)
+
+    def voice_suffix(self) -> str:
+        return "_hi" if self.lang == "hi" else ""
+
+    def filter_content(self, story: Dict[str, Any]) -> bool:
+        """Default: include the story iff its lang matches.
+
+        For English, treat items missing ``lang`` as English so legacy
+        content remains eligible. For Hindi, ``lang`` must be explicit.
+        """
+        story_lang = story.get("lang") or story.get("language") or "en"
+        return story_lang == self.lang
+
+
+# ── Voice assignment ─────────────────────────────────────────────────────
+
+def get_daily_voice_assignment(config: LangConfig) -> Dict[str, str]:
+    """Deterministic daily coin flip — same date+lang ⇒ same assignment.
+
+    The hash is salted with the language so EN and HI alternate
+    independently and one doesn't drag the other along on flip days.
+    Returned voice IDs include any language-specific suffix.
+    """
     today = date.today().isoformat()
-    flip = int(hashlib.md5(today.encode()).hexdigest(), 16) % 2
+    seed = f"{today}|{config.lang}"
+    flip = int(hashlib.md5(seed.encode()).hexdigest(), 16) % 2
+    suffix = config.voice_suffix()
     if flip == 0:
-        return {"story": "female_1", "poem": "asmr", "lullaby": "default"}
-    else:
-        return {"story": "asmr", "poem": "female_1", "lullaby": "default"}
+        return {
+            "story": f"female_1{suffix}",
+            "poem": f"asmr{suffix}",
+            "lullaby": f"default{suffix}" if suffix else "default",
+        }
+    return {
+        "story": f"asmr{suffix}",
+        "poem": f"female_1{suffix}",
+        "lullaby": f"default{suffix}" if suffix else "default",
+    }
 
 
-def get_voice_for_story(story, voice_assignment):
-    """Get the voice variant to use for a given story based on today's assignment."""
+def get_voice_for_story(
+    story: Dict[str, Any],
+    voice_assignment: Dict[str, str],
+    config: LangConfig,
+) -> Tuple[Optional[str], Optional[str]]:
+    """Choose a voice variant for ``story`` honouring the language config.
+
+    Mood-based selection when available; legacy assignment otherwise.
+    Hindi resolves via ``VOICE_ID_MAP_HI`` (``_hi``-suffixed file IDs)
+    so the matcher hits Hindi audio_variants.
+    """
     content_type = story.get("type", "story").lower()
-    if content_type == "song":
-        assigned = voice_assignment.get("lullaby", "default")
-    elif content_type == "poem":
-        assigned = voice_assignment.get("poem", "female_1")
-    else:
-        assigned = voice_assignment.get("story", "female_1")
-
-    # For "default" (lullabies), pick the first available variant
     variants = story.get("audio_variants", [])
     if not variants:
         return None, None
 
-    if assigned == "default":
+    if content_type == "song":
         v = variants[0]
         return v["voice"], v["url"]
 
-    # Try to find the assigned voice
+    if HAS_VOICE_SELECTION:
+        clip_voice_descriptive = get_clip_voice(story)
+        clip_voice_id = resolve_voice_id(clip_voice_descriptive, lang=config.lang)
+        for v in variants:
+            if v["voice"] == clip_voice_id:
+                return v["voice"], v["url"]
+        v = variants[0]
+        return v["voice"], v["url"]
+
+    if content_type == "poem":
+        assigned = voice_assignment.get("poem", f"female_1{config.voice_suffix()}")
+    else:
+        assigned = voice_assignment.get("story", f"female_1{config.voice_suffix()}")
+
     for v in variants:
         if v["voice"] == assigned:
             return v["voice"], v["url"]
 
-    # Fallback: use first available
     v = variants[0]
     return v["voice"], v["url"]
 
 
 # ── SVG to PNG ───────────────────────────────────────────────────────────
 
-def svg_to_png(svg_path, png_path, size=COVER_SIZE):
-    """Convert SVG to PNG using cairosvg."""
+def svg_to_png(svg_path: Path, png_path: Path, size: int = COVER_SIZE) -> bool:
     try:
-        import cairosvg
+        import cairosvg  # type: ignore
         cairosvg.svg2png(
             url=str(svg_path),
             write_to=str(png_path),
@@ -148,7 +175,6 @@ def svg_to_png(svg_path, png_path, size=COVER_SIZE):
         return True
     except Exception as e:
         logger.warning("  cairosvg failed: %s — trying rsvg-convert fallback", e)
-        # Fallback: rsvg-convert
         try:
             subprocess.run(
                 ["rsvg-convert", "-w", str(size), "-h", str(size),
@@ -161,11 +187,9 @@ def svg_to_png(svg_path, png_path, size=COVER_SIZE):
             return False
 
 
-# ── Ken Burns Video ──────────────────────────────────────────────────────
+# ── FFmpeg primitives ────────────────────────────────────────────────────
 
-def _run_ffmpeg(cmd, label, timeout=FFMPEG_TIMEOUT):
-    """Run an ffmpeg command with timeout, thread limits, and nice priority."""
-    # Add thread limit to ffmpeg for small VMs
+def _run_ffmpeg(cmd: List[str], label: str, timeout: int = FFMPEG_TIMEOUT) -> bool:
     if "-threads" not in cmd:
         cmd = cmd[:1] + ["-threads", str(FFMPEG_THREADS)] + cmd[1:]
     try:
@@ -183,8 +207,8 @@ def _run_ffmpeg(cmd, label, timeout=FFMPEG_TIMEOUT):
         return False
 
 
-def create_ken_burns_video(png_path, video_path, duration=CLIP_DURATION):
-    """Create a slow-zoom (Ken Burns) video from a static image via FFmpeg."""
+def create_ken_burns_video(png_path: Path, video_path: Path,
+                           duration: int = CLIP_DURATION) -> bool:
     total_frames = duration * FPS
     cmd = [
         "ffmpeg", "-y",
@@ -207,10 +231,8 @@ def create_ken_burns_video(png_path, video_path, duration=CLIP_DURATION):
     return _run_ffmpeg(cmd, "Ken Burns")
 
 
-# ── Audio Processing ─────────────────────────────────────────────────────
-
-def trim_audio(input_path, output_path, duration=CLIP_DURATION):
-    """Trim audio to duration with fade in (1s) and fade out (3s)."""
+def trim_audio(input_path: Path, output_path: Path,
+               duration: int = CLIP_DURATION) -> bool:
     fade_out_start = max(0, duration - 3)
     cmd = [
         "ffmpeg", "-y",
@@ -224,12 +246,11 @@ def trim_audio(input_path, output_path, duration=CLIP_DURATION):
     return _run_ffmpeg(cmd, "Audio trim", timeout=120)
 
 
-# ── Title Wrapping ───────────────────────────────────────────────────────
+# ── Title / text helpers ─────────────────────────────────────────────────
 
-def wrap_title(title, max_chars=24):
-    """Split title into lines that fit the video width."""
+def wrap_title(title: str, max_chars: int = 24) -> List[str]:
     words = title.split()
-    lines = []
+    lines: List[str] = []
     current = ""
     for word in words:
         test = f"{current} {word}".strip()
@@ -241,54 +262,55 @@ def wrap_title(title, max_chars=24):
             current = word
     if current:
         lines.append(current)
-    return lines[:3]  # max 3 lines
+    return lines[:3]
 
 
-def escape_ffmpeg_text(text):
-    """Escape special characters for FFmpeg drawtext filter."""
-    # FFmpeg drawtext needs these chars escaped
+def escape_ffmpeg_text(text: str) -> str:
     for ch in [":", "'", "\\", "[", "]", ";", ","]:
         text = text.replace(ch, f"\\{ch}")
     return text
 
 
-# ── Video Compositing ────────────────────────────────────────────────────
+# ── Composite ────────────────────────────────────────────────────────────
 
-def composite_video(cover_video, audio_path, title, mood, output_path,
-                    character_info=None, age_group=None, content_type=None):
-    """Combine cover video + audio + text overlays into final 9:16 clip."""
-    mood_info = MOOD_DISPLAY.get(mood, MOOD_DISPLAY["calm"])
-    mood_text = f"{mood_info['label']}"
-    mood_color = mood_info["color"]
+def composite_video(
+    cover_video: Path,
+    audio_path: Path,
+    title: str,
+    mood: str,
+    output_path: Path,
+    config: LangConfig,
+    character_info: Optional[Dict[str, Any]] = None,
+    age_group: Optional[str] = None,
+    content_type: Optional[str] = None,
+    subtype: Optional[str] = None,
+) -> bool:
+    """Stitch cover + audio + overlays into a 9:16 60s MP4."""
+    mood_info = config.mood_display.get(mood, config.mood_display.get("calm", {
+        "label": "", "color": TITLE_COLOR,
+    }))
+    mood_text = mood_info.get("label", "")
+    mood_color = mood_info.get("color", TITLE_COLOR)
 
     title_lines = wrap_title(title)
-    brand_text = "dreamvalley.app"
 
-    # Find a suitable font
     font_paths = [
         "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
         "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
-        "/System/Library/Fonts/Helvetica.ttc",  # macOS
-        "/usr/share/fonts/TTF/DejaVuSans-Bold.ttf",  # Arch
+        "/System/Library/Fonts/Helvetica.ttc",
+        "/usr/share/fonts/TTF/DejaVuSans-Bold.ttf",
     ]
     font = next((f for f in font_paths if os.path.exists(f)), "")
     font_arg = f":fontfile={font}" if font else ""
 
-    # Build FFmpeg filter chain
-    filters = []
-
-    # Scale cover to 1080x1080
+    filters: List[str] = []
     filters.append(f"[0:v]scale={COVER_SIZE}:{COVER_SIZE}[cover]")
-
-    # Dark background
     filters.append(
-        f"color=c=0x{BG_COLOR}:s={VIDEO_WIDTH}x{VIDEO_HEIGHT}:d={CLIP_DURATION}:r={FPS}[bg]"
+        f"color=c=0x{BG_COLOR}:s={VIDEO_WIDTH}x{VIDEO_HEIGHT}:"
+        f"d={CLIP_DURATION}:r={FPS}[bg]"
     )
-
-    # Place cover on background (top, 80px padding)
     filters.append("[bg][cover]overlay=0:80[comp]")
 
-    # Mood tag text
     escaped_mood = escape_ffmpeg_text(mood_text)
     filters.append(
         f"[comp]drawtext="
@@ -300,7 +322,6 @@ def composite_video(cover_video, audio_path, title, mood, output_path,
         f"[t0]"
     )
 
-    # Title lines
     prev = "t0"
     y_start = 1280
     for i, line in enumerate(title_lines):
@@ -317,19 +338,15 @@ def composite_video(cover_video, audio_path, title, mood, output_path,
         )
         prev = tag
 
-    # ── Character info + age group (fills the empty space below title) ──
     tag_idx = len(title_lines) + 1
-    title_bottom = y_start + len(title_lines) * 65 + 20  # 20px padding after title
+    title_bottom = y_start + len(title_lines) * 65 + 20
 
-    # Character identity line
     if character_info:
         char_name = character_info.get("name", "")
         char_identity = character_info.get("identity", "")
         if char_name and char_identity:
-            # Shorten identity to fit: "A dreamy firefly who believes in ..." → "A dreamy firefly"
             short_identity = char_identity
             if len(short_identity) > 40:
-                # Cut at last space before 40 chars
                 short_identity = short_identity[:40].rsplit(" ", 1)[0]
             char_text = f"{char_name} — {short_identity}"
         elif char_name:
@@ -352,22 +369,17 @@ def composite_video(cover_video, audio_path, title, mood, output_path,
             prev = char_tag
             tag_idx += 1
 
-    # Age group + content type line
-    info_parts = []
+    info_parts: List[str] = []
     if age_group:
-        info_parts.append(f"Ages {age_group}")
-    type_labels = {
-        "song": "Lullaby", "story": "Story",
-        "poem": "Poem", "long_story": "Story",
-    }
-    if content_type and content_type in type_labels:
-        info_parts.append(type_labels[content_type])
+        info_parts.append(f"{config.ages_prefix} {age_group}")
+    type_key = subtype if (subtype and subtype in config.type_labels) else content_type
+    if type_key and type_key in config.type_labels:
+        info_parts.append(config.type_labels[type_key])
     if info_parts:
-        info_text = " · ".join(info_parts)  # e.g. "Ages 2-5 · Lullaby"
-        # Use middle-dot as separator — escape it for FFmpeg
+        info_text = " · ".join(info_parts)
         info_text_escaped = escape_ffmpeg_text(info_text)
         info_tag = f"t{tag_idx}"
-        char_line_offset = 80 if character_info else 40  # extra space if no char line
+        char_line_offset = 80 if character_info else 40
         filters.append(
             f"[{prev}]drawtext="
             f"text='{info_text_escaped}'"
@@ -380,9 +392,8 @@ def composite_video(cover_video, audio_path, title, mood, output_path,
         prev = info_tag
         tag_idx += 1
 
-    # Branding
     brand_tag = f"t{tag_idx}"
-    escaped_brand = escape_ffmpeg_text(brand_text)
+    escaped_brand = escape_ffmpeg_text(config.brand_text)
     filters.append(
         f"[{prev}]drawtext="
         f"text='{escaped_brand}'"
@@ -393,7 +404,6 @@ def composite_video(cover_video, audio_path, title, mood, output_path,
         f"[{brand_tag}]"
     )
 
-    # Fade in/out
     filters.append(
         f"[{brand_tag}]fade=t=in:st=0:d=1,fade=t=out:st={CLIP_DURATION - 3}:d=3[final_v]"
     )
@@ -420,80 +430,50 @@ def composite_video(cover_video, audio_path, title, mood, output_path,
     return _run_ffmpeg(cmd, "Composite", timeout=FFMPEG_COMPOSITE_TIMEOUT)
 
 
-# ── Captions ─────────────────────────────────────────────────────────────
-
-def generate_captions(title, mood, age_group, story_id, voice):
-    """Generate platform-specific captions for the clip."""
-    mood_info = MOOD_DISPLAY.get(mood, MOOD_DISPLAY["calm"])
-    voice_label = VOICE_LABELS.get(voice, "")
-    voice_tag = VOICE_TAGS.get(voice, "")
-
-    youtube = (
-        f"{title} {mood_info['emoji']} | Bedtime Story for Kids"
-        f"{' (' + voice_label + ')' if voice_label else ''}\n\n"
-        f"A {mood_info['label'].lower()} bedtime story for ages {age_group}. "
-        f"Listen to the full story free on Dream Valley.\n\n"
-        f"\U0001F319 dreamvalley.app\n\n"
-        f"#bedtimestory #kidssleep #bedtimeroutine #storytime "
-        f"#dreamvalley {voice_tag}"
-    )
-
-    instagram = (
-        f"{title} {mood_info['emoji']}"
-        f"{' · ' + voice_label if voice_label else ''}\n\n"
-        f"A {mood_info['label'].lower()} bedtime story for ages {age_group}. "
-        f"Full story free on dreamvalley.app \U0001F319\n\n"
-        f"#bedtimestories #toddlerbedtime #kidssleep "
-        f"#parentinghack #bedtimeroutine {voice_tag}"
-    )
-
-    tiktok = (
-        f"{title} {mood_info['emoji']}"
-        f"{' · ' + voice_label if voice_label else ''}\n\n"
-        f"dreamvalley.app \U0001F319\n\n"
-        f"#bedtimestory #toddlermom #bedtimeroutine "
-        f"#kidssleep {voice_tag}"
-    )
-
-    return {"youtube": youtube, "instagram": instagram, "tiktok": tiktok}
-
-
 # ── Metadata ─────────────────────────────────────────────────────────────
 
-def write_clip_metadata(story, voice, clip_path):
-    """Write metadata JSON alongside the MP4."""
+def derive_age_group(story: Dict[str, Any]) -> str:
     age_group = story.get("age_group", "")
-    if not age_group:
-        age = story.get("target_age", 4)
-        if age <= 1:
-            age_group = "0-1"
-        elif age <= 5:
-            age_group = "2-5"
-        elif age <= 8:
-            age_group = "6-8"
-        else:
-            age_group = "9-12"
+    if age_group:
+        return age_group
+    age = story.get("target_age", 4)
+    if age <= 1:
+        return "0-1"
+    if age <= 5:
+        return "2-5"
+    if age <= 8:
+        return "6-8"
+    return "9-12"
 
+
+def write_clip_metadata(story: Dict[str, Any], voice: str, clip_path: Path,
+                        config: LangConfig) -> str:
+    age_group = derive_age_group(story)
     short_id = story["id"][:8]
     meta = {
         "storyId": short_id,
         "fullStoryId": story["id"],
         "voice": voice,
+        "lang": config.lang,
         "title": story.get("title", "Untitled"),
         "mood": story.get("mood", "calm"),
         "ageGroup": age_group,
         "contentType": story.get("type", "story"),
+        "subtype": story.get("subtype"),
         "generatedAt": datetime.utcnow().isoformat() + "Z",
         "duration": CLIP_DURATION,
-        "fileSize": os.path.getsize(clip_path) if os.path.exists(clip_path) else 0,
-        "filename": os.path.basename(clip_path),
+        "fileSize": clip_path.stat().st_size if clip_path.exists() else 0,
+        "filename": clip_path.name,
         "posted": {"youtube": None, "instagram": None, "tiktok": None},
-        "captions": generate_captions(
-            story.get("title", "Untitled"),
-            story.get("mood", "calm"),
-            age_group,
-            story["id"],
-            voice,
+        "captions": config.caption_builder(
+            title=story.get("title", "Untitled"),
+            mood=story.get("mood", "calm"),
+            age_group=age_group,
+            story_id=story["id"],
+            voice=voice,
+            content_type=story.get("type", "story"),
+            subtype=story.get("subtype"),
+            config=config,
         ),
     }
     meta_path = str(clip_path).replace(".mp4", ".json")
@@ -502,10 +482,11 @@ def write_clip_metadata(story, voice, clip_path):
     return meta_path
 
 
-# ── Single Clip Generation ───────────────────────────────────────────────
+# ── Single clip ──────────────────────────────────────────────────────────
 
-def generate_clip(story, voice, audio_url, output_dir, force=False):
-    """Generate one 60-second clip for a story with the given voice."""
+def generate_clip(story: Dict[str, Any], voice: str, audio_url: str,
+                  output_dir: Path, config: LangConfig,
+                  force: bool = False) -> Optional[str]:
     story_id = story["id"]
     short_id = story_id[:8]
     title = story.get("title", "Untitled")
@@ -513,14 +494,12 @@ def generate_clip(story, voice, audio_url, output_dir, force=False):
     output_filename = f"{short_id}_{voice}_clip.mp4"
     final_clip = output_dir / output_filename
 
-    # Skip if exists
     if final_clip.exists() and not force:
         logger.info("  %s already exists, skipping", output_filename)
-        return None  # Don't count pre-existing clips as newly generated
+        return None
 
     logger.info("  Generating: %s (%s voice)", title, voice)
 
-    # Resolve file paths
     cover_path = story.get("cover", "")
     if cover_path.startswith("/covers/"):
         svg_path = COVERS_DIR / cover_path.removeprefix("/covers/")
@@ -533,87 +512,80 @@ def generate_clip(story, voice, audio_url, output_dir, force=False):
         logger.warning("    Cover not found: %s", svg_path)
         return None
 
-    # Audio path
     audio_filename = audio_url.split("/")[-1] if audio_url else f"{short_id}_{voice}.mp3"
     audio_path = AUDIO_DIR / audio_filename
     if not audio_path.exists():
         logger.warning("    Audio not found: %s", audio_path)
         return None
 
-    # Work in temp directory
     with tempfile.TemporaryDirectory(prefix="clip_") as work_dir:
         work = Path(work_dir)
 
-        # Step 1: SVG → PNG
         png_path = work / "cover.png"
         logger.info("    Step 1: SVG → PNG")
         if not svg_to_png(svg_path, png_path):
             return None
 
-        # Step 2: Ken Burns video
         cover_video = work / "cover.mp4"
         logger.info("    Step 2: Ken Burns video (%ds)", CLIP_DURATION)
         if not create_ken_burns_video(png_path, cover_video):
             return None
 
-        # Step 3: Trim audio
         trimmed_audio = work / "narration_60s.wav"
         logger.info("    Step 3: Trim audio to %ds", CLIP_DURATION)
         if not trim_audio(audio_path, trimmed_audio):
             return None
 
-        # Step 4: Composite final video
         logger.info("    Step 4: Compositing final video")
         if not composite_video(
             cover_video, trimmed_audio, title,
             story.get("mood", "calm"), final_clip,
+            config=config,
             character_info=story.get("character"),
             age_group=story.get("age_group", story.get("ageGroup", "")),
             content_type=story.get("type", story.get("contentType", "")),
+            subtype=story.get("subtype"),
         ):
             return None
 
-    # Write metadata
-    meta_path = write_clip_metadata(story, voice, final_clip)
+    write_clip_metadata(story, voice, final_clip, config)
     file_size = final_clip.stat().st_size
     logger.info("    ✓ %s (%.1f MB)", output_filename, file_size / 1024 / 1024)
 
     return str(final_clip)
 
 
-# ── Back-Catalog Selection ───────────────────────────────────────────────
+# ── Back-catalog ─────────────────────────────────────────────────────────
 
-def pick_unclipped(stories, voice, output_dir):
-    """Pick a story that doesn't have a clip in this voice yet. Oldest first."""
+def pick_unclipped(stories: List[Dict[str, Any]], voice: str,
+                   output_dir: Path) -> Optional[Dict[str, Any]]:
     for story in stories:
         short_id = story["id"][:8]
         clip_path = output_dir / f"{short_id}_{voice}_clip.mp4"
         if not clip_path.exists():
-            # Check the story has this voice variant available
             variants = story.get("audio_variants", [])
             has_voice = any(v["voice"] == voice for v in variants)
-            if has_voice or voice == "default":
+            if has_voice or voice.startswith("default"):
                 return story
     return None
 
 
-# ── Daily Generation ─────────────────────────────────────────────────────
+# ── Daily plan ───────────────────────────────────────────────────────────
 
-def generate_daily_clips(stories, output_dir, force=False, dry_run=False):
-    """Generate 6 clips per day: 3 new + 3 back-catalog."""
-    voices = get_daily_voice_assignment()
-    logger.info("Voice assignment: story=%s, poem=%s, lullaby=%s",
-                voices["story"], voices["poem"], voices["lullaby"])
+def generate_daily_clips(stories: List[Dict[str, Any]], output_dir: Path,
+                         config: LangConfig, force: bool = False,
+                         dry_run: bool = False) -> List[str]:
+    voices = get_daily_voice_assignment(config)
+    logger.info("Voice assignment (%s): story=%s, poem=%s, lullaby=%s",
+                config.lang, voices["story"], voices["poem"], voices["lullaby"])
 
     today = date.today().isoformat()
 
-    # Separate by type
     all_stories = [s for s in stories if s.get("type", "story") in ("story", "long_story")]
     all_poems = [s for s in stories if s.get("type") == "poem"]
     all_lullabies = [s for s in stories if s.get("type") == "song"]
 
-    # Find today's new content (by addedAt or created_at date)
-    def is_today(s):
+    def is_today(s: Dict[str, Any]) -> bool:
         added = s.get("addedAt") or s.get("created_at") or ""
         return added[:10] == today
 
@@ -621,53 +593,49 @@ def generate_daily_clips(stories, output_dir, force=False, dry_run=False):
     new_poems = [s for s in all_poems if is_today(s)]
     new_lullabies = [s for s in all_lullabies if is_today(s)]
 
-    clips_plan = []
+    clips_plan: List[Tuple[str, Dict[str, Any], str, str]] = []
 
-    # --- 3 NEW CLIPS ---
     if new_stories:
         story = new_stories[0]
-        voice, url = get_voice_for_story(story, voices)
+        voice, url = get_voice_for_story(story, voices, config)
         if voice:
             clips_plan.append(("NEW story", story, voice, url))
 
     if new_poems:
         poem = new_poems[0]
-        voice, url = get_voice_for_story(poem, voices)
+        voice, url = get_voice_for_story(poem, voices, config)
         if voice:
             clips_plan.append(("NEW poem", poem, voice, url))
 
     if new_lullabies:
         lullaby = new_lullabies[0]
-        voice, url = get_voice_for_story(lullaby, voices)
+        voice, url = get_voice_for_story(lullaby, voices, config)
         if voice:
             clips_plan.append(("NEW lullaby", lullaby, voice, url))
 
-    # --- 3 BACK-CATALOG CLIPS ---
     old_story = pick_unclipped(all_stories, voices["story"], output_dir)
     if old_story:
-        voice, url = get_voice_for_story(old_story, voices)
+        voice, url = get_voice_for_story(old_story, voices, config)
         if voice:
             clips_plan.append(("CATALOG story", old_story, voice, url))
 
     old_poem = pick_unclipped(all_poems, voices["poem"], output_dir)
     if old_poem:
-        voice, url = get_voice_for_story(old_poem, voices)
+        voice, url = get_voice_for_story(old_poem, voices, config)
         if voice:
             clips_plan.append(("CATALOG poem", old_poem, voice, url))
 
     old_lullaby = pick_unclipped(all_lullabies, voices["lullaby"], output_dir)
     if old_lullaby:
-        voice, url = get_voice_for_story(old_lullaby, voices)
+        voice, url = get_voice_for_story(old_lullaby, voices, config)
         if voice:
             clips_plan.append(("CATALOG lullaby", old_lullaby, voice, url))
 
-    # Cap to MAX_CLIPS_PER_RUN
     if len(clips_plan) > MAX_CLIPS_PER_RUN:
         logger.warning("  Capping from %d to %d clips", len(clips_plan), MAX_CLIPS_PER_RUN)
         clips_plan = clips_plan[:MAX_CLIPS_PER_RUN]
 
-    # Show plan
-    logger.info("\n=== Clip Generation Plan ===")
+    logger.info("\n=== Clip Generation Plan (%s) ===", config.lang)
     logger.info("Total clips: %d", len(clips_plan))
     for label, story, voice, url in clips_plan:
         logger.info("  [%s] %s / %s", label, story.get("title", "?")[:40], voice)
@@ -676,11 +644,10 @@ def generate_daily_clips(stories, output_dir, force=False, dry_run=False):
         logger.info("\nDry run complete.")
         return []
 
-    # Generate
-    generated = []
+    generated: List[str] = []
     for label, story, voice, url in clips_plan:
         logger.info("\n[%s] %s", label, story.get("title", "?"))
-        result = generate_clip(story, voice, url, output_dir, force=force)
+        result = generate_clip(story, voice, url, output_dir, config, force=force)
         if result:
             generated.append(result)
 
@@ -689,46 +656,57 @@ def generate_daily_clips(stories, output_dir, force=False, dry_run=False):
     return generated
 
 
-# ── Main ─────────────────────────────────────────────────────────────────
+# ── Top-level orchestration ─────────────────────────────────────────────
 
-def main():
-    parser = argparse.ArgumentParser(description="Generate social media clips")
+def load_content() -> List[Dict[str, Any]]:
+    if not CONTENT_PATH.exists():
+        logger.error("Content not found: %s", CONTENT_PATH)
+        sys.exit(1)
+    with open(CONTENT_PATH) as f:
+        return json.load(f)
+
+
+def filter_stories(stories: List[Dict[str, Any]], config: LangConfig) -> List[Dict[str, Any]]:
+    return [
+        s for s in stories
+        if isinstance(s, dict)
+        and s.get("audio_variants")
+        and config.filter_content(s)
+    ]
+
+
+def run_main(config: LangConfig, argv: Optional[List[str]] = None) -> None:
+    """Single entry point used by both generate_clips.py and generate_clips_hi.py."""
+    import argparse
+
+    parser = argparse.ArgumentParser(description=f"Generate {config.lang} social-media clips")
     parser.add_argument("--story-id", help="Generate clip for a specific story ID")
     parser.add_argument("--force", action="store_true", help="Overwrite existing clips")
     parser.add_argument("--dry-run", action="store_true", help="Show plan without generating")
     parser.add_argument("--batch", action="store_true", help="Generate clips for all unclipped stories")
     parser.add_argument("--limit", type=int, help="Max clips to generate in batch mode")
-    parser.add_argument("--output-dir", default=str(CLIPS_DIR), help="Output directory")
+    parser.add_argument("--output-dir", default=str(config.output_dir), help="Output directory")
     parser.add_argument("--no-email", action="store_true", help="Don't send email notification")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    # Load content
-    if not CONTENT_PATH.exists():
-        logger.error("Content not found: %s", CONTENT_PATH)
-        sys.exit(1)
+    stories = filter_stories(load_content(), config)
+    logger.info("Loaded %d %s stories with audio from %s",
+                len(stories), config.lang, CONTENT_PATH.name)
 
-    with open(CONTENT_PATH) as f:
-        stories = json.load(f)
-
-    # Filter to stories with audio variants
-    stories = [s for s in stories if isinstance(s, dict) and s.get("audio_variants")]
-    logger.info("Loaded %d stories with audio from %s", len(stories), CONTENT_PATH.name)
-
-    generated_clips = []  # Track paths for email notification
+    generated_clips: List[str] = []
     start_time = time.time()
 
     if args.story_id:
-        # Single story mode
         story = next((s for s in stories if s["id"] == args.story_id), None)
         if not story:
             logger.error("Story not found: %s", args.story_id)
             sys.exit(1)
 
-        voices = get_daily_voice_assignment()
-        voice, url = get_voice_for_story(story, voices)
+        voices = get_daily_voice_assignment(config)
+        voice, url = get_voice_for_story(story, voices, config)
         if not voice:
             logger.error("No audio variant available for %s", args.story_id)
             sys.exit(1)
@@ -738,7 +716,7 @@ def main():
             logger.info("Dry run — would generate %s_%s_clip.mp4", story["id"][:8], voice)
             return
 
-        result = generate_clip(story, voice, url, output_dir, force=args.force)
+        result = generate_clip(story, voice, url, output_dir, config, force=args.force)
         if result:
             logger.info("Done: %s", result)
             generated_clips.append(result)
@@ -747,11 +725,10 @@ def main():
             sys.exit(1)
 
     elif args.batch:
-        # Batch: generate for all unclipped stories
-        voices = get_daily_voice_assignment()
-        plan = []
+        voices = get_daily_voice_assignment(config)
+        plan: List[Tuple[Dict[str, Any], str, str]] = []
         for story in stories:
-            voice, url = get_voice_for_story(story, voices)
+            voice, url = get_voice_for_story(story, voices, config)
             if voice:
                 short_id = story["id"][:8]
                 clip_path = output_dir / f"{short_id}_{voice}_clip.mp4"
@@ -773,7 +750,7 @@ def main():
         errors = 0
         for story, voice, url in plan:
             logger.info("\n[%d/%d] %s", generated + errors + 1, len(plan), story.get("title", "?"))
-            result = generate_clip(story, voice, url, output_dir, force=args.force)
+            result = generate_clip(story, voice, url, output_dir, config, force=args.force)
             if result:
                 generated += 1
                 generated_clips.append(result)
@@ -783,16 +760,14 @@ def main():
         logger.info("\n=== Summary: %d generated, %d errors ===", generated, errors)
 
     else:
-        # Daily mode: 6 clips
-        results = generate_daily_clips(stories, output_dir, force=args.force, dry_run=args.dry_run)
+        results = generate_daily_clips(stories, output_dir, config,
+                                       force=args.force, dry_run=args.dry_run)
         generated_clips = results or []
 
-    # ── Send email notification ────────────────────────────────────
     if generated_clips and not args.dry_run and not args.no_email:
         elapsed = time.time() - start_time
         try:
-            # Collect metadata from generated clip JSON files
-            clips_info = []
+            clips_info: List[Dict[str, Any]] = []
             for clip_path in generated_clips:
                 meta_path = str(clip_path).replace(".mp4", ".json")
                 if os.path.exists(meta_path):
@@ -801,11 +776,7 @@ def main():
 
             if clips_info:
                 sys.path.insert(0, str(Path(__file__).parent))
-                from pipeline_notify import send_clips_notification
+                from pipeline_notify import send_clips_notification  # type: ignore
                 send_clips_notification(clips_info, elapsed)
         except Exception as e:
             logger.warning("Email notification failed: %s", e)
-
-
-if __name__ == "__main__":
-    main()
