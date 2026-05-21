@@ -191,6 +191,18 @@ def _upsert_content(entry: dict) -> None:
     cj.write_text(json.dumps(data, ensure_ascii=False, indent=2))
 
 
+def _upsert_aggregate_json(entry: dict, agg_path: Path) -> None:
+    if not agg_path.exists():
+        agg_path.parent.mkdir(parents=True, exist_ok=True)
+        agg_path.write_text("[]")
+    data = json.loads(agg_path.read_text() or "[]")
+    if not isinstance(data, list):
+        data = []
+    data = [i for i in data if i.get("id") != entry["id"]]
+    data.append(entry)
+    agg_path.write_text(json.dumps(data, ensure_ascii=False, indent=2))
+
+
 def _attach_qa_changes(entry: dict, llm_data: dict) -> None:
     """If the critic touched llm_data, surface a sanitized audit record on
     the saved entry (visible in seed/runtime content.json + daily email).
@@ -695,12 +707,14 @@ def generate_lullaby(axes: dict, log_prefix: str = "  ") -> dict:
 
     sid = f"hi-{axes['lullaby_type']}-{axes['age_group']}-{_slug(data['title'])}"
 
-    _save_audio(
-        audio,
+    audio_paths = [
         WEB_ROOT / "public" / "audio" / "lullabies" / f"{sid}.mp3",
         WEB_ROOT / "public" / "audio" / "pre-gen" / f"{sid}_female_1.mp3",
         BASE_DIR / "seed_output" / "lullabies" / f"{sid}.mp3",
-    )
+    ]
+    if ON_PROD:
+        audio_paths.append(PROD_AUDIO_STORE / "lullabies" / f"{sid}.mp3")
+    _save_audio(audio, *audio_paths)
 
     cover = _flux_cover(data.get("cover_context", "Indian baby sleeping under a quilt"))
     if cover:
@@ -767,6 +781,7 @@ def generate_lullaby(axes: dict, log_prefix: str = "  ") -> dict:
     # post-cutover). _upsert_content below stays until post-cutover §4 step 15.
     _write_per_content_file(entry)
     _upsert_content(entry)
+    _upsert_aggregate_json(entry, BASE_DIR / "seed_output" / "lullabies" / "lullabies.json")
     print(f"{log_prefix}✓ lullaby published: {sid} ({duration}s)")
     return entry
 

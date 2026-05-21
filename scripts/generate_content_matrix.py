@@ -1225,21 +1225,21 @@ def generate_one(client, item: Dict, existing_titles: List[str],
             # Collision check against recent stories
             if fingerprint and recent_fingerprints:
                 passes_hard, violations = check_hard_rules(fingerprint, recent_fingerprints)
-                if not passes_hard and attempt < max_retries - 1:
+                if not passes_hard and attempt < 2:
                     logger.warning("  Attempt %d: Hard rule violation: %s — retrying",
                                    attempt + 1, "; ".join(violations[:3]))
                     time.sleep(retry_delay)
                     continue
 
                 passes_soft, details = check_collision(fingerprint, recent_fingerprints)
-                if not passes_soft and attempt < max_retries - 1:
+                if not passes_soft and attempt < 2:
                     logger.warning("  Attempt %d: Collision score %d (threshold 18) — retrying",
                                    attempt + 1, details["score"])
                     time.sleep(retry_delay)
                     continue
 
                 if not passes_hard or not passes_soft:
-                    logger.warning("  Accepting on final attempt despite diversity collision")
+                    logger.warning("  Accepting at attempt %d/%d despite diversity collision (freeing budget for comprehensibility retries)", attempt + 1, max_retries)
 
             title = parsed.get("title", "").strip()
             text = parsed.get("text", parsed.get("content", "")).strip()
