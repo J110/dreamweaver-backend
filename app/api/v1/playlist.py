@@ -2,8 +2,10 @@
 
 Slot order (fixed): silly_song → poem → funny_short → short_story →
 lullaby → long_story. Each slot is filled with today's cron-generated
-content for the user's age + lang. Missing slots fall back to the past
-30 days, with a 7-day global dedup window (tracked in playlist_history).
+content for the user's lang (age is ignored on the free tier — any
+age group's fresh item is acceptable; paid tier will restore
+age-targeted curation). Missing slots fall back to the past 30 days,
+with a 7-day dedup window keyed by (date, lang) in playlist_history.
 """
 
 import json
@@ -131,8 +133,13 @@ def _item_age(item: dict) -> Optional[str]:
     return None
 
 
-def _pick_slot(slot_def, age: str, lang: str, today: str, recent_excluded: set) -> tuple[Optional[dict], bool, str]:
-    """Return (item, is_fallback, audio_dir, cover_dir) or (None, False, ...) if no candidate."""
+def _pick_slot(slot_def, lang: str, today: str, recent_excluded: set) -> tuple[Optional[dict], bool, str]:
+    """Return (item, is_fallback, audio_dir, cover_dir) or (None, False, ...) if no candidate.
+
+    Free-tier selection: lang-only filter. Age groups are pooled — if today's
+    cron produced any (age, lang) item for the slot type, it qualifies. Multi-
+    candidate days resolve deterministically by oldest created_at, then id.
+    """
     name, typ, subtype, dir_en, dir_hi, aud_en, aud_hi, cov_en, cov_hi = slot_def
     data_dir = dir_hi if lang == "hi" else dir_en
     audio_dir = aud_hi if lang == "hi" else aud_en
@@ -141,21 +148,17 @@ def _pick_slot(slot_def, age: str, lang: str, today: str, recent_excluded: set) 
     items = _load_dir(data_dir)
 
     def matches(it):
-        if _item_age(it) != age:
-            return False
         item_lang = it.get("lang", "en")
         if item_lang != lang:
             return False
-        # Must have audio
         _, url = _audio_info(it, audio_dir)
         return url is not None
 
     candidates = [it for it in items if matches(it)]
 
-    # Today's content
     todays = [it for it in candidates if _item_date(it) == today]
     if todays:
-        todays.sort(key=lambda x: x.get("created_at", ""), reverse=True)
+        todays.sort(key=lambda x: (x.get("created_at", ""), x.get("id", "")))
         return todays[0], False, audio_dir, cover_dir
 
     # Fallback: past 30 days, excluding recent playlist members
@@ -175,19 +178,22 @@ def _pick_slot(slot_def, age: str, lang: str, today: str, recent_excluded: set) 
     return None, False, audio_dir, cover_dir
 
 
-def _recent_excluded_ids(store, lookback_days: int = 7) -> set:
-    """All content_ids used in any playlist in the last N days (global dedup)."""
+def _recent_excluded_ids(store, lang: str, lookback_days: int = 7) -> set:
+    """Content_ids used in any same-lang playlist in the last N days."""
     cutoff = (datetime.utcnow().date() - timedelta(days=lookback_days)).isoformat()
     history = store.collections.get("playlist_history", {})
     excluded = set()
     for record in history.values():
-        if record.get("date", "") >= cutoff:
-            for cid in record.get("item_ids", []):
-                excluded.add(cid)
+        if record.get("date", "") < cutoff:
+            continue
+        if record.get("lang") and record.get("lang") != lang:
+            continue
+        for cid in record.get("item_ids", []):
+            excluded.add(cid)
     return excluded
 
 
-def _record_history(store, date: str, age: str, lang: str, item_ids: list[str]) -> None:
+def _record_history(store, date: str, lang: str, item_ids: list[str]) -> None:
     if not item_ids:
         return
     history = store.collections.setdefault("playlist_history", {})
@@ -195,7 +201,6 @@ def _record_history(store, date: str, age: str, lang: str, item_ids: list[str]) 
     history[record_id] = {
         "id": record_id,
         "date": date,
-        "age": age,
         "lang": lang,
         "item_ids": item_ids,
         "created_at": datetime.utcnow().isoformat(),
@@ -208,13 +213,13 @@ def _record_history(store, date: str, age: str, lang: str, item_ids: list[str]) 
 
 @router.get("/today", response_model=PlaylistResponse)
 async def get_today_playlist(
-    age: str = Query(..., description="Age group: '0-1' | '2-5' | '6-8' | '9-12'"),
+    age: str = Query("6-8", description="Age group (accepted for client compatibility; ignored on free tier)"),
     lang: str = Query("en", description="'en' or 'hi'"),
     tz: str = Query("Asia/Kolkata", description="IANA timezone string"),
     store=Depends(get_db_client),
 ) -> PlaylistResponse:
     today = _local_today(tz)
-    recent_excluded = _recent_excluded_ids(store, lookback_days=7)
+    recent_excluded = _recent_excluded_ids(store, lang=lang, lookback_days=7)
 
     items: list[PlaylistItem] = []
     missing: list[str] = []
@@ -222,7 +227,7 @@ async def get_today_playlist(
 
     for slot_def in SLOTS:
         item, is_fallback, audio_dir, cover_dir = _pick_slot(
-            slot_def, age=age, lang=lang, today=today, recent_excluded=recent_excluded,
+            slot_def, lang=lang, today=today, recent_excluded=recent_excluded,
         )
         slot_name = slot_def[0]
         if item is None:
@@ -244,7 +249,7 @@ async def get_today_playlist(
             is_fallback=is_fallback,
         ))
 
-    _record_history(store, today, age, lang, [it.content_id for it in items])
+    _record_history(store, today, lang, [it.content_id for it in items])
 
     return PlaylistResponse(
         success=True,
