@@ -54,6 +54,7 @@ from _hindi_qa_critic import critic_review, is_qa_enabled  # type: ignore
 
 
 TOGETHER_KEY = os.getenv("TOGETHER_API_KEY", "")
+POLLINATIONS_KEY = os.getenv("POLLINATIONS_API_KEY", "")
 
 
 # ───────────────────────────────────────────────────────────────────────
@@ -108,45 +109,76 @@ def _sanitize_flux_prompt(prompt: str) -> str:
     )
 
 
+def _abstract_flux_prompt(_prompt: str) -> str:
+    return (
+        "Watercolor abstract bedtime artwork, soft pastel hues, dreamy "
+        "indigo and violet palette, gentle gradient sky with stars and moon, "
+        "no people, no faces, no figures, no characters, no objects — "
+        "pure mood and color"
+    )
+
+
 def _flux_cover(prompt: str, w: int = 1024, h: int = 1024) -> bytes | None:
-    if not TOGETHER_KEY:
-        print("  TOGETHER_API_KEY missing, skipping cover")
+    """Generate a cover via Pollinations FLUX.
+
+    Switched from Together AI on 2026-05-22: Together's 0.83 QPS free-tier
+    cap caused NSFW-retry calls to 429-rate-limit, silently shipping
+    /covers/default.svg. Pollinations has no QPS cap.
+
+    Retry chain: original prompt → sanitized no-people prompt → fully
+    abstract prompt. Logs loudly on total failure so cron-log scrapers
+    can surface stories needing manual cover regen.
+    """
+    from urllib.parse import quote
+
+    if not POLLINATIONS_KEY:
+        print("  POLLINATIONS_API_KEY missing, skipping cover")
         return None
 
-    def _call(p: str):
+    def _call(p: str) -> bytes | None:
+        truncated = p[:600].rsplit(",", 1)[0] if len(p) > 600 else p
+        encoded = quote(truncated, safe="")
+        url = f"https://gen.pollinations.ai/image/{encoded}?width={w}&height={h}&model=flux&nologo=true"
+        headers = {"Authorization": f"Bearer {POLLINATIONS_KEY}"}
         try:
-            resp = httpx.post(
-                "https://api.together.xyz/v1/images/generations",
-                headers={"Authorization": f"Bearer {TOGETHER_KEY}"},
-                json={
-                    "model": "black-forest-labs/FLUX.1-schnell",
-                    "prompt": p[:1000],
-                    "width": w, "height": h, "n": 1,
-                    "response_format": "b64_json",
-                },
-                timeout=180,
-            )
-            return resp
+            resp = httpx.get(url, headers=headers, timeout=180, follow_redirects=True)
         except Exception as e:
-            print(f"  FLUX error: {e}")
+            print(f"  Pollinations error: {e}")
             return None
-
-    resp = _call(prompt)
-    if resp is None:
+        if resp.status_code == 200:
+            ct = resp.headers.get("content-type", "")
+            if "image" in ct and len(resp.content) > 1000:
+                return resp.content
+            print(f"  Pollinations 200 but unusable: ct={ct} bytes={len(resp.content)}")
+            return None
+        if resp.status_code == 429:
+            print("  Pollinations 429 rate-limited, waiting 20s and retrying once")
+            time.sleep(20)
+            try:
+                resp = httpx.get(url, headers=headers, timeout=180, follow_redirects=True)
+                if resp.status_code == 200 and "image" in resp.headers.get("content-type", "") and len(resp.content) > 1000:
+                    return resp.content
+            except Exception as e:
+                print(f"  Pollinations retry error: {e}")
+                return None
+        print(f"  Pollinations {resp.status_code}: {resp.text[:200]}")
         return None
-    if resp.status_code == 200:
-        return base64.b64decode(resp.json()["data"][0]["b64_json"])
 
-    body = resp.text[:200]
-    print(f"  FLUX {resp.status_code}: {body}")
-    if resp.status_code == 422 and "NSFW" in body.upper():
-        sanitized = _sanitize_flux_prompt(prompt)
-        print("  FLUX NSFW false-positive — retrying with no-people prompt")
-        retry = _call(sanitized)
-        if retry is not None and retry.status_code == 200:
-            return base64.b64decode(retry.json()["data"][0]["b64_json"])
-        if retry is not None:
-            print(f"  FLUX retry {retry.status_code}: {retry.text[:200]}")
+    result = _call(prompt)
+    if result:
+        return result
+
+    print("  Pollinations attempt 1 failed — retrying with no-people sanitized prompt")
+    result = _call(_sanitize_flux_prompt(prompt))
+    if result:
+        return result
+
+    print("  Pollinations attempt 2 failed — retrying with fully abstract prompt")
+    result = _call(_abstract_flux_prompt(prompt))
+    if result:
+        return result
+
+    print("  COVER GENERATION FAILED — manual retry needed for this item")
     return None
 
 
