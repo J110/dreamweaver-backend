@@ -266,9 +266,7 @@ def wrap_title(title: str, max_chars: int = 24) -> List[str]:
 
 
 def escape_ffmpeg_text(text: str) -> str:
-    for ch in [":", "'", "\\", "[", "]", ";", ","]:
-        text = text.replace(ch, f"\\{ch}")
-    return text
+    return text.replace("'", "'\\''")
 
 
 # ── Composite ────────────────────────────────────────────────────────────
