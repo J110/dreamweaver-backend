@@ -81,6 +81,12 @@ def _find_user_by_customer(db_client, customer_id: str) -> Optional[dict]:
     grows substantially. O(n) over _local_users is acceptable at current
     scale (~hundreds of users); becomes a hotspot above ~10k.
     """
+    # Webhooks arrive without auth so _load_persisted_tokens (the only
+    # populator of _local_users) hasn't run yet on a cold worker. Force
+    # the load — idempotent, gated by `if not _local_users` internally.
+    from app.dependencies import _load_persisted_tokens
+    _load_persisted_tokens()
+
     for uid, user in _local_users.items():
         if user.get("stripe_customer_id") == customer_id:
             try:

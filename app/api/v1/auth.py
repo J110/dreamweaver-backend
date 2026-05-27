@@ -48,6 +48,12 @@ class ClaimExistingBody(BaseModel):
     lang: str = Field(default="en", pattern="^(en|hi)$")
 
 
+class LoginUsernameBody(BaseModel):
+    username: str = Field(min_length=1, max_length=64)
+    child_age: Optional[int] = Field(default=None, ge=0, le=18)
+    lang: Optional[str] = Field(default=None, pattern="^(en|hi)$")
+
+
 # ── New endpoints ────────────────────────────────────────────
 
 
@@ -142,6 +148,85 @@ async def claim_existing(
         lang=body.lang,
         initiator_ip=initiator_ip,
     )
+
+
+# ── Username-only login ──────────────────────────────────────
+
+
+@router.post("/login_username")
+async def login_username(body: LoginUsernameBody) -> dict:
+    """Username-only sign-in. Mints a 30-day session token.
+
+    Magic-link UI was scrapped; this is the surfaced path for existing
+    users to re-authenticate. Security model: anyone who knows a username
+    can impersonate that user — an accepted tradeoff per the simplified
+    UX. Returns 404 if the username isn't found (caller should fall
+    through to anon onboarding to create a new account).
+
+    Optional child_age / lang on the body update the existing user's
+    settings as a side-effect, mirroring the post-auth completeOnboarding
+    call so the onboarding form's age/language selections persist.
+    """
+    import uuid as _uuid
+    from app.services.local_store import get_local_store
+    from app.services.magic_link import _persist_token_row
+
+    uname_lc = body.username.strip().lower()
+    if not uname_lc:
+        raise HTTPException(status_code=400, detail="username required")
+
+    store = get_local_store()
+    target = None
+    target_uid = None
+    for doc in store.collection("users").get():
+        data = doc.to_dict()
+        lc = (data.get("username_lowercase") or (data.get("username") or "").lower())
+        if lc == uname_lc:
+            target = data
+            target_uid = data.get("uid") or data.get("id")
+            break
+
+    if target is None or not target_uid:
+        raise HTTPException(status_code=404, detail="user_not_found")
+
+    updates = {}
+    if body.child_age is not None and body.child_age != target.get("child_age"):
+        updates["child_age"] = body.child_age
+    if body.lang and body.lang != target.get("preferred_lang"):
+        updates["preferred_lang"] = body.lang
+    if updates:
+        updates["onboarding_complete"] = True
+        store.collection("users").document(target_uid).update(updates)
+        target.update(updates)
+        try:
+            from app.dependencies import _local_users
+            if target_uid in _local_users:
+                _local_users[target_uid].update(updates)
+        except Exception:
+            pass
+
+    token = _uuid.uuid4().hex
+    session_id = f"username-login-{_uuid.uuid4().hex[:8]}"
+    _persist_token_row(store, token, target_uid, session_id)
+
+    logger.info("username_login uid=%s", target_uid)
+    ph_emit(target.get("family_id") or "", "auth_username_login", {})
+
+    return {
+        "token": token,
+        "user": {
+            "uid": target_uid,
+            "username": target.get("username"),
+            "family_id": target.get("family_id"),
+            "email": target.get("email"),
+            "child_age": target.get("child_age"),
+            "preferred_lang": target.get("preferred_lang"),
+            "subscription_tier": target.get("subscription_tier") or "free",
+            "subscription_status": target.get("subscription_status"),
+            "credits_remaining": target.get("credits_remaining"),
+            "onboarding_complete": target.get("onboarding_complete", True),
+        },
+    }
 
 
 # ── Deprecated endpoints — 410 Gone ──────────────────────────
