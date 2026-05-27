@@ -113,6 +113,24 @@ def _iso_from_ts(ts: Optional[int]) -> Optional[str]:
         return None
 
 
+def _sub_period(sub: dict) -> tuple[Optional[int], Optional[int]]:
+    """Read billing-period timestamps from a Stripe Subscription object.
+
+    Basil (2025-03-31) moved current_period_{start,end} from the
+    subscription object onto subscription items. Read from items
+    first, fall back to top-level for compatibility with older
+    API versions during the cutover.
+    """
+    items = (sub.get("items") or {}).get("data") or []
+    if items:
+        it = items[0] or {}
+        start = it.get("current_period_start")
+        end = it.get("current_period_end")
+        if start is not None or end is not None:
+            return start, end
+    return sub.get("current_period_start"), sub.get("current_period_end")
+
+
 # ── Event handlers ─────────────────────────────────────────────
 
 
@@ -127,8 +145,9 @@ def _handle_sub_created(db_client, event) -> None:
         return
 
     family_id = user.get("family_id") or ""
-    period_start_iso = _iso_from_ts(sub.get("current_period_start"))
-    period_end_iso = _iso_from_ts(sub.get("current_period_end"))
+    period_start_ts, period_end_ts = _sub_period(sub)
+    period_start_iso = _iso_from_ts(period_start_ts)
+    period_end_iso = _iso_from_ts(period_end_ts)
     fields = {
         "stripe_subscription_id": sub.get("id"),
         "subscription_status": sub.get("status") or "active",
@@ -180,10 +199,11 @@ def _handle_sub_updated(db_client, event) -> None:
         return
 
     status_str = sub.get("status") or "active"
+    _, period_end_ts = _sub_period(sub)
     fields = {
         "stripe_subscription_id": sub.get("id"),
         "subscription_status": status_str,
-        "current_period_end": _iso_from_ts(sub.get("current_period_end")),
+        "current_period_end": _iso_from_ts(period_end_ts),
     }
 
     if status_str in ("trialing", "active", "past_due"):
@@ -223,9 +243,10 @@ def _handle_sub_deleted(db_client, event) -> None:
 
     # Mark canceled but DO NOT downgrade tier — premium remains until
     # current_period_end. A 1.4c cron downgrades past-period-end subs.
+    _, period_end_ts = _sub_period(sub)
     fields = {
         "subscription_status": "canceled",
-        "current_period_end": _iso_from_ts(sub.get("current_period_end")),
+        "current_period_end": _iso_from_ts(period_end_ts),
     }
     _persist_user_update(db_client, user["uid"], fields)
 

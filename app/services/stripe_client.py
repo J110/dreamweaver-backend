@@ -61,10 +61,12 @@ def _get_client() -> Optional[Any]:
         return None
 
     stripe.api_key = api_key
+    stripe.api_version = "2025-03-31.basil"
     _stripe = stripe
     logger.info(
-        "Stripe SDK initialized (mode=%s)",
+        "Stripe SDK initialized (mode=%s, api_version=%s)",
         "live" if api_key.startswith("sk_live_") else "test",
+        stripe.api_version,
     )
     return _stripe
 

@@ -46,6 +46,21 @@ def _iso_from_ts(ts: Optional[int]) -> Optional[str]:
         return None
 
 
+def _sub_period_end(sub) -> Optional[int]:
+    """Read current_period_end from a Stripe Subscription object.
+
+    Basil (2025-03-31) moved the field from the subscription object onto
+    subscription items. Read from items first, fall back to top-level.
+    """
+    items = (sub.get("items") or {}).get("data") or []
+    if items:
+        it = items[0] or {}
+        end = it.get("current_period_end")
+        if end is not None:
+            return end
+    return sub.get("current_period_end")
+
+
 def _infer_tier(status: Optional[str], local_tier: Optional[str]) -> str:
     """Tier inference from Stripe status, mirroring billing.py handler logic."""
     if status in ("trialing", "active", "past_due"):
@@ -125,7 +140,7 @@ def main() -> int:
         local_tier = data.get("subscription_tier")
 
         remote_status = stripe_sub.get("status")
-        remote_period_end = _iso_from_ts(stripe_sub.get("current_period_end"))
+        remote_period_end = _iso_from_ts(_sub_period_end(stripe_sub))
         remote_tier = _infer_tier(remote_status, local_tier)
 
         diffs = {}
