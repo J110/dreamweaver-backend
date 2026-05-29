@@ -7,6 +7,7 @@ from fastapi import APIRouter, HTTPException, Depends, status
 from pydantic import BaseModel
 
 from app.dependencies import get_current_user, get_db_client
+from app.utils.gating import is_premium, save_cap
 from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -175,7 +176,7 @@ async def save_content(
     """
     try:
         user_id = current_user["uid"]
-        
+
         # Get content
         content_doc = db_client.collection("content").document(content_id).get()
         if not content_doc.exists:
@@ -183,36 +184,93 @@ async def save_content(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Content not found"
             )
-        
+
         content_data = content_doc.to_dict()
-        
-        # Create interaction record
-        interaction_id = f"{user_id}_{content_id}_save"
-        interaction_data = {
-            "id": interaction_id,
+
+        save_id = f"{user_id}_{content_id}_save"
+        already_saved = db_client.collection("interactions").document(save_id).get().exists
+
+        # Save cap (paywall). None = unlimited (flag off → today's behavior).
+        cap = save_cap(current_user)
+        current_count = None
+        if cap is not None:
+            saves = (
+                db_client.collection("interactions")
+                .where("user_id", "==", user_id)
+                .where("type", "==", "save")
+                .get()
+            )
+            current_count = len(saves)
+            # Past the cap, a NEW heart tap NEVER fails — it registers a
+            # like instead of a save. The cap is discovered on the
+            # favorites page, not as a failed tap. Re-saving an item the
+            # user already saved is always allowed (idempotent, no cap).
+            if not already_saved and current_count >= cap:
+                like_id = f"{user_id}_{content_id}_like"
+                if not db_client.collection("interactions").document(like_id).get().exists:
+                    db_client.collection("interactions").document(like_id).set({
+                        "id": like_id,
+                        "user_id": user_id,
+                        "content_id": content_id,
+                        "type": "like",
+                        "created_at": datetime.utcnow(),
+                    })
+                    likes = content_data.get("like_count", 0)
+                    db_client.collection("content").document(content_id).update({
+                        "like_count": likes + 1,
+                        "updated_at": datetime.utcnow(),
+                    })
+                logger.info(f"User {user_id} hit save cap ({cap}); liked {content_id} instead")
+                return InteractionResponse(
+                    success=True,
+                    data={
+                        "content_id": content_id,
+                        "saved": False,
+                        "liked": True,
+                        "cap_reached": True,
+                        "saved_count": current_count,
+                        "save_cap": cap,
+                    },
+                    message="Save cap reached — liked instead",
+                )
+
+        # Normal save (under cap, re-save, or flag-off unlimited).
+        db_client.collection("interactions").document(save_id).set({
+            "id": save_id,
             "user_id": user_id,
             "content_id": content_id,
             "type": "save",
             "created_at": datetime.utcnow(),
-        }
-        
-        db_client.collection("interactions").document(interaction_id).set(interaction_data)
-        
-        # Increment save count
-        current_saves = content_data.get("save_count", 0)
-        db_client.collection("content").document(content_id).update({
-            "save_count": current_saves + 1,
-            "updated_at": datetime.utcnow(),
         })
-        
+
+        # Increment save count only on a genuinely new save.
+        current_saves = content_data.get("save_count", 0)
+        if not already_saved:
+            db_client.collection("content").document(content_id).update({
+                "save_count": current_saves + 1,
+                "updated_at": datetime.utcnow(),
+            })
+
         logger.info(f"User {user_id} saved content {content_id}")
-        
+
+        saved_count_after = None
+        if cap is not None:
+            saved_count_after = current_count + (0 if already_saved else 1)
+
         return InteractionResponse(
             success=True,
-            data={"content_id": content_id, "save_count": current_saves + 1},
+            data={
+                "content_id": content_id,
+                "save_count": current_saves + (0 if already_saved else 1),
+                "saved": True,
+                "liked": False,
+                "cap_reached": False,
+                "saved_count": saved_count_after,
+                "save_cap": cap,
+            },
             message="Content saved successfully"
         )
-        
+
     except HTTPException:
         raise
     except Exception as e:
@@ -365,7 +423,15 @@ async def get_user_saves(
 
         return InteractionResponse(
             success=True,
-            data={"items": items, "saved_content_ids": saved_ids, "total": len(items)},
+            data={
+                "items": items,
+                "saved_content_ids": saved_ids,
+                "total": len(items),
+                # None when paywall off (unlimited). Favorites page shows the
+                # "n of cap saved — Premium unlocks 20" invitation off these.
+                "save_cap": save_cap(current_user),
+                "effective_premium": is_premium(current_user),
+            },
             message="User saves retrieved successfully"
         )
 

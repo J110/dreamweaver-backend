@@ -43,6 +43,23 @@ def is_premium(user: Optional[dict]) -> bool:
     return (u.get("subscription_tier") or "free") == "premium"
 
 
+# Save caps (Step 3). None = unlimited (pre-paywall behavior, flag off).
+FREE_SAVE_CAP = 5
+PREMIUM_SAVE_CAP = 20
+
+
+def save_cap(user: Optional[dict]) -> Optional[int]:
+    """Max saved items for this user. None = unlimited.
+
+    Flag-off returns None so saves stay unlimited (byte-identical to
+    today). Flag-on: premium (incl. native-dormant / outside-allowlist)
+    gets 20, gated free users get 5.
+    """
+    if not get_settings().paywall_enabled:
+        return None
+    return PREMIUM_SAVE_CAP if is_premium(user) else FREE_SAVE_CAP
+
+
 def is_premium_content_item(item: dict) -> bool:
     """True if the item belongs to a premium-only content type.
 
