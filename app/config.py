@@ -70,6 +70,11 @@ class Settings:
         self.paywall_test_family_ids: set = {
             s.strip() for s in os.getenv("PAYWALL_TEST_FAMILY_IDS", "").split(",") if s.strip()
         }
+        # Platform gate (compliance). Native apps (iOS / Android Flutter
+        # wrapper) keep the paywall DORMANT even when PAYWALL_ENABLED is
+        # true. Flip this on only when a reviewed App Store / Play Store
+        # build with corrected IAP + privacy declarations is shipped.
+        self.paywall_native_enabled: bool = os.getenv("PAYWALL_NATIVE_ENABLED", "false").lower() in ("true", "1")
 
 
 _settings = None

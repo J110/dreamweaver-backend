@@ -7,7 +7,7 @@ from fastapi import APIRouter, HTTPException, Depends, status, Query
 from pydantic import BaseModel
 
 from app.dependencies import admin_bypass, get_db_client, get_optional_user
-from app.utils.backlog import filter_by_backlog
+from app.utils.backlog import apply_premium_lock, filter_by_backlog
 from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -185,7 +185,7 @@ async def get_content(
 
         return ContentResponse(
             success=True,
-            data=content_data,
+            data=apply_premium_lock(content_data, current_user),
             message="Content retrieved successfully"
         )
         

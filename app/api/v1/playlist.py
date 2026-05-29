@@ -18,8 +18,11 @@ from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
 
-from app.dependencies import get_db_client
+from app.dependencies import get_db_client, get_optional_user
+from app.utils.gating import is_premium
 from app.utils.logger import get_logger
+
+FREE_SLOTS = {"silly_song", "poem", "short_story", "lullaby"}
 
 logger = get_logger(__name__)
 router = APIRouter()
@@ -217,15 +220,18 @@ async def get_today_playlist(
     lang: str = Query("en", description="'en' or 'hi'"),
     tz: str = Query("Asia/Kolkata", description="IANA timezone string"),
     store=Depends(get_db_client),
+    current_user: Optional[dict] = Depends(get_optional_user),
 ) -> PlaylistResponse:
     today = _local_today(tz)
     recent_excluded = _recent_excluded_ids(store, lang=lang, lookback_days=7)
+
+    slots = SLOTS if is_premium(current_user) else [s for s in SLOTS if s[0] in FREE_SLOTS]
 
     items: list[PlaylistItem] = []
     missing: list[str] = []
     all_fresh = True
 
-    for slot_def in SLOTS:
+    for slot_def in slots:
         item, is_fallback, audio_dir, cover_dir = _pick_slot(
             slot_def, lang=lang, today=today, recent_excluded=recent_excluded,
         )

@@ -10,7 +10,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel
 
 from app.dependencies import admin_bypass, get_optional_user
-from app.utils.backlog import filter_by_backlog
+from app.utils.backlog import apply_premium_lock, filter_by_backlog, should_lock_for_user
 from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -136,7 +136,10 @@ async def list_funny_shorts(
 
 
 @router.get("/{short_id}", response_model=FunnyShortResponse)
-async def get_funny_short(short_id: str) -> FunnyShortResponse:
+async def get_funny_short(
+    short_id: str,
+    current_user: Optional[Dict[str, str]] = Depends(get_optional_user),
+) -> FunnyShortResponse:
     """Get a single funny short by ID (includes script)."""
     short = _load_short(short_id)
     if not short:
@@ -146,19 +149,27 @@ async def get_funny_short(short_id: str) -> FunnyShortResponse:
         )
     return FunnyShortResponse(
         success=True,
-        data=short,
+        data=apply_premium_lock(short, current_user),
         message="Funny short retrieved successfully",
     )
 
 
 @router.post("/{short_id}/play", response_model=FunnyShortResponse)
-async def play_funny_short(short_id: str) -> FunnyShortResponse:
+async def play_funny_short(
+    short_id: str,
+    current_user: Optional[Dict[str, str]] = Depends(get_optional_user),
+) -> FunnyShortResponse:
     """Increment play count for a funny short (first play in session)."""
     short = _load_short(short_id)
     if not short:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Funny short not found",
+        )
+    if should_lock_for_user(short, current_user):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="premium_required",
         )
     short["play_count"] = short.get("play_count", 0) + 1
     _save_short(short)
@@ -170,13 +181,21 @@ async def play_funny_short(short_id: str) -> FunnyShortResponse:
 
 
 @router.post("/{short_id}/replay", response_model=FunnyShortResponse)
-async def replay_funny_short(short_id: str) -> FunnyShortResponse:
+async def replay_funny_short(
+    short_id: str,
+    current_user: Optional[Dict[str, str]] = Depends(get_optional_user),
+) -> FunnyShortResponse:
     """Increment replay count for a funny short (subsequent plays in session)."""
     short = _load_short(short_id)
     if not short:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Funny short not found",
+        )
+    if should_lock_for_user(short, current_user):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="premium_required",
         )
     short["replay_count"] = short.get("replay_count", 0) + 1
     _save_short(short)

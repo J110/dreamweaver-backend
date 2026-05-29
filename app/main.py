@@ -13,6 +13,7 @@ from fastapi.staticfiles import StaticFiles
 
 from app.config import get_settings
 from app.middleware.error_handler import ErrorHandlerMiddleware
+from app.middleware.platform import PlatformContextMiddleware
 from app.middleware.timing import TimingMiddleware
 from app.utils.logger import configure_logging, get_logger
 
@@ -192,7 +193,11 @@ app = FastAPI(
 # 1. Timing middleware added first → innermost layer (measures actual handler time)
 app.add_middleware(TimingMiddleware)
 
-# 2. Error handler
+# 2. Platform context — sets is_native_app_request() contextvar for is_premium().
+#    Added before error handler so handler exceptions still see the flag.
+app.add_middleware(PlatformContextMiddleware)
+
+# 3. Error handler
 app.add_middleware(ErrorHandlerMiddleware)
 
 # 3. CORS added last → outermost layer (processes OPTIONS preflight first)

@@ -9,7 +9,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel
 
 from app.dependencies import admin_bypass, get_optional_user
-from app.utils.backlog import filter_by_backlog
+from app.utils.backlog import apply_premium_lock, filter_by_backlog, should_lock_for_user
 from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -137,7 +137,10 @@ async def list_silly_songs(
 
 
 @router.get("/{song_id}", response_model=SillySongResponse)
-async def get_silly_song(song_id: str) -> SillySongResponse:
+async def get_silly_song(
+    song_id: str,
+    current_user: Optional[Dict[str, str]] = Depends(get_optional_user),
+) -> SillySongResponse:
     """Get a single silly song by ID (includes lyrics)."""
     song = _load_song(song_id)
     if not song:
@@ -147,19 +150,27 @@ async def get_silly_song(song_id: str) -> SillySongResponse:
         )
     return SillySongResponse(
         success=True,
-        data=song,
+        data=apply_premium_lock(song, current_user),
         message="Silly song retrieved successfully",
     )
 
 
 @router.post("/{song_id}/play", response_model=SillySongResponse)
-async def play_silly_song(song_id: str) -> SillySongResponse:
+async def play_silly_song(
+    song_id: str,
+    current_user: Optional[Dict[str, str]] = Depends(get_optional_user),
+) -> SillySongResponse:
     """Increment play count for a silly song (first play in session)."""
     song = _load_song(song_id)
     if not song:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Silly song not found",
+        )
+    if should_lock_for_user(song, current_user):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="premium_required",
         )
     song["play_count"] = song.get("play_count", 0) + 1
     _save_song(song)
@@ -171,13 +182,21 @@ async def play_silly_song(song_id: str) -> SillySongResponse:
 
 
 @router.post("/{song_id}/replay", response_model=SillySongResponse)
-async def replay_silly_song(song_id: str) -> SillySongResponse:
+async def replay_silly_song(
+    song_id: str,
+    current_user: Optional[Dict[str, str]] = Depends(get_optional_user),
+) -> SillySongResponse:
     """Increment replay count for a silly song (subsequent plays in session)."""
     song = _load_song(song_id)
     if not song:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Silly song not found",
+        )
+    if should_lock_for_user(song, current_user):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="premium_required",
         )
     song["replay_count"] = song.get("replay_count", 0) + 1
     _save_song(song)

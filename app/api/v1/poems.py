@@ -9,7 +9,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel
 
 from app.dependencies import admin_bypass, get_optional_user
-from app.utils.backlog import filter_by_backlog
+from app.utils.backlog import apply_premium_lock, filter_by_backlog, should_lock_for_user
 from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -137,7 +137,10 @@ async def list_poems(
 
 
 @router.get("/{poem_id}", response_model=PoemResponse)
-async def get_poem(poem_id: str) -> PoemResponse:
+async def get_poem(
+    poem_id: str,
+    current_user: Optional[Dict[str, str]] = Depends(get_optional_user),
+) -> PoemResponse:
     """Get a single poem by ID (includes full text)."""
     poem = _load_poem(poem_id)
     if not poem:
@@ -147,19 +150,27 @@ async def get_poem(poem_id: str) -> PoemResponse:
         )
     return PoemResponse(
         success=True,
-        data=poem,
+        data=apply_premium_lock(poem, current_user),
         message="Poem retrieved successfully",
     )
 
 
 @router.post("/{poem_id}/play", response_model=PoemResponse)
-async def play_poem(poem_id: str) -> PoemResponse:
+async def play_poem(
+    poem_id: str,
+    current_user: Optional[Dict[str, str]] = Depends(get_optional_user),
+) -> PoemResponse:
     """Increment play count for a poem (first play in session)."""
     poem = _load_poem(poem_id)
     if not poem:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Poem not found",
+        )
+    if should_lock_for_user(poem, current_user):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="premium_required",
         )
     poem["play_count"] = poem.get("play_count", 0) + 1
     _save_poem(poem)
@@ -171,13 +182,21 @@ async def play_poem(poem_id: str) -> PoemResponse:
 
 
 @router.post("/{poem_id}/replay", response_model=PoemResponse)
-async def replay_poem(poem_id: str) -> PoemResponse:
+async def replay_poem(
+    poem_id: str,
+    current_user: Optional[Dict[str, str]] = Depends(get_optional_user),
+) -> PoemResponse:
     """Increment replay count for a poem (subsequent plays in session)."""
     poem = _load_poem(poem_id)
     if not poem:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Poem not found",
+        )
+    if should_lock_for_user(poem, current_user):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="premium_required",
         )
     poem["replay_count"] = poem.get("replay_count", 0) + 1
     _save_poem(poem)

@@ -8,7 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
 
 from app.dependencies import admin_bypass, get_optional_user
-from app.utils.backlog import filter_by_backlog
+from app.utils.backlog import apply_premium_lock, filter_by_backlog
 from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -80,14 +80,17 @@ async def list_lullabies(
 
 
 @router.get("/{lullaby_id}", response_model=LullabyResponse)
-async def get_lullaby(lullaby_id: str):
+async def get_lullaby(
+    lullaby_id: str,
+    current_user: Optional[Dict[str, str]] = Depends(get_optional_user),
+):
     """Get a single lullaby by ID."""
     lullabies = _load_lullabies()
     for lullaby in lullabies:
         if lullaby["id"] == lullaby_id:
             return {
                 "success": True,
-                "data": lullaby,
+                "data": apply_premium_lock(lullaby, current_user),
                 "message": "Lullaby found",
             }
     raise HTTPException(status_code=404, detail=f"Lullaby {lullaby_id} not found")
