@@ -65,6 +65,12 @@ class Settings:
         self.algorithm: str = os.getenv("ALGORITHM", "HS256")
         self.access_token_expire_minutes: int = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "30"))
 
+        # Paywall (Step 1 foundation — flag-off must be byte-identical to today)
+        self.paywall_enabled: bool = os.getenv("PAYWALL_ENABLED", "false").lower() in ("true", "1")
+        self.paywall_test_family_ids: set = {
+            s.strip() for s in os.getenv("PAYWALL_TEST_FAMILY_IDS", "").split(",") if s.strip()
+        }
+
 
 _settings = None
 

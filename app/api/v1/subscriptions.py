@@ -135,10 +135,17 @@ async def get_current_subscription(
             # Fallback to free tier if tier not found
             tier = SUBSCRIPTION_TIERS[0]
         
+        from app.utils.gating import is_premium
+        effective_premium = is_premium({
+            "subscription_tier": tier_id,
+            "family_id": user_data.get("family_id"),
+        })
+
         return SubscriptionResponse(
             success=True,
             data={
                 "current_tier": tier,
+                "effective_premium": effective_premium,
                 "since": user_data.get("subscription_start_date"),
                 "next_billing_date": user_data.get("next_billing_date"),
                 # Phase 0 step 1.4e: surface credit machinery for settings UI.
