@@ -35,6 +35,8 @@ Resolved with the owner (brainstorm Q1–Q3 + design Sections 1–2):
 - An active device effectively never expires. A device falls to cold restore only after **365 days of zero use** (`AUTH_TOKEN_DORMANCY_DAYS = 365`, single config constant). Stripe keeps billing through dormancy, so nothing is lost — a year-dormant premium device does one email-verify to re-anchor.
 - Expired token rows are **retained until the 365d horizon** (so renewal can recognize them), then purged.
 
+> **iOS caveat (load-bearing).** The 365d server-side TTL does NOT hold on iOS *web*: Safari/WKWebView ITP clears script-writable localStorage (where the token lives) after ~7 days inactivity / under storage pressure. So iOS web devices — including premium — lose the token and re-auth (→ email-restore for premium) far more often than 365d implies. **Web launch: accepted iOS-web limitation** (smaller segment; re-auth smoother post-migration). **Native iOS build: a named must-have** — store the token in the iOS Keychain and inject it into the webview so it survives ITP clearing (see native-build requirements). This migration does not solve iOS localStorage clearing; it only makes the re-auth graceful (silent re-mint / restore, no magic-link wall).
+
 ### Failure taxonomy (item 1 — the riskiest retarget)
 Every authenticated-request failure is classified; **only an explicit backend "unrenewable" verdict bounces the user.** A transient blip must never send a paying device to restore.
 
