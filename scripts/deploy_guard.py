@@ -1530,23 +1530,25 @@ def cmd_verify(args):
             for issue in file_issues:
                 print(issue)
 
-            # Auto-recover
-            if recoverable and not args.no_recover:
+            # Auto-recover, then HARD-block on anything still missing.
+            if recoverable and not args.no_recover and not args.dry_run:
                 recovered, not_found = auto_recover(recoverable, dry_run=args.dry_run)
                 print(f"\n  Recovery: {recovered} restored, {not_found} not in backup stores")
-                if recovered > 0 and not args.dry_run:
-                    print("  Re-checking recovered files...")
-                    file_issues2, _ = verify_files(after, frontend, api)
-                    still_missing = len(file_issues2)
-                    if still_missing == 0:
-                        print("  ✅ All files now reachable!")
-                    else:
-                        msg = f"{still_missing} file(s) still missing after recovery"
-                        print(f"  ❌ {msg}")
-                        unresolved.append(msg)
-                elif not_found > 0:
-                    msg = f"{not_found} file(s) not found in any backup store"
+                # AUTHORITATIVE re-check — never trust the (recovered, not_found)
+                # counts alone. auto_recover returns (0,0) when its recovery step
+                # no-ops (e.g. SSH-to-self when verify runs ON the VM), which
+                # previously dropped a genuinely missing file
+                # (gen-feec_monika.mp3, 2026-05-29) instead of blocking. Re-run
+                # the file check and block on ANY remaining missing/broken file.
+                print("  Re-checking files after recovery attempt...")
+                file_issues2, _ = verify_files(after, frontend, api)
+                if len(file_issues2) == 0:
+                    print("  ✅ All files now reachable!")
+                else:
+                    msg = f"{len(file_issues2)} file(s) still missing/broken after recovery attempt"
                     print(f"  ❌ {msg}")
+                    for i2 in file_issues2:
+                        print(i2)
                     unresolved.append(msg)
             else:
                 msg = f"{len(file_issues)} file(s) missing or broken (no recovery available)"
