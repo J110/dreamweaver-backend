@@ -2626,6 +2626,17 @@ def main():
     print_summary(state, total_elapsed)
 
     # ── Email notifications (ALWAYS — success or failure) ──
+    # Scan log for fal-ai balance-exhaustion marker (set by _fal_utils
+    # wrappers when fal returns 403 "Exhausted balance"). Surfaces the
+    # top-up link prominently in the email instead of a generic failure.
+    try:
+        _logp = Path(str(log_file)) if not isinstance(log_file, Path) else log_file
+        if _logp.exists():
+            _logtail = _logp.read_text(errors="ignore")[-200000:]
+            if "FAL_BALANCE_EXHAUSTED" in _logtail or "Exhausted balance" in _logtail:
+                state["fal_balance_exhausted"] = True
+    except Exception:
+        pass
     try:
         from pipeline_notify import send_pipeline_notification, send_qa_notification
         send_pipeline_notification(state, str(log_file), total_elapsed)

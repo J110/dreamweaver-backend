@@ -42,6 +42,7 @@ except Exception:
 # Local imports (after sys.path tweak)
 from _hindi_diversity import PICKERS, load_hindi_catalog  # type: ignore
 from _hindi_generators import GENERATORS  # type: ignore
+from _fal_utils import FalBalanceExhausted as _FalBalanceExhausted
 
 LOG_DIR = BASE_DIR / "logs"
 LOG_DIR.mkdir(exist_ok=True)
@@ -113,6 +114,13 @@ def _build_state(results: dict, elapsed: float) -> dict:
             {"type": r["type"], "error": r.get("error", "")[:300]}
             for r in failures
         ],
+        "fal_balance_exhausted": any(
+            r.get("status") == "balance_exhausted" for r in results.values()
+        ),
+        "balance_exhausted_items": [
+            r["type"] for r in results.values()
+            if r.get("status") == "balance_exhausted"
+        ],
         "log_file": str(LOG_FILE),
         "cost_this_run": "~$1.50-2.00 (Hindi daily)",
     }
@@ -180,6 +188,15 @@ def main(only_types: list[str] | None = None) -> int:
             # Reload local catalog so subsequent diversity samples
             # account for the just-generated piece.
             catalog = load_hindi_catalog()
+        except _FalBalanceExhausted as e:
+            err = f"{type(e).__name__}: {e}"
+            print(f"  ⚠  {content_type} skipped — fal-ai balance exhausted (top up at https://fal.ai/dashboard/billing)")
+            _log_failure(content_type, traceback.format_exc())
+            results[content_type] = {
+                "status": "balance_exhausted",
+                "type": content_type,
+                "error": err,
+            }
         except Exception as e:
             err = f"{type(e).__name__}: {e}"
             print(f"  ✗ {content_type} failed: {err}")
@@ -241,7 +258,7 @@ def main(only_types: list[str] | None = None) -> int:
         if content_type not in results:
             continue
         r = results[content_type]
-        icon = "✓" if r.get("status") == "ok" else "✗"
+        icon = "✓" if r.get("status") == "ok" else ("⚠" if r.get("status") == "balance_exhausted" else "✗")
         suffix = r.get("id", r.get("error", ""))[:60]
         print(f"  {icon} {content_type:12s}  {suffix}")
 

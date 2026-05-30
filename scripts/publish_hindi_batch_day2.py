@@ -35,6 +35,7 @@ the tail of the script.
 """
 
 from __future__ import annotations
+from _fal_utils import safe_subscribe as _safe_subscribe, safe_upload_file as _safe_upload_file
 
 import io
 import json
@@ -408,7 +409,7 @@ def minimax_generate_lullaby(style: str, lyrics: str) -> bytes:
     if not MINIMAX_REFERENCE_FILE.exists():
         sys.exit(f"Reference audio not found: {MINIMAX_REFERENCE_FILE}")
     print(f"  Uploading reference ({MINIMAX_REFERENCE_FILE.stat().st_size:,} bytes)...")
-    ref_url = fal_client.upload_file(str(MINIMAX_REFERENCE_FILE))
+    ref_url = _safe_upload_file(str(MINIMAX_REFERENCE_FILE))
     print(f"  reference_audio → {ref_url}")
 
     # fal schema has varied — probe accepted param names.
@@ -418,7 +419,7 @@ def minimax_generate_lullaby(style: str, lyrics: str) -> bytes:
         args = {"prompt": style, "lyrics": lyrics, param: ref_url}
         try:
             print(f"  Trying param '{param}'...")
-            result = fal_client.subscribe(FAL_ENDPOINT, arguments=args, with_logs=False)
+            result = _safe_subscribe(FAL_ENDPOINT, arguments=args, with_logs=False)
             print(f"  → accepted")
             break
         except Exception as e:

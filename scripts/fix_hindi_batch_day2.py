@@ -47,6 +47,7 @@ WEB_ROOT = REPO_ROOT / "dreamweaver-web"
 
 sys.path.insert(0, str(Path(__file__).parent))
 from audio_assembly import normalize_for_tts, apply_swell_envelope, MUSIC_DIR
+from _fal_utils import safe_subscribe as _safe_subscribe, safe_upload_file as _safe_upload_file
 
 load_dotenv(BASE_DIR / ".env", override=True)
 
@@ -495,10 +496,10 @@ def minimax_lullaby(style, lyrics_deva):
     import fal_client
     ref_path = _resolve_minimax_reference()
     print(f"  Uploading reference {ref_path.name} ({ref_path.stat().st_size:,} bytes)...")
-    ref_url = fal_client.upload_file(str(ref_path))
+    ref_url = _safe_upload_file(str(ref_path))
     args = {"prompt": style, "lyrics": lyrics_deva, "reference_audio_url": ref_url}
     print(f"  fal-ai/minimax-music/v2.5 + Devanagari lyrics (len={len(lyrics_deva)})")
-    result = fal_client.subscribe(FAL_ENDPOINT, arguments=args, with_logs=False)
+    result = _safe_subscribe(FAL_ENDPOINT, arguments=args, with_logs=False)
     audio_url = None
     if isinstance(result, dict):
         a = result.get("audio")

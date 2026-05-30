@@ -176,6 +176,21 @@ def _build_html(state: dict, log_file: str = "", elapsed: float = 0) -> str:
                     font-size:12px;overflow-x:auto;white-space:pre-wrap;">{log_tail}</pre>
         """
 
+    fal_balance_exhausted = bool(state.get("fal_balance_exhausted"))
+    balance_items = state.get("balance_exhausted_items") or []
+    balance_html = ""
+    if fal_balance_exhausted:
+        items_text = ", ".join(balance_items) if balance_items else "music items"
+        balance_html = (
+            "<div style='background:#fef3c7;border:2px solid #f59e0b;"
+            "color:#92400e;padding:14px;border-radius:8px;margin:0 0 12px 0;'>"
+            "<b style='font-size:16px;'>⚠️ fal-ai balance exhausted</b><br>"
+            f"Skipped: <b>{items_text}</b><br>"
+            "Top up to resume generation: "
+            "<a href='https://fal.ai/dashboard/billing' "
+            "style='color:#92400e;font-weight:bold;'>fal.ai/dashboard/billing</a>"
+            "</div>"
+        )
     html = f"""
     <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
                 max-width:600px;margin:0 auto;color:#333;">
@@ -187,6 +202,7 @@ def _build_html(state: dict, log_file: str = "", elapsed: float = 0) -> str:
         <table style="width:100%;border-collapse:collapse;font-size:14px;">
           {rows}
         </table>
+        {balance_html}
         {titles_html}
         {covers_html}
         {before_bed_html}
@@ -228,6 +244,8 @@ def send_pipeline_notification(
     mood = state.get("mood")
     mood_label = f" [MOOD:{mood.upper()}]" if mood else ""
     subject = f"{tag} Dream Valley Pipeline{mood_label} — {date_str}"
+    if state.get("fal_balance_exhausted"):
+        subject = f"[BALANCE EXHAUSTED] {subject}"
     if is_success and n_items:
         # Per-type breakdown in subject
         stories_n = state.get("generated_stories", 0)

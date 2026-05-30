@@ -30,6 +30,7 @@ import time
 from collections import Counter
 from datetime import date
 from pathlib import Path
+from _fal_utils import safe_subscribe as _safe_subscribe
 
 # ── Load .env ────────────────────────────────────────────────────────
 _env_path = Path(__file__).resolve().parents[1] / ".env"
@@ -753,7 +754,7 @@ def generate_audio(style_prompt: str, lyrics: str) -> tuple:
     print(f"  Style: {style_prompt[:80]}...")
     start = time.time()
 
-    result = fal_client.subscribe("fal-ai/minimax-music/v2", arguments={
+    result = _safe_subscribe("fal-ai/minimax-music/v2", arguments={
         "prompt": style_prompt,
         "lyrics_prompt": lyrics,
         "audio_setting": {

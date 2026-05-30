@@ -22,6 +22,7 @@ import sys
 import time
 from datetime import date
 from pathlib import Path
+from _fal_utils import safe_subscribe as _safe_subscribe
 
 # ── Load .env ────────────────────────────────────────────────────────
 _env_path = Path(__file__).resolve().parents[1] / ".env"
@@ -544,7 +545,7 @@ def generate_audio_fal(style_prompt: str, poem_text: str) -> tuple:
     start = time.time()
 
     # Poems don't use [verse]/[chorus] — just raw lines as lyrics
-    result = fal_client.subscribe("fal-ai/minimax-music/v2", arguments={
+    result = _safe_subscribe("fal-ai/minimax-music/v2", arguments={
         "prompt": style_prompt,
         "lyrics_prompt": poem_text,
         "audio_setting": {

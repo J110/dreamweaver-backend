@@ -40,6 +40,7 @@ if _env_path.exists():
                 os.environ.setdefault(_key.strip(), _val.strip())
 
 import httpx  # noqa: E402
+from _fal_utils import safe_subscribe as _safe_subscribe, safe_upload_file as _safe_upload_file
 
 STINGS_DIR_LOCAL = Path("/opt/audio-store/stings")
 WORK_DIR = Path("/tmp/funny_short_stings")
@@ -105,7 +106,7 @@ def _generate_one(lang: str, kind: str, ref_url: str | None) -> str:
     if ref_url:
         args["reference_audio_url"] = ref_url
 
-    result = fal_client.subscribe(endpoint, arguments=args, with_logs=False)
+    result = _safe_subscribe(endpoint, arguments=args, with_logs=False)
     audio = result.get("audio") or result.get("data", {}).get("audio")
     if not audio or not audio.get("url"):
         raise RuntimeError(f"No audio URL in response: {result}")
@@ -123,7 +124,7 @@ def generate_candidates(lang: str, kind: str, count: int) -> list[Path]:
                 f"Restore from backup before generating Hindi stings."
             )
         print(f"  Uploading Hindi reference {REF_HI.name}...")
-        ref_url = fal_client.upload_file(str(REF_HI))
+        ref_url = _safe_upload_file(str(REF_HI))
         print(f"  Reference URL: {ref_url}")
 
     candidates: list[Path] = []
