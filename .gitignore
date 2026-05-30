@@ -55,5 +55,11 @@ add_annotations.py
 # deploy_guard transient snapshot (regenerated per deploy)
 data/deploy_snapshot.json
 
+# Runtime auth store — REAL prod users/tokens. Must NEVER be committed: a
+# commit+push would overwrite prod's live auth data on the next git pull.
+# Untracked 2026-05-29 before the device-anchored auth migration deploy.
+data/users.json
+data/tokens.json
+
 # Test outputs
 seed_output/funny_shorts_test/
