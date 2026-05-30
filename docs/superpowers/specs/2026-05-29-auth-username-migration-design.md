@@ -114,6 +114,17 @@ This is the **one deliberate live-behavior change** in the build — not a dark 
 5. **401 renewal — genuine dormancy:** token row purged (>365d / removed) → `/auth/renew` returns 410 → free device silently re-mints; premium device routed to `/restore` (Step 5; pre-Step-5 it lands on the silent-router fallback, acceptable since no real premium user is in this state).
 6. **No bounce/loop anywhere:** confirm no redirect loop between `/login`, `/onboarding`, and authed pages under any of the above.
 7. **deploy_guard:** snapshot before, verify after (YouTube-radio flag pre-existing/exempt).
+8. **Heart silent401 (no regression of the live fix):** a stale-token / token-less user taps the heart during or after the transition → inline "Sign in to save", **no logout, no `/login` bounce**. The migration's `/login` retargeting and 401 renewal must NOT reintroduce a heart→magic-link bounce. The shipped `silent401` path (heart save/like/unsave never trigger `authLogout()` or the `/login` redirect) stays intact until device-auto-mint makes token-less heart taps impossible.
+
+### Rollback path & safety
+This is a LIVE deploy — there is no flag to switch off, so a clean revert path is mandatory.
+- **Revert mechanism:** `git revert` the migration commits in BOTH repos → redeploy backend (Docker rebuild) + frontend (build/PM2). Revert both together (never partial — see caveat). No data migration to undo: the new code only ADDS user/token records; it never destructively mutates existing ones (only sliding `expires_at`).
+- **Newly-minted accounts SURVIVE the revert (verified against current code).** Device accounts created via `/auth/device_account` during the live window persist as normal user records in `data/users.json` + token rows in `data/tokens.json` (both Docker-volumed, durable across rebuilds). The OLD `local_verify_token` bulk-loads tokens + users from disk and validates any token with a uid present in `_local_users` + a non-expired `expires_at` — same schema the new code writes. So new-code tokens keep working post-revert; they simply revert from the 365d to the old 30-day sliding TTL on next use. **No account loss, no forced re-login.**
+- **Partial-revert caveat (solve before deploy):** the new `/auth/renew` endpoint disappears on revert. The OLD frontend never calls it, so a full both-repos revert is consistent. Do NOT leave the new frontend (which calls `/auth/renew`) against an old backend (→ 404) — revert both repos in the same operation.
+
+### Mid-deploy continuity (no mid-session breakage)
+- **Backend downtime (Docker rebuild, ~30–60s):** authed requests get network errors, which `fetchApi` explicitly tolerates — the `.catch(() => {})` "Network error — don't logout, just proceed offline" branch (api.js). No logout, no bounce; requests succeed on the next interaction after restart. (Confirmed: only an explicit 401 logs out, never a network error.)
+- **Old-frontend ↔ new-backend window:** deploy the backend **backward-compatibly** — keep `/auth/login_username` RESPONDING (repurposed to always-create, identical to `/auth/device_account`) for one deploy cycle, so a mid-session user still on the cached old frontend who triggers re-auth gets a working account instead of a hard error. Remove `login_username` only in a follow-up cleanup once no old-frontend sessions remain. New frontend uses `/auth/device_account` on reload. → A user with the app open during the rebuild is not broken, bounced, or logged out mid-session.
 
 ## 10. Risks & rollback
 
