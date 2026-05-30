@@ -54,7 +54,7 @@ logger = get_logger(__name__)
 # ── Constants per spec ──────────────────────────────────────
 
 CODE_TTL = timedelta(minutes=15)
-SESSION_TTL = timedelta(days=30)
+SESSION_TTL = timedelta(days=365)
 SESSION_REFRESH_GATE = timedelta(hours=24)
 
 RATE_LIMIT_WINDOW_SECONDS = 3600

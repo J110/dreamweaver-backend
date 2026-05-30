@@ -362,7 +362,8 @@ def _ensure_email_field(db_client, uid: str, user_data: dict) -> None:
 # Phase 0 step 1.5: token TTL + sliding refresh.
 # Tokens minted pre-1.5 lack expires_at — treated as legacy until the
 # migration script revokes them en masse.
-_SESSION_TTL_SECONDS = 30 * 24 * 3600
+AUTH_TOKEN_DORMANCY_DAYS = 365
+_SESSION_TTL_SECONDS = AUTH_TOKEN_DORMANCY_DAYS * 24 * 3600
 _SESSION_REFRESH_GATE_SECONDS = 24 * 3600
 
 
