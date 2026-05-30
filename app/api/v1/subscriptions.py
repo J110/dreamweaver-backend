@@ -45,6 +45,7 @@ SUBSCRIPTION_TIERS = [
         "currency": "USD",
         "billing_period": "monthly",
         "trial_days_annual": 7,
+        "trial_days_monthly": 7,
         # Credit model
         "credits_per_period": 30,     # Premium pool, resets each renewal
         "lifetime_free_credits": None,

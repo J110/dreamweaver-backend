@@ -11,7 +11,7 @@ Configuration via env vars:
   STRIPE_DISABLED:             '1' / 'true' to disable (tests/CI)
 
 7-day trial is configured per-Checkout-Session via
-subscription_data.trial_period_days for the annual plan only,
+subscription_data.trial_period_days for both monthly and annual plans,
 NOT baked into the Price object — keeps trial duration tunable
 in code without touching Stripe configuration.
 
@@ -140,9 +140,9 @@ def create_checkout_session(
 ) -> Optional[str]:
     """Create a Stripe Checkout session, return the hosted URL.
 
-    Annual plan gets a 7-day trial via subscription_data.trial_period_days.
-    Monthly plan has no trial. Trial duration lives here — change in code,
-    not Stripe Dashboard.
+    Both monthly and annual plans get a 7-day trial via
+    subscription_data.trial_period_days. Trial duration lives here — change in
+    code, not Stripe Dashboard.
     """
     stripe = _get_client()
     if stripe is None:
@@ -163,7 +163,7 @@ def create_checkout_session(
         "metadata": {"family_id": family_id, "plan": plan},
     }
 
-    if plan == "annual":
+    if plan in ("monthly", "annual"):
         params["subscription_data"] = {"trial_period_days": 7}
 
     try:
