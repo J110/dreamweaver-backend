@@ -256,3 +256,34 @@ async def login_deprecated() -> dict:
             "replacement": "POST /api/v1/auth/request_link with context=login_existing",
         },
     )
+
+
+class DeviceAccountBody(BaseModel):
+    username: str
+    child_age: int | None = None
+    lang: str = "en"
+
+
+@router.post("/device_account")
+async def device_account(body: DeviceAccountBody) -> dict:
+    """Always-create a fresh device account + 365d token. Username is a
+    cosmetic label (collisions fine). The ONLY mint path for new devices;
+    there is no find-existing-by-username login (impersonation vector).
+    """
+    from app.services.local_store import get_local_store
+    from app.services import magic_link as ml
+    store = get_local_store()
+    user = ml._create_device_user(store, body.username, child_age=body.child_age, lang=body.lang)
+    token = ml.mint_device_token(store, user["uid"])
+    return {
+        "token": token,
+        "user": {
+            "uid": user["uid"],
+            "username": user["username"],
+            "family_id": user["family_id"],
+            "child_age": user.get("child_age"),
+            "preferred_lang": user.get("preferred_lang"),
+            "subscription_tier": user.get("subscription_tier") or "free",
+            "onboarding_complete": True,
+        },
+    }

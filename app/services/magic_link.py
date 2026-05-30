@@ -248,6 +248,49 @@ def _create_user_with_email(store, email_lc: str) -> dict:
     return user_data
 
 
+def _create_device_user(store, username: str, child_age=None, lang: str = "en") -> dict:
+    """Mint a fresh device account. Username is a COSMETIC label — never
+    queried for auth, collisions allowed. Each call creates a distinct
+    account (uid + family_id). onboarding_complete=True (the device account
+    IS onboarding). No email (captured only at Stripe checkout for restore).
+    Mirrors _create_user_with_email; secrets.token_hex keeps uid unique even
+    when the username repeats.
+    """
+    uname = (username or "").strip()
+    uid = hashlib.sha256(f"{uname}:{secrets.token_hex(8)}".encode()).hexdigest()[:28]
+    family_id = str(uuid.uuid4())
+    user_data = {
+        "id": uid,
+        "uid": uid,
+        "username": uname,
+        "username_lowercase": uname.lower(),
+        "child_age": child_age,
+        "preferred_lang": lang or "en",
+        "subscription_tier": "free",
+        "created_at": _now_iso(),
+        "preferences": {},
+        "family_id": family_id,
+        "onboarding_complete": True,
+    }
+    store.collection("users").document(uid).set(user_data)
+    try:
+        from app.dependencies import _local_users
+        _local_users[uid] = user_data
+    except Exception:
+        pass
+    logger.info("Device account created: uid=%s family_id=%s username=%s", uid, family_id, uname)
+    return user_data
+
+
+def mint_device_token(store, uid: str) -> str:
+    """Issue a fresh 365d sliding token for a uid and persist it."""
+    import uuid as _uuid
+    token = _uuid.uuid4().hex
+    session_id = f"device-{_uuid.uuid4().hex[:8]}"
+    _persist_token_row(store, token, uid, session_id)
+    return token
+
+
 def _set_user_email_verified(store, uid: str, email_lc: Optional[str]) -> None:
     """Persist email_verified=true and (optionally) email on a user record."""
     update = {"email_verified": True}
