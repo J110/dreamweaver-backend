@@ -82,6 +82,12 @@ def get_groq_client(settings: Settings = Depends(get_settings)):
 # Local Auth Store (for dev mode without Firebase)
 _local_users: Dict[str, dict] = {}
 _local_tokens: Dict[str, str] = {}  # token -> uid
+# Loaded-flags: set True only after a FULL disk load of the respective
+# collection. Gating the load on these (not on cache emptiness) prevents a
+# single create/persist-seeded entry from tripping `if not _local_*` and
+# skipping the rest of disk — which silently 401s every pre-existing user.
+_tokens_loaded = False
+_users_loaded = False
 
 
 def _persist_token(token: str, uid: str):
@@ -100,36 +106,40 @@ def _persist_token(token: str, uid: str):
 
 
 def _load_persisted_tokens():
-    """Load persisted tokens and users from LocalStore on first use.
+    """Load persisted tokens and users from LocalStore once after boot.
 
-    The two caches are gated independently. A single gate on _local_tokens
-    previously caused 401s: if any path seeded _local_tokens (cron
-    pipelines persisting a service token, magic_link._persist_token_row
-    on a verify call) before a user's first authenticated request, the
-    early return skipped loading _local_users. local_verify_token then
-    rejected the new token via `uid not in _local_users`.
+    Gated on the _tokens_loaded / _users_loaded flags, NOT on cache
+    emptiness. The previous `if not _local_*` gates were tripped whenever a
+    create/persist path (_create_device_user, _create_user_with_email,
+    _persist_token_row) seeded a single entry before the first full load: the
+    cache went non-empty, the gate skipped loading the rest of disk, and every
+    pre-existing disk user then 401'd via `uid not in _local_users` until the
+    next restart. The flags make the full load happen exactly once regardless
+    of seeding; setdefault preserves any already-seeded entry.
     """
-    global _local_tokens, _local_users
+    global _tokens_loaded, _users_loaded
     try:
         from app.services.local_store import get_local_store
         store = get_local_store()
-        if not _local_tokens:
+        if not _tokens_loaded:
             token_docs = store.collection("tokens").get()
             for doc in token_docs:
                 data = doc.to_dict()
                 tok = data.get("token")
                 uid = data.get("uid")
                 if tok and uid:
-                    _local_tokens[tok] = uid
-        if not _local_users:
+                    _local_tokens.setdefault(tok, uid)
+            _tokens_loaded = True
+        if not _users_loaded:
             user_docs = store.collection("users").get()
             for doc in user_docs:
                 data = doc.to_dict()
                 uid = data.get("uid") or data.get("id")
                 if uid:
-                    _local_users[uid] = data
+                    _local_users.setdefault(uid, data)
+            _users_loaded = True
     except Exception:
-        pass  # Don't crash on load failure
+        pass  # leave flags unset so a later call retries the load
 
 
 # NOTE: Phase 0 step 1.5 (magic-link auth migration) deleted local_login()
@@ -393,20 +403,44 @@ def local_verify_token(token: str) -> Optional[dict]:
         migration script revokes them).
       - Sliding refresh: if last_used_at > 24h ago, extend expires_at by
         30 days and bump last_used_at. Skipped on legacy tokens.
+
+    Cache read-through: a token/user valid on disk but absent from the
+    in-memory cache (persisted by another path/process after the one-time
+    load) is recovered from the store before rejecting — the cache is an
+    accelerator, never the source of truth for existence.
     """
     _load_persisted_tokens()
-    uid = _local_tokens.get(token)
-    if not uid or uid not in _local_users:
-        return None
 
-    # Read the persistent token row for status fields.
+    # Read the persistent token row (disk truth) up front — used both for the
+    # cache read-through and for the revoked/expired status checks.
+    store = None
+    token_row = None
     try:
         from app.services.local_store import get_local_store
         store = get_local_store()
         token_doc = store.collection("tokens").document(token).get()
         token_row = token_doc.to_dict() if token_doc.exists else None
     except Exception:
+        store = None
         token_row = None
+
+    uid = _local_tokens.get(token)
+    if not uid and token_row:
+        uid = token_row.get("uid")
+        if uid:
+            _local_tokens[token] = uid
+    if not uid:
+        return None
+
+    if uid not in _local_users and store is not None:
+        try:
+            user_doc = store.collection("users").document(uid).get()
+            if user_doc.exists:
+                _local_users[uid] = user_doc.to_dict()
+        except Exception:
+            pass
+    if uid not in _local_users:
+        return None
 
     if token_row:
         if token_row.get("revoked_at"):
