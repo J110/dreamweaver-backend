@@ -264,6 +264,49 @@ class DeviceAccountBody(BaseModel):
     lang: str = "en"
 
 
+class RenewBody(BaseModel):
+    token: str
+    family_id: str
+
+
+def _renew_logic(token: str, family_id: str) -> dict:
+    """Renew a session. Requires the stored token (proof of a prior real
+    session) + matching family_id — family_id alone can never mint (closes
+    the leaked-UUID hole). Returns {token} on success; raises 410
+    'dormant_reauth_required' when the token row is gone/revoked/expired or
+    the family_id doesn't match (the ONLY fall-through trigger, spec §3).
+    """
+    from datetime import datetime, timezone
+    from app.services.local_store import get_local_store
+    from app.services import magic_link as ml
+    store = get_local_store()
+    doc = store.collection("tokens").document(token).get()
+    row = doc.to_dict() if doc.exists else None
+    if not row or row.get("revoked_at"):
+        raise HTTPException(status_code=410, detail="dormant_reauth_required")
+    uid = row.get("uid")
+    user_doc = store.collection("users").document(uid).get() if uid else None
+    user = user_doc.to_dict() if (user_doc and user_doc.exists) else None
+    if not user or (user.get("family_id") or "") != family_id:
+        raise HTTPException(status_code=410, detail="dormant_reauth_required")
+    exp = row.get("expires_at")
+    if exp:
+        try:
+            if datetime.fromisoformat(exp) < datetime.now(timezone.utc):
+                raise HTTPException(status_code=410, detail="dormant_reauth_required")
+        except HTTPException:
+            raise
+        except Exception:
+            pass
+    new_token = ml.mint_device_token(store, uid)
+    return {"token": new_token}
+
+
+@router.post("/renew")
+async def renew(body: RenewBody) -> dict:
+    return _renew_logic(body.token, body.family_id)
+
+
 @router.post("/device_account")
 async def device_account(body: DeviceAccountBody) -> dict:
     """Always-create a fresh device account + 365d token. Username is a
