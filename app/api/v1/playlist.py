@@ -20,6 +20,7 @@ from pydantic import BaseModel
 
 from app.dependencies import get_db_client, get_optional_user
 from app.utils.gating import is_premium
+from app.utils.backlog import should_lock_for_user
 from app.utils.logger import get_logger
 
 FREE_SLOTS = {"silly_song", "poem", "short_story", "lullaby"}
@@ -238,6 +239,12 @@ async def get_today_playlist(
         slot_name = slot_def[0]
         if item is None:
             missing.append(slot_name)
+            continue
+        # Defense-in-depth: a locked item must NEVER enter the playlist.
+        # FREE_SLOTS already excludes premium types and _pick_slot favors
+        # recent items, so this never fires in practice — it makes the
+        # guarantee structural, not coincidental. Flag-off → always False.
+        if should_lock_for_user(item, current_user):
             continue
         audio_file, audio_url = _audio_info(item, audio_dir)
         cover_file, cover_url = _cover_info(item, cover_dir)
