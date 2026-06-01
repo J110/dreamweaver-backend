@@ -26,7 +26,7 @@ from app.utils.gating import is_premium, is_premium_content_item
 
 
 # Paywall-active windows.
-FREE_BACKLOG_DAYS = 7
+FREE_BACKLOG_DAYS = 14
 PREMIUM_BACKLOG_DAYS: Optional[int] = None
 
 # Pre-paywall window — applied to everyone when PAYWALL_ENABLED=false.
