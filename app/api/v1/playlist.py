@@ -25,6 +25,18 @@ from app.utils.logger import get_logger
 
 FREE_SLOTS = {"silly_song", "poem", "short_story", "lullaby"}
 
+# Nap playlist: calming types only (exclude funny_short + long_story).
+# 4th slot (nap_lullaby_2) is premium-only — lullabies are the most nap-appropriate.
+NAP_SLOTS = [
+    ("nap_lullaby",   "song",  "lullaby", "lullabies", "lullabies_hi", "lullabies", "lullabies-hi", "lullabies", "lullabies-hi"),
+    ("nap_poem",      "poem",  None,      "poems",     "poems_hi",     "poems",     "poems-hi",     "poems",     "poems-hi"),
+    ("nap_story",     "story", None,      "stories",   "stories_hi",   "stories",   "stories-hi",   "stories",   "stories-hi"),
+    ("nap_lullaby_2", "song",  "lullaby", "lullabies", "lullabies_hi", "lullabies", "lullabies-hi", "lullabies", "lullabies-hi"),
+]
+NAP_FREE_SLOTS = {"nap_lullaby", "nap_poem", "nap_story"}
+NAP_FREE_COUNT = 3
+NAP_PREMIUM_COUNT = 4
+
 logger = get_logger(__name__)
 router = APIRouter()
 
@@ -275,3 +287,99 @@ async def get_today_playlist(
         },
         message="Today's bedtime playlist",
     )
+
+
+# ── Nap playlist ────────────────────────────────────────────────────
+
+_nap_cache: dict[str, PlaylistResponse] = {}
+
+
+def _today_bedtime_ids(store, today: str, lang: str) -> set:
+    """Content IDs from today's bedtime playlist (one-directional exclusion).
+
+    Same-day overlap decision: ACCEPTED (intentional). A comforting lullaby
+    at nap AND bedtime is arguably nice for a child. Bedtime does NOT read
+    nap history (asymmetric). Named here so it's an explicit design choice,
+    not an accidental gap.
+    """
+    history = store.collections.get("playlist_history", {})
+    ids = set()
+    for record in history.values():
+        if record.get("date") == today and record.get("lang", "en") == lang:
+            for cid in record.get("item_ids", []):
+                ids.add(cid)
+    return ids
+
+
+@router.get("/nap", response_model=PlaylistResponse)
+async def get_nap_playlist(
+    lang: str = Query("en", description="'en' or 'hi'"),
+    tz: str = Query("Asia/Kolkata", description="IANA timezone string"),
+    store=Depends(get_db_client),
+    current_user: Optional[dict] = Depends(get_optional_user),
+) -> PlaylistResponse:
+    """On-demand daytime nap playlist — calming content only.
+
+    Persists per day: first request generates + caches; subsequent requests
+    return the same playlist. Cache key = (date, lang).
+
+    Flag-off: is_premium returns True → everyone gets 4 items from the full
+    library, no lock treatment. Byte-identical to pre-paywall behavior.
+    """
+    today = _local_today(tz)
+    cache_key = f"{today}:{lang}"
+
+    if cache_key in _nap_cache:
+        return _nap_cache[cache_key]
+
+    premium = is_premium(current_user)
+    slots = NAP_SLOTS if premium else [s for s in NAP_SLOTS if s[0] in NAP_FREE_SLOTS]
+
+    bedtime_ids = _today_bedtime_ids(store, today, lang)
+    recent_excluded = _recent_excluded_ids(store, lang=lang, lookback_days=7)
+    all_excluded = recent_excluded | bedtime_ids
+
+    items: list[PlaylistItem] = []
+    used_ids: set[str] = set()
+
+    for slot_def in slots:
+        item, is_fallback, audio_dir, cover_dir = _pick_slot(
+            slot_def, lang=lang, today=today, recent_excluded=all_excluded | used_ids,
+        )
+        slot_name = slot_def[0]
+        if item is None:
+            continue
+        if should_lock_for_user(item, current_user):
+            continue
+        cid = item.get("id")
+        if cid in used_ids:
+            continue
+        used_ids.add(cid)
+        audio_file, audio_url = _audio_info(item, audio_dir)
+        cover_file, cover_url = _cover_info(item, cover_dir)
+        items.append(PlaylistItem(
+            slot=slot_name,
+            content_id=cid,
+            title=item.get("title") or item.get("title_en") or "",
+            audio_file=audio_file,
+            audio_url=audio_url,
+            cover_file=cover_file,
+            cover_url=cover_url,
+            duration_seconds=item.get("duration_seconds") or item.get("duration"),
+            is_fallback=is_fallback,
+        ))
+
+    _record_history(store, today, lang, [it.content_id for it in items])
+
+    response = PlaylistResponse(
+        success=True,
+        data={
+            "date": today,
+            "tz": tz,
+            "items": [it.model_dump() for it in items],
+            "is_nap": True,
+        },
+        message="Today's nap playlist",
+    )
+    _nap_cache[cache_key] = response
+    return response
