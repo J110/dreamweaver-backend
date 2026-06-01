@@ -6,7 +6,8 @@ from typing import Optional
 from fastapi import APIRouter, HTTPException, Depends, status, Query
 from pydantic import BaseModel
 
-from app.dependencies import get_db_client
+from app.dependencies import get_db_client, get_optional_user
+from app.utils.backlog import apply_premium_lock
 from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -52,6 +53,7 @@ async def get_trending(
     limit: int = Query(20, ge=1, le=200),
     lang: Optional[str] = Query(None, description="Filter by language: 'en' or 'hi'"),
     db_client=Depends(get_db_client),
+    current_user: Optional[dict] = Depends(get_optional_user),
 ) -> TrendingResponse:
     """
     Get trending content sorted by engagement + recency boost.
@@ -78,6 +80,9 @@ async def get_trending(
 
         # Limit results
         items = items[:limit]
+
+        # Annotate with premium_locked (Reading-B lock; flag-off = no-op).
+        items = [apply_premium_lock(item, current_user) for item in items]
 
         return TrendingResponse(
             success=True,
