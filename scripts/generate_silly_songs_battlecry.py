@@ -1183,6 +1183,7 @@ def generate_cover_flux(song: dict, force: bool = False) -> bool:
                 size_kb = cover_path.stat().st_size / 1024
                 print(f"    Saved: {cover_path.name} ({size_kb:.0f} KB)")
                 song["cover_file"] = f"{song_id}.webp"
+                song["cover"] = f"/covers/silly-songs/{song_id}.webp"
                 return True
             elif resp.status_code == 429:
                 print(f"    Rate limited, waiting 15s...")

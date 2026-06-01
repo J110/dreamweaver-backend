@@ -59,8 +59,9 @@ def main():
             # Update the JSON's cover_file if it changed
             if data.get("cover_file") != new_cover:
                 data["cover_file"] = new_cover
+                data["cover"] = f"/covers/poems/{new_cover}"
                 path.write_text(json.dumps(data, indent=2, ensure_ascii=False))
-                print(f"  Updated {path.name} → cover_file={new_cover}")
+                print(f"  Updated {path.name} → cover_file={new_cover} cover=/covers/poems/{new_cover}")
         # Small gap to be nice to the API
         if i < len(poems):
             time.sleep(2)

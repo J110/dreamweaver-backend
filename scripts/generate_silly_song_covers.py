@@ -150,6 +150,7 @@ def generate_cover(song: dict, force: bool = False) -> bool:
 
     # Update JSON with cover path
     song["cover_file"] = f"{song_id}.webp"
+    song["cover"] = f"/covers/silly-songs/{song_id}.webp"
     json_path = DATA_DIR / f"{song_id}.json"
     with open(json_path, "w") as f:
         json.dump(song, f, indent=2)
