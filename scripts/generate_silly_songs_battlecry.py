@@ -1204,14 +1204,21 @@ def generate_cover_flux(song: dict, force: bool = False) -> bool:
 # ── Diversity Tracking ───────────────────────────────────────────────
 
 def _load_existing_songs() -> list:
-    """Load all existing silly song metadata for diversity tracking."""
+    """Load all existing silly song metadata for diversity tracking.
+
+    Sorted by created_at (not filesystem mtime) — admin reloads touch
+    files in arbitrary order, so mtime is not a reliable proxy for
+    creation chronology. The age-group rotation reads [-3:] to decide
+    the next age; wrong order = wrong rotation = age skew.
+    """
     songs = []
     if DATA_DIR.exists():
-        for f in sorted(DATA_DIR.glob("*.json"), key=lambda p: p.stat().st_mtime):
+        for f in DATA_DIR.glob("*.json"):
             try:
                 songs.append(json.loads(f.read_text()))
             except Exception:
                 pass
+    songs.sort(key=lambda s: s.get("created_at") or "")
     return songs
 
 
