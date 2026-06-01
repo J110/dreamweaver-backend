@@ -172,7 +172,9 @@ def _pick_slot(slot_def, lang: str, today: str, recent_excluded: set) -> tuple[O
 
     candidates = [it for it in items if matches(it)]
 
-    todays = [it for it in candidates if _item_date(it) == today]
+    todays = [it for it in candidates if _item_date(it) == today and it.get("id") not in recent_excluded]
+    if not todays:
+        todays = [it for it in candidates if _item_date(it) == today]
     if todays:
         todays.sort(key=lambda x: (x.get("created_at", ""), x.get("id", "")))
         return todays[0], False, audio_dir, cover_dir
