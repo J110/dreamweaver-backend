@@ -260,11 +260,8 @@ async def get_today_playlist(
         if item is None:
             missing.append(slot_name)
             continue
-        # Playlists are curated surfaces — slot selection + FREE_SLOTS
-        # filtering is the gate. No should_lock_for_user: it would block
-        # fallback items older than FREE_BACKLOG_DAYS, producing empty
-        # playlists when the content pool is thin. Flag-off: is_premium=True
-        # → full SLOTS, no lock concern regardless.
+        if should_lock_for_user(item, current_user):
+            continue
         audio_file, audio_url = _audio_info(item, audio_dir)
         cover_file, cover_url = _cover_info(item, cover_dir)
         if is_fallback:
@@ -363,20 +360,20 @@ async def get_nap_playlist(
         item, is_fallback, audio_dir, cover_dir = _pick_slot(
             slot_def, lang=lang, today=today, recent_excluded=all_excluded | used_ids,
         )
-        # Thin pool → repeat: if exclusion emptied the slot, retry WITHOUT
-        # bedtime exclusion (per spec: "better to repeat a calming item than
-        # show an empty/short nap playlist"). Cross-day exclusion still applies.
-        if item is None:
+        # Thin pool → repeat: if exclusion emptied the slot OR the picked
+        # item is recency-locked, retry WITHOUT bedtime exclusion. The retry
+        # finds today's items (which bedtime also has) — those are recent, so
+        # should_lock_for_user passes them. Per spec: "better to repeat a
+        # calming item than show an empty/short nap playlist."
+        if item is None or should_lock_for_user(item, current_user):
             item, is_fallback, audio_dir, cover_dir = _pick_slot(
                 slot_def, lang=lang, today=today, recent_excluded=recent_excluded | used_ids,
             )
         slot_name = slot_def[0]
         if item is None:
             continue
-        # No should_lock_for_user here — playlists are curated surfaces, not
-        # browsing surfaces. The slot selection + FREE_SLOTS filtering is the
-        # gate. Locking after selection is redundant and breaks the thin-pool
-        # case (items older than FREE_BACKLOG_DAYS get locked → empty playlist).
+        if should_lock_for_user(item, current_user):
+            continue
         cid = item.get("id")
         if cid in used_ids:
             continue
