@@ -303,13 +303,23 @@ def _today_bedtime_ids(store, today: str, lang: str) -> set:
     at nap AND bedtime is arguably nice for a child. Bedtime does NOT read
     nap history (asymmetric). Named here so it's an explicit design choice,
     not an accidental gap.
+
+    Reads from the persisted file directly — the in-memory store may not
+    have loaded playlist_history on boot (it only loads core collections).
     """
-    history = store.collections.get("playlist_history", {})
     ids = set()
-    for record in history.values():
-        if record.get("date") == today and record.get("lang", "en") == lang:
-            for cid in record.get("item_ids", []):
-                ids.add(cid)
+    history_path = _BASE / "playlist_history.json"
+    if not history_path.exists():
+        return ids
+    try:
+        raw = json.loads(history_path.read_text())
+        records = raw.values() if isinstance(raw, dict) else raw
+        for record in records:
+            if record.get("date") == today and record.get("lang", "en") == lang:
+                for cid in record.get("item_ids", []):
+                    ids.add(cid)
+    except Exception as e:
+        logger.warning("nap: failed to read playlist_history: %s", e)
     return ids
 
 
