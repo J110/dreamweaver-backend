@@ -364,6 +364,13 @@ async def get_nap_playlist(
         item, is_fallback, audio_dir, cover_dir = _pick_slot(
             slot_def, lang=lang, today=today, recent_excluded=all_excluded | used_ids,
         )
+        # Thin pool → repeat: if exclusion emptied the slot, retry WITHOUT
+        # bedtime exclusion (per spec: "better to repeat a calming item than
+        # show an empty/short nap playlist"). Cross-day exclusion still applies.
+        if item is None:
+            item, is_fallback, audio_dir, cover_dir = _pick_slot(
+                slot_def, lang=lang, today=today, recent_excluded=recent_excluded | used_ids,
+            )
         slot_name = slot_def[0]
         if item is None:
             continue
