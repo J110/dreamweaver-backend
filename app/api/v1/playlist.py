@@ -260,12 +260,11 @@ async def get_today_playlist(
         if item is None:
             missing.append(slot_name)
             continue
-        # Defense-in-depth: a locked item must NEVER enter the playlist.
-        # FREE_SLOTS already excludes premium types and _pick_slot favors
-        # recent items, so this never fires in practice — it makes the
-        # guarantee structural, not coincidental. Flag-off → always False.
-        if should_lock_for_user(item, current_user):
-            continue
+        # Playlists are curated surfaces — slot selection + FREE_SLOTS
+        # filtering is the gate. No should_lock_for_user: it would block
+        # fallback items older than FREE_BACKLOG_DAYS, producing empty
+        # playlists when the content pool is thin. Flag-off: is_premium=True
+        # → full SLOTS, no lock concern regardless.
         audio_file, audio_url = _audio_info(item, audio_dir)
         cover_file, cover_url = _cover_info(item, cover_dir)
         if is_fallback:
@@ -374,8 +373,10 @@ async def get_nap_playlist(
         slot_name = slot_def[0]
         if item is None:
             continue
-        if should_lock_for_user(item, current_user):
-            continue
+        # No should_lock_for_user here — playlists are curated surfaces, not
+        # browsing surfaces. The slot selection + FREE_SLOTS filtering is the
+        # gate. Locking after selection is redundant and breaks the thin-pool
+        # case (items older than FREE_BACKLOG_DAYS get locked → empty playlist).
         cid = item.get("id")
         if cid in used_ids:
             continue
