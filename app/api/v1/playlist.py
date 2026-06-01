@@ -194,13 +194,21 @@ def _pick_slot(slot_def, lang: str, today: str, recent_excluded: set) -> tuple[O
     return None, False, audio_dir, cover_dir
 
 
-def _recent_excluded_ids(store, lang: str, lookback_days: int = 7) -> set:
-    """Content_ids used in any same-lang playlist in the last N days."""
+def _recent_excluded_ids(store, lang: str, lookback_days: int = 7, today: str = "") -> set:
+    """Content_ids used in any same-lang playlist in recent PAST days (not today).
+
+    Excludes only records from before today — so the bedtime endpoint is
+    idempotent on repeat calls (its own today's IDs are not self-excluded).
+    The nap endpoint uses _today_bedtime_ids for same-day exclusion separately.
+    """
     cutoff = (datetime.utcnow().date() - timedelta(days=lookback_days)).isoformat()
     history = store.collections.get("playlist_history", {})
     excluded = set()
     for record in history.values():
-        if record.get("date", "") < cutoff:
+        d = record.get("date", "")
+        if d < cutoff:
+            continue
+        if today and d >= today:
             continue
         if record.get("lang") and record.get("lang") != lang:
             continue
@@ -236,7 +244,7 @@ async def get_today_playlist(
     current_user: Optional[dict] = Depends(get_optional_user),
 ) -> PlaylistResponse:
     today = _local_today(tz)
-    recent_excluded = _recent_excluded_ids(store, lang=lang, lookback_days=7)
+    recent_excluded = _recent_excluded_ids(store, lang=lang, lookback_days=7, today=today)
 
     slots = SLOTS if is_premium(current_user) else [s for s in SLOTS if s[0] in FREE_SLOTS]
 
@@ -346,7 +354,7 @@ async def get_nap_playlist(
     slots = NAP_SLOTS if premium else [s for s in NAP_SLOTS if s[0] in NAP_FREE_SLOTS]
 
     bedtime_ids = _today_bedtime_ids(store, today, lang)
-    recent_excluded = _recent_excluded_ids(store, lang=lang, lookback_days=7)
+    recent_excluded = _recent_excluded_ids(store, lang=lang, lookback_days=7, today=today)
     all_excluded = recent_excluded | bedtime_ids
 
     items: list[PlaylistItem] = []
