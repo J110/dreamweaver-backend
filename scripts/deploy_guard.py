@@ -1072,6 +1072,26 @@ def load_json(path: Path) -> dict:
 # Commands
 # ────────────────────────────────────────────────────────────
 
+def _report_paywall_flags():
+    """Print current paywall flag state from .env — called by both snapshot
+    and verify so flag drift is immediately visible in every deploy output."""
+    env_path = Path(__file__).resolve().parents[1] / ".env"
+    flags = {}
+    try:
+        for line in env_path.read_text().splitlines():
+            for key in ("PAYWALL_ENABLED", "PAYWALL_TEST_FAMILY_IDS", "PAYWALL_NATIVE_ENABLED"):
+                if line.startswith(f"{key}="):
+                    flags[key] = line.split("=", 1)[1].strip()
+    except Exception:
+        pass
+    enabled = flags.get("PAYWALL_ENABLED", "?")
+    test_ids = flags.get("PAYWALL_TEST_FAMILY_IDS", "")
+    native = flags.get("PAYWALL_NATIVE_ENABLED", "?")
+    status = "LIVE" if enabled == "true" else ("DARK" if enabled == "false" else "?")
+    scope = f"scoped to {test_ids}" if test_ids else "all web users"
+    print(f"\n  {'🟢' if status == 'LIVE' else '⚫'} Paywall: {status} ({scope}, native={'dormant' if native == 'false' else native})")
+
+
 def cmd_snapshot(args):
     """Capture and save pre-deploy state + back up JSON data files."""
     api = get_api(args.local)
@@ -1086,6 +1106,7 @@ def cmd_snapshot(args):
         print()
         backup_json_files()
 
+    _report_paywall_flags()
     print(f"\n  ✅ Run your deploy now, then run: python3 scripts/deploy_guard.py verify\n")
 
 
@@ -1621,6 +1642,9 @@ def cmd_verify(args):
     # ── Back up current JSON files (so they're available for next recovery) ──
     if not args.local:
         backup_json_files()
+
+    # ── Paywall flag state (always visible — catches drift) ──
+    _report_paywall_flags()
 
     # ── FINAL VERDICT ──
     print()
