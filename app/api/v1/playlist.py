@@ -217,7 +217,7 @@ def _recent_excluded_ids(store, lang: str, lookback_days: int = 7, today: str = 
     return excluded
 
 
-def _record_history(store, date: str, lang: str, item_ids: list[str]) -> None:
+def _record_history(store, date: str, lang: str, item_ids: list[str], kind: str = "bedtime") -> None:
     if not item_ids:
         return
     history = store.collections.setdefault("playlist_history", {})
@@ -226,6 +226,7 @@ def _record_history(store, date: str, lang: str, item_ids: list[str]) -> None:
         "id": record_id,
         "date": date,
         "lang": lang,
+        "kind": kind,
         "item_ids": item_ids,
         "created_at": datetime.utcnow().isoformat(),
     }
@@ -278,7 +279,7 @@ async def get_today_playlist(
             is_fallback=is_fallback,
         ))
 
-    _record_history(store, today, lang, [it.content_id for it in items])
+    _record_history(store, today, lang, [it.content_id for it in items], kind="bedtime")
 
     return PlaylistResponse(
         success=True,
@@ -317,7 +318,8 @@ def _today_bedtime_ids(store, today: str, lang: str) -> set:
         raw = json.loads(history_path.read_text())
         records = raw.values() if isinstance(raw, dict) else raw
         for record in records:
-            if record.get("date") == today and record.get("lang", "en") == lang:
+            if (record.get("date") == today and record.get("lang", "en") == lang
+                    and record.get("kind") == "bedtime"):
                 for cid in record.get("item_ids", []):
                     ids.add(cid)
     except Exception as e:
@@ -392,7 +394,7 @@ async def get_nap_playlist(
             is_fallback=is_fallback,
         ))
 
-    _record_history(store, today, lang, [it.content_id for it in items])
+    _record_history(store, today, lang, [it.content_id for it in items], kind="nap")
 
     response = PlaylistResponse(
         success=True,
