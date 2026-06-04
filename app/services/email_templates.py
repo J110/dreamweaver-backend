@@ -210,3 +210,58 @@ def build_magic_link_email(
     else:
         html = _login_email(magic_link_url, lang, username)
     return subject, html
+
+
+# ── Restore code (6-digit numeric, typed into native app) ──────
+
+
+def _restore_code_block(code: str) -> str:
+    spaced = " ".join(list(code))
+    return f"""
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" style="margin:24px auto;">
+      <tr>
+        <td align="center" style="background:rgba(124,92,255,0.12);border:1px solid rgba(124,92,255,0.4);border-radius:14px;padding:18px 28px;">
+          <div style="font-family:'Quicksand',Arial,sans-serif;font-size:28px;font-weight:700;color:#ffffff;letter-spacing:8px;">
+            {spaced}
+          </div>
+        </td>
+      </tr>
+    </table>
+    """
+
+
+def build_restore_code_email(code: str, lang: str = "en") -> Tuple[str, str]:
+    """Return (subject, html) for a 6-digit restore code email.
+
+    Used by the native-app restore flow (Step 5). The user TYPES this code
+    into the app rather than clicking a link — clicking a link would land
+    the resulting session in a browser tab, wrong storage context for
+    Keychain forwarding.
+    """
+    lang = "hi" if lang == "hi" else "en"
+    if lang == "hi":
+        subject = "Aapka Dream Valley restore code"
+        intro = (
+            "<p>Apna Dream Valley account restore karne ke liye yeh 6-digit "
+            "code app mein daalein. Code <strong>10 minute</strong> tak chalega "
+            "aur sirf ek baar use ho sakta hai.</p>"
+        )
+        ignore = (
+            "Agar aapne restore request nahi kiya tha, to is email ko "
+            "ignore kar dein. Aapka account safe hai."
+        )
+        title = "Dream Valley restore code"
+    else:
+        subject = "Your Dream Valley restore code"
+        intro = (
+            "<p>Type this 6-digit code into the Dream Valley app to restore "
+            "your account. The code is good for <strong>10 minutes</strong> "
+            "and can only be used once.</p>"
+        )
+        ignore = (
+            "If you didn't request a restore, you can safely ignore this "
+            "email — your account is fine."
+        )
+        title = "Dream Valley restore code"
+    html = _shell(title, intro, _restore_code_block(code), ignore)
+    return subject, html

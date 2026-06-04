@@ -1,0 +1,123 @@
+"""Backfill recovery_email on existing user records from Stripe customer.email.
+
+Idempotent. Sets recovery_email only when missing.
+
+Discipline pattern (matches scripts/correct_duration_metadata.py):
+  1. --dry-run: log what WOULD be written; no changes
+  2. Review the sample (first 5)
+  3. Real run (no --dry-run)
+  4. Verify: counts before/after
+
+Targets data/users.json on the prod VM directly. The pipeline cron and
+prod LocalStore both read users.json on next boot/load; admin reload is
+NOT required (users.json is not regenerated from per-content files —
+unlike content.json — so direct edits are safe).
+
+Usage:
+  python3 scripts/backfill_recovery_email.py --dry-run
+  python3 scripts/backfill_recovery_email.py
+  python3 scripts/backfill_recovery_email.py --users-path /opt/dreamweaver-backend/data/users.json
+"""
+
+import argparse
+import json
+import os
+import sys
+from pathlib import Path
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--dry-run", action="store_true",
+                        help="Print what WOULD be written; no changes.")
+    parser.add_argument("--users-path", default="data/users.json",
+                        help="Path to users.json (default: data/users.json)")
+    args = parser.parse_args()
+
+    try:
+        import stripe
+    except ImportError:
+        print("ERROR: stripe library not installed. Run: pip install stripe", file=sys.stderr)
+        sys.exit(1)
+
+    stripe.api_key = os.getenv("STRIPE_SECRET_KEY", "")
+    if not stripe.api_key:
+        print("ERROR: STRIPE_SECRET_KEY env var missing.", file=sys.stderr)
+        sys.exit(1)
+
+    users_path = Path(args.users_path)
+    if not users_path.exists():
+        print(f"ERROR: users.json not found at {users_path}", file=sys.stderr)
+        sys.exit(1)
+
+    with open(users_path) as f:
+        users = json.load(f)
+
+    if not isinstance(users, dict):
+        print(f"ERROR: expected dict in {users_path}, got {type(users).__name__}", file=sys.stderr)
+        sys.exit(1)
+
+    before_count = sum(1 for u in users.values() if u.get("recovery_email"))
+    with_customer = [(uid, u) for uid, u in users.items() if u.get("stripe_customer_id")]
+
+    print(f"Total users: {len(users)}")
+    print(f"With stripe_customer_id: {len(with_customer)}")
+    print(f"With recovery_email (before): {before_count}")
+    print()
+
+    changes = []
+    skipped = []
+    fetch_failed = []
+    for uid, u in with_customer:
+        if u.get("recovery_email"):
+            skipped.append(uid)
+            continue
+        try:
+            customer = stripe.Customer.retrieve(u["stripe_customer_id"])
+            email = (customer.get("email") or "").strip().lower()
+            if not email:
+                continue
+            changes.append({
+                "uid": uid,
+                "stripe_customer_id": u["stripe_customer_id"],
+                "recovery_email": email,
+                "current_billing_email": (u.get("billing_email") or "").strip().lower(),
+            })
+        except Exception as e:
+            fetch_failed.append((uid, str(e)))
+
+    print(f"Already had recovery_email (skipped): {len(skipped)}")
+    print(f"Stripe fetch failed: {len(fetch_failed)}")
+    print(f"Will set recovery_email on: {len(changes)} users")
+    print()
+    print("Sample (first 5):")
+    for c in changes[:5]:
+        match = " (matches billing_email)" if c["current_billing_email"] == c["recovery_email"] else ""
+        print(f"  uid={c['uid'][:8]}... recovery_email={c['recovery_email']}{match}")
+
+    if fetch_failed:
+        print()
+        print("Fetch failures (first 5):")
+        for uid, err in fetch_failed[:5]:
+            print(f"  uid={uid[:8]}...: {err}")
+
+    if args.dry_run:
+        print()
+        print("[DRY RUN] No changes written.")
+        return
+
+    print()
+    print(f"Applying {len(changes)} changes to {users_path}...")
+    for c in changes:
+        users[c["uid"]]["recovery_email"] = c["recovery_email"]
+
+    with open(users_path, "w") as f:
+        json.dump(users, f, indent=2)
+
+    after_count = sum(1 for u in users.values() if u.get("recovery_email"))
+    print(f"With recovery_email (after): {after_count}")
+    print(f"Delta: +{after_count - before_count}")
+
+
+if __name__ == "__main__":
+    main()

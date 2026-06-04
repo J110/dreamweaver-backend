@@ -356,6 +356,10 @@ def _handle_invoice_paid(db_client, event) -> None:
     customer_email = invoice.get("customer_email")
     if customer_email and user.get("billing_email") != customer_email:
         fields["billing_email"] = customer_email
+    # recovery_email: frozen at first capture, used by restore matching.
+    # billing_email tracks latest; recovery_email is the canonical lookup key.
+    if customer_email and not user.get("recovery_email"):
+        fields["recovery_email"] = customer_email.strip().lower()
 
     _persist_user_update(db_client, user["uid"], fields)
 
