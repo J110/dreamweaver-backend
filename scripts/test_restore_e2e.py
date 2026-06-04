@@ -87,11 +87,21 @@ def _seed_code_directly(email_lc: str, family_id: str, code: str,
 
 
 def _cleanup_user(uid: str, email_lc: str) -> None:
-    """Remove synthetic test user + restore_codes row + rate_limit row."""
+    """Tombstone synthetic test user + restore_codes row + rate_limit row.
+
+    LocalStore has no .delete() primitive (see magic_link._delete_auth_code).
+    We tombstone instead: subscription_tier=free so the synthetic record
+    can't ghost-premium, recovery_email cleared so it can't be re-targeted
+    via restore, _e2e_deleted_at marker for audit + manual cleanup later.
+    """
     from app.dependencies import _local_users
     store = get_local_store()
     try:
-        store.collection("users").document(uid).update({"_e2e_deleted": True})
+        store.collection("users").document(uid).update({
+            "subscription_tier": "free",
+            "recovery_email": "",
+            "_e2e_deleted_at": datetime.now(timezone.utc).isoformat(),
+        })
     except Exception:
         pass
     _local_users.pop(uid, None)
