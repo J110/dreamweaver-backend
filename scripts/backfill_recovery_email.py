@@ -40,9 +40,11 @@ def main():
         print("ERROR: stripe library not installed. Run: pip install stripe", file=sys.stderr)
         sys.exit(1)
 
-    stripe.api_key = os.getenv("STRIPE_SECRET_KEY", "")
+    # Project convention is STRIPE_API_KEY (see billing.py + stripe_client.py).
+    # STRIPE_SECRET_KEY accepted as fallback for Stripe-doc-following users.
+    stripe.api_key = os.getenv("STRIPE_API_KEY") or os.getenv("STRIPE_SECRET_KEY", "")
     if not stripe.api_key:
-        print("ERROR: STRIPE_SECRET_KEY env var missing.", file=sys.stderr)
+        print("ERROR: STRIPE_API_KEY (or STRIPE_SECRET_KEY) env var missing.", file=sys.stderr)
         sys.exit(1)
 
     users_path = Path(args.users_path)
@@ -51,16 +53,23 @@ def main():
         sys.exit(1)
 
     with open(users_path) as f:
-        users = json.load(f)
+        users_raw = json.load(f)
 
-    if not isinstance(users, dict):
-        print(f"ERROR: expected dict in {users_path}, got {type(users).__name__}", file=sys.stderr)
+    # users.json may be a list of user dicts OR a dict of uid→user.
+    # Normalize to a list of (uid, user_dict) pairs.
+    if isinstance(users_raw, list):
+        users_list = [(u.get("uid") or u.get("id"), u) for u in users_raw if isinstance(u, dict)]
+    elif isinstance(users_raw, dict):
+        users_list = list(users_raw.items())
+    else:
+        print(f"ERROR: unexpected structure in {users_path}: {type(users_raw).__name__}", file=sys.stderr)
         sys.exit(1)
+    users_list = [(uid, u) for uid, u in users_list if uid]
 
-    before_count = sum(1 for u in users.values() if u.get("recovery_email"))
-    with_customer = [(uid, u) for uid, u in users.items() if u.get("stripe_customer_id")]
+    before_count = sum(1 for _, u in users_list if u.get("recovery_email"))
+    with_customer = [(uid, u) for uid, u in users_list if u.get("stripe_customer_id")]
 
-    print(f"Total users: {len(users)}")
+    print(f"Total users: {len(users_list)}")
     print(f"With stripe_customer_id: {len(with_customer)}")
     print(f"With recovery_email (before): {before_count}")
     print()
@@ -108,13 +117,29 @@ def main():
 
     print()
     print(f"Applying {len(changes)} changes to {users_path}...")
-    for c in changes:
-        users[c["uid"]]["recovery_email"] = c["recovery_email"]
+    changes_by_uid = {c["uid"]: c["recovery_email"] for c in changes}
+
+    # Mutate in place per original on-disk shape (list of dicts OR dict of uid→dict).
+    if isinstance(users_raw, list):
+        for u in users_raw:
+            if not isinstance(u, dict):
+                continue
+            uid = u.get("uid") or u.get("id")
+            if uid in changes_by_uid:
+                u["recovery_email"] = changes_by_uid[uid]
+        out = users_raw
+    else:
+        for uid, email in changes_by_uid.items():
+            if uid in users_raw:
+                users_raw[uid]["recovery_email"] = email
+        out = users_raw
 
     with open(users_path, "w") as f:
-        json.dump(users, f, indent=2)
+        json.dump(out, f, indent=2)
 
-    after_count = sum(1 for u in users.values() if u.get("recovery_email"))
+    # Re-count from on-disk shape.
+    after_users = (out if isinstance(out, list) else list(out.values()))
+    after_count = sum(1 for u in after_users if isinstance(u, dict) and u.get("recovery_email"))
     print(f"With recovery_email (after): {after_count}")
     print(f"Delta: +{after_count - before_count}")
 
