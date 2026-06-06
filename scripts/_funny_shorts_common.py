@@ -1020,17 +1020,11 @@ def render_dialogue_v3(
     api_key: str | None = None,
     timeout: float = 90.0,
 ) -> bytes:
-    """Call ElevenLabs v3 Text-to-Dialogue and return MP3 bytes."""
-    import httpx
-
-    api_key = api_key or os.environ.get("ELEVENLABS_API_KEY")
-    if not api_key:
-        # Fallback to baked default in _elevenlabs_common.py
-        try:
-            from _elevenlabs_common import ELEVENLABS_API_KEY  # type: ignore
-        except ImportError:
-            from scripts._elevenlabs_common import ELEVENLABS_API_KEY  # type: ignore
-        api_key = ELEVENLABS_API_KEY
+    """Call ElevenLabs v3 Text-to-Dialogue with dual-key failover."""
+    try:
+        from _elevenlabs_common import failover_post, API_DIALOGUE
+    except ImportError:
+        from scripts._elevenlabs_common import failover_post, API_DIALOGUE
 
     payload_inputs = [
         {
@@ -1044,14 +1038,12 @@ def render_dialogue_v3(
         "model_id": "eleven_v3",
         "settings": ELEVENLABS_V3_FUNNY_SHORT_SETTINGS,
     }
-    with httpx.Client(timeout=timeout) as client:
-        r = client.post(
-            ELEVENLABS_V3_URL,
-            headers={"xi-api-key": api_key, "Content-Type": "application/json"},
-            json=body,
-        )
-        r.raise_for_status()
-        return r.content
+    resp = failover_post(
+        ELEVENLABS_V3_URL,
+        headers={"Content-Type": "application/json"},
+        json=body, api=API_DIALOGUE, timeout=timeout,
+    )
+    return resp.content
 
 
 def frame_dialogue_with_stings(

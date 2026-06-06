@@ -343,34 +343,14 @@ def _ensure_terminal_danda(text: str) -> str:
 
 def elevenlabs_tts(text, voice_id, *, stability, similarity, style, speed,
                    previous_text="", next_text=""):
-    payload = {
-        "text": text,
-        "model_id": ELEVENLABS_MODEL,
-        "voice_settings": {
-            "stability": stability, "similarity_boost": similarity,
-            "style": style, "use_speaker_boost": True,
-            "speed": max(0.7, min(1.2, speed)),
-        },
-    }
-    if previous_text:
-        payload["previous_text"] = previous_text[-500:]
-    if next_text:
-        payload["next_text"] = next_text[:500]
-    url = ELEVENLABS_URL.format(voice_id=voice_id) + "?output_format=mp3_44100_128"
-    headers = {"xi-api-key": ELEVENLABS_API_KEY, "Content-Type": "application/json",
-               "Accept": "audio/mpeg"}
-    with httpx.Client() as client:
-        for attempt in range(3):
-            try:
-                r = client.post(url, json=payload, headers=headers, timeout=180.0)
-                if r.status_code == 200:
-                    return AudioSegment.from_file(io.BytesIO(r.content), format="mp3")
-                print(f"    11labs {r.status_code}: {r.text[:200]}", file=sys.stderr)
-            except Exception as e:
-                print(f"    11labs error: {e}", file=sys.stderr)
-            if attempt < 2:
-                time.sleep(3 * (attempt + 1))
-    raise RuntimeError(f"ElevenLabs TTS failed voice={voice_id}")
+    sys.path.insert(0, str(Path(__file__).parent))
+    from _elevenlabs_common import tts_eleven_raw
+    return tts_eleven_raw(
+        text, voice_id,
+        stability=stability, similarity_boost=similarity,
+        style=style, speed=speed,
+        previous_text=previous_text, next_text=next_text,
+    )
 
 
 def parse_segments_deva(text: str) -> list:

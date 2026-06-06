@@ -48,7 +48,7 @@ REVIEW_DIR.mkdir(parents=True, exist_ok=True)
 load_dotenv(BASE_DIR / ".env", override=True)
 
 MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY")
-SARVAM_API_KEY = os.getenv("SARVAM_API_KEY", "sk_uglvw84k_eOJq43V6xzSWDeRNPHC6tmeS")
+SARVAM_API_KEY = os.getenv("SARVAM_API_KEY", "")
 SARVAM_URL = "https://api.sarvam.ai/text-to-speech"
 ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
 if not ELEVENLABS_API_KEY:
@@ -434,41 +434,14 @@ HINDI_TTS_PARAMS = {
 def _elevenlabs_tts(text: str, voice_id: str, stability: float,
                     similarity: float, style: float, speed: float,
                     previous_text: str = "", next_text: str = "") -> AudioSegment:
-    payload = {
-        "text": text,
-        "model_id": ELEVENLABS_MODEL,
-        "voice_settings": {
-            "stability": stability,
-            "similarity_boost": similarity,
-            "style": style,
-            "use_speaker_boost": True,
-            "speed": max(0.7, min(1.2, speed)),
-        },
-    }
-    # previous_text/next_text give the model tonal context across chunks —
-    # prevents abrupt mood resets between adjacent [TEXT] blocks.
-    if previous_text:
-        payload["previous_text"] = previous_text[-500:]
-    if next_text:
-        payload["next_text"] = next_text[:500]
-    headers = {
-        "xi-api-key": ELEVENLABS_API_KEY,
-        "Content-Type": "application/json",
-        "Accept": "audio/mpeg",
-    }
-    url = ELEVENLABS_URL.format(voice_id=voice_id) + "?output_format=mp3_44100_128"
-    with httpx.Client() as client:
-        for attempt in range(3):
-            try:
-                resp = client.post(url, json=payload, headers=headers, timeout=180.0)
-                if resp.status_code == 200:
-                    return AudioSegment.from_file(io.BytesIO(resp.content), format="mp3")
-                print(f"    ElevenLabs {resp.status_code}: {resp.text[:200]}", file=sys.stderr)
-            except Exception as e:
-                print(f"    ElevenLabs error: {e}", file=sys.stderr)
-            if attempt < 2:
-                time.sleep(3 * (attempt + 1))
-    raise RuntimeError(f"ElevenLabs TTS failed voice_id={voice_id} text={text[:40]}")
+    sys.path.insert(0, str(Path(__file__).parent))
+    from _elevenlabs_common import tts_eleven_raw
+    return tts_eleven_raw(
+        text, voice_id,
+        stability=stability, similarity_boost=similarity,
+        style=style, speed=speed,
+        previous_text=previous_text, next_text=next_text,
+    )
 
 
 def make_elevenlabs_tts_fn(voice_label: str):

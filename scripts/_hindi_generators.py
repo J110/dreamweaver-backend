@@ -931,10 +931,8 @@ def generate_silly_song(axes: dict, log_prefix: str = "  ") -> dict:
                               # past 3-attempt default. Matches long-story budget.
     )
 
-    # ── Render via ElevenLabs Music
-    elevenlabs_key = os.getenv("ELEVENLABS_API_KEY")
-    if not elevenlabs_key:
-        raise RuntimeError("ELEVENLABS_API_KEY not set — cannot generate silly song audio")
+    # ── Render via ElevenLabs Music (with dual-key failover)
+    from _elevenlabs_common import failover_post, API_MUSIC, ELEVENLABS_MUSIC_URL
     style_prompt = (
         f"Catchy children's Hindi {axes['category']} song, bouncy playful "
         f"anthem, {data.get('instruments', 'ukulele and dholki')}, "
@@ -943,7 +941,6 @@ def generate_silly_song(axes: dict, log_prefix: str = "  ") -> dict:
         "Bollywood-nursery lilt, warm major key, native Hindi "
         "pronunciation, strong singalong chorus."
     )[:295]
-    # Devanagari for engine input per HINDI_SILLY_SONGS_GUIDELINES (1) §6 lock-in.
     lyrics_for_engine = data.get("lyrics_deva") or data["lyrics"]
     composed = (
         f"{style_prompt}\n\n"
@@ -959,17 +956,11 @@ def generate_silly_song(axes: dict, log_prefix: str = "  ") -> dict:
         "output_format": "mp3_44100_128",
     }
     print(f"{log_prefix}calling ElevenLabs Music…")
-    resp = httpx.post(
-        "https://api.elevenlabs.io/v1/music",
-        headers={
-            "xi-api-key": elevenlabs_key,
-            "Content-Type": "application/json",
-            "Accept": "audio/mpeg",
-        },
-        json=body, timeout=600,
+    resp = failover_post(
+        ELEVENLABS_MUSIC_URL,
+        headers={"Content-Type": "application/json", "Accept": "audio/mpeg"},
+        json=body, api=API_MUSIC, timeout=600,
     )
-    if resp.status_code != 200:
-        raise RuntimeError(f"ElevenLabs Music {resp.status_code}: {resp.text[:300]}")
     audio = AudioSegment.from_file(io.BytesIO(resp.content), format="mp3")
     duration = round(len(audio) / 1000)
 

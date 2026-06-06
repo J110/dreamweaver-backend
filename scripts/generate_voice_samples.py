@@ -14,7 +14,7 @@ from pathlib import Path
 
 import httpx
 
-CHATTERBOX_URL_HI = "https://j110--dreamweaver-chatterbox-tts.modal.run"
+HINDI_TTS_URL = "https://j110--dreamweaver-chatterbox-tts.modal.run"
 
 # Output directory
 OUTPUT_DIR = Path(__file__).parent.parent.parent / "dreamweaver-web" / "public" / "audio" / "samples"
@@ -76,7 +76,7 @@ def main():
                 out_path.write_bytes(buf.getvalue())
             else:
                 resp = client.get(
-                    CHATTERBOX_URL_HI,
+                    HINDI_TTS_URL,
                     params={
                         "text": config["text"], "voice": voice_id,
                         "lang": config["lang"],

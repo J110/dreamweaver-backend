@@ -43,9 +43,15 @@ def _load_keys() -> list[str]:
 
 ELEVENLABS_KEYS: list[str] = _load_keys()
 _active_key_index: int = 0
-_exhausted_keys: set[int] = set()
+_exhausted: dict[str, set[int]] = {}
+
+API_TTS = "tts"
+API_MUSIC = "music"
+API_DIALOGUE = "dialogue"
 
 ELEVENLABS_URL = "https://api.elevenlabs.io/v1/text-to-speech/{voice_id}"
+ELEVENLABS_MUSIC_URL = "https://api.elevenlabs.io/v1/music"
+ELEVENLABS_DIALOGUE_URL = "https://api.elevenlabs.io/v1/text-to-dialogue"
 ELEVENLABS_MODEL = "eleven_multilingual_v2"
 ELEVENLABS_OUTPUT_FORMAT = "mp3_44100_128"
 
@@ -54,50 +60,101 @@ SOFT_LIMIT = 2000
 MIN_CREDITS_THRESHOLD = 500
 
 
-def _get_active_key() -> str:
+def _get_active_key(api: str = API_TTS) -> str:
     global _active_key_index
     if not ELEVENLABS_KEYS:
         raise AllKeysExhaustedError("No ElevenLabs API keys configured")
-    if _active_key_index in _exhausted_keys:
-        _switch_key()
+    exhausted = _exhausted.get(api, set())
+    if _active_key_index in exhausted:
+        _switch_key(api)
     return ELEVENLABS_KEYS[_active_key_index]
 
 
-def _mark_exhausted(index: int) -> None:
-    _exhausted_keys.add(index)
+def get_api_key(api: str = API_TTS) -> str:
+    """Public interface for paths that make their own HTTP calls."""
+    return _get_active_key(api)
 
 
-def _switch_key() -> None:
+def _mark_exhausted(index: int, api: str = API_TTS) -> None:
+    _exhausted.setdefault(api, set()).add(index)
+
+
+def _switch_key(api: str = API_TTS) -> None:
     global _active_key_index
+    exhausted = _exhausted.get(api, set())
     for i in range(len(ELEVENLABS_KEYS)):
-        if i != _active_key_index and i not in _exhausted_keys:
+        if i != _active_key_index and i not in exhausted:
             _active_key_index = i
-            print(f"     [eleven] Switched to key {i + 1}/{len(ELEVENLABS_KEYS)}")
+            print(f"     [eleven] Switched to key {i + 1}/{len(ELEVENLABS_KEYS)} (api={api})")
             return
     raise AllKeysExhaustedError(
-        f"All {len(ELEVENLABS_KEYS)} ElevenLabs key(s) exhausted"
+        f"All {len(ELEVENLABS_KEYS)} ElevenLabs key(s) exhausted for {api}"
     )
 
 
-def _is_quota_exhausted(resp: "httpx.Response") -> bool:
-    if resp.status_code != 401:
+def is_quota_or_credits_error(resp: "httpx.Response") -> bool:
+    if resp.status_code not in (401, 402):
         return False
     try:
         body = resp.text.lower()
-        return "quota_exceeded" in body or "0 credits remaining" in body
+        return any(s in body for s in (
+            "quota_exceeded", "0 credits remaining",
+            "insufficient_credits", "payment_required",
+        ))
     except Exception:
         return False
 
 
 def _is_key_dead(resp: "httpx.Response") -> bool:
-    return resp.status_code == 401 and not _is_quota_exhausted(resp)
+    return resp.status_code == 401 and not is_quota_or_credits_error(resp)
+
+
+def failover_post(url: str, *, headers: dict, json: dict,
+                  api: str = API_TTS, timeout: float = 180.0,
+                  max_retries: int = 3) -> "httpx.Response":
+    """HTTP POST with dual-key failover. Returns the successful response.
+
+    On quota/credits exhaustion or dead key, switches to next key and
+    retries. Raises AllKeysExhaustedError when no keys remain.
+    """
+    last_err = None
+    retries = 0
+    with httpx.Client() as client:
+        while retries < max_retries:
+            key = _get_active_key(api)
+            headers["xi-api-key"] = key
+            try:
+                resp = client.post(url, headers=headers, json=json, timeout=timeout)
+                if resp.status_code == 200:
+                    return resp
+
+                if is_quota_or_credits_error(resp) or _is_key_dead(resp):
+                    kind = "quota/credits" if is_quota_or_credits_error(resp) else "invalid/revoked"
+                    print(f"     [eleven] Key {_active_key_index + 1} {kind} on {api}, switching...")
+                    _mark_exhausted(_active_key_index, api)
+                    _switch_key(api)
+                    continue
+
+                if resp.status_code == 429:
+                    retries += 1
+                    time.sleep(2 * retries)
+                    continue
+
+                last_err = f"http={resp.status_code} body={resp.text[:200]}"
+                retries += 1
+            except Exception as e:
+                last_err = repr(e)
+                retries += 1
+                if retries < max_retries:
+                    time.sleep(2 * retries)
+
+    raise AllKeysExhaustedError(
+        f"ElevenLabs {api} failed after {max_retries} retries: {last_err}"
+    )
 
 
 def check_quota() -> dict[int, dict]:
-    """Check remaining credits on each key. Returns {index: {remaining, limit, ok}}.
-
-    Uses GET /v1/user/subscription. Safe to call at pipeline start.
-    """
+    """Check remaining TTS credits on each key. Returns {index: {remaining, limit, ok}}."""
     results = {}
     with httpx.Client(timeout=15.0) as client:
         for i, key in enumerate(ELEVENLABS_KEYS):
@@ -113,13 +170,13 @@ def check_quota() -> dict[int, dict]:
                     remaining = max(0, limit - used)
                     results[i] = {"remaining": remaining, "limit": limit, "ok": remaining >= MIN_CREDITS_THRESHOLD}
                     if remaining < MIN_CREDITS_THRESHOLD:
-                        _mark_exhausted(i)
+                        _mark_exhausted(i, API_TTS)
                 else:
                     results[i] = {"remaining": 0, "limit": 0, "ok": False}
-                    _mark_exhausted(i)
+                    _mark_exhausted(i, API_TTS)
             except Exception as e:
                 results[i] = {"remaining": 0, "limit": 0, "ok": False, "error": str(e)}
-                _mark_exhausted(i)
+                _mark_exhausted(i, API_TTS)
 
     best = max((i for i in results if results[i]["ok"]), key=lambda i: results[i]["remaining"], default=None)
     if best is not None:
@@ -410,7 +467,7 @@ def tts_eleven_raw(text: str, voice: str, *,
     consecutive_429 = 0
     with httpx.Client() as client:
         while retries < max_retries:
-            key = _get_active_key()
+            key = _get_active_key(API_TTS)
             headers = {
                 "xi-api-key": key,
                 "Content-Type": "application/json",
@@ -421,11 +478,11 @@ def tts_eleven_raw(text: str, voice: str, *,
                 if resp.status_code == 200 and len(resp.content) > 200:
                     return AudioSegment.from_file(io.BytesIO(resp.content), format="mp3")
 
-                if _is_quota_exhausted(resp) or _is_key_dead(resp):
-                    kind = "quota-exhausted" if _is_quota_exhausted(resp) else "invalid/revoked"
-                    print(f"     [eleven] Key {_active_key_index + 1} {kind}, switching...")
-                    _mark_exhausted(_active_key_index)
-                    _switch_key()
+                if is_quota_or_credits_error(resp) or _is_key_dead(resp):
+                    kind = "quota/credits" if is_quota_or_credits_error(resp) else "invalid/revoked"
+                    print(f"     [eleven] Key {_active_key_index + 1} {kind} on tts, switching...")
+                    _mark_exhausted(_active_key_index, API_TTS)
+                    _switch_key(API_TTS)
                     consecutive_429 = 0
                     continue
 
@@ -433,8 +490,8 @@ def tts_eleven_raw(text: str, voice: str, *,
                     consecutive_429 += 1
                     if consecutive_429 >= 3:
                         print(f"     [eleven] 3x 429 on key {_active_key_index + 1}, switching...")
-                        _mark_exhausted(_active_key_index)
-                        _switch_key()
+                        _mark_exhausted(_active_key_index, API_TTS)
+                        _switch_key(API_TTS)
                         consecutive_429 = 0
                         continue
                     retries += 1
