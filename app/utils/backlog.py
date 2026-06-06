@@ -2,10 +2,9 @@
 
 Two regimes:
 
-- Paywall OFF (PAYWALL_ENABLED=false): legacy behavior — items older
-  than LEGACY_BACKLOG_DAYS (30) are clipped for everyone. Detail
-  endpoints return items unchanged. No `premium_locked` field, no
-  audio scrubbing. Byte-identical to pre-paywall responses.
+- Paywall OFF (PAYWALL_ENABLED=false): no gating — the full catalog is
+  returned to everyone, no clip. Detail endpoints return items
+  unchanged. No `premium_locked` field, no audio scrubbing.
 
 - Paywall ON: Reading-B — free users see the full library browsable,
   with old items (> FREE_BACKLOG_DAYS) and premium-only content types
@@ -150,8 +149,7 @@ def filter_by_backlog(
 ) -> tuple[list[dict], Optional[str]]:
     """Apply tier-window treatment to a list of items.
 
-    Flag-off → legacy clip at LEGACY_BACKLOG_DAYS for everyone (today's
-    behavior). Flag-on → Reading-B mark+scrub.
+    Flag-off → full catalog, no clip. Flag-on → Reading-B mark+scrub.
 
     Returns (items, cutoff_iso). `cutoff_iso` signals to the frontend
     that older content exists beyond the user's window — used for the
@@ -162,7 +160,7 @@ def filter_by_backlog(
         return list(items), None
 
     if not _paywall_active():
-        return _legacy_clip(items, LEGACY_BACKLOG_DAYS)
+        return list(items), None
 
     out: list[dict] = []
     any_locked = False
