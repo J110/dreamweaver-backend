@@ -14,8 +14,7 @@ from pathlib import Path
 
 import httpx
 
-CHATTERBOX_URL = "https://mohan-32314--dreamweaver-chatterbox-tts.modal.run"
-HEALTH_URL = "https://mohan-32314--dreamweaver-chatterbox-health.modal.run"
+CHATTERBOX_URL_HI = "https://j110--dreamweaver-chatterbox-tts.modal.run"
 
 # Output directory
 OUTPUT_DIR = Path(__file__).parent.parent.parent / "dreamweaver-web" / "public" / "audio" / "samples"
@@ -53,13 +52,8 @@ VOICES = {
 def main():
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-    # Warm up the container
-    print("Warming up Chatterbox...")
-    try:
-        r = httpx.get(HEALTH_URL, timeout=60)
-        print(f"  Health: {r.status_code}")
-    except Exception as e:
-        print(f"  Health check failed: {e}")
+    import sys, io
+    sys.path.insert(0, str(Path(__file__).parent))
 
     client = httpx.Client(timeout=120)
     generated = 0
@@ -67,31 +61,34 @@ def main():
     for voice_id, config in VOICES.items():
         out_path = OUTPUT_DIR / f"{voice_id}.mp3"
 
-        # Skip existing
         if out_path.exists() and out_path.stat().st_size > 1000:
             print(f"  [SKIP] {voice_id} (already exists, {out_path.stat().st_size // 1024} KB)")
             continue
 
         print(f"  Generating {voice_id}...")
         try:
-            resp = client.get(
-                f"{CHATTERBOX_URL}",
-                params={
-                    "text": config["text"],
-                    "voice": voice_id,
-                    "lang": config["lang"],
-                    "exaggeration": 0.5,
-                    "cfg_weight": 0.4,
-                    "format": "mp3",
-                },
-            )
-            resp.raise_for_status()
+            if config["lang"] == "en":
+                from _elevenlabs_common import tts_eleven_compat
+                seg = tts_eleven_compat(config["text"], voice_id,
+                                        exaggeration=0.5, cfg_weight=0.4)
+                buf = io.BytesIO()
+                seg.export(buf, format="mp3")
+                out_path.write_bytes(buf.getvalue())
+            else:
+                resp = client.get(
+                    CHATTERBOX_URL_HI,
+                    params={
+                        "text": config["text"], "voice": voice_id,
+                        "lang": config["lang"],
+                        "exaggeration": 0.5, "cfg_weight": 0.4,
+                        "format": "mp3",
+                    },
+                )
+                resp.raise_for_status()
+                out_path.write_bytes(resp.content)
 
-            out_path.write_bytes(resp.content)
-            print(f"  Saved {voice_id}.mp3 ({len(resp.content) // 1024} KB)")
+            print(f"  Saved {voice_id}.mp3 ({out_path.stat().st_size // 1024} KB)")
             generated += 1
-
-            # Brief delay between requests
             time.sleep(2)
 
         except Exception as e:

@@ -33,15 +33,13 @@ MUSIC_DIR = BASE_DIR / "audio" / "story_music"
 OUTPUT_DIR = BASE_DIR / "output" / "experimental_stories_v2"
 AUDIO_DIR.mkdir(parents=True, exist_ok=True)
 
-CHATTERBOX_URL = "https://mohan-32314--dreamweaver-chatterbox-tts.modal.run"
-
-# Voice mapping by mood (from AUDIO_GENERATION_GUIDELINES)
+# Voice mapping by mood
 MOOD_VOICES = {
-    "wired":   ["female_3", "male_2"],    # melodic + gentle
-    "curious": ["female_4", "male_2"],    # musical + gentle
-    "calm":    ["female_1", "asmr"],      # calm + asmr
-    "sad":     ["male_2", "female_1"],    # gentle + calm
-    "anxious": ["male_2", "female_1"],    # gentle + calm
+    "wired":   ["tara"],
+    "curious": ["simran"],
+    "calm":    ["tripti"],
+    "sad":     ["rhea"],
+    "anxious": ["monika"],
     "angry":   ["female_3", "male_2"],    # melodic + gentle
 }
 DEFAULT_VOICES = ["female_1", "asmr"]
@@ -71,27 +69,10 @@ def normalize_display_text(text: str) -> str:
 def generate_tts(text: str, voice: str, exaggeration: float = 0.45,
                  cfg_weight: float = 0.5, speed: float = 0.85,
                  is_phrase: bool = False) -> AudioSegment:
-    text = normalize_for_tts(text)
-    if is_phrase:
-        text = f"... {text}"
-    params = {
-        "text": text, "voice": voice, "lang": "en",
-        "exaggeration": exaggeration, "cfg_weight": cfg_weight,
-        "speed": speed, "format": "wav",
-    }
-    url = f"{CHATTERBOX_URL}?{urlencode(params)}"
-    with httpx.Client() as client:
-        for attempt in range(3):
-            try:
-                resp = client.get(url, timeout=180.0)
-                if resp.status_code == 200 and len(resp.content) > 100:
-                    return AudioSegment.from_wav(io.BytesIO(resp.content))
-                print(f"    TTS {resp.status_code}: {resp.text[:80]}")
-            except Exception as e:
-                print(f"    TTS error: {e}")
-            if attempt < 2:
-                time.sleep(5 * (attempt + 1))
-    raise RuntimeError(f"TTS failed for voice={voice}")
+    from _elevenlabs_common import tts_eleven_compat
+    return tts_eleven_compat(text, voice, exaggeration=exaggeration,
+                             cfg_weight=cfg_weight, speed=speed,
+                             is_phrase=is_phrase)
 
 
 def parse_segments(text: str) -> list:
@@ -332,7 +313,7 @@ def main():
             "voice": voice,
             "url": f"/audio/pre-gen/{path_pipeline.name}",
             "duration_seconds": round(duration_s, 2),
-            "provider": "chatterbox",
+            "provider": "elevenlabs",
         })
 
     # Update content.json — fix text + audio variants + duration

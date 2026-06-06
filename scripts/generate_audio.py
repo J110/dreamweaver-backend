@@ -559,7 +559,7 @@ def _use_elevenlabs(lang: str = "en") -> bool:
 
 
 def _tts_provider(lang: str = "en") -> str:
-    return "elevenlabs" if _use_elevenlabs(lang) else "chatterbox"
+    return "elevenlabs"
 
 
 def generate_tts_for_segment(

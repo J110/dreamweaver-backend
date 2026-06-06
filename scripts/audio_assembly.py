@@ -14,61 +14,34 @@ import os
 import re
 import time
 from pathlib import Path
-from urllib.parse import urlencode
 
-import httpx
 from pydub import AudioSegment
 
 # ── Paths ───────────────────────────────────────────────────────────────
 BASE_DIR = Path(__file__).parent.parent
 MUSIC_DIR = BASE_DIR / "audio" / "story_music"
 
-# ── Chatterbox TTS endpoints ────────────────────────────────────────────
-CHATTERBOX_URL = "https://mohan-32314--dreamweaver-chatterbox-tts.modal.run"
-
-
-def _use_elevenlabs() -> bool:
-    return os.getenv("TTS_ENGINE_EN", "chatterbox").lower() == "elevenlabs"
-
-
 # ── Voice mapping by mood ───────────────────────────────────────────────
-# Chatterbox era: mood → [primary_voice, secondary_voice] (2 voice variants per story).
-# ElevenLabs era (per spec §5.1): single narrator per mood — list of one.
-_CHATTERBOX_MOOD_VOICES = {
-    "wired":   ["female_3", "male_2"],    # melodic + gentle
-    "curious": ["female_4", "male_2"],    # musical + gentle
-    "calm":    ["female_1", "asmr"],      # calm + asmr
-    "sad":     ["male_2", "female_1"],    # gentle + calm
-    "anxious": ["male_2", "female_1"],    # gentle + calm
-    "angry":   ["female_3", "male_2"],    # melodic + gentle
+# Single narrator per mood (per spec §5.1).
+MOOD_VOICES = {
+    "wired":   ["tara"],
+    "curious": ["simran"],
+    "calm":    ["tripti"],
+    "sad":     ["rhea"],
+    "anxious": ["monika"],
+    "angry":   ["zara"],
 }
-_ELEVENLABS_MOOD_VOICES = {
-    "wired":   ["tara"],     # Conversational and Expressive — playful energy
-    "curious": ["simran"],   # Cheerful Best Friend — wonder vibe
-    "calm":    ["tripti"],   # Calm and Experienced — the anchor
-    "sad":     ["rhea"],     # Soft, Polished and Calm — tender
-    "anxious": ["monika"],   # Deep and Natural — grounding, reassuring
-    "angry":   ["zara"],     # Soothing/Meditative — softens the heat (was maya, swapped 2026-04-27)
-}
-MOOD_VOICES = _ELEVENLABS_MOOD_VOICES if _use_elevenlabs() else _CHATTERBOX_MOOD_VOICES
-DEFAULT_VOICES = ["tripti"] if _use_elevenlabs() else ["female_1", "asmr"]
+DEFAULT_VOICES = ["tripti"]
 
 # ── TTS parameter sets ─────────────────────────────────────────────────
-# When ElevenLabs is on, params are picked so the chatterbox→elevenlabs
-# formula in _elevenlabs_common.chatterbox_to_elevenlabs() lands on the
-# tuned-for-warmth values (per spec §6 + 2026-04-27 tuning):
+# Params chosen so chatterbox_to_elevenlabs() formula lands on the
+# tuned-for-warmth ElevenLabs values (per spec §6 + 2026-04-27 tuning):
 #   NORMAL → stab 0.50 / style 0.25 / speed 0.88
 #   HOOK   → stab 0.45 / style 0.30 / speed 0.90
 #   PHRASE → stab 0.70 / style 0.15 / speed 0.75 (intimate)
-# Formula: stab = 1.0 - cfg*1.1, style = exag*0.6
-if _use_elevenlabs():
-    NORMAL_TTS = {"exaggeration": 0.42, "speed": 0.88, "cfg_weight": 0.45}
-    HOOK_TTS   = {"exaggeration": 0.50, "speed": 0.90, "cfg_weight": 0.50}
-    PHRASE_TTS = {"exaggeration": 0.25, "speed": 0.75, "cfg_weight": 0.27}
-else:
-    NORMAL_TTS = {"exaggeration": 0.45, "speed": 0.85, "cfg_weight": 0.5}
-    HOOK_TTS   = {"exaggeration": 0.55, "speed": 0.82, "cfg_weight": 0.45}
-    PHRASE_TTS = {"exaggeration": 0.60, "speed": 0.78, "cfg_weight": 0.42}
+NORMAL_TTS = {"exaggeration": 0.42, "speed": 0.88, "cfg_weight": 0.45}
+HOOK_TTS   = {"exaggeration": 0.50, "speed": 0.90, "cfg_weight": 0.50}
+PHRASE_TTS = {"exaggeration": 0.25, "speed": 0.75, "cfg_weight": 0.27}
 
 
 # ── Text normalization ──────────────────────────────────────────────────
@@ -76,7 +49,7 @@ else:
 def normalize_for_tts(text: str) -> str:
     """Normalize ALL CAPS words (3+ chars) to Title Case for TTS.
 
-    Prevents Chatterbox from spelling out words letter-by-letter.
+    Prevents TTS from spelling out words letter-by-letter.
     E.g., WHACK → Whack, BOOM → Boom, CRASH → Crash.
     Short words like I, OK, TV are preserved.
     """
@@ -106,13 +79,11 @@ def parse_segments(text: str) -> list:
     - [PHRASE]...[/PHRASE] → repeated phrase (special TTS delivery)
     - Everything else → narration text
 
-    On the ElevenLabs path, short pauses (<2s) are converted to inline SSML
-    <break time="..."/> tags so the TTS renders them with natural breath
-    instead of cold silence inserts. Longer pauses stay as discrete segments.
+    Short pauses (<2s) are converted to inline SSML <break time="..."/> tags
+    so ElevenLabs renders them with natural breath instead of cold silence.
     """
-    if _use_elevenlabs():
-        from _elevenlabs_common import convert_short_pauses_to_breaks
-        text = convert_short_pauses_to_breaks(text)
+    from _elevenlabs_common import convert_short_pauses_to_breaks
+    text = convert_short_pauses_to_breaks(text)
 
     segments = []
     pattern = r'(\[MUSIC\]|\[PAUSE:\s*\d+\]|\[PHRASE\].*?\[/PHRASE\])'
@@ -160,55 +131,21 @@ def clean_display_text(raw_text: str) -> str:
 
 def generate_tts(text: str, voice: str, exaggeration: float = 0.45,
                  cfg_weight: float = 0.5, speed: float = 0.85,
-                 is_phrase: bool = False,
-                 chatterbox_url: str = CHATTERBOX_URL) -> AudioSegment:
-    """Generate TTS audio via Chatterbox Modal endpoint OR ElevenLabs.
+                 is_phrase: bool = False, **_kwargs) -> AudioSegment:
+    """Generate TTS audio via ElevenLabs.
 
-    Engine selected by env TTS_ENGINE_EN (default 'chatterbox').
-
-    Args:
-        text: Text to speak
-        voice: Voice ID — chatterbox label (female_1, male_2, asmr) OR
-               elevenlabs label (tripti, monika, ranbir, ...)
-        exaggeration: Chatterbox exaggeration param (0-1)
-        cfg_weight: Chatterbox cfg_weight param (0-1)
-        speed: Chatterbox speed param (0-1)
-        is_phrase: If True, prefix with ellipsis for breath effect
-        chatterbox_url: Override endpoint URL
+    Raises AllKeysExhaustedError when all keys are exhausted.
     """
-    if _use_elevenlabs():
-        from _elevenlabs_common import tts_eleven_compat
-        return tts_eleven_compat(text, voice, exaggeration=exaggeration,
-                                 cfg_weight=cfg_weight, speed=speed,
-                                 is_phrase=is_phrase)
-
-    text = normalize_for_tts(text)
-    if is_phrase:
-        text = f"... {text}"
-    params = {
-        "text": text, "voice": voice, "lang": "en",
-        "exaggeration": exaggeration, "cfg_weight": cfg_weight,
-        "speed": speed, "format": "wav",
-    }
-    url = f"{chatterbox_url}?{urlencode(params)}"
-    with httpx.Client() as client:
-        for attempt in range(3):
-            try:
-                resp = client.get(url, timeout=180.0)
-                if resp.status_code == 200 and len(resp.content) > 100:
-                    return AudioSegment.from_wav(io.BytesIO(resp.content))
-            except Exception:
-                pass
-            if attempt < 2:
-                time.sleep(5 * (attempt + 1))
-    raise RuntimeError(f"TTS failed for voice={voice}, text={text[:50]}")
+    from _elevenlabs_common import tts_eleven_compat
+    return tts_eleven_compat(text, voice, exaggeration=exaggeration,
+                             cfg_weight=cfg_weight, speed=speed,
+                             is_phrase=is_phrase)
 
 
-def generate_tts_throwaway(voice: str, chatterbox_url: str = CHATTERBOX_URL):
-    """Send a throwaway TTS request to prevent Chatterbox repeat bug."""
+def generate_tts_throwaway(voice: str, **_kwargs):
+    """Send a throwaway TTS request to prevent voice repeat bug."""
     try:
-        generate_tts(".", voice, exaggeration=0.1, speed=0.8, cfg_weight=0.5,
-                     chatterbox_url=chatterbox_url)
+        generate_tts(".", voice, exaggeration=0.1, speed=0.8, cfg_weight=0.5)
     except Exception:
         pass
 
@@ -271,7 +208,7 @@ def assemble_v2_audio(
 
     Args:
         segments: List of (type, content) tuples from parse_segments()
-        voice: Chatterbox voice ID
+        voice: ElevenLabs voice label
         mood: Story mood (wired, calm, etc.)
         hook: Hook text for intro narration (optional)
         skip_hook: Skip hook TTS
@@ -307,7 +244,7 @@ def assemble_v2_audio(
         elif stype == "music":
             segment_audios.append(("music", None))
 
-    # Throwaway to prevent Chatterbox repeat bug
+    # Throwaway to prevent voice repeat bug
     generate_tts_throwaway(voice)
 
     # Build narration track

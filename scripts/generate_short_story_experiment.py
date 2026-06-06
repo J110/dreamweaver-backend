@@ -41,15 +41,12 @@ AUDIO_DIR.mkdir(parents=True, exist_ok=True)
 MUSIC_DIR.mkdir(parents=True, exist_ok=True)
 
 MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY", "nkMwV9APQAsY4KALXMk3CaGLV1a5RPBa")
-CHATTERBOX_URL = "https://mohan-32314--dreamweaver-chatterbox-tts.modal.run"
-
 # ── Config: Calm × Nature × 2-5 ──────────────────────────────────────
 MOOD = "calm"
 STORY_TYPE = "nature"
 AGE_GROUP = "2-5"
 
-# Mood voice selection: calm → female_1 + asmr
-MOOD_VOICES = ["female_1", "asmr"]
+MOOD_VOICES = ["tripti"]
 
 # ── Music configs from spec ───────────────────────────────────────────
 
@@ -323,26 +320,14 @@ def select_sting_zone(chunk_pos: int, total_chunks: int) -> str:
 
 def generate_tts(text: str, voice: str, exaggeration: float = 0.5,
                  cfg_weight: float = 0.4, speed: float = 0.88) -> bytes:
-    """Call Chatterbox TTS, return WAV bytes."""
-    params = {
-        "text": text, "voice": voice, "lang": "en",
-        "exaggeration": exaggeration, "cfg_weight": cfg_weight,
-        "speed": speed, "format": "wav",
-    }
-    url = f"{CHATTERBOX_URL}?{urlencode(params)}"
-    with httpx.Client() as client:
-        for attempt in range(3):
-            try:
-                print(f"    TTS: voice={voice}, attempt {attempt+1}...")
-                resp = client.get(url, timeout=180.0)
-                if resp.status_code == 200 and len(resp.content) > 100:
-                    return resp.content
-                print(f"    TTS {resp.status_code}: {resp.text[:100]}")
-            except Exception as e:
-                print(f"    TTS error: {e}")
-            if attempt < 2:
-                time.sleep(5 * (attempt + 1))
-    raise RuntimeError(f"TTS failed for voice={voice}")
+    import sys
+    sys.path.insert(0, str(Path(__file__).parent))
+    from _elevenlabs_common import tts_eleven_compat
+    seg = tts_eleven_compat(text, voice, exaggeration=exaggeration,
+                            cfg_weight=cfg_weight, speed=speed)
+    buf = io.BytesIO()
+    seg.export(buf, format="wav")
+    return buf.getvalue()
 
 
 def get_musicgen():
@@ -537,7 +522,7 @@ def main():
             "voice": voice,
             "url": f"/audio/pre-gen/{output_path.name}",
             "duration_seconds": round(duration, 2),
-            "provider": "chatterbox",
+            "provider": "elevenlabs",
         })
 
     avg_dur = sum(v["duration_seconds"] for v in audio_variants) / len(audio_variants)

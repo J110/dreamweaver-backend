@@ -31,10 +31,6 @@ DATA_DIR = Path(__file__).resolve().parents[1] / "data" / "funny_shorts"
 AUDIO_DIR = Path(__file__).resolve().parents[1] / "public" / "audio" / "funny-shorts"
 JINGLES_DIR = Path(__file__).resolve().parents[1] / "public" / "audio" / "jingles"
 
-MODAL_TTS_URL = os.getenv(
-    "MODAL_TTS_URL",
-    "https://mohan-32314--dreamweaver-chatterbox-tts.modal.run",
-)
 
 # ── Jingle File References ────────────────────────────────────
 
@@ -80,30 +76,21 @@ GAP_AFTER_HOST_OUTRO = 200      # ms
 # ── TTS Generation ────────────────────────────────────────────
 
 def generate_host_tts(text: str) -> bytes | None:
-    """Generate TTS audio for host intro/outro via Modal Chatterbox."""
-    import httpx
-
-    query_params = {
-        "text": text,
-        "voice": HOST_VOICE_PARAMS["voice"],
-        "exaggeration": HOST_VOICE_PARAMS["exaggeration"],
-        "cfg_weight": HOST_VOICE_PARAMS["cfg_weight"],
-        "speed": HOST_VOICE_PARAMS["speed"],
-    }
-
-    url = f"{MODAL_TTS_URL}?{urlencode(query_params)}"
-
+    """Generate TTS audio for host intro/outro via ElevenLabs."""
+    import sys, io
+    sys.path.insert(0, str(Path(__file__).parent))
+    from _elevenlabs_common import tts_eleven_compat
     try:
-        with httpx.Client(timeout=120) as client:
-            resp = client.get(url)
-            resp.raise_for_status()
-            if len(resp.content) > 1000:
-                return resp.content
-            else:
-                print(f"    Host TTS too small: {len(resp.content)} bytes")
-                return None
+        seg = tts_eleven_compat(text, HOST_VOICE_PARAMS["voice"],
+                                exaggeration=HOST_VOICE_PARAMS["exaggeration"],
+                                cfg_weight=HOST_VOICE_PARAMS["cfg_weight"],
+                                speed=HOST_VOICE_PARAMS["speed"])
+        buf = io.BytesIO()
+        seg.export(buf, format="wav")
+        return buf.getvalue()
     except Exception as e:
         print(f"    Host TTS error: {e}")
+        return None
         return None
 
 

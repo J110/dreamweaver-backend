@@ -43,9 +43,6 @@ EXPANDED_PATH = BASE_DIR / "seed_output" / "content_expanded.json"
 CONTENT_NEW_PATH = BASE_DIR / "seed_output" / "content_new.json"
 OUTPUT_DIR = BASE_DIR / "audio" / "pre-gen"
 
-# ── Chatterbox Modal endpoint ────────────────────────────────────────────
-CHATTERBOX_URL = "https://mohan-32314--dreamweaver-chatterbox-tts.modal.run"
-CHATTERBOX_HEALTH = "https://mohan-32314--dreamweaver-chatterbox-health.modal.run"
 
 # ── Emotion profiles ─────────────────────────────────────────────────────
 EMOTION_PROFILES: Dict[str, dict] = {
@@ -229,61 +226,14 @@ def generate_tts_segment(
     speed: float = 0.8,
     max_retries: int = 3,
 ) -> Optional[bytes]:
-    params = {
-        "text": text,
-        "voice": voice,
-        "lang": lang,
-        "exaggeration": exaggeration,
-        "cfg_weight": cfg_weight,
-        "speed": speed,
-        "format": "wav",
-    }
-    url = f"{CHATTERBOX_URL}?{urlencode(params)}"
-
-    for attempt in range(max_retries):
-        try:
-            resp = client.get(url, timeout=180.0)
-            if resp.status_code == 200 and len(resp.content) > 100:
-                return resp.content
-            else:
-                logger.warning("    TTS %d: %s", resp.status_code, resp.text[:200] if resp.text else "empty")
-        except httpx.TimeoutException:
-            logger.warning("    Timeout (attempt %d/%d)", attempt + 1, max_retries)
-        except Exception as e:
-            logger.warning("    Error (attempt %d/%d): %s", attempt + 1, max_retries, e)
-
-        if attempt < max_retries - 1:
-            time.sleep(5 * (attempt + 1))
-
-    return None
-
-
-def warm_up_chatterbox() -> bool:
-    logger.info("Warming up Chatterbox Modal container...")
-    client = httpx.Client(timeout=180.0)
-    try:
-        resp = client.get(CHATTERBOX_HEALTH, timeout=30.0)
-        if resp.status_code == 200:
-            data = resp.json()
-            logger.info("Chatterbox healthy: %s, voices: %s",
-                       data.get("engine"), data.get("voice_refs"))
-            client.close()
-            return True
-    except Exception as e:
-        logger.warning("Health check failed: %s", e)
-
-    # Warm up with a quick TTS call
-    logger.info("Sending warm-up TTS request...")
-    try:
-        params = {"text": "Hello", "voice": "female_1", "exaggeration": 0.3, "cfg_weight": 0.4}
-        resp = client.get(f"{CHATTERBOX_URL}?{urlencode(params)}", timeout=180.0)
-        logger.info("Warm-up: %d (%d bytes)", resp.status_code, len(resp.content))
-        client.close()
-        return resp.status_code == 200
-    except Exception as e:
-        logger.error("Warm-up failed: %s", e)
-        client.close()
-        return False
+    import sys
+    sys.path.insert(0, str(Path(__file__).parent))
+    from _elevenlabs_common import tts_eleven_compat
+    seg = tts_eleven_compat(text, voice, exaggeration=exaggeration,
+                            cfg_weight=cfg_weight, speed=speed)
+    buf = io.BytesIO()
+    seg.export(buf, format="wav")
+    return buf.getvalue()
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -315,7 +265,7 @@ def generate_single_variant(
             "voice": voice,
             "url": f"/audio/pre-gen/{output_path.name}",
             "duration_seconds": round(duration, 2),
-            "provider": "chatterbox",
+            "provider": "elevenlabs",
         }
         with _lock:
             _skipped += 1
@@ -425,7 +375,7 @@ def generate_single_variant(
             "voice": voice,
             "url": f"/audio/pre-gen/{output_path.name}",
             "duration_seconds": round(duration, 2),
-            "provider": "chatterbox",
+            "provider": "elevenlabs",
         }
 
         with _lock:

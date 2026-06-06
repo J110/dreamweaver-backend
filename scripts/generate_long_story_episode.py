@@ -498,50 +498,20 @@ MOOD_SONG_ARC = {
 
 # ── Voice assignment ──
 
-def _use_elevenlabs() -> bool:
-    return os.getenv("TTS_ENGINE_EN", "chatterbox").lower() == "elevenlabs"
-
-
-# Chatterbox era voices.
-_CHATTERBOX_ALL_VOICES = ["female_1", "female_2", "female_3", "male_1", "male_2", "male_3"]
-_CHATTERBOX_MOOD_NARRATOR = {
-    "wired":   "female_1",
-    "curious": "female_2",
-    "calm":    "female_3",
-    "sad":     "female_1",
-    "anxious": "female_2",
-    "angry":   "female_3",
-}
-
-# ElevenLabs era voices (per spec §5.1, §5.2).
-# Naming convention preserved: voices ending in "female_*" / "male_*" so the
-# existing assign_voices() pool-filter logic keeps working.
-_ELEVENLABS_ALL_VOICES = [
+ALL_VOICES = [
     "female_tripti", "female_monika", "female_tara",
     "female_simran", "female_rhea",
     "male_ranbir", "male_jackie", "male_ishan",
 ]
-# Note: female_maya, male_harshit, male_tarun, male_prem all retired
-# 2026-04-27 (user feedback iteration). male_jackie (Jackie Shaw - Energetic
-# and Friendly) is the current male_1 slot. female_zara is the angry-mood
-# narrator AND the whisper voice; intentionally NOT in this pool so she
-# isn't double-cast as a dialogue character.
-_ELEVENLABS_MOOD_NARRATOR = {
-    "wired":   "female_tara",     # Conversational and Expressive — playful energy
-    "curious": "female_simran",   # Cheerful Best Friend — wonder vibe
-    "calm":    "female_tripti",   # Calm and Experienced — the anchor
-    "sad":     "female_rhea",     # Soft, Polished and Calm — tender
-    "anxious": "female_monika",   # Deep and Natural — grounding, reassuring
-    "angry":   "female_zara",     # Soothing/Meditative — softens the heat (was maya, swapped 2026-04-27)
+MOOD_NARRATOR_VOICE = {
+    "wired":   "female_tara",
+    "curious": "female_simran",
+    "calm":    "female_tripti",
+    "sad":     "female_rhea",
+    "anxious": "female_monika",
+    "angry":   "female_zara",
 }
-_ELEVENLABS_WHISPER_VOICE = "female_zara"  # Phase 3 / [WHISPER] takeover
-
-if _use_elevenlabs():
-    ALL_VOICES = _ELEVENLABS_ALL_VOICES
-    MOOD_NARRATOR_VOICE = _ELEVENLABS_MOOD_NARRATOR
-else:
-    ALL_VOICES = _CHATTERBOX_ALL_VOICES
-    MOOD_NARRATOR_VOICE = _CHATTERBOX_MOOD_NARRATOR
+_ELEVENLABS_WHISPER_VOICE = "female_zara"
 
 CHARACTER_VOICE_MODIFIERS = {
     "confident": {"speed_offset": +0.03, "exag_offset": +0.10},
@@ -1553,74 +1523,25 @@ def generate_song_audio(lyrics, mood, setting, output_path):
 
 
 # ═══════════════════════════════════════════════════════════════
-#  Step 6: TTS via Chatterbox on Modal
+#  Step 6: TTS via ElevenLabs
 # ═══════════════════════════════════════════════════════════════
-
-CHATTERBOX_URL = "https://mohan-32314--dreamweaver-chatterbox-tts.modal.run"
 
 
 def generate_tts(text, voice, exaggeration=0.45, cfg_weight=0.5, speed=0.85,
                  is_phrase=False, timeout=180,
                  previous_text="", next_text=""):
-    """Generate TTS audio via Chatterbox Modal endpoint OR ElevenLabs.
+    """Generate TTS audio via ElevenLabs.
 
-    Engine selected by env TTS_ENGINE_EN (default 'chatterbox').
-
-    `previous_text` / `next_text` (ElevenLabs only): pass surrounding
-    chunks for tonal continuity across long-story segment boundaries.
-
-    timeout: Per-attempt timeout in seconds (default 60). Prevents hangs
-    on short inputs that Chatterbox can't handle.
+    Raises AllKeysExhaustedError when all keys are exhausted.
     """
-    if _use_elevenlabs():
-        # Translate "female_tripti" / "male_ranbir" labels → bare elevenlabs labels.
-        eleven_voice = voice
-        if voice.startswith(("female_", "male_")):
-            bare = voice.split("_", 1)[1]
-            # Bare labels like "tripti" are already in ELEVENLABS_VOICES_EN.
-            eleven_voice = bare
-        from _elevenlabs_common import tts_eleven_compat
-        return tts_eleven_compat(text, eleven_voice, exaggeration=exaggeration,
-                                 cfg_weight=cfg_weight, speed=speed,
-                                 is_phrase=is_phrase, timeout=timeout,
-                                 previous_text=previous_text, next_text=next_text)
-
-    from urllib.parse import urlencode
-
-    # Normalize ALL CAPS words
-    text = re.sub(r'\b[A-Z]{3,}\b', lambda m: m.group(0).capitalize(), text)
-    if is_phrase:
-        text = f"... {text}"
-
-    params = {
-        "text": text, "voice": voice, "lang": "en",
-        "exaggeration": exaggeration, "cfg_weight": cfg_weight,
-        "speed": speed, "format": "wav",
-    }
-    url = f"{CHATTERBOX_URL}?{urlencode(params)}"
-
-    with httpx.Client() as http:
-        for attempt in range(3):
-            try:
-                resp = http.get(url, timeout=float(timeout))
-                if resp.status_code == 200 and len(resp.content) > 100:
-                    return AudioSegment.from_wav(io.BytesIO(resp.content))
-            except httpx.TimeoutException:
-                print(f"     TTS timeout (attempt {attempt+1}): '{text[:40]}...'")
-                if attempt == 0 and not text.startswith("..."):
-                    # Retry with ellipsis prefix on first timeout
-                    text = f"... {text}"
-                    params["text"] = text
-                    url = f"{CHATTERBOX_URL}?{urlencode(params)}"
-            except Exception as e:
-                print(f"     TTS error (attempt {attempt+1}): {e}")
-            if attempt < 2:
-                time.sleep(5 * (attempt + 1))
-
-    # Final fallback: return silence instead of crashing
-    print(f"     TTS FAILED, using silence: '{text[:40]}...'")
-    word_count = len(text.split())
-    return AudioSegment.silent(duration=max(500, word_count * 300))
+    eleven_voice = voice
+    if voice.startswith(("female_", "male_")):
+        eleven_voice = voice.split("_", 1)[1]
+    from _elevenlabs_common import tts_eleven_compat
+    return tts_eleven_compat(text, eleven_voice, exaggeration=exaggeration,
+                             cfg_weight=cfg_weight, speed=speed,
+                             is_phrase=is_phrase, timeout=timeout,
+                             previous_text=previous_text, next_text=next_text)
 
 
 def trim_tts_silence(audio, silence_thresh=-50, min_silence_len=300):
@@ -2746,7 +2667,7 @@ def publish_episode(output_dir, params, metadata, duration_seconds):
                 "voice": "mixed",
                 "url": f"/audio/pre-gen/{short_id}_mixed.mp3",
                 "duration_seconds": round(duration_seconds, 2),
-                "provider": "chatterbox",
+                "provider": "elevenlabs",
             }
         ],
         "author_id": "system",

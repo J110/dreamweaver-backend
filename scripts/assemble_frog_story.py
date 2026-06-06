@@ -30,9 +30,8 @@ MUSIC_DIR = BASE_DIR / "audio" / "story_music"
 AUDIO_DIR.mkdir(parents=True, exist_ok=True)
 MUSIC_DIR.mkdir(parents=True, exist_ok=True)
 
-CHATTERBOX_URL = "https://mohan-32314--dreamweaver-chatterbox-tts.modal.run"
 FAL_KEY = os.getenv("FAL_KEY", "")
-MOOD_VOICES = ["female_1", "asmr"]
+MOOD_VOICES = ["tripti"]
 
 STORY_ID = "gen-041123d72402"
 SHORT_ID = STORY_ID[:8]
@@ -85,28 +84,10 @@ def normalize_for_tts(text: str) -> str:
 def generate_tts(text: str, voice: str, exaggeration: float = 0.45,
                  cfg_weight: float = 0.5, speed: float = 0.85,
                  is_phrase: bool = False) -> AudioSegment:
-    """Call Chatterbox TTS, return AudioSegment."""
-    text = normalize_for_tts(text)
-    if is_phrase:
-        text = f"... {text}"
-    params = {
-        "text": text, "voice": voice, "lang": "en",
-        "exaggeration": exaggeration, "cfg_weight": cfg_weight,
-        "speed": speed, "format": "wav",
-    }
-    url = f"{CHATTERBOX_URL}?{urlencode(params)}"
-    with httpx.Client() as client:
-        for attempt in range(3):
-            try:
-                resp = client.get(url, timeout=180.0)
-                if resp.status_code == 200 and len(resp.content) > 100:
-                    return AudioSegment.from_wav(io.BytesIO(resp.content))
-                print(f"    TTS {resp.status_code}: {resp.text[:80]}")
-            except Exception as e:
-                print(f"    TTS error: {e}")
-            if attempt < 2:
-                time.sleep(5 * (attempt + 1))
-    raise RuntimeError(f"TTS failed for voice={voice}")
+    from _elevenlabs_common import tts_eleven_compat
+    return tts_eleven_compat(text, voice, exaggeration=exaggeration,
+                             cfg_weight=cfg_weight, speed=speed,
+                             is_phrase=is_phrase)
 
 
 def generate_bed_cassetteai() -> AudioSegment:
