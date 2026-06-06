@@ -42,7 +42,7 @@ def _load_keys() -> list[str]:
 
 
 ELEVENLABS_KEYS: list[str] = _load_keys()
-_active_key_index: int = 0
+_active_index: dict[str, int] = {}
 _exhausted: dict[str, set[int]] = {}
 
 API_TTS = "tts"
@@ -61,13 +61,14 @@ MIN_CREDITS_THRESHOLD = 500
 
 
 def _get_active_key(api: str = API_TTS) -> str:
-    global _active_key_index
     if not ELEVENLABS_KEYS:
         raise AllKeysExhaustedError("No ElevenLabs API keys configured")
+    idx = _active_index.get(api, 0)
     exhausted = _exhausted.get(api, set())
-    if _active_key_index in exhausted:
+    if idx in exhausted:
         _switch_key(api)
-    return ELEVENLABS_KEYS[_active_key_index]
+        idx = _active_index[api]
+    return ELEVENLABS_KEYS[idx]
 
 
 def get_api_key(api: str = API_TTS) -> str:
@@ -80,11 +81,11 @@ def _mark_exhausted(index: int, api: str = API_TTS) -> None:
 
 
 def _switch_key(api: str = API_TTS) -> None:
-    global _active_key_index
+    current = _active_index.get(api, 0)
     exhausted = _exhausted.get(api, set())
     for i in range(len(ELEVENLABS_KEYS)):
-        if i != _active_key_index and i not in exhausted:
-            _active_key_index = i
+        if i != current and i not in exhausted:
+            _active_index[api] = i
             print(f"     [eleven] Switched to key {i + 1}/{len(ELEVENLABS_KEYS)} (api={api})")
             return
     raise AllKeysExhaustedError(
@@ -130,8 +131,8 @@ def failover_post(url: str, *, headers: dict, json: dict,
 
                 if is_quota_or_credits_error(resp) or _is_key_dead(resp):
                     kind = "quota/credits" if is_quota_or_credits_error(resp) else "invalid/revoked"
-                    print(f"     [eleven] Key {_active_key_index + 1} {kind} on {api}, switching...")
-                    _mark_exhausted(_active_key_index, api)
+                    print(f"     [eleven] Key {_active_index.get(api, 0) + 1} {kind} on {api}, switching...")
+                    _mark_exhausted(_active_index.get(api, 0), api)
                     _switch_key(api)
                     continue
 
@@ -180,8 +181,7 @@ def check_quota() -> dict[int, dict]:
 
     best = max((i for i in results if results[i]["ok"]), key=lambda i: results[i]["remaining"], default=None)
     if best is not None:
-        global _active_key_index
-        _active_key_index = best
+        _active_index[API_TTS] = best
     return results
 
 
@@ -480,8 +480,9 @@ def tts_eleven_raw(text: str, voice: str, *,
 
                 if is_quota_or_credits_error(resp) or _is_key_dead(resp):
                     kind = "quota/credits" if is_quota_or_credits_error(resp) else "invalid/revoked"
-                    print(f"     [eleven] Key {_active_key_index + 1} {kind} on tts, switching...")
-                    _mark_exhausted(_active_key_index, API_TTS)
+                    idx = _active_index.get(API_TTS, 0)
+                    print(f"     [eleven] Key {idx + 1} {kind} on tts, switching...")
+                    _mark_exhausted(idx, API_TTS)
                     _switch_key(API_TTS)
                     consecutive_429 = 0
                     continue
@@ -489,8 +490,9 @@ def tts_eleven_raw(text: str, voice: str, *,
                 if resp.status_code == 429:
                     consecutive_429 += 1
                     if consecutive_429 >= 3:
-                        print(f"     [eleven] 3x 429 on key {_active_key_index + 1}, switching...")
-                        _mark_exhausted(_active_key_index, API_TTS)
+                        idx = _active_index.get(API_TTS, 0)
+                        print(f"     [eleven] 3x 429 on key {idx + 1}, switching...")
+                        _mark_exhausted(idx, API_TTS)
                         _switch_key(API_TTS)
                         consecutive_429 = 0
                         continue
