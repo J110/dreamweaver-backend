@@ -383,7 +383,7 @@ def _llm_with_retry(*, system: str, user: str, validator_key: str,
 
 def _short_story_prompt(axes: dict) -> tuple[str, str]:
     age = axes["age_group"]
-    word_band = {"2-5": "50-200", "6-8": "160-320", "9-12": "240-400"}[age]
+    word_band = {"2-5": "50-200", "6-8": "160-320", "9-12": "180-350"}[age]
     mood_descriptions = {
         "calm":    "soft and settling, warm steady rhythm, almost a lullaby",
         "curious": "dreamy and wondering, spacious and slow",

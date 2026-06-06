@@ -12,11 +12,11 @@ Sources:
     poem        → HINDI_MUSICAL_POEMS_GUIDELINES (1).md §10
 
 Pending validation calibration follow-ups (see 2026-05-19 cron analysis):
-    1. HI 9-12 short_story word band lower bound (240) may be too tight.
-       Mistral consistently undershoots by 30-40% on Hindi Roman script
-       (which is more lexically compact than English). Per CLAUDE.md,
-       requires 5-gen sample before adjusting. Defer to dedicated
-       calibration session.
+    1. FIXED 2026-06-06: HI 9-12 short_story word band lowered from
+       (240,400) to (180,350). 12-sample calibration: Mistral produces
+       166-314w (median 252) for Hindi 9-12. Stories >=180w are complete
+       arcs; <180w feel truncated. Prior 240 floor was English-derived
+       and unreachable (42% failure rate).
     2. EN poem 8-word-per-line cap consistently exceeded by 1 word.
     3. EN story banned word "however" not enumerated in initial prompt.
     4. EN story sentences over per-age cap by 1-3 words.
@@ -214,10 +214,13 @@ def validate_short_story(d: dict) -> list[str]:
     if not (3 <= mu <= 5):
         errors.append(f"[MUSIC] count {mu} (need 3-5)")
 
-    # Word count age 2-5: 50-200; 6-8: 160-320; 9-12: 240-400
+    # Word count age 2-5: 50-200; 6-8: 160-320; 9-12: 180-350
+    # (9-12 calibrated 2026-06-06: Hindi Roman script is ~30% more compact
+    # than English; Mistral produces 166-314w, median 252. 180 floor catches
+    # truncated stories; 350 cap matches observed ceiling. 12-sample test.)
     age = d.get("age_group", "")
     body_words = len(re.sub(r"\[[^\]]+\]\s*", "", text).split())
-    bands = {"2-5": (50, 200), "6-8": (160, 320), "9-12": (240, 400)}
+    bands = {"2-5": (50, 200), "6-8": (160, 320), "9-12": (180, 350)}
     band = bands.get(age, (50, 400))
     if not (band[0] <= body_words <= band[1]):
         errors.append(f"word count {body_words} not in {band} for age {age}")
