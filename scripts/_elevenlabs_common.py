@@ -1,10 +1,12 @@
 """Shared ElevenLabs TTS layer for English content (V2 short stories + long stories).
 
-Drop-in alternative to the Chatterbox `generate_tts(text, voice, exaggeration,
-cfg_weight, speed, ...)` contract used in audio_assembly.py,
+Drop-in alternative to the legacy Chatterbox contract used in audio_assembly.py,
 generate_experimental_v2.py, and generate_long_story_episode.py.
 
-Activated via env flag: TTS_ENGINE_EN=elevenlabs (default: chatterbox).
+Supports dual-key failover: ELEVENLABS_API_KEYS=key1,key2 (comma-separated).
+On quota exhaustion (401), switches mid-segment to the next key. When all keys
+are exhausted, raises AllKeysExhaustedError — callers abort cleanly, no degraded
+audio produced, no orphaned metadata.
 
 See: docs/superpowers/specs/2026-04-27-english-tts-elevenlabs-migration-design.md
 """
@@ -21,19 +23,110 @@ import httpx
 from pydub import AudioSegment
 
 # ────────────────────────────────────────────────────────────────────────
-#  ElevenLabs API
+#  ElevenLabs API — dual-key failover
 # ────────────────────────────────────────────────────────────────────────
 
-ELEVENLABS_API_KEY = os.getenv(
-    "ELEVENLABS_API_KEY",
-    "sk_5bbd5d1a1ee9fa532c454154e2a7723f94ffc3bce07087ff",
-)
+class AllKeysExhaustedError(Exception):
+    """All configured ElevenLabs keys are quota-exhausted or dead."""
+    pass
+
+
+def _load_keys() -> list[str]:
+    multi = os.getenv("ELEVENLABS_API_KEYS", "")
+    if multi.strip():
+        return [k.strip() for k in multi.split(",") if k.strip()]
+    single = os.getenv(
+        "ELEVENLABS_API_KEY",
+        "sk_5bbd5d1a1ee9fa532c454154e2a7723f94ffc3bce07087ff",
+    )
+    return [single] if single else []
+
+
+ELEVENLABS_KEYS: list[str] = _load_keys()
+_active_key_index: int = 0
+_exhausted_keys: set[int] = set()
+
 ELEVENLABS_URL = "https://api.elevenlabs.io/v1/text-to-speech/{voice_id}"
 ELEVENLABS_MODEL = "eleven_multilingual_v2"
 ELEVENLABS_OUTPUT_FORMAT = "mp3_44100_128"
 
-# 2000 chars: above this, ElevenLabs Multilingual v2 prosody soft-degrades.
 SOFT_LIMIT = 2000
+
+MIN_CREDITS_THRESHOLD = 500
+
+
+def _get_active_key() -> str:
+    global _active_key_index
+    if not ELEVENLABS_KEYS:
+        raise AllKeysExhaustedError("No ElevenLabs API keys configured")
+    if _active_key_index in _exhausted_keys:
+        _switch_key()
+    return ELEVENLABS_KEYS[_active_key_index]
+
+
+def _mark_exhausted(index: int) -> None:
+    _exhausted_keys.add(index)
+
+
+def _switch_key() -> None:
+    global _active_key_index
+    for i in range(len(ELEVENLABS_KEYS)):
+        if i != _active_key_index and i not in _exhausted_keys:
+            _active_key_index = i
+            print(f"     [eleven] Switched to key {i + 1}/{len(ELEVENLABS_KEYS)}")
+            return
+    raise AllKeysExhaustedError(
+        f"All {len(ELEVENLABS_KEYS)} ElevenLabs key(s) exhausted"
+    )
+
+
+def _is_quota_exhausted(resp: "httpx.Response") -> bool:
+    if resp.status_code != 401:
+        return False
+    try:
+        body = resp.text.lower()
+        return "quota_exceeded" in body or "0 credits remaining" in body
+    except Exception:
+        return False
+
+
+def _is_key_dead(resp: "httpx.Response") -> bool:
+    return resp.status_code == 401 and not _is_quota_exhausted(resp)
+
+
+def check_quota() -> dict[int, dict]:
+    """Check remaining credits on each key. Returns {index: {remaining, limit, ok}}.
+
+    Uses GET /v1/user/subscription. Safe to call at pipeline start.
+    """
+    results = {}
+    with httpx.Client(timeout=15.0) as client:
+        for i, key in enumerate(ELEVENLABS_KEYS):
+            try:
+                resp = client.get(
+                    "https://api.elevenlabs.io/v1/user/subscription",
+                    headers={"xi-api-key": key},
+                )
+                if resp.status_code == 200:
+                    data = resp.json()
+                    limit = data.get("character_limit", 0)
+                    used = data.get("character_count", 0)
+                    remaining = max(0, limit - used)
+                    results[i] = {"remaining": remaining, "limit": limit, "ok": remaining >= MIN_CREDITS_THRESHOLD}
+                    if remaining < MIN_CREDITS_THRESHOLD:
+                        _mark_exhausted(i)
+                else:
+                    results[i] = {"remaining": 0, "limit": 0, "ok": False}
+                    _mark_exhausted(i)
+            except Exception as e:
+                results[i] = {"remaining": 0, "limit": 0, "ok": False, "error": str(e)}
+                _mark_exhausted(i)
+
+    best = max((i for i in results if results[i]["ok"]), key=lambda i: results[i]["remaining"], default=None)
+    if best is not None:
+        global _active_key_index
+        _active_key_index = best
+    return results
 
 
 # ────────────────────────────────────────────────────────────────────────
@@ -148,7 +241,7 @@ def is_enabled(lang: str = "en") -> bool:
     """Whether ElevenLabs is the active engine for the given language."""
     if lang != "en":
         return False
-    return os.getenv("TTS_ENGINE_EN", "chatterbox").lower() == "elevenlabs"
+    return os.getenv("TTS_ENGINE_EN", "elevenlabs").lower() == "elevenlabs"
 
 
 def resolve_voice_id(voice: str) -> str:
@@ -274,22 +367,16 @@ def tts_eleven_raw(text: str, voice: str, *,
                    stability: float, similarity_boost: float, style: float, speed: float,
                    is_phrase: bool = False, timeout: float = 180.0,
                    previous_text: str = "", next_text: str = "") -> AudioSegment:
-    """Single ElevenLabs TTS call → AudioSegment (MP3 decoded via pydub).
+    """Single ElevenLabs TTS call → AudioSegment with dual-key failover.
 
-    Caller passes section-correct ElevenLabs params (preferred over the
-    chatterbox-formula path).
-
-    `previous_text` / `next_text` (added 2026-04-27): pass surrounding
-    chunks (last ~300 chars / first ~200 chars respectively) so ElevenLabs
-    maintains tonal continuity across long-story chunk boundaries. Without
-    these, the voice resets emotional state at every segment boundary,
-    flattening the multi-phase arc.
+    On quota exhaustion or dead key, switches to the next configured key
+    mid-segment and retries immediately. Raises AllKeysExhaustedError when
+    no keys remain — caller aborts cleanly, no degraded audio produced.
     """
     text = _normalize_text(text, is_phrase)
     if not text or not text.strip():
         return AudioSegment.silent(duration=200)
 
-    # Defensive: split at sentence boundaries if over soft limit.
     if len(text) > SOFT_LIMIT:
         print(f"     [eleven] chunk {len(text)} chars > {SOFT_LIMIT}, splitting")
         chunks = _split_at_sentence_boundary(text, SOFT_LIMIT)
@@ -303,11 +390,6 @@ def tts_eleven_raw(text: str, voice: str, *,
 
     voice_id = resolve_voice_id(voice)
     url = ELEVENLABS_URL.format(voice_id=voice_id) + f"?output_format={ELEVENLABS_OUTPUT_FORMAT}"
-    headers = {
-        "xi-api-key": ELEVENLABS_API_KEY,
-        "Content-Type": "application/json",
-        "Accept": "audio/mpeg",
-    }
     body = {
         "text": text,
         "model_id": ELEVENLABS_MODEL,
@@ -324,21 +406,58 @@ def tts_eleven_raw(text: str, voice: str, *,
         body["next_text"] = next_text[:200]
 
     last_err = None
+    retries = 0
+    max_retries = 3
+    consecutive_429 = 0
     with httpx.Client() as client:
-        for attempt in range(3):
+        while retries < max_retries:
+            key = _get_active_key()
+            headers = {
+                "xi-api-key": key,
+                "Content-Type": "application/json",
+                "Accept": "audio/mpeg",
+            }
             try:
                 resp = client.post(url, headers=headers, json=body, timeout=timeout)
                 if resp.status_code == 200 and len(resp.content) > 200:
                     return AudioSegment.from_file(io.BytesIO(resp.content), format="mp3")
+
+                if _is_quota_exhausted(resp) or _is_key_dead(resp):
+                    kind = "quota-exhausted" if _is_quota_exhausted(resp) else "invalid/revoked"
+                    print(f"     [eleven] Key {_active_key_index + 1} {kind}, switching...")
+                    _mark_exhausted(_active_key_index)
+                    _switch_key()
+                    consecutive_429 = 0
+                    continue
+
+                if resp.status_code == 429:
+                    consecutive_429 += 1
+                    if consecutive_429 >= 3:
+                        print(f"     [eleven] 3x 429 on key {_active_key_index + 1}, switching...")
+                        _mark_exhausted(_active_key_index)
+                        _switch_key()
+                        consecutive_429 = 0
+                        continue
+                    retries += 1
+                    time.sleep(2 * retries)
+                    continue
+
+                if resp.status_code >= 500:
+                    retries += 1
+                    time.sleep(2 * retries)
+                    continue
+
                 last_err = f"http={resp.status_code} body={resp.text[:200]}"
+                retries += 1
             except Exception as e:
                 last_err = repr(e)
-            if attempt < 2:
-                time.sleep(2 * (attempt + 1))
+                retries += 1
+                if retries < max_retries:
+                    time.sleep(2 * retries)
 
-    print(f"     [eleven] FAILED voice={voice} text={text[:40]!r}  err={last_err}")
-    word_count = len(text.split())
-    return AudioSegment.silent(duration=max(500, word_count * 300))
+    raise AllKeysExhaustedError(
+        f"ElevenLabs TTS failed after {max_retries} retries: {last_err}"
+    )
 
 
 def tts_eleven_compat(text: str, voice: str, exaggeration: float = 0.45,

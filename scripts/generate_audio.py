@@ -1,4 +1,4 @@
-"""Pre-generate audio for all stories using Chatterbox TTS via Modal.
+"""Pre-generate audio for all stories using ElevenLabs TTS.
 
 Generates 7 variants per story (female_1/2/3, male_1/2/3, asmr per language).
 Supports PARALLEL processing for fast generation across Modal GPU containers.
@@ -46,10 +46,6 @@ except ImportError:
 
 CONTENT_PATH = BASE_DIR / "seed_output" / "content.json"
 OUTPUT_DIR = BASE_DIR / "audio" / "pre-gen"
-
-# ── Chatterbox Modal endpoint ────────────────────────────────────────────
-CHATTERBOX_URL = "https://mohan-32314--dreamweaver-chatterbox-tts.modal.run"
-CHATTERBOX_HEALTH = "https://mohan-32314--dreamweaver-chatterbox-health.modal.run"
 
 # ── SongGen Modal endpoint (for singing voice generation) ────────────────
 SONGGEN_URL = os.getenv("SONGGEN_URL", "")
@@ -559,7 +555,11 @@ def crossfade_phases(phase_audios: list, crossfade_ms: int = 3000) -> "AudioSegm
 # ═════════════════════════════════════════════════════════════════════════
 
 def _use_elevenlabs(lang: str = "en") -> bool:
-    return lang == "en" and os.getenv("TTS_ENGINE_EN", "chatterbox").lower() == "elevenlabs"
+    return lang == "en" and os.getenv("TTS_ENGINE_EN", "elevenlabs").lower() == "elevenlabs"
+
+
+def _tts_provider(lang: str = "en") -> str:
+    return "elevenlabs" if _use_elevenlabs(lang) else "chatterbox"
 
 
 def generate_tts_for_segment(
@@ -572,90 +572,18 @@ def generate_tts_for_segment(
     speed: float = 1.0,
     max_retries: int = 3,
 ) -> Optional[bytes]:
-    """Return audio bytes (WAV for lossless quality).
+    """Return audio bytes (WAV) via ElevenLabs.
 
-    Routes via Chatterbox (Modal) or ElevenLabs based on TTS_ENGINE_EN env flag.
+    Raises AllKeysExhaustedError when all keys are exhausted — caller
+    should abort the story, not produce degraded audio.
     """
-    if _use_elevenlabs(lang):
-        # ElevenLabs path: get an AudioSegment via the shared module, export as WAV bytes.
-        try:
-            sys.path.insert(0, str(Path(__file__).parent))
-            from _elevenlabs_common import tts_eleven_compat
-            seg = tts_eleven_compat(text, voice, exaggeration=exaggeration,
-                                    cfg_weight=cfg_weight, speed=speed)
-            buf = io.BytesIO()
-            seg.export(buf, format="wav")
-            return buf.getvalue()
-        except Exception as e:
-            logger.warning("  ElevenLabs TTS failed: %s", e)
-            return None
-
-    params = {
-        "text": text,
-        "voice": voice,
-        "lang": lang,
-        "exaggeration": exaggeration,
-        "cfg_weight": cfg_weight,
-        "speed": speed,
-        "format": "wav",  # Request lossless WAV — we do MP3 conversion ourselves
-    }
-    url = f"{CHATTERBOX_URL}?{urlencode(params)}"
-
-    for attempt in range(max_retries):
-        try:
-            logger.debug("  TTS: voice=%s exag=%.2f cfg=%.2f text=%.50s...",
-                        voice, exaggeration, cfg_weight, text)
-            resp = client.get(url, timeout=180.0)
-            if resp.status_code == 200:
-                audio_bytes = resp.content
-                if len(audio_bytes) > 100:
-                    return audio_bytes
-                else:
-                    logger.warning("  Small response (%d bytes), retrying...", len(audio_bytes))
-            else:
-                logger.warning("  TTS %d: %s", resp.status_code, resp.text[:200])
-        except httpx.TimeoutException:
-            logger.warning("  Timeout (attempt %d/%d)", attempt + 1, max_retries)
-        except Exception as e:
-            logger.warning("  Error (attempt %d/%d): %s", attempt + 1, max_retries, e)
-
-        if attempt < max_retries - 1:
-            wait = 5 * (attempt + 1)
-            logger.info("  Retrying in %ds...", wait)
-            time.sleep(wait)
-
-    return None
-
-
-def warm_up_chatterbox(client: httpx.Client) -> bool:
-    """Ping health endpoint to wake up Modal container.
-
-    No-op when running in ElevenLabs mode (no warm-up needed).
-    """
-    if _use_elevenlabs():
-        logger.info("ElevenLabs mode: skipping Chatterbox warm-up")
-        return True
-
-    logger.info("Warming up Chatterbox Modal container...")
-    try:
-        resp = client.get(CHATTERBOX_HEALTH, timeout=30.0)
-        if resp.status_code == 200:
-            data = resp.json()
-            logger.info("Chatterbox healthy: %s, voices: %s",
-                       data.get("engine"), data.get("voice_refs"))
-            return True
-    except Exception as e:
-        logger.warning("Health check failed: %s", e)
-
-    logger.info("Sending warm-up TTS request...")
-    try:
-        params = {"text": "Hello", "voice": "female_1", "exaggeration": 0.3, "cfg_weight": 0.4}
-        resp = client.get(f"{CHATTERBOX_URL}?{urlencode(params)}", timeout=180.0)
-        logger.info("Warm-up: %d (%d bytes)", resp.status_code, len(resp.content))
-        return resp.status_code == 200
-    except Exception as e:
-        logger.error("Warm-up failed: %s", e)
-        return False
+    sys.path.insert(0, str(Path(__file__).parent))
+    from _elevenlabs_common import tts_eleven_compat
+    seg = tts_eleven_compat(text, voice, exaggeration=exaggeration,
+                            cfg_weight=cfg_weight, speed=speed)
+    buf = io.BytesIO()
+    seg.export(buf, format="wav")
+    return buf.getvalue()
 
 
 # ═════════════════════════════════════════════════════════════════════════
@@ -1478,7 +1406,7 @@ def generate_song_variant(
         }
 
     if not SONGGEN_URL:
-        logger.warning("  SONGGEN_URL not configured, falling back to Chatterbox for song")
+        logger.warning("  SONGGEN_URL not configured, falling back to TTS for song")
         return generate_story_variant(client, story, voice, output_path, force)
 
     # Prepare lyrics for ACE-Step
@@ -2039,7 +1967,7 @@ def generate_story_variant(
             "voice": voice,
             "url": f"/audio/pre-gen/{output_path.name}",
             "duration_seconds": round(duration, 2),
-            "provider": "chatterbox",
+            "provider": _tts_provider(),
         }
 
     # For Hindi stories, prefer Devanagari text (better TTS pronunciation)
@@ -2089,7 +2017,7 @@ def generate_story_variant(
             "voice": voice,
             "url": f"/audio/pre-gen/{output_path.name}",
             "duration_seconds": round(duration, 2),
-            "provider": "chatterbox",
+            "provider": _tts_provider(),
         }
 
     # ── Standard story flow (mood-aware pauses, exag/speed ramps) ──
@@ -2247,7 +2175,7 @@ def generate_story_variant(
         "voice": voice,
         "url": f"/audio/pre-gen/{output_path.name}",
         "duration_seconds": round(duration, 2),
-        "provider": "chatterbox",
+        "provider": _tts_provider(),
     }
 
 
@@ -2282,7 +2210,7 @@ def generate_v2_story_variant(
             "voice": voice,
             "url": f"/audio/pre-gen/{output_path.name}",
             "duration_seconds": round(duration, 2),
-            "provider": "chatterbox",
+            "provider": _tts_provider(),
         }
 
     # Get the tagged text for assembly
@@ -2319,12 +2247,12 @@ def generate_v2_story_variant(
         "voice": voice,
         "url": f"/audio/pre-gen/{output_path.name}",
         "duration_seconds": round(duration, 2),
-        "provider": "chatterbox",
+        "provider": _tts_provider(),
     }
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Pre-generate story audio via Chatterbox (parallel)")
+    parser = argparse.ArgumentParser(description="Pre-generate story audio via ElevenLabs (parallel)")
     parser.add_argument("--story-id", help="Generate for a specific story ID only")
     parser.add_argument("--voice", help="Generate for a specific voice only")
     parser.add_argument("--dry-run", action="store_true", help="Show plan without generating")
@@ -2426,13 +2354,6 @@ def main():
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-    # Warm up with a single client first
-    warmup_client = httpx.Client(timeout=180.0)
-    if not warm_up_chatterbox(warmup_client):
-        logger.error("Failed to warm up Chatterbox. Aborting.")
-        sys.exit(1)
-    warmup_client.close()
-
     # ── Thread-safe state ──
     results = {}
     results_lock = threading.Lock()
@@ -2519,7 +2440,7 @@ def main():
             logger.info("[%d/%d] %s / %s [%s%s]", item_idx + 1, total, story["title"], voice,
                        content_type, " v2" if is_v2 else "")
 
-            # Route: v2 stories → baked music assembly, songs → SongGen, rest → Chatterbox
+            # Route: v2 stories → baked music assembly, songs → SongGen, rest → ElevenLabs
             if is_v2:
                 variant = generate_v2_story_variant(
                     story, voice, output_path,

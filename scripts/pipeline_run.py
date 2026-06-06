@@ -6,7 +6,7 @@ Designed to run autonomously on the GCP production server (daily cron).
 
 Pipeline flow:
   1. GENERATE    → Mistral Large (free tier) → stories + poems + lullabies
-  2. AUDIO GEN   → Modal Chatterbox TTS + ACE-Step ($30 free credits) → 14+3 MP3 files per 3 items
+  2. AUDIO GEN   → ElevenLabs TTS + ACE-Step → 14+3 MP3 files per 3 items
   3. AUDIO QA    → Voxtral transcription + fidelity (free tier) → PASS/FAIL
   4. ENRICH      → Mistral Large (free tier) → musicParams for new items
   5. MOOD        → Mistral Small (free tier) → mood tag (calm/curious/wired/sad/anxious/angry)
@@ -125,9 +125,6 @@ logger = logging.getLogger("pipeline")
 
 # ── Pipeline steps ───────────────────────────────────────────────────────
 STEPS = ["generate", "audio", "qa", "enrich", "mood", "covers", "lullabies", "before_bed", "sync", "clips", "deploy_prod"]
-
-CHATTERBOX_HEALTH = "https://mohan-32314--dreamweaver-chatterbox-health.modal.run"
-
 
 def load_state() -> dict:
     """Load pipeline state for crash-resume."""
@@ -801,7 +798,7 @@ def _find_incomplete_content() -> list:
 
 
 def step_audio(args, state: dict) -> bool:
-    """Step 2: Generate audio variants for new stories via Chatterbox TTS on Modal."""
+    """Step 2: Generate audio variants for new stories via ElevenLabs TTS."""
     logger.info("\n╔══════════════════════════════════════╗")
     logger.info("║  STEP 2: GENERATE AUDIO              ║")
     logger.info("╚══════════════════════════════════════╝")
@@ -865,7 +862,7 @@ def step_audio(args, state: dict) -> bool:
     for sid in new_ids:
         # Songs use ACE-Step which is memory-intensive (~1.7GB per worker).
         # On low-memory VMs (2GB), use 1 worker to avoid OOM kills.
-        # Regular stories use Chatterbox TTS which is lighter.
+        # Regular stories use ElevenLabs TTS which is lighter.
         is_song = story_types.get(sid) == "song"
         workers = "1" if is_song else "3"
 
@@ -978,7 +975,25 @@ def _strip_qa_failed_variants(failed_variants: list):
                 ]
         api_content_path.write_text(json.dumps(api_content, indent=2, ensure_ascii=False))
 
-    # --- 3. Delete bad audio files from backend ---
+    # --- 3. Strip from per-content files (source of truth) ---
+    from scripts._per_content_io import find_per_content_file
+    for sid, voices in failed_lookup.items():
+        pc_path = find_per_content_file(sid)
+        if pc_path is None:
+            continue
+        try:
+            pc = json.loads(pc_path.read_text())
+            avs = pc.get("audio_variants", [])
+            if isinstance(avs, list):
+                pc["audio_variants"] = [v for v in avs if v.get("voice") not in voices]
+            else:
+                pc["audio_variants"] = []
+            pc_path.write_text(json.dumps(pc, indent=2, ensure_ascii=False))
+            logger.info("  Stripped QA-failed variants from per-content: %s", pc_path.name)
+        except Exception as e:
+            logger.warning("  Per-content strip failed for %s: %s", sid, e)
+
+    # --- 4. Delete bad audio files from backend ---
     backend_audio_dir = BASE_DIR / "audio" / "pre-gen"
     web_audio_dir = WEB_DIR / "public" / "audio" / "pre-gen" if WEB_DIR.exists() else None
     deleted = 0
@@ -1800,7 +1815,7 @@ def _drop_no_audio_from_content(state: dict) -> list:
     Some content sources (e.g. generate_long_story_episode.py --publish) append
     to content.json regardless of whether TTS actually produced sound, and the
     short-story path leaves items in place even when generate_audio.py aborts at
-    Chatterbox warmup. Either way, headless items break the homepage. Strip them
+    TTS warmup. Either way, headless items break the homepage. Strip them
     here, log loudly, and surface them on state["dropped_no_audio"] so the
     notification email reports the failure.
 
@@ -2261,20 +2276,7 @@ def preflight_checks(args) -> bool:
     except Exception as e:
         logger.debug("  Disk check skipped: %s", e)
 
-    # 3. Warm up Modal Chatterbox endpoint (avoid cold start during audio step)
-    if not args.dry_run:
-        try:
-            import httpx
-            logger.info("  Warming up Modal Chatterbox endpoint...")
-            resp = httpx.get(CHATTERBOX_HEALTH, timeout=90)
-            if resp.status_code == 200:
-                logger.info("  Modal Chatterbox health: OK")
-            else:
-                logger.warning("  Modal Chatterbox health: HTTP %d", resp.status_code)
-        except Exception as e:
-            logger.warning("  Modal Chatterbox warmup failed: %s (will retry during audio step)", e)
-
-    # 3b. Warm up SongGen endpoint (for song audio generation)
+    # 3. Warm up SongGen endpoint (for song audio generation)
     songgen_health = os.environ.get("SONGGEN_HEALTH", "")
     if songgen_health and not args.dry_run:
         try:
@@ -2286,7 +2288,7 @@ def preflight_checks(args) -> bool:
             else:
                 logger.warning("  Modal SongGen health: HTTP %d", resp.status_code)
         except Exception as e:
-            logger.warning("  Modal SongGen warmup failed: %s (songs will fallback to Chatterbox)", e)
+            logger.warning("  Modal SongGen warmup failed: %s (songs may fail)", e)
 
     # 4. Quick Mistral API connectivity test
     if not args.dry_run:
