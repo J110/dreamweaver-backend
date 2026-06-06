@@ -932,10 +932,9 @@ def generate_silly_song(axes: dict, log_prefix: str = "  ") -> dict:
     )
 
     # ── Render via ElevenLabs Music
-    elevenlabs_key = os.getenv(
-        "ELEVENLABS_API_KEY",
-        "sk_5bbd5d1a1ee9fa532c454154e2a7723f94ffc3bce07087ff",
-    )
+    elevenlabs_key = os.getenv("ELEVENLABS_API_KEY")
+    if not elevenlabs_key:
+        raise RuntimeError("ELEVENLABS_API_KEY not set — cannot generate silly song audio")
     style_prompt = (
         f"Catchy children's Hindi {axes['category']} song, bouncy playful "
         f"anthem, {data.get('instruments', 'ukulele and dholki')}, "

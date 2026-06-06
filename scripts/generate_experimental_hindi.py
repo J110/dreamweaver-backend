@@ -50,7 +50,9 @@ load_dotenv(BASE_DIR / ".env", override=True)
 MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY")
 SARVAM_API_KEY = os.getenv("SARVAM_API_KEY", "sk_uglvw84k_eOJq43V6xzSWDeRNPHC6tmeS")
 SARVAM_URL = "https://api.sarvam.ai/text-to-speech"
-ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY", "sk_5bbd5d1a1ee9fa532c454154e2a7723f94ffc3bce07087ff")
+ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
+if not ELEVENLABS_API_KEY:
+    raise RuntimeError("ELEVENLABS_API_KEY not set")
 ELEVENLABS_URL = "https://api.elevenlabs.io/v1/text-to-speech/{voice_id}"
 ELEVENLABS_MODEL = "eleven_multilingual_v2"
 

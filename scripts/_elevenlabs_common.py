@@ -35,11 +35,10 @@ def _load_keys() -> list[str]:
     multi = os.getenv("ELEVENLABS_API_KEYS", "")
     if multi.strip():
         return [k.strip() for k in multi.split(",") if k.strip()]
-    single = os.getenv(
-        "ELEVENLABS_API_KEY",
-        "sk_5bbd5d1a1ee9fa532c454154e2a7723f94ffc3bce07087ff",
-    )
-    return [single] if single else []
+    single = os.getenv("ELEVENLABS_API_KEY", "")
+    if single.strip():
+        return [single.strip()]
+    return []
 
 
 ELEVENLABS_KEYS: list[str] = _load_keys()

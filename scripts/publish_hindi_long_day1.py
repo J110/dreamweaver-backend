@@ -56,10 +56,9 @@ from fix_hindi_batch_day2 import minimax_lullaby  # reuse MiniMax pipe
 
 load_dotenv(BASE_DIR / ".env", override=True)
 
-ELEVENLABS_API_KEY = os.getenv(
-    "ELEVENLABS_API_KEY",
-    "sk_5bbd5d1a1ee9fa532c454154e2a7723f94ffc3bce07087ff",
-)
+ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
+if not ELEVENLABS_API_KEY:
+    raise RuntimeError("ELEVENLABS_API_KEY not set")
 FAL_KEY = os.getenv("FAL_KEY")
 if FAL_KEY:
     os.environ["FAL_KEY"] = FAL_KEY
