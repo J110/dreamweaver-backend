@@ -53,6 +53,7 @@ sys.path.insert(0, str(BASE_DIR / "scripts"))
 from _english_validators import (  # noqa: E402
     validate_structured as _en_validate_structured,
 )
+from _elevenlabs_common import _use_elevenlabs  # noqa: E402
 
 # Ensure ffmpeg is in PATH (homebrew on macOS)
 for ffmpeg_dir in ["/opt/homebrew/bin", "/usr/local/bin"]:

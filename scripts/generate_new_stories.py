@@ -482,11 +482,6 @@ def main():
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-    # Warm up Modal
-    if not warm_up_chatterbox():
-        logger.error("Failed to warm up Chatterbox. Aborting.")
-        sys.exit(1)
-
     # === PARALLEL GENERATION ===
     start_time = time.time()
     total = len(plan)

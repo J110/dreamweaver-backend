@@ -554,10 +554,6 @@ def crossfade_phases(phase_audios: list, crossfade_ms: int = 3000) -> "AudioSegm
 # TTS generation
 # ═════════════════════════════════════════════════════════════════════════
 
-def _use_elevenlabs(lang: str = "en") -> bool:
-    return lang == "en" and os.getenv("TTS_ENGINE_EN", "elevenlabs").lower() == "elevenlabs"
-
-
 def _tts_provider(lang: str = "en") -> str:
     return "elevenlabs"
 

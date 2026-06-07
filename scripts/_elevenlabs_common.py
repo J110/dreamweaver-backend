@@ -22,6 +22,10 @@ from pathlib import Path
 import httpx
 from pydub import AudioSegment
 
+
+def _use_elevenlabs(lang: str = "en") -> bool:
+    return lang == "en" and os.getenv("TTS_ENGINE_EN", "elevenlabs").lower() == "elevenlabs"
+
 # ────────────────────────────────────────────────────────────────────────
 #  ElevenLabs API — dual-key failover
 # ────────────────────────────────────────────────────────────────────────
