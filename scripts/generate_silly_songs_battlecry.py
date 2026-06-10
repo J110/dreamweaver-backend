@@ -1363,6 +1363,66 @@ def select_silly_song_params(existing_songs: list, age_group: str = None,
     }
 
 
+def _slugify_anthem(text: str) -> str:
+    """Slug from an invented hook, e.g. 'Where do clouds nap?' -> 'where_do_clouds_nap'."""
+    slug = re.sub(r"[^a-z0-9]+", "_", (text or "").lower()).strip("_")
+    return slug[:40] or "anthem"
+
+
+# Short style descriptions per category — steer fresh invention without a menu.
+CATEGORY_INVENT_GUIDE = {
+    "battle_cry": "a defiant kid-protest anthem (chanting back against bedtime, baths, vegetables, rules)",
+    "celebration": "a joyful celebration anthem (shouting out something exciting)",
+    "observation": "a curious wonder anthem (a funny question or observation about the world)",
+}
+
+
+def invent_anthem(category: str, age_group: str, mood: str, recent: list,
+                  api_key: str, existing_on_disk: set) -> tuple:
+    """Invent a FRESH anthem hook via the LLM, using the curated anthems only as
+    few-shot STYLE seeds (not a finite menu) — so silly songs generate-fresh with
+    no ceiling, mirroring the Hindi silly-song generator. Returns (hook, slug)."""
+    anthem_dict, _ = CATEGORY_ANTHEMS.get(category, CATEGORY_ANTHEMS["battle_cry"])
+    seeds = [v.get("anthem") or v.get("cry", "")
+             for v in anthem_dict.values() if age_group in v.get("ages", [])]
+    seeds = seeds or [v.get("anthem") or v.get("cry", "") for v in anthem_dict.values()]
+    random.shuffle(seeds)
+    examples = "\n".join(f"- {s}" for s in seeds[:6])
+    recent_clean = [r for r in dict.fromkeys(recent) if r][:25]
+    avoid = "\n".join(f"- {r}" for r in recent_clean) or "- (none yet)"
+    guide = CATEGORY_INVENT_GUIDE.get(category, CATEGORY_INVENT_GUIDE["battle_cry"])
+
+    system_msg = ("You invent short, punchy, chantable hooks for kids' silly "
+                  "songs — 2 to 6 words a child would shout or chant over and over.")
+    prompt = (
+        f"Invent ONE brand-new {category} hook: {guide}.\n"
+        f"Audience: ages {age_group}. Energy/mood: {mood or 'wired'}.\n\n"
+        f"Example {category} hooks (STYLE ONLY — invent something clearly different, "
+        f"do NOT reuse these):\n{examples}\n\n"
+        f"Do NOT reuse or closely echo any recently-used hook:\n{avoid}\n\n"
+        "Output ONLY the new hook phrase — one short line, no quotes, no explanation."
+    )
+    anthem_text = ""
+    for _ in range(3):
+        resp = call_mistral(prompt, system_msg=system_msg, api_key=api_key) or ""
+        cand = resp.strip().splitlines()[0].strip() if resp.strip() else ""
+        cand = re.sub(r'^[-•\d\.\)\s"\'\[]+', '', cand).strip().strip('"').strip("'").strip("[]").strip()
+        if cand and 1 <= len(cand.split()) <= 8 and len(cand) <= 60:
+            anthem_text = cand
+            break
+        anthem_text = cand or anthem_text
+    if not anthem_text:
+        raise RuntimeError("invent_anthem: LLM returned no usable hook")
+
+    base = _slugify_anthem(anthem_text)
+    suffix = age_group.replace('-', '_')
+    slug, n = base, 2
+    while f"{slug}_{suffix}" in existing_on_disk:
+        slug = f"{base}_{n}"
+        n += 1
+    return anthem_text, slug
+
+
 def generate_scene(battle_cry: str, age_group: str, api_key: str,
                    category: str = "battle_cry") -> str:
     """Step 0: Generate a concrete scene that anchors the entire song."""
@@ -1846,73 +1906,42 @@ Examples:
                 song_mood = assigned_moods[i]
                 song_cat = assigned_cats[i]
 
-                # Build the rotation ladder: try the originally-assigned combo
-                # first, then other categories, then other ages, then drop the
-                # mood filter. Stops once we find a combo that has an eligible
-                # anthem not already on disk. This fixes the "0 songs generated"
-                # dead-end that used to fire whenever one combo was exhausted.
-                cat_order = [song_cat] + [c for c in ["battle_cry", "celebration", "observation"] if c != song_cat]
-                age_order = [forced_age] + [a for a in ["2-5", "6-8", "9-12"] if a != forced_age]
-                mood_order = [song_mood, None] if song_mood else [None]
+                # Generate-fresh: invent a NEW anthem hook within the rotated
+                # category (a repeatable format, not a finite menu), so silly
+                # songs never exhaust — mirrors the Hindi silly-song generator.
+                recent = ([s.get("title", "") for s in existing_songs[-40:]]
+                          + [s.get("anthem") or s.get("battle_cry", "")
+                             for s in existing_songs[-40:]]
+                          + [r.get("title", "") for r in results])
+                anthem_text, anthem_slug = invent_anthem(
+                    category=song_cat, age_group=forced_age, mood=song_mood,
+                    recent=recent, api_key=api_key, existing_on_disk=existing_on_disk,
+                )
+                style_prompt, instruments, tempo = build_style_prompt(
+                    forced_age, existing_songs, mood=song_mood
+                )
+                params = {
+                    "age_group": forced_age,
+                    "category": song_cat,
+                    "mood": song_mood or "wired",
+                    "anthem_id": anthem_slug,
+                    "anthem": anthem_text,
+                    "battle_cry_id": anthem_slug,
+                    "battle_cry": anthem_text,
+                    "style_prompt": style_prompt,
+                    "instruments": instruments,
+                    "tempo": tempo,
+                }
+                song_id = f"{anthem_slug}_{forced_age.replace('-', '_')}"
 
-                params = None
-                tried_combos = []
-                exhausted_combos = []
-                batch_cries = {r.get("anthem_id") or r.get("battle_cry_id") for r in results}
-                for try_cat in cat_order:
-                    for try_age in age_order:
-                        for try_mood in mood_order:
-                            try_suffix = try_age.replace('-', '_')
-                            disk_cries = {
-                                sid.rsplit(f"_{try_suffix}", 1)[0]
-                                for sid in existing_on_disk
-                                if sid.endswith(f"_{try_suffix}")
-                            }
-                            exclude = batch_cries | disk_cries
-                            tried_combos.append((try_cat, try_age, try_mood))
-                            candidate = select_silly_song_params(
-                                existing_songs, age_group=try_age, exclude_cries=exclude,
-                                mood=try_mood, category=try_cat,
-                            )
-                            candidate_id = f"{candidate['battle_cry_id']}_{try_suffix}"
-                            if candidate_id in existing_on_disk and not args.force:
-                                exhausted_combos.append((try_cat, try_age, try_mood or "any"))
-                                continue
-                            params = candidate
-                            forced_age = try_age
-                            age_suffix = try_suffix
-                            song_cat = try_cat
-                            song_mood = try_mood
-                            song_id = candidate_id
-                            break
-                        if params:
-                            break
-                    if params:
-                        break
-
-                if params is None:
-                    print(f"\n  ⚠️  All rotation combos exhausted on disk. Tried:")
-                    for c, a, m in exhausted_combos[:10]:
-                        print(f"     - {c}/{a}/{m}")
-                    print(f"     Add new anthems to BATTLE_CRIES/CELEBRATIONS/OBSERVATIONS, or use --force.")
-                    continue
-
-                if exhausted_combos:
-                    print(f"\n  ⚠️  Rotated past {len(exhausted_combos)} exhausted combo(s); using {song_cat}/{forced_age}/{song_mood or 'any'}")
-
-                ok, reason = validate_batch_diversity(params, results)
-                if not ok:
-                    # Should not happen with exclude_cries, but log just in case
-                    print(f"  ⚠️  Batch diversity failed even with exclusions: {reason}")
-
-                print(f"\n  Selected: {params['anthem']} (ages {params['age_group']}, {params['category']}, mood: {params.get('mood', 'wired')})")
-                print(f"  Instruments: {params['instruments']}")
-                print(f"  Tempo: {params['tempo']} BPM")
+                print(f"\n  Invented: \"{anthem_text}\" (ages {forced_age}, {song_cat}, mood: {song_mood or 'wired'})")
+                print(f"  Instruments: {instruments}")
+                print(f"  Tempo: {tempo} BPM")
 
                 result = generate_silly_song(
-                    cry_id=params["battle_cry_id"],
-                    battle_cry=params["battle_cry"],
-                    age_group=params["age_group"],
+                    cry_id=anthem_slug,
+                    battle_cry=anthem_text,
+                    age_group=forced_age,
                     api_key=api_key,
                     lyrics_only=args.lyrics_only,
                     force=args.force,
@@ -1933,8 +1962,7 @@ Examples:
             for r in results:
                 print(f"    • {r['title']} (ages {r['age_group']}) — {r.get('instruments', '?')}")
         else:
-            print(f"  Generated 0/{count} songs — all eligible anthems already exist on disk.")
-            print(f"  Add new anthems to BATTLE_CRIES/CELEBRATIONS/OBSERVATIONS to enable more generation.")
+            print(f"  Generated 0/{count} songs — generation failed (see errors above).")
         print(f"{'='*60}\n")
         if count and not results:
             sys.exit(3)  # produced 0 of N requested — not a crash, but not OK

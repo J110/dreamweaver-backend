@@ -86,9 +86,19 @@ def _build_state(results: dict, elapsed: float) -> dict:
     """Shape a state dict matching pipeline_notify's expectations."""
     successes = [r for r in results.values() if r.get("status") == "ok"]
     failures = [r for r in results.values() if r.get("status") != "ok"]
+    # Any EXPECTED type that failed to generate must be visible: a single-type
+    # drop forces the email to [PARTIAL] via generation_warning, regardless of
+    # how many others succeeded. Replaces the old ">=4 successes = completed"
+    # threshold that masked single-type drops (HI analog of the EN reporting fix).
+    expected_failed = [t for t in CONTENT_TYPES_ORDER
+                       if results.get(t, {}).get("status") == "failed"]
 
     state = {
-        "status": "completed" if len(successes) >= 4 else "partial",
+        "status": "completed" if successes else "failed",
+        "generation_warning": (
+            "did not generate: " + ", ".join(expected_failed)
+            if expected_failed else ""
+        ),
         "lang": "hi",
         "generated_ids": [r["id"] for r in successes if r.get("id")],
         "qa_passed": [r["id"] for r in successes if r.get("id")],
@@ -125,6 +135,49 @@ def _build_state(results: dict, elapsed: float) -> dict:
         "cost_this_run": "~$1.50-2.00 (Hindi daily)",
     }
     return state
+
+
+# Content types that get a bounded re-pick: if one (age/mood/world) combo can't
+# pass the validator after the generator's own retries, try a DIFFERENT combo
+# rather than dropping the type for the day. Validator thresholds stay AS-IS.
+REPICK_TYPES = {"long_story"}
+MAX_PICKS = 3
+
+
+def _pick_signature(axes: dict) -> tuple:
+    return (axes.get("age_group"), axes.get("mood"),
+            axes.get("world"), axes.get("characterType"))
+
+
+def _generate_with_repick(content_type: str, catalog: list, max_picks: int = MAX_PICKS):
+    """Try up to `max_picks` DISTINCT combos for a fragile type, each with the
+    generator's own retry budget. Returns (entry, axes) on first success; raises
+    the last error if every combo fails (surfaced as [PARTIAL] by _build_state).
+    Re-pick is the lever — validators are never loosened."""
+    tried = []
+    last_err = None
+    for attempt in range(max_picks):
+        axes = PICKERS[content_type](catalog)
+        guard = 0
+        while _pick_signature(axes) in tried and guard < 8:
+            axes = PICKERS[content_type](catalog)
+            guard += 1
+        tried.append(_pick_signature(axes))
+        loc = f"age:{axes.get('age_group')} mood:{axes.get('mood')}"
+        if axes.get("world"):
+            loc += f" world:{axes.get('world')}"
+        print(f"  pick {attempt + 1}/{max_picks}: {{{loc}}}")
+        try:
+            entry = GENERATORS[content_type](axes, log_prefix="    ")
+            return entry, axes
+        except _FalBalanceExhausted:
+            raise  # a re-pick won't refill the fal balance
+        except Exception as e:
+            last_err = e
+            print(f"    ✗ pick {attempt + 1} failed ({type(e).__name__}); re-picking a different combo")
+            catalog = load_hindi_catalog()
+    raise last_err if last_err else RuntimeError(
+        f"{content_type}: all {max_picks} picks failed validation")
 
 
 def _send_email(state: dict, elapsed: float) -> None:
@@ -175,9 +228,12 @@ def main(only_types: list[str] | None = None) -> int:
     for content_type in types_to_run:
         print(f"\n→ {content_type.upper()}")
         try:
-            axes = PICKERS[content_type](catalog)
-            print(f"  axes: {{age:{axes['age_group']} mood:{axes['mood']}}}")
-            entry = GENERATORS[content_type](axes, log_prefix="    ")
+            if content_type in REPICK_TYPES:
+                entry, axes = _generate_with_repick(content_type, catalog)
+            else:
+                axes = PICKERS[content_type](catalog)
+                print(f"  axes: {{age:{axes['age_group']} mood:{axes['mood']}}}")
+                entry = GENERATORS[content_type](axes, log_prefix="    ")
             results[content_type] = {
                 "status": "ok",
                 "type": content_type,
