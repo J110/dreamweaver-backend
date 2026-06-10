@@ -81,7 +81,8 @@ def _build_html(state: dict, log_file: str = "", elapsed: float = 0) -> str:
     type_detail = f" ({', '.join(type_parts)})" if type_parts else ""
 
     generation_warning = state.get("generation_warning", "")
-    is_partial = is_success and bool(generation_warning)
+    before_bed_shortfalls = state.get("before_bed_shortfalls", [])
+    is_partial = is_success and (bool(generation_warning) or bool(before_bed_shortfalls))
 
     if is_partial:
         status_color = "#f59e0b"  # amber/yellow
@@ -123,6 +124,9 @@ def _build_html(state: dict, log_file: str = "", elapsed: float = 0) -> str:
         rows += f'<tr><td><b>🧪 Mood skip</b></td><td>{", ".join(skip_parts)} (experimental run earlier today)</td></tr>'
     if generation_warning:
         rows += f'<tr><td><b>⚠️ Warning</b></td><td style="color:#f59e0b"><b>{generation_warning}</b></td></tr>'
+    if before_bed_shortfalls:
+        _sf = ", ".join(sorted(set(before_bed_shortfalls)))
+        rows += f'<tr><td><b>⚠️ Produced 0 of N</b></td><td style="color:#f59e0b"><b>{_sf} — generated nothing this run</b></td></tr>'
     if failed_step:
         rows += f'<tr><td><b>Failed at</b></td><td style="color:#ef4444"><b>{failed_step}</b></td></tr>'
 
@@ -157,10 +161,14 @@ def _build_html(state: dict, log_file: str = "", elapsed: float = 0) -> str:
         bb_items = []
         if bb.get("silly_song"):
             bb_items.append(f'<li style="color:#22c55e;">🎵 Silly Song: {bb["silly_song"]}</li>')
+        elif "silly_song" in before_bed_shortfalls:
+            bb_items.append('<li style="color:#f59e0b;">🎵 Silly Song: 0 generated (pool exhausted)</li>')
         else:
             bb_items.append('<li style="color:#ef4444;">🎵 Silly Song: failed</li>')
         if bb.get("poem"):
             bb_items.append(f'<li style="color:#22c55e;">✨ Musical Poem: {bb["poem"]}</li>')
+        elif "poem" in before_bed_shortfalls:
+            bb_items.append('<li style="color:#f59e0b;">✨ Musical Poem: 0 generated</li>')
         else:
             bb_items.append('<li style="color:#ef4444;">✨ Musical Poem: failed</li>')
         bb_list = "".join(bb_items)
@@ -231,7 +239,8 @@ def send_pipeline_notification(
     date_str = datetime.now().strftime("%Y-%m-%d")
 
     gen_warning = state.get("generation_warning", "")
-    is_partial = is_success and bool(gen_warning)
+    before_bed_shortfalls = state.get("before_bed_shortfalls", [])
+    is_partial = is_success and (bool(gen_warning) or bool(before_bed_shortfalls))
 
     if is_partial:
         tag = "[PARTIAL]"
@@ -256,6 +265,9 @@ def send_pipeline_notification(
         if poems_n: parts.append(f"{poems_n} poem" if poems_n == 1 else f"{poems_n} poems")
         if lullabies_n: parts.append(f"{lullabies_n} lullaby" if lullabies_n == 1 else f"{lullabies_n} lullabies")
         subject += f" — {', '.join(parts)}" if parts else f" — {n_items} new items"
+
+    if before_bed_shortfalls:
+        subject += f" — ⚠️ 0 {'/'.join(sorted(set(before_bed_shortfalls)))}"
 
     html = _build_html(state, log_file, elapsed)
 

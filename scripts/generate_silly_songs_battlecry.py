@@ -1936,6 +1936,8 @@ Examples:
             print(f"  Generated 0/{count} songs — all eligible anthems already exist on disk.")
             print(f"  Add new anthems to BATTLE_CRIES/CELEBRATIONS/OBSERVATIONS to enable more generation.")
         print(f"{'='*60}\n")
+        if count and not results:
+            sys.exit(3)  # produced 0 of N requested — not a crash, but not OK
         return
 
     # ── Legacy modes: --test, --all, --cry ──

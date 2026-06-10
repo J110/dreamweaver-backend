@@ -1720,16 +1720,17 @@ def step_before_bed(args, state: dict) -> bool:
         "Before Bed: generate silly song",
         timeout=600,  # song generation includes audio via Replicate
     )
-    if ok:
-        # Parse title from output
-        for line in (stdout or "").split("\n"):
-            line = line.strip()
-            if line.startswith("•") or line.startswith("- "):
-                before_bed_results["silly_song"] = line.lstrip("•- ").strip()
-                break
+    # the "•" title line is only printed when a song was actually generated
+    for line in (stdout or "").split("\n"):
+        line = line.strip()
+        if line.startswith("•") or line.startswith("- "):
+            before_bed_results["silly_song"] = line.lstrip("•- ").strip()
+            break
+    if ok and before_bed_results["silly_song"]:
         logger.info("  Silly song: OK")
     else:
-        logger.warning("  Silly song generation failed")
+        logger.warning("  Silly song: produced 0 of 1 (pool exhausted or generation failed)")
+        state.setdefault("before_bed_shortfalls", []).append("silly_song")
         all_ok = False
 
     # Rate limit pause
@@ -1751,7 +1752,8 @@ def step_before_bed(args, state: dict) -> bool:
                 break
         logger.info("  Musical poem: OK")
     else:
-        logger.warning("  Musical poem generation failed")
+        logger.warning("  Musical poem: produced 0 of 1 (generation failed)")
+        state.setdefault("before_bed_shortfalls", []).append("poem")
         all_ok = False
 
     # Rate limit pause before next Mistral call
@@ -1792,10 +1794,12 @@ def step_before_bed(args, state: dict) -> bool:
                 logger.warning("  Funny short cover failed (audio still generated)")
                 before_bed_results["funny_short"] = funny_short_id  # audio is ok
         else:
-            logger.warning("  Funny short generation completed but no id parsed")
+            logger.warning("  Funny short: produced 0 (completed but no id parsed)")
+            state.setdefault("before_bed_shortfalls", []).append("funny_short")
             all_ok = False
     else:
-        logger.warning("  Funny short generation failed")
+        logger.warning("  Funny short: produced 0 (generation failed)")
+        state.setdefault("before_bed_shortfalls", []).append("funny_short")
         all_ok = False
 
     state["before_bed"] = before_bed_results
@@ -2464,8 +2468,11 @@ def print_summary(state: dict, total_elapsed: float):
     logger.info("  Lullabies:  %s", state.get("step_lullabies", "not run"))
     bb = state.get("before_bed", {})
     bb_count = sum(1 for k in ["silly_song", "poem", "funny_short"] if bb.get(k))
-    logger.info("  Before Bed: %s (%d/2 for ages %s)",
+    logger.info("  Before Bed: %s (%d/3 for ages %s)",
                 state.get("step_before_bed", "not run"), bb_count, bb.get("age", "?"))
+    shortfalls = state.get("before_bed_shortfalls", [])
+    if shortfalls:
+        logger.warning("  ⚠️  Produced 0 of requested: %s", ", ".join(sorted(set(shortfalls))))
     logger.info("  Enriched:   %s", state.get("step_enrich", "not run"))
     logger.info("  Synced:     %s", state.get("step_sync", "not run"))
     logger.info("  Deployed:   %s", state.get("step_deploy_prod", "not run"))
