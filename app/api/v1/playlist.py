@@ -16,7 +16,7 @@ from typing import Optional
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from fastapi import APIRouter, Depends, Query
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError, field_validator
 
 from app.dependencies import get_db_client, get_optional_user
 from app.utils.gating import is_premium
@@ -63,6 +63,16 @@ class PlaylistItem(BaseModel):
     cover_url: Optional[str] = None
     duration_seconds: Optional[int] = None
     is_fallback: bool = False
+
+    @field_validator("duration_seconds", mode="before")
+    @classmethod
+    def _coerce_duration(cls, v):
+        if v is None:
+            return None
+        try:
+            return int(round(float(v)))
+        except (TypeError, ValueError):
+            return None
 
 
 class PlaylistResponse(BaseModel):
@@ -267,17 +277,23 @@ async def get_today_playlist(
         cover_file, cover_url = _cover_info(item, cover_dir)
         if is_fallback:
             all_fresh = False
-        items.append(PlaylistItem(
-            slot=slot_name,
-            content_id=item.get("id"),
-            title=item.get("title") or item.get("title_en") or "",
-            audio_file=audio_file,
-            audio_url=audio_url,
-            cover_file=cover_file,
-            cover_url=cover_url,
-            duration_seconds=item.get("duration_seconds") or item.get("duration"),
-            is_fallback=is_fallback,
-        ))
+        try:
+            items.append(PlaylistItem(
+                slot=slot_name,
+                content_id=item.get("id"),
+                title=item.get("title") or item.get("title_en") or "",
+                audio_file=audio_file,
+                audio_url=audio_url,
+                cover_file=cover_file,
+                cover_url=cover_url,
+                duration_seconds=item.get("duration_seconds") or item.get("duration"),
+                is_fallback=is_fallback,
+            ))
+        except ValidationError:
+            logger.exception(
+                "playlist: malformed item %s in slot %s — skipping", item.get("id"), slot_name,
+            )
+            missing.append(slot_name)
 
     _record_history(store, today, lang, [it.content_id for it in items], kind="bedtime")
 
@@ -382,17 +398,23 @@ async def get_nap_playlist(
         used_ids.add(cid)
         audio_file, audio_url = _audio_info(item, audio_dir)
         cover_file, cover_url = _cover_info(item, cover_dir)
-        items.append(PlaylistItem(
-            slot=slot_name,
-            content_id=cid,
-            title=item.get("title") or item.get("title_en") or "",
-            audio_file=audio_file,
-            audio_url=audio_url,
-            cover_file=cover_file,
-            cover_url=cover_url,
-            duration_seconds=item.get("duration_seconds") or item.get("duration"),
-            is_fallback=is_fallback,
-        ))
+        try:
+            items.append(PlaylistItem(
+                slot=slot_name,
+                content_id=cid,
+                title=item.get("title") or item.get("title_en") or "",
+                audio_file=audio_file,
+                audio_url=audio_url,
+                cover_file=cover_file,
+                cover_url=cover_url,
+                duration_seconds=item.get("duration_seconds") or item.get("duration"),
+                is_fallback=is_fallback,
+            ))
+        except ValidationError:
+            logger.exception(
+                "nap: malformed item %s in slot %s — skipping", cid, slot_name,
+            )
+            continue
 
     _record_history(store, today, lang, [it.content_id for it in items], kind="nap")
 
