@@ -77,6 +77,7 @@ async def reload_content(
 class SetTierRequest(BaseModel):
     email: Optional[str] = None
     uid: Optional[str] = None
+    recovery_email: Optional[str] = None
     subscription_tier: str = "free"
     subscription_status: str = "canceled"
 
@@ -100,7 +101,8 @@ async def set_tier(
     ephemeral test backend, where a raw users.json edit is invisible (the user
     cache loads once and is never re-read). Writes memory+disk live via the same
     _persist_user_update the Stripe webhooks use, so it takes effect with no
-    restart. NEVER merge to main/prod.
+    restart. Pass a new uid + recovery_email to SEED a restorable premium
+    family (scenario 2/3) without Stripe. NEVER merge to main/prod.
     """
     admin_key = os.getenv("ADMIN_API_KEY", "")
     if not admin_key:
@@ -119,15 +121,23 @@ async def set_tier(
             detail="set-tier only available in LocalStore mode",
         )
 
+    recovery_email = (body.recovery_email or "").strip().lower()
     uid = (body.uid or "").strip()
     if uid:
         from app.dependencies import _load_persisted_tokens, _local_users
         _load_persisted_tokens()
         if uid not in _local_users:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"No user for uid={uid}",
-            )
+            if not recovery_email:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"No user for uid={uid} (pass recovery_email to seed one)",
+                )
+            _local_users[uid] = {
+                "uid": uid,
+                "family_id": uid,
+                "username": uid,
+                "onboarding_complete": True,
+            }
     else:
         if not body.email:
             raise HTTPException(
@@ -147,6 +157,11 @@ async def set_tier(
         "subscription_tier": body.subscription_tier,
         "subscription_status": body.subscription_status,
     }
+    if recovery_email:
+        fields["recovery_email"] = recovery_email
+        fields["billing_email"] = recovery_email
+    from app.dependencies import _local_users
+    _local_users.setdefault(uid, {"uid": uid}).update(fields)
     from app.api.v1.billing import _persist_user_update
     _persist_user_update(db_client, uid, fields)
     logger.warning("[TEST set-tier] uid=%s -> %s", uid, fields)
@@ -156,4 +171,70 @@ async def set_tier(
         uid=uid,
         subscription_tier=body.subscription_tier,
         subscription_status=body.subscription_status,
+    )
+
+
+class RestoreCodePeekRequest(BaseModel):
+    email: str
+
+
+class RestoreCodePeekResponse(BaseModel):
+    email: str
+    code: str
+    family_id: str
+
+
+@router.post("/restore-code", response_model=RestoreCodePeekResponse)
+async def peek_restore_code(
+    body: RestoreCodePeekRequest,
+    x_admin_key: str = Header(..., alias="X-Admin-Key"),
+    db_client=Depends(get_db_client),
+) -> RestoreCodePeekResponse:
+    """TEST-ONLY restore-code minter — MUST stay on the test-env branch.
+
+    jt34 has no RESEND_API_KEY, so the restore-code email never sends. This
+    mints a valid code for an existing recovery_email family and RETURNS it
+    (writing the same code row verify-code reads), so restore completes without
+    email. A "read any restore code" endpoint in prod is an account-takeover
+    hole — test-env ONLY, admin-key gated, LocalStore-only, NEVER merge to prod.
+    """
+    admin_key = os.getenv("ADMIN_API_KEY", "")
+    if not admin_key:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Admin API key not configured",
+        )
+    if x_admin_key != admin_key:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Invalid admin key",
+        )
+    if not _check_local_mode():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="restore-code only available in LocalStore mode",
+        )
+
+    from app.services.restore_codes import (
+        _norm_email,
+        _lookup_user_by_recovery_email,
+        _generate_code,
+        _write_code_row,
+    )
+    email_lc = _norm_email(body.email)
+    user = _lookup_user_by_recovery_email(email_lc)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No family for recovery_email={email_lc}",
+        )
+    code = _generate_code()
+    _write_code_row(email_lc, user.get("family_id", ""), code)
+    logger.warning(
+        "[TEST restore-code] email=%s family=%s", email_lc, user.get("family_id", "")
+    )
+    return RestoreCodePeekResponse(
+        email=email_lc,
+        code=code,
+        family_id=user.get("family_id", ""),
     )
