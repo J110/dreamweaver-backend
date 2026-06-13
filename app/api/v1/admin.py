@@ -132,12 +132,14 @@ async def set_tier(
                     status_code=status.HTTP_404_NOT_FOUND,
                     detail=f"No user for uid={uid} (pass recovery_email to seed one)",
                 )
-            _local_users[uid] = {
+            seed_doc = {
                 "uid": uid,
                 "family_id": uid,
                 "username": uid,
                 "onboarding_complete": True,
             }
+            _local_users[uid] = seed_doc
+            db_client.collection("users").document(uid).set(seed_doc)
     else:
         if not body.email:
             raise HTTPException(
