@@ -274,7 +274,7 @@ def main(only_types: list[str] | None = None) -> int:
 
     # ── Social-media clips (Hindi). Runs after admin reload so the
     # generator's view of seed_output/content.json includes today's items.
-    if successes:
+    if False:  # Hindi clips retired (process removed)
         print("\n→ Hindi clips…")
         try:
             r = subprocess.run(

@@ -124,7 +124,7 @@ logging.basicConfig(
 logger = logging.getLogger("pipeline")
 
 # ── Pipeline steps ───────────────────────────────────────────────────────
-STEPS = ["generate", "audio", "qa", "enrich", "mood", "covers", "lullabies", "before_bed", "sync", "clips", "deploy_prod"]
+STEPS = ["generate", "audio", "qa", "enrich", "mood", "covers", "lullabies", "before_bed", "sync", "deploy_prod"]
 
 def load_state() -> dict:
     """Load pipeline state for crash-resume."""
