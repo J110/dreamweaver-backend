@@ -45,36 +45,63 @@ def _lang_of(item: Dict[str, Any]) -> str:
     return item.get("lang") or item.get("language") or "en"
 
 
-def _audio_url(item: Dict[str, Any]) -> str:
+def _audio_candidate_urls(item: Dict[str, Any], lang: str) -> List[str]:
+    """`/audio/...` URLs to try, in order. Many items have a null audio_url,
+    so fall back to the on-disk naming convention by type."""
+    urls: List[str] = []
     if item.get("audio_url"):
-        return item["audio_url"]
-    variants = item.get("audio_variants") or []
-    return variants[0].get("url", "") if variants else ""
+        urls.append(item["audio_url"])
+    for v in (item.get("audio_variants") or []):
+        if v.get("url"):
+            urls.append(v["url"])
+    cid = item.get("id", "")
+    if item.get("type") == "poem":
+        primary = "poems-hi" if lang == "hi" else "poems"
+        urls += [f"/audio/{primary}/{cid}.mp3",
+                 f"/audio/poems/{cid}.mp3", f"/audio/poems-hi/{cid}.mp3"]
+    elif item.get("subtype") == "silly_song":
+        urls.append(f"/audio/silly-songs/{cid}.mp3")
+    return urls
 
 
-def _resolve_audio(audio_url: str) -> Optional[Path]:
-    if not audio_url:
-        return None
-    rel = audio_url.split("/audio/", 1)[-1].lstrip("/")
-    for base in AUDIO_ROOTS:
-        p = base / rel
-        if p.exists():
-            return p
+def _resolve_audio(item: Dict[str, Any], lang: str) -> Optional[Path]:
+    for url in _audio_candidate_urls(item, lang):
+        rel = url.split("/audio/", 1)[-1].lstrip("/")
+        for base in AUDIO_ROOTS:
+            p = base / rel
+            if p.exists():
+                return p
     return None
 
 
 def _resolve_cover(item: Dict[str, Any]) -> Optional[Path]:
+    """Prefer a FLUX raster (.webp) — the cover field, then any {id}*.webp in
+    the cover stores (covers some items live under subtype dirs or carry _vN /
+    _cover suffixes). Fall back to .svg only if no webp exists."""
     cid = item.get("id", "")
-    rels: List[str] = []
     cover = item.get("cover") or ""
-    if "/covers/" in cover:
-        rels.append(cover.split("/covers/", 1)[-1].lstrip("/"))
-    rels.append(f"{cid}.webp")
+    field_rel = cover.split("/covers/", 1)[-1].lstrip("/") if "/covers/" in cover else ""
+    # 1. webp
     for base in COVER_ROOTS:
-        for rel in rels:
-            p = base / rel
+        if field_rel.endswith(".webp"):
+            p = base / field_rel
             if p.exists():
                 return p
+        if cid:
+            webps = sorted(base.glob(f"**/{cid}*.webp"))
+            if webps:
+                exact = [w for w in webps if w.stem == cid]
+                return exact[0] if exact else webps[-1]
+    # 2. svg fallback (rare for our 3 types)
+    for base in COVER_ROOTS:
+        if field_rel:
+            p = base / field_rel
+            if p.exists():
+                return p
+        if cid:
+            svgs = sorted(base.glob(f"**/{cid}*.svg"))
+            if svgs:
+                return svgs[0]
     return None
 
 
@@ -123,11 +150,11 @@ def collect_assets(lang: str, content_path: Path = CONTENT_PATH) -> List[Dict[st
     plan = [
         ("Musical poem",
          _pick_today(items, lang, lambda s: s.get("type") == "poem"),
-         lambda it: _resolve_audio(_audio_url(it))),
+         lambda it: _resolve_audio(it, lang)),
         ("Silly song",
          _pick_today(items, lang,
                      lambda s: s.get("type") == "song" and s.get("subtype") == "silly_song"),
-         lambda it: _resolve_audio(_audio_url(it))),
+         lambda it: _resolve_audio(it, lang)),
         ("Long-story song",
          _pick_today(items, lang, lambda s: s.get("type") == "long_story"),
          lambda it: _long_story_song(it, lang)),
