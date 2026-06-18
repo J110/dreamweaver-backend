@@ -1640,6 +1640,13 @@ def generate_long_story(axes: dict, log_prefix: str = "  ") -> dict:
         BASE_DIR / "seed_output" / "hindi_long" / f"{sid}.mp3",
     )
 
+    # Standalone mid-story song for the marketing email (parity with EN song.mp3).
+    try:
+        song.export(BASE_DIR / "seed_output" / "hindi_long" / f"{sid}_song.mp3",
+                    format="mp3", bitrate="192k")
+    except Exception as _song_e:
+        print(f"{log_prefix}  standalone song export failed (non-fatal): {_song_e}")
+
     cover = _flux_cover(data.get("cover_context", "Indian dreamy bedtime watercolor"))
     if cover:
         cover_paths = [

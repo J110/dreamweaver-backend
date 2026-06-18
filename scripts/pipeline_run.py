@@ -2662,6 +2662,14 @@ def main():
     except Exception as e:
         logger.warning("  Email notification failed: %s", e)
 
+    # ── Marketing assets email: day's new poem + silly song + long-story
+    # song (audio + FLUX cover attachments). Non-fatal.
+    try:
+        from marketing_email import email_daily_marketing_assets
+        email_daily_marketing_assets("en")
+    except Exception as e:
+        logger.warning("  Marketing email failed: %s", e)
+
 
 def _send_crash_email(error: Exception):
     """Send a crash notification email when pipeline fails before reaching normal notification."""

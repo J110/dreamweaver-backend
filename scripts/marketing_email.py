@@ -1,0 +1,186 @@
+#!/usr/bin/env python3
+"""marketing_email.py — email the day's new marketing assets (audio + FLUX cover).
+
+Per language per day, emails up to three items from the day's NEW creations:
+  1. Musical poem      (type == "poem")
+  2. Silly song        (type == "song", subtype == "silly_song")
+  3. Long-story song   (the standalone mid-story song, NOT the full narration)
+
+Each item is attached as its audio file plus its FLUX cover (.webp). Called at
+the end of pipeline_run.py (EN) and pipeline_run_hi.py (HI).
+
+Standalone:
+    python3 scripts/marketing_email.py --lang en [--dry-run]
+"""
+from __future__ import annotations
+
+import json
+import logging
+import os
+from datetime import date
+from pathlib import Path
+from typing import Any, Callable, Dict, List, Optional
+
+logger = logging.getLogger("marketing_email")
+
+BASE_DIR = Path(__file__).parent.parent
+WEB_DIR = BASE_DIR.parent / "dreamweaver-web"
+AUDIO_ROOTS = [WEB_DIR / "public" / "audio", Path("/opt/audio-store")]
+COVER_ROOTS = [Path(os.getenv("COVER_OUTPUT_DIR", "/opt/cover-store")),
+               WEB_DIR / "public" / "covers"]
+CONTENT_PATH = BASE_DIR / "seed_output" / "content.json"
+EPISODE_DIR = BASE_DIR / "seed_output"            # holds episode_* dirs (EN long story)
+HINDI_LONG_DIR = BASE_DIR / "seed_output" / "hindi_long"
+
+
+def _today() -> str:
+    return date.today().isoformat()
+
+
+def _is_today(item: Dict[str, Any]) -> bool:
+    return (item.get("addedAt") or item.get("created_at") or "")[:10] == _today()
+
+
+def _lang_of(item: Dict[str, Any]) -> str:
+    return item.get("lang") or item.get("language") or "en"
+
+
+def _audio_url(item: Dict[str, Any]) -> str:
+    if item.get("audio_url"):
+        return item["audio_url"]
+    variants = item.get("audio_variants") or []
+    return variants[0].get("url", "") if variants else ""
+
+
+def _resolve_audio(audio_url: str) -> Optional[Path]:
+    if not audio_url:
+        return None
+    rel = audio_url.split("/audio/", 1)[-1].lstrip("/")
+    for base in AUDIO_ROOTS:
+        p = base / rel
+        if p.exists():
+            return p
+    return None
+
+
+def _resolve_cover(item: Dict[str, Any]) -> Optional[Path]:
+    cid = item.get("id", "")
+    rels: List[str] = []
+    cover = item.get("cover") or ""
+    if "/covers/" in cover:
+        rels.append(cover.split("/covers/", 1)[-1].lstrip("/"))
+    rels.append(f"{cid}.webp")
+    for base in COVER_ROOTS:
+        for rel in rels:
+            p = base / rel
+            if p.exists():
+                return p
+    return None
+
+
+def _en_long_story_song(item: Dict[str, Any]) -> Optional[Path]:
+    """Newest seed_output/episode_*/song.mp3, preferring the episode whose
+    metadata title matches this long story."""
+    title = (item.get("title") or "").strip()
+    title_en = (item.get("title_en") or "").strip()
+    dirs = sorted(EPISODE_DIR.glob("episode_*"),
+                  key=lambda d: d.stat().st_mtime, reverse=True)
+    newest: Optional[Path] = None
+    for d in dirs:
+        song = d / "song.mp3"
+        if not song.exists():
+            continue
+        if newest is None:
+            newest = song
+        meta = d / "metadata.json"
+        if meta.exists() and title:
+            try:
+                mt = (json.loads(meta.read_text()).get("title") or "").strip()
+                if mt and mt in (title, title_en):
+                    return song
+            except Exception:
+                pass
+    return newest
+
+
+def _long_story_song(item: Dict[str, Any], lang: str) -> Optional[Path]:
+    if lang == "hi":
+        p = HINDI_LONG_DIR / f"{item.get('id')}_song.mp3"
+        return p if p.exists() else None
+    return _en_long_story_song(item)
+
+
+def _pick_today(items: List[Dict[str, Any]], lang: str,
+                pred: Callable[[Dict[str, Any]], bool]) -> Optional[Dict[str, Any]]:
+    xs = [s for s in items if isinstance(s, dict) and _is_today(s)
+          and _lang_of(s) == lang and pred(s)]
+    xs.sort(key=lambda s: (s.get("addedAt") or s.get("created_at") or ""), reverse=True)
+    return xs[0] if xs else None
+
+
+def collect_assets(lang: str, content_path: Path = CONTENT_PATH) -> List[Dict[str, Any]]:
+    items = json.loads(Path(content_path).read_text())
+    plan = [
+        ("Musical poem",
+         _pick_today(items, lang, lambda s: s.get("type") == "poem"),
+         lambda it: _resolve_audio(_audio_url(it))),
+        ("Silly song",
+         _pick_today(items, lang,
+                     lambda s: s.get("type") == "song" and s.get("subtype") == "silly_song"),
+         lambda it: _resolve_audio(_audio_url(it))),
+        ("Long-story song",
+         _pick_today(items, lang, lambda s: s.get("type") == "long_story"),
+         lambda it: _long_story_song(it, lang)),
+    ]
+    assets: List[Dict[str, Any]] = []
+    for label, item, audio_fn in plan:
+        if not item:
+            logger.info("  [%s] no new %s today", lang, label)
+            continue
+        audio = audio_fn(item)
+        cover = _resolve_cover(item)
+        if not audio or not audio.exists():
+            logger.warning("  [%s] %s '%s' — audio not found, skipping",
+                           lang, label, item.get("title"))
+            continue
+        if not cover:
+            logger.warning("  [%s] %s '%s' — cover not found, skipping",
+                           lang, label, item.get("title"))
+            continue
+        assets.append({"label": label, "title": item.get("title") or item.get("id"),
+                       "id": item.get("id"), "audio": str(audio), "cover": str(cover)})
+    return assets
+
+
+def email_daily_marketing_assets(lang: str, content_path: Path = CONTENT_PATH,
+                                 dry_run: bool = False) -> bool:
+    assets = collect_assets(lang, content_path)
+    if not assets:
+        logger.info("  [%s] no marketing assets to email today", lang)
+        return False
+    logger.info("  [%s] %d marketing asset(s): %s", lang, len(assets),
+                ", ".join(a["label"] for a in assets))
+    if dry_run:
+        for a in assets:
+            logger.info("    %s — %s | audio=%s | cover=%s",
+                        a["label"], a["title"], a["audio"], a["cover"])
+        return True
+    try:
+        from pipeline_notify import send_marketing_assets
+    except ImportError:
+        import sys
+        sys.path.insert(0, str(BASE_DIR / "scripts"))
+        from pipeline_notify import send_marketing_assets
+    return send_marketing_assets(lang, assets)
+
+
+if __name__ == "__main__":
+    import argparse
+    import sys
+    logging.basicConfig(level=logging.INFO, format="%(message)s")
+    ap = argparse.ArgumentParser(description="Email the day's marketing assets")
+    ap.add_argument("--lang", default="en", choices=["en", "hi"])
+    ap.add_argument("--dry-run", action="store_true")
+    args = ap.parse_args()
+    ok = email_daily_marketing_assets(args.lang, dry_run=args.dry_run)
+    sys.exit(0 if ok else 1)

@@ -8,6 +8,7 @@ Standalone test:
     python3 scripts/pipeline_notify.py --test
 """
 
+import base64
 import json
 import os
 import sys
@@ -765,6 +766,70 @@ def send_clips_notification(clips_info: list, elapsed: float = 0) -> bool:
             return False
     except Exception as e:
         print(f"  WARNING: Clips email notification failed: {e}")
+        return False
+
+
+def send_marketing_assets(lang: str, assets: list) -> bool:
+    """Email the day's marketing assets (audio + FLUX cover) as attachments.
+
+    ``assets`` is a list of dicts: {label, title, id, audio (path), cover (path)}.
+    Returns True on success.
+    """
+    if not RESEND_API_KEY:
+        print("  WARNING: RESEND_API_KEY not set — skipping marketing email")
+        return False
+    if not assets:
+        print("  No marketing assets — skipping email")
+        return False
+
+    date_str = datetime.now().strftime("%Y-%m-%d")
+    lang_label = "Hindi" if lang == "hi" else "English"
+
+    rows, attachments = [], []
+    for a in assets:
+        audio_p, cover_p = Path(a["audio"]), Path(a["cover"])
+        rows.append(
+            f"<li><b>{a['label']}:</b> {a['title']}<br>"
+            f"<span style='color:#888;font-size:13px'>{audio_p.name} &middot; {cover_p.name}</span></li>"
+        )
+        try:
+            for f in (audio_p, cover_p):
+                attachments.append({
+                    "filename": f.name,
+                    "content": base64.b64encode(f.read_bytes()).decode("ascii"),
+                })
+        except Exception as e:
+            print(f"  WARNING: could not attach assets for {a['title']}: {e}")
+
+    subject = f"[MARKETING] {lang_label} daily assets — {date_str} — {len(assets)} item(s)"
+    html = (
+        f"<h2>Dream Valley — {lang_label} marketing assets</h2>"
+        f"<p>{date_str} &middot; {len(assets)} new item(s). Audio + FLUX covers attached.</p>"
+        f"<ul>{''.join(rows)}</ul>"
+    )
+    try:
+        resp = httpx.post(
+            RESEND_ENDPOINT,
+            headers={
+                "Authorization": f"Bearer {RESEND_API_KEY}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "from": FROM_EMAIL,
+                "to": [TO_EMAIL],
+                "subject": subject,
+                "html": html,
+                "attachments": attachments,
+            },
+            timeout=120,
+        )
+        if resp.status_code in (200, 201):
+            print(f"  Marketing email sent: {subject}")
+            return True
+        print(f"  WARNING: Marketing email failed ({resp.status_code}): {resp.text[:200]}")
+        return False
+    except Exception as e:
+        print(f"  WARNING: Marketing email failed: {e}")
         return False
 
 

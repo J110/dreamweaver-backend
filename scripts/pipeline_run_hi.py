@@ -272,23 +272,16 @@ def main(only_types: list[str] | None = None) -> int:
         print("\n→ Deploying…")
         _admin_reload()
 
-    # ── Social-media clips (Hindi). Runs after admin reload so the
-    # generator's view of seed_output/content.json includes today's items.
-    if False:  # Hindi clips retired (process removed)
-        print("\n→ Hindi clips…")
+    # ── Marketing assets email (Hindi): day's new poem + silly song +
+    # long-story song (audio + FLUX cover attachments). After admin reload so
+    # the generator's view of seed_output/content.json includes today's items.
+    if successes:
+        print("\n→ Hindi marketing email…")
         try:
-            r = subprocess.run(
-                ["python3", "scripts/generate_clips_hi.py"],
-                cwd=BASE_DIR, capture_output=True, text=True, timeout=1800,
-            )
-            if r.returncode == 0:
-                print("  ✓ clips generated")
-            else:
-                print(f"  clips generation non-fatal failure: {r.stderr[-300:]}")
-        except subprocess.TimeoutExpired:
-            print("  clips generation timed out (continuing)")
+            from marketing_email import email_daily_marketing_assets
+            email_daily_marketing_assets("hi")
         except Exception as e:
-            print(f"  clips generation failed (continuing): {e}")
+            print(f"  marketing email failed (continuing): {e}")
 
     # ── deploy_guard verify
     print("\n→ deploy_guard verify…")
