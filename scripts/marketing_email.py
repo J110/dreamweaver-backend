@@ -17,6 +17,8 @@ from __future__ import annotations
 import json
 import logging
 import os
+import re
+import tempfile
 from datetime import date
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional
@@ -75,34 +77,51 @@ def _resolve_audio(item: Dict[str, Any], lang: str) -> Optional[Path]:
 
 
 def _resolve_cover(item: Dict[str, Any]) -> Optional[Path]:
-    """Prefer a FLUX raster (.webp) — the cover field, then any {id}*.webp in
-    the cover stores (covers some items live under subtype dirs or carry _vN /
-    _cover suffixes). Fall back to .svg only if no webp exists."""
+    """Resolve the canonical cover file. Trust the item's declared ``cover``
+    field first (.webp, or the .svg that is the composed FLUX cover the app
+    renders). Only when the field is missing/broken fall back to {id} files in
+    the cover stores, EXCLUDING FLUX intermediates ({id}_vN.webp — those are
+    progressively-blank generation artifacts, not the cover)."""
     cid = item.get("id", "")
     cover = item.get("cover") or ""
     field_rel = cover.split("/covers/", 1)[-1].lstrip("/") if "/covers/" in cover else ""
-    # 1. webp
-    for base in COVER_ROOTS:
-        if field_rel.endswith(".webp"):
+    # 1. Trust the declared cover (webp or svg).
+    if field_rel:
+        for base in COVER_ROOTS:
             p = base / field_rel
             if p.exists():
                 return p
-        if cid:
-            webps = sorted(base.glob(f"**/{cid}*.webp"))
+    # 2. Fallback for null/broken cover fields. Skip {id}_vN.webp junk.
+    if cid:
+        for base in COVER_ROOTS:
+            webps = [w for w in sorted(base.glob(f"**/{cid}*.webp"))
+                     if not re.search(r"_v\d+\.webp$", w.name)]
+            exact = [w for w in webps if w.stem == cid]
+            if exact:
+                return exact[0]
             if webps:
-                exact = [w for w in webps if w.stem == cid]
-                return exact[0] if exact else webps[-1]
-    # 2. svg fallback (rare for our 3 types)
-    for base in COVER_ROOTS:
-        if field_rel:
-            p = base / field_rel
-            if p.exists():
-                return p
-        if cid:
+                return webps[0]
             svgs = sorted(base.glob(f"**/{cid}*.svg"))
             if svgs:
                 return svgs[0]
     return None
+
+
+def _attachable_cover(cover: Path) -> Optional[Path]:
+    """Return a raster image to attach. SVG covers are rasterized to PNG via
+    cairosvg (the SVG embeds the real FLUX webp + overlay — the composed cover
+    users actually see); other formats pass through unchanged."""
+    if cover.suffix.lower() != ".svg":
+        return cover
+    try:
+        import cairosvg
+        out = Path(tempfile.gettempdir()) / f"{cover.stem}_cover.png"
+        cairosvg.svg2png(url=str(cover), write_to=str(out),
+                         output_width=1024, output_height=1024)
+        return out if out.exists() else None
+    except Exception as e:
+        logger.warning("  cover rasterize failed for %s: %s", cover, e)
+        return None
 
 
 def _en_long_story_song(item: Dict[str, Any]) -> Optional[Path]:
@@ -166,6 +185,7 @@ def collect_assets(lang: str, content_path: Path = CONTENT_PATH) -> List[Dict[st
             continue
         audio = audio_fn(item)
         cover = _resolve_cover(item)
+        cover = _attachable_cover(cover) if cover else None
         if not audio or not audio.exists():
             logger.warning("  [%s] %s '%s' — audio not found, skipping",
                            lang, label, item.get("title"))
