@@ -27,6 +27,14 @@ import urllib.request
 from collections import Counter
 from datetime import datetime, timezone
 
+# radio_controller runs standalone (python3 scripts/radio_controller.py, so
+# sys.path[0] = scripts/) — add the repo root so we can import the CANONICAL
+# premium-content definition instead of hardcoding a type list. One source of
+# truth with the API/paywall: app/utils/gating.is_premium_content_item
+# (long_story + song/subtype=funny_short).
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from app.utils.gating import is_premium_content_item
+
 # ---------------------------------------------------------------------------
 # Configuration
 # ---------------------------------------------------------------------------
@@ -153,6 +161,12 @@ def load_main_content(logger):
             break
 
         for item in items:
+            # Premium content (long_story, funny_short songs) must NEVER reach
+            # the free 24/7 radio. Exclude by the canonical definition so it's
+            # excluded BY DESIGN — not by accident (e.g. a future fresh load
+            # surfacing audio_variants the current staleness happens to hide).
+            if is_premium_content_item(item):
+                continue
             content_type = item.get("type", "story")
             audio_variants = item.get("audio_variants", [])
             if not isinstance(audio_variants, list) or not audio_variants:
@@ -364,7 +378,10 @@ def load_all_content(logger):
     """Load all playable content from all API endpoints, verified against disk."""
     all_tracks = []
     all_tracks.extend(load_main_content(logger))
-    all_tracks.extend(load_funny_shorts(logger))
+    # funny_shorts are PREMIUM (song / subtype=funny_short) — they must NOT be
+    # on the free radio. The dedicated premium loader is intentionally dropped
+    # here; do NOT re-add it. (load_main_content also skips premium items via
+    # is_premium_content_item, so both leak paths are closed.)
     all_tracks.extend(load_silly_songs(logger))
     all_tracks.extend(load_poems(logger))
     all_tracks.extend(load_lullabies(logger))
