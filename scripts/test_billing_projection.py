@@ -11,6 +11,7 @@ NOW = datetime(2026, 6, 19, tzinfo=timezone.utc)
 FUTURE = (NOW + timedelta(days=10)).isoformat()
 PAST = (NOW - timedelta(days=10)).isoformat()
 FUTURE_TS = int((NOW + timedelta(days=30)).timestamp())
+PAST_TS = int((NOW - timedelta(days=30)).timestamp())
 
 
 # ── Fake LocalStore (in-memory; no disk) ───────────────────────
@@ -311,3 +312,38 @@ def test_apply_tier_missing_user_noops(env):
     db, _ = env
     billing._apply_tier(db, "ghost")  # no doc → silent return
     assert "ghost" not in db.users
+
+
+# ── 7. created with non-premium status → free (Decision-A delta) ───
+
+
+def test_created_incomplete_projects_free(env):
+    db, seed = env
+    seed("u1", "cus_1", {"subscription_tier": "free"})
+    billing._handle_sub_created(db, _sub_event(
+        "customer.subscription.created", "cus_1", "sub_1", "incomplete", FUTURE_TS))
+    assert db.users["u1"]["subscription_tier"] == "free"
+
+
+# ── 8. Task-4 boundary: deleted/invoice_failed must NOT apply tier ─
+
+
+def test_sub_deleted_does_not_apply_tier(env):
+    db, seed = env
+    seed("u1", "cus_1", {"subscription_tier": "premium", "subscription_status": "active"})
+    # period end already PAST: projection would be free, but this handler must
+    # leave tier untouched — the Task-4 sweep owns the past-period downgrade.
+    billing._handle_sub_deleted(db, _sub_event(
+        "customer.subscription.deleted", "cus_1", "sub_1", "canceled", PAST_TS))
+    assert db.users["u1"]["subscription_tier"] == "premium"
+    assert db.users["u1"]["subscription_status"] == "canceled"
+
+
+def test_invoice_failed_does_not_apply_tier(env):
+    db, seed = env
+    seed("u1", "cus_1", {"subscription_tier": "free", "subscription_status": "active"})
+    billing._handle_invoice_failed(db, {
+        "data": {"object": {"id": "in_1", "customer": "cus_1", "attempt_count": 1, "amount_due": 100}}
+    })
+    assert db.users["u1"]["subscription_tier"] == "free"
+    assert db.users["u1"]["subscription_status"] == "past_due"

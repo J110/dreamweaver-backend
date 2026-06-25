@@ -116,11 +116,14 @@ def _apply_tier(db_client, uid: str) -> None:
     on change. The ONLY writer of subscription_tier in the webhook path."""
     try:
         doc = db_client.collection("users").document(uid).get()
-    except Exception:
+    except Exception as e:
+        logger.warning("tier recompute read failed uid=%s: %s", uid, e)
         return
     if not doc.exists:
         return
     user = doc.to_dict() or {}
+    # Recompute from the freshly-read record (not the handler's `fields`) so
+    # apple/google/comp entitlements are honored — never narrow this to fields.
     new_tier = compute_tier(user)
     if user.get("subscription_tier") != new_tier:
         _persist_user_update(db_client, uid, {"subscription_tier": new_tier})
