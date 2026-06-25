@@ -88,14 +88,21 @@ class UserCRUD(BaseCRUD):
     # daily_usage_count counter. See app/dependencies.py:_ensure_credit_fields.
 
     async def update_subscription(self, uid: str, tier: str, expires_at: Optional[datetime] = None) -> bool:
-        """
-        Update user subscription tier.
-        
+        """Update user subscription tier.
+
+        DEPRECATED (Deploy 2 — entitlement projection). subscription_tier is now
+        a materialized cache written ONLY by the projection: billing._apply_tier
+        (Stripe webhooks) and the downgrade sweep (entitlements.compute_downgrades).
+        This method writes the tier DIRECTLY, bypassing the projection, and is
+        retained only for API stability — it has no production callers. Do NOT add
+        new callers: mutate the underlying entitlement source (stripe state or
+        user["entitlements"][apple|google|comp]) and let the projection recompute.
+
         Args:
             uid: User ID
             tier: New subscription tier
             expires_at: Subscription expiration time (optional)
-            
+
         Returns:
             True if successful
         """
