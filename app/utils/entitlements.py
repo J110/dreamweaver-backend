@@ -72,6 +72,13 @@ def compute_downgrades(users, now: Optional[datetime] = None) -> list:
             continue
         if user.get("subscription_tier") != "premium":
             continue
-        if compute_tier(user, now) == "free":
+        try:
+            projects_free = compute_tier(user, now) == "free"
+        except Exception:
+            # A record we can't evaluate (tz-naive timestamp, malformed
+            # entitlements, etc.) stays premium — never auto-downgrade on data
+            # we couldn't assess, and never let one bad record stall the sweep.
+            continue
+        if projects_free:
             result.append(user)
     return result

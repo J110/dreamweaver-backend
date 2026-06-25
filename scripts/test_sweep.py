@@ -104,6 +104,21 @@ def test_sweep_canceled_boundary_now():
     assert compute_downgrades([user], NOW) == [user]
 
 
+def test_sweep_skips_malformed_records_without_stalling():
+    # tz-naive timestamp and list-shaped entitlements each used to raise and
+    # abort the whole sweep; they must now be skipped (stay premium) while the
+    # valid canceled-past-period user is still swept.
+    tz_naive = {"uid": "naive", "subscription_tier": "premium",
+                "subscription_status": "canceled",
+                "current_period_end": "2026-06-10T00:00:00"}  # no offset
+    bad_ent = {"uid": "badent", "subscription_tier": "premium",
+               "entitlements": ["comp"]}  # list, not dict
+    legit = {"uid": "cancel_past", "subscription_tier": "premium",
+             "subscription_status": "canceled", "current_period_end": PAST}
+    out = compute_downgrades([tz_naive, bad_ent, legit], NOW)
+    assert _uids(out) == {"cancel_past"}
+
+
 def test_sweep_mixed_returns_only_projected_free_premium():
     perpetual = {"uid": "p", "subscription_tier": "premium", "entitlements": {"comp": {"status": "active", "expires": None}}}
     active = {"uid": "a", "subscription_tier": "premium", "subscription_status": "active"}
