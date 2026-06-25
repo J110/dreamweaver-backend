@@ -111,7 +111,7 @@ def _persist_user_update(db_client, uid: str, fields: dict) -> None:
         logger.warning("user record update failed uid=%s: %s", uid, e)
 
 
-def _apply_tier(db_client, uid: str) -> None:
+def _apply_tier(db_client, uid: str, now: Optional[datetime] = None) -> None:
     """Recompute subscription_tier from the entitlement projection and persist
     on change. The ONLY writer of subscription_tier in the webhook path."""
     try:
@@ -124,7 +124,7 @@ def _apply_tier(db_client, uid: str) -> None:
     user = doc.to_dict() or {}
     # Recompute from the freshly-read record (not the handler's `fields`) so
     # apple/google/comp entitlements are honored — never narrow this to fields.
-    new_tier = compute_tier(user)
+    new_tier = compute_tier(user, now)
     if user.get("subscription_tier") != new_tier:
         _persist_user_update(db_client, uid, {"subscription_tier": new_tier})
 

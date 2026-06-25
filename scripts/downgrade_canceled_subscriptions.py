@@ -1,17 +1,30 @@
 #!/usr/bin/env python3
-"""Daily downgrade of canceled subscriptions past their period end.
+"""Daily downgrade sweep — the projection's downgrade-side safety net.
 
-Phase 0 step 1.4e. Stripe convention: when a user cancels, their
-subscription status flips to 'canceled' but tier stays premium until
-current_period_end (they keep what they paid for). After the period
-end passes, this script drops them to free.
+Generalized (Deploy 2 Task 4). This is the cache-correcting half of the
+entitlement projection: it downgrades ANY user whose cached
+subscription_tier == 'premium' but whose entitlement projection
+(compute_tier) is now 'free'. The candidate set is computed by
+app.utils.entitlements.compute_downgrades — this script no longer
+hand-rolls the canceled-past-period filter.
 
-Behavior per user record where:
-    subscription_status == 'canceled'
-    AND current_period_end < now()
-    AND subscription_tier == 'premium'
+Cases swept (anything compute_tier scores as free while cache says premium):
+    - canceled subscription past current_period_end (the primary, original case)
+    - expired comp/apple/google entitlement (active but past its `expires`)
+    - disputed/unpaid/incomplete stripe status with no active comp
+    - signal-less premium orphans (tier=premium, no status, no entitlements)
 
-Set:
+NEVER swept (project premium, so cache is correct):
+    - perpetual comp (entitlements.comp = active, expires=None)
+    - healthy payers (status active/trialing/past_due)
+    - canceled still within current_period_end
+    - disputed BUT comp-active (comp is independent of the stripe dispute)
+
+This generalization is SAFE because Deploy 1's backfill gave every legit
+premium user an entitlement source; Deploy 2's dry-run against real data
+gates the rollout. The downgrade WRITE is unchanged:
+
+Set per swept user:
     subscription_tier = 'free'
     credits_remaining = 0      (monthly subscription credits zero out)
     credits_period_end = now() (period closed)
@@ -49,19 +62,21 @@ def main() -> int:
     parser = argparse.ArgumentParser(
         prog="downgrade_canceled_subscriptions",
         description=(
-            "Downgrade users whose canceled subscription has passed its "
-            "current_period_end. Sets tier=free, zeros monthly credits, "
-            "preserves top-up credits. Idempotent."
+            "Downgrade any premium-cached user whose entitlement projection "
+            "is now free (canceled-past-period, expired comp/apple/google, "
+            "disputed-without-comp, signal-less orphans). Sets tier=free, "
+            "zeros monthly credits, preserves top-up credits. Idempotent."
         ),
     )
     parser.add_argument(
         "--dry-run",
         action="store_true",
-        help="Report which users would be downgraded without writing.",
+        help="Report which premium-cached users project free without writing.",
     )
     args = parser.parse_args()
 
     from app.services.local_store import get_local_store
+    from app.utils.entitlements import compute_downgrades
 
     store = get_local_store()
     try:
@@ -71,43 +86,28 @@ def main() -> int:
         return 1
 
     now = datetime.now(timezone.utc)
-    candidates = []
-
-    for doc in users:
-        data = doc.to_dict() if hasattr(doc, "to_dict") else doc
-        if not isinstance(data, dict):
-            continue
-        if data.get("subscription_status") != "canceled":
-            continue
-        if data.get("subscription_tier") != "premium":
-            continue
-        period_end_iso = data.get("current_period_end")
-        if not period_end_iso:
-            continue
-        try:
-            period_end = datetime.fromisoformat(
-                str(period_end_iso).replace("Z", "+00:00")
-            )
-        except Exception:
-            continue
-        if period_end >= now:
-            # Still within paid window — leave them on premium.
-            continue
-        candidates.append(data)
+    users_dicts = [
+        doc.to_dict() if hasattr(doc, "to_dict") else doc for doc in users
+    ]
+    candidates = compute_downgrades(users_dicts, now)
 
     if not candidates:
-        print("No canceled subscriptions past period end. Nothing to do.")
+        print("No premium-cached users project free. Nothing to do.")
         return 0
 
-    print(f"Found {len(candidates)} canceled subscription(s) past period end:")
+    print(
+        f"Found {len(candidates)} premium-cached user(s) projecting free "
+        f"(stale-high cache):"
+    )
     for data in candidates:
         username = data.get("username", "?")
         uid = data.get("uid") or data.get("id", "?")
-        period_end = data.get("current_period_end")
+        period_end = data.get("current_period_end") or "n/a"
+        status = data.get("subscription_status") or "none"
         topup = data.get("topup_credits_remaining") or 0
         print(
-            f"  - {username} (uid={uid}) period_end={period_end} "
-            f"topup_credits_preserved={topup}"
+            f"  - {username} (uid={uid}) status={status} "
+            f"period_end={period_end} topup_credits_preserved={topup}"
         )
 
     if args.dry_run:

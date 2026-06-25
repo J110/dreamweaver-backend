@@ -56,3 +56,22 @@ def compute_tier(user: dict, now: Optional[datetime] = None) -> str:
         if source_active(ent.get(key), now):
             return "premium"
     return "free"
+
+
+def compute_downgrades(users, now: Optional[datetime] = None) -> list:
+    """Premium-cached users whose projection is now free (stale-high cache) —
+    the set the downgrade sweep should act on. A user is returned iff
+    subscription_tier == "premium" AND compute_tier(user, now) == "free".
+    Perpetual comp (active, expires=None) projects premium and is NEVER
+    returned (the perpetual-comp safety). Healthy active/trialing/past_due and
+    canceled-still-in-period also project premium and are never returned."""
+    now = now or datetime.now(timezone.utc)
+    result = []
+    for user in users:
+        if not isinstance(user, dict):
+            continue
+        if user.get("subscription_tier") != "premium":
+            continue
+        if compute_tier(user, now) == "free":
+            result.append(user)
+    return result
