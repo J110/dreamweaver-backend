@@ -26,6 +26,7 @@ from app.services.stripe_client import (
     verify_webhook,
 )
 from app.services.analytics_posthog import emit_event as ph_emit
+from app.utils.entitlements import compute_tier
 from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -110,6 +111,21 @@ def _persist_user_update(db_client, uid: str, fields: dict) -> None:
         logger.warning("user record update failed uid=%s: %s", uid, e)
 
 
+def _apply_tier(db_client, uid: str) -> None:
+    """Recompute subscription_tier from the entitlement projection and persist
+    on change. The ONLY writer of subscription_tier in the webhook path."""
+    try:
+        doc = db_client.collection("users").document(uid).get()
+    except Exception:
+        return
+    if not doc.exists:
+        return
+    user = doc.to_dict() or {}
+    new_tier = compute_tier(user)
+    if user.get("subscription_tier") != new_tier:
+        _persist_user_update(db_client, uid, {"subscription_tier": new_tier})
+
+
 def _iso_from_ts(ts: Optional[int]) -> Optional[str]:
     if ts is None:
         return None
@@ -157,7 +173,6 @@ def _handle_sub_created(db_client, event) -> None:
     fields = {
         "stripe_subscription_id": sub.get("id"),
         "subscription_status": sub.get("status") or "active",
-        "subscription_tier": "premium",
         "current_period_end": period_end_iso,
         # Phase 0 step 1.4e: seed monthly credits on subscription start
         # (covers both new signups and trial starts; trial users get
@@ -181,6 +196,7 @@ def _handle_sub_created(db_client, event) -> None:
         logger.info("billing_email fetch skipped: %s", e)
 
     _persist_user_update(db_client, user["uid"], fields)
+    _apply_tier(db_client, user["uid"])
 
     ph_emit(
         family_id,
@@ -212,20 +228,14 @@ def _handle_sub_updated(db_client, event) -> None:
         "current_period_end": _iso_from_ts(period_end_ts),
     }
 
-    if status_str in ("trialing", "active", "past_due"):
-        fields["subscription_tier"] = "premium"
-    elif status_str == "canceled":
-        # Don't downgrade tier here; deletion handler / period-end cron
-        # owns that.
-        pass
-    elif status_str in ("incomplete", "incomplete_expired", "unpaid"):
+    if status_str in ("incomplete", "incomplete_expired", "unpaid"):
         logger.warning(
-            "subscription.updated unusual status=%s sub=%s — treating as free",
+            "subscription.updated unusual status=%s sub=%s — tier will project to free",
             status_str, sub.get("id"),
         )
-        fields["subscription_tier"] = "free"
 
     _persist_user_update(db_client, user["uid"], fields)
+    _apply_tier(db_client, user["uid"])
 
     ph_emit(
         user.get("family_id") or "",
@@ -326,7 +336,6 @@ def _handle_invoice_paid(db_client, event) -> None:
 
     fields = {
         "subscription_status": "active",
-        "subscription_tier": "premium",
         # Phase 0 step 1.4e: reset monthly credits on every successful
         # invoice (covers post-trial first charge AND every renewal).
         # Top-up credits (topup_credits_remaining) are NOT touched —
@@ -362,6 +371,7 @@ def _handle_invoice_paid(db_client, event) -> None:
         fields["recovery_email"] = customer_email.strip().lower()
 
     _persist_user_update(db_client, user["uid"], fields)
+    _apply_tier(db_client, user["uid"])
 
     ph_emit(
         user.get("family_id") or "",
@@ -455,11 +465,11 @@ def _handle_charge_dispute(db_client, event) -> None:
         return
 
     fields = {
-        "subscription_tier": "free",
         "subscription_status": "disputed",
         "disputed_at": datetime.now(timezone.utc).isoformat(),
     }
     _persist_user_update(db_client, user["uid"], fields)
+    _apply_tier(db_client, user["uid"])
 
     logger.warning(
         "DISPUTE: customer=%s dispute=%s reason=%s amount=%s — premium revoked, "
