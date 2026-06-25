@@ -20,6 +20,7 @@ from .lullabies import router as lullabies_router
 from .poems import router as poems_router
 from .funny_shorts import router as funny_shorts_router
 from .billing import router as billing_router
+from .revenuecat import router as revenuecat_router
 from .playlist import router as playlist_router
 from .restore import router as restore_router
 
@@ -45,6 +46,7 @@ router.include_router(lullabies_router, prefix="/lullabies", tags=["Lullabies"])
 router.include_router(poems_router, prefix="/poems", tags=["Poems"])
 router.include_router(funny_shorts_router, prefix="/funny-shorts", tags=["Funny Shorts"])
 router.include_router(billing_router, prefix="/billing", tags=["Billing"])
+router.include_router(revenuecat_router, prefix="/billing/revenuecat", tags=["RevenueCat"])
 router.include_router(playlist_router, prefix="/playlist", tags=["Playlist"])
 router.include_router(restore_router, prefix="/auth/restore", tags=["Auth Restore"])
 
