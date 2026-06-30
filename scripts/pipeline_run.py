@@ -930,6 +930,115 @@ def _parse_qa_failed_variants(story_id: str) -> list:
     return []
 
 
+_QUARANTINE_OVERLAP_MIN = 0.70
+_QUARANTINE_ORDER_MIN = 0.70
+
+
+def _quarantine_decision(word_overlap, word_order, acoustic_ok) -> bool:
+    """A text-fidelity FAIL is a measurement artifact (Voxtral truncation or
+    un-stripped markers) when word overlap+order are BOTH high while coverage/ratio
+    are low; genuine garbage is low on all four. Only quarantine (keep audio) when
+    the artifact shape holds AND the audio passes a full-file acoustic check."""
+    shape_artifact = (word_overlap or 0) >= _QUARANTINE_OVERLAP_MIN and (word_order or 0) >= _QUARANTINE_ORDER_MIN
+    return bool(shape_artifact and acoustic_ok)
+
+
+def _qa_variant_fidelity(story_id, voice):
+    """text_fidelity sub-scores for a story/voice from the latest QA report, or {}."""
+    qa_dir = SEED_OUTPUT / "qa_reports"
+    if not qa_dir.exists():
+        return {}
+    for report_path in sorted(qa_dir.glob("qa_audio_*.json"), reverse=True):
+        try:
+            report = json.loads(report_path.read_text())
+        except Exception:
+            continue
+        for story in report.get("stories", []):
+            if story.get("story_id") == story_id:
+                for v in story.get("variants", []):
+                    if v.get("voice") == voice:
+                        return v.get("text_fidelity") or {}
+    return {}
+
+
+def _audio_path_for(story_id, voice):
+    """Resolve the on-disk audio file for a variant via content.json url, else naming."""
+    try:
+        content = json.loads(CONTENT_PATH.read_text())
+        for item in content:
+            if item.get("id") == story_id:
+                for v in item.get("audio_variants", []):
+                    if v.get("voice") == voice and v.get("url"):
+                        return BASE_DIR / "audio" / "pre-gen" / Path(v["url"]).name
+    except Exception:
+        pass
+    h = story_id.replace("gen-", "")
+    for name in (f"gen-{h[:4]}_{voice}.mp3", f"{h[:8]}_{voice}.mp3"):
+        p = BASE_DIR / "audio" / "pre-gen" / name
+        if p.exists():
+            return p
+    return None
+
+
+def _acoustic_health(audio_path):
+    """Cheap full-file acoustic check (no API). Returns (ok, metrics)."""
+    if not audio_path or not audio_path.exists():
+        return False, {"reason": "missing_audio"}
+    import re as _re
+    metrics = {}
+    try:
+        vol = subprocess.run(
+            ["ffmpeg", "-hide_banner", "-nostats", "-i", str(audio_path),
+             "-af", "volumedetect", "-f", "null", "/dev/null"],
+            capture_output=True, text=True, timeout=180,
+        )
+        m = _re.search(r"mean_volume:\s*(-?[\d.]+) dB", vol.stderr)
+        mean_db = float(m.group(1)) if m else None
+        metrics["mean_db"] = mean_db
+        sil = subprocess.run(
+            ["ffmpeg", "-hide_banner", "-nostats", "-i", str(audio_path),
+             "-af", "silencedetect=noise=-40dB:d=3", "-f", "null", "/dev/null"],
+            capture_output=True, text=True, timeout=180,
+        )
+        silence = sum(float(x) for x in _re.findall(r"silence_duration:\s*([\d.]+)", sil.stderr))
+        probe = subprocess.run(
+            ["ffprobe", "-v", "error", "-show_entries", "format=duration",
+             "-of", "default=nk=1:nw=1", str(audio_path)],
+            capture_output=True, text=True, timeout=30,
+        )
+        dur = float(probe.stdout.strip() or 0)
+        metrics["silence_frac"] = round(silence / dur, 3) if dur else None
+        ok = (mean_db is not None and -45.0 <= mean_db <= -8.0
+              and (metrics["silence_frac"] is None or metrics["silence_frac"] < 0.5))
+        return ok, metrics
+    except Exception as e:
+        metrics["reason"] = str(e)
+        return False, metrics
+
+
+def _quarantine_false_positives(failed_variants):
+    """Split failed variants into (genuinely_failed, quarantined). Quarantined
+    variants keep their audio (not stripped/dropped) and are flagged for review."""
+    genuine, quarantined = [], []
+    for fv in failed_variants:
+        fid = _qa_variant_fidelity(fv["story_id"], fv["voice"]) or {}
+        overlap = fid.get("word_overlap", 0) or 0
+        order = fid.get("word_order_score", 0) or 0
+        acoustic_ok, metrics = _acoustic_health(_audio_path_for(fv["story_id"], fv["voice"]))
+        if _quarantine_decision(overlap, order, acoustic_ok):
+            fv2 = dict(fv)
+            fv2["quarantine_metrics"] = {"word_overlap": overlap, "word_order": order, **metrics}
+            quarantined.append(fv2)
+            logger.warning(
+                "  QUARANTINE %s/%s: text-fidelity FAIL but audio healthy "
+                "(overlap=%.2f order=%.2f mean_db=%s silence_frac=%s) — KEEPING audio, flag for review",
+                fv["story_id"][:8], fv["voice"], overlap, order,
+                metrics.get("mean_db"), metrics.get("silence_frac"))
+        else:
+            genuine.append(fv)
+    return genuine, quarantined
+
+
 def _strip_qa_failed_variants(failed_variants: list):
     """Remove QA-failed audio variants from content.json and delete their audio files.
 
@@ -996,15 +1105,25 @@ def _strip_qa_failed_variants(failed_variants: list):
     # --- 4. Delete bad audio files from backend ---
     backend_audio_dir = BASE_DIR / "audio" / "pre-gen"
     web_audio_dir = WEB_DIR / "public" / "audio" / "pre-gen" if WEB_DIR.exists() else None
+    audio_store_dir = Path("/opt/audio-store/pre-gen")
     deleted = 0
     for fv in failed_variants:
-        short_id = fv["story_id"][:8]
-        filename = f"{short_id}_{fv['voice']}.mp3"
-        for audio_dir in [backend_audio_dir, web_audio_dir]:
-            if audio_dir and (audio_dir / filename).exists():
-                (audio_dir / filename).unlink()
-                deleted += 1
-                logger.info("  Deleted QA-failed audio: %s", audio_dir / filename)
+        # Audio files use one of two naming conventions: gen-<first4>_<voice>.mp3
+        # (short stories) or <first8hex>_<voice>.mp3 (long stories). The old
+        # story_id[:8] ("gen-0560") matched neither reliably, so it mis-targeted
+        # (long-story files survived; short-story files were hit). Resolve both
+        # and clear all three serving stores including the persistent audio-store.
+        h = fv["story_id"].replace("gen-", "")
+        candidates = [f"gen-{h[:4]}_{fv['voice']}.mp3", f"{h[:8]}_{fv['voice']}.mp3"]
+        for audio_dir in [backend_audio_dir, web_audio_dir, audio_store_dir]:
+            if not audio_dir:
+                continue
+            for filename in candidates:
+                fp = audio_dir / filename
+                if fp.exists():
+                    fp.unlink()
+                    deleted += 1
+                    logger.info("  Deleted QA-failed audio: %s", fp)
     if deleted:
         logger.info("  Deleted %d QA-failed audio files total", deleted)
 
@@ -1098,6 +1217,23 @@ def step_qa(args, state: dict) -> bool:
     if qa_failed_variants:
         logger.info("  Failed variants: %s",
                      ", ".join(f"{v['story_id'][:8]}/{v['voice']}" for v in qa_failed_variants))
+
+    # Quarantine gate: never silently drop a text-fidelity FAIL whose audio is
+    # actually healthy (measurement-artifact false positive — Voxtral truncation or
+    # un-stripped markers). Keep + flag those; only strip genuine failures.
+    if qa_failed_variants:
+        qa_failed_variants, quarantined = _quarantine_false_positives(qa_failed_variants)
+        if quarantined:
+            still_failed_ids = {fv["story_id"] for fv in qa_failed_variants}
+            q_ids = {fv["story_id"] for fv in quarantined}
+            qa_failed = [s for s in qa_failed if s in still_failed_ids]
+            qa_passed = qa_passed + [s for s in q_ids if s not in still_failed_ids and s not in qa_passed]
+            state["qa_quarantined"] = quarantined
+            state["qa_passed"] = qa_passed
+            state["qa_failed"] = qa_failed
+            state["qa_failed_variants"] = qa_failed_variants
+            save_state(state)
+            logger.warning("  QUARANTINE: kept %d acoustically-healthy variant(s) flagged FAIL by text-fidelity", len(quarantined))
 
     # Strip failed variants from content.json and remove bad audio files
     if qa_failed_variants:
