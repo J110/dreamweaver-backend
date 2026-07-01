@@ -3,7 +3,7 @@
 
 Per language per day, emails up to three items from the day's NEW creations:
   1. Musical poem      (type == "poem")
-  2. Silly song        (type == "song", subtype == "silly_song")
+  2. Short story       (type == "story")
   3. Long-story song   (the standalone mid-story song, NOT the full narration)
 
 Each item is attached as its audio file plus its FLUX cover (.webp). Called at
@@ -124,6 +124,26 @@ def _attachable_cover(cover: Path) -> Optional[Path]:
         return None
 
 
+def _trim_audio(src: Optional[Path], seconds: int = 60) -> Optional[Path]:
+    """Trim to the first ``seconds`` as a marketing teaser (short stories run
+    longer than a minute). Falls back to the untrimmed file if ffmpeg is
+    unavailable or fails; a source shorter than ``seconds`` passes through."""
+    if not src or not src.exists():
+        return src
+    out = Path(tempfile.gettempdir()) / f"{src.stem}_teaser.mp3"
+    try:
+        import subprocess
+        subprocess.run(
+            ["ffmpeg", "-y", "-loglevel", "error", "-i", str(src),
+             "-t", str(seconds), "-c", "copy", str(out)],
+            check=True,
+        )
+        return out if out.exists() and out.stat().st_size > 0 else src
+    except Exception as e:
+        logger.warning("  audio trim failed for %s: %s", src, e)
+        return src
+
+
 def _en_long_story_song(item: Dict[str, Any]) -> Optional[Path]:
     """Newest seed_output/episode_*/song.mp3, preferring the episode whose
     metadata title matches this long story."""
@@ -170,10 +190,9 @@ def collect_assets(lang: str, content_path: Path = CONTENT_PATH) -> List[Dict[st
         ("Musical poem",
          _pick_today(items, lang, lambda s: s.get("type") == "poem"),
          lambda it: _resolve_audio(it, lang)),
-        ("Silly song",
-         _pick_today(items, lang,
-                     lambda s: s.get("type") == "song" and s.get("subtype") == "silly_song"),
-         lambda it: _resolve_audio(it, lang)),
+        ("Short story",
+         _pick_today(items, lang, lambda s: s.get("type") == "story"),
+         lambda it: _trim_audio(_resolve_audio(it, lang), 60)),
         ("Long-story song",
          _pick_today(items, lang, lambda s: s.get("type") == "long_story"),
          lambda it: _long_story_song(it, lang)),

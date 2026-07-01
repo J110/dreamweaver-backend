@@ -30,6 +30,7 @@ RESEND_API_KEY = os.getenv("RESEND_API_KEY", "")
 RESEND_ENDPOINT = "https://api.resend.com/emails"
 FROM_EMAIL = "Dream Valley Pipeline <support@dreamvalley.app>"
 TO_EMAIL = "mohan.anmol@gmail.com"
+MARKETING_TO = [TO_EMAIL, "neha@dreamvalley.app"]
 
 
 def _fmt_duration(seconds: float) -> str:
@@ -816,7 +817,7 @@ def send_marketing_assets(lang: str, assets: list) -> bool:
             },
             json={
                 "from": FROM_EMAIL,
-                "to": [TO_EMAIL],
+                "to": MARKETING_TO,
                 "subject": subject,
                 "html": html,
                 "attachments": attachments,
