@@ -1798,6 +1798,19 @@ def generate_long_story(axes: dict, log_prefix: str = "  ", text_only: bool = Fa
         "mystery": data["mystery"],
         "resolution": data["resolution"],
         "breathing_mechanic": data["breathing_mechanic"],
+        # Redesign axes — persisted so pick_long_story_axes' avoid-recent works
+        # (it reads these off content.json hi long_story entries via select_story_axes).
+        # These were MISSING here (the no-op: recency dead for HI long); the earlier
+        # fix wrongly landed in generate_short_story. NOTE: deliberately NO
+        # "episode_format":"v2" — EN's _load_existing_long_stories filters type+v2
+        # with no lang filter, so v2 on hi entries would contaminate EN recency.
+        # Old hi entries (None axes) are skipped by select_story_axes' `if s.get(key)`.
+        "narrative_shape": axes.get("narrative_shape", ""),
+        "resolution_meaning": axes.get("resolution_meaning", ""),
+        "emotional_texture": axes.get("emotional_texture", ""),
+        "cast_structure": axes.get("cast_structure", ""),
+        "phase3_texture": axes.get("phase3_texture", ""),
+        "breath_expression": axes.get("breath_expression") or axes.get("_breath_key", ""),
         "repeated_phrase": data["repeated_phrase"],
         "characters": chars,
         "song_seed": data["song_seed"],
