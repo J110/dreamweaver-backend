@@ -27,6 +27,10 @@ from pathlib import Path
 
 import httpx
 
+# Hard wall-clock backstop OVER httpx's own read-timeout — now lives in the
+# language-neutral _llm_timeout so EN + HI import it from the same source.
+from _llm_timeout import _hard_timeout  # noqa: F401  (re-exported for callers)
+
 BASE_DIR = Path(__file__).parent.parent
 
 try:
@@ -101,7 +105,8 @@ def generate_text(
             try:
                 if log_prefix:
                     print(f"{log_prefix}  attempt {attempt+1}: Mistral")
-                return _call_provider(
+                return _hard_timeout(
+                    _call_provider, 330,  # hard backstop just over the 300s read-timeout
                     endpoint=MISTRAL_ENDPOINT,
                     api_key=MISTRAL_KEY,
                     model=MISTRAL_MODEL,
@@ -109,7 +114,11 @@ def generate_text(
                     temperature=temperature,
                     max_tokens=max_tokens,
                     want_json=want_json,
-                    timeout=120,
+                    # Long stories emit full_text_roman + full_text_deva (double
+                    # the text) + JSON — a legitimately large response that
+                    # exceeds 120s and falls back to Groq fragments. 300s lets
+                    # the single consistent roman+deva call finish.
+                    timeout=300,
                 )
             except Exception as e:
                 last_err = e
@@ -124,7 +133,8 @@ def generate_text(
             try:
                 if log_prefix:
                     print(f"{log_prefix}  attempt {attempt+1}: Groq")
-                return _call_provider(
+                return _hard_timeout(
+                    _call_provider, 180,  # hard backstop over the 150s read-timeout
                     endpoint=GROQ_ENDPOINT,
                     api_key=GROQ_KEY,
                     model=GROQ_MODEL,
@@ -132,7 +142,7 @@ def generate_text(
                     temperature=temperature,
                     max_tokens=max_tokens,
                     want_json=want_json,
-                    timeout=60,
+                    timeout=150,
                 )
             except Exception as e:
                 last_err = e

@@ -22,6 +22,7 @@ import base64
 import io
 import json
 import os
+import random
 import re
 import sys
 import time
@@ -608,6 +609,17 @@ def generate_short_story(axes: dict, log_prefix: str = "  ") -> dict:
             + int(axes["age_group"].split("-")[1])
         ) // 2,
         "mood": axes["mood"],
+        # Persist the six Layer-B axes so load_hindi_catalog reads them back and
+        # pick_long_story_axes' avoid-recent actually threads in prod (mirrors
+        # EN publish_episode). Without these, HI recency is a no-op and the new
+        # axes decay to monotony over time. episode_format marks redesign entries.
+        "episode_format": "v2",
+        "narrative_shape": axes.get("narrative_shape", ""),
+        "resolution_meaning": axes.get("resolution_meaning", ""),
+        "emotional_texture": axes.get("emotional_texture", ""),
+        "cast_structure": axes.get("cast_structure", ""),
+        "phase3_texture": axes.get("phase3_texture", ""),
+        "breath_expression": axes.get("breath_expression", ""),
         "cover": f"/covers/{sid}.webp" if cover else "/covers/default.svg",
         "cover_context": data.get("cover_context", ""),
         "audio_url": f"/audio/pre-gen/{sid}_{voice_for_mood}.mp3",
@@ -1247,12 +1259,63 @@ def generate_poem(axes: dict, log_prefix: str = "  ") -> dict:
 # LONG STORY
 # ───────────────────────────────────────────────────────────────────────
 
+# Breath-weaving examples, ROTATED per call so no single string dominates
+# across HI stories (HI copies examples near-verbatim, unlike EN which adapts —
+# so a fixed example leaks). Structurally identical (short-in / long-out,
+# A3-detectable via out-cue + elongation) but lexically DISJOINT (no shared
+# 4-word span, verified against the whole-story leak diff).
+# Keyed to breath_expression (NOT random.choice, which collapsed to one
+# favorite and decoupled the example from the axis — transport-axis drew the
+# water example). Keying ties example→axis and distributes as breath_expression
+# distributes via (now-persisted) recency. Examples are lexically disjoint.
+BREATH_EXAMPLES_HI = {
+    "water": "Saans andar li, toh lehar thehar gayi. Saans bahar chhodi, aur lehar lambi ho kar behti gayi.",
+    "light": "Andar wali saans par diya simat gaya. Dheemi bahar-saans par roshni poore aangan mein phailti gayi.",
+    "garden": "Bheetar khinchte hi kali mund gayi. Lambi bahar nikalti saans par pankhudiyan khilti chali gayin.",
+    "creature": "Jeev ke pehlu upar uthe andar-saans mein. Neeche dhalti, dheere, sust bahar-saans mein woh baith gaye.",
+    "transport": "Gaadi thami jab saans bhitar gayi. Patri par woh lambi bahar-saans mein aage sarakti chali gayi.",
+}
+
+
 def _long_story_prompt(axes: dict) -> tuple[str, str]:
     age = axes["age_group"]
-    word_band = {"2-5": (1040, 1520), "6-8": (1520, 2240), "9-12": (2240, 3040)}[age]
+    word_band = {"2-5": (600, 1000), "6-8": (900, 1400), "9-12": (1100, 1700)}[age]
     avoid_titles = "; ".join(t for t in axes["recent_titles"] if t) or "(none yet)"
     avoid_phrases = "; ".join(p for p in axes["recent_phrases"] if p) or "(none yet)"
     avoid_mysteries = "; ".join(m for m in axes["recent_mysteries"] if m) or "(none yet)"
+
+    lead = axes.get("lead_name") or "Tara"
+    # Layer-B meaning axes from the SAME shared module as EN (anti-drift).
+    import _story_axes as SA
+    ax = {
+        "narrative_shape": axes.get("narrative_shape", "investigate_resolve"),
+        "resolution_meaning": axes.get("resolution_meaning", "was_resting"),
+        "emotional_texture": axes.get("emotional_texture", "tender"),
+        "cast_structure": axes.get("cast_structure", "mentor_pair"),
+        "phase3_texture": axes.get("phase3_texture", "descending_length"),
+    }
+    ax["breath_expression"] = axes.get("breath_expression") or SA.breath_family(
+        world_name=axes.get("world_name"), cast=ax["cast_structure"])
+    # Breath example KEYED to the (tracked) breath_expression axis — consistent
+    # example<->axis, distributes as the axis distributes (no random collapse).
+    breath_example = BREATH_EXAMPLES_HI.get(ax["breath_expression"], BREATH_EXAMPLES_HI["light"])
+    axes["_breath_key"] = ax["breath_expression"]  # record for distribution check
+    physiology_contract = SA.PHYSIOLOGY_CONTRACT_HI
+    story_spec = SA.story_spec_block(ax, "hi")
+    resolution_hint = SA.RESOLUTION_MEANINGS[ax["resolution_meaning"]]["hi_hint"]
+    breath_hint = SA.BREATH_EXPRESSIONS[ax["breath_expression"]]["hi_hint"]
+    phase3_hint = SA.PHASE3_TEXTURES[ax["phase3_texture"]]["hi_hint"]
+    # 9-12 chronically under-produces (sparse [PHRASE], <600 words) — this band
+    # should be the LONGEST and richest, not the sparsest. Force beat-count and
+    # phrase-tag count explicitly for it; other bands hit their floors already.
+    long_age_push = {
+        "9-12": ("YEH TUMHARI SABSE LAMBI, SABSE DETAILED KAHANI HAI. 9-12 saal "
+                 f"ke liye poore {word_band[0]}-{word_band[1]} shabd likho — P1+P2 "
+                 "mein kam se kam 8-10 alag scene-beat, har beat POORA likha "
+                 "(summary ya jump nahin), har beat sensory detail se bhara. "
+                 "[PHRASE]...[/PHRASE] kam se kam 4 baar — length ke chakkar mein "
+                 "yeh tag mat chhodo, yeh optional NAHIN hai."),
+    }.get(age, "")
 
     system = (
         "You are a Hindi children's storyteller writing long-form bedtime "
@@ -1267,28 +1330,49 @@ AXES:
 - mood: {axes['mood']}
 - world_name: {axes['world_name']}
 - characterType: {axes['characterType']}
+- LEAD CHARACTER NAME: {lead}  (use EXACTLY this as the protagonist's name — do NOT rename the lead "Meenu" or "Bulbul")
 
+{physiology_contract}
+
+{story_spec}
+CAST SIZE follows cast_structure: solo=1 character, mentor_pair/peer_pair/
+found_companion=2, small_group=3. (Solo ka ek hi character — par woh phir
+bhi kam se kam 3 baar bolta hai: khud se, chaand se, hawa se, ya sun rahe
+bachche se — NAME: "..." form mein.)
+LENGTH: yeh poori-lambi kahani hai ({word_band[0]}-{word_band[1]} shabd),
+shape chahe koi bhi ho — arrival/pure_settling bhi chhoti nahin; woh sensory
+detail, halki repetition aur dheere waqt se lambi hoti hain, jaldi khatam nahin.
+{long_age_push}
 ANTI-DUPLICATION:
 - recent titles: {avoid_titles}
 - recent phrases: {avoid_phrases}
 - recent mysteries: {avoid_mysteries}
-- BANNED names: Chintu, Raju, Bittu, Munna, Guddu, Pinky, Rinku, Bablu,
-  Pappu, Chhotu, Motu, Golu, Sonu, Monu, Titu, Bunty, Ramu
+- BANNED names (never use for ANY character): Meenu, Bulbul, Chinti, Chintu,
+  Raju, Bittu, Munna, Guddu, Pinky, Rinku, Bablu, Pappu, Chhotu, Motu, Golu,
+  Sonu, Monu, Titu, Bunty, Ramu
 
-THREE-PHASE ARC (mandatory):
-- Phase 1 — Khoj (Discovery, ~30%): character enters {axes['world_name']},
-  finds a mystery, meets companions, gets a breathing mechanic
-- Phase 2 — Vishraam (Resolution-as-Rest, ~35%): the mystery resolves to
-  rest. Companions settle. Dialogue fades.
-- Phase 3 — Vilay (Dissolution, ~35%): no dialogue. Descending sentence
-  length. Wave repetition. Closes with [WHISPER]...[/WHISPER]
+THREE-PHASE ARC (the phase tags are the audio scaffold — KEEP them; but
+the NARRATIVE inside them varies by narrative_shape in the STORY SPEC. Do
+NOT default to "finds a mystery -> it was resting"):
+- Phase 1 — Khoj/Aagman (~30%): realise the narrative_shape above. arrival:
+  the child is already still and things come TO them; pure_settling: no
+  mystery, only slow arrival; nested: a character begins telling a small
+  story; circular: open on an image you will return to, transformed.
+- Phase 2 — Vishraam (~35%): it settles toward peace, and the MEANING of
+  that peace is the resolution_meaning above (NOT "khoya nahin, so raha
+  tha" unless was_resting is the named one): {resolution_hint}
+  Companions settle. Dialogue fades.
+- Phase 3 — Vilay (~35%): no dialogue. Dissolve via the phase3_texture
+  above: {phase3_hint}. Descending sentence length. Closes with
+  [WHISPER]...[/WHISPER]. Arousal keeps falling; it dissolves, never wakes.
 
 REQUIRED tags throughout:
 - [CHARACTER: Name, personality, voice_style, gender] for each character (top of story)
 - [INTRO] (2-3 sentences direct address to child)
 - [PHASE_1] [PHASE_2] [PHASE_3] section markers
-- [BREATHE_GUIDE]...[/BREATHE_GUIDE] (slow-breath instructions, once)
-- 4-6 [BREATHE] standalone tags (clustered in P1 + P2)
+- 4-6 [BREATHE] standalone tags (breath moments; at least one late in the
+  story). Breath is EMERGENT from the world (see below) — do NOT write a
+  spoken narrator breathing cue, and do NOT use [BREATHE_GUIDE].
 - [SONG_SEED: one English sentence] at end of P1
 - [POST_SONG] section after song
 - 3+ [PHRASE]...[/PHRASE] wraps around the unique repeated phrase
@@ -1305,14 +1389,23 @@ Same caps as Hindi short stories:
   Ages 9-12:  max 18 words / 32 matras per sentence
 
 PHASE 3 (VILAY) — DESCEND BELOW THE CAP:
-The dissolution phase already removes dialogue. It must also shrink
-sentences. Start P3 near the cap; end at 3-5 words per sentence. The
-listener's breathing slows; the prose breathes with it.
-
-  Phase 3 opening sentence (near cap):
-    "Chaand ab dheere dheere apni jagah par tham gaya tha."  (10 words)
-  Phase 3 closing sentences (well below cap):
-    "Sab kuch shaant.  Hawa thami.  Aankh band.  Saans dheere."  (3-2-2-2)
+The dissolution phase removes dialogue and shrinks sentences. Start P3
+near the cap; end at 3-5 words per sentence. The listener's breathing
+slows; the prose breathes with it. SHAPE the ending by the phase3_texture
+in the STORY SPEC — do NOT reuse a fixed closing line.
+  STRUCTURE (invent fresh surface text for THIS world — copy NO example):
+  - opening of P3: ONE near-cap sentence naming this world going still.
+  - body: sentences shrink line by line.
+  - close: 3-4 lines, each shorter than the last, each closing a DIFFERENT
+    sensory channel or the breath, in words specific to THIS story's world.
+  - LET SLEEP ARRIVE THROUGH THE WORLD. Settle each character through a channel
+    the world offers: the lantern dims, the breath lengthens, the body grows
+    heavy, sounds fade to nothing, warmth spreads, the gaze drifts to the water.
+    Give each character — and each story — a DIFFERENT channel; that is what
+    makes each ending its own.
+  BANNED: reusing a fixed closing formula or a stock scaffold of stilling-
+  phrases across stories. The last lines must be unique to this world,
+  never a reproducible template.
 
 ABSTRACT NOUNS — same rule as short stories:
   bhavna   →  "dil ne kaha"
@@ -1344,8 +1437,25 @@ Rules:
   listening child — but they MUST use the NAME: "..." form, not
   embedded narration.
 
-The mystery's reveal is ALWAYS rest: "khoya nahin, so raha tha".
-Mechanic is an object that activates with slow breath (diya, patang, leaf, talaab).
+BREATH (emergent from the world — NOT a narrator cue): {breath_hint}
+Andar ki saans chhoti; bahar ki saans lambi aur dheemi; duniya bahar-wali
+saans par narm hoti hai. Bachcha isliye saans leta hai kyunki woh ek
+saans-leti duniya ke ANDAR hai — narrator ke kehne se nahin. Ek halka
+mechanic (diya, patang, patta, talaab) ise anchor kar sakta hai, par
+resolution ka matlab resolution_meaning se aata hai — "khoya nahin so raha
+tha" se nahin (jab tak wahi na chuna gaya ho).
+
+HAR saans-pal par: breath ko DO chhote vaakyon mein likho (dono
+per-sentence cap ke andar), phir agli line par [BREATHE]. Pehla vaakya
+saans ANDAR (kuch chhota), doosra vaakya saans BAHAR — bahar-cue ke turant
+baad "dheere/lambe/dheemi" jaisa shabd rakho (bahar-wali saans hamesha
+lambi lagti hai, par vaakya phir bhi cap ke andar). Sirf DHAANCHA follow
+karo, is misaal ko copy MAT karo — har baar apni duniya ke apne shabd
+(patte, lehar, roshni, dhuaan, pankh, jo bhi is duniya mein ho):
+  {breath_example}
+  [BREATHE]
+Khaali [BREATHE] (bina breath-vaakya ke) nahin chalega. 4-6 baar, kam se
+kam ek kahani ke aakhri hisse mein. Ek hi breath-vaakya kabhi dohrao mat.
 
 Return JSON:
 {{
@@ -1376,7 +1486,7 @@ Return JSON:
     return system, user
 
 
-def generate_long_story(axes: dict, log_prefix: str = "  ") -> dict:
+def generate_long_story(axes: dict, log_prefix: str = "  ", text_only: bool = False) -> dict:
     print(f"\n{log_prefix}═══ LONG STORY: age={axes['age_group']} mood={axes['mood']} world={axes['world_name']} ═══")
     sys_msg, user_msg = _long_story_prompt(axes)
 
@@ -1405,6 +1515,9 @@ def generate_long_story(axes: dict, log_prefix: str = "  ") -> dict:
         p3 = re.search(r"\[PHASE_3\](.*)", full, re.DOTALL)
         return {
             **d,
+            "age_group": axes.get("age_group", ""),  # so the validator's word-floor sees the band
+            "narrative_shape": axes.get("narrative_shape", ""),  # so format-mins can be shape-aware
+            "cast_structure": axes.get("cast_structure", ""),  # so solo gets relaxed dialogue-min
             "phase_1_text_roman": p1.group(1).strip() if p1 else "",
             "phase_2_text_roman": p2.group(1).strip() if p2 else "",
             "phase_3_text_roman": p3.group(1).strip() if p3 else "",
@@ -1420,6 +1533,12 @@ def generate_long_story(axes: dict, log_prefix: str = "  ") -> dict:
         max_tokens=12_000,    # full_text_roman + full_text_deva together
                               # need ~8-12k tokens of headroom
     )
+
+    # Text-only path (batch/eval): return the tagged generation output before
+    # any song/cover/publish. full_text_roman still carries the inline tags
+    # ([BREATHE], [WHISPER], [PHASE_*]) that publish would later strip.
+    if text_only:
+        return data
 
     # ── Render via existing publish_hindi_long_day1 helpers
     from publish_hindi_long_day1 import (  # type: ignore

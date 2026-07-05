@@ -142,6 +142,12 @@ def _build_state(results: dict, elapsed: float) -> dict:
 # rather than dropping the type for the day. Validator thresholds stay AS-IS.
 REPICK_TYPES = {"long_story"}
 MAX_PICKS = 3
+# Per-story wall-clock: with gating ON, a story makes up to ~15 Mistral calls
+# (3 picks x 5 retries). Even without a hard hang, a slow run could blow the
+# cron window. A story that can't produce a clean result in this budget SKIPS
+# (logged, pipeline continues) — skip-and-continue applied to TIME, not just
+# retry count. Complements the per-call hard-timeout in _hindi_llm.
+STORY_WALL_CLOCK = 720  # seconds (12 min)
 
 
 def _pick_signature(axes: dict) -> tuple:
@@ -156,7 +162,12 @@ def _generate_with_repick(content_type: str, catalog: list, max_picks: int = MAX
     Re-pick is the lever — validators are never loosened."""
     tried = []
     last_err = None
+    _t0 = time.time()
     for attempt in range(max_picks):
+        if time.time() - _t0 > STORY_WALL_CLOCK:
+            raise TimeoutError(
+                f"{content_type}: wall-clock budget {STORY_WALL_CLOCK}s exceeded after "
+                f"{attempt} picks — skipping (cron-safety)")
         axes = PICKERS[content_type](catalog)
         guard = 0
         while _pick_signature(axes) in tried and guard < 8:

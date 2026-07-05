@@ -140,19 +140,58 @@ def pick_short_story_axes(catalog: list[dict] | None = None) -> dict:
     }
 
 
-def pick_long_story_axes(catalog: list[dict] | None = None) -> dict:
+# Lead-name pool — a tracked, varied axis (the HI generator was defaulting the
+# lead to "Meenu" every story: the original monotony resurfacing in an untracked
+# axis). Deliberately excludes Meenu/Bulbul so they stop dominating. Mixed gender.
+HI_LEAD_NAMES = [
+    "Tara", "Anaya", "Ira", "Meera", "Naina", "Zoya", "Kiara", "Aarohi",
+    "Saanjh", "Nitya", "Myra", "Riya", "Avni", "Diya", "Suhani", "Pari",
+    "Kabir", "Vivaan", "Aarav", "Reyansh", "Advik", "Rehan", "Vihaan",
+    "Arjun", "Neel", "Ishaan", "Dhruv", "Ved", "Kian", "Aryan",
+]
+
+
+def pick_long_story_axes(catalog: list[dict] | None = None,
+                         avoid_names: list[str] | None = None) -> dict:
     catalog = catalog if catalog is not None else load_hindi_catalog()
     same_type = _by_type(catalog, {"type": "long_story"})
     recent = _last_n(same_type, 14)
+    age = _avoid_collisions(AGE_GROUPS, [r.get("age_group") for r in recent])
+    mood = _avoid_collisions(MOODS, [r.get("mood") for r in recent])
+    world = _avoid_collisions(LONG_STORY_WORLDS, [r.get("world_name") for r in recent])
+
+    # NEW meaning axes from the SAME shared module as EN (anti-drift). `recent`
+    # is most-recent-first; the shared picker expects most-recent-last.
+    # breath_expression is now tracked inside select_story_axes (no longer
+    # derived from world keywords, which collapsed to 'light' for HI worlds).
+    import _story_axes as SA
+    existing = list(reversed(recent))
+    b = SA.select_story_axes(existing, age, mood)
+
+    # Lead name: a tracked axis. Avoid names used recently (catalog) + this
+    # run's already-used names, and never fall back to the Meenu/Bulbul default.
+    used = {(n or "").lower() for n in (avoid_names or [])}
+    for r in recent[:10]:
+        chs = r.get("characters") or []
+        if isinstance(chs, list) and chs and isinstance(chs[0], dict):
+            used.add((chs[0].get("name") or "").lower())
+    name_pool = [n for n in HI_LEAD_NAMES if n.lower() not in used] or HI_LEAD_NAMES
+    lead_name = random.choice(name_pool)
+
     return {
-        "age_group": _avoid_collisions(AGE_GROUPS, [r.get("age_group") for r in recent]),
-        "mood": _avoid_collisions(MOODS, [r.get("mood") for r in recent]),
+        "age_group": age,
+        "mood": mood,
+        "lead_name": lead_name,
         "characterType": _avoid_collisions(
             CHARACTER_TYPES, [r.get("characterType") for r in recent]
         ),
-        "world_name": _avoid_collisions(
-            LONG_STORY_WORLDS, [r.get("world_name") for r in recent]
-        ),
+        "world_name": world,
+        "narrative_shape": b["narrative_shape"],
+        "resolution_meaning": b["resolution_meaning"],
+        "emotional_texture": b["emotional_texture"],
+        "cast_structure": b["cast_structure"],
+        "phase3_texture": b["phase3_texture"],
+        "breath_expression": b["breath_expression"],
         "recent_titles": [r.get("title") for r in recent[:10]],
         "recent_phrases": [r.get("repeated_phrase") for r in recent[:10] if r.get("repeated_phrase")],
         "recent_mysteries": [r.get("mystery") for r in recent[:10] if r.get("mystery")],
