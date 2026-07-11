@@ -68,6 +68,22 @@ def _open_billing_db() -> sqlite3.Connection:
         "CREATE INDEX IF NOT EXISTS idx_swh_received_at "
         "ON stripe_webhook_events(received_at)"
     )
+    conn.execute(
+        """
+        CREATE TABLE IF NOT EXISTS revenuecat_webhook_events (
+            event_id TEXT PRIMARY KEY,
+            event_type TEXT NOT NULL,
+            received_at TEXT NOT NULL,
+            processed_at TEXT,
+            status TEXT NOT NULL DEFAULT 'received',
+            error TEXT
+        )
+        """
+    )
+    conn.execute(
+        "CREATE INDEX IF NOT EXISTS idx_rcwh_received_at "
+        "ON revenuecat_webhook_events(received_at)"
+    )
     conn.commit()
     return conn
 
