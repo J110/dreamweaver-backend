@@ -41,7 +41,9 @@ except Exception:
 
 # Local imports (after sys.path tweak)
 from _hindi_diversity import PICKERS, load_hindi_catalog  # type: ignore
-from _hindi_generators import GENERATORS  # type: ignore
+from _hindi_generators import (  # type: ignore
+    GENERATORS, GenerationDeadlineExceeded, ValidationRetriesExhausted,
+)
 from _fal_utils import FalBalanceExhausted as _FalBalanceExhausted
 
 LOG_DIR = BASE_DIR / "logs"
@@ -140,14 +142,23 @@ def _build_state(results: dict, elapsed: float) -> dict:
 # Content types that get a bounded re-pick: if one (age/mood/world) combo can't
 # pass the validator after the generator's own retries, try a DIFFERENT combo
 # rather than dropping the type for the day. Validator thresholds stay AS-IS.
+# Contract: a REPICK_TYPES generator must accept (deadline, max_attempts,
+# seed_errors) kwargs — see generate_long_story.
 REPICK_TYPES = {"long_story"}
-MAX_PICKS = 3
-# Per-story wall-clock: with gating ON, a story makes up to ~15 Mistral calls
-# (3 picks x 5 retries). Even without a hard hang, a slow run could blow the
-# cron window. A story that can't produce a clean result in this budget SKIPS
-# (logged, pipeline continues) — skip-and-continue applied to TIME, not just
-# retry count. Complements the per-call hard-timeout in _hindi_llm.
-STORY_WALL_CLOCK = 720  # seconds (12 min)
+MAX_PICKS = 5           # count backstop; the deadline below is the real limiter
+# Per-story wall-clock (UNCHANGED at 720s). 2026-07-15 post-mortem: the old
+# shape (3 picks x 5 attempts, budget checked only BETWEEN picks) burned the
+# whole 720s on TWO combos (~72s/attempt x 10) and never reached pick 3.
+# Deadline-aware shape: attempts stop early enough to leave RENDER_RESERVE
+# for song+TTS+assembly, each pick gets ATTEMPTS_PER_PICK attempts before a
+# FRESH combo (validator failures carry to the next pick's prompt), and no
+# attempt launches that can't finish safely. A story that can't produce a
+# clean result in this budget SKIPS (logged, pipeline continues) — [PARTIAL]
+# reporting preserved. Complements the per-call hard-timeout in _hindi_llm.
+STORY_WALL_CLOCK = 720   # seconds (12 min) — total budget, unchanged
+RENDER_RESERVE = 240     # reserved for post-validation render (song/TTS/assembly)
+ATTEMPTS_PER_PICK = 2    # then move to a fresh combo instead of grinding one
+ATTEMPT_FLOOR = 75       # prior estimate for one gen+validate attempt (observed ~72s)
 
 
 def _pick_signature(axes: dict) -> tuple:
@@ -156,18 +167,29 @@ def _pick_signature(axes: dict) -> tuple:
 
 
 def _generate_with_repick(content_type: str, catalog: list, max_picks: int = MAX_PICKS):
-    """Try up to `max_picks` DISTINCT combos for a fragile type, each with the
-    generator's own retry budget. Returns (entry, axes) on first success; raises
-    the last error if every combo fails (surfaced as [PARTIAL] by _build_state).
-    Re-pick is the lever — validators are never loosened."""
+    """Try up to `max_picks` DISTINCT combos for a fragile type under one
+    deadline-aware wall-clock budget: ATTEMPTS_PER_PICK attempts per combo,
+    RENDER_RESERVE held back for post-validation rendering, validator failures
+    from a failed pick seeded into the next pick's prompt, and no attempt
+    launched that cannot finish safely. Returns (entry, axes) on first
+    success; raises TimeoutError (exit=deadline) or the last error if every
+    combo fails (both surfaced as [PARTIAL] by _build_state). Re-pick and the
+    deadline are the levers — validators are never loosened."""
     tried = []
     last_err = None
     _t0 = time.time()
+    wall_deadline = _t0 + STORY_WALL_CLOCK
+    text_deadline = wall_deadline - RENDER_RESERVE
+    carry_errors: list[str] = []
     for attempt in range(max_picks):
-        if time.time() - _t0 > STORY_WALL_CLOCK:
+        elapsed = time.time() - _t0
+        remaining_text = text_deadline - time.time()
+        if remaining_text < ATTEMPT_FLOOR:
             raise TimeoutError(
-                f"{content_type}: wall-clock budget {STORY_WALL_CLOCK}s exceeded after "
-                f"{attempt} picks — skipping (cron-safety)")
+                f"{content_type}: wall-clock budget {STORY_WALL_CLOCK}s: exit=deadline "
+                f"picks_tried={attempt} elapsed={elapsed:.0f}s "
+                f"remaining_text={remaining_text:.0f}s < attempt_floor={ATTEMPT_FLOOR}s "
+                f"(render_reserve={RENDER_RESERVE}s) — skipping (cron-safety)")
         axes = PICKERS[content_type](catalog)
         guard = 0
         while _pick_signature(axes) in tried and guard < 8:
@@ -177,15 +199,37 @@ def _generate_with_repick(content_type: str, catalog: list, max_picks: int = MAX
         loc = f"age:{axes.get('age_group')} mood:{axes.get('mood')}"
         if axes.get("world"):
             loc += f" world:{axes.get('world')}"
-        print(f"  pick {attempt + 1}/{max_picks}: {{{loc}}}")
+        print(f"  pick={attempt + 1}/{max_picks} {{{loc}}} "
+              f"elapsed={elapsed:.0f}s remaining_text={remaining_text:.0f}s")
         try:
-            entry = GENERATORS[content_type](axes, log_prefix="    ")
+            entry = GENERATORS[content_type](
+                axes, log_prefix="    ",
+                deadline=text_deadline,
+                max_attempts=ATTEMPTS_PER_PICK,
+                seed_errors=carry_errors or None,
+            )
+            print(f"  {content_type}: exit=success pick={attempt + 1} "
+                  f"elapsed={time.time() - _t0:.0f}s")
             return entry, axes
         except _FalBalanceExhausted:
             raise  # a re-pick won't refill the fal balance
+        except GenerationDeadlineExceeded as e:
+            # Terminal: a fresh pick has no more wall clock than this one did.
+            raise TimeoutError(
+                f"{content_type}: wall-clock budget {STORY_WALL_CLOCK}s: exit=deadline "
+                f"pick={attempt + 1} elapsed={time.time() - _t0:.0f}s — {e} "
+                f"— skipping (cron-safety)") from e
+        except ValidationRetriesExhausted as e:
+            last_err = e
+            carry_errors = sorted(set(carry_errors) | set(e.errors))
+            print(f"    ✗ pick={attempt + 1} exit=validation_exhausted "
+                  f"elapsed={time.time() - _t0:.0f}s "
+                  f"({len(e.errors)} validator failure(s) carried to next pick)")
+            catalog = load_hindi_catalog()
         except Exception as e:
             last_err = e
-            print(f"    ✗ pick {attempt + 1} failed ({type(e).__name__}); re-picking a different combo")
+            print(f"    ✗ pick={attempt + 1} failed ({type(e).__name__}) "
+                  f"elapsed={time.time() - _t0:.0f}s; re-picking a different combo")
             catalog = load_hindi_catalog()
     raise last_err if last_err else RuntimeError(
         f"{content_type}: all {max_picks} picks failed validation")

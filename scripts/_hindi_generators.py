@@ -251,10 +251,30 @@ def _attach_qa_changes(entry: dict, llm_data: dict) -> None:
         }
 
 
+class GenerationDeadlineExceeded(TimeoutError):
+    """The next LLM attempt cannot finish before the caller's deadline.
+    Terminal for the whole generation window — a re-pick has no more wall
+    clock left than the pick that raised this, so callers must NOT re-pick."""
+
+
+class ValidationRetriesExhausted(RuntimeError):
+    """Every attempt for one pick failed validation. Carries the cumulative
+    validator error strings so a re-pick can seed its next prompt with them
+    (the failure classes are largely combo-independent: onomatopoeia counts,
+    physiology A3/A4, settling-gesture tic repeat across picks)."""
+
+    def __init__(self, message: str, errors: "list[str] | None" = None):
+        super().__init__(message)
+        self.errors = list(errors or [])
+
+
 def _llm_with_retry(*, system: str, user: str, validator_key: str,
                      max_retries: int = 3, log_prefix: str = "  ",
                      post_process=None, max_tokens: int = 4096,
-                     repair_hint: "Callable[[list[str], dict], str | None] | None" = None) -> dict:
+                     repair_hint: "Callable[[list[str], dict], str | None] | None" = None,
+                     deadline: "float | None" = None,
+                     attempt_floor_s: float = 75.0,
+                     seed_errors: "list[str] | None" = None) -> dict:
     """Generate JSON, validate, optionally critic-review, retry on failure.
 
     Flow per attempt (when HINDI_QA_ENABLED for this content_type):
@@ -276,18 +296,35 @@ def _llm_with_retry(*, system: str, user: str, validator_key: str,
     at the end of the user prompt for highest recency-weighted attention)
     or None to fall back to the generic block only.
 
+    When `deadline` (absolute time.time() epoch) is set, no attempt is
+    launched that cannot finish before it: the next attempt's duration is
+    estimated as the max observed so far (floor `attempt_floor_s`), and a
+    too-late attempt raises GenerationDeadlineExceeded instead of running.
+    `seed_errors` pre-loads the cumulative failure set so attempt 1 of a
+    fresh pick already carries the previous pick's validator failures.
+
     Returns the final (validated) content dict. The dict carries a
     `_qa_changes` key when the critic edited it — strip before saving
     to user-facing seed entries; keep for audit/email summary.
     """
-    all_errors_seen: set[str] = set()
+    all_errors_seen: set[str] = set(seed_errors or [])
     last_errors: list[str] = []
     last_data: dict | None = None
+    attempt_durations: list[float] = []
     qa_enabled = is_qa_enabled(validator_key)
     qa_attempted = False  # one critic attempt per generation, not per retry
     for attempt in range(max_retries):
+        if deadline is not None:
+            remaining = deadline - time.time()
+            est = max(attempt_durations) if attempt_durations else attempt_floor_s
+            if remaining < est:
+                raise GenerationDeadlineExceeded(
+                    f"attempt={attempt + 1}/{max_retries} not launched: "
+                    f"est={est:.0f}s > remaining={remaining:.0f}s")
+            print(f"{log_prefix}attempt={attempt + 1}/{max_retries} "
+                  f"remaining={remaining:.0f}s est={est:.0f}s")
         retry_hint = ""
-        if attempt > 0 and (last_errors or all_errors_seen):
+        if (attempt > 0 or seed_errors) and (last_errors or all_errors_seen):
             cumulative = sorted(set(last_errors) | all_errors_seen)
             retry_hint = (
                 "\n\nPREVIOUS ATTEMPTS FAILED VALIDATION (across all retries — "
@@ -300,6 +337,7 @@ def _llm_with_retry(*, system: str, user: str, validator_key: str,
                 surgical = repair_hint(last_errors, last_data)
                 if surgical:
                     retry_hint = retry_hint + "\n\n" + surgical
+        _att_start = time.time()
         try:
             data = generate_json(
                 system=system,
@@ -309,9 +347,11 @@ def _llm_with_retry(*, system: str, user: str, validator_key: str,
                 log_prefix=log_prefix,
             )
         except LLMError as e:
+            attempt_durations.append(time.time() - _att_start)
             print(f"{log_prefix}LLM failure: {e}")
             last_errors = [str(e)]
             continue
+        attempt_durations.append(time.time() - _att_start)
 
         # Optional shape transform before validation
         validator_input = post_process(data) if post_process else data
@@ -372,9 +412,10 @@ def _llm_with_retry(*, system: str, user: str, validator_key: str,
         last_errors = errors
         last_data = validator_input
         all_errors_seen.update(errors)
-    raise RuntimeError(
+    raise ValidationRetriesExhausted(
         f"validator failed after {max_retries} attempts; "
-        f"last errors: {last_errors}; cumulative seen: {sorted(all_errors_seen)[:10]}"
+        f"last errors: {last_errors}; cumulative seen: {sorted(all_errors_seen)[:10]}",
+        errors=sorted(set(last_errors) | all_errors_seen),
     )
 
 
@@ -1486,7 +1527,93 @@ Return JSON:
     return system, user
 
 
-def generate_long_story(axes: dict, log_prefix: str = "  ", text_only: bool = False) -> dict:
+_LS_FLOOR_RE = re.compile(r"word count (\d+) below floor (\d+) for age (\S+)")
+
+
+def _long_story_repair_hint(errors: list[str], last_data: dict) -> str | None:
+    """Surgical Hindi-specific forward constraints for the validator failures
+    long stories actually hit (2026-07-15 timeout post-mortem: onomatopoeia
+    count, physiology A3/A4, settling-gesture tic, word floor). The generic
+    cumulative error block alone left the model whack-a-moling for 5 attempts
+    per pick; these blocks state HOW to satisfy each check, with vocabulary
+    the validators literally count."""
+    blocks: list[str] = []
+    joined = " || ".join(errors)
+    m = _LS_FLOOR_RE.search(joined)
+    if m:
+        wc, floor, age = m.group(1), m.group(2), m.group(3)
+        blocks.append(
+            f"- LENGTH: your draft was {wc} words; age {age} needs ≥{floor} words "
+            f"(tags excluded). Target {int(floor) + 100}+ words — write ALL THREE "
+            f"phases full-length; story ko chhota mat karo, fragment reject hota hai."
+        )
+    if "onomatopoeia" in joined:
+        blocks.append(
+            "- ONOMATOPOEIA: weave in at least 2 DIFFERENT sound-words from this "
+            "exact list (ONLY these count): sarr, tap tap, chhap, khat, dheere "
+            "dheere, chi chi, gunghun, jhoom, tip tip, patak, thak thak. "
+            "Example: 'baarish tip tip girti rahi' / 'patte sarr se hile'."
+        )
+    if "physiology A1" in joined:
+        blocks.append(
+            "- CALM BACK HALF (A1): after the story's midpoint there must be NO "
+            "exclamation marks, no 'achanak'/'ekdam se'/'suddenly', and no stakes "
+            "or threats ('aakhri mauka', 'der ho rahi', anything about-to-vanish). "
+            "Excitement lives ONLY in the opening; the back half only settles."
+        )
+    if "physiology A2" in joined:
+        blocks.append(
+            "- SLOWING PROSODY (A2): sentences must get SHORTER toward the end — "
+            "final lines ≤6 words each, trailing into stillness."
+        )
+    if "physiology A3" in joined:
+        blocks.append(
+            "- LONG EXHALE (A3): at least one breath line must RENDER the "
+            "out-breath as long and slow, right next to a [BREATHE] tag. "
+            "Example: 'Usne lambi saans bahar chhodi — dheere, aur lehar dheere "
+            "se bahar behti gayi.' [BREATHE] — the words 'lambi'/'dheere' must "
+            "sit next to the out-breath (saans bahar). Never describe an exhale "
+            "as jaldi/tez/turant. Bare [BREATHE] tags are not enough."
+        )
+    if "physiology A4" in joined:
+        blocks.append(
+            "- ENDING (A4): the final lines AND every [WHISPER] block must land "
+            "IN stillness/sleep — use words like 'neend', 'so gaya'/'so gayi', "
+            "'shaant', 'sapna', 'tham gaya'. NO exclamation marks in the ending, "
+            "no waking/alert words (jaag, uth gaya, kal phir)."
+        )
+    if "settling-gesture tic" in joined or "eyes close" in joined:
+        blocks.append(
+            "- SETTLING GESTURES: 'aankhen band' (eyes closing) may appear at "
+            "MOST 2 times in the whole story. Vary the settling beat instead: "
+            "'saans dheemi ho gayi', 'badan dheela pad gaya', 'khamoshi phail "
+            "gayi', 'kandhe jhuk gaye'."
+        )
+    if "conversational markers" in joined:
+        blocks.append(
+            "- CONVERSATIONAL MARKERS: use at least 5 of these words naturally in "
+            "narration/dialogue (ONLY these count): toh, na, arre, pata hai, "
+            "chalo, dekho, suno, hai na, aur phir, bas, achha, zara."
+        )
+    if "dialogue line" in joined:
+        blocks.append(
+            "- DIALOGUE FORMAT: every declared [CHARACTER:] speaks at least once, "
+            'on its own line, exactly as NAME: "..." (uppercase name, straight '
+            "quotes) — never dialogue buried inside narration prose."
+        )
+    if not blocks:
+        return None
+    return (
+        "REVISION REQUIRED — the validator rejected your previous draft(s).\n\n"
+        "FORWARD CONSTRAINTS for your next draft (hard requirements; every "
+        "other prompt rule still applies):\n" + "\n".join(blocks)
+    )
+
+
+def generate_long_story(axes: dict, log_prefix: str = "  ", text_only: bool = False,
+                        deadline: "float | None" = None,
+                        max_attempts: "int | None" = None,
+                        seed_errors: "list[str] | None" = None) -> dict:
     print(f"\n{log_prefix}═══ LONG STORY: age={axes['age_group']} mood={axes['mood']} world={axes['world_name']} ═══")
     sys_msg, user_msg = _long_story_prompt(axes)
 
@@ -1526,10 +1653,16 @@ def generate_long_story(axes: dict, log_prefix: str = "  ", text_only: bool = Fa
     data = _llm_with_retry(
         system=sys_msg, user=user_msg,
         validator_key="long_story", log_prefix=log_prefix, post_process=shape,
-        max_retries=5,        # long stories often need multiple retries to
-                              # converge on all structural requirements
-                              # simultaneously (BREATHE count, onomatopoeia,
-                              # phase tags, conversational markers, etc.)
+        repair_hint=_long_story_repair_hint,
+        max_retries=max_attempts or 5,
+                              # standalone default 5: long stories often need
+                              # multiple retries to converge on all structural
+                              # requirements simultaneously (BREATHE count,
+                              # onomatopoeia, phase tags, markers, etc.).
+                              # The daily pipeline passes 2 and re-picks a
+                              # FRESH combo instead (see pipeline_run_hi).
+        deadline=deadline,    # absolute; None = no wall-clock gating
+        seed_errors=seed_errors,
         max_tokens=12_000,    # full_text_roman + full_text_deva together
                               # need ~8-12k tokens of headroom
     )
