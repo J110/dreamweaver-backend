@@ -139,26 +139,40 @@ def _reserve_content_id(sid: str, log_prefix: str = "") -> None:
             print(f"{log_prefix}  id-guard: reserved {sid} (pid={os.getpid()})")
             return
         except FileExistsError:
+            pid, ts, readable = -1, 0.0, False
             try:
                 held = json.loads(path.read_text())
+                pid = int(held.get("pid") or -1)
+                ts = float(held.get("ts") or 0)
+                readable = pid > 0 and ts > 0
             except Exception:
-                held = {}
-            pid = int(held.get("pid") or -1)
-            ts = float(held.get("ts") or 0)
-            if pid == os.getpid():
-                return  # re-entrant within this process
-            stale = (not _pid_alive(pid)) or (time.time() - ts > RESERVATION_TTL_S)
+                readable = False
+            if readable:
+                if pid == os.getpid():
+                    return  # re-entrant within this process
+                stale = (not _pid_alive(pid)) or (time.time() - ts > RESERVATION_TTL_S)
+                detail = f"pid={pid}, age={time.time() - ts:.0f}s"
+            else:
+                # Unreadable/zero-byte reservation: the holder is unknown —
+                # possibly a peer mid-write. Treat it as ACTIVE (fail closed,
+                # do NOT unlink) while the FILE's mtime is younger than the
+                # TTL; reclaim only once the file itself has outlived it.
+                try:
+                    fs_age = time.time() - path.stat().st_mtime
+                except FileNotFoundError:
+                    continue  # vanished under us — retry the exclusive create
+                stale = fs_age > RESERVATION_TTL_S
+                detail = f"unreadable reservation, fs_age={fs_age:.0f}s"
             if stale and attempt == 1:
                 print(f"{log_prefix}  id-guard: stale reservation for {sid} "
-                      f"(pid={pid} dead or age>{RESERVATION_TTL_S}s) — taking over")
+                      f"({detail}; TTL {RESERVATION_TTL_S}s) — taking over")
                 try:
                     path.unlink()
                 except FileNotFoundError:
                     pass
                 continue
             raise ContentIdCollision(
-                f"id {sid} is reserved by another live process "
-                f"(pid={pid}, age={time.time() - ts:.0f}s) — refusing")
+                f"id {sid} is reserved by another process ({detail}) — refusing")
 
 
 def _release_content_id(sid: str) -> None:
@@ -184,6 +198,13 @@ def _guard_new_content_id(sid: str, paths: "list[Path]", log_prefix: str = "") -
     On success takes the exclusive id reservation (see _reserve_content_id)."""
     clashes = [str(p) for p in paths if p is not None and Path(p).exists()]
     seed = BASE_DIR / "seed_output" / "content.json"
+    if ON_PROD and not seed.exists():
+        # On production a missing catalog snapshot means the id CANNOT be
+        # verified — fail closed. Local/manual environments legitimately run
+        # without a snapshot and keep the path-only checks.
+        raise ContentIdGuardError(
+            f"catalog snapshot {seed} is MISSING on production — failing "
+            f"closed before paid render")
     if seed.exists():
         try:
             data = json.loads(seed.read_text())

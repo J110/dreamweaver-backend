@@ -107,6 +107,10 @@ def _short_setup(monkeypatch, tmp_path, text):
            "per_content": 0, "upsert": 0}
     monkeypatch.setattr(gen, "BASE_DIR", tmp_path / "backend")
     monkeypatch.setattr(gen, "WEB_ROOT", tmp_path / "web")
+    # Valid empty catalog: ON_PROD guard now fails closed on a MISSING one.
+    seed = tmp_path / "backend" / "seed_output"
+    seed.mkdir(parents=True, exist_ok=True)
+    (seed / "content.json").write_text("[]")
     monkeypatch.setattr(gen, "generate_json",
                         lambda **k: dict(_story_data(text)))
     monkeypatch.setattr(gen, "validate_structured", lambda *a, **k: [])
@@ -269,9 +273,8 @@ def test_invalid_catalog_shape_fails_closed(tmp_path, monkeypatch):
 
 def test_corrupt_catalog_blocks_generator_before_render(monkeypatch, tmp_path):
     rec = _short_setup(monkeypatch, tmp_path, "Tippy corrupt catalog kahani.")
-    seed = tmp_path / "backend" / "seed_output"
-    seed.mkdir(parents=True)
-    (seed / "content.json").write_text("{ definitely not json")
+    (tmp_path / "backend" / "seed_output" / "content.json").write_text(
+        "{ definitely not json")
     with pytest.raises(gen.ContentIdGuardError):
         gen.generate_short_story(dict(SHORT_AXES), log_prefix="")
     assert rec["render"] == 0 and rec["flux"] == 0     # nothing paid happened
@@ -385,3 +388,46 @@ def test_save_audio_single_encode_byte_identical_real_files(tmp_path):
               for p in (served, seed, store)}
     assert len(hashes) == 1                    # byte-identical SHA-256
     assert served.stat().st_size > 500         # a real encoded mp3, not a stub
+
+
+# ── 11. review round 3: unreadable reservations + missing prod catalog ──
+
+
+def test_fresh_zero_byte_reservation_refused_and_preserved(tmp_path, monkeypatch):
+    monkeypatch.setattr(gen, "BASE_DIR", tmp_path)
+    sid = "hi-zb-2-5-abcd-12345678"
+    path = gen._reservation_path(sid)
+    path.parent.mkdir(parents=True)
+    path.write_text("")                      # zero-byte, mtime = now
+    with pytest.raises(gen.ContentIdCollision) as ei:
+        gen._reserve_content_id(sid)
+    assert "unreadable reservation" in str(ei.value)
+    assert path.exists() and path.read_text() == ""   # NOT unlinked
+
+
+def test_unreadable_reservation_past_ttl_reclaimed(tmp_path, monkeypatch):
+    monkeypatch.setattr(gen, "BASE_DIR", tmp_path)
+    sid = "hi-zbold-2-5-abcd-12345678"
+    path = gen._reservation_path(sid)
+    path.parent.mkdir(parents=True)
+    path.write_text("garbage not json")
+    old = time.time() - gen.RESERVATION_TTL_S - 60
+    os.utime(path, (old, old))               # fs age beyond the TTL
+    gen._reserve_content_id(sid)             # reclaimed
+    assert json.loads(path.read_text())["pid"] == os.getpid()
+
+
+def test_missing_prod_catalog_blocks_before_render(monkeypatch, tmp_path):
+    rec = _short_setup(monkeypatch, tmp_path, "Tippy missing catalog kahani.")
+    monkeypatch.setattr(gen, "ON_PROD", True)
+    monkeypatch.setattr(gen, "PROD_AUDIO_STORE", tmp_path / "audio-store")
+    monkeypatch.setattr(gen, "PROD_COVER_STORE", tmp_path / "cover-store")
+    monkeypatch.setattr(gen, "PROD_JSON_STORE", tmp_path / "json-store")
+    (tmp_path / "backend" / "seed_output" / "content.json").unlink()
+    with pytest.raises(gen.ContentIdGuardError) as ei:
+        gen.generate_short_story(dict(SHORT_AXES), log_prefix="")
+    assert "MISSING on production" in str(ei.value)
+    assert rec["render"] == 0 and rec["flux"] == 0     # nothing paid happened
+    # Local/manual behavior unchanged: same missing catalog, ON_PROD False
+    monkeypatch.setattr(gen, "ON_PROD", False)
+    gen._guard_new_content_id("hi-local-2-5-abcd-12345678", [])
