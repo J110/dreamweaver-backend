@@ -475,6 +475,10 @@ def _render_setup(monkeypatch, clock, *, segments=(), song_advance=0.0,
     _tmp = Path(tempfile.mkdtemp(prefix="hi_ls_test_"))
     monkeypatch.setattr(gen, "BASE_DIR", _tmp / "backend")
     monkeypatch.setattr(gen, "WEB_ROOT", _tmp / "web")
+    # Pin local semantics: on the prod box ON_PROD is genuinely True and the
+    # guard fails closed on a missing catalog; tests wanting prod behavior
+    # override this explicitly after setup.
+    monkeypatch.setattr(gen, "ON_PROD", False)
     rec = {"minimax": 0, "tts": 0, "flux": 0, "save_audio": 0,
            "save_cover": 0, "per_content": 0, "upsert": 0,
            "song_write": 0, "song_path": "", "hard": []}

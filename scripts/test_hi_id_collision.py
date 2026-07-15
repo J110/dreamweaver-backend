@@ -58,6 +58,7 @@ def test_content_hash_deterministic_and_distinct():
 
 def test_guard_blocks_existing_paths_and_preserves_them(tmp_path, monkeypatch):
     monkeypatch.setattr(gen, "BASE_DIR", tmp_path)      # no catalog snapshot
+    monkeypatch.setattr(gen, "ON_PROD", False)          # local semantics
     fresh = tmp_path / "new.json"
     gen._guard_new_content_id("hi-x-2-5-abcd-12345678", [fresh])  # passes
     existing = tmp_path / "old.json"
@@ -71,6 +72,7 @@ def test_guard_blocks_existing_paths_and_preserves_them(tmp_path, monkeypatch):
 
 def test_guard_blocks_catalog_id(tmp_path, monkeypatch):
     monkeypatch.setattr(gen, "BASE_DIR", tmp_path)
+    monkeypatch.setattr(gen, "ON_PROD", False)
     seed = tmp_path / "seed_output"
     seed.mkdir()
     (seed / "content.json").write_text(json.dumps([{"id": "hi-x-2-5-tipp-aaaaaaaa"}]))
@@ -107,6 +109,7 @@ def _short_setup(monkeypatch, tmp_path, text):
            "per_content": 0, "upsert": 0}
     monkeypatch.setattr(gen, "BASE_DIR", tmp_path / "backend")
     monkeypatch.setattr(gen, "WEB_ROOT", tmp_path / "web")
+    monkeypatch.setattr(gen, "ON_PROD", False)  # pin local semantics on prod boxes
     # Valid empty catalog: ON_PROD guard now fails closed on a MISSING one.
     seed = tmp_path / "backend" / "seed_output"
     seed.mkdir(parents=True, exist_ok=True)
@@ -189,6 +192,7 @@ LULLABY_DATA = {
 
 def test_lullaby_id_carries_content_hash(monkeypatch, tmp_path):
     monkeypatch.setattr(gen, "BASE_DIR", tmp_path / "backend")
+    monkeypatch.setattr(gen, "ON_PROD", False)
     monkeypatch.setattr(gen, "WEB_ROOT", tmp_path / "web")
     monkeypatch.setattr(gen, "generate_json", lambda **k: dict(LULLABY_DATA))
     monkeypatch.setattr(gen, "validate_structured", lambda *a, **k: [])
@@ -256,6 +260,7 @@ import threading   # noqa: E402
 
 def test_corrupt_catalog_fails_closed(tmp_path, monkeypatch):
     monkeypatch.setattr(gen, "BASE_DIR", tmp_path)
+    monkeypatch.setattr(gen, "ON_PROD", False)
     (tmp_path / "seed_output").mkdir()
     (tmp_path / "seed_output" / "content.json").write_text("{ not json !!")
     with pytest.raises(gen.ContentIdGuardError):
@@ -264,6 +269,7 @@ def test_corrupt_catalog_fails_closed(tmp_path, monkeypatch):
 
 def test_invalid_catalog_shape_fails_closed(tmp_path, monkeypatch):
     monkeypatch.setattr(gen, "BASE_DIR", tmp_path)
+    monkeypatch.setattr(gen, "ON_PROD", False)
     (tmp_path / "seed_output").mkdir()
     for bad in ('{"items": 5}', "[1, 2, 3]", '"just a string"'):
         (tmp_path / "seed_output" / "content.json").write_text(bad)
@@ -377,7 +383,6 @@ def test_reservation_released_after_successful_publish(monkeypatch, tmp_path):
 
 
 def test_save_audio_single_encode_byte_identical_real_files(tmp_path):
-    import hashlib
     from pydub import AudioSegment as RealSeg
     seg = RealSeg.silent(duration=300)
     served = tmp_path / "web" / "audio" / "pre-gen" / "x_anika.mp3"
