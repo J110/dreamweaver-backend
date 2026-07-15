@@ -15,6 +15,7 @@ Fake clock is injected by patching the `time` module attribute on the two
 modules under test; the LLM is faked by patching `generate_json`.
 """
 import sys
+import tempfile
 import types
 from pathlib import Path
 
@@ -469,6 +470,11 @@ def _render_setup(monkeypatch, clock, *, segments=(), song_advance=0.0,
     _hard_timeout (records bounded seconds; raises like the real one when
     `hard_fail_on` names the wrapped fn), and write recorders. Returns the
     recorder dict."""
+    # Isolate repo paths: the collision guard + id reservation write under
+    # BASE_DIR; tests must never touch the real worktree's data/seed dirs.
+    _tmp = Path(tempfile.mkdtemp(prefix="hi_ls_test_"))
+    monkeypatch.setattr(gen, "BASE_DIR", _tmp / "backend")
+    monkeypatch.setattr(gen, "WEB_ROOT", _tmp / "web")
     rec = {"minimax": 0, "tts": 0, "flux": 0, "save_audio": 0,
            "save_cover": 0, "per_content": 0, "upsert": 0,
            "song_write": 0, "song_path": "", "hard": []}
