@@ -146,17 +146,36 @@ def _build_state(results: dict, elapsed: float) -> dict:
 # seed_errors) kwargs — see generate_long_story.
 REPICK_TYPES = {"long_story"}
 MAX_PICKS = 5           # count backstop; the deadline below is the real limiter
-# Per-story wall-clock (UNCHANGED at 720s). 2026-07-15 post-mortem: the old
+# Per-story wall-clock (UNCHANGED at 720s) is a GENUINE text budget: the
+# whole 720s belongs to text attempts/picks. 2026-07-15 post-mortem: the old
 # shape (3 picks x 5 attempts, budget checked only BETWEEN picks) burned the
 # whole 720s on TWO combos (~72s/attempt x 10) and never reached pick 3.
-# Deadline-aware shape: attempts stop early enough to leave RENDER_RESERVE
-# for song+TTS+assembly, each pick gets ATTEMPTS_PER_PICK attempts before a
-# FRESH combo (validator failures carry to the next pick's prompt), and no
-# attempt launches that can't finish safely. A story that can't produce a
-# clean result in this budget SKIPS (logged, pipeline continues) — [PARTIAL]
-# reporting preserved. Complements the per-call hard-timeout in _hindi_llm.
-STORY_WALL_CLOCK = 720   # seconds (12 min) — total budget, unchanged
-RENDER_RESERVE = 240     # reserved for post-validation render (song/TTS/assembly)
+# Deadline-aware shape: attempts stop at text_deadline (= start + 720s), each
+# pick gets ATTEMPTS_PER_PICK attempts before a FRESH combo (validator
+# failures carry to the next pick's prompt), and no attempt launches that
+# can't finish safely. A story that can't produce a clean text in this budget
+# SKIPS (logged, pipeline continues) — [PARTIAL] reporting preserved.
+# Complements the per-call deadline clamping in _hindi_llm (HTTP + hard
+# timeouts, provider-fallback gating).
+#
+# RENDER envelope (separate budget, starts when text validates): production
+# evidence (2026-07-11/12/14 file mtimes on the GCP VM) puts a successful
+# render — MiniMax song + full-story ElevenLabs TTS + pydub assembly + FLUX
+# cover + writes — at 390-700s, so a render can NEVER fit inside the 720s
+# text wall; successful prod days (7/12 ≈1070s, 7/14 ≈840s total step) have
+# always finished render past the 720s mark. RENDER_BUDGET is authoritative
+# inside generate_long_story: _wall_gate before EVERY external request
+# (MiniMax song, each ElevenLabs TTS call, FLUX cover), per-request waits
+# bounded to the remaining render time (caller-side via _hard_timeout — the
+# in-flight network op itself is not cancelled; only the FLUX httpx timeout
+# truly aborts), and ALL production writes deferred to a single zero-write
+# budget gate after the assets are prepared. Caller-side scheduling envelope:
+# 720s text + 900s render. This bounds when the pipeline moves on, NOT
+# process lifetime — an abandoned MiniMax/ElevenLabs worker thread may keep
+# the process alive until its underlying network operation returns.
+STORY_WALL_CLOCK = 720   # seconds (12 min) — text budget, all of it for text
+RENDER_BUDGET = 900      # render+publish envelope from text-validation time
+                         # (observed 390-700s + margin; gates abort beyond it)
 ATTEMPTS_PER_PICK = 2    # then move to a fresh combo instead of grinding one
 ATTEMPT_FLOOR = 75       # prior estimate for one gen+validate attempt (observed ~72s)
 
@@ -168,28 +187,28 @@ def _pick_signature(axes: dict) -> tuple:
 
 def _generate_with_repick(content_type: str, catalog: list, max_picks: int = MAX_PICKS):
     """Try up to `max_picks` DISTINCT combos for a fragile type under one
-    deadline-aware wall-clock budget: ATTEMPTS_PER_PICK attempts per combo,
-    RENDER_RESERVE held back for post-validation rendering, validator failures
-    from a failed pick seeded into the next pick's prompt, and no attempt
-    launched that cannot finish safely. Returns (entry, axes) on first
-    success; raises TimeoutError (exit=deadline) or the last error if every
-    combo fails (both surfaced as [PARTIAL] by _build_state). Re-pick and the
-    deadline are the levers — validators are never loosened."""
+    deadline-aware text budget (the full STORY_WALL_CLOCK): ATTEMPTS_PER_PICK
+    attempts per combo, validator failures from a failed pick seeded into the
+    next pick's prompt, and no attempt launched that cannot finish safely.
+    The render/publish envelope is a SEPARATE budget (RENDER_BUDGET) enforced
+    inside the generator. Returns (entry, axes) on first success; raises
+    TimeoutError (exit=deadline) or the last error if every combo fails (both
+    surfaced as [PARTIAL] by _build_state). Re-pick and the deadline are the
+    levers — validators are never loosened."""
     tried = []
     last_err = None
     _t0 = time.time()
-    wall_deadline = _t0 + STORY_WALL_CLOCK
-    text_deadline = wall_deadline - RENDER_RESERVE
+    text_deadline = _t0 + STORY_WALL_CLOCK
     carry_errors: list[str] = []
     for attempt in range(max_picks):
         elapsed = time.time() - _t0
         remaining_text = text_deadline - time.time()
         if remaining_text < ATTEMPT_FLOOR:
             raise TimeoutError(
-                f"{content_type}: wall-clock budget {STORY_WALL_CLOCK}s: exit=deadline "
+                f"{content_type}: text budget {STORY_WALL_CLOCK}s: exit=deadline "
                 f"picks_tried={attempt} elapsed={elapsed:.0f}s "
                 f"remaining_text={remaining_text:.0f}s < attempt_floor={ATTEMPT_FLOOR}s "
-                f"(render_reserve={RENDER_RESERVE}s) — skipping (cron-safety)")
+                f"— skipping (cron-safety)")
         axes = PICKERS[content_type](catalog)
         guard = 0
         while _pick_signature(axes) in tried and guard < 8:
@@ -207,29 +226,29 @@ def _generate_with_repick(content_type: str, catalog: list, max_picks: int = MAX
                 deadline=text_deadline,
                 max_attempts=ATTEMPTS_PER_PICK,
                 seed_errors=carry_errors or None,
+                render_budget=RENDER_BUDGET,
             )
             print(f"  {content_type}: exit=success pick={attempt + 1} "
                   f"elapsed={time.time() - _t0:.0f}s")
             return entry, axes
-        except _FalBalanceExhausted:
-            raise  # a re-pick won't refill the fal balance
         except GenerationDeadlineExceeded as e:
-            # Terminal: a fresh pick has no more wall clock than this one did.
+            # Terminal: a fresh pick has no more wall clock than this one did
+            # (covers both the text deadline and the render envelope).
             raise TimeoutError(
-                f"{content_type}: wall-clock budget {STORY_WALL_CLOCK}s: exit=deadline "
+                f"{content_type}: text budget {STORY_WALL_CLOCK}s: exit=deadline "
                 f"pick={attempt + 1} elapsed={time.time() - _t0:.0f}s — {e} "
                 f"— skipping (cron-safety)") from e
         except ValidationRetriesExhausted as e:
+            # The ONLY re-pick path: a combo whose TEXT failed validation.
+            # Everything else — provider errors, render failures (a paid
+            # render must never trigger a second paid combo), assembly or
+            # filesystem errors, fal balance exhaustion, unexpected bugs —
+            # has NO handler here and propagates immediately.
             last_err = e
             carry_errors = sorted(set(carry_errors) | set(e.errors))
             print(f"    ✗ pick={attempt + 1} exit=validation_exhausted "
                   f"elapsed={time.time() - _t0:.0f}s "
                   f"({len(e.errors)} validator failure(s) carried to next pick)")
-            catalog = load_hindi_catalog()
-        except Exception as e:
-            last_err = e
-            print(f"    ✗ pick={attempt + 1} failed ({type(e).__name__}) "
-                  f"elapsed={time.time() - _t0:.0f}s; re-picking a different combo")
             catalog = load_hindi_catalog()
     raise last_err if last_err else RuntimeError(
         f"{content_type}: all {max_picks} picks failed validation")

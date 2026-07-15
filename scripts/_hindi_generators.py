@@ -49,7 +49,8 @@ ON_PROD = PROD_BACKEND_PUBLIC.exists()
 
 sys.path.insert(0, str(Path(__file__).parent))
 
-from _hindi_llm import generate_json, LLMError  # type: ignore
+from _hindi_llm import generate_json, LLMError, LLMDeadlineExceeded  # type: ignore
+from _llm_timeout import _hard_timeout  # type: ignore
 from _hindi_validators import VALIDATORS, validate_structured, has_major, silly_song_cap_for  # type: ignore
 from _hindi_qa_critic import critic_review, is_qa_enabled  # type: ignore
 
@@ -119,7 +120,8 @@ def _abstract_flux_prompt(_prompt: str) -> str:
     )
 
 
-def _flux_cover(prompt: str, w: int = 1024, h: int = 1024) -> bytes | None:
+def _flux_cover(prompt: str, w: int = 1024, h: int = 1024,
+                deadline: "float | None" = None) -> bytes | None:
     """Generate a cover via Pollinations FLUX.
 
     Switched from Together AI on 2026-05-22: Together's 0.83 QPS free-tier
@@ -129,6 +131,9 @@ def _flux_cover(prompt: str, w: int = 1024, h: int = 1024) -> bytes | None:
     Retry chain: original prompt → sanitized no-people prompt → fully
     abstract prompt. Logs loudly on total failure so cron-log scrapers
     can surface stories needing manual cover regen.
+
+    `deadline` (absolute epoch) clamps every request's timeout to the
+    remaining time and skips retries/backoffs that no longer fit.
     """
     from urllib.parse import quote
 
@@ -136,13 +141,25 @@ def _flux_cover(prompt: str, w: int = 1024, h: int = 1024) -> bytes | None:
         print("  POLLINATIONS_API_KEY missing, skipping cover")
         return None
 
+    def _timeout() -> float | None:
+        # Per-request timeout clamped to the remaining render time; None
+        # signals "no time left — don't launch".
+        if deadline is None:
+            return 180.0
+        rem = deadline - time.time()
+        return None if rem < 5 else min(180.0, rem)
+
     def _call(p: str) -> bytes | None:
+        t = _timeout()
+        if t is None:
+            print("  Pollinations request skipped: render deadline reached")
+            return None
         truncated = p[:600].rsplit(",", 1)[0] if len(p) > 600 else p
         encoded = quote(truncated, safe="")
         url = f"https://gen.pollinations.ai/image/{encoded}?width={w}&height={h}&model=flux&nologo=true"
         headers = {"Authorization": f"Bearer {POLLINATIONS_KEY}"}
         try:
-            resp = httpx.get(url, headers=headers, timeout=180, follow_redirects=True)
+            resp = httpx.get(url, headers=headers, timeout=t, follow_redirects=True)
         except Exception as e:
             print(f"  Pollinations error: {e}")
             return None
@@ -153,10 +170,18 @@ def _flux_cover(prompt: str, w: int = 1024, h: int = 1024) -> bytes | None:
             print(f"  Pollinations 200 but unusable: ct={ct} bytes={len(resp.content)}")
             return None
         if resp.status_code == 429:
+            if deadline is not None and deadline - time.time() < 25:
+                print("  Pollinations 429: no render time left for the 20s wait — skipping retry")
+                return None
             print("  Pollinations 429 rate-limited, waiting 20s and retrying once")
             time.sleep(20)
+            # Recompute AFTER the wait — the pre-wait remainder is stale by 20s.
+            t2 = _timeout()
+            if t2 is None:
+                print("  Pollinations retry skipped: render deadline reached during wait")
+                return None
             try:
-                resp = httpx.get(url, headers=headers, timeout=180, follow_redirects=True)
+                resp = httpx.get(url, headers=headers, timeout=t2, follow_redirects=True)
                 if resp.status_code == 200 and "image" in resp.headers.get("content-type", "") and len(resp.content) > 1000:
                     return resp.content
             except Exception as e:
@@ -194,6 +219,11 @@ def _save_audio(seg: AudioSegment, *paths: Path):
     for p in paths:
         p.parent.mkdir(parents=True, exist_ok=True)
         seg.export(p, format="mp3", bitrate="192k")
+
+
+def _write_bytes(path: Path, data: bytes):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(data)
 
 
 def _write_per_content_file(entry: dict) -> None:
@@ -268,6 +298,31 @@ class ValidationRetriesExhausted(RuntimeError):
         self.errors = list(errors or [])
 
 
+class RenderFailed(RuntimeError):
+    """Terminal render-phase failure (hard timeout waiting on a render worker,
+    or an encode failure while preparing publish assets). Never triggers a
+    re-pick: the text already validated and the render spend already happened —
+    generating a whole new combo would double-pay for a non-text problem."""
+
+
+def _wall_gate(deadline: "float | None", phase: str, log_prefix: str = "",
+               quiet: bool = False) -> None:
+    """Enforce an absolute deadline before starting an external render request
+    or a publish (prod-mutating) step. Raises GenerationDeadlineExceeded when
+    the deadline has passed — an over-budget run must not start another paid
+    external call and must never begin mutating production content. `quiet`
+    suppresses the progress line for high-frequency per-request gates (one
+    per ElevenLabs segment call)."""
+    if deadline is None:
+        return
+    remaining = deadline - time.time()
+    if remaining <= 0:
+        raise GenerationDeadlineExceeded(
+            f"phase={phase} not started: deadline exceeded by {-remaining:.0f}s")
+    if not quiet:
+        print(f"{log_prefix}phase={phase} remaining={remaining:.0f}s")
+
+
 def _llm_with_retry(*, system: str, user: str, validator_key: str,
                      max_retries: int = 3, log_prefix: str = "  ",
                      post_process=None, max_tokens: int = 4096,
@@ -333,8 +388,12 @@ def _llm_with_retry(*, system: str, user: str, validator_key: str,
                 + "\n".join(f"- {e}" for e in cumulative[:15])
                 + "\n\nOutput ONLY corrected JSON. Re-check every requirement before submitting."
             )
-            if repair_hint is not None and last_data is not None:
-                surgical = repair_hint(last_errors, last_data)
+            # Surgical hint from the CUMULATIVE failures, not just the last
+            # attempt's: a fresh pick seeded with the previous pick's errors
+            # has last_errors=[] on attempt 1 — it must still get the explicit
+            # FORWARD CONSTRAINTS, not merely the generic block above.
+            if repair_hint is not None:
+                surgical = repair_hint(cumulative, last_data or {})
                 if surgical:
                     retry_hint = retry_hint + "\n\n" + surgical
         _att_start = time.time()
@@ -345,7 +404,13 @@ def _llm_with_retry(*, system: str, user: str, validator_key: str,
                 temperature=0.85,
                 max_tokens=max_tokens,
                 log_prefix=log_prefix,
+                deadline=deadline,  # clamps provider HTTP/hard timeouts + skips
+                                    # fallbacks that can't finish (see _hindi_llm)
             )
+        except LLMDeadlineExceeded as e:
+            # Wall clock ran out mid-attempt (e.g., slow Mistral left no room
+            # for the Groq fallback). Terminal — do NOT loop for another attempt.
+            raise GenerationDeadlineExceeded(str(e)) from e
         except LLMError as e:
             attempt_durations.append(time.time() - _att_start)
             print(f"{log_prefix}LLM failure: {e}")
@@ -1613,8 +1678,27 @@ def _long_story_repair_hint(errors: list[str], last_data: dict) -> str | None:
 def generate_long_story(axes: dict, log_prefix: str = "  ", text_only: bool = False,
                         deadline: "float | None" = None,
                         max_attempts: "int | None" = None,
-                        seed_errors: "list[str] | None" = None) -> dict:
+                        seed_errors: "list[str] | None" = None,
+                        render_budget: "float | None" = None) -> dict:
+    """`deadline` bounds the TEXT loop (absolute epoch; attempts that can't
+    finish before it never launch). `render_budget` (seconds; authoritative,
+    0 = no render time, None = unbounded standalone run) bounds the
+    render+publish envelope from the moment text validates: EVERY external
+    request (MiniMax song, each ElevenLabs TTS segment, FLUX cover) passes a
+    _wall_gate against render start + render_budget with its wait bounded to
+    the remaining render time; the assembled audio, encoded standalone-song
+    bytes, cover bytes, and entry are PREPARED before the single deferred-
+    publish gate, after which the final audio mp3 encoding, cover PNG→WEBP
+    conversion, and filesystem/catalog writes run together (not
+    rollback-backed) — an over-budget run cannot start another paid call or
+    mutate production content. LIMITATION: for MiniMax/ElevenLabs the bound
+    is caller-side (_hard_timeout stops WAITING; it cannot cancel the
+    in-flight network operation — the abandoned worker thread may extend
+    process lifetime until the underlying operation returns, see
+    _llm_timeout). Only the FLUX/httpx timeout truly aborts its request.
+    Production render evidence 2026-07-11..14: 390-700s."""
     print(f"\n{log_prefix}═══ LONG STORY: age={axes['age_group']} mood={axes['mood']} world={axes['world_name']} ═══")
+    _gen_t0 = time.time()
     sys_msg, user_msg = _long_story_prompt(axes)
 
     def shape(d: dict) -> dict:
@@ -1667,11 +1751,29 @@ def generate_long_story(axes: dict, log_prefix: str = "  ", text_only: bool = Fa
                               # need ~8-12k tokens of headroom
     )
 
+    text_elapsed = time.time() - _gen_t0
+    print(f"{log_prefix}text validated: text_elapsed={text_elapsed:.0f}s")
+
     # Text-only path (batch/eval): return the tagged generation output before
     # any song/cover/publish. full_text_roman still carries the inline tags
     # ([BREATHE], [WHISPER], [PHASE_*]) that publish would later strip.
     if text_only:
         return data
+
+    # Render/publish envelope starts when text validates. render_budget is
+    # authoritative: 0 means "no render time at all" (gates fire immediately),
+    # None means no envelope (standalone/manual runs).
+    _render_t0 = time.time()
+    render_deadline = (_render_t0 + render_budget) if render_budget is not None else None
+
+    def _render_remaining(default: float) -> float:
+        """Caller-side wait bound for one render request: the natural cap
+        clamped to remaining render time. Gates guarantee remaining > 0 when
+        this is called. NOTE: fed to _hard_timeout, which bounds how long WE
+        wait — it does not cancel the underlying network operation."""
+        if render_deadline is None:
+            return default
+        return min(default, max(1.0, render_deadline - time.time()))
 
     # ── Render via existing publish_hindi_long_day1 helpers
     from publish_hindi_long_day1 import (  # type: ignore
@@ -1697,6 +1799,7 @@ def generate_long_story(axes: dict, log_prefix: str = "  ", text_only: bool = Fa
         "lullaby, soft harmonium and bansuri, 60 BPM, warm and loving, "
         "smiling maternal voice, major key, native Hindi pronunciation"
     )
+    _wall_gate(render_deadline, "song_render", log_prefix)
     print(f"{log_prefix}generating mid-story song…")
     song_lyrics = (data.get("song_lyrics_deva") or "").strip()
     if not song_lyrics:
@@ -1705,7 +1808,16 @@ def generate_long_story(axes: dict, log_prefix: str = "  ", text_only: bool = Fa
             f"Dheere dheere, bas dheere dheere\n"
             f"{data['repeated_phrase']}"
         )
-    song_bytes = minimax_lullaby(song_style, song_lyrics)
+    try:
+        song_bytes = _hard_timeout(
+            # natural cap 600s: fal upload + MiniMax generation + audio download
+            minimax_lullaby, _render_remaining(600.0),
+            style=song_style, lyrics_deva=song_lyrics,
+        )
+    except TimeoutError as e:
+        # _hard_timeout gave up waiting on the MiniMax worker — terminal
+        # render failure, never a re-pick.
+        raise RenderFailed(f"song render hard-timeout: {e}") from e
     song = AudioSegment.from_file(io.BytesIO(song_bytes), format="mp3")
     if len(song) > 45000:
         song = song[:45000].fade_out(2000)
@@ -1804,12 +1916,21 @@ def generate_long_story(axes: dict, log_prefix: str = "  ", text_only: bool = Fa
         else:
             return None
         text = normalize_for_tts(text)
-        return elevenlabs_tts(
-            text, ELEVENLABS_VOICES[voice_label],
-            stability=preset["stability"], similarity=0.75,
-            style=preset["style"], speed=preset["speed"],
-            previous_text=prev, next_text=nxt,
-        )
+        # Gate + clamp EVERY ElevenLabs request: a slow segment call must not
+        # be followed by further paid calls once the render budget is spent.
+        _wall_gate(render_deadline, "tts_call", log_prefix, quiet=True)
+        try:
+            return _hard_timeout(
+                elevenlabs_tts, _render_remaining(240.0),  # natural cap per segment
+                text=text, voice_id=ELEVENLABS_VOICES[voice_label],
+                stability=preset["stability"], similarity=0.75,
+                style=preset["style"], speed=preset["speed"],
+                previous_text=prev, next_text=nxt,
+            )
+        except TimeoutError as e:
+            # _hard_timeout gave up waiting on the ElevenLabs worker —
+            # terminal render failure, never a re-pick.
+            raise RenderFailed(f"tts render hard-timeout: {e}") from e
 
     def stitch(section: str, gap_ms: int):
         out = AudioSegment.silent(duration=0)
@@ -1843,6 +1964,7 @@ def generate_long_story(axes: dict, log_prefix: str = "  ", text_only: bool = Fa
                 out += AudioSegment.silent(duration=gap_ms)
         return out, breathes
 
+    _wall_gate(render_deadline, "tts_assembly", log_prefix)
     intro_music = AudioSegment.from_wav(str(MUSIC_DIR / "intro_calm.wav"))
     bed_raw = AudioSegment.from_wav(str(MUSIC_DIR / "bed_calm.wav"))
 
@@ -1886,28 +2008,11 @@ def generate_long_story(axes: dict, log_prefix: str = "  ", text_only: bool = Fa
     char_slug = _slug(chars[0]["name"], 4) if chars else _hex(4)
     sid = f"hi-long-{axes['age_group']}-{char_slug}"
 
-    _save_audio(
-        audio,
-        WEB_ROOT / "public" / "audio" / "pre-gen" / f"{sid}_tripti.mp3",
-        BASE_DIR / "seed_output" / "hindi_long" / f"{sid}.mp3",
-    )
-
-    # Standalone mid-story song for the marketing email (parity with EN song.mp3).
-    try:
-        song.export(BASE_DIR / "seed_output" / "hindi_long" / f"{sid}_song.mp3",
-                    format="mp3", bitrate="192k")
-    except Exception as _song_e:
-        print(f"{log_prefix}  standalone song export failed (non-fatal): {_song_e}")
-
-    cover = _flux_cover(data.get("cover_context", "Indian dreamy bedtime watercolor"))
-    if cover:
-        cover_paths = [
-            WEB_ROOT / "public" / "covers" / f"{sid}.webp",                          # legacy duplicate
-            BASE_DIR / "seed_output" / "hindi_long" / f"{sid}_cover.webp",           # debug master
-        ]
-        if ON_PROD:
-            cover_paths.append(PROD_COVER_STORE / f"{sid}.webp")                     # frontend-served
-        _save_cover(cover, *cover_paths)
+    # Cover renders BEFORE any production write, so every asset (audio, song,
+    # cover, entry) is fully ready when the single publish gate below runs.
+    _wall_gate(render_deadline, "cover_render", log_prefix)
+    cover = _flux_cover(data.get("cover_context", "Indian dreamy bedtime watercolor"),
+                        deadline=render_deadline)
 
     # Strip tags for display text (use the Roman version for human readability)
     from publish_hindi_long_day1 import strip_long_story_tags  # type: ignore
@@ -1996,11 +2101,52 @@ def generate_long_story(axes: dict, log_prefix: str = "  ", text_only: bool = Fa
         "updated_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
     }
     _attach_qa_changes(entry, data)
+
+    # Standalone mid-story song for the marketing email (parity with EN
+    # song.mp3): ENCODE before the publish gate so no fallible encode runs
+    # after the first production mutation. An encode failure here is terminal
+    # (RenderFailed) — better no item than a half-prepared one.
+    try:
+        _song_buf = io.BytesIO()
+        song.export(_song_buf, format="mp3", bitrate="192k")
+        song_mp3_bytes = _song_buf.getvalue()
+    except Exception as e:
+        raise RenderFailed(f"standalone song encode failed: {e}") from e
+
+    # DEFERRED PUBLISH with a zero-write budget gate (not rollback-backed
+    # atomicity): the assembled audio, encoded standalone-song bytes, cover
+    # bytes, and catalog entry are PREPARED above; the FIRST production
+    # mutation is the audio write below. An over-budget run stops HERE with
+    # ZERO writes. Past this gate there are no further external calls, but
+    # the final audio mp3 encoding (_save_audio), the cover PNG→WEBP
+    # conversion (_save_cover), and the filesystem/catalog writes all happen
+    # AFTER the gate and are not rollback-backed — a mid-publish failure can
+    # leave a partial publish.
+    _wall_gate(render_deadline, "publish", log_prefix)
+    _save_audio(
+        audio,
+        WEB_ROOT / "public" / "audio" / "pre-gen" / f"{sid}_tripti.mp3",
+        BASE_DIR / "seed_output" / "hindi_long" / f"{sid}.mp3",
+    )
+    _write_bytes(BASE_DIR / "seed_output" / "hindi_long" / f"{sid}_song.mp3",
+                 song_mp3_bytes)
+    if cover:
+        cover_paths = [
+            WEB_ROOT / "public" / "covers" / f"{sid}.webp",                          # legacy duplicate
+            BASE_DIR / "seed_output" / "hindi_long" / f"{sid}_cover.webp",           # debug master
+        ]
+        if ON_PROD:
+            cover_paths.append(PROD_COVER_STORE / f"{sid}.webp")                     # frontend-served
+        _save_cover(cover, *cover_paths)
     # Per spec §2g.1: per-content file write (additive — walker reads this
     # post-cutover). _upsert_content below stays until post-cutover §4 step 15.
     _write_per_content_file(entry)
     _upsert_content(entry)
-    print(f"{log_prefix}✓ long story published: {sid} ({duration}s)")
+    render_elapsed = time.time() - _render_t0
+    total_elapsed = time.time() - _gen_t0
+    print(f"{log_prefix}✓ long story published: {sid} ({duration}s) "
+          f"text_elapsed={text_elapsed:.0f}s render_elapsed={render_elapsed:.0f}s "
+          f"total_elapsed={total_elapsed:.0f}s")
     return entry
 
 
