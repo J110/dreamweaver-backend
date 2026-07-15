@@ -19,6 +19,7 @@ Engine matrix (per v2 specs):
 from __future__ import annotations
 
 import base64
+import hashlib
 import io
 import json
 import os
@@ -45,6 +46,7 @@ WEB_ROOT = REPO_ROOT / "dreamweaver-web"
 PROD_BACKEND_PUBLIC = Path("/opt/dreamweaver-backend/public")
 PROD_COVER_STORE   = Path("/opt/cover-store")
 PROD_AUDIO_STORE   = Path("/opt/audio-store")
+PROD_JSON_STORE    = Path("/opt/json-store")   # per-content JSON recovery store
 ON_PROD = PROD_BACKEND_PUBLIC.exists()
 
 sys.path.insert(0, str(Path(__file__).parent))
@@ -69,6 +71,139 @@ def _slug(s: str, n: int = 4) -> str:
 
 def _hex(n: int = 4) -> str:
     return uuid.uuid4().hex[:n]
+
+
+def _content_hash(text: str, n: int = 8) -> str:
+    """Content-derived id suffix. Deterministic on purpose: the same text
+    yields the same id, so an exact regeneration trips the collision guard
+    instead of silently overwriting a published item; different content
+    always gets a different id."""
+    return hashlib.sha256((text or "").encode("utf-8")).hexdigest()[:n]
+
+
+class ContentIdCollision(RuntimeError):
+    """A freshly generated id — or one of its per-content/asset/recovery-store
+    paths — already exists. Fail CLOSED before any paid rendering; NEVER
+    overwrite an existing generated item. (2026-07-15 post-mortem: slug-only
+    HI ids were reused on 05-19/06-15/07-15, each publish silently destroying
+    the previous story; the symptom surfaced as a stale-cover mismatch on
+    mobile via the 30-day cover cache.)"""
+
+
+class ContentIdGuardError(RuntimeError):
+    """The collision guard could not PROVE the id is fresh: the catalog
+    snapshot exists but is unreadable or has an invalid shape. Fail closed
+    BEFORE paid rendering — an unverifiable catalog must never be treated as
+    an empty one."""
+
+
+# ── Exclusive id reservations: close the check-then-write race between two
+# pipeline processes (cron + manual run) that both pass the existence checks
+# before either has written anything. O_CREAT|O_EXCL makes creation atomic;
+# only ONE process can hold a reservation. Cleanup semantics for a
+# reservation whose holder failed without releasing:
+#   - same process        → re-entrant (allowed; a retry in-process is safe)
+#   - holder pid dead     → stale, safe to take over
+#   - older than TTL      → stale (holder wedged), safe to take over
+#   - held by a LIVE peer → ContentIdCollision (fail closed)
+RESERVATION_TTL_S = 2 * 3600  # far above the longest observed generation
+
+
+def _reservation_path(sid: str) -> Path:
+    return BASE_DIR / "data" / ".id_reservations" / f"{sid}.json"
+
+
+def _pid_alive(pid: int) -> bool:
+    if pid <= 0:
+        return False
+    try:
+        os.kill(pid, 0)
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        return True  # exists, owned by someone else
+    except OSError:
+        return False
+    return True
+
+
+def _reserve_content_id(sid: str, log_prefix: str = "") -> None:
+    path = _reservation_path(sid)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    payload = json.dumps({"sid": sid, "pid": os.getpid(), "ts": time.time()})
+    for attempt in (1, 2):
+        try:
+            fd = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+            with os.fdopen(fd, "w") as f:
+                f.write(payload)
+            print(f"{log_prefix}  id-guard: reserved {sid} (pid={os.getpid()})")
+            return
+        except FileExistsError:
+            try:
+                held = json.loads(path.read_text())
+            except Exception:
+                held = {}
+            pid = int(held.get("pid") or -1)
+            ts = float(held.get("ts") or 0)
+            if pid == os.getpid():
+                return  # re-entrant within this process
+            stale = (not _pid_alive(pid)) or (time.time() - ts > RESERVATION_TTL_S)
+            if stale and attempt == 1:
+                print(f"{log_prefix}  id-guard: stale reservation for {sid} "
+                      f"(pid={pid} dead or age>{RESERVATION_TTL_S}s) — taking over")
+                try:
+                    path.unlink()
+                except FileNotFoundError:
+                    pass
+                continue
+            raise ContentIdCollision(
+                f"id {sid} is reserved by another live process "
+                f"(pid={pid}, age={time.time() - ts:.0f}s) — refusing")
+
+
+def _release_content_id(sid: str) -> None:
+    """Release after successful publication (or a handled failure in the
+    owning process). Only the owner may release; foreign/unreadable
+    reservations are left for the staleness rules above."""
+    path = _reservation_path(sid)
+    try:
+        held = json.loads(path.read_text())
+        if int(held.get("pid") or -1) == os.getpid():
+            path.unlink()
+    except FileNotFoundError:
+        pass
+    except Exception:
+        pass  # unreadable → let TTL/pid-death cleanup handle it
+
+
+def _guard_new_content_id(sid: str, paths: "list[Path]", log_prefix: str = "") -> None:
+    """Collision guard, run BEFORE paid audio/cover rendering. Refuses to
+    proceed when the id is already in the catalog snapshot or when any of the
+    given per-content / served-asset / recovery-store paths exist; raises
+    ContentIdGuardError (also terminal) when the catalog cannot be verified.
+    On success takes the exclusive id reservation (see _reserve_content_id)."""
+    clashes = [str(p) for p in paths if p is not None and Path(p).exists()]
+    seed = BASE_DIR / "seed_output" / "content.json"
+    if seed.exists():
+        try:
+            data = json.loads(seed.read_text())
+        except Exception as e:
+            raise ContentIdGuardError(
+                f"catalog snapshot {seed} is unreadable ({e}) — failing closed "
+                f"before paid render") from e
+        items = data.get("items") if isinstance(data, dict) else data
+        if not isinstance(items, list) or not all(isinstance(i, dict) for i in items):
+            raise ContentIdGuardError(
+                f"catalog snapshot {seed} has an invalid shape (expected a list "
+                f"of dicts) — failing closed before paid render")
+        if any(i.get("id") == sid for i in items):
+            clashes.insert(0, f"catalog id already present: {sid}")
+    if clashes:
+        raise ContentIdCollision(
+            f"refusing to overwrite existing content for id {sid}: "
+            + "; ".join(clashes[:6]))
+    _reserve_content_id(sid, log_prefix)
+    print(f"{log_prefix}  id-guard: {sid} fresh (catalog + {len(paths)} paths clear)")
 
 
 _SHORT_STORY_TAG_RE = re.compile(
@@ -216,9 +351,15 @@ def _save_cover(png_bytes: bytes, *paths: Path, size: tuple[int, int] = (1024, 1
 
 
 def _save_audio(seg: AudioSegment, *paths: Path):
+    """Encode ONCE into bytes, then write that exact buffer to every path
+    (served, seed, recovery store) — copies are byte-identical by
+    construction, never the product of N separate encoder runs."""
+    buf = io.BytesIO()
+    seg.export(buf, format="mp3", bitrate="192k")
+    data = buf.getvalue()
     for p in paths:
         p.parent.mkdir(parents=True, exist_ok=True)
-        seg.export(p, format="mp3", bitrate="192k")
+        p.write_bytes(data)
 
 
 def _write_bytes(path: Path, data: bytes):
@@ -650,6 +791,30 @@ def generate_short_story(axes: dict, log_prefix: str = "  ") -> dict:
     # back to Roman if the LLM didn't return text_deva.
     text_for_engine = data.get("text_deva") or data["text"]
     hook_for_engine = data.get("hook_deva") or data["hook"]
+
+    # ── Unique id + collision guard BEFORE any paid rendering. Character
+    # slug alone collided (Tippy 05-19/06-15/07-15, two stories destroyed);
+    # the content hash makes the id unique and an exact-duplicate refuse.
+    char_slug = _slug(data["character"]["name"], 4) or _hex(4)
+    sid = data["id"] = (f"hi-{axes['story_type']}-{axes['age_group']}-{char_slug}"
+                        f"-{_content_hash(data['text'])}")
+    audio_paths = [
+        WEB_ROOT / "public" / "audio" / "pre-gen" / f"{sid}_{voice_for_mood}.mp3",
+        BASE_DIR / "seed_output" / "stories_hi" / f"{sid}.mp3",
+    ]
+    cover_paths = [
+        WEB_ROOT / "public" / "covers" / f"{sid}.webp",                          # legacy duplicate
+        BASE_DIR / "seed_output" / "stories_hi" / f"{sid}_cover.webp",           # debug master
+    ]
+    if ON_PROD:
+        # Served + RECOVERY-STORE copies, written from the same bytes below.
+        audio_paths.append(PROD_AUDIO_STORE / "pre-gen" / f"{sid}_{voice_for_mood}.mp3")
+        cover_paths.append(PROD_COVER_STORE / f"{sid}.webp")                     # frontend-served
+    guard_paths = [BASE_DIR / "data" / "stories_hi" / f"{sid}.json"]
+    if ON_PROD:
+        guard_paths.append(PROD_JSON_STORE / "stories_hi" / f"{sid}.json")       # JSON recovery store
+    _guard_new_content_id(sid, guard_paths + audio_paths + cover_paths, log_prefix)
+
     audio = assemble_story_audio(
         text_deva=text_for_engine,
         hook_deva=hook_for_engine,
@@ -658,26 +823,12 @@ def generate_short_story(axes: dict, log_prefix: str = "  ") -> dict:
     )
     duration = round(len(audio) / 1000)
 
-    # Generate ID with character slug (matches existing convention)
-    char_slug = _slug(data["character"]["name"], 4) or _hex(4)
-    sid = data["id"] = f"hi-{axes['story_type']}-{axes['age_group']}-{char_slug}"
-
-    # Save audio
-    _save_audio(
-        audio,
-        WEB_ROOT / "public" / "audio" / "pre-gen" / f"{sid}_{voice_for_mood}.mp3",
-        BASE_DIR / "seed_output" / "stories_hi" / f"{sid}.mp3",
-    )
+    # Save audio — served copy and recovery-store copy from the same bytes
+    _save_audio(audio, *audio_paths)
 
     # Generate + save cover
     cover = _flux_cover(data.get("cover_context", "Indian bedtime watercolor"))
     if cover:
-        cover_paths = [
-            WEB_ROOT / "public" / "covers" / f"{sid}.webp",                          # legacy duplicate
-            BASE_DIR / "seed_output" / "stories_hi" / f"{sid}_cover.webp",           # debug master
-        ]
-        if ON_PROD:
-            cover_paths.append(PROD_COVER_STORE / f"{sid}.webp")                     # frontend-served
         _save_cover(cover, *cover_paths)
 
     # text field is the user-facing display version (tags stripped).
@@ -752,6 +903,7 @@ def generate_short_story(axes: dict, log_prefix: str = "  ") -> dict:
     # post-cutover). _upsert_content below stays until post-cutover §4 step 15.
     _write_per_content_file(entry)
     _upsert_content(entry)
+    _release_content_id(sid)  # successful publication → free the reservation
     print(f"{log_prefix}✓ short story published: {sid} ({duration}s)")
     return entry
 
@@ -851,31 +1003,39 @@ def generate_lullaby(axes: dict, log_prefix: str = "  ") -> dict:
         "pronunciation — not a Western or Chinese vocal lens.\n\n"
         f"Lyrics:\n{lyrics_for_engine}"
     )
-    audio_bytes = minimax_lullaby(composed, lyrics_for_engine)
-    audio = AudioSegment.from_file(io.BytesIO(audio_bytes), format="mp3")
-    duration = round(len(audio) / 1000)
-
-    sid = f"hi-{axes['lullaby_type']}-{axes['age_group']}-{_slug(data['title'])}"
-
+    # ── Unique id + collision guard BEFORE the paid MiniMax render. Title
+    # slug alone can repeat; the lyrics hash makes the id unique and an
+    # exact-duplicate refuse (same class as the Tippy story collision).
+    sid = (f"hi-{axes['lullaby_type']}-{axes['age_group']}-{_slug(data['title'])}"
+           f"-{_content_hash(data['lyrics'])}")
     audio_paths = [
         WEB_ROOT / "public" / "audio" / "lullabies" / f"{sid}.mp3",
         WEB_ROOT / "public" / "audio" / "pre-gen" / f"{sid}_female_1.mp3",
         BASE_DIR / "seed_output" / "lullabies" / f"{sid}.mp3",
     ]
+    cover_paths = [
+        WEB_ROOT / "public" / "covers" / f"{sid}.webp",                          # legacy duplicate
+        WEB_ROOT / "public" / "covers" / "lullabies" / f"{sid}_cover.webp",      # legacy duplicate
+        BASE_DIR / "seed_output" / "lullabies" / f"{sid}_cover.webp",            # debug master
+    ]
     if ON_PROD:
+        # Served + RECOVERY-STORE copies, written from the same bytes below.
         audio_paths.append(PROD_AUDIO_STORE / "lullabies" / f"{sid}.mp3")
+        cover_paths.append(PROD_COVER_STORE / f"{sid}.webp")                              # frontend-served (root)
+        cover_paths.append(PROD_COVER_STORE / "lullabies" / f"{sid}_cover.webp")          # frontend-served (subtype)
+    guard_paths = [BASE_DIR / "data" / "lullabies_hi" / f"{sid}.json"]
+    if ON_PROD:
+        guard_paths.append(PROD_JSON_STORE / "lullabies_hi" / f"{sid}.json")              # JSON recovery store
+    _guard_new_content_id(sid, guard_paths + audio_paths + cover_paths, log_prefix)
+
+    audio_bytes = minimax_lullaby(composed, lyrics_for_engine)
+    audio = AudioSegment.from_file(io.BytesIO(audio_bytes), format="mp3")
+    duration = round(len(audio) / 1000)
+
     _save_audio(audio, *audio_paths)
 
     cover = _flux_cover(data.get("cover_context", "Indian baby sleeping under a quilt"))
     if cover:
-        cover_paths = [
-            WEB_ROOT / "public" / "covers" / f"{sid}.webp",                          # legacy duplicate
-            WEB_ROOT / "public" / "covers" / "lullabies" / f"{sid}_cover.webp",      # legacy duplicate
-            BASE_DIR / "seed_output" / "lullabies" / f"{sid}_cover.webp",            # debug master
-        ]
-        if ON_PROD:
-            cover_paths.append(PROD_COVER_STORE / f"{sid}.webp")                              # frontend-served (root)
-            cover_paths.append(PROD_COVER_STORE / "lullabies" / f"{sid}_cover.webp")          # frontend-served (subtype)
         _save_cover(cover, *cover_paths)
 
     entry = {
@@ -932,6 +1092,7 @@ def generate_lullaby(axes: dict, log_prefix: str = "  ") -> dict:
     _write_per_content_file(entry)
     _upsert_content(entry)
     _upsert_aggregate_json(entry, BASE_DIR / "seed_output" / "lullabies" / "lullabies.json")
+    _release_content_id(sid)  # successful publication → free the reservation
     print(f"{log_prefix}✓ lullaby published: {sid} ({duration}s)")
     return entry
 
@@ -1775,6 +1936,31 @@ def generate_long_story(axes: dict, log_prefix: str = "  ", text_only: bool = Fa
             return default
         return min(default, max(1.0, render_deadline - time.time()))
 
+    # ── Unique id + collision guard BEFORE any paid rendering (song/TTS/
+    # cover). Character slug alone can repeat across runs; the content hash
+    # makes the id unique and an exact-duplicate refuse.
+    chars = data.get("characters", []) or []
+    char_slug = _slug(chars[0]["name"], 4) if chars else _hex(4)
+    sid = (f"hi-long-{axes['age_group']}-{char_slug}"
+           f"-{_content_hash(data['full_text_roman'])}")
+    audio_paths = [
+        WEB_ROOT / "public" / "audio" / "pre-gen" / f"{sid}_tripti.mp3",
+        BASE_DIR / "seed_output" / "hindi_long" / f"{sid}.mp3",
+    ]
+    if ON_PROD:
+        # Served + RECOVERY-STORE copies, written from the same bytes below.
+        audio_paths.append(PROD_AUDIO_STORE / "pre-gen" / f"{sid}_tripti.mp3")
+    guard_paths = [
+        BASE_DIR / "data" / "long_stories_hi" / f"{sid}.json",
+        WEB_ROOT / "public" / "covers" / f"{sid}.webp",
+        BASE_DIR / "seed_output" / "hindi_long" / f"{sid}_cover.webp",
+        BASE_DIR / "seed_output" / "hindi_long" / f"{sid}_song.mp3",
+    ]
+    if ON_PROD:
+        guard_paths.append(PROD_COVER_STORE / f"{sid}.webp")
+        guard_paths.append(PROD_JSON_STORE / "long_stories_hi" / f"{sid}.json")  # JSON recovery store
+    _guard_new_content_id(sid, guard_paths + audio_paths, log_prefix)
+
     # ── Render via existing publish_hindi_long_day1 helpers
     from publish_hindi_long_day1 import (  # type: ignore
         elevenlabs_tts, ELEVENLABS_VOICES, PHASE_TTS, PHRASE_TTS,
@@ -2005,8 +2191,7 @@ def generate_long_story(axes: dict, log_prefix: str = "  ", text_only: bool = Fa
     audio = timeline
     duration = round(len(audio) / 1000)
 
-    char_slug = _slug(chars[0]["name"], 4) if chars else _hex(4)
-    sid = f"hi-long-{axes['age_group']}-{char_slug}"
+    # sid was assigned (and collision-guarded) before the first paid render.
 
     # Cover renders BEFORE any production write, so every asset (audio, song,
     # cover, entry) is fully ready when the single publish gate below runs.
@@ -2123,11 +2308,9 @@ def generate_long_story(axes: dict, log_prefix: str = "  ", text_only: bool = Fa
     # AFTER the gate and are not rollback-backed — a mid-publish failure can
     # leave a partial publish.
     _wall_gate(render_deadline, "publish", log_prefix)
-    _save_audio(
-        audio,
-        WEB_ROOT / "public" / "audio" / "pre-gen" / f"{sid}_tripti.mp3",
-        BASE_DIR / "seed_output" / "hindi_long" / f"{sid}.mp3",
-    )
+    # Served copy and recovery-store copy from the same bytes (audio_paths
+    # was built alongside the collision guard above).
+    _save_audio(audio, *audio_paths)
     _write_bytes(BASE_DIR / "seed_output" / "hindi_long" / f"{sid}_song.mp3",
                  song_mp3_bytes)
     if cover:
@@ -2142,6 +2325,7 @@ def generate_long_story(axes: dict, log_prefix: str = "  ", text_only: bool = Fa
     # post-cutover). _upsert_content below stays until post-cutover §4 step 15.
     _write_per_content_file(entry)
     _upsert_content(entry)
+    _release_content_id(sid)  # successful publication → free the reservation
     render_elapsed = time.time() - _render_t0
     total_elapsed = time.time() - _gen_t0
     print(f"{log_prefix}✓ long story published: {sid} ({duration}s) "

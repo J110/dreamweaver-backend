@@ -135,7 +135,11 @@ def pick_short_story_axes(catalog: list[dict] | None = None) -> dict:
         "recent_titles": [r.get("title") for r in recent[:10]],
         "recent_phrases": [r.get("repeated_phrase") for r in recent[:10] if r.get("repeated_phrase")],
         "recent_names": [
-            (r.get("character") or {}).get("name", "") for r in recent[:14]
+            # All 30 recent stories (was 14): diversity protection against
+            # repeated leads like "Tippy". Softens name reuse only — the
+            # content-hash id suffix in _hindi_generators is the collision
+            # guarantee, not this list.
+            (r.get("character") or {}).get("name", "") for r in recent[:30]
         ],
     }
 
