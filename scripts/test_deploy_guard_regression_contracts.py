@@ -54,6 +54,7 @@ def test_frontend_runtime_guard_rejects_missing_bundle():
         f"{frontend}/version.json": FakeResponse(200),
         f"{frontend}/sw.js": FakeResponse(200),
         f"{frontend}/logo-new.png": FakeResponse(200),
+        f"{frontend}/upgrade-showcase.webp": FakeResponse(200),
     })
 
     issues = deploy_guard.verify_frontend_runtime_assets(
@@ -68,6 +69,31 @@ def test_frontend_runtime_guard_rejects_missing_bundle():
 
 def test_verify_registers_frontend_runtime_assets():
     assert "runtime_asset_issues = verify_frontend_runtime_assets()" in SOURCE
+
+
+def test_frontend_runtime_guard_rejects_missing_upgrade_showcase():
+    frontend = "https://dreamvalley.app"
+    client = FakeClient({
+        f"{frontend}/?source=app": FakeResponse(
+            200,
+            '<script src="/_next/static/chunks/app.js"></script>',
+        ),
+        f"{frontend}/nap-playlist": FakeResponse(200),
+        f"{frontend}/_next/static/chunks/app.js": FakeResponse(200),
+        f"{frontend}/version.json": FakeResponse(200),
+        f"{frontend}/sw.js": FakeResponse(200),
+        f"{frontend}/logo-new.png": FakeResponse(200),
+        f"{frontend}/upgrade-showcase.webp": FakeResponse(404),
+    })
+
+    issues = deploy_guard.verify_frontend_runtime_assets(
+        frontend=frontend,
+        client=client,
+    )
+
+    assert issues == [
+        "Frontend runtime asset returned 404: /upgrade-showcase.webp"
+    ]
 
 
 def test_current_playback_guard_rejects_missing_audio():

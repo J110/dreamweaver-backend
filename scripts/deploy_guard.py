@@ -917,7 +917,12 @@ def verify_frontend_runtime_assets(
     if client is None:
         client = httpx.Client(timeout=20, follow_redirects=True)
     issues = []
-    assets = {"/version.json", "/sw.js", "/logo-new.png"}
+    assets = {
+        "/version.json",
+        "/sw.js",
+        "/logo-new.png",
+        "/upgrade-showcase.webp",
+    }
     try:
         for route in ("/?source=app", "/nap-playlist"):
             try:
