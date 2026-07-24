@@ -816,6 +816,75 @@ def verify_all_live_urls(api: str, frontend: str) -> list[str]:
     return issues
 
 
+def verify_nap_playlist_counts() -> list[str]:
+    import asyncio
+    from app.api.v1 import playlist as nap_playlist
+
+    class GuardStore:
+        collections = {"playlist_history": {}}
+
+        def _persist_collection(self, _name):
+            return None
+
+    issues = []
+    original_record_history = nap_playlist._record_history
+    original_cache = dict(nap_playlist._nap_cache)
+    try:
+        nap_playlist._record_history = lambda *_args, **_kwargs: None
+        nap_playlist._nap_cache.clear()
+        users = (
+            ("free", {"subscription_tier": "free", "subscription_status": "inactive"}, 3),
+            ("premium", {"subscription_tier": "premium", "subscription_status": "active"}, 4),
+        )
+        for lang in ("en", "hi"):
+            for tier, user, expected in users:
+                response = asyncio.run(nap_playlist.get_nap_playlist(
+                    lang=lang,
+                    tz="Asia/Kolkata",
+                    store=GuardStore(),
+                    current_user=user,
+                ))
+                actual = len(response.data.get("items", []))
+                if actual != expected:
+                    issues.append(
+                        f"Nap playlist {lang}/{tier} returned {actual} items; expected {expected}"
+                    )
+    except Exception as exc:
+        issues.append(f"Nap playlist contract check failed: {type(exc).__name__}: {exc}")
+    finally:
+        nap_playlist._record_history = original_record_history
+        nap_playlist._nap_cache.clear()
+        nap_playlist._nap_cache.update(original_cache)
+    return issues
+
+
+def verify_frontend_regression_suite() -> list[str]:
+    web_root = Path(os.environ.get("DREAMWEAVER_WEB_ROOT", "/opt/dreamweaver-web"))
+    if not web_root.exists():
+        return [f"Frontend regression suite unavailable: {web_root} does not exist"]
+
+    issues = []
+    commands = (
+        ("Emberlight source verification", ["npm", "run", "verify:emberlight"]),
+        ("Emberlight regression tests", ["npm", "run", "test:emberlight", "--", "--ci"]),
+    )
+    for label, command in commands:
+        try:
+            result = subprocess.run(
+                command,
+                cwd=web_root,
+                capture_output=True,
+                text=True,
+                timeout=300,
+            )
+            if result.returncode != 0:
+                output = (result.stdout + "\n" + result.stderr).strip().splitlines()
+                issues.append(f"{label} failed: {' | '.join(output[-8:])}")
+        except Exception as exc:
+            issues.append(f"{label} failed: {type(exc).__name__}: {exc}")
+    return issues
+
+
 def verify_new_items_serving(added_items: list[dict], frontend: str, api: str) -> list[str]:
     """For each newly added item, verify its audio and cover URLs are reachable.
 
@@ -1638,6 +1707,23 @@ def cmd_verify(args):
                 unresolved.append(m)
         else:
             print(f"\n  ✅ Per-content routing: en/hi dirs clean.")
+
+    nap_issues = verify_nap_playlist_counts()
+    if nap_issues:
+        for issue in nap_issues:
+            print(f"  ❌ {issue}")
+            unresolved.append(issue)
+    else:
+        print("\n  ✅ Nap playlists: en/hi free=3 and premium=4.")
+
+    if not args.local:
+        frontend_regression_issues = verify_frontend_regression_suite()
+        if frontend_regression_issues:
+            for issue in frontend_regression_issues:
+                print(f"  ❌ {issue}")
+                unresolved.append(issue)
+        else:
+            print("  ✅ Premium UI regression suite passed.")
 
     # ── Back up current JSON files (so they're available for next recovery) ──
     if not args.local:

@@ -194,8 +194,12 @@ def _pick_slot(slot_def, lang: str, today: str, recent_excluded: set) -> tuple[O
         if _item_date(it) >= cutoff and it.get("id") not in recent_excluded
     ]
     if not fallbacks:
-        # Loosen dedup if catalog is too narrow
-        fallbacks = [it for it in candidates if _item_date(it) >= cutoff]
+        fallbacks = [
+            it for it in candidates
+            if _item_date(it) <= today and it.get("id") not in recent_excluded
+        ]
+    if not fallbacks:
+        fallbacks = [it for it in candidates if _item_date(it) <= today]
     if fallbacks:
         # Oldest first — rotate through library
         fallbacks.sort(key=lambda x: x.get("created_at", ""))
@@ -352,19 +356,19 @@ async def get_nap_playlist(
 ) -> PlaylistResponse:
     """On-demand daytime nap playlist — calming content only.
 
-    Persists per day: first request generates + caches; subsequent requests
-    return the same playlist. Cache key = (date, lang).
+    Persists per day and membership tier: first request generates + caches;
+    subsequent requests return the same playlist.
 
     Flag-off: is_premium returns True → everyone gets 4 items from the full
     library, no lock treatment. Byte-identical to pre-paywall behavior.
     """
     today = _local_today(tz)
-    cache_key = f"{today}:{lang}"
+    premium = is_premium(current_user)
+    cache_key = f"{today}:{lang}:{'premium' if premium else 'free'}"
 
     if cache_key in _nap_cache:
         return _nap_cache[cache_key]
 
-    premium = is_premium(current_user)
     slots = NAP_SLOTS if premium else [s for s in NAP_SLOTS if s[0] in NAP_FREE_SLOTS]
 
     bedtime_ids = _today_bedtime_ids(store, today, lang)
@@ -393,8 +397,6 @@ async def get_nap_playlist(
         if should_lock_for_user(item, current_user):
             continue
         cid = item.get("id")
-        if cid in used_ids:
-            continue
         used_ids.add(cid)
         audio_file, audio_url = _audio_info(item, audio_dir)
         cover_file, cover_url = _cover_info(item, cover_dir)
@@ -415,6 +417,19 @@ async def get_nap_playlist(
                 "nap: malformed item %s in slot %s — skipping", cid, slot_name,
             )
             continue
+
+    target_count = NAP_PREMIUM_COUNT if premium else NAP_FREE_COUNT
+    if items and len(items) < target_count:
+        existing = list(items)
+        filled_slots = {item.slot for item in items}
+        missing_slots = [slot[0] for slot in slots if slot[0] not in filled_slots]
+        for index, slot_name in enumerate(missing_slots):
+            if len(items) >= target_count:
+                break
+            items.append(existing[index % len(existing)].model_copy(update={
+                "slot": slot_name,
+                "is_fallback": True,
+            }))
 
     _record_history(store, today, lang, [it.content_id for it in items], kind="nap")
 
