@@ -43,6 +43,7 @@ Usage:
 import argparse
 import json
 import os
+import re
 import subprocess
 import sys
 import time
@@ -908,6 +909,59 @@ def verify_frontend_regression_suite() -> list[str]:
     return issues
 
 
+def verify_frontend_runtime_assets(
+    frontend: str = PROD_FRONTEND,
+    client=None,
+) -> list[str]:
+    owns_client = client is None
+    if client is None:
+        client = httpx.Client(timeout=20, follow_redirects=True)
+    issues = []
+    assets = {"/version.json", "/sw.js", "/logo-new.png"}
+    try:
+        for route in ("/?source=app", "/nap-playlist"):
+            try:
+                response = client.get(f"{frontend}{route}")
+            except Exception as exc:
+                issues.append(
+                    f"Frontend runtime page failed: {route}: "
+                    f"{type(exc).__name__}: {exc}"
+                )
+                continue
+            if response.status_code != 200:
+                issues.append(
+                    f"Frontend runtime page returned {response.status_code}: {route}"
+                )
+                continue
+            assets.update(
+                path
+                for path in re.findall(
+                    r"""(?:src|href)=["']([^"']+)["']""",
+                    response.text,
+                )
+                if path.startswith("/_next/static/")
+            )
+        if not any(path.endswith(".js") for path in assets):
+            issues.append("Frontend runtime pages reference no JavaScript bundles")
+        for path in sorted(assets):
+            try:
+                response = client.get(f"{frontend}{path}")
+            except Exception as exc:
+                issues.append(
+                    f"Frontend runtime asset failed: {path}: "
+                    f"{type(exc).__name__}: {exc}"
+                )
+                continue
+            if response.status_code != 200:
+                issues.append(
+                    f"Frontend runtime asset returned {response.status_code}: {path}"
+                )
+    finally:
+        if owns_client:
+            client.close()
+    return issues
+
+
 def verify_new_items_serving(added_items: list[dict], frontend: str, api: str) -> list[str]:
     """For each newly added item, verify its audio and cover URLs are reachable.
 
@@ -1740,6 +1794,14 @@ def cmd_verify(args):
         print("\n  ✅ Nap playlists: en/hi free=3 and premium=4.")
 
     if not args.local:
+        runtime_asset_issues = verify_frontend_runtime_assets()
+        if runtime_asset_issues:
+            for issue in runtime_asset_issues:
+                print(f"  ❌ {issue}")
+                unresolved.append(issue)
+        else:
+            print("  ✅ Frontend runtime assets are reachable.")
+
         frontend_regression_issues = verify_frontend_regression_suite()
         if frontend_regression_issues:
             for issue in frontend_regression_issues:
