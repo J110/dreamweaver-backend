@@ -817,44 +817,67 @@ def verify_all_live_urls(api: str, frontend: str) -> list[str]:
 
 
 def verify_nap_playlist_counts() -> list[str]:
-    import asyncio
-    from app.api.v1 import playlist as nap_playlist
+    probe = """
+import asyncio
+import json
+from app.api.v1 import playlist as nap_playlist
 
-    class GuardStore:
-        collections = {"playlist_history": {}}
+class GuardStore:
+    collections = {"playlist_history": {}}
 
-        def _persist_collection(self, _name):
-            return None
+    def _persist_collection(self, _name):
+        return None
 
-    issues = []
+async def main():
     original_record_history = nap_playlist._record_history
     original_cache = dict(nap_playlist._nap_cache)
     try:
         nap_playlist._record_history = lambda *_args, **_kwargs: None
         nap_playlist._nap_cache.clear()
+        results = {}
         users = (
             ("free", {"subscription_tier": "free", "subscription_status": "inactive"}, 3),
             ("premium", {"subscription_tier": "premium", "subscription_status": "active"}, 4),
         )
         for lang in ("en", "hi"):
             for tier, user, expected in users:
-                response = asyncio.run(nap_playlist.get_nap_playlist(
+                response = await nap_playlist.get_nap_playlist(
                     lang=lang,
                     tz="Asia/Kolkata",
                     store=GuardStore(),
                     current_user=user,
-                ))
-                actual = len(response.data.get("items", []))
-                if actual != expected:
-                    issues.append(
-                        f"Nap playlist {lang}/{tier} returned {actual} items; expected {expected}"
-                    )
-    except Exception as exc:
-        issues.append(f"Nap playlist contract check failed: {type(exc).__name__}: {exc}")
+                )
+                results[f"{lang}/{tier}"] = {
+                    "actual": len(response.data.get("items", [])),
+                    "expected": expected,
+                }
     finally:
         nap_playlist._record_history = original_record_history
         nap_playlist._nap_cache.clear()
         nap_playlist._nap_cache.update(original_cache)
+    print(json.dumps(results))
+
+asyncio.run(main())
+"""
+    command = ["sudo", "docker", "exec", "dreamweaver-backend", "python", "-c", probe]
+    try:
+        result = subprocess.run(command, capture_output=True, text=True, timeout=60)
+    except Exception as exc:
+        return [f"Nap playlist contract check failed: {type(exc).__name__}: {exc}"]
+    if result.returncode != 0:
+        detail = (result.stderr or result.stdout).strip().splitlines()
+        return [f"Nap playlist contract check failed: {' | '.join(detail[-8:])}"]
+    try:
+        results = json.loads(result.stdout.strip().splitlines()[-1])
+    except (IndexError, json.JSONDecodeError) as exc:
+        return [f"Nap playlist contract returned invalid output: {exc}"]
+    issues = []
+    for label, counts in results.items():
+        if counts["actual"] != counts["expected"]:
+            issues.append(
+                f"Nap playlist {label} returned {counts['actual']} items; "
+                f"expected {counts['expected']}"
+            )
     return issues
 
 
