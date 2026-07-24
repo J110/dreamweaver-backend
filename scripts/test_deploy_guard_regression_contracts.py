@@ -19,17 +19,25 @@ def test_nap_contract_runs_inside_the_backend_container():
 
 
 class FakeResponse:
-    def __init__(self, status_code, text=""):
+    def __init__(self, status_code, text="", data=None):
         self.status_code = status_code
         self.text = text
+        self.data = data
+
+    def json(self):
+        return self.data
 
 
 class FakeClient:
-    def __init__(self, responses):
+    def __init__(self, responses, head_responses=None):
         self.responses = responses
+        self.head_responses = head_responses or {}
 
     def get(self, url, **_kwargs):
         return self.responses[url]
+
+    def head(self, url, **_kwargs):
+        return self.head_responses[url]
 
 
 def test_frontend_runtime_guard_rejects_missing_bundle():
@@ -60,3 +68,60 @@ def test_frontend_runtime_guard_rejects_missing_bundle():
 
 def test_verify_registers_frontend_runtime_assets():
     assert "runtime_asset_issues = verify_frontend_runtime_assets()" in SOURCE
+
+
+def test_current_playback_guard_rejects_missing_audio():
+    frontend = "https://dreamvalley.app"
+    api = "https://api.dreamvalley.app"
+    client = FakeClient(
+        {
+            f"{api}/api/v1/content?lang=en&page=1": FakeResponse(
+                200,
+                data={
+                    "data": {
+                        "items": [{
+                            "audio_variants": [{
+                                "url": "/audio/pre-gen/current.mp3",
+                            }],
+                        }],
+                    },
+                },
+            ),
+            f"{api}/api/v1/content?lang=hi&page=1": FakeResponse(
+                200,
+                data={"data": {"items": []}},
+            ),
+            f"{api}/api/v1/playlist/nap?lang=en&tz=Asia%2FKolkata": FakeResponse(
+                200,
+                data={
+                    "data": {
+                        "items": [{
+                            "audio_url": "/audio/pre-gen/nap.mp3",
+                        }],
+                    },
+                },
+            ),
+            f"{api}/api/v1/playlist/nap?lang=hi&tz=Asia%2FKolkata": FakeResponse(
+                200,
+                data={"data": {"items": []}},
+            ),
+        },
+        {
+            f"{frontend}/audio/pre-gen/current.mp3": FakeResponse(200),
+            f"{frontend}/audio/pre-gen/nap.mp3": FakeResponse(404),
+        },
+    )
+
+    issues = deploy_guard.verify_current_playback_assets(
+        frontend=frontend,
+        api=api,
+        client=client,
+    )
+
+    assert issues == [
+        "Current playback audio returned 404: /audio/pre-gen/nap.mp3"
+    ]
+
+
+def test_verify_registers_current_playback_assets():
+    assert "playback_issues = verify_current_playback_assets()" in SOURCE

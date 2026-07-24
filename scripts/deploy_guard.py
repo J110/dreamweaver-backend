@@ -962,6 +962,71 @@ def verify_frontend_runtime_assets(
     return issues
 
 
+def verify_current_playback_assets(
+    frontend: str = PROD_FRONTEND,
+    api: str = PROD_API,
+    client=None,
+) -> list[str]:
+    owns_client = client is None
+    if client is None:
+        client = httpx.Client(timeout=20, follow_redirects=True)
+    issues = []
+    audio_paths = set()
+    try:
+        sources = []
+        for lang in ("en", "hi"):
+            sources.extend((
+                f"{api}/api/v1/content?lang={lang}&page=1",
+                f"{api}/api/v1/playlist/nap?lang={lang}&tz=Asia%2FKolkata",
+            ))
+        for source in sources:
+            try:
+                response = client.get(source)
+            except Exception as exc:
+                issues.append(
+                    f"Current playback catalog failed: {source}: "
+                    f"{type(exc).__name__}: {exc}"
+                )
+                continue
+            if response.status_code != 200:
+                issues.append(
+                    f"Current playback catalog returned "
+                    f"{response.status_code}: {source}"
+                )
+                continue
+            data = response.json()
+            payload = data.get("data", data) if isinstance(data, dict) else {}
+            items = payload.get("items", []) if isinstance(payload, dict) else []
+            for item in items:
+                direct_audio = item.get("audio_url") or item.get("audio")
+                if direct_audio:
+                    audio_paths.add(direct_audio)
+                for variant in item.get("audio_variants") or []:
+                    variant_audio = variant.get("url") or variant.get("audio_url")
+                    if variant_audio:
+                        audio_paths.add(variant_audio)
+        if not audio_paths:
+            issues.append("Current playback catalogs reference no audio files")
+        for path in sorted(audio_paths):
+            url = path if path.startswith(("http://", "https://")) else f"{frontend}{path}"
+            try:
+                response = client.head(url)
+            except Exception as exc:
+                issues.append(
+                    f"Current playback audio failed: {path}: "
+                    f"{type(exc).__name__}: {exc}"
+                )
+                continue
+            if response.status_code not in (200, 206):
+                issues.append(
+                    f"Current playback audio returned {response.status_code}: {path}"
+                )
+    finally:
+        if owns_client:
+            client.close()
+    return issues
+
+
 def verify_new_items_serving(added_items: list[dict], frontend: str, api: str) -> list[str]:
     """For each newly added item, verify its audio and cover URLs are reachable.
 
@@ -1801,6 +1866,14 @@ def cmd_verify(args):
                 unresolved.append(issue)
         else:
             print("  ✅ Frontend runtime assets are reachable.")
+
+        playback_issues = verify_current_playback_assets()
+        if playback_issues:
+            for issue in playback_issues:
+                print(f"  ❌ {issue}")
+                unresolved.append(issue)
+        else:
+            print("  ✅ Current story and nap audio files are reachable.")
 
         frontend_regression_issues = verify_frontend_regression_suite()
         if frontend_regression_issues:
