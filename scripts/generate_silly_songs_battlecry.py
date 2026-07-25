@@ -1069,13 +1069,15 @@ def generate_audio_minimax(song: dict, force: bool = False) -> bool:
     audio_path = AUDIO_DIR / f"{song_id}.mp3"
 
     if audio_path.exists() and not force:
-        print(f"    Audio exists, skipping")
+        print("    Audio exists, skipping")
         return True
+    if force:
+        song.pop("audio_file", None)
+        song.pop("duration_seconds", None)
 
     lyrics = song["lyrics"]
     style = song.get("style_prompt", "")
     if not style:
-        # Fallback: build a fresh style prompt
         style, _, _ = build_style_prompt(song["age_group"])
 
     trimmed = prepare_lyrics_for_minimax(lyrics)
@@ -1083,47 +1085,51 @@ def generate_audio_minimax(song: dict, force: bool = False) -> bool:
     print(f"    Style: {style[:80]}...")
 
     for audio_attempt in range(1, 3):
-      try:
-        print(f"    Calling MiniMax Music 1.5 on Replicate (attempt {audio_attempt}/2)...")
-        output = replicate.run(
-            "minimax/music-1.5",
-            input={
-                "prompt": style,
-                "lyrics": trimmed,
-            },
-        )
-
-        if not output:
-            raise RuntimeError("No output from MiniMax")
-
-        audio_url = str(output)
-        print(f"    Got audio URL, downloading...")
-
-        resp = httpx.get(audio_url, timeout=120, follow_redirects=True)
-        if resp.status_code != 200 or len(resp.content) < 1000:
-            raise RuntimeError(f"Download failed ({resp.status_code}, {len(resp.content)} bytes)")
-
-        audio_path.write_bytes(resp.content)
-        size_kb = len(resp.content) / 1024
-        print(f"    Saved: {audio_path.name} ({size_kb:.0f} KB)")
-
-        # Get duration
         try:
-            from pydub import AudioSegment
-            seg = AudioSegment.from_file(str(audio_path))
-            duration_s = len(seg) / 1000.0
+            print(f"    Calling MiniMax Music 1.5 on Replicate (attempt {audio_attempt}/2)...")
+            output = replicate.run(
+                "minimax/music-1.5",
+                input={
+                    "prompt": style,
+                    "lyrics": trimmed,
+                },
+            )
+            if not output:
+                raise RuntimeError("No output from MiniMax")
+
+            audio_url = str(output)
+            print("    Got audio URL, downloading...")
+            resp = httpx.get(audio_url, timeout=120, follow_redirects=True)
+            if resp.status_code != 200 or len(resp.content) < 1000:
+                raise RuntimeError(
+                    f"Download failed ({resp.status_code}, {len(resp.content)} bytes)"
+                )
+
+            audio_path.write_bytes(resp.content)
+            print(f"    Saved: {audio_path.name} ({len(resp.content) / 1024:.0f} KB)")
+
+            try:
+                from pydub import AudioSegment
+                seg = AudioSegment.from_file(str(audio_path))
+                duration_s = len(seg) / 1000.0
+            except Exception as e:
+                audio_path.unlink(missing_ok=True)
+                raise RuntimeError(f"Unable to validate audio duration: {e}") from e
+
             print(f"    Duration: {duration_s:.1f}s")
+            if not 60 <= duration_s <= 90:
+                audio_path.unlink(missing_ok=True)
+                raise RuntimeError(
+                    f"Duration {duration_s:.1f}s outside required 60-90s"
+                )
+
             song["duration_seconds"] = int(duration_s)
-        except Exception:
-            song["duration_seconds"] = 75  # Default estimate
-
-        song["audio_file"] = f"{song_id}.mp3"
-        return True
-
-      except Exception as e:
-        print(f"    ERROR attempt {audio_attempt}/2: {e}")
-        if audio_attempt < 2:
-            time.sleep(10)
+            song["audio_file"] = f"{song_id}.mp3"
+            return True
+        except Exception as e:
+            print(f"    ERROR attempt {audio_attempt}/2: {e}")
+            if audio_attempt < 2:
+                time.sleep(10)
     return False
 
 
