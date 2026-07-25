@@ -1036,12 +1036,19 @@ def trim_lyrics_for_minimax(lyrics: str) -> str:
 def prepare_lyrics_for_minimax(lyrics: str, max_chars: int = 580) -> str:
     """Ensure lyrics fit MiniMax limit with margin.
 
-    Strips section tags, parent lines, empty lines. Trims from the end
+    Normalizes supported section tags, strips unsupported tags and parent
+    lines, and removes empty lines. Trims from the end
     (cuts ending/final chorus first) to preserve verses and first chorus.
     Uses 580 not 600 — leaves margin for MiniMax's own formatting.
     """
-    # Strip section tags
-    clean = re.sub(r'\[.*?\]', '', lyrics)
+    clean = re.sub(r'\[verse(?:\s+\d+)?\]', '[verse]', lyrics, flags=re.IGNORECASE)
+    clean = re.sub(r'\[ending\]', '[outro]', clean, flags=re.IGNORECASE)
+    clean = re.sub(
+        r'\[(?!(?:intro|verse|chorus|bridge|outro)\])[^]]+\]',
+        '',
+        clean,
+        flags=re.IGNORECASE,
+    )
     # Strip parent lines
     clean = strip_parent_lines(clean)
     # Strip empty lines, normalize whitespace
@@ -1081,12 +1088,8 @@ def generate_audio_minimax(song: dict, force: bool = False) -> bool:
         style, _, _ = build_style_prompt(song["age_group"])
 
     trimmed = prepare_lyrics_for_minimax(lyrics)
-    duration_style = (
-        f"{style}, complete 60-75 second arrangement, "
-        "instrumental intro and instrumental outro"
-    )
     print(f"    Lyrics: {len(lyrics)} chars -> {len(trimmed)} chars (trimmed for MiniMax)")
-    print(f"    Style: {duration_style[:80]}...")
+    print(f"    Style: {style[:80]}...")
 
     for audio_attempt in range(1, 3):
         try:
@@ -1094,7 +1097,7 @@ def generate_audio_minimax(song: dict, force: bool = False) -> bool:
             output = replicate.run(
                 "minimax/music-1.5",
                 input={
-                    "prompt": duration_style,
+                    "prompt": style,
                     "lyrics": trimmed,
                 },
             )
