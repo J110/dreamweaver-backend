@@ -9,6 +9,7 @@ with a 7-day dedup window keyed by (date, lang) in playlist_history.
 """
 
 import json
+import random
 import uuid
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -63,6 +64,7 @@ class PlaylistItem(BaseModel):
     cover_url: Optional[str] = None
     duration_seconds: Optional[int] = None
     is_fallback: bool = False
+    is_locked: bool = False
 
     @field_validator("duration_seconds", mode="before")
     @classmethod
@@ -110,6 +112,11 @@ def _load_dir(dir_name: str) -> list[dict]:
 
 def _audio_info(item: dict, audio_dir: str) -> tuple[Optional[str], Optional[str]]:
     """Return (audio_file, audio_url) for an item.
+
+    Reference impl for the canonical resolver in app/services/audio_resolver.py
+    (used by /content-audit, deploy_guard, user_facing_audit). Keep the two in
+    sync; this one additionally honors the SLOTS-table audio_dir for the drift
+    case described below.
 
     Prefers the item's own `audio_url` field — it records where the file
     actually lives on disk, which can differ from the SLOTS-table audio_dir
@@ -319,6 +326,87 @@ async def get_today_playlist(
 _nap_cache: dict[str, PlaylistResponse] = {}
 
 
+def _nap_type(slot_name: str) -> str:
+    return "lullaby" if slot_name.startswith("nap_lullaby") else slot_name.removeprefix("nap_")
+
+
+def _nap_seen_ids(store, username: str, lang: str, nap_type: str) -> set[str]:
+    records = list(store.collections.get("playlist_history", {}).values())
+    history_path = _BASE / "playlist_history.json"
+    if history_path.exists():
+        try:
+            persisted = json.loads(history_path.read_text())
+            records.extend(persisted.values() if isinstance(persisted, dict) else persisted)
+        except Exception as e:
+            logger.warning("nap: failed to read persisted playlist history: %s", e)
+    return {
+        cid
+        for record in records
+        if record.get("kind") == "nap"
+        and record.get("username") == username
+        and record.get("lang") == lang
+        and record.get("nap_type") == nap_type
+        for cid in record.get("item_ids", [])
+    }
+
+
+def _pick_nap_slot(
+    slot_def,
+    lang: str,
+    today: str,
+    excluded: set[str],
+    current_user: Optional[dict],
+    allow_locked: bool,
+) -> tuple[Optional[dict], bool, str, str]:
+    preferred, preferred_fallback, audio_dir, cover_dir = _pick_slot(
+        slot_def, lang=lang, today=today, recent_excluded=excluded,
+    )
+    _, _, _, dir_en, dir_hi, aud_en, aud_hi, cov_en, cov_hi = slot_def
+    data_dir = dir_hi if lang == "hi" else dir_en
+    audio_dir = aud_hi if lang == "hi" else aud_en
+    cover_dir = cov_hi if lang == "hi" else cov_en
+    eligible = []
+    for item in _load_dir(data_dir):
+        if item.get("lang", "en") != lang:
+            continue
+        if _item_date(item) > today:
+            continue
+        _, audio_url = _audio_info(item, audio_dir)
+        if not audio_url:
+            continue
+        if not allow_locked and should_lock_for_user(item, current_user):
+            continue
+        eligible.append(item)
+    candidates = [item for item in eligible if item.get("id") not in excluded]
+    if candidates:
+        item = random.choice(candidates)
+        return item, _item_date(item) != today, audio_dir, cover_dir
+    if eligible:
+        return None, False, audio_dir, cover_dir
+    if preferred is not None and (allow_locked or not should_lock_for_user(preferred, current_user)):
+        return preferred, preferred_fallback, audio_dir, cover_dir
+    return None, False, audio_dir, cover_dir
+
+
+def _record_nap_history(store, date: str, lang: str, username: str, ids_by_type: dict[str, list[str]]) -> None:
+    history = store.collections.setdefault("playlist_history", {})
+    for nap_type, item_ids in ids_by_type.items():
+        if not item_ids:
+            continue
+        record_id = str(uuid.uuid4())
+        history[record_id] = {
+            "id": record_id,
+            "date": date,
+            "lang": lang,
+            "kind": "nap",
+            "username": username,
+            "nap_type": nap_type,
+            "item_ids": item_ids,
+            "created_at": datetime.utcnow().isoformat(),
+        }
+    store._persist_collection("playlist_history")
+
+
 def _today_bedtime_ids(store, today: str, lang: str) -> set:
     """Content IDs from today's bedtime playlist (one-directional exclusion).
 
@@ -356,61 +444,89 @@ async def get_nap_playlist(
 ) -> PlaylistResponse:
     """On-demand daytime nap playlist — calming content only.
 
-    Persists per day and membership tier: first request generates + caches;
-    subsequent requests return the same playlist.
-
-    Flag-off: is_premium returns True → everyone gets 4 items from the full
-    library, no lock treatment. Byte-identical to pre-paywall behavior.
+    Generates a new per-user selection on every request. Each content type
+    avoids items previously placed for that username until its pool is exhausted.
     """
     today = _local_today(tz)
     premium = is_premium(current_user)
-    cache_key = f"{today}:{lang}:{'premium' if premium else 'free'}"
-
-    if cache_key in _nap_cache:
-        return _nap_cache[cache_key]
-
-    slots = NAP_SLOTS if premium else [s for s in NAP_SLOTS if s[0] in NAP_FREE_SLOTS]
+    username = (current_user or {}).get("username") or (current_user or {}).get("uid")
+    if not username:
+        return PlaylistResponse(
+            success=False,
+            data={"items": [], "is_nap": True},
+            message="Authenticated username required",
+        )
+    slots = NAP_SLOTS
 
     bedtime_ids = _today_bedtime_ids(store, today, lang)
-    recent_excluded = _recent_excluded_ids(store, lang=lang, lookback_days=7, today=today)
-    all_excluded = recent_excluded | bedtime_ids
-
     items: list[PlaylistItem] = []
-    used_ids: set[str] = set()
+    used_by_type: dict[str, set[str]] = {"lullaby": set(), "poem": set(), "story": set()}
+    placed_by_type: dict[str, list[str]] = {"lullaby": [], "poem": [], "story": []}
+    seen_by_type = {
+        nap_type: _nap_seen_ids(store, username, lang, nap_type)
+        for nap_type in used_by_type
+    }
 
-    for slot_def in slots:
-        item, is_fallback, audio_dir, cover_dir = _pick_slot(
-            slot_def, lang=lang, today=today, recent_excluded=all_excluded | used_ids,
-        )
-        # Thin pool → repeat: if exclusion emptied the slot OR the picked
-        # item is recency-locked, retry WITHOUT bedtime exclusion. The retry
-        # finds today's items (which bedtime also has) — those are recent, so
-        # should_lock_for_user passes them. Per spec: "better to repeat a
-        # calming item than show an empty/short nap playlist."
-        if item is None or should_lock_for_user(item, current_user):
-            item, is_fallback, audio_dir, cover_dir = _pick_slot(
-                slot_def, lang=lang, today=today, recent_excluded=recent_excluded | used_ids,
-            )
+    for index, slot_def in enumerate(slots):
         slot_name = slot_def[0]
+        nap_type = _nap_type(slot_name)
+        used_ids = used_by_type[nap_type]
+        allow_locked = not premium and index == NAP_PREMIUM_COUNT - 1
+        item, is_fallback, audio_dir, cover_dir = _pick_nap_slot(
+            slot_def,
+            lang=lang,
+            today=today,
+            excluded=seen_by_type[nap_type] | used_ids | bedtime_ids,
+            current_user=current_user,
+            allow_locked=allow_locked,
+        )
         if item is None:
-            continue
-        if should_lock_for_user(item, current_user):
+            item, is_fallback, audio_dir, cover_dir = _pick_nap_slot(
+                slot_def,
+                lang=lang,
+                today=today,
+                excluded=used_ids | bedtime_ids,
+                current_user=current_user,
+                allow_locked=allow_locked,
+            )
+        if item is None:
+            item, is_fallback, audio_dir, cover_dir = _pick_nap_slot(
+                slot_def,
+                lang=lang,
+                today=today,
+                excluded=used_ids,
+                current_user=current_user,
+                allow_locked=allow_locked,
+            )
+        if item is None and used_ids:
+            item, is_fallback, audio_dir, cover_dir = _pick_nap_slot(
+                slot_def,
+                lang=lang,
+                today=today,
+                excluded=set(),
+                current_user=current_user,
+                allow_locked=allow_locked,
+            )
+        if item is None:
             continue
         cid = item.get("id")
         used_ids.add(cid)
+        placed_by_type[nap_type].append(cid)
         audio_file, audio_url = _audio_info(item, audio_dir)
         cover_file, cover_url = _cover_info(item, cover_dir)
+        is_locked = allow_locked
         try:
             items.append(PlaylistItem(
                 slot=slot_name,
                 content_id=cid,
                 title=item.get("title") or item.get("title_en") or "",
                 audio_file=audio_file,
-                audio_url=audio_url,
+                audio_url=None if is_locked else audio_url,
                 cover_file=cover_file,
                 cover_url=cover_url,
                 duration_seconds=item.get("duration_seconds") or item.get("duration"),
                 is_fallback=is_fallback,
+                is_locked=is_locked,
             ))
         except ValidationError:
             logger.exception(
@@ -418,20 +534,22 @@ async def get_nap_playlist(
             )
             continue
 
-    target_count = NAP_PREMIUM_COUNT if premium else NAP_FREE_COUNT
+    target_count = NAP_PREMIUM_COUNT
     if items and len(items) < target_count:
         existing = list(items)
-        filled_slots = {item.slot for item in items}
-        missing_slots = [slot[0] for slot in slots if slot[0] not in filled_slots]
+        missing_slots = [slot[0] for slot in slots if slot[0] not in {item.slot for item in items}]
         for index, slot_name in enumerate(missing_slots):
             if len(items) >= target_count:
                 break
+            filler_locked = not premium and slot_name == "nap_lullaby_2"
             items.append(existing[index % len(existing)].model_copy(update={
                 "slot": slot_name,
                 "is_fallback": True,
+                "is_locked": filler_locked,
+                "audio_url": None if filler_locked else existing[index % len(existing)].audio_url,
             }))
 
-    _record_history(store, today, lang, [it.content_id for it in items], kind="nap")
+    _record_nap_history(store, today, lang, username, placed_by_type)
 
     response = PlaylistResponse(
         success=True,
@@ -443,5 +561,4 @@ async def get_nap_playlist(
         },
         message="Today's nap playlist",
     )
-    _nap_cache[cache_key] = response
     return response
