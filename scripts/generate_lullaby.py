@@ -754,15 +754,19 @@ def generate_audio(style_prompt: str, lyrics: str) -> tuple:
     print(f"  Style: {style_prompt[:80]}...")
     start = time.time()
 
-    result = _safe_subscribe("fal-ai/minimax-music/v2", arguments={
-        "prompt": style_prompt,
-        "lyrics_prompt": lyrics,
-        "audio_setting": {
-            "sample_rate": 44100,
-            "bitrate": 256000,
-            "format": "mp3",
+    result = _safe_subscribe(
+        "fal-ai/minimax-music/v2",
+        arguments={
+            "prompt": style_prompt,
+            "lyrics_prompt": lyrics,
+            "audio_setting": {
+                "sample_rate": 44100,
+                "bitrate": 256000,
+                "format": "mp3",
+            },
         },
-    })
+        timeout=300, attempts=1,
+    )
 
     audio_info = result.get("audio") or result.get("data", {}).get("audio")
     if not audio_info or not audio_info.get("url"):

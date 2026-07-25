@@ -1082,8 +1082,9 @@ def generate_audio_minimax(song: dict, force: bool = False) -> bool:
     print(f"    Lyrics: {len(lyrics)} chars -> {len(trimmed)} chars (trimmed for MiniMax)")
     print(f"    Style: {style[:80]}...")
 
-    try:
-        print(f"    Calling MiniMax Music 1.5 on Replicate...")
+    for audio_attempt in range(1, 3):
+      try:
+        print(f"    Calling MiniMax Music 1.5 on Replicate (attempt {audio_attempt}/2)...")
         output = replicate.run(
             "minimax/music-1.5",
             input={
@@ -1093,16 +1094,14 @@ def generate_audio_minimax(song: dict, force: bool = False) -> bool:
         )
 
         if not output:
-            print(f"    ERROR: No output from MiniMax")
-            return False
+            raise RuntimeError("No output from MiniMax")
 
         audio_url = str(output)
         print(f"    Got audio URL, downloading...")
 
         resp = httpx.get(audio_url, timeout=120, follow_redirects=True)
         if resp.status_code != 200 or len(resp.content) < 1000:
-            print(f"    ERROR: Download failed ({resp.status_code}, {len(resp.content)} bytes)")
-            return False
+            raise RuntimeError(f"Download failed ({resp.status_code}, {len(resp.content)} bytes)")
 
         audio_path.write_bytes(resp.content)
         size_kb = len(resp.content) / 1024
@@ -1121,9 +1120,11 @@ def generate_audio_minimax(song: dict, force: bool = False) -> bool:
         song["audio_file"] = f"{song_id}.mp3"
         return True
 
-    except Exception as e:
-        print(f"    ERROR: {e}")
-        return False
+      except Exception as e:
+        print(f"    ERROR attempt {audio_attempt}/2: {e}")
+        if audio_attempt < 2:
+            time.sleep(10)
+    return False
 
 
 # ── Cover Generation (FLUX via Pollinations) ─────────────────────────
@@ -1716,6 +1717,7 @@ def generate_silly_song(
             check_audio_loudness(str(audio_path))
     else:
         print(f"  ✗ Audio generation failed")
+        return None
 
     # ── STEP 6: Generate cover ──
     print(f"\n  Step 6: Generating cover via FLUX...")

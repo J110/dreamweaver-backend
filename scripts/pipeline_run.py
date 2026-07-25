@@ -1643,7 +1643,7 @@ def step_lullabies(args, state: dict) -> bool:
     ]
 
     ok, stdout, stderr, elapsed = run_command(
-        cmd, "Lullaby Generation (MiniMax)", timeout=600
+        cmd, "Lullaby Generation (MiniMax)", timeout=900
     )
 
     if ok:

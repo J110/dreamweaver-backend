@@ -173,10 +173,10 @@ MAX_PICKS = 5           # count backstop; the deadline below is the real limiter
 # 720s text + 900s render. This bounds when the pipeline moves on, NOT
 # process lifetime — an abandoned MiniMax/ElevenLabs worker thread may keep
 # the process alive until its underlying network operation returns.
-STORY_WALL_CLOCK = 720   # seconds (12 min) — text budget, all of it for text
+STORY_WALL_CLOCK = 1200  # seconds (20 min) — text budget, all of it for text
 RENDER_BUDGET = 900      # render+publish envelope from text-validation time
                          # (observed 390-700s + margin; gates abort beyond it)
-ATTEMPTS_PER_PICK = 2    # then move to a fresh combo instead of grinding one
+ATTEMPTS_PER_PICK = 3    # guideline contract, then move to a fresh combo
 ATTEMPT_FLOOR = 75       # prior estimate for one gen+validate attempt (observed ~72s)
 
 
