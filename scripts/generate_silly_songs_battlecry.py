@@ -1081,8 +1081,12 @@ def generate_audio_minimax(song: dict, force: bool = False) -> bool:
         style, _, _ = build_style_prompt(song["age_group"])
 
     trimmed = prepare_lyrics_for_minimax(lyrics)
+    duration_style = (
+        f"{style}, complete 60-75 second arrangement, "
+        "instrumental intro and instrumental outro"
+    )
     print(f"    Lyrics: {len(lyrics)} chars -> {len(trimmed)} chars (trimmed for MiniMax)")
-    print(f"    Style: {style[:80]}...")
+    print(f"    Style: {duration_style[:80]}...")
 
     for audio_attempt in range(1, 3):
         try:
@@ -1090,7 +1094,7 @@ def generate_audio_minimax(song: dict, force: bool = False) -> bool:
             output = replicate.run(
                 "minimax/music-1.5",
                 input={
-                    "prompt": style,
+                    "prompt": duration_style,
                     "lyrics": trimmed,
                 },
             )
