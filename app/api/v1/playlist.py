@@ -25,6 +25,8 @@ from app.utils.backlog import should_lock_for_user
 from app.utils.logger import get_logger
 
 FREE_SLOTS = {"silly_song", "poem", "short_story", "lullaby"}
+BEDTIME_FREE_COUNT = 4
+BEDTIME_PREMIUM_COUNT = 6
 
 # Nap playlist: calming types only (exclude funny_short + long_story).
 # 4th slot (nap_lullaby_2) is premium-only — lullabies are the most nap-appropriate.
@@ -305,6 +307,25 @@ async def get_today_playlist(
                 "playlist: malformed item %s in slot %s — skipping", item.get("id"), slot_name,
             )
             missing.append(slot_name)
+
+    target_count = BEDTIME_PREMIUM_COUNT if is_premium(current_user) else BEDTIME_FREE_COUNT
+    if items and len(items) < target_count:
+        existing = list(items)
+        filled_slots = {item.slot for item in items}
+        missing_slots = [slot[0] for slot in slots if slot[0] not in filled_slots]
+        for index, slot_name in enumerate(missing_slots):
+            if len(items) >= target_count:
+                break
+            items.append(existing[index % len(existing)].model_copy(update={
+                "slot": slot_name,
+                "is_fallback": True,
+            }))
+        slot_order = {slot[0]: index for index, slot in enumerate(slots)}
+        items.sort(key=lambda item: slot_order[item.slot])
+        all_fresh = False
+
+    filled_slots = {item.slot for item in items}
+    missing = [slot[0] for slot in slots if slot[0] not in filled_slots]
 
     _record_history(store, today, lang, [it.content_id for it in items], kind="bedtime")
 

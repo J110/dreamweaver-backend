@@ -882,6 +882,67 @@ asyncio.run(main())
     return issues
 
 
+def verify_bedtime_playlist_counts() -> list[str]:
+    probe = """
+import asyncio
+import json
+from app.api.v1 import playlist
+
+class GuardStore:
+    collections = {"playlist_history": {}}
+
+    def _persist_collection(self, _name):
+        return None
+
+async def main():
+    original_record_history = playlist._record_history
+    try:
+        playlist._record_history = lambda *_args, **_kwargs: None
+        results = {}
+        users = (
+            ("free", {"subscription_tier": "free", "subscription_status": "inactive"}, 4),
+            ("premium", {"subscription_tier": "premium", "subscription_status": "active"}, 6),
+        )
+        for lang in ("en", "hi"):
+            for tier, user, expected in users:
+                response = await playlist.get_today_playlist(
+                    lang=lang,
+                    tz="Asia/Kolkata",
+                    store=GuardStore(),
+                    current_user=user,
+                )
+                results[f"{lang}/{tier}"] = {
+                    "actual": len(response.data.get("items", [])),
+                    "expected": expected,
+                }
+        print(json.dumps(results))
+    finally:
+        playlist._record_history = original_record_history
+
+asyncio.run(main())
+"""
+    command = ["sudo", "docker", "exec", "dreamweaver-backend", "python", "-c", probe]
+    try:
+        result = subprocess.run(command, capture_output=True, text=True, timeout=60)
+    except Exception as exc:
+        return [f"Bedtime playlist contract check failed: {type(exc).__name__}: {exc}"]
+    if result.returncode != 0:
+        detail = (result.stderr or result.stdout).strip().splitlines()
+        return [f"Bedtime playlist contract check failed: {' | '.join(detail[-8:])}"]
+    try:
+        results = json.loads(result.stdout.strip().splitlines()[-1])
+    except (IndexError, json.JSONDecodeError) as exc:
+        return [f"Bedtime playlist contract returned invalid output: {exc}"]
+    issues = []
+    for label, counts in results.items():
+        if counts["actual"] != counts["expected"]:
+            issues.append(
+                f"Bedtime playlist {label} returned {counts['actual']} items; "
+                f"expected {counts['expected']}"
+            )
+    return issues
+
+
 def verify_frontend_regression_suite() -> list[str]:
     web_root = Path(os.environ.get("DREAMWEAVER_WEB_ROOT", "/opt/dreamweaver-web"))
     if not web_root.exists():
@@ -1862,6 +1923,14 @@ def cmd_verify(args):
             unresolved.append(issue)
     else:
         print("\n  ✅ Nap playlists: en/hi free=3 and premium=4.")
+
+    bedtime_issues = verify_bedtime_playlist_counts()
+    if bedtime_issues:
+        for issue in bedtime_issues:
+            print(f"  ❌ {issue}")
+            unresolved.append(issue)
+    else:
+        print("  ✅ Bedtime playlists: en/hi free=4 and premium=6.")
 
     if not args.local:
         runtime_asset_issues = verify_frontend_runtime_assets()
