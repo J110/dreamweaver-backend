@@ -12,6 +12,7 @@ import pytest
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from app.models.subscription import DEFAULT_PLANS, SubscriptionTier
+from app.services.local_store import LocalStore
 from app.utils import gating
 
 
@@ -270,6 +271,20 @@ def test_unsave_initializes_and_decrements_existing_saved_counter(fake_db, premi
     counter = fake_db.collection("user_save_counters").document(premium_user["uid"]).get().to_dict()
     assert counter["saved_count"] == 1
     assert interaction_types(fake_db, premium_user["uid"], "story-1") == []
+
+
+def test_local_store_save_and_unsave_use_immediate_transaction_reads(premium_user):
+    db = object.__new__(LocalStore)
+    db.collections = {"content": {}, "interactions": {}, "user_save_counters": {}}
+    db._lock = threading.Lock()
+    db._persist = lambda *args: None
+    seed_content(db, "story-1")
+
+    saved = run_save("story-1", premium_user, db).data
+    asyncio.run(interactions.unsave_content("story-1", premium_user, db))
+
+    assert saved["saved"] is True
+    assert db.collection("interactions").document("premium-user_story-1_save").get().exists is False
 
 
 def test_saved_library_exposes_offline_entitlement(fake_db, premium_user):

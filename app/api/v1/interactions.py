@@ -15,6 +15,9 @@ router = APIRouter()
 
 
 class _ImmediateTransaction:
+    def get(self, target):
+        return target.get()
+
     def set(self, document, data):
         document.set(data)
 
@@ -41,12 +44,12 @@ def _run_transaction(db_client, callback):
 
 
 def _saved_count_in_transaction(transaction, db_client, user_id):
-    saves = (
+    query = (
         db_client.collection("interactions")
         .where("user_id", "==", user_id)
         .where("type", "==", "save")
-        .get(transaction=transaction)
     )
+    saves = transaction.get(query)
     return len(saves)
 
 
@@ -219,14 +222,14 @@ async def save_content(
         counter_ref = db_client.collection("user_save_counters").document(user_id)
         cap = save_cap(current_user)
         def save_in_transaction(transaction):
-            content_doc = content_ref.get(transaction=transaction)
+            content_doc = transaction.get(content_ref)
             if not content_doc.exists:
                 raise HTTPException(
                     status_code=status.HTTP_404_NOT_FOUND,
                     detail="Content not found",
                 )
-            save_doc = save_ref.get(transaction=transaction)
-            counter_doc = counter_ref.get(transaction=transaction)
+            save_doc = transaction.get(save_ref)
+            counter_doc = transaction.get(counter_ref)
             current_count = (
                 max(0, int((counter_doc.to_dict() or {}).get("saved_count", 0)))
                 if counter_doc.exists
@@ -345,14 +348,14 @@ async def unsave_content(
         counter_ref = db_client.collection("user_save_counters").document(user_id)
 
         def unsave_in_transaction(transaction):
-            content_doc = content_ref.get(transaction=transaction)
+            content_doc = transaction.get(content_ref)
             if not content_doc.exists:
                 raise HTTPException(
                     status_code=status.HTTP_404_NOT_FOUND,
                     detail="Content not found",
                 )
-            save_doc = save_ref.get(transaction=transaction)
-            counter_doc = counter_ref.get(transaction=transaction)
+            save_doc = transaction.get(save_ref)
+            counter_doc = transaction.get(counter_ref)
             current_count = (
                 max(0, int((counter_doc.to_dict() or {}).get("saved_count", 0)))
                 if counter_doc.exists
