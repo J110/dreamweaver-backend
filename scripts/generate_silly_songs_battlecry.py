@@ -33,6 +33,7 @@ import re
 import sys
 import time
 from datetime import date
+from difflib import SequenceMatcher
 from io import BytesIO
 from pathlib import Path
 from urllib.parse import quote, urlparse
@@ -1303,6 +1304,60 @@ def generate_cover_flux(song: dict, force: bool = False) -> bool:
 
 
 # ── Diversity Tracking ───────────────────────────────────────────────
+
+HOOK_REJECT_JACCARD = 0.60
+HOOK_REJECT_SEQUENCE = 0.82
+HOOK_SEMANTIC_JACCARD = 0.35
+HOOK_SEMANTIC_SEQUENCE = 0.68
+HOOK_STOP_WORDS = {"a", "an", "the", "my", "your", "our", "today", "tonight", "again"}
+
+
+def _stem_hook_token(token: str) -> str:
+    if len(token) > 5 and token.endswith("ing"):
+        return token[:-3]
+    if len(token) > 5 and token.endswith(("ches", "shes", "xes", "zes")):
+        return token[:-2]
+    if len(token) > 4 and token.endswith("s") and not token.endswith("ss"):
+        return token[:-1]
+    return token
+
+
+def _normalize_hook(text: str) -> str:
+    normalized = re.sub(r"[*_`~]", "", text or "").lower()
+    normalized = re.sub(r"[^a-z0-9\s]", " ", normalized)
+    tokens = (
+        _stem_hook_token(token)
+        for token in normalized.split()
+        if token not in HOOK_STOP_WORDS
+    )
+    return " ".join(tokens)
+
+
+def _hook_similarity(candidate: str, existing: str) -> tuple[float, float]:
+    left = _normalize_hook(candidate)
+    right = _normalize_hook(existing)
+    left_tokens, right_tokens = set(left.split()), set(right.split())
+    union = left_tokens | right_tokens
+    jaccard = len(left_tokens & right_tokens) / len(union) if union else 1.0
+    sequence = SequenceMatcher(None, left, right).ratio()
+    return jaccard, sequence
+
+
+def _closest_hook_matches(candidate, existing_hooks, limit=5):
+    unique = list(dict.fromkeys(h for h in existing_hooks if h))
+    scored = [(hook, *_hook_similarity(candidate, hook)) for hook in unique]
+    return sorted(scored, key=lambda row: max(row[1], row[2]), reverse=True)[:limit]
+
+
+def _deterministic_hook_decision(candidate, existing_hooks):
+    matches = _closest_hook_matches(candidate, existing_hooks)
+    if any(j >= HOOK_REJECT_JACCARD or s >= HOOK_REJECT_SEQUENCE
+           for _, j, s in matches):
+        return "reject", matches
+    if any(j >= HOOK_SEMANTIC_JACCARD or s >= HOOK_SEMANTIC_SEQUENCE
+           for _, j, s in matches):
+        return "semantic", matches
+    return "accept", matches
 
 def _load_existing_songs() -> list:
     """Load all existing silly song metadata for diversity tracking.
