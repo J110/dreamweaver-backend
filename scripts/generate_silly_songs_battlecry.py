@@ -35,7 +35,7 @@ import time
 from datetime import date
 from io import BytesIO
 from pathlib import Path
-from urllib.parse import quote
+from urllib.parse import quote, urlparse
 
 # Load .env
 _env_path = Path(__file__).resolve().parents[1] / ".env"
@@ -1107,6 +1107,9 @@ def _run_minimax_prediction(
             if remaining <= 0:
                 break
             time.sleep(min(poll_interval, remaining))
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                break
             try:
                 response = client.get(
                     poll_url,
@@ -1127,7 +1130,7 @@ def _run_minimax_prediction(
                 if not output:
                     raise RuntimeError("MiniMax prediction returned no output")
                 return str(output)
-            if status in {"failed", "canceled"}:
+            if status in {"failed", "canceled", "aborted"}:
                 raise RuntimeError(
                     f"MiniMax prediction {status}: "
                     f"{prediction.get('error') or 'unknown error'}"
@@ -1136,6 +1139,29 @@ def _run_minimax_prediction(
     raise TimeoutError(
         f"MiniMax prediction {prediction_id} did not finish within "
         f"{timeout_seconds:.0f}s"
+    )
+
+
+def _download_replicate_output(audio_url: str) -> httpx.Response:
+    parsed = urlparse(audio_url)
+    hostname = parsed.hostname or ""
+    if (
+        parsed.scheme != "https"
+        or (
+            hostname != "replicate.delivery"
+            and not hostname.endswith(".replicate.delivery")
+        )
+    ):
+        raise RuntimeError(f"Unexpected Replicate output host: {hostname}")
+
+    token = os.environ.get("REPLICATE_API_TOKEN", "")
+    if not token:
+        raise RuntimeError("REPLICATE_API_TOKEN not set")
+    return httpx.get(
+        audio_url,
+        headers={"Authorization": f"Bearer {token}"},
+        timeout=120,
+        follow_redirects=True,
     )
 
 
@@ -1168,7 +1194,7 @@ def generate_audio_minimax(song: dict, force: bool = False) -> bool:
         print("    Calling MiniMax Music 1.5 on Replicate...")
         audio_url = _run_minimax_prediction(style, trimmed)
         print("    Got audio URL, downloading...")
-        resp = httpx.get(audio_url, timeout=120, follow_redirects=True)
+        resp = _download_replicate_output(audio_url)
         if resp.status_code != 200 or len(resp.content) < 1000:
             raise RuntimeError(
                 f"Download failed ({resp.status_code}, {len(resp.content)} bytes)"
