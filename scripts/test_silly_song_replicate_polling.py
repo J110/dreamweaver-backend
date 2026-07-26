@@ -111,6 +111,48 @@ def test_minimax_poll_does_not_request_after_deadline(monkeypatch):
     assert calls["get"] == 0
 
 
+def test_minimax_poll_timeout_never_exceeds_remaining_deadline(monkeypatch):
+    captured = {}
+
+    class Client:
+        def __init__(self, **_kwargs):
+            pass
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_args):
+            return None
+
+        def post(self, _url, **_kwargs):
+            return Response({
+                "id": "prediction-123",
+                "urls": {
+                    "get": "https://api.replicate.com/v1/predictions/prediction-123",
+                },
+            })
+
+        def get(self, _url, **kwargs):
+            captured["timeout"] = kwargs["timeout"]
+            return Response({"status": "processing"})
+
+    clock = iter([0, 0, 9.5])
+    monkeypatch.setenv("REPLICATE_API_TOKEN", "test-token")
+    monkeypatch.setattr(generator.httpx, "Client", Client)
+    monkeypatch.setattr(generator.time, "monotonic", lambda: next(clock))
+    monkeypatch.setattr(generator.time, "sleep", lambda _seconds: None)
+
+    with pytest.raises(TimeoutError):
+        generator._run_minimax_prediction(
+            "playful style",
+            "[verse]\nBrush, brush!",
+            max_polls=1,
+            timeout_seconds=10,
+        )
+
+    assert captured["timeout"] == 0.5
+
+
 def test_minimax_download_sends_bearer_token_to_replicate_delivery(monkeypatch):
     captured = {}
 

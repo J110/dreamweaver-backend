@@ -1114,7 +1114,7 @@ def _run_minimax_prediction(
                 response = client.get(
                     poll_url,
                     headers=headers,
-                    timeout=min(30, max(1, remaining)),
+                    timeout=min(30, remaining),
                 )
                 response.raise_for_status()
             except httpx.TransportError as e:
