@@ -193,6 +193,12 @@ def capture_state(api: str) -> dict:
                 # Skip Hindi audio variants
                 if url and "_hi." not in url:
                     audio_urls.append(url)
+            if (
+                not audio_urls
+                and item.get("subtype") == "silly_song"
+                and item.get("audio_file")
+            ):
+                audio_urls.append(f"/audio/silly-songs/{item['audio_file']}")
             cover_url = item.get("cover", "")
             stories.append({
                 "id": item.get("id"),

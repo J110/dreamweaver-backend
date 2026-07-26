@@ -30,6 +30,11 @@ def test_radio_contract_does_not_require_premium_long_stories():
     assert "long_story" not in required_types
 
 
+def test_story_snapshot_recognizes_single_file_silly_song_audio():
+    assert 'item.get("subtype") == "silly_song"' in SOURCE
+    assert 'f"/audio/silly-songs/{item[\'audio_file\']}"' in SOURCE
+
+
 class FakeResponse:
     def __init__(self, status_code, text="", data=None):
         self.status_code = status_code
