@@ -18,6 +18,18 @@ def test_nap_contract_runs_inside_the_backend_container():
     assert '"sudo", "docker", "exec", "dreamweaver-backend"' in SOURCE
 
 
+def test_nap_contract_uses_authenticated_four_row_users():
+    assert '"username": "deploy-guard-free"' in SOURCE
+    assert '"username": "deploy-guard-premium"' in SOURCE
+    assert '("free", {"username": "deploy-guard-free"' in SOURCE
+    assert '}, 4),' in SOURCE
+
+
+def test_radio_contract_does_not_require_premium_long_stories():
+    required_types = SOURCE.split("required_types = ", 1)[1].splitlines()[0]
+    assert "long_story" not in required_types
+
+
 class FakeResponse:
     def __init__(self, status_code, text="", data=None):
         self.status_code = status_code

@@ -837,8 +837,8 @@ async def main():
         nap_playlist._nap_cache.clear()
         results = {}
         users = (
-            ("free", {"subscription_tier": "free", "subscription_status": "inactive"}, 3),
-            ("premium", {"subscription_tier": "premium", "subscription_status": "active"}, 4),
+            ("free", {"username": "deploy-guard-free", "subscription_tier": "free", "subscription_status": "inactive"}, 4),
+            ("premium", {"username": "deploy-guard-premium", "subscription_tier": "premium", "subscription_status": "active"}, 4),
         )
         for lang in ("en", "hi"):
             for tier, user, expected in users:
@@ -1468,7 +1468,7 @@ def check_radio_health():
             total = int(total_match.group(1))
             print(f"  ✅ Radio content loaded: {total} playable tracks")
 
-            required_types = {"story", "long_story", "silly_song", "poem", "lullaby"}
+            required_types = {"story", "silly_song", "poem", "lullaby"}
             missing_types = []
             for ct in required_types:
                 ct_match = _re.search(rf"^\s*{ct}:\s*(\d+)", out, _re.MULTILINE)
