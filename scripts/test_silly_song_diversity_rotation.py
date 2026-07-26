@@ -112,6 +112,37 @@ def test_invent_anthem_exhausts_three_rejected_candidates(monkeypatch):
         )
 
 
+def test_similarity_exhaustion_never_starts_song_generation(monkeypatch):
+    monkeypatch.setattr(generator, "_load_existing_songs", lambda: [{
+        "title": "Tiny Parade Hooray!",
+        "anthem": "Tiny Parade Hooray!",
+        "age_group": "2-5",
+        "created_at": "2026-07-25",
+    }])
+    monkeypatch.setattr(
+        generator,
+        "call_mistral",
+        lambda *args, **kwargs: "Tiny Parade Today!",
+    )
+    generated = []
+    monkeypatch.setattr(
+        generator,
+        "generate_silly_song",
+        lambda **kwargs: generated.append(kwargs),
+    )
+
+    with pytest.raises(RuntimeError, match="three similarity rejections"):
+        generator.invent_anthem(
+            "celebration",
+            "2-5",
+            "wired",
+            ["Tiny Parade Hooray!"],
+            "test-key",
+            {"tiny_parade_hooray_2_5"},
+        )
+    assert generated == []
+
+
 def test_existing_hooks_are_newest_first_and_keep_yesterdays_title():
     songs = [
         {"created_at": f"2026-07-{day:02d}", "title": f"Song {day}"}
