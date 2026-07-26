@@ -2,7 +2,9 @@ import asyncio
 import importlib.util
 import os
 import sys
+import threading
 import types
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import pytest
@@ -51,7 +53,7 @@ class _Document:
         self._store = store
         self._document_id = document_id
 
-    def get(self):
+    def get(self, transaction=None):
         return _Snapshot(self._store.get(self._document_id))
 
     def set(self, data):
@@ -65,20 +67,24 @@ class _Document:
 
 
 class _Query:
-    def __init__(self, store, filters=()):
+    def __init__(self, db, store, filters=()):
+        self._db = db
         self._store = store
         self._filters = filters
 
     def where(self, field, operator, value):
         assert operator == "=="
-        return _Query(self._store, self._filters + ((field, value),))
+        return _Query(self._db, self._store, self._filters + ((field, value),))
 
-    def get(self):
-        return [
+    def get(self, transaction=None):
+        results = [
             _Snapshot(data)
             for data in self._store.values()
             if all(data.get(field) == value for field, value in self._filters)
         ]
+        if self._db.concurrent_count_barrier and not getattr(self._db._transaction_state, "active", False):
+            self._db.concurrent_count_barrier.wait()
+        return results
 
 
 class _Collection(_Query):
@@ -86,12 +92,37 @@ class _Collection(_Query):
         return _Document(self._store, document_id)
 
 
+class _Transaction:
+    def get(self, target):
+        return target.get()
+
+    def set(self, document, data):
+        document.set(data)
+
+    def update(self, document, data):
+        document.update(data)
+
+    def delete(self, document):
+        document.delete()
+
+
 class _FakeDb:
     def __init__(self):
-        self._collections = {"content": {}, "interactions": {}}
+        self._collections = {"content": {}, "interactions": {}, "user_save_counters": {}}
+        self._transaction_lock = threading.RLock()
+        self._transaction_state = threading.local()
+        self.concurrent_count_barrier = None
 
     def collection(self, name):
-        return _Collection(self._collections[name])
+        return _Collection(self, self._collections.setdefault(name, {}))
+
+    def run_transaction(self, callback):
+        with self._transaction_lock:
+            self._transaction_state.active = True
+            try:
+                return callback(_Transaction())
+            finally:
+                self._transaction_state.active = False
 
 
 @pytest.fixture(autouse=True)
@@ -207,6 +238,38 @@ def test_resave_at_cap_is_idempotent(fake_db, premium_user):
     assert result["saved_count"] == 30
     assert result["save_cap"] == 30
     assert result["offline_allowed"] is True
+
+
+@pytest.mark.parametrize(("tier", "cap"), [("free", 5), ("premium", 30)])
+def test_concurrent_new_saves_cannot_exceed_entitlement_cap(tier, cap):
+    db = _FakeDb()
+    user = {"uid": f"{tier}-concurrent", "subscription_tier": tier}
+    seed_saves(db, user["uid"], count=cap - 1)
+    seed_content(db, "race-a")
+    seed_content(db, "race-b")
+    db.concurrent_count_barrier = threading.Barrier(2)
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        responses = list(pool.map(lambda content_id: run_save(content_id, user, db), ("race-a", "race-b")))
+
+    saves = [
+        record for record in db._collections["interactions"].values()
+        if record["user_id"] == user["uid"] and record["type"] == "save"
+    ]
+    assert len(saves) == cap
+    assert sorted(response.data["saved"] for response in responses) == [False, True]
+    assert sorted(response.data["saved_count"] for response in responses) == [cap, cap]
+
+
+def test_unsave_initializes_and_decrements_existing_saved_counter(fake_db, premium_user):
+    seed_content(fake_db, "story-1")
+    seed_saves(fake_db, premium_user["uid"], count=2, include="story-1")
+
+    asyncio.run(interactions.unsave_content("story-1", premium_user, fake_db))
+
+    counter = fake_db.collection("user_save_counters").document(premium_user["uid"]).get().to_dict()
+    assert counter["saved_count"] == 1
+    assert interaction_types(fake_db, premium_user["uid"], "story-1") == []
 
 
 def test_saved_library_exposes_offline_entitlement(fake_db, premium_user):
