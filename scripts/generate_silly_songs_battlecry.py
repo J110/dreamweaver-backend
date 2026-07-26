@@ -1324,10 +1324,14 @@ def _latest_age_dates(existing_songs):
     latest = {age: None for age in AGE_GROUPS}
     for song_data in existing_songs:
         status = song_data.get("generation_status")
-        if status is not None and status not in {"published", "lyrics_only"}:
+        if status is not None and status != "published":
+            continue
+        if status is None and song_data.get("published") is False:
             continue
         age = song_data.get("age_group")
-        created = _valid_created_at(song_data.get("created_at"))
+        created = _valid_created_at(
+            song_data.get("published_at") or song_data.get("created_at")
+        )
         if age in latest and created is not None:
             latest[age] = max(filter(None, (latest[age], created)))
     return latest
@@ -1382,12 +1386,24 @@ def _closest_hook_matches(candidate, existing_hooks, limit=None):
 
 def _deterministic_hook_decision(candidate, existing_hooks):
     matches = _closest_hook_matches(candidate, existing_hooks)
-    if any(j >= HOOK_REJECT_JACCARD or s >= HOOK_REJECT_SEQUENCE
-           for _, j, s in matches):
-        return "reject", matches
-    if any(j >= HOOK_SEMANTIC_JACCARD or s >= HOOK_SEMANTIC_SEQUENCE
-           for _, j, s in matches):
-        return "semantic", matches
+    rejecting = [
+        match for match in matches
+        if match[1] >= HOOK_REJECT_JACCARD
+        or match[2] >= HOOK_REJECT_SEQUENCE
+    ]
+    if rejecting:
+        return "reject", rejecting + [
+            match for match in matches if match not in rejecting
+        ]
+    borderline = [
+        match for match in matches
+        if match[1] >= HOOK_SEMANTIC_JACCARD
+        or match[2] >= HOOK_SEMANTIC_SEQUENCE
+    ]
+    if borderline:
+        return "semantic", borderline + [
+            match for match in matches if match not in borderline
+        ]
     return "accept", matches
 
 
@@ -1664,6 +1680,7 @@ def invent_anthem(category: str, age_group: str, mood: str, existing_hooks: list
             slug = _slugify_anthem(cand)
             song_id = f"{slug}_{age_group.replace('-', '_')}"
             if song_id in existing_on_disk:
+                similarity_rejections += 1
                 print(
                     f"  Hook rejection {attempt}/3: decision=id_collision, "
                     f"candidate={cand!r}, song_id={song_id!r}"
@@ -1979,6 +1996,7 @@ def generate_silly_song(
         "battle_cry": battle_cry,
         "generation_method": "battlecry_v4",
         "generation_status": "lyrics_only" if lyrics_only else "pending_audio",
+        "published": False,
     }
 
     # Save JSON (before audio/cover so we don't lose lyrics on failure)
@@ -2016,12 +2034,6 @@ def generate_silly_song(
         print(f"  ✗ Audio generation failed")
         return None
 
-    song["generation_status"] = "published"
-    with open(json_path, "w") as f:
-        json.dump(song, f, indent=2)
-    with open(output_json, "w") as f:
-        json.dump(song, f, indent=2)
-
     # ── STEP 6: Generate cover ──
     print(f"\n  Step 6: Generating cover via FLUX...")
     time.sleep(5)
@@ -2033,12 +2045,27 @@ def generate_silly_song(
     else:
         print(f"  ✗ Cover generation failed")
 
+    if not _auto_mirror(song_id):
+        song["generation_status"] = "failed_catalog"
+        with open(json_path, "w") as f:
+            json.dump(song, f, indent=2)
+        with open(output_json, "w") as f:
+            json.dump(song, f, indent=2)
+        print(f"  ✗ Catalog insertion failed")
+        return None
+
+    song["generation_status"] = "published"
+    song["published"] = True
+    song["published_at"] = date.today().isoformat()
+    with open(json_path, "w") as f:
+        json.dump(song, f, indent=2)
+    with open(output_json, "w") as f:
+        json.dump(song, f, indent=2)
     print(f"\n  ✓ Complete: {song_id}")
-    _auto_mirror(song_id)
     return song
 
 
-def _auto_mirror(song_id: str) -> None:
+def _auto_mirror(song_id: str) -> bool:
     """Append entry into seed_output/content.json (flat list). Replaces if id exists.
 
     Mirrors the pattern used by generate_funny_shorts.py — without this call,
@@ -2048,12 +2075,12 @@ def _auto_mirror(song_id: str) -> None:
     song_json = DATA_DIR / f"{song_id}.json"
     if not song_json.exists():
         print(f"  (no {song_json} — skipping mirror)")
-        return
+        return False
     song = json.loads(song_json.read_text())
     seed_content = BASE_DIR / "seed_output" / "content.json"
     if not seed_content.exists():
         print(f"  (no {seed_content} — skipping mirror)")
-        return
+        return False
     content = json.loads(seed_content.read_text())
     if isinstance(content, dict):
         items = content.setdefault("items", [])
@@ -2090,6 +2117,7 @@ def _auto_mirror(song_id: str) -> None:
         out = items
     seed_content.write_text(json.dumps(out, indent=2, ensure_ascii=False))
     print(f"  Mirrored into {seed_content}")
+    return True
 
 
 def main():

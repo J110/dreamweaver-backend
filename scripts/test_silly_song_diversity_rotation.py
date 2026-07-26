@@ -1,5 +1,6 @@
 import json
 import sys
+from datetime import date
 
 import pytest
 
@@ -62,7 +63,25 @@ def test_deterministic_rejection_scores_beyond_five_closest_matches():
         distractors + [hard_jaccard_match],
     )
     assert decision == "reject"
-    assert any(match[0] == hard_jaccard_match for match in matches)
+    assert matches[0][0] == hard_jaccard_match
+
+
+def test_semantic_borderline_match_precedes_higher_nontrigger_scores():
+    candidate = "alpha beta gamma delta epsilon zeta eta theta"
+    distractors = [
+        "alpha beta gamma delta cat dog mouse horse",
+        "alpha beta gamma delta quick brown fox leaps",
+        "alpha beta gamma delta river mountain ocean forest",
+        "alpha beta gamma delta socks shoes hats coats",
+        "alpha beta gamma delta paper pencil crayon ruler",
+    ]
+    borderline_match = "epsilon delta gamma beta alpha red orange purple"
+    decision, matches = generator._deterministic_hook_decision(
+        candidate,
+        distractors + [borderline_match],
+    )
+    assert decision == "semantic"
+    assert matches[0][0] == borderline_match
 
 
 def test_hook_normalization_removes_markdown_case_and_punctuation():
@@ -148,6 +167,25 @@ def test_invent_anthem_retries_candidate_id_collision(monkeypatch):
         api_key="test-key",
         existing_on_disk={"tiny_parade_2_5"},
     ) == ("Clouds Wear Sneakers", "clouds_wear_sneakers")
+
+
+def test_invent_anthem_counts_three_id_collisions_as_similarity_exhaustion(
+    monkeypatch,
+):
+    monkeypatch.setattr(
+        generator,
+        "call_mistral",
+        lambda *args, **kwargs: "Tiny Parade",
+    )
+    with pytest.raises(RuntimeError, match="three similarity rejections"):
+        generator.invent_anthem(
+            category="celebration",
+            age_group="2-5",
+            mood="wired",
+            existing_hooks=[],
+            api_key="test-key",
+            existing_on_disk={"tiny_parade_2_5"},
+        )
 
 
 def test_disk_song_ids_include_orphan_assets_and_malformed_metadata(
@@ -254,6 +292,7 @@ def _stub_song_generation(monkeypatch, tmp_path, audio_result):
     monkeypatch.setattr(generator, "OUTPUT_DIR", output_dir)
     monkeypatch.setattr(generator, "AUDIO_DIR", audio_dir)
     monkeypatch.setattr(generator, "COVERS_DIR", covers_dir)
+    monkeypatch.setattr(generator, "BASE_DIR", tmp_path)
     monkeypatch.setattr(generator.time, "sleep", lambda *_: None)
     monkeypatch.setattr(generator, "generate_scene", lambda *args, **kwargs: "A child jumps on a bed")
     monkeypatch.setattr(generator, "validate_scene", lambda scene: True)
@@ -269,6 +308,11 @@ def _stub_song_generation(monkeypatch, tmp_path, audio_result):
         generator,
         "generate_audio_minimax",
         lambda *args, **kwargs: audio_result,
+    )
+    monkeypatch.setattr(
+        generator,
+        "generate_cover_flux",
+        lambda *args, **kwargs: True,
     )
     return data_dir
 
@@ -296,7 +340,9 @@ def test_failed_audio_metadata_does_not_advance_age_rotation(
     assert generator.select_next_age(generator._load_existing_songs()) == "9-12"
 
 
-def test_lyrics_only_metadata_advances_age_rotation(monkeypatch, tmp_path):
+def test_lyrics_only_metadata_does_not_advance_published_age_rotation(
+    monkeypatch, tmp_path
+):
     _stub_song_generation(monkeypatch, tmp_path, audio_result=False)
     result = generator.generate_silly_song(
         cry_id="lyrics_hook",
@@ -313,7 +359,62 @@ def test_lyrics_only_metadata_advances_age_rotation(monkeypatch, tmp_path):
         },
     )
     assert result["generation_status"] == "lyrics_only"
-    assert generator.select_next_age(generator._load_existing_songs()) == "6-8"
+    assert result["published"] is False
+    assert generator.select_next_age(generator._load_existing_songs()) == "2-5"
+
+
+def test_mirror_failure_remains_unpublished_across_invocations(
+    monkeypatch, tmp_path
+):
+    data_dir = _stub_song_generation(monkeypatch, tmp_path, audio_result=True)
+    (data_dir / "old_2_5.json").write_text(json.dumps(song("2-5", "2026-07-24")))
+    (data_dir / "old_6_8.json").write_text(json.dumps(song("6-8", "2026-07-25")))
+    result = generator.generate_silly_song(
+        cry_id="unmirrored_hook",
+        battle_cry="Unmirrored Hook",
+        age_group="9-12",
+        api_key="test-key",
+        params={
+            "category": "celebration",
+            "mood": "wired",
+            "style_prompt": "style",
+            "instruments": "piano",
+            "tempo": 100,
+        },
+    )
+    record = json.loads((data_dir / "unmirrored_hook_9_12.json").read_text())
+    assert result is None
+    assert record["generation_status"] == "failed_catalog"
+    assert record["published"] is False
+    assert "published_at" not in record
+    assert generator.select_next_age(generator._load_existing_songs()) == "9-12"
+
+
+def test_catalog_insertion_marks_metadata_published(monkeypatch, tmp_path):
+    data_dir = _stub_song_generation(monkeypatch, tmp_path, audio_result=True)
+    seed_dir = tmp_path / "seed_output"
+    seed_dir.mkdir()
+    seed_content = seed_dir / "content.json"
+    seed_content.write_text("[]")
+    result = generator.generate_silly_song(
+        cry_id="published_hook",
+        battle_cry="Published Hook",
+        age_group="6-8",
+        api_key="test-key",
+        params={
+            "category": "celebration",
+            "mood": "wired",
+            "style_prompt": "style",
+            "instruments": "piano",
+            "tempo": 100,
+        },
+    )
+    record = json.loads((data_dir / "published_hook_6_8.json").read_text())
+    catalog = json.loads(seed_content.read_text())
+    assert result["generation_status"] == "published"
+    assert record["published"] is True
+    assert record["published_at"] == date.today().isoformat()
+    assert any(item["id"] == "published_hook_6_8" for item in catalog)
 
 
 def test_existing_hooks_are_newest_first_and_keep_yesterdays_title():
