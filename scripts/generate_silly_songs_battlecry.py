@@ -1066,6 +1066,79 @@ def prepare_lyrics_for_minimax(lyrics: str, max_chars: int = 580) -> str:
     return result
 
 
+REPLICATE_MINIMAX_PREDICTIONS_URL = (
+    "https://api.replicate.com/v1/models/minimax/music-1.5/predictions"
+)
+
+
+def _run_minimax_prediction(
+    style: str,
+    lyrics: str,
+    *,
+    max_polls: int = 120,
+    poll_interval: float = 5,
+    timeout_seconds: float = 600,
+) -> str:
+    token = os.environ.get("REPLICATE_API_TOKEN", "")
+    if not token:
+        raise RuntimeError("REPLICATE_API_TOKEN not set")
+
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Content-Type": "application/json",
+        "Cancel-After": "10m",
+    }
+    deadline = time.monotonic() + timeout_seconds
+
+    with httpx.Client(timeout=30, follow_redirects=True) as client:
+        response = client.post(
+            REPLICATE_MINIMAX_PREDICTIONS_URL,
+            headers=headers,
+            json={"input": {"prompt": style, "lyrics": lyrics}},
+        )
+        response.raise_for_status()
+        prediction = response.json()
+        prediction_id = prediction["id"]
+        poll_url = prediction["urls"]["get"]
+        print(f"    Prediction {prediction_id} created, polling...")
+
+        for _ in range(max_polls):
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                break
+            time.sleep(min(poll_interval, remaining))
+            try:
+                response = client.get(
+                    poll_url,
+                    headers=headers,
+                    timeout=min(30, max(1, remaining)),
+                )
+                response.raise_for_status()
+            except httpx.TransportError as e:
+                print(f"    Poll interrupted, keeping prediction {prediction_id}: {e}")
+                continue
+
+            prediction = response.json()
+            status = prediction.get("status")
+            if status == "succeeded":
+                output = prediction.get("output")
+                if isinstance(output, list):
+                    output = output[0] if output else None
+                if not output:
+                    raise RuntimeError("MiniMax prediction returned no output")
+                return str(output)
+            if status in {"failed", "canceled"}:
+                raise RuntimeError(
+                    f"MiniMax prediction {status}: "
+                    f"{prediction.get('error') or 'unknown error'}"
+                )
+
+    raise TimeoutError(
+        f"MiniMax prediction {prediction_id} did not finish within "
+        f"{timeout_seconds:.0f}s"
+    )
+
+
 def generate_audio_minimax(song: dict, force: bool = False) -> bool:
     """Generate audio via MiniMax Music 1.5 on Replicate."""
     if replicate is None:
@@ -1091,53 +1164,40 @@ def generate_audio_minimax(song: dict, force: bool = False) -> bool:
     print(f"    Lyrics: {len(lyrics)} chars -> {len(trimmed)} chars (trimmed for MiniMax)")
     print(f"    Style: {style[:80]}...")
 
-    for audio_attempt in range(1, 3):
-        try:
-            print(f"    Calling MiniMax Music 1.5 on Replicate (attempt {audio_attempt}/2)...")
-            output = replicate.run(
-                "minimax/music-1.5",
-                input={
-                    "prompt": style,
-                    "lyrics": trimmed,
-                },
+    try:
+        print("    Calling MiniMax Music 1.5 on Replicate...")
+        audio_url = _run_minimax_prediction(style, trimmed)
+        print("    Got audio URL, downloading...")
+        resp = httpx.get(audio_url, timeout=120, follow_redirects=True)
+        if resp.status_code != 200 or len(resp.content) < 1000:
+            raise RuntimeError(
+                f"Download failed ({resp.status_code}, {len(resp.content)} bytes)"
             )
-            if not output:
-                raise RuntimeError("No output from MiniMax")
 
-            audio_url = str(output)
-            print("    Got audio URL, downloading...")
-            resp = httpx.get(audio_url, timeout=120, follow_redirects=True)
-            if resp.status_code != 200 or len(resp.content) < 1000:
-                raise RuntimeError(
-                    f"Download failed ({resp.status_code}, {len(resp.content)} bytes)"
-                )
+        audio_path.write_bytes(resp.content)
+        print(f"    Saved: {audio_path.name} ({len(resp.content) / 1024:.0f} KB)")
 
-            audio_path.write_bytes(resp.content)
-            print(f"    Saved: {audio_path.name} ({len(resp.content) / 1024:.0f} KB)")
-
-            try:
-                from pydub import AudioSegment
-                seg = AudioSegment.from_file(str(audio_path))
-                duration_s = len(seg) / 1000.0
-            except Exception as e:
-                audio_path.unlink(missing_ok=True)
-                raise RuntimeError(f"Unable to validate audio duration: {e}") from e
-
-            print(f"    Duration: {duration_s:.1f}s")
-            if not 60 <= duration_s <= 90:
-                audio_path.unlink(missing_ok=True)
-                raise RuntimeError(
-                    f"Duration {duration_s:.1f}s outside required 60-90s"
-                )
-
-            song["duration_seconds"] = int(duration_s)
-            song["audio_file"] = f"{song_id}.mp3"
-            return True
+        try:
+            from pydub import AudioSegment
+            seg = AudioSegment.from_file(str(audio_path))
+            duration_s = len(seg) / 1000.0
         except Exception as e:
-            print(f"    ERROR attempt {audio_attempt}/2: {e}")
-            if audio_attempt < 2:
-                time.sleep(10)
-    return False
+            audio_path.unlink(missing_ok=True)
+            raise RuntimeError(f"Unable to validate audio duration: {e}") from e
+
+        print(f"    Duration: {duration_s:.1f}s")
+        if not 60 <= duration_s <= 90:
+            audio_path.unlink(missing_ok=True)
+            raise RuntimeError(
+                f"Duration {duration_s:.1f}s outside required 60-90s"
+            )
+
+        song["duration_seconds"] = int(duration_s)
+        song["audio_file"] = f"{song_id}.mp3"
+        return True
+    except Exception as e:
+        print(f"    ERROR: {e}")
+        return False
 
 
 # ── Cover Generation (FLUX via Pollinations) ─────────────────────────
