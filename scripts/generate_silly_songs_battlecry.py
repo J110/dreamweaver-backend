@@ -1391,6 +1391,13 @@ def _existing_hooks_newest_first(existing_songs: list[dict]) -> list[str]:
     return [hook for hook in dict.fromkeys(hooks) if hook]
 
 
+def _comparison_hooks(existing_songs: list[dict], current_results: list[dict]) -> list[str]:
+    return list(dict.fromkeys(
+        _existing_hooks_newest_first(existing_songs)
+        + _existing_hooks_newest_first(current_results)
+    ))
+
+
 def _load_existing_songs() -> list:
     """Load all existing silly song metadata for diversity tracking.
 
@@ -1565,7 +1572,8 @@ CATEGORY_INVENT_GUIDE = {
 
 
 def invent_anthem(category: str, age_group: str, mood: str, existing_hooks: list,
-                  api_key: str, existing_on_disk: set) -> tuple:
+                  api_key: str, existing_on_disk: set,
+                  prompt_hooks: list = None) -> tuple:
     """Invent a FRESH anthem hook via the LLM, using the curated anthems only as
     few-shot STYLE seeds (not a finite menu) — so silly songs generate-fresh with
     no ceiling, mirroring the Hindi silly-song generator. Returns (hook, slug)."""
@@ -1575,7 +1583,8 @@ def invent_anthem(category: str, age_group: str, mood: str, existing_hooks: list
     seeds = seeds or [v.get("anthem") or v.get("cry", "") for v in anthem_dict.values()]
     random.shuffle(seeds)
     examples = "\n".join(f"- {s}" for s in seeds[:6])
-    recent_clean = [r for r in dict.fromkeys(existing_hooks) if r][:25]
+    prompt_hooks = prompt_hooks if prompt_hooks is not None else existing_hooks
+    recent_clean = [r for r in dict.fromkeys(prompt_hooks) if r][:25]
     avoid = "\n".join(f"- {r}" for r in recent_clean) or "- (none yet)"
     guide = CATEGORY_INVENT_GUIDE.get(category, CATEGORY_INVENT_GUIDE["battle_cry"])
 
@@ -2109,6 +2118,7 @@ Examples:
             for f in DATA_DIR.glob("*.json"):
                 existing_on_disk.add(f.stem)  # e.g. "not_sleepy_2_5"
 
+        production_songs = list(existing_songs)
         results = []
         for i in range(count):
             try:
@@ -2123,11 +2133,12 @@ Examples:
                 # Generate-fresh: invent a NEW anthem hook within the rotated
                 # category (a repeatable format, not a finite menu), so silly
                 # songs never exhaust — mirrors the Hindi silly-song generator.
-                existing_hooks = _existing_hooks_newest_first(existing_songs)
+                production_hooks = _existing_hooks_newest_first(production_songs)
+                existing_hooks = _comparison_hooks(production_songs, results)
                 anthem_text, anthem_slug = invent_anthem(
                     category=song_cat, age_group=forced_age, mood=song_mood,
                     existing_hooks=existing_hooks, api_key=api_key,
-                    existing_on_disk=existing_on_disk,
+                    existing_on_disk=existing_on_disk, prompt_hooks=production_hooks,
                 )
                 style_prompt, instruments, tempo = build_style_prompt(
                     forced_age, existing_songs, mood=song_mood

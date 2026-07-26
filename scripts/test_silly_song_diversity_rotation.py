@@ -93,3 +93,16 @@ def test_existing_hooks_are_newest_first_and_keep_yesterdays_title():
     hooks = generator._existing_hooks_newest_first(songs)
     assert hooks[0] == "Tiny Parade Hooray!"
     assert "Tiny Parade Hooray!" in hooks[:25]
+
+
+def test_current_run_result_is_compared_with_the_next_candidate():
+    hooks = generator._comparison_hooks(
+        [],
+        [{"title": "Tiny Parade Hooray!", "anthem": "Tiny Parade Hooray!"}],
+    )
+    decision, matches = generator._deterministic_hook_decision(
+        "Tiny Parade Today!",
+        hooks,
+    )
+    assert decision == "reject"
+    assert matches[0][0] == "Tiny Parade Hooray!"
