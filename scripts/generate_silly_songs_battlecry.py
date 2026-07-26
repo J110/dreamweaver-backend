@@ -1359,6 +1359,38 @@ def _deterministic_hook_decision(candidate, existing_hooks):
         return "semantic", matches
     return "accept", matches
 
+
+def _semantic_hook_is_similar(candidate: str, matches: list[tuple[str, float, float]],
+                              api_key: str) -> bool:
+    comparison = "\n".join(f"- {hook}" for hook, _, _ in matches[:5])
+    prompt = (
+        "Judge whether the candidate silly-song hook is substantially the same "
+        "idea, image, or chant as any existing hook.\n"
+        f"Candidate: {candidate}\nExisting hooks:\n{comparison}\n"
+        'Return only JSON: {"similar": true} or {"similar": false}.'
+    )
+    try:
+        raw = call_mistral(
+            prompt,
+            system_msg="You are a strict content diversity classifier.",
+            api_key=api_key,
+        )
+        parsed = json.loads(raw)
+        return parsed.get("similar") is not False
+    except Exception:
+        return True
+
+
+def _existing_hooks_newest_first(existing_songs: list[dict]) -> list[str]:
+    hooks = []
+    for song_data in reversed(existing_songs):
+        hooks.extend((
+            song_data.get("title", ""),
+            song_data.get("anthem") or song_data.get("battle_cry", ""),
+        ))
+    return [hook for hook in dict.fromkeys(hooks) if hook]
+
+
 def _load_existing_songs() -> list:
     """Load all existing silly song metadata for diversity tracking.
 
@@ -1532,7 +1564,7 @@ CATEGORY_INVENT_GUIDE = {
 }
 
 
-def invent_anthem(category: str, age_group: str, mood: str, recent: list,
+def invent_anthem(category: str, age_group: str, mood: str, existing_hooks: list,
                   api_key: str, existing_on_disk: set) -> tuple:
     """Invent a FRESH anthem hook via the LLM, using the curated anthems only as
     few-shot STYLE seeds (not a finite menu) — so silly songs generate-fresh with
@@ -1543,7 +1575,7 @@ def invent_anthem(category: str, age_group: str, mood: str, recent: list,
     seeds = seeds or [v.get("anthem") or v.get("cry", "") for v in anthem_dict.values()]
     random.shuffle(seeds)
     examples = "\n".join(f"- {s}" for s in seeds[:6])
-    recent_clean = [r for r in dict.fromkeys(recent) if r][:25]
+    recent_clean = [r for r in dict.fromkeys(existing_hooks) if r][:25]
     avoid = "\n".join(f"- {r}" for r in recent_clean) or "- (none yet)"
     guide = CATEGORY_INVENT_GUIDE.get(category, CATEGORY_INVENT_GUIDE["battle_cry"])
 
@@ -1557,25 +1589,51 @@ def invent_anthem(category: str, age_group: str, mood: str, recent: list,
         f"Do NOT reuse or closely echo any recently-used hook:\n{avoid}\n\n"
         "Output ONLY the new hook phrase — one short line, no quotes, no explanation."
     )
-    anthem_text = ""
-    for _ in range(3):
-        resp = call_mistral(prompt, system_msg=system_msg, api_key=api_key) or ""
+
+    def unique_slug(text: str) -> str:
+        base = _slugify_anthem(text)
+        suffix = age_group.replace('-', '_')
+        slug, n = base, 2
+        while f"{slug}_{suffix}" in existing_on_disk:
+            slug = f"{base}_{n}"
+            n += 1
+        return slug
+
+    rejection_feedback = ""
+    similarity_rejections = 0
+    for attempt in range(1, 4):
+        resp = call_mistral(
+            prompt + rejection_feedback,
+            system_msg=system_msg,
+            api_key=api_key,
+        ) or ""
         cand = resp.strip().splitlines()[0].strip() if resp.strip() else ""
         cand = re.sub(r'^[-•\d\.\)\s"\'\[]+', '', cand).strip().strip('"').strip("'").strip("[]").strip()
         if cand and 1 <= len(cand.split()) <= 8 and len(cand) <= 60:
-            anthem_text = cand
-            break
-        anthem_text = cand or anthem_text
-    if not anthem_text:
-        raise RuntimeError("invent_anthem: LLM returned no usable hook")
-
-    base = _slugify_anthem(anthem_text)
-    suffix = age_group.replace('-', '_')
-    slug, n = base, 2
-    while f"{slug}_{suffix}" in existing_on_disk:
-        slug = f"{base}_{n}"
-        n += 1
-    return anthem_text, slug
+            decision, matches = _deterministic_hook_decision(cand, existing_hooks)
+            semantic_rejected = False
+            if decision == "accept":
+                return cand, unique_slug(cand)
+            if decision == "semantic":
+                semantic_rejected = _semantic_hook_is_similar(cand, matches, api_key)
+                if not semantic_rejected:
+                    return cand, unique_slug(cand)
+            similarity_rejections += 1
+            closest_match = matches[0] if matches else ("(none)", 0.0, 0.0)
+            closest = ", ".join(match[0] for match in matches[:3])
+            print(
+                f"  Hook rejection {attempt}/3: decision={decision}, "
+                f"candidate={cand!r}, closest={closest_match[0]!r}, "
+                f"jaccard={closest_match[1]:.2f}, sequence={closest_match[2]:.2f}, "
+                f"semantic_rejected={semantic_rejected}"
+            )
+            rejection_feedback = (
+                f"\nPrevious candidate rejected as too similar: {cand}. "
+                f"Closest hooks: {closest}. Invent a different subject and wording."
+            )
+    if similarity_rejections == 3:
+        raise RuntimeError("invent_anthem: three similarity rejections")
+    raise RuntimeError("invent_anthem: LLM returned no usable hook")
 
 
 def generate_scene(battle_cry: str, age_group: str, api_key: str,
@@ -2065,13 +2123,11 @@ Examples:
                 # Generate-fresh: invent a NEW anthem hook within the rotated
                 # category (a repeatable format, not a finite menu), so silly
                 # songs never exhaust — mirrors the Hindi silly-song generator.
-                recent = ([s.get("title", "") for s in existing_songs[-40:]]
-                          + [s.get("anthem") or s.get("battle_cry", "")
-                             for s in existing_songs[-40:]]
-                          + [r.get("title", "") for r in results])
+                existing_hooks = _existing_hooks_newest_first(existing_songs)
                 anthem_text, anthem_slug = invent_anthem(
                     category=song_cat, age_group=forced_age, mood=song_mood,
-                    recent=recent, api_key=api_key, existing_on_disk=existing_on_disk,
+                    existing_hooks=existing_hooks, api_key=api_key,
+                    existing_on_disk=existing_on_disk,
                 )
                 style_prompt, instruments, tempo = build_style_prompt(
                     forced_age, existing_songs, mood=song_mood

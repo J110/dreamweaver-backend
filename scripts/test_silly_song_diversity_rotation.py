@@ -1,3 +1,5 @@
+import pytest
+
 from scripts import generate_silly_songs_battlecry as generator
 
 
@@ -32,3 +34,62 @@ def test_distinct_hook_skips_semantic_judgment():
         ["Tiny Parade Hooray!"],
     )
     assert decision == "accept"
+
+
+def test_semantic_paraphrase_is_rejected(monkeypatch):
+    monkeypatch.setattr(
+        generator,
+        "call_mistral",
+        lambda *args, **kwargs: '{"similar": true}',
+    )
+    assert generator._semantic_hook_is_similar(
+        "Moon Boots March",
+        [("Marching Shoes on the Moon", 0.4, 0.7)],
+        "test-key",
+    ) is True
+
+
+def test_malformed_semantic_response_is_conservatively_rejected(monkeypatch):
+    monkeypatch.setattr(generator, "call_mistral", lambda *args, **kwargs: "maybe")
+    assert generator._semantic_hook_is_similar(
+        "Moon Boots March",
+        [("Marching Shoes on the Moon", 0.4, 0.7)],
+        "test-key",
+    ) is True
+
+
+def test_invent_anthem_exhausts_three_rejected_candidates(monkeypatch):
+    responses = iter([
+        "Tiny Parade Today!",
+        "Tiny Parade Tonight!",
+        "Tiny Parade Again!",
+    ])
+    monkeypatch.setattr(
+        generator,
+        "call_mistral",
+        lambda *args, **kwargs: next(responses),
+    )
+    with pytest.raises(RuntimeError, match="three similarity rejections"):
+        generator.invent_anthem(
+            category="celebration",
+            age_group="2-5",
+            mood="wired",
+            existing_hooks=["Tiny Parade Hooray!"],
+            api_key="test-key",
+            existing_on_disk={"tiny_parade_hooray_2_5"},
+        )
+
+
+def test_existing_hooks_are_newest_first_and_keep_yesterdays_title():
+    songs = [
+        {"created_at": f"2026-07-{day:02d}", "title": f"Song {day}"}
+        for day in range(1, 26)
+    ]
+    songs.append({
+        "created_at": "2026-07-26",
+        "title": "Tiny Parade Hooray!",
+        "anthem": "Tiny Parade Hooray!",
+    })
+    hooks = generator._existing_hooks_newest_first(songs)
+    assert hooks[0] == "Tiny Parade Hooray!"
+    assert "Tiny Parade Hooray!" in hooks[:25]
