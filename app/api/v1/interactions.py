@@ -7,7 +7,7 @@ from fastapi import APIRouter, HTTPException, Depends, status
 from pydantic import BaseModel
 
 from app.dependencies import get_current_user, get_db_client
-from app.utils.gating import is_premium, save_cap
+from app.utils.gating import is_premium, offline_allowed, save_cap
 from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -201,37 +201,20 @@ async def save_content(
                 .get()
             )
             current_count = len(saves)
-            # Past the cap, a NEW heart tap NEVER fails — it registers a
-            # like instead of a save. The cap is discovered on the
-            # favorites page, not as a failed tap. Re-saving an item the
-            # user already saved is always allowed (idempotent, no cap).
             if not already_saved and current_count >= cap:
-                like_id = f"{user_id}_{content_id}_like"
-                if not db_client.collection("interactions").document(like_id).get().exists:
-                    db_client.collection("interactions").document(like_id).set({
-                        "id": like_id,
-                        "user_id": user_id,
-                        "content_id": content_id,
-                        "type": "like",
-                        "created_at": datetime.utcnow(),
-                    })
-                    likes = content_data.get("like_count", 0)
-                    db_client.collection("content").document(content_id).update({
-                        "like_count": likes + 1,
-                        "updated_at": datetime.utcnow(),
-                    })
-                logger.info(f"User {user_id} hit save cap ({cap}); liked {content_id} instead")
+                logger.info(f"User {user_id} hit save cap ({cap}) for {content_id}")
                 return InteractionResponse(
                     success=True,
                     data={
                         "content_id": content_id,
                         "saved": False,
-                        "liked": True,
+                        "liked": False,
                         "cap_reached": True,
                         "saved_count": current_count,
                         "save_cap": cap,
+                        "offline_allowed": offline_allowed(current_user),
                     },
-                    message="Save cap reached — liked instead",
+                    message="Save cap reached",
                 )
 
         # Normal save (under cap, re-save, or flag-off unlimited).
@@ -267,6 +250,7 @@ async def save_content(
                 "cap_reached": False,
                 "saved_count": saved_count_after,
                 "save_cap": cap,
+                "offline_allowed": offline_allowed(current_user),
             },
             message="Content saved successfully"
         )
@@ -428,9 +412,10 @@ async def get_user_saves(
                 "saved_content_ids": saved_ids,
                 "total": len(items),
                 # None when paywall off (unlimited). Favorites page shows the
-                # "n of cap saved — Premium unlocks 20" invitation off these.
+                # "n of cap saved — Premium unlocks 30" invitation off these.
                 "save_cap": save_cap(current_user),
                 "effective_premium": is_premium(current_user),
+                "offline_allowed": offline_allowed(current_user),
             },
             message="User saves retrieved successfully"
         )
