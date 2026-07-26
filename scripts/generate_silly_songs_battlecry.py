@@ -1310,6 +1310,33 @@ HOOK_REJECT_SEQUENCE = 0.82
 HOOK_SEMANTIC_JACCARD = 0.35
 HOOK_SEMANTIC_SEQUENCE = 0.68
 HOOK_STOP_WORDS = {"a", "an", "the", "my", "your", "our", "today", "tonight", "again"}
+AGE_GROUPS = ("2-5", "6-8", "9-12")
+
+
+def _valid_created_at(value):
+    try:
+        return date.fromisoformat(str(value)[:10])
+    except (TypeError, ValueError):
+        return None
+
+
+def _latest_age_dates(existing_songs):
+    latest = {age: None for age in AGE_GROUPS}
+    for song_data in existing_songs:
+        age = song_data.get("age_group")
+        created = _valid_created_at(song_data.get("created_at"))
+        if age in latest and created is not None:
+            latest[age] = max(filter(None, (latest[age], created)))
+    return latest
+
+
+def select_next_age(existing_songs):
+    latest = _latest_age_dates(existing_songs)
+    return min(AGE_GROUPS, key=lambda age: (
+        latest[age] is not None,
+        latest[age] or date.min,
+        AGE_GROUPS.index(age),
+    ))
 
 
 def _stem_hook_token(token: str) -> str:
@@ -2103,14 +2130,6 @@ Examples:
         print(f"  Mode: {'lyrics only' if args.lyrics_only else 'full (lyrics + audio + cover)'}")
         print(f"{'='*60}")
 
-        # Pre-assign age groups: cycle through 2-5, 6-8, 9-12 to guarantee
-        # coverage. This prevents the diversity selector from picking the same
-        # age group twice while missing another entirely.
-        age_cycle = ["2-5", "6-8", "9-12"]
-        assigned_ages = [age_cycle[i % len(age_cycle)] for i in range(count)]
-        random.shuffle(assigned_ages)  # Shuffle so order varies
-        print(f"  Age rotation: {' → '.join(assigned_ages)}")
-
         # Build set of song IDs that already have JSON files on disk,
         # so we don't "generate" an existing song and count it as new.
         existing_on_disk = set()
@@ -2126,7 +2145,14 @@ Examples:
                     print(f"\n  Waiting 35s for Mistral rate limit...")
                     time.sleep(35)
 
-                forced_age = assigned_ages[i]
+                latest = _latest_age_dates(existing_songs)
+                forced_age = select_next_age(existing_songs)
+                print(
+                    "  Age selection: "
+                    + ", ".join(f"{age}={latest[age] or 'never'}"
+                                for age in AGE_GROUPS)
+                    + f" -> {forced_age}"
+                )
                 song_mood = assigned_moods[i]
                 song_cat = assigned_cats[i]
 

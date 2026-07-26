@@ -3,6 +3,38 @@ import pytest
 from scripts import generate_silly_songs_battlecry as generator
 
 
+def song(age, created_at):
+    return {"age_group": age, "created_at": created_at}
+
+
+def test_select_next_age_uses_least_recent_generation():
+    history = [
+        song("2-5", "2026-07-26"),
+        song("6-8", "2026-07-24"),
+        song("9-12", "2026-07-25"),
+    ]
+    assert generator.select_next_age(history) == "6-8"
+
+
+def test_three_daily_selections_cover_every_age():
+    history = []
+    selected = []
+    for day in ("2026-07-26", "2026-07-27", "2026-07-28"):
+        age = generator.select_next_age(history)
+        selected.append(age)
+        history.append(song(age, day))
+    assert selected == ["2-5", "6-8", "9-12"]
+
+
+def test_missing_dates_are_oldest_with_fixed_tie_order():
+    history = [
+        song("2-5", "2026-07-26"),
+        song("6-8", "not-a-date"),
+        song("9-12", "2026-07-25"),
+    ]
+    assert generator.select_next_age(history) == "6-8"
+
+
 def test_tiny_parade_variants_are_deterministically_rejected():
     decision, matches = generator._deterministic_hook_decision(
         "Tiny Parade Today!",
