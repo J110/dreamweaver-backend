@@ -1323,6 +1323,9 @@ def _valid_created_at(value):
 def _latest_age_dates(existing_songs):
     latest = {age: None for age in AGE_GROUPS}
     for song_data in existing_songs:
+        status = song_data.get("generation_status")
+        if status is not None and status not in {"published", "lyrics_only"}:
+            continue
         age = song_data.get("age_group")
         created = _valid_created_at(song_data.get("created_at"))
         if age in latest and created is not None:
@@ -1370,10 +1373,11 @@ def _hook_similarity(candidate: str, existing: str) -> tuple[float, float]:
     return jaccard, sequence
 
 
-def _closest_hook_matches(candidate, existing_hooks, limit=5):
+def _closest_hook_matches(candidate, existing_hooks, limit=None):
     unique = list(dict.fromkeys(h for h in existing_hooks if h))
     scored = [(hook, *_hook_similarity(candidate, hook)) for hook in unique]
-    return sorted(scored, key=lambda row: max(row[1], row[2]), reverse=True)[:limit]
+    matches = sorted(scored, key=lambda row: max(row[1], row[2]), reverse=True)
+    return matches[:limit] if limit is not None else matches
 
 
 def _deterministic_hook_decision(candidate, existing_hooks):
@@ -1442,6 +1446,18 @@ def _load_existing_songs() -> list:
                 pass
     songs.sort(key=lambda s: s.get("created_at") or "")
     return songs
+
+
+def _existing_song_ids_on_disk() -> set[str]:
+    ids = set()
+    for directory, pattern in (
+        (DATA_DIR, "*.json"),
+        (AUDIO_DIR, "*.mp3"),
+        (COVERS_DIR, "*.webp"),
+    ):
+        if directory.exists():
+            ids.update(path.stem for path in directory.glob(pattern))
+    return ids
 
 
 # Full battle cry library (expandable)
@@ -1611,7 +1627,15 @@ def invent_anthem(category: str, age_group: str, mood: str, existing_hooks: list
     random.shuffle(seeds)
     examples = "\n".join(f"- {s}" for s in seeds[:6])
     prompt_hooks = prompt_hooks if prompt_hooks is not None else existing_hooks
-    recent_clean = [r for r in dict.fromkeys(prompt_hooks) if r][:25]
+    recent_clean = []
+    normalized_prompt_hooks = set()
+    for hook in prompt_hooks:
+        normalized = _normalize_hook(hook)
+        if hook and normalized and normalized not in normalized_prompt_hooks:
+            recent_clean.append(hook)
+            normalized_prompt_hooks.add(normalized)
+        if len(recent_clean) == 25:
+            break
     avoid = "\n".join(f"- {r}" for r in recent_clean) or "- (none yet)"
     guide = CATEGORY_INVENT_GUIDE.get(category, CATEGORY_INVENT_GUIDE["battle_cry"])
 
@@ -1626,15 +1650,6 @@ def invent_anthem(category: str, age_group: str, mood: str, existing_hooks: list
         "Output ONLY the new hook phrase — one short line, no quotes, no explanation."
     )
 
-    def unique_slug(text: str) -> str:
-        base = _slugify_anthem(text)
-        suffix = age_group.replace('-', '_')
-        slug, n = base, 2
-        while f"{slug}_{suffix}" in existing_on_disk:
-            slug = f"{base}_{n}"
-            n += 1
-        return slug
-
     rejection_feedback = ""
     similarity_rejections = 0
     for attempt in range(1, 4):
@@ -1646,14 +1661,42 @@ def invent_anthem(category: str, age_group: str, mood: str, existing_hooks: list
         cand = resp.strip().splitlines()[0].strip() if resp.strip() else ""
         cand = re.sub(r'^[-•\d\.\)\s"\'\[]+', '', cand).strip().strip('"').strip("'").strip("[]").strip()
         if cand and 1 <= len(cand.split()) <= 8 and len(cand) <= 60:
+            slug = _slugify_anthem(cand)
+            song_id = f"{slug}_{age_group.replace('-', '_')}"
+            if song_id in existing_on_disk:
+                print(
+                    f"  Hook rejection {attempt}/3: decision=id_collision, "
+                    f"candidate={cand!r}, song_id={song_id!r}"
+                )
+                rejection_feedback = (
+                    f"\nPrevious candidate rejected because its song ID already "
+                    f"exists: {cand}. Invent a different subject and wording."
+                )
+                continue
             decision, matches = _deterministic_hook_decision(cand, existing_hooks)
             semantic_rejected = False
             if decision == "accept":
-                return cand, unique_slug(cand)
+                closest_match = matches[0] if matches else ("(none)", 0.0, 0.0)
+                print(
+                    f"  Hook accepted: candidate={cand!r}, "
+                    f"closest={closest_match[0]!r}, "
+                    f"jaccard={closest_match[1]:.2f}, "
+                    f"sequence={closest_match[2]:.2f}, "
+                    f"semantic_result=not_run"
+                )
+                return cand, slug
             if decision == "semantic":
                 semantic_rejected = _semantic_hook_is_similar(cand, matches, api_key)
                 if not semantic_rejected:
-                    return cand, unique_slug(cand)
+                    closest_match = matches[0] if matches else ("(none)", 0.0, 0.0)
+                    print(
+                        f"  Hook accepted: candidate={cand!r}, "
+                        f"closest={closest_match[0]!r}, "
+                        f"jaccard={closest_match[1]:.2f}, "
+                        f"sequence={closest_match[2]:.2f}, "
+                        f"semantic_result={semantic_rejected}"
+                    )
+                    return cand, slug
             similarity_rejections += 1
             closest_match = matches[0] if matches else ("(none)", 0.0, 0.0)
             closest = ", ".join(match[0] for match in matches[:3])
@@ -1935,6 +1978,7 @@ def generate_silly_song(
         "battle_cry_id": cry_id,
         "battle_cry": battle_cry,
         "generation_method": "battlecry_v4",
+        "generation_status": "lyrics_only" if lyrics_only else "pending_audio",
     }
 
     # Save JSON (before audio/cover so we don't lose lyrics on failure)
@@ -1964,8 +2008,19 @@ def generate_silly_song(
         if audio_path.exists():
             check_audio_loudness(str(audio_path))
     else:
+        song["generation_status"] = "failed_audio"
+        with open(json_path, "w") as f:
+            json.dump(song, f, indent=2)
+        with open(output_json, "w") as f:
+            json.dump(song, f, indent=2)
         print(f"  ✗ Audio generation failed")
         return None
+
+    song["generation_status"] = "published"
+    with open(json_path, "w") as f:
+        json.dump(song, f, indent=2)
+    with open(output_json, "w") as f:
+        json.dump(song, f, indent=2)
 
     # ── STEP 6: Generate cover ──
     print(f"\n  Step 6: Generating cover via FLUX...")
@@ -2132,10 +2187,7 @@ Examples:
 
         # Build set of song IDs that already have JSON files on disk,
         # so we don't "generate" an existing song and count it as new.
-        existing_on_disk = set()
-        if DATA_DIR.exists():
-            for f in DATA_DIR.glob("*.json"):
-                existing_on_disk.add(f.stem)  # e.g. "not_sleepy_2_5"
+        existing_on_disk = _existing_song_ids_on_disk()
 
         production_songs = list(existing_songs)
         results = []
@@ -2213,8 +2265,8 @@ Examples:
         else:
             print(f"  Generated 0/{count} songs — generation failed (see errors above).")
         print(f"{'='*60}\n")
-        if count and not results:
-            sys.exit(3)  # produced 0 of N requested — not a crash, but not OK
+        if len(results) < count:
+            sys.exit(3)
         return
 
     # ── Legacy modes: --test, --all, --cry ──
@@ -2278,6 +2330,8 @@ Examples:
     print(f"    - Does V3 make you laugh more than V1?")
     print(f"    - Are the rhymes driving the content (not the other way)?")
     print(f"{'='*60}\n")
+    if len(results) < len(songs_to_gen):
+        sys.exit(3)
 
 
 if __name__ == "__main__":
