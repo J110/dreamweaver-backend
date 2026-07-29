@@ -1,6 +1,7 @@
 from calendar import monthrange
+from contextlib import nullcontext
 from datetime import datetime, timedelta, timezone
-from typing import Optional
+from typing import Callable, Optional
 
 FREE_MONTHLY_CREDITS = 3
 PREMIUM_MONTHLY_CREDITS = 30
@@ -53,34 +54,79 @@ def premium_period_credit_fields(
     return fields
 
 
+def update_user_credit_state(
+    db_client,
+    uid: str,
+    updater: Callable[[dict], dict],
+) -> dict:
+    user_ref = db_client.collection("users").document(uid)
+
+    def apply_update(transaction=None) -> dict:
+        if transaction is None:
+            snapshot = user_ref.get()
+        else:
+            snapshot = user_ref.get(transaction=transaction)
+        if not snapshot.exists:
+            raise RuntimeError("User credit record not found")
+
+        current = dict(snapshot.to_dict() or {})
+        fields = updater(current)
+        if fields:
+            if transaction is None:
+                user_ref.update(fields)
+            else:
+                transaction.update(user_ref, fields)
+            current.update(fields)
+        return current
+
+    transaction_factory = getattr(db_client, "transaction", None)
+    if callable(transaction_factory):
+        from google.cloud import firestore
+
+        transaction = transaction_factory()
+
+        @firestore.transactional
+        def apply_firestore_update(active_transaction):
+            return apply_update(active_transaction)
+
+        return apply_firestore_update(transaction)
+
+    lock = getattr(db_client, "_lock", None)
+    with lock if lock is not None else nullcontext():
+        return apply_update()
+
+
 def refresh_credit_period(
     db_client,
     uid: str,
     user_data: dict,
     now: datetime | None = None,
 ) -> dict:
-    refreshed = dict(user_data)
-    tier = str(refreshed.get("subscription_tier") or "free").lower()
-    if tier == "premium":
-        return refreshed
-
     current = _utc(now or datetime.now(timezone.utc))
     start, end = calendar_month_period(current)
-    period_end = _parse_iso(refreshed.get("credits_period_end"))
-    legacy_free = "lifetime_free_remaining" in refreshed and not refreshed.get("credits_period_start")
-    if period_end and current < period_end and not legacy_free:
-        return refreshed
 
-    fields = {
-        "credits_remaining": FREE_MONTHLY_CREDITS,
-        "credits_period_start": start.isoformat(),
-        "credits_period_end": end.isoformat(),
-        "lifetime_free_remaining": 0,
-        "credits_frozen": False,
-    }
+    def refresh_fields(latest: dict) -> dict:
+        tier = str(latest.get("subscription_tier") or "free").lower()
+        if tier == "premium":
+            return {}
+
+        period_end = _parse_iso(latest.get("credits_period_end"))
+        legacy_free = (
+            "lifetime_free_remaining" in latest
+            and not latest.get("credits_period_start")
+        )
+        if period_end and current < period_end and not legacy_free:
+            return {}
+
+        return {
+            "credits_remaining": FREE_MONTHLY_CREDITS,
+            "credits_period_start": start.isoformat(),
+            "credits_period_end": end.isoformat(),
+            "lifetime_free_remaining": 0,
+            "credits_frozen": False,
+        }
+
     try:
-        db_client.collection("users").document(uid).update(fields)
+        return update_user_credit_state(db_client, uid, refresh_fields)
     except Exception as exc:
-        raise CreditRefreshError(f"credit refresh failed for uid={uid}") from exc
-    refreshed.update(fields)
-    return refreshed
+        raise CreditRefreshError("Credit refresh failed") from exc

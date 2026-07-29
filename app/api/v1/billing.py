@@ -26,7 +26,10 @@ from app.services.stripe_client import (
     verify_webhook,
 )
 from app.services.analytics_posthog import emit_event as ph_emit
-from app.utils.credits import premium_period_credit_fields
+from app.utils.credits import (
+    premium_period_credit_fields,
+    update_user_credit_state,
+)
 from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -103,10 +106,18 @@ def _find_user_by_customer(db_client, customer_id: str) -> Optional[dict]:
 
 
 def _persist_user_update(db_client, uid: str, fields: dict) -> None:
-    try:
+    def persist() -> None:
         db_client.collection("users").document(uid).update(fields)
         if uid in _local_users:
             _local_users[uid].update(fields)
+
+    try:
+        lock = getattr(db_client, "_lock", None)
+        if lock is None:
+            persist()
+        else:
+            with lock:
+                persist()
     except Exception as e:
         logger.warning("user record update failed uid=%s: %s", uid, e)
 
@@ -296,7 +307,7 @@ def _handle_invoice_failed(db_client, event) -> None:
 
 
 def _handle_invoice_paid(db_client, event) -> None:
-    """Renewal happy path. Fired on every successful subscription invoice."""
+    """Apply a monthly grant for a validated advancing renewal period."""
     invoice = event["data"]["object"]
     customer_id = invoice.get("customer")
     user = _find_user_by_customer(db_client, customer_id)
@@ -331,36 +342,99 @@ def _handle_invoice_paid(db_client, event) -> None:
         pass
     if period_start_iso is None:
         period_start_iso = _iso_from_ts(invoice.get("period_start"))
-    fields = {
-        "subscription_status": "active",
-        "subscription_tier": "premium",
-        **premium_period_credit_fields(period_start_iso, iso_end),
-    }
-    if iso_end:
-        fields["current_period_end"] = iso_end
 
-    # Stripe occasionally surfaces an updated email on the invoice — sync it.
-    customer_email = invoice.get("customer_email")
-    if customer_email and user.get("billing_email") != customer_email:
-        fields["billing_email"] = customer_email
-    # recovery_email: frozen at first capture, used by restore matching.
-    # billing_email tracks latest; recovery_email is the canonical lookup key.
-    if customer_email and not user.get("recovery_email"):
-        fields["recovery_email"] = customer_email.strip().lower()
-
-    _persist_user_update(db_client, user["uid"], fields)
-
-    ph_emit(
-        user.get("family_id") or "",
-        "subscription_renewed",
-        {
-            "invoice_id": invoice.get("id"),
-            "amount_paid": invoice.get("amount_paid"),
-            "currency": invoice.get("currency"),
-            "plan": plan_id,
-            "current_period_end": iso_end,
-        },
+    invoice_id = invoice.get("id")
+    billing_reason = invoice.get("billing_reason")
+    try:
+        valid_period = (
+            period_start_iso is not None
+            and iso_end is not None
+            and int(period_end_ts) > int(
+                ((invoice.get("lines") or {}).get("data") or [{}])[0]
+                .get("period", {})
+                .get("start")
+            )
+        )
+    except (TypeError, ValueError):
+        valid_period = False
+    valid_renewal = (
+        billing_reason == "subscription_cycle"
+        and bool(invoice_id)
+        and valid_period
     )
+
+    customer_email = invoice.get("customer_email")
+    applied = {"value": False}
+    committed_fields = {"value": {}}
+
+    def invoice_fields(current: dict) -> dict:
+        fields = {}
+        applied["value"] = False
+
+        if customer_email and current.get("billing_email") != customer_email:
+            fields["billing_email"] = customer_email
+        if customer_email and not current.get("recovery_email"):
+            fields["recovery_email"] = customer_email.strip().lower()
+
+        stored_period_ends = []
+        for field_name in (
+            "credits_period_end",
+            "credits_last_applied_period_end",
+        ):
+            try:
+                stored_period_ends.append(
+                    datetime.fromisoformat(
+                        str(current.get(field_name)).replace("Z", "+00:00")
+                    )
+                )
+            except (TypeError, ValueError):
+                pass
+        candidate_end = (
+            datetime.fromisoformat(iso_end)
+            if iso_end is not None
+            else None
+        )
+        advances_period = (
+            candidate_end is not None
+            and (
+                not stored_period_ends
+                or candidate_end > max(stored_period_ends)
+            )
+        )
+        duplicate_invoice = (
+            current.get("credits_last_applied_invoice_id") == invoice_id
+        )
+        if valid_renewal and advances_period and not duplicate_invoice:
+            fields.update({
+                "subscription_status": "active",
+                "subscription_tier": "premium",
+                "current_period_end": iso_end,
+                **premium_period_credit_fields(period_start_iso, iso_end),
+                "credits_last_applied_invoice_id": invoice_id,
+                "credits_last_applied_period_start": period_start_iso,
+                "credits_last_applied_period_end": iso_end,
+            })
+            applied["value"] = True
+
+        committed_fields["value"] = fields
+        return fields
+
+    update_user_credit_state(db_client, user["uid"], invoice_fields)
+    if user["uid"] in _local_users:
+        _local_users[user["uid"]].update(committed_fields["value"])
+
+    if applied["value"]:
+        ph_emit(
+            user.get("family_id") or "",
+            "subscription_renewed",
+            {
+                "invoice_id": invoice_id,
+                "amount_paid": invoice.get("amount_paid"),
+                "currency": invoice.get("currency"),
+                "plan": plan_id,
+                "current_period_end": iso_end,
+            },
+        )
 
 
 def _handle_trial_will_end(db_client, event) -> None:
@@ -529,6 +603,7 @@ _HANDLERS = {
     "customer.subscription.updated": _handle_sub_updated,
     "customer.subscription.deleted": _handle_sub_deleted,
     "invoice.payment_failed": _handle_invoice_failed,
+    "invoice.paid": _handle_invoice_paid,
     "invoice.payment_succeeded": _handle_invoice_paid,
     "customer.subscription.trial_will_end": _handle_trial_will_end,
     "charge.dispute.created": _handle_charge_dispute,

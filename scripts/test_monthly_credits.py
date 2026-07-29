@@ -20,6 +20,19 @@ class FakeDocument:
             raise RuntimeError("write failed")
         self.store[self.uid].update(fields)
 
+    def get(self):
+        return FakeSnapshot(self.store[self.uid])
+
+
+class FakeSnapshot:
+    exists = True
+
+    def __init__(self, data):
+        self.data = data
+
+    def to_dict(self):
+        return dict(self.data)
+
 
 class FakeCollection:
     def __init__(self, store, fail=False):
@@ -84,6 +97,31 @@ def test_premium_period_is_owned_by_stripe():
     }}
     refreshed = refresh_credit_period(FakeDb(users), "u1", users["u1"], NOW)
     assert refreshed["credits_remaining"] == 4
+
+
+def test_free_refresh_re_reads_current_premium_tier_before_reset():
+    stale_free_snapshot = {
+        "subscription_tier": "free",
+        "credits_remaining": 1,
+        "credits_period_end": "2026-07-01T00:00:00+00:00",
+    }
+    users = {"u1": {
+        "subscription_tier": "premium",
+        "credits_remaining": 30,
+        "credits_period_start": "2026-07-29T00:00:00+00:00",
+        "credits_period_end": "2026-08-29T00:00:00+00:00",
+    }}
+
+    refreshed = refresh_credit_period(
+        FakeDb(users),
+        "u1",
+        stale_free_snapshot,
+        NOW,
+    )
+
+    assert refreshed["subscription_tier"] == "premium"
+    assert refreshed["credits_remaining"] == 30
+    assert users["u1"]["credits_remaining"] == 30
 
 
 def test_premium_renewal_fields_reset_monthly_pool_without_touching_topups():
