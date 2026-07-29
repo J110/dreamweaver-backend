@@ -63,3 +63,5 @@ data/tokens.json
 
 # Test outputs
 seed_output/funny_shorts_test/
+
+.worktrees/
