@@ -6,6 +6,12 @@ from fastapi import APIRouter, HTTPException, Depends, status, Query
 from pydantic import BaseModel
 
 from app.dependencies import get_current_user, get_db_client
+from app.utils.credits import (
+    FREE_MONTHLY_CREDITS,
+    PREMIUM_MONTHLY_CREDITS,
+    available_credit_total,
+    refresh_credit_period,
+)
 from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -21,18 +27,18 @@ SUBSCRIPTION_TIERS = [
     {
         "id": "free",
         "name": "Free",
-        "description": "Tonight's bedtime bundle, 3 free personalized stories",
+        "description": "3 personalized story credits every month",
         "price": 0,
         "price_annual": 0,
         "currency": "USD",
         # Credit model
-        "credits_per_period": None,   # Free has no monthly pool
-        "lifetime_free_credits": 3,   # 3-burst onboarding
+        "credits_per_period": FREE_MONTHLY_CREDITS,
+        "lifetime_free_credits": None,
         "backlog_days": 3,            # Free sees last 3 days of ritual content
         "features": [
             "Tonight's bedtime bundle (silly song, story, poem, lullaby)",
             "Last 3 days of stories saved",
-            "3 free personalized stories",
+            "3 personalized story credits every month",
             "Default narration voices",
         ],
     },
@@ -47,7 +53,7 @@ SUBSCRIPTION_TIERS = [
         "trial_days_annual": 7,
         "trial_days_monthly": 7,
         # Credit model
-        "credits_per_period": 30,     # Premium pool, resets each renewal
+        "credits_per_period": PREMIUM_MONTHLY_CREDITS,
         "lifetime_free_credits": None,
         "backlog_days": 30,           # Premium sees last 30 days
         "top_up_pack": {
@@ -126,7 +132,11 @@ async def get_current_subscription(
                 detail="User not found"
             )
         
-        user_data = user_doc.to_dict()
+        user_data = refresh_credit_period(
+            db_client,
+            user_id,
+            user_doc.to_dict(),
+        )
         tier_id = user_data.get("subscription_tier", "free")
         
         # Find tier details
@@ -156,7 +166,7 @@ async def get_current_subscription(
                 "topup_credits_remaining": user_data.get("topup_credits_remaining", 0),
                 "credits_period_end": user_data.get("credits_period_end"),
                 "credits_frozen": bool(user_data.get("credits_frozen")),
-                "lifetime_free_remaining": user_data.get("lifetime_free_remaining", 3),
+                "credits_total": available_credit_total(user_data),
             },
             message="Current subscription retrieved successfully"
         )

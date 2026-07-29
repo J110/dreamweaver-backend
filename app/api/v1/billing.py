@@ -26,6 +26,7 @@ from app.services.stripe_client import (
     verify_webhook,
 )
 from app.services.analytics_posthog import emit_event as ph_emit
+from app.utils.credits import premium_period_credit_fields
 from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -159,13 +160,7 @@ def _handle_sub_created(db_client, event) -> None:
         "subscription_status": sub.get("status") or "active",
         "subscription_tier": "premium",
         "current_period_end": period_end_iso,
-        # Phase 0 step 1.4e: seed monthly credits on subscription start
-        # (covers both new signups and trial starts; trial users get
-        # the same 30 credits during their 7-day trial).
-        "credits_remaining": 30,
-        "credits_period_start": period_start_iso,
-        "credits_period_end": period_end_iso,
-        "credits_frozen": False,
+        **premium_period_credit_fields(period_start_iso, period_end_iso),
     }
 
     # Capture billing_email from the customer object.
@@ -324,20 +319,7 @@ def _handle_invoice_paid(db_client, event) -> None:
     except Exception:
         pass
 
-    fields = {
-        "subscription_status": "active",
-        "subscription_tier": "premium",
-        # Phase 0 step 1.4e: reset monthly credits on every successful
-        # invoice (covers post-trial first charge AND every renewal).
-        # Top-up credits (topup_credits_remaining) are NOT touched —
-        # they survive the period boundary by design.
-        "credits_remaining": 30,
-        "credits_frozen": False,
-    }
     iso_end = _iso_from_ts(period_end_ts)
-    if iso_end:
-        fields["current_period_end"] = iso_end
-        fields["credits_period_end"] = iso_end
     # Period start: line item period.start, fall back to invoice period_start.
     period_start_iso = None
     try:
@@ -349,8 +331,13 @@ def _handle_invoice_paid(db_client, event) -> None:
         pass
     if period_start_iso is None:
         period_start_iso = _iso_from_ts(invoice.get("period_start"))
-    if period_start_iso:
-        fields["credits_period_start"] = period_start_iso
+    fields = {
+        "subscription_status": "active",
+        "subscription_tier": "premium",
+        **premium_period_credit_fields(period_start_iso, iso_end),
+    }
+    if iso_end:
+        fields["current_period_end"] = iso_end
 
     # Stripe occasionally surfaces an updated email on the invoice — sync it.
     customer_email = invoice.get("customer_email")

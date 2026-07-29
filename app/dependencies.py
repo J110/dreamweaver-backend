@@ -12,6 +12,7 @@ from typing import Dict, Optional
 from fastapi import Depends, Header, HTTPException, status
 
 from app.config import Settings, get_settings
+from app.utils.credits import FREE_MONTHLY_CREDITS
 from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -250,8 +251,8 @@ def _ensure_subscription_fields(db_client, uid: str, user_data: dict) -> None:
 
 
 CREDIT_FIELD_DEFAULTS = {
-    "lifetime_free_remaining": 3,
-    "credits_remaining": 0,
+    "lifetime_free_remaining": 0,
+    "credits_remaining": FREE_MONTHLY_CREDITS,
     "topup_credits_remaining": 0,
     "credits_period_start": None,
     "credits_period_end": None,
@@ -268,12 +269,8 @@ def _ensure_credit_fields(db_client, uid: str, user_data: dict) -> None:
     / _ensure_subscription_fields / _ensure_email_field shapes.
 
     Defaults:
-      lifetime_free_remaining = 3   (everyone gets the onboarding burst,
-                                     even existing users — they've never
-                                     been gated, so 3 fresh starts is
-                                     fair)
-      credits_remaining       = 0   (premium users get 30 seeded by
-                                     subscription.created webhook)
+      lifetime_free_remaining = 0
+      credits_remaining       = 3
       topup_credits_remaining = 0
       credits_period_*        = null
       credits_frozen          = false
@@ -497,7 +494,11 @@ async def get_current_user(
             )
         # Lazy backfill chain. Each helper is idempotent and fast on cached records.
         family_id = user.get("family_id")
-        if not family_id or "email" not in user:
+        if (
+            not family_id
+            or "email" not in user
+            or any(field not in user for field in CREDIT_FIELD_DEFAULTS)
+        ):
             try:
                 db = get_db_client()
                 user_doc = db.collection("users").document(user["uid"]).get()
