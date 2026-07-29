@@ -45,7 +45,11 @@ def is_premium(user: Optional[dict]) -> bool:
 
 # Save caps (Step 3). None = unlimited (pre-paywall behavior, flag off).
 FREE_SAVE_CAP = 5
-PREMIUM_SAVE_CAP = 20
+PREMIUM_SAVE_CAP = 30
+
+
+def offline_allowed(user: Optional[dict]) -> bool:
+    return is_premium(user)
 
 
 def save_cap(user: Optional[dict]) -> Optional[int]:
@@ -53,7 +57,7 @@ def save_cap(user: Optional[dict]) -> Optional[int]:
 
     Flag-off returns None so saves stay unlimited (byte-identical to
     today). Flag-on: premium (incl. native-dormant / outside-allowlist)
-    gets 20, gated free users get 5.
+    gets 30, gated free users get 5.
     """
     if not get_settings().paywall_enabled:
         return None

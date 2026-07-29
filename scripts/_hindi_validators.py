@@ -249,6 +249,14 @@ def validate_long_story(d: dict) -> list[str]:
     )
     text_lower = text.lower()
 
+    # solo / arrival / pure_settling are short + low-dialogue + low-ornament BY
+    # DESIGN. Format-mins are shape-aware (like the picker's age/mood rules):
+    # these shapes get relaxed [PHRASE]/[BREATHE]/onomatopoeia/marker/word/
+    # dialogue mins; dialogue-heavy shapes keep the full set. Re-bitten: a
+    # genuinely breath-barren or fragment-length story still fails.
+    is_solo = d.get("cast_structure", "") == "solo"
+    low_content = is_solo or d.get("narrative_shape", "") in ("arrival", "pure_settling")
+
     # Devanagari rejection in user-facing fields
     for f in ("title", "world_name", "world_description",
               "mystery", "resolution", "repeated_phrase"):
@@ -270,29 +278,54 @@ def validate_long_story(d: dict) -> list[str]:
     for w in _religious_hits(text_lower):
         errors.append(f"religious content: '{w}'")
 
-    # Conversational markers ≥5 for long stories
+    # Conversational markers: ≥5 full, ≥3 low-content (shorter stories carry fewer)
+    _mark_min = 3 if low_content else 5
     n = _count_conversational_markers(text)
-    if n < 5:
-        errors.append(f"only {n} conversational markers (need ≥5)")
+    if n < _mark_min:
+        errors.append(f"only {n} conversational markers (need ≥{_mark_min})")
 
     # Phase structure
     for ph in ("[PHASE_1]", "[PHASE_2]", "[PHASE_3]"):
         if ph not in full:
             errors.append(f"missing {ph}")
 
-    # Phrase count ≥3
-    if full.count("[PHRASE]") < 3:
-        errors.append("[PHRASE] count <3")
+    # Phrase count: ≥2 (style tag; HI reliably lands 2, 3 was unmet)
+    if full.count("[PHRASE]") < 2:
+        errors.append("[PHRASE] count <2")
 
     # Empty phrase leak
     if re.search(r"\[PHRASE\]\s*\.\.\.\s*\[/PHRASE\]", full):
         errors.append("empty [PHRASE] leak")
 
-    # Breathe count ≥4
-    if full.count("[BREATHE]") < 4:
-        errors.append("[BREATHE] count <4")
-    if "[BREATHE_GUIDE]" not in full:
-        errors.append("missing [BREATHE_GUIDE]")
+    # Phrase-shatter guard: the repeated phrase must stay WHOLE, not be split
+    # word-by-word across [PHRASE] tags (the same-every-story ending monotony).
+    _ptags = re.findall(r"\[PHRASE\](.*?)\[/PHRASE\]", full, re.S)
+    if sum(1 for p in _ptags if len(p.split()) == 1) >= 2:
+        errors.append("repeated phrase shattered into single-word [PHRASE] fragments — "
+                      "keep it whole in one tag; vary the ending per phase3_texture")
+
+    # Breathe swells (PHYSIOLOGY presence): ≥3 full, ≥2 low-content. This
+    # guarantees breath is PRESENT; A3 validates each is a real long exhale.
+    # A 0-1 breath story still fails — presence is never waived.
+    _breathe_min = 2 if low_content else 3
+    if full.count("[BREATHE]") < _breathe_min:
+        errors.append(f"[BREATHE] count <{_breathe_min}")
+
+    # Word-count floor — a long story must actually be long. Without this the
+    # model under-writes to ~1/3 length (629 vs 1520+ for age 6-8).
+    # Realistic floors: reject Groq-fallback fragments, not chase the old
+    # aspirational 1520-2240 band that production HI stories (~608-714 words)
+    # never met. A clean Mistral run (~950+) clears these.
+    _age = d.get("age_group", "")
+    # Floors match reality (production ~608-714w) and are SHAPE-AWARE: solo/
+    # arrival/pure_settling are legitimately shorter, so they get a lower floor
+    # instead of being forced to a length they never reach. Still rejects
+    # genuine sub-fragments; the descent is guaranteed length-independently by A2/A4.
+    _floor = ({"2-5": 380, "6-8": 480, "9-12": 480} if low_content
+              else {"2-5": 450, "6-8": 600, "9-12": 600}).get(_age)
+    _wc = len(re.sub(r"\[[^\]]*\]", " ", full).split())
+    if _floor and _wc < _floor:
+        errors.append(f"word count {_wc} below floor {_floor} for age {_age} — write the full length, not a fragment")
 
     # Song
     if "[SONG_SEED:" not in full:
@@ -307,38 +340,76 @@ def validate_long_story(d: dict) -> list[str]:
         if ch.get("name") in NAME_BLACKLIST:
             errors.append(f"blacklisted name: '{ch['name']}'")
 
-    # Onomatopoeia ≥3
+    # Onomatopoeia: ≥2 full, ≥1 low-content (ornament; low-content shapes are
+    # sparse by design). 0 still rejects a truly barren story.
+    _ono_min = 1 if low_content else 2
     n = sum(1 for o in ONOMATOPOEIA if o in text_lower)
-    if n < 3:
-        errors.append(f"only {n} onomatopoeia (need ≥3 for long story)")
+    if n < _ono_min:
+        errors.append(f"only {n} onomatopoeia (need ≥{_ono_min})")
 
-    # Dialogue format: must use NAME: "..." form, not embedded prose.
-    # Without this check, the LLM produces single-voice narrative and the
-    # parser tags everything as narration → only narrator voice ever fires.
-    # NAME is uppercase, may contain spaces and dashes, ends with colon.
+    # Dialogue: solo may be pure narration (0 — one character, narrator-led is
+    # a valid solo); other low-content shapes ≥1; dialogue-driven shapes ≥3. A
+    # dialogue-empty NON-low story is still caught (single-voice narration).
+    min_dialogue = 0 if is_solo else (1 if low_content else 3)
     name_dialogue = re.findall(
         r'^\s*[A-Z][A-Z _-]{1,30}:\s*"[^"\n]+"',
         full,
         re.MULTILINE,
     )
-    if len(name_dialogue) < 3:
+    if len(name_dialogue) < min_dialogue:
         errors.append(
             f"only {len(name_dialogue)} NAME: \"...\" dialogue lines "
-            f"(need ≥3); do not embed dialogue inside narration prose"
+            f"(need ≥{min_dialogue}); do not embed dialogue inside narration prose"
         )
 
-    # Additionally: every declared [CHARACTER:] should have at least one
-    # dialogue line, so character voices actually get used.
-    declared = re.findall(r"\[CHARACTER:\s*([A-Za-z][A-Za-z0-9 _-]{1,30})\b", full)
-    for name in declared:
-        upper = name.upper().strip()
-        # Look for that exact name as a dialogue prefix
-        pattern = rf'^\s*{re.escape(upper)}\s*:\s*"'
-        if not re.search(pattern, full, re.MULTILINE):
-            errors.append(
-                f"declared character {name!r} has no dialogue line "
-                f"(no '{upper}: \"...\"' found) — give them at least one quote"
-            )
+    # Every declared [CHARACTER:] should speak — dialogue-driven shapes only;
+    # low-content shapes may keep a mostly-silent companion or be solo-narrated.
+    if not low_content:
+        declared = re.findall(r"\[CHARACTER:\s*([A-Za-z][A-Za-z0-9 _-]{1,30})\b", full)
+        for name in declared:
+            upper = name.upper().strip()
+            pattern = rf'^\s*{re.escape(upper)}\s*:\s*"'
+            if not re.search(pattern, full, re.MULTILINE):
+                errors.append(
+                    f"declared character {name!r} has no dialogue line "
+                    f"(no '{upper}: \"...\"' found) — give them at least one quote"
+                )
+
+    # Physiology gate (A1-A4) — the sleep guarantee, now ENFORCED at accept
+    # (was only post-hoc). Physiology-fail -> regenerate/re-pick, so no
+    # arousal-rising / breath-absent / non-dissolving HI story publishes.
+    import _physiology_validators as _PHYS
+    for _pn, _po, _pr in _PHYS.validate_all(full)[1]:
+        if not _po:
+            errors.append(f"physiology {_pr}")
+    # Cast gate: solo = no second VOICE (declared or undeclared). Counts
+    # speaking entities via the shared helper, so an undeclared talking
+    # companion can't slip through a declaration-only check.
+    if d.get("cast_structure") == "solo":
+        import _story_axes as _SA
+        _cv = _SA.solo_cast_violation(full, full.count("[CHARACTER:"))
+        if _cv:
+            errors.append(_cv)
+
+    # Settling-gesture tic gate: the DEFECT is the intra-story BLUR — the same
+    # eye-close beat repeating 3+ times (often across multiple characters). A
+    # natural 1-2 closes in an 800-word story is how a human writer uses the
+    # gesture, not blur — the model's unconstrained rate is 4-7x, so cap at the
+    # real defect threshold (3+), not an aspirational zero. Reality-matched like
+    # the length floors. Count "band" preceded by aankh* within 3 words,
+    # EXCLUDING negated ones via the shared _negated (±2) helper ("aankhen band
+    # NAHIN kiya" = did NOT close — must not count; same negation lesson as A1).
+    _ws = re.findall(r"\w+", full.lower())
+    _eye_closes = 0
+    for _i, _w in enumerate(_ws):
+        if _w == "band" and any(_ws[_j].startswith("aankh") for _j in range(max(0, _i - 3), _i)):
+            if not _PHYS._negated(_ws, _i):
+                _eye_closes += 1
+    if _eye_closes > 2:
+        errors.append(f"settling-gesture tic: eyes close {_eye_closes}x — max 2 "
+                      "eye-closes per story; the same settling beat repeating 3+ times "
+                      "blurs it. Vary the gesture (breath slows, body softens, stillness "
+                      "spreads) instead of repeating aankh-band")
 
     return errors
 

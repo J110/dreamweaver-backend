@@ -31,6 +31,7 @@ SUBSCRIPTION_TIERS = [
         "price": 0,
         "price_annual": 0,
         "currency": "USD",
+        "max_saves": 5,
         # Credit model
         "credits_per_period": FREE_MONTHLY_CREDITS,
         "lifetime_free_credits": None,
@@ -49,6 +50,7 @@ SUBSCRIPTION_TIERS = [
         "price": 6,
         "price_annual": 40,
         "currency": "USD",
+        "max_saves": 30,
         "billing_period": "monthly",
         "trial_days_annual": 7,
         "trial_days_monthly": 7,

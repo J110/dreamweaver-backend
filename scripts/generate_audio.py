@@ -19,6 +19,7 @@ import fcntl
 import io
 import json
 import math
+import statistics
 import logging
 import os
 import re
@@ -2399,6 +2400,8 @@ def main():
                         if durs:
                             story["duration"] = max(1, math.ceil(sum(durs) / len(durs) / 60))
                             fields["duration"] = story["duration"]
+                            story["duration_seconds"] = int(round(statistics.median(durs)))
+                            fields["duration_seconds"] = story["duration_seconds"]
                         per_content_updates.append((story["id"], fields))
                         updated += 1
 

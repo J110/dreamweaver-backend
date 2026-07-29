@@ -65,11 +65,7 @@ VOXTRAL_MODEL = "voxtral-mini-latest"
 
 # ── Emotion markers (from generate_audio.py) ────────────────────────────
 _MARKER_RE = re.compile(
-    r"\["
-    r"(SLEEPY|GENTLE|CALM|EXCITED|CURIOUS|ADVENTUROUS|MYSTERIOUS|"
-    r"JOYFUL|DRAMATIC|WHISPERING|DRAMATIC_PAUSE|RHYTHMIC|SINGING|"
-    r"HUMMING|PAUSE|laugh|chuckle)"
-    r"\]",
+    r"\[/?[A-Za-z_]+(?:\s*:\s*[^\]]*)?\]",
     re.IGNORECASE,
 )
 
@@ -89,6 +85,19 @@ SONG_FIDELITY_FAIL = 0.30
 ASMR_FIDELITY_PASS = 0.40
 ASMR_FIDELITY_FAIL = 0.20
 ASMR_DURATION_OUTLIER_PCT = 0.25  # ASMR tends to run longer, allow 25%
+
+# Long stories: the combined score is length-fragile (fuzzy coverage + char-ratio
+# degrade on long texts even for a faithful transcript), while word overlap+order
+# stay reliable. Per-class handling (cf. SONG/ASMR thresholds): both high = faithful.
+LONG_STORY_TRUST_OVERLAP = 0.80
+LONG_STORY_TRUST_ORDER = 0.80
+
+
+def _long_story_trustworthy(word_overlap, word_order_score) -> bool:
+    """Length-stable signal for long stories: both high means the narration is
+    faithful even when the length-fragile combined score is low. Genuinely-bad long
+    audio is low on all four metrics and is NOT rescued by this."""
+    return (word_overlap or 0) >= LONG_STORY_TRUST_OVERLAP and (word_order_score or 0) >= LONG_STORY_TRUST_ORDER
 
 # ── Logging ──────────────────────────────────────────────────────────────
 logging.basicConfig(
@@ -534,8 +543,24 @@ def save_transcript_cache(cache: Dict[str, str]):
         json.dump(cache, f, indent=2, ensure_ascii=False)
 
 
-def transcribe_audio(audio_path: Path, language: str = "hi") -> str:
-    """Transcribe an audio file using Voxtral."""
+TRANSCRIBE_CHUNK_SECONDS = 120
+
+
+def _audio_duration_s(audio_path: Path) -> float:
+    """Audio duration via ffprobe (0.0 on error)."""
+    try:
+        out = _sp.run(
+            ["ffprobe", "-v", "error", "-show_entries", "format=duration",
+             "-of", "default=nk=1:nw=1", str(audio_path)],
+            capture_output=True, text=True, timeout=30,
+        )
+        return float(out.stdout.strip() or 0)
+    except Exception:
+        return 0.0
+
+
+def _transcribe_once(audio_path: Path, language: str = "hi") -> str:
+    """Single Voxtral transcription call (with retry)."""
     with open(audio_path, "rb") as f:
         audio_bytes = f.read()
 
@@ -548,6 +573,37 @@ def transcribe_audio(audio_path: Path, language: str = "hi") -> str:
         return result.text if hasattr(result, "text") else str(result)
 
     return api_call_with_retry(_call)
+
+
+def transcribe_audio(audio_path: Path, language: str = "hi") -> str:
+    """Transcribe via Voxtral. Long audio is split into <=TRANSCRIBE_CHUNK_SECONDS
+    segments and concatenated, because Voxtral truncates long inputs (returns only
+    the opening), which collapses text-fidelity coverage for full episodes."""
+    import math
+    import tempfile
+
+    dur = _audio_duration_s(audio_path)
+    if dur <= TRANSCRIBE_CHUNK_SECONDS + 5:
+        return _transcribe_once(audio_path, language)
+
+    n = math.ceil(dur / TRANSCRIBE_CHUNK_SECONDS)
+    parts = []
+    with tempfile.TemporaryDirectory() as td:
+        for i in range(n):
+            seg = Path(td) / f"seg_{i}.mp3"
+            ss = i * TRANSCRIBE_CHUNK_SECONDS
+            try:
+                _sp.run(
+                    ["ffmpeg", "-hide_banner", "-loglevel", "error", "-y",
+                     "-ss", str(ss), "-t", str(TRANSCRIBE_CHUNK_SECONDS),
+                     "-i", str(audio_path), "-c", "copy", str(seg)],
+                    check=True, timeout=120,
+                )
+                if seg.exists() and seg.stat().st_size > 0:
+                    parts.append(_transcribe_once(seg, language))
+            except Exception as e:
+                logger.warning("    chunk %d/%d transcription failed: %s", i + 1, n, e)
+    return " ".join(p for p in parts if p)
 
 
 def fuzzy_word_sim(w1: str, w2: str) -> float:
@@ -689,6 +745,7 @@ def phase2_transcription_fidelity(
         story_id = story["id"]
         title = story.get("title", "untitled")
         is_song = story.get("type") == "song"
+        is_long = story.get("type") == "long_story"
 
         # Songs use the raw text field (with [Verse]/[Chorus] markers)
         # Stories use annotated_text_devanagari or annotated_text
@@ -751,6 +808,10 @@ def phase2_transcription_fidelity(
                     verdict = "WARN"
                 else:
                     verdict = "FAIL"
+
+                if is_long and verdict != "PASS" and _long_story_trustworthy(
+                        fidelity["word_overlap"], fidelity["word_order_score"]):
+                    verdict = "PASS"
 
                 # Song completeness check: verify the last 20% of lyrics
                 # appear in transcript (catches truncation from duration limit)

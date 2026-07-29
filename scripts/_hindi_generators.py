@@ -19,9 +19,11 @@ Engine matrix (per v2 specs):
 from __future__ import annotations
 
 import base64
+import hashlib
 import io
 import json
 import os
+import random
 import re
 import sys
 import time
@@ -44,11 +46,13 @@ WEB_ROOT = REPO_ROOT / "dreamweaver-web"
 PROD_BACKEND_PUBLIC = Path("/opt/dreamweaver-backend/public")
 PROD_COVER_STORE   = Path("/opt/cover-store")
 PROD_AUDIO_STORE   = Path("/opt/audio-store")
+PROD_JSON_STORE    = Path("/opt/json-store")   # per-content JSON recovery store
 ON_PROD = PROD_BACKEND_PUBLIC.exists()
 
 sys.path.insert(0, str(Path(__file__).parent))
 
-from _hindi_llm import generate_json, LLMError  # type: ignore
+from _hindi_llm import generate_json, LLMError, LLMDeadlineExceeded  # type: ignore
+from _llm_timeout import _hard_timeout  # type: ignore
 from _hindi_validators import VALIDATORS, validate_structured, has_major, silly_song_cap_for  # type: ignore
 from _hindi_qa_critic import critic_review, is_qa_enabled  # type: ignore
 
@@ -67,6 +71,160 @@ def _slug(s: str, n: int = 4) -> str:
 
 def _hex(n: int = 4) -> str:
     return uuid.uuid4().hex[:n]
+
+
+def _content_hash(text: str, n: int = 8) -> str:
+    """Content-derived id suffix. Deterministic on purpose: the same text
+    yields the same id, so an exact regeneration trips the collision guard
+    instead of silently overwriting a published item; different content
+    always gets a different id."""
+    return hashlib.sha256((text or "").encode("utf-8")).hexdigest()[:n]
+
+
+class ContentIdCollision(RuntimeError):
+    """A freshly generated id — or one of its per-content/asset/recovery-store
+    paths — already exists. Fail CLOSED before any paid rendering; NEVER
+    overwrite an existing generated item. (2026-07-15 post-mortem: slug-only
+    HI ids were reused on 05-19/06-15/07-15, each publish silently destroying
+    the previous story; the symptom surfaced as a stale-cover mismatch on
+    mobile via the 30-day cover cache.)"""
+
+
+class ContentIdGuardError(RuntimeError):
+    """The collision guard could not PROVE the id is fresh: the catalog
+    snapshot exists but is unreadable or has an invalid shape. Fail closed
+    BEFORE paid rendering — an unverifiable catalog must never be treated as
+    an empty one."""
+
+
+# ── Exclusive id reservations: close the check-then-write race between two
+# pipeline processes (cron + manual run) that both pass the existence checks
+# before either has written anything. O_CREAT|O_EXCL makes creation atomic;
+# only ONE process can hold a reservation. Cleanup semantics for a
+# reservation whose holder failed without releasing:
+#   - same process        → re-entrant (allowed; a retry in-process is safe)
+#   - holder pid dead     → stale, safe to take over
+#   - older than TTL      → stale (holder wedged), safe to take over
+#   - held by a LIVE peer → ContentIdCollision (fail closed)
+RESERVATION_TTL_S = 2 * 3600  # far above the longest observed generation
+
+
+def _reservation_path(sid: str) -> Path:
+    return BASE_DIR / "data" / ".id_reservations" / f"{sid}.json"
+
+
+def _pid_alive(pid: int) -> bool:
+    if pid <= 0:
+        return False
+    try:
+        os.kill(pid, 0)
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        return True  # exists, owned by someone else
+    except OSError:
+        return False
+    return True
+
+
+def _reserve_content_id(sid: str, log_prefix: str = "") -> None:
+    path = _reservation_path(sid)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    payload = json.dumps({"sid": sid, "pid": os.getpid(), "ts": time.time()})
+    for attempt in (1, 2):
+        try:
+            fd = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+            with os.fdopen(fd, "w") as f:
+                f.write(payload)
+            print(f"{log_prefix}  id-guard: reserved {sid} (pid={os.getpid()})")
+            return
+        except FileExistsError:
+            pid, ts, readable = -1, 0.0, False
+            try:
+                held = json.loads(path.read_text())
+                pid = int(held.get("pid") or -1)
+                ts = float(held.get("ts") or 0)
+                readable = pid > 0 and ts > 0
+            except Exception:
+                readable = False
+            if readable:
+                if pid == os.getpid():
+                    return  # re-entrant within this process
+                stale = (not _pid_alive(pid)) or (time.time() - ts > RESERVATION_TTL_S)
+                detail = f"pid={pid}, age={time.time() - ts:.0f}s"
+            else:
+                # Unreadable/zero-byte reservation: the holder is unknown —
+                # possibly a peer mid-write. Treat it as ACTIVE (fail closed,
+                # do NOT unlink) while the FILE's mtime is younger than the
+                # TTL; reclaim only once the file itself has outlived it.
+                try:
+                    fs_age = time.time() - path.stat().st_mtime
+                except FileNotFoundError:
+                    continue  # vanished under us — retry the exclusive create
+                stale = fs_age > RESERVATION_TTL_S
+                detail = f"unreadable reservation, fs_age={fs_age:.0f}s"
+            if stale and attempt == 1:
+                print(f"{log_prefix}  id-guard: stale reservation for {sid} "
+                      f"({detail}; TTL {RESERVATION_TTL_S}s) — taking over")
+                try:
+                    path.unlink()
+                except FileNotFoundError:
+                    pass
+                continue
+            raise ContentIdCollision(
+                f"id {sid} is reserved by another process ({detail}) — refusing")
+
+
+def _release_content_id(sid: str) -> None:
+    """Release after successful publication (or a handled failure in the
+    owning process). Only the owner may release; foreign/unreadable
+    reservations are left for the staleness rules above."""
+    path = _reservation_path(sid)
+    try:
+        held = json.loads(path.read_text())
+        if int(held.get("pid") or -1) == os.getpid():
+            path.unlink()
+    except FileNotFoundError:
+        pass
+    except Exception:
+        pass  # unreadable → let TTL/pid-death cleanup handle it
+
+
+def _guard_new_content_id(sid: str, paths: "list[Path]", log_prefix: str = "") -> None:
+    """Collision guard, run BEFORE paid audio/cover rendering. Refuses to
+    proceed when the id is already in the catalog snapshot or when any of the
+    given per-content / served-asset / recovery-store paths exist; raises
+    ContentIdGuardError (also terminal) when the catalog cannot be verified.
+    On success takes the exclusive id reservation (see _reserve_content_id)."""
+    clashes = [str(p) for p in paths if p is not None and Path(p).exists()]
+    seed = BASE_DIR / "seed_output" / "content.json"
+    if ON_PROD and not seed.exists():
+        # On production a missing catalog snapshot means the id CANNOT be
+        # verified — fail closed. Local/manual environments legitimately run
+        # without a snapshot and keep the path-only checks.
+        raise ContentIdGuardError(
+            f"catalog snapshot {seed} is MISSING on production — failing "
+            f"closed before paid render")
+    if seed.exists():
+        try:
+            data = json.loads(seed.read_text())
+        except Exception as e:
+            raise ContentIdGuardError(
+                f"catalog snapshot {seed} is unreadable ({e}) — failing closed "
+                f"before paid render") from e
+        items = data.get("items") if isinstance(data, dict) else data
+        if not isinstance(items, list) or not all(isinstance(i, dict) for i in items):
+            raise ContentIdGuardError(
+                f"catalog snapshot {seed} has an invalid shape (expected a list "
+                f"of dicts) — failing closed before paid render")
+        if any(i.get("id") == sid for i in items):
+            clashes.insert(0, f"catalog id already present: {sid}")
+    if clashes:
+        raise ContentIdCollision(
+            f"refusing to overwrite existing content for id {sid}: "
+            + "; ".join(clashes[:6]))
+    _reserve_content_id(sid, log_prefix)
+    print(f"{log_prefix}  id-guard: {sid} fresh (catalog + {len(paths)} paths clear)")
 
 
 _SHORT_STORY_TAG_RE = re.compile(
@@ -118,7 +276,8 @@ def _abstract_flux_prompt(_prompt: str) -> str:
     )
 
 
-def _flux_cover(prompt: str, w: int = 1024, h: int = 1024) -> bytes | None:
+def _flux_cover(prompt: str, w: int = 1024, h: int = 1024,
+                deadline: "float | None" = None) -> bytes | None:
     """Generate a cover via Pollinations FLUX.
 
     Switched from Together AI on 2026-05-22: Together's 0.83 QPS free-tier
@@ -128,6 +287,9 @@ def _flux_cover(prompt: str, w: int = 1024, h: int = 1024) -> bytes | None:
     Retry chain: original prompt → sanitized no-people prompt → fully
     abstract prompt. Logs loudly on total failure so cron-log scrapers
     can surface stories needing manual cover regen.
+
+    `deadline` (absolute epoch) clamps every request's timeout to the
+    remaining time and skips retries/backoffs that no longer fit.
     """
     from urllib.parse import quote
 
@@ -135,13 +297,25 @@ def _flux_cover(prompt: str, w: int = 1024, h: int = 1024) -> bytes | None:
         print("  POLLINATIONS_API_KEY missing, skipping cover")
         return None
 
+    def _timeout() -> float | None:
+        # Per-request timeout clamped to the remaining render time; None
+        # signals "no time left — don't launch".
+        if deadline is None:
+            return 180.0
+        rem = deadline - time.time()
+        return None if rem < 5 else min(180.0, rem)
+
     def _call(p: str) -> bytes | None:
+        t = _timeout()
+        if t is None:
+            print("  Pollinations request skipped: render deadline reached")
+            return None
         truncated = p[:600].rsplit(",", 1)[0] if len(p) > 600 else p
         encoded = quote(truncated, safe="")
         url = f"https://gen.pollinations.ai/image/{encoded}?width={w}&height={h}&model=flux&nologo=true"
         headers = {"Authorization": f"Bearer {POLLINATIONS_KEY}"}
         try:
-            resp = httpx.get(url, headers=headers, timeout=180, follow_redirects=True)
+            resp = httpx.get(url, headers=headers, timeout=t, follow_redirects=True)
         except Exception as e:
             print(f"  Pollinations error: {e}")
             return None
@@ -152,10 +326,18 @@ def _flux_cover(prompt: str, w: int = 1024, h: int = 1024) -> bytes | None:
             print(f"  Pollinations 200 but unusable: ct={ct} bytes={len(resp.content)}")
             return None
         if resp.status_code == 429:
+            if deadline is not None and deadline - time.time() < 25:
+                print("  Pollinations 429: no render time left for the 20s wait — skipping retry")
+                return None
             print("  Pollinations 429 rate-limited, waiting 20s and retrying once")
             time.sleep(20)
+            # Recompute AFTER the wait — the pre-wait remainder is stale by 20s.
+            t2 = _timeout()
+            if t2 is None:
+                print("  Pollinations retry skipped: render deadline reached during wait")
+                return None
             try:
-                resp = httpx.get(url, headers=headers, timeout=180, follow_redirects=True)
+                resp = httpx.get(url, headers=headers, timeout=t2, follow_redirects=True)
                 if resp.status_code == 200 and "image" in resp.headers.get("content-type", "") and len(resp.content) > 1000:
                     return resp.content
             except Exception as e:
@@ -190,9 +372,20 @@ def _save_cover(png_bytes: bytes, *paths: Path, size: tuple[int, int] = (1024, 1
 
 
 def _save_audio(seg: AudioSegment, *paths: Path):
+    """Encode ONCE into bytes, then write that exact buffer to every path
+    (served, seed, recovery store) — copies are byte-identical by
+    construction, never the product of N separate encoder runs."""
+    buf = io.BytesIO()
+    seg.export(buf, format="mp3", bitrate="192k")
+    data = buf.getvalue()
     for p in paths:
         p.parent.mkdir(parents=True, exist_ok=True)
-        seg.export(p, format="mp3", bitrate="192k")
+        p.write_bytes(data)
+
+
+def _write_bytes(path: Path, data: bytes):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(data)
 
 
 def _write_per_content_file(entry: dict) -> None:
@@ -250,10 +443,55 @@ def _attach_qa_changes(entry: dict, llm_data: dict) -> None:
         }
 
 
+class GenerationDeadlineExceeded(TimeoutError):
+    """The next LLM attempt cannot finish before the caller's deadline.
+    Terminal for the whole generation window — a re-pick has no more wall
+    clock left than the pick that raised this, so callers must NOT re-pick."""
+
+
+class ValidationRetriesExhausted(RuntimeError):
+    """Every attempt for one pick failed validation. Carries the cumulative
+    validator error strings so a re-pick can seed its next prompt with them
+    (the failure classes are largely combo-independent: onomatopoeia counts,
+    physiology A3/A4, settling-gesture tic repeat across picks)."""
+
+    def __init__(self, message: str, errors: "list[str] | None" = None):
+        super().__init__(message)
+        self.errors = list(errors or [])
+
+
+class RenderFailed(RuntimeError):
+    """Terminal render-phase failure (hard timeout waiting on a render worker,
+    or an encode failure while preparing publish assets). Never triggers a
+    re-pick: the text already validated and the render spend already happened —
+    generating a whole new combo would double-pay for a non-text problem."""
+
+
+def _wall_gate(deadline: "float | None", phase: str, log_prefix: str = "",
+               quiet: bool = False) -> None:
+    """Enforce an absolute deadline before starting an external render request
+    or a publish (prod-mutating) step. Raises GenerationDeadlineExceeded when
+    the deadline has passed — an over-budget run must not start another paid
+    external call and must never begin mutating production content. `quiet`
+    suppresses the progress line for high-frequency per-request gates (one
+    per ElevenLabs segment call)."""
+    if deadline is None:
+        return
+    remaining = deadline - time.time()
+    if remaining <= 0:
+        raise GenerationDeadlineExceeded(
+            f"phase={phase} not started: deadline exceeded by {-remaining:.0f}s")
+    if not quiet:
+        print(f"{log_prefix}phase={phase} remaining={remaining:.0f}s")
+
+
 def _llm_with_retry(*, system: str, user: str, validator_key: str,
                      max_retries: int = 3, log_prefix: str = "  ",
                      post_process=None, max_tokens: int = 4096,
-                     repair_hint: "Callable[[list[str], dict], str | None] | None" = None) -> dict:
+                     repair_hint: "Callable[[list[str], dict], str | None] | None" = None,
+                     deadline: "float | None" = None,
+                     attempt_floor_s: float = 75.0,
+                     seed_errors: "list[str] | None" = None) -> dict:
     """Generate JSON, validate, optionally critic-review, retry on failure.
 
     Flow per attempt (when HINDI_QA_ENABLED for this content_type):
@@ -275,18 +513,35 @@ def _llm_with_retry(*, system: str, user: str, validator_key: str,
     at the end of the user prompt for highest recency-weighted attention)
     or None to fall back to the generic block only.
 
+    When `deadline` (absolute time.time() epoch) is set, no attempt is
+    launched that cannot finish before it: the next attempt's duration is
+    estimated as the max observed so far (floor `attempt_floor_s`), and a
+    too-late attempt raises GenerationDeadlineExceeded instead of running.
+    `seed_errors` pre-loads the cumulative failure set so attempt 1 of a
+    fresh pick already carries the previous pick's validator failures.
+
     Returns the final (validated) content dict. The dict carries a
     `_qa_changes` key when the critic edited it — strip before saving
     to user-facing seed entries; keep for audit/email summary.
     """
-    all_errors_seen: set[str] = set()
+    all_errors_seen: set[str] = set(seed_errors or [])
     last_errors: list[str] = []
     last_data: dict | None = None
+    attempt_durations: list[float] = []
     qa_enabled = is_qa_enabled(validator_key)
     qa_attempted = False  # one critic attempt per generation, not per retry
     for attempt in range(max_retries):
+        if deadline is not None:
+            remaining = deadline - time.time()
+            est = max(attempt_durations) if attempt_durations else attempt_floor_s
+            if remaining < est:
+                raise GenerationDeadlineExceeded(
+                    f"attempt={attempt + 1}/{max_retries} not launched: "
+                    f"est={est:.0f}s > remaining={remaining:.0f}s")
+            print(f"{log_prefix}attempt={attempt + 1}/{max_retries} "
+                  f"remaining={remaining:.0f}s est={est:.0f}s")
         retry_hint = ""
-        if attempt > 0 and (last_errors or all_errors_seen):
+        if (attempt > 0 or seed_errors) and (last_errors or all_errors_seen):
             cumulative = sorted(set(last_errors) | all_errors_seen)
             retry_hint = (
                 "\n\nPREVIOUS ATTEMPTS FAILED VALIDATION (across all retries — "
@@ -295,10 +550,15 @@ def _llm_with_retry(*, system: str, user: str, validator_key: str,
                 + "\n".join(f"- {e}" for e in cumulative[:15])
                 + "\n\nOutput ONLY corrected JSON. Re-check every requirement before submitting."
             )
-            if repair_hint is not None and last_data is not None:
-                surgical = repair_hint(last_errors, last_data)
+            # Surgical hint from the CUMULATIVE failures, not just the last
+            # attempt's: a fresh pick seeded with the previous pick's errors
+            # has last_errors=[] on attempt 1 — it must still get the explicit
+            # FORWARD CONSTRAINTS, not merely the generic block above.
+            if repair_hint is not None:
+                surgical = repair_hint(cumulative, last_data or {})
                 if surgical:
                     retry_hint = retry_hint + "\n\n" + surgical
+        _att_start = time.time()
         try:
             data = generate_json(
                 system=system,
@@ -306,11 +566,19 @@ def _llm_with_retry(*, system: str, user: str, validator_key: str,
                 temperature=0.85,
                 max_tokens=max_tokens,
                 log_prefix=log_prefix,
+                deadline=deadline,  # clamps provider HTTP/hard timeouts + skips
+                                    # fallbacks that can't finish (see _hindi_llm)
             )
+        except LLMDeadlineExceeded as e:
+            # Wall clock ran out mid-attempt (e.g., slow Mistral left no room
+            # for the Groq fallback). Terminal — do NOT loop for another attempt.
+            raise GenerationDeadlineExceeded(str(e)) from e
         except LLMError as e:
+            attempt_durations.append(time.time() - _att_start)
             print(f"{log_prefix}LLM failure: {e}")
             last_errors = [str(e)]
             continue
+        attempt_durations.append(time.time() - _att_start)
 
         # Optional shape transform before validation
         validator_input = post_process(data) if post_process else data
@@ -371,9 +639,10 @@ def _llm_with_retry(*, system: str, user: str, validator_key: str,
         last_errors = errors
         last_data = validator_input
         all_errors_seen.update(errors)
-    raise RuntimeError(
+    raise ValidationRetriesExhausted(
         f"validator failed after {max_retries} attempts; "
-        f"last errors: {last_errors}; cumulative seen: {sorted(all_errors_seen)[:10]}"
+        f"last errors: {last_errors}; cumulative seen: {sorted(all_errors_seen)[:10]}",
+        errors=sorted(set(last_errors) | all_errors_seen),
     )
 
 
@@ -543,6 +812,30 @@ def generate_short_story(axes: dict, log_prefix: str = "  ") -> dict:
     # back to Roman if the LLM didn't return text_deva.
     text_for_engine = data.get("text_deva") or data["text"]
     hook_for_engine = data.get("hook_deva") or data["hook"]
+
+    # ── Unique id + collision guard BEFORE any paid rendering. Character
+    # slug alone collided (Tippy 05-19/06-15/07-15, two stories destroyed);
+    # the content hash makes the id unique and an exact-duplicate refuse.
+    char_slug = _slug(data["character"]["name"], 4) or _hex(4)
+    sid = data["id"] = (f"hi-{axes['story_type']}-{axes['age_group']}-{char_slug}"
+                        f"-{_content_hash(data['text'])}")
+    audio_paths = [
+        WEB_ROOT / "public" / "audio" / "pre-gen" / f"{sid}_{voice_for_mood}.mp3",
+        BASE_DIR / "seed_output" / "stories_hi" / f"{sid}.mp3",
+    ]
+    cover_paths = [
+        WEB_ROOT / "public" / "covers" / f"{sid}.webp",                          # legacy duplicate
+        BASE_DIR / "seed_output" / "stories_hi" / f"{sid}_cover.webp",           # debug master
+    ]
+    if ON_PROD:
+        # Served + RECOVERY-STORE copies, written from the same bytes below.
+        audio_paths.append(PROD_AUDIO_STORE / "pre-gen" / f"{sid}_{voice_for_mood}.mp3")
+        cover_paths.append(PROD_COVER_STORE / f"{sid}.webp")                     # frontend-served
+    guard_paths = [BASE_DIR / "data" / "stories_hi" / f"{sid}.json"]
+    if ON_PROD:
+        guard_paths.append(PROD_JSON_STORE / "stories_hi" / f"{sid}.json")       # JSON recovery store
+    _guard_new_content_id(sid, guard_paths + audio_paths + cover_paths, log_prefix)
+
     audio = assemble_story_audio(
         text_deva=text_for_engine,
         hook_deva=hook_for_engine,
@@ -551,26 +844,12 @@ def generate_short_story(axes: dict, log_prefix: str = "  ") -> dict:
     )
     duration = round(len(audio) / 1000)
 
-    # Generate ID with character slug (matches existing convention)
-    char_slug = _slug(data["character"]["name"], 4) or _hex(4)
-    sid = data["id"] = f"hi-{axes['story_type']}-{axes['age_group']}-{char_slug}"
-
-    # Save audio
-    _save_audio(
-        audio,
-        WEB_ROOT / "public" / "audio" / "pre-gen" / f"{sid}_{voice_for_mood}.mp3",
-        BASE_DIR / "seed_output" / "stories_hi" / f"{sid}.mp3",
-    )
+    # Save audio — served copy and recovery-store copy from the same bytes
+    _save_audio(audio, *audio_paths)
 
     # Generate + save cover
     cover = _flux_cover(data.get("cover_context", "Indian bedtime watercolor"))
     if cover:
-        cover_paths = [
-            WEB_ROOT / "public" / "covers" / f"{sid}.webp",                          # legacy duplicate
-            BASE_DIR / "seed_output" / "stories_hi" / f"{sid}_cover.webp",           # debug master
-        ]
-        if ON_PROD:
-            cover_paths.append(PROD_COVER_STORE / f"{sid}.webp")                     # frontend-served
         _save_cover(cover, *cover_paths)
 
     # text field is the user-facing display version (tags stripped).
@@ -608,6 +887,17 @@ def generate_short_story(axes: dict, log_prefix: str = "  ") -> dict:
             + int(axes["age_group"].split("-")[1])
         ) // 2,
         "mood": axes["mood"],
+        # Persist the six Layer-B axes so load_hindi_catalog reads them back and
+        # pick_long_story_axes' avoid-recent actually threads in prod (mirrors
+        # EN publish_episode). Without these, HI recency is a no-op and the new
+        # axes decay to monotony over time. episode_format marks redesign entries.
+        "episode_format": "v2",
+        "narrative_shape": axes.get("narrative_shape", ""),
+        "resolution_meaning": axes.get("resolution_meaning", ""),
+        "emotional_texture": axes.get("emotional_texture", ""),
+        "cast_structure": axes.get("cast_structure", ""),
+        "phase3_texture": axes.get("phase3_texture", ""),
+        "breath_expression": axes.get("breath_expression", ""),
         "cover": f"/covers/{sid}.webp" if cover else "/covers/default.svg",
         "cover_context": data.get("cover_context", ""),
         "audio_url": f"/audio/pre-gen/{sid}_{voice_for_mood}.mp3",
@@ -634,6 +924,7 @@ def generate_short_story(axes: dict, log_prefix: str = "  ") -> dict:
     # post-cutover). _upsert_content below stays until post-cutover §4 step 15.
     _write_per_content_file(entry)
     _upsert_content(entry)
+    _release_content_id(sid)  # successful publication → free the reservation
     print(f"{log_prefix}✓ short story published: {sid} ({duration}s)")
     return entry
 
@@ -733,31 +1024,39 @@ def generate_lullaby(axes: dict, log_prefix: str = "  ") -> dict:
         "pronunciation — not a Western or Chinese vocal lens.\n\n"
         f"Lyrics:\n{lyrics_for_engine}"
     )
-    audio_bytes = minimax_lullaby(composed, lyrics_for_engine)
-    audio = AudioSegment.from_file(io.BytesIO(audio_bytes), format="mp3")
-    duration = round(len(audio) / 1000)
-
-    sid = f"hi-{axes['lullaby_type']}-{axes['age_group']}-{_slug(data['title'])}"
-
+    # ── Unique id + collision guard BEFORE the paid MiniMax render. Title
+    # slug alone can repeat; the lyrics hash makes the id unique and an
+    # exact-duplicate refuse (same class as the Tippy story collision).
+    sid = (f"hi-{axes['lullaby_type']}-{axes['age_group']}-{_slug(data['title'])}"
+           f"-{_content_hash(data['lyrics'])}")
     audio_paths = [
         WEB_ROOT / "public" / "audio" / "lullabies" / f"{sid}.mp3",
         WEB_ROOT / "public" / "audio" / "pre-gen" / f"{sid}_female_1.mp3",
         BASE_DIR / "seed_output" / "lullabies" / f"{sid}.mp3",
     ]
+    cover_paths = [
+        WEB_ROOT / "public" / "covers" / f"{sid}.webp",                          # legacy duplicate
+        WEB_ROOT / "public" / "covers" / "lullabies" / f"{sid}_cover.webp",      # legacy duplicate
+        BASE_DIR / "seed_output" / "lullabies" / f"{sid}_cover.webp",            # debug master
+    ]
     if ON_PROD:
+        # Served + RECOVERY-STORE copies, written from the same bytes below.
         audio_paths.append(PROD_AUDIO_STORE / "lullabies" / f"{sid}.mp3")
+        cover_paths.append(PROD_COVER_STORE / f"{sid}.webp")                              # frontend-served (root)
+        cover_paths.append(PROD_COVER_STORE / "lullabies" / f"{sid}_cover.webp")          # frontend-served (subtype)
+    guard_paths = [BASE_DIR / "data" / "lullabies_hi" / f"{sid}.json"]
+    if ON_PROD:
+        guard_paths.append(PROD_JSON_STORE / "lullabies_hi" / f"{sid}.json")              # JSON recovery store
+    _guard_new_content_id(sid, guard_paths + audio_paths + cover_paths, log_prefix)
+
+    audio_bytes = minimax_lullaby(composed, lyrics_for_engine)
+    audio = AudioSegment.from_file(io.BytesIO(audio_bytes), format="mp3")
+    duration = round(len(audio) / 1000)
+
     _save_audio(audio, *audio_paths)
 
     cover = _flux_cover(data.get("cover_context", "Indian baby sleeping under a quilt"))
     if cover:
-        cover_paths = [
-            WEB_ROOT / "public" / "covers" / f"{sid}.webp",                          # legacy duplicate
-            WEB_ROOT / "public" / "covers" / "lullabies" / f"{sid}_cover.webp",      # legacy duplicate
-            BASE_DIR / "seed_output" / "lullabies" / f"{sid}_cover.webp",            # debug master
-        ]
-        if ON_PROD:
-            cover_paths.append(PROD_COVER_STORE / f"{sid}.webp")                              # frontend-served (root)
-            cover_paths.append(PROD_COVER_STORE / "lullabies" / f"{sid}_cover.webp")          # frontend-served (subtype)
         _save_cover(cover, *cover_paths)
 
     entry = {
@@ -814,6 +1113,7 @@ def generate_lullaby(axes: dict, log_prefix: str = "  ") -> dict:
     _write_per_content_file(entry)
     _upsert_content(entry)
     _upsert_aggregate_json(entry, BASE_DIR / "seed_output" / "lullabies" / "lullabies.json")
+    _release_content_id(sid)  # successful publication → free the reservation
     print(f"{log_prefix}✓ lullaby published: {sid} ({duration}s)")
     return entry
 
@@ -1247,12 +1547,63 @@ def generate_poem(axes: dict, log_prefix: str = "  ") -> dict:
 # LONG STORY
 # ───────────────────────────────────────────────────────────────────────
 
+# Breath-weaving examples, ROTATED per call so no single string dominates
+# across HI stories (HI copies examples near-verbatim, unlike EN which adapts —
+# so a fixed example leaks). Structurally identical (short-in / long-out,
+# A3-detectable via out-cue + elongation) but lexically DISJOINT (no shared
+# 4-word span, verified against the whole-story leak diff).
+# Keyed to breath_expression (NOT random.choice, which collapsed to one
+# favorite and decoupled the example from the axis — transport-axis drew the
+# water example). Keying ties example→axis and distributes as breath_expression
+# distributes via (now-persisted) recency. Examples are lexically disjoint.
+BREATH_EXAMPLES_HI = {
+    "water": "Saans andar li, toh lehar thehar gayi. Saans bahar chhodi, aur lehar lambi ho kar behti gayi.",
+    "light": "Andar wali saans par diya simat gaya. Dheemi bahar-saans par roshni poore aangan mein phailti gayi.",
+    "garden": "Bheetar khinchte hi kali mund gayi. Lambi bahar nikalti saans par pankhudiyan khilti chali gayin.",
+    "creature": "Jeev ke pehlu upar uthe andar-saans mein. Neeche dhalti, dheere, sust bahar-saans mein woh baith gaye.",
+    "transport": "Gaadi thami jab saans bhitar gayi. Patri par woh lambi bahar-saans mein aage sarakti chali gayi.",
+}
+
+
 def _long_story_prompt(axes: dict) -> tuple[str, str]:
     age = axes["age_group"]
-    word_band = {"2-5": (1040, 1520), "6-8": (1520, 2240), "9-12": (2240, 3040)}[age]
+    word_band = {"2-5": (600, 1000), "6-8": (900, 1400), "9-12": (1100, 1700)}[age]
     avoid_titles = "; ".join(t for t in axes["recent_titles"] if t) or "(none yet)"
     avoid_phrases = "; ".join(p for p in axes["recent_phrases"] if p) or "(none yet)"
     avoid_mysteries = "; ".join(m for m in axes["recent_mysteries"] if m) or "(none yet)"
+
+    lead = axes.get("lead_name") or "Tara"
+    # Layer-B meaning axes from the SAME shared module as EN (anti-drift).
+    import _story_axes as SA
+    ax = {
+        "narrative_shape": axes.get("narrative_shape", "investigate_resolve"),
+        "resolution_meaning": axes.get("resolution_meaning", "was_resting"),
+        "emotional_texture": axes.get("emotional_texture", "tender"),
+        "cast_structure": axes.get("cast_structure", "mentor_pair"),
+        "phase3_texture": axes.get("phase3_texture", "descending_length"),
+    }
+    ax["breath_expression"] = axes.get("breath_expression") or SA.breath_family(
+        world_name=axes.get("world_name"), cast=ax["cast_structure"])
+    # Breath example KEYED to the (tracked) breath_expression axis — consistent
+    # example<->axis, distributes as the axis distributes (no random collapse).
+    breath_example = BREATH_EXAMPLES_HI.get(ax["breath_expression"], BREATH_EXAMPLES_HI["light"])
+    axes["_breath_key"] = ax["breath_expression"]  # record for distribution check
+    physiology_contract = SA.PHYSIOLOGY_CONTRACT_HI
+    story_spec = SA.story_spec_block(ax, "hi")
+    resolution_hint = SA.RESOLUTION_MEANINGS[ax["resolution_meaning"]]["hi_hint"]
+    breath_hint = SA.BREATH_EXPRESSIONS[ax["breath_expression"]]["hi_hint"]
+    phase3_hint = SA.PHASE3_TEXTURES[ax["phase3_texture"]]["hi_hint"]
+    # 9-12 chronically under-produces (sparse [PHRASE], <600 words) — this band
+    # should be the LONGEST and richest, not the sparsest. Force beat-count and
+    # phrase-tag count explicitly for it; other bands hit their floors already.
+    long_age_push = {
+        "9-12": ("YEH TUMHARI SABSE LAMBI, SABSE DETAILED KAHANI HAI. 9-12 saal "
+                 f"ke liye poore {word_band[0]}-{word_band[1]} shabd likho — P1+P2 "
+                 "mein kam se kam 8-10 alag scene-beat, har beat POORA likha "
+                 "(summary ya jump nahin), har beat sensory detail se bhara. "
+                 "[PHRASE]...[/PHRASE] kam se kam 4 baar — length ke chakkar mein "
+                 "yeh tag mat chhodo, yeh optional NAHIN hai."),
+    }.get(age, "")
 
     system = (
         "You are a Hindi children's storyteller writing long-form bedtime "
@@ -1267,28 +1618,49 @@ AXES:
 - mood: {axes['mood']}
 - world_name: {axes['world_name']}
 - characterType: {axes['characterType']}
+- LEAD CHARACTER NAME: {lead}  (use EXACTLY this as the protagonist's name — do NOT rename the lead "Meenu" or "Bulbul")
 
+{physiology_contract}
+
+{story_spec}
+CAST SIZE follows cast_structure: solo=1 character, mentor_pair/peer_pair/
+found_companion=2, small_group=3. (Solo ka ek hi character — par woh phir
+bhi kam se kam 3 baar bolta hai: khud se, chaand se, hawa se, ya sun rahe
+bachche se — NAME: "..." form mein.)
+LENGTH: yeh poori-lambi kahani hai ({word_band[0]}-{word_band[1]} shabd),
+shape chahe koi bhi ho — arrival/pure_settling bhi chhoti nahin; woh sensory
+detail, halki repetition aur dheere waqt se lambi hoti hain, jaldi khatam nahin.
+{long_age_push}
 ANTI-DUPLICATION:
 - recent titles: {avoid_titles}
 - recent phrases: {avoid_phrases}
 - recent mysteries: {avoid_mysteries}
-- BANNED names: Chintu, Raju, Bittu, Munna, Guddu, Pinky, Rinku, Bablu,
-  Pappu, Chhotu, Motu, Golu, Sonu, Monu, Titu, Bunty, Ramu
+- BANNED names (never use for ANY character): Meenu, Bulbul, Chinti, Chintu,
+  Raju, Bittu, Munna, Guddu, Pinky, Rinku, Bablu, Pappu, Chhotu, Motu, Golu,
+  Sonu, Monu, Titu, Bunty, Ramu
 
-THREE-PHASE ARC (mandatory):
-- Phase 1 — Khoj (Discovery, ~30%): character enters {axes['world_name']},
-  finds a mystery, meets companions, gets a breathing mechanic
-- Phase 2 — Vishraam (Resolution-as-Rest, ~35%): the mystery resolves to
-  rest. Companions settle. Dialogue fades.
-- Phase 3 — Vilay (Dissolution, ~35%): no dialogue. Descending sentence
-  length. Wave repetition. Closes with [WHISPER]...[/WHISPER]
+THREE-PHASE ARC (the phase tags are the audio scaffold — KEEP them; but
+the NARRATIVE inside them varies by narrative_shape in the STORY SPEC. Do
+NOT default to "finds a mystery -> it was resting"):
+- Phase 1 — Khoj/Aagman (~30%): realise the narrative_shape above. arrival:
+  the child is already still and things come TO them; pure_settling: no
+  mystery, only slow arrival; nested: a character begins telling a small
+  story; circular: open on an image you will return to, transformed.
+- Phase 2 — Vishraam (~35%): it settles toward peace, and the MEANING of
+  that peace is the resolution_meaning above (NOT "khoya nahin, so raha
+  tha" unless was_resting is the named one): {resolution_hint}
+  Companions settle. Dialogue fades.
+- Phase 3 — Vilay (~35%): no dialogue. Dissolve via the phase3_texture
+  above: {phase3_hint}. Descending sentence length. Closes with
+  [WHISPER]...[/WHISPER]. Arousal keeps falling; it dissolves, never wakes.
 
 REQUIRED tags throughout:
 - [CHARACTER: Name, personality, voice_style, gender] for each character (top of story)
 - [INTRO] (2-3 sentences direct address to child)
 - [PHASE_1] [PHASE_2] [PHASE_3] section markers
-- [BREATHE_GUIDE]...[/BREATHE_GUIDE] (slow-breath instructions, once)
-- 4-6 [BREATHE] standalone tags (clustered in P1 + P2)
+- 4-6 [BREATHE] standalone tags (breath moments; at least one late in the
+  story). Breath is EMERGENT from the world (see below) — do NOT write a
+  spoken narrator breathing cue, and do NOT use [BREATHE_GUIDE].
 - [SONG_SEED: one English sentence] at end of P1
 - [POST_SONG] section after song
 - 3+ [PHRASE]...[/PHRASE] wraps around the unique repeated phrase
@@ -1305,14 +1677,23 @@ Same caps as Hindi short stories:
   Ages 9-12:  max 18 words / 32 matras per sentence
 
 PHASE 3 (VILAY) — DESCEND BELOW THE CAP:
-The dissolution phase already removes dialogue. It must also shrink
-sentences. Start P3 near the cap; end at 3-5 words per sentence. The
-listener's breathing slows; the prose breathes with it.
-
-  Phase 3 opening sentence (near cap):
-    "Chaand ab dheere dheere apni jagah par tham gaya tha."  (10 words)
-  Phase 3 closing sentences (well below cap):
-    "Sab kuch shaant.  Hawa thami.  Aankh band.  Saans dheere."  (3-2-2-2)
+The dissolution phase removes dialogue and shrinks sentences. Start P3
+near the cap; end at 3-5 words per sentence. The listener's breathing
+slows; the prose breathes with it. SHAPE the ending by the phase3_texture
+in the STORY SPEC — do NOT reuse a fixed closing line.
+  STRUCTURE (invent fresh surface text for THIS world — copy NO example):
+  - opening of P3: ONE near-cap sentence naming this world going still.
+  - body: sentences shrink line by line.
+  - close: 3-4 lines, each shorter than the last, each closing a DIFFERENT
+    sensory channel or the breath, in words specific to THIS story's world.
+  - LET SLEEP ARRIVE THROUGH THE WORLD. Settle each character through a channel
+    the world offers: the lantern dims, the breath lengthens, the body grows
+    heavy, sounds fade to nothing, warmth spreads, the gaze drifts to the water.
+    Give each character — and each story — a DIFFERENT channel; that is what
+    makes each ending its own.
+  BANNED: reusing a fixed closing formula or a stock scaffold of stilling-
+  phrases across stories. The last lines must be unique to this world,
+  never a reproducible template.
 
 ABSTRACT NOUNS — same rule as short stories:
   bhavna   →  "dil ne kaha"
@@ -1344,8 +1725,25 @@ Rules:
   listening child — but they MUST use the NAME: "..." form, not
   embedded narration.
 
-The mystery's reveal is ALWAYS rest: "khoya nahin, so raha tha".
-Mechanic is an object that activates with slow breath (diya, patang, leaf, talaab).
+BREATH (emergent from the world — NOT a narrator cue): {breath_hint}
+Andar ki saans chhoti; bahar ki saans lambi aur dheemi; duniya bahar-wali
+saans par narm hoti hai. Bachcha isliye saans leta hai kyunki woh ek
+saans-leti duniya ke ANDAR hai — narrator ke kehne se nahin. Ek halka
+mechanic (diya, patang, patta, talaab) ise anchor kar sakta hai, par
+resolution ka matlab resolution_meaning se aata hai — "khoya nahin so raha
+tha" se nahin (jab tak wahi na chuna gaya ho).
+
+HAR saans-pal par: breath ko DO chhote vaakyon mein likho (dono
+per-sentence cap ke andar), phir agli line par [BREATHE]. Pehla vaakya
+saans ANDAR (kuch chhota), doosra vaakya saans BAHAR — bahar-cue ke turant
+baad "dheere/lambe/dheemi" jaisa shabd rakho (bahar-wali saans hamesha
+lambi lagti hai, par vaakya phir bhi cap ke andar). Sirf DHAANCHA follow
+karo, is misaal ko copy MAT karo — har baar apni duniya ke apne shabd
+(patte, lehar, roshni, dhuaan, pankh, jo bhi is duniya mein ho):
+  {breath_example}
+  [BREATHE]
+Khaali [BREATHE] (bina breath-vaakya ke) nahin chalega. 4-6 baar, kam se
+kam ek kahani ke aakhri hisse mein. Ek hi breath-vaakya kabhi dohrao mat.
 
 Return JSON:
 {{
@@ -1376,8 +1774,113 @@ Return JSON:
     return system, user
 
 
-def generate_long_story(axes: dict, log_prefix: str = "  ") -> dict:
+_LS_FLOOR_RE = re.compile(r"word count (\d+) below floor (\d+) for age (\S+)")
+
+
+def _long_story_repair_hint(errors: list[str], last_data: dict) -> str | None:
+    """Surgical Hindi-specific forward constraints for the validator failures
+    long stories actually hit (2026-07-15 timeout post-mortem: onomatopoeia
+    count, physiology A3/A4, settling-gesture tic, word floor). The generic
+    cumulative error block alone left the model whack-a-moling for 5 attempts
+    per pick; these blocks state HOW to satisfy each check, with vocabulary
+    the validators literally count."""
+    blocks: list[str] = []
+    joined = " || ".join(errors)
+    m = _LS_FLOOR_RE.search(joined)
+    if m:
+        wc, floor, age = m.group(1), m.group(2), m.group(3)
+        blocks.append(
+            f"- LENGTH: your draft was {wc} words; age {age} needs ≥{floor} words "
+            f"(tags excluded). Target {int(floor) + 100}+ words — write ALL THREE "
+            f"phases full-length; story ko chhota mat karo, fragment reject hota hai."
+        )
+    if "onomatopoeia" in joined:
+        blocks.append(
+            "- ONOMATOPOEIA: weave in at least 2 DIFFERENT sound-words from this "
+            "exact list (ONLY these count): sarr, tap tap, chhap, khat, dheere "
+            "dheere, chi chi, gunghun, jhoom, tip tip, patak, thak thak. "
+            "Example: 'baarish tip tip girti rahi' / 'patte sarr se hile'."
+        )
+    if "physiology A1" in joined:
+        blocks.append(
+            "- CALM BACK HALF (A1): after the story's midpoint there must be NO "
+            "exclamation marks, no 'achanak'/'ekdam se'/'suddenly', and no stakes "
+            "or threats ('aakhri mauka', 'der ho rahi', anything about-to-vanish). "
+            "Excitement lives ONLY in the opening; the back half only settles."
+        )
+    if "physiology A2" in joined:
+        blocks.append(
+            "- SLOWING PROSODY (A2): sentences must get SHORTER toward the end — "
+            "final lines ≤6 words each, trailing into stillness."
+        )
+    if "physiology A3" in joined:
+        blocks.append(
+            "- LONG EXHALE (A3): at least one breath line must RENDER the "
+            "out-breath as long and slow, right next to a [BREATHE] tag. "
+            "Example: 'Usne lambi saans bahar chhodi — dheere, aur lehar dheere "
+            "se bahar behti gayi.' [BREATHE] — the words 'lambi'/'dheere' must "
+            "sit next to the out-breath (saans bahar). Never describe an exhale "
+            "as jaldi/tez/turant. Bare [BREATHE] tags are not enough."
+        )
+    if "physiology A4" in joined:
+        blocks.append(
+            "- ENDING (A4): the final lines AND every [WHISPER] block must land "
+            "IN stillness/sleep — use words like 'neend', 'so gaya'/'so gayi', "
+            "'shaant', 'sapna', 'tham gaya'. NO exclamation marks in the ending, "
+            "no waking/alert words (jaag, uth gaya, kal phir)."
+        )
+    if "settling-gesture tic" in joined or "eyes close" in joined:
+        blocks.append(
+            "- SETTLING GESTURES: 'aankhen band' (eyes closing) may appear at "
+            "MOST 2 times in the whole story. Vary the settling beat instead: "
+            "'saans dheemi ho gayi', 'badan dheela pad gaya', 'khamoshi phail "
+            "gayi', 'kandhe jhuk gaye'."
+        )
+    if "conversational markers" in joined:
+        blocks.append(
+            "- CONVERSATIONAL MARKERS: use at least 5 of these words naturally in "
+            "narration/dialogue (ONLY these count): toh, na, arre, pata hai, "
+            "chalo, dekho, suno, hai na, aur phir, bas, achha, zara."
+        )
+    if "dialogue line" in joined:
+        blocks.append(
+            "- DIALOGUE FORMAT: every declared [CHARACTER:] speaks at least once, "
+            'on its own line, exactly as NAME: "..." (uppercase name, straight '
+            "quotes) — never dialogue buried inside narration prose."
+        )
+    if not blocks:
+        return None
+    return (
+        "REVISION REQUIRED — the validator rejected your previous draft(s).\n\n"
+        "FORWARD CONSTRAINTS for your next draft (hard requirements; every "
+        "other prompt rule still applies):\n" + "\n".join(blocks)
+    )
+
+
+def generate_long_story(axes: dict, log_prefix: str = "  ", text_only: bool = False,
+                        deadline: "float | None" = None,
+                        max_attempts: "int | None" = None,
+                        seed_errors: "list[str] | None" = None,
+                        render_budget: "float | None" = None) -> dict:
+    """`deadline` bounds the TEXT loop (absolute epoch; attempts that can't
+    finish before it never launch). `render_budget` (seconds; authoritative,
+    0 = no render time, None = unbounded standalone run) bounds the
+    render+publish envelope from the moment text validates: EVERY external
+    request (MiniMax song, each ElevenLabs TTS segment, FLUX cover) passes a
+    _wall_gate against render start + render_budget with its wait bounded to
+    the remaining render time; the assembled audio, encoded standalone-song
+    bytes, cover bytes, and entry are PREPARED before the single deferred-
+    publish gate, after which the final audio mp3 encoding, cover PNG→WEBP
+    conversion, and filesystem/catalog writes run together (not
+    rollback-backed) — an over-budget run cannot start another paid call or
+    mutate production content. LIMITATION: for MiniMax/ElevenLabs the bound
+    is caller-side (_hard_timeout stops WAITING; it cannot cancel the
+    in-flight network operation — the abandoned worker thread may extend
+    process lifetime until the underlying operation returns, see
+    _llm_timeout). Only the FLUX/httpx timeout truly aborts its request.
+    Production render evidence 2026-07-11..14: 390-700s."""
     print(f"\n{log_prefix}═══ LONG STORY: age={axes['age_group']} mood={axes['mood']} world={axes['world_name']} ═══")
+    _gen_t0 = time.time()
     sys_msg, user_msg = _long_story_prompt(axes)
 
     def shape(d: dict) -> dict:
@@ -1405,6 +1908,9 @@ def generate_long_story(axes: dict, log_prefix: str = "  ") -> dict:
         p3 = re.search(r"\[PHASE_3\](.*)", full, re.DOTALL)
         return {
             **d,
+            "age_group": axes.get("age_group", ""),  # so the validator's word-floor sees the band
+            "narrative_shape": axes.get("narrative_shape", ""),  # so format-mins can be shape-aware
+            "cast_structure": axes.get("cast_structure", ""),  # so solo gets relaxed dialogue-min
             "phase_1_text_roman": p1.group(1).strip() if p1 else "",
             "phase_2_text_roman": p2.group(1).strip() if p2 else "",
             "phase_3_text_roman": p3.group(1).strip() if p3 else "",
@@ -1413,13 +1919,68 @@ def generate_long_story(axes: dict, log_prefix: str = "  ") -> dict:
     data = _llm_with_retry(
         system=sys_msg, user=user_msg,
         validator_key="long_story", log_prefix=log_prefix, post_process=shape,
-        max_retries=5,        # long stories often need multiple retries to
-                              # converge on all structural requirements
-                              # simultaneously (BREATHE count, onomatopoeia,
-                              # phase tags, conversational markers, etc.)
+        repair_hint=_long_story_repair_hint,
+        max_retries=max_attempts or 5,
+                              # standalone default 5: long stories often need
+                              # multiple retries to converge on all structural
+                              # requirements simultaneously (BREATHE count,
+                              # onomatopoeia, phase tags, markers, etc.).
+                              # The daily pipeline passes 2 and re-picks a
+                              # FRESH combo instead (see pipeline_run_hi).
+        deadline=deadline,    # absolute; None = no wall-clock gating
+        seed_errors=seed_errors,
         max_tokens=12_000,    # full_text_roman + full_text_deva together
                               # need ~8-12k tokens of headroom
     )
+
+    text_elapsed = time.time() - _gen_t0
+    print(f"{log_prefix}text validated: text_elapsed={text_elapsed:.0f}s")
+
+    # Text-only path (batch/eval): return the tagged generation output before
+    # any song/cover/publish. full_text_roman still carries the inline tags
+    # ([BREATHE], [WHISPER], [PHASE_*]) that publish would later strip.
+    if text_only:
+        return data
+
+    # Render/publish envelope starts when text validates. render_budget is
+    # authoritative: 0 means "no render time at all" (gates fire immediately),
+    # None means no envelope (standalone/manual runs).
+    _render_t0 = time.time()
+    render_deadline = (_render_t0 + render_budget) if render_budget is not None else None
+
+    def _render_remaining(default: float) -> float:
+        """Caller-side wait bound for one render request: the natural cap
+        clamped to remaining render time. Gates guarantee remaining > 0 when
+        this is called. NOTE: fed to _hard_timeout, which bounds how long WE
+        wait — it does not cancel the underlying network operation."""
+        if render_deadline is None:
+            return default
+        return min(default, max(1.0, render_deadline - time.time()))
+
+    # ── Unique id + collision guard BEFORE any paid rendering (song/TTS/
+    # cover). Character slug alone can repeat across runs; the content hash
+    # makes the id unique and an exact-duplicate refuse.
+    chars = data.get("characters", []) or []
+    char_slug = _slug(chars[0]["name"], 4) if chars else _hex(4)
+    sid = (f"hi-long-{axes['age_group']}-{char_slug}"
+           f"-{_content_hash(data['full_text_roman'])}")
+    audio_paths = [
+        WEB_ROOT / "public" / "audio" / "pre-gen" / f"{sid}_tripti.mp3",
+        BASE_DIR / "seed_output" / "hindi_long" / f"{sid}.mp3",
+    ]
+    if ON_PROD:
+        # Served + RECOVERY-STORE copies, written from the same bytes below.
+        audio_paths.append(PROD_AUDIO_STORE / "pre-gen" / f"{sid}_tripti.mp3")
+    guard_paths = [
+        BASE_DIR / "data" / "long_stories_hi" / f"{sid}.json",
+        WEB_ROOT / "public" / "covers" / f"{sid}.webp",
+        BASE_DIR / "seed_output" / "hindi_long" / f"{sid}_cover.webp",
+        BASE_DIR / "seed_output" / "hindi_long" / f"{sid}_song.mp3",
+    ]
+    if ON_PROD:
+        guard_paths.append(PROD_COVER_STORE / f"{sid}.webp")
+        guard_paths.append(PROD_JSON_STORE / "long_stories_hi" / f"{sid}.json")  # JSON recovery store
+    _guard_new_content_id(sid, guard_paths + audio_paths, log_prefix)
 
     # ── Render via existing publish_hindi_long_day1 helpers
     from publish_hindi_long_day1 import (  # type: ignore
@@ -1445,6 +2006,7 @@ def generate_long_story(axes: dict, log_prefix: str = "  ") -> dict:
         "lullaby, soft harmonium and bansuri, 60 BPM, warm and loving, "
         "smiling maternal voice, major key, native Hindi pronunciation"
     )
+    _wall_gate(render_deadline, "song_render", log_prefix)
     print(f"{log_prefix}generating mid-story song…")
     song_lyrics = (data.get("song_lyrics_deva") or "").strip()
     if not song_lyrics:
@@ -1453,7 +2015,16 @@ def generate_long_story(axes: dict, log_prefix: str = "  ") -> dict:
             f"Dheere dheere, bas dheere dheere\n"
             f"{data['repeated_phrase']}"
         )
-    song_bytes = minimax_lullaby(song_style, song_lyrics)
+    try:
+        song_bytes = _hard_timeout(
+            # natural cap 600s: fal upload + MiniMax generation + audio download
+            minimax_lullaby, _render_remaining(600.0),
+            style=song_style, lyrics_deva=song_lyrics,
+        )
+    except TimeoutError as e:
+        # _hard_timeout gave up waiting on the MiniMax worker — terminal
+        # render failure, never a re-pick.
+        raise RenderFailed(f"song render hard-timeout: {e}") from e
     song = AudioSegment.from_file(io.BytesIO(song_bytes), format="mp3")
     if len(song) > 45000:
         song = song[:45000].fade_out(2000)
@@ -1552,12 +2123,21 @@ def generate_long_story(axes: dict, log_prefix: str = "  ") -> dict:
         else:
             return None
         text = normalize_for_tts(text)
-        return elevenlabs_tts(
-            text, ELEVENLABS_VOICES[voice_label],
-            stability=preset["stability"], similarity=0.75,
-            style=preset["style"], speed=preset["speed"],
-            previous_text=prev, next_text=nxt,
-        )
+        # Gate + clamp EVERY ElevenLabs request: a slow segment call must not
+        # be followed by further paid calls once the render budget is spent.
+        _wall_gate(render_deadline, "tts_call", log_prefix, quiet=True)
+        try:
+            return _hard_timeout(
+                elevenlabs_tts, _render_remaining(240.0),  # natural cap per segment
+                text=text, voice_id=ELEVENLABS_VOICES[voice_label],
+                stability=preset["stability"], similarity=0.75,
+                style=preset["style"], speed=preset["speed"],
+                previous_text=prev, next_text=nxt,
+            )
+        except TimeoutError as e:
+            # _hard_timeout gave up waiting on the ElevenLabs worker —
+            # terminal render failure, never a re-pick.
+            raise RenderFailed(f"tts render hard-timeout: {e}") from e
 
     def stitch(section: str, gap_ms: int):
         out = AudioSegment.silent(duration=0)
@@ -1591,6 +2171,7 @@ def generate_long_story(axes: dict, log_prefix: str = "  ") -> dict:
                 out += AudioSegment.silent(duration=gap_ms)
         return out, breathes
 
+    _wall_gate(render_deadline, "tts_assembly", log_prefix)
     intro_music = AudioSegment.from_wav(str(MUSIC_DIR / "intro_calm.wav"))
     bed_raw = AudioSegment.from_wav(str(MUSIC_DIR / "bed_calm.wav"))
 
@@ -1631,24 +2212,13 @@ def generate_long_story(axes: dict, log_prefix: str = "  ") -> dict:
     audio = timeline
     duration = round(len(audio) / 1000)
 
-    char_slug = _slug(chars[0]["name"], 4) if chars else _hex(4)
-    sid = f"hi-long-{axes['age_group']}-{char_slug}"
+    # sid was assigned (and collision-guarded) before the first paid render.
 
-    _save_audio(
-        audio,
-        WEB_ROOT / "public" / "audio" / "pre-gen" / f"{sid}_tripti.mp3",
-        BASE_DIR / "seed_output" / "hindi_long" / f"{sid}.mp3",
-    )
-
-    cover = _flux_cover(data.get("cover_context", "Indian dreamy bedtime watercolor"))
-    if cover:
-        cover_paths = [
-            WEB_ROOT / "public" / "covers" / f"{sid}.webp",                          # legacy duplicate
-            BASE_DIR / "seed_output" / "hindi_long" / f"{sid}_cover.webp",           # debug master
-        ]
-        if ON_PROD:
-            cover_paths.append(PROD_COVER_STORE / f"{sid}.webp")                     # frontend-served
-        _save_cover(cover, *cover_paths)
+    # Cover renders BEFORE any production write, so every asset (audio, song,
+    # cover, entry) is fully ready when the single publish gate below runs.
+    _wall_gate(render_deadline, "cover_render", log_prefix)
+    cover = _flux_cover(data.get("cover_context", "Indian dreamy bedtime watercolor"),
+                        deadline=render_deadline)
 
     # Strip tags for display text (use the Roman version for human readability)
     from publish_hindi_long_day1 import strip_long_story_tags  # type: ignore
@@ -1672,6 +2242,19 @@ def generate_long_story(axes: dict, log_prefix: str = "  ") -> dict:
         "mystery": data["mystery"],
         "resolution": data["resolution"],
         "breathing_mechanic": data["breathing_mechanic"],
+        # Redesign axes — persisted so pick_long_story_axes' avoid-recent works
+        # (it reads these off content.json hi long_story entries via select_story_axes).
+        # These were MISSING here (the no-op: recency dead for HI long); the earlier
+        # fix wrongly landed in generate_short_story. NOTE: deliberately NO
+        # "episode_format":"v2" — EN's _load_existing_long_stories filters type+v2
+        # with no lang filter, so v2 on hi entries would contaminate EN recency.
+        # Old hi entries (None axes) are skipped by select_story_axes' `if s.get(key)`.
+        "narrative_shape": axes.get("narrative_shape", ""),
+        "resolution_meaning": axes.get("resolution_meaning", ""),
+        "emotional_texture": axes.get("emotional_texture", ""),
+        "cast_structure": axes.get("cast_structure", ""),
+        "phase3_texture": axes.get("phase3_texture", ""),
+        "breath_expression": axes.get("breath_expression") or axes.get("_breath_key", ""),
         "repeated_phrase": data["repeated_phrase"],
         "characters": chars,
         "song_seed": data["song_seed"],
@@ -1724,11 +2307,51 @@ def generate_long_story(axes: dict, log_prefix: str = "  ") -> dict:
         "updated_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
     }
     _attach_qa_changes(entry, data)
+
+    # Standalone mid-story song for the marketing email (parity with EN
+    # song.mp3): ENCODE before the publish gate so no fallible encode runs
+    # after the first production mutation. An encode failure here is terminal
+    # (RenderFailed) — better no item than a half-prepared one.
+    try:
+        _song_buf = io.BytesIO()
+        song.export(_song_buf, format="mp3", bitrate="192k")
+        song_mp3_bytes = _song_buf.getvalue()
+    except Exception as e:
+        raise RenderFailed(f"standalone song encode failed: {e}") from e
+
+    # DEFERRED PUBLISH with a zero-write budget gate (not rollback-backed
+    # atomicity): the assembled audio, encoded standalone-song bytes, cover
+    # bytes, and catalog entry are PREPARED above; the FIRST production
+    # mutation is the audio write below. An over-budget run stops HERE with
+    # ZERO writes. Past this gate there are no further external calls, but
+    # the final audio mp3 encoding (_save_audio), the cover PNG→WEBP
+    # conversion (_save_cover), and the filesystem/catalog writes all happen
+    # AFTER the gate and are not rollback-backed — a mid-publish failure can
+    # leave a partial publish.
+    _wall_gate(render_deadline, "publish", log_prefix)
+    # Served copy and recovery-store copy from the same bytes (audio_paths
+    # was built alongside the collision guard above).
+    _save_audio(audio, *audio_paths)
+    _write_bytes(BASE_DIR / "seed_output" / "hindi_long" / f"{sid}_song.mp3",
+                 song_mp3_bytes)
+    if cover:
+        cover_paths = [
+            WEB_ROOT / "public" / "covers" / f"{sid}.webp",                          # legacy duplicate
+            BASE_DIR / "seed_output" / "hindi_long" / f"{sid}_cover.webp",           # debug master
+        ]
+        if ON_PROD:
+            cover_paths.append(PROD_COVER_STORE / f"{sid}.webp")                     # frontend-served
+        _save_cover(cover, *cover_paths)
     # Per spec §2g.1: per-content file write (additive — walker reads this
     # post-cutover). _upsert_content below stays until post-cutover §4 step 15.
     _write_per_content_file(entry)
     _upsert_content(entry)
-    print(f"{log_prefix}✓ long story published: {sid} ({duration}s)")
+    _release_content_id(sid)  # successful publication → free the reservation
+    render_elapsed = time.time() - _render_t0
+    total_elapsed = time.time() - _gen_t0
+    print(f"{log_prefix}✓ long story published: {sid} ({duration}s) "
+          f"text_elapsed={text_elapsed:.0f}s render_elapsed={render_elapsed:.0f}s "
+          f"total_elapsed={total_elapsed:.0f}s")
     return entry
 
 

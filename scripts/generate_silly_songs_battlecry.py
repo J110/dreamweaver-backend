@@ -33,9 +33,10 @@ import re
 import sys
 import time
 from datetime import date
+from difflib import SequenceMatcher
 from io import BytesIO
 from pathlib import Path
-from urllib.parse import quote
+from urllib.parse import quote, urlparse
 
 # Load .env
 _env_path = Path(__file__).resolve().parents[1] / ".env"
@@ -1036,12 +1037,19 @@ def trim_lyrics_for_minimax(lyrics: str) -> str:
 def prepare_lyrics_for_minimax(lyrics: str, max_chars: int = 580) -> str:
     """Ensure lyrics fit MiniMax limit with margin.
 
-    Strips section tags, parent lines, empty lines. Trims from the end
+    Normalizes supported section tags, strips unsupported tags and parent
+    lines, and removes empty lines. Trims from the end
     (cuts ending/final chorus first) to preserve verses and first chorus.
     Uses 580 not 600 — leaves margin for MiniMax's own formatting.
     """
-    # Strip section tags
-    clean = re.sub(r'\[.*?\]', '', lyrics)
+    clean = re.sub(r'\[verse(?:\s+\d+)?\]', '[verse]', lyrics, flags=re.IGNORECASE)
+    clean = re.sub(r'\[ending\]', '[outro]', clean, flags=re.IGNORECASE)
+    clean = re.sub(
+        r'\[(?!(?:intro|verse|chorus|bridge|outro)\])[^]]+\]',
+        '',
+        clean,
+        flags=re.IGNORECASE,
+    )
     # Strip parent lines
     clean = strip_parent_lines(clean)
     # Strip empty lines, normalize whitespace
@@ -1059,6 +1067,105 @@ def prepare_lyrics_for_minimax(lyrics: str, max_chars: int = 580) -> str:
     return result
 
 
+REPLICATE_MINIMAX_PREDICTIONS_URL = (
+    "https://api.replicate.com/v1/models/minimax/music-1.5/predictions"
+)
+
+
+def _run_minimax_prediction(
+    style: str,
+    lyrics: str,
+    *,
+    max_polls: int = 120,
+    poll_interval: float = 5,
+    timeout_seconds: float = 600,
+) -> str:
+    token = os.environ.get("REPLICATE_API_TOKEN", "")
+    if not token:
+        raise RuntimeError("REPLICATE_API_TOKEN not set")
+
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Content-Type": "application/json",
+        "Cancel-After": "10m",
+    }
+    deadline = time.monotonic() + timeout_seconds
+
+    with httpx.Client(timeout=30, follow_redirects=True) as client:
+        response = client.post(
+            REPLICATE_MINIMAX_PREDICTIONS_URL,
+            headers=headers,
+            json={"input": {"prompt": style, "lyrics": lyrics}},
+        )
+        response.raise_for_status()
+        prediction = response.json()
+        prediction_id = prediction["id"]
+        poll_url = prediction["urls"]["get"]
+        print(f"    Prediction {prediction_id} created, polling...")
+
+        for _ in range(max_polls):
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                break
+            time.sleep(min(poll_interval, remaining))
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                break
+            try:
+                response = client.get(
+                    poll_url,
+                    headers=headers,
+                    timeout=min(30, remaining),
+                )
+                response.raise_for_status()
+            except httpx.TransportError as e:
+                print(f"    Poll interrupted, keeping prediction {prediction_id}: {e}")
+                continue
+
+            prediction = response.json()
+            status = prediction.get("status")
+            if status == "succeeded":
+                output = prediction.get("output")
+                if isinstance(output, list):
+                    output = output[0] if output else None
+                if not output:
+                    raise RuntimeError("MiniMax prediction returned no output")
+                return str(output)
+            if status in {"failed", "canceled", "aborted"}:
+                raise RuntimeError(
+                    f"MiniMax prediction {status}: "
+                    f"{prediction.get('error') or 'unknown error'}"
+                )
+
+    raise TimeoutError(
+        f"MiniMax prediction {prediction_id} did not finish within "
+        f"{timeout_seconds:.0f}s"
+    )
+
+
+def _download_replicate_output(audio_url: str) -> httpx.Response:
+    parsed = urlparse(audio_url)
+    hostname = parsed.hostname or ""
+    if (
+        parsed.scheme != "https"
+        or (
+            hostname != "replicate.delivery"
+            and not hostname.endswith(".replicate.delivery")
+        )
+    ):
+        raise RuntimeError(f"Unexpected Replicate output host: {hostname}")
+
+    token = os.environ.get("REPLICATE_API_TOKEN", "")
+    if not token:
+        raise RuntimeError("REPLICATE_API_TOKEN not set")
+    return httpx.get(
+        audio_url,
+        headers={"Authorization": f"Bearer {token}"},
+        timeout=120,
+        follow_redirects=True,
+    )
+
+
 def generate_audio_minimax(song: dict, force: bool = False) -> bool:
     """Generate audio via MiniMax Music 1.5 on Replicate."""
     if replicate is None:
@@ -1069,13 +1176,15 @@ def generate_audio_minimax(song: dict, force: bool = False) -> bool:
     audio_path = AUDIO_DIR / f"{song_id}.mp3"
 
     if audio_path.exists() and not force:
-        print(f"    Audio exists, skipping")
+        print("    Audio exists, skipping")
         return True
+    if force:
+        song.pop("audio_file", None)
+        song.pop("duration_seconds", None)
 
     lyrics = song["lyrics"]
     style = song.get("style_prompt", "")
     if not style:
-        # Fallback: build a fresh style prompt
         style, _, _ = build_style_prompt(song["age_group"])
 
     trimmed = prepare_lyrics_for_minimax(lyrics)
@@ -1083,44 +1192,36 @@ def generate_audio_minimax(song: dict, force: bool = False) -> bool:
     print(f"    Style: {style[:80]}...")
 
     try:
-        print(f"    Calling MiniMax Music 1.5 on Replicate...")
-        output = replicate.run(
-            "minimax/music-1.5",
-            input={
-                "prompt": style,
-                "lyrics": trimmed,
-            },
-        )
-
-        if not output:
-            print(f"    ERROR: No output from MiniMax")
-            return False
-
-        audio_url = str(output)
-        print(f"    Got audio URL, downloading...")
-
-        resp = httpx.get(audio_url, timeout=120, follow_redirects=True)
+        print("    Calling MiniMax Music 1.5 on Replicate...")
+        audio_url = _run_minimax_prediction(style, trimmed)
+        print("    Got audio URL, downloading...")
+        resp = _download_replicate_output(audio_url)
         if resp.status_code != 200 or len(resp.content) < 1000:
-            print(f"    ERROR: Download failed ({resp.status_code}, {len(resp.content)} bytes)")
-            return False
+            raise RuntimeError(
+                f"Download failed ({resp.status_code}, {len(resp.content)} bytes)"
+            )
 
         audio_path.write_bytes(resp.content)
-        size_kb = len(resp.content) / 1024
-        print(f"    Saved: {audio_path.name} ({size_kb:.0f} KB)")
+        print(f"    Saved: {audio_path.name} ({len(resp.content) / 1024:.0f} KB)")
 
-        # Get duration
         try:
             from pydub import AudioSegment
             seg = AudioSegment.from_file(str(audio_path))
             duration_s = len(seg) / 1000.0
-            print(f"    Duration: {duration_s:.1f}s")
-            song["duration_seconds"] = int(duration_s)
-        except Exception:
-            song["duration_seconds"] = 75  # Default estimate
+        except Exception as e:
+            audio_path.unlink(missing_ok=True)
+            raise RuntimeError(f"Unable to validate audio duration: {e}") from e
 
+        print(f"    Duration: {duration_s:.1f}s")
+        if not 60 <= duration_s <= 90:
+            audio_path.unlink(missing_ok=True)
+            raise RuntimeError(
+                f"Duration {duration_s:.1f}s outside required 60-90s"
+            )
+
+        song["duration_seconds"] = int(duration_s)
         song["audio_file"] = f"{song_id}.mp3"
         return True
-
     except Exception as e:
         print(f"    ERROR: {e}")
         return False
@@ -1204,6 +1305,146 @@ def generate_cover_flux(song: dict, force: bool = False) -> bool:
 
 # ── Diversity Tracking ───────────────────────────────────────────────
 
+HOOK_REJECT_JACCARD = 0.60
+HOOK_REJECT_SEQUENCE = 0.82
+HOOK_SEMANTIC_JACCARD = 0.35
+HOOK_SEMANTIC_SEQUENCE = 0.68
+HOOK_STOP_WORDS = {"a", "an", "the", "my", "your", "our", "today", "tonight", "again"}
+AGE_GROUPS = ("2-5", "6-8", "9-12")
+
+
+def _valid_created_at(value):
+    try:
+        return date.fromisoformat(str(value)[:10])
+    except (TypeError, ValueError):
+        return None
+
+
+def _latest_age_dates(existing_songs):
+    latest = {age: None for age in AGE_GROUPS}
+    for song_data in existing_songs:
+        status = song_data.get("generation_status")
+        if status is not None and status != "published":
+            continue
+        if status is None and song_data.get("published") is False:
+            continue
+        age = song_data.get("age_group")
+        created = _valid_created_at(
+            song_data.get("published_at") or song_data.get("created_at")
+        )
+        if age in latest and created is not None:
+            latest[age] = max(filter(None, (latest[age], created)))
+    return latest
+
+
+def select_next_age(existing_songs):
+    latest = _latest_age_dates(existing_songs)
+    return min(AGE_GROUPS, key=lambda age: (
+        latest[age] is not None,
+        latest[age] or date.min,
+        AGE_GROUPS.index(age),
+    ))
+
+
+def _stem_hook_token(token: str) -> str:
+    if len(token) > 5 and token.endswith("ing"):
+        return token[:-3]
+    if len(token) > 5 and token.endswith(("ches", "shes", "xes", "zes")):
+        return token[:-2]
+    if len(token) > 4 and token.endswith("s") and not token.endswith("ss"):
+        return token[:-1]
+    return token
+
+
+def _normalize_hook(text: str) -> str:
+    normalized = re.sub(r"[*_`~]", "", text or "").lower()
+    normalized = re.sub(r"[^a-z0-9\s]", " ", normalized)
+    tokens = (
+        _stem_hook_token(token)
+        for token in normalized.split()
+        if token not in HOOK_STOP_WORDS
+    )
+    return " ".join(tokens)
+
+
+def _hook_similarity(candidate: str, existing: str) -> tuple[float, float]:
+    left = _normalize_hook(candidate)
+    right = _normalize_hook(existing)
+    left_tokens, right_tokens = set(left.split()), set(right.split())
+    union = left_tokens | right_tokens
+    jaccard = len(left_tokens & right_tokens) / len(union) if union else 1.0
+    sequence = SequenceMatcher(None, left, right).ratio()
+    return jaccard, sequence
+
+
+def _closest_hook_matches(candidate, existing_hooks, limit=None):
+    unique = list(dict.fromkeys(h for h in existing_hooks if h))
+    scored = [(hook, *_hook_similarity(candidate, hook)) for hook in unique]
+    matches = sorted(scored, key=lambda row: max(row[1], row[2]), reverse=True)
+    return matches[:limit] if limit is not None else matches
+
+
+def _deterministic_hook_decision(candidate, existing_hooks):
+    matches = _closest_hook_matches(candidate, existing_hooks)
+    rejecting = [
+        match for match in matches
+        if match[1] >= HOOK_REJECT_JACCARD
+        or match[2] >= HOOK_REJECT_SEQUENCE
+    ]
+    if rejecting:
+        return "reject", rejecting + [
+            match for match in matches if match not in rejecting
+        ]
+    borderline = [
+        match for match in matches
+        if match[1] >= HOOK_SEMANTIC_JACCARD
+        or match[2] >= HOOK_SEMANTIC_SEQUENCE
+    ]
+    if borderline:
+        return "semantic", borderline + [
+            match for match in matches if match not in borderline
+        ]
+    return "accept", matches
+
+
+def _semantic_hook_is_similar(candidate: str, matches: list[tuple[str, float, float]],
+                              api_key: str) -> bool:
+    comparison = "\n".join(f"- {hook}" for hook, _, _ in matches[:5])
+    prompt = (
+        "Judge whether the candidate silly-song hook is substantially the same "
+        "idea, image, or chant as any existing hook.\n"
+        f"Candidate: {candidate}\nExisting hooks:\n{comparison}\n"
+        'Return only JSON: {"similar": true} or {"similar": false}.'
+    )
+    try:
+        raw = call_mistral(
+            prompt,
+            system_msg="You are a strict content diversity classifier.",
+            api_key=api_key,
+        )
+        parsed = json.loads(raw)
+        return parsed.get("similar") is not False
+    except Exception:
+        return True
+
+
+def _existing_hooks_newest_first(existing_songs: list[dict]) -> list[str]:
+    hooks = []
+    for song_data in reversed(existing_songs):
+        hooks.extend((
+            song_data.get("title", ""),
+            song_data.get("anthem") or song_data.get("battle_cry", ""),
+        ))
+    return [hook for hook in dict.fromkeys(hooks) if hook]
+
+
+def _comparison_hooks(existing_songs: list[dict], current_results: list[dict]) -> list[str]:
+    return list(dict.fromkeys(
+        _existing_hooks_newest_first(existing_songs)
+        + _existing_hooks_newest_first(current_results)
+    ))
+
+
 def _load_existing_songs() -> list:
     """Load all existing silly song metadata for diversity tracking.
 
@@ -1221,6 +1462,18 @@ def _load_existing_songs() -> list:
                 pass
     songs.sort(key=lambda s: s.get("created_at") or "")
     return songs
+
+
+def _existing_song_ids_on_disk() -> set[str]:
+    ids = set()
+    for directory, pattern in (
+        (DATA_DIR, "*.json"),
+        (AUDIO_DIR, "*.mp3"),
+        (COVERS_DIR, "*.webp"),
+    ):
+        if directory.exists():
+            ids.update(path.stem for path in directory.glob(pattern))
+    return ids
 
 
 # Full battle cry library (expandable)
@@ -1377,8 +1630,9 @@ CATEGORY_INVENT_GUIDE = {
 }
 
 
-def invent_anthem(category: str, age_group: str, mood: str, recent: list,
-                  api_key: str, existing_on_disk: set) -> tuple:
+def invent_anthem(category: str, age_group: str, mood: str, existing_hooks: list,
+                  api_key: str, existing_on_disk: set,
+                  prompt_hooks: list = None) -> tuple:
     """Invent a FRESH anthem hook via the LLM, using the curated anthems only as
     few-shot STYLE seeds (not a finite menu) — so silly songs generate-fresh with
     no ceiling, mirroring the Hindi silly-song generator. Returns (hook, slug)."""
@@ -1388,7 +1642,16 @@ def invent_anthem(category: str, age_group: str, mood: str, recent: list,
     seeds = seeds or [v.get("anthem") or v.get("cry", "") for v in anthem_dict.values()]
     random.shuffle(seeds)
     examples = "\n".join(f"- {s}" for s in seeds[:6])
-    recent_clean = [r for r in dict.fromkeys(recent) if r][:25]
+    prompt_hooks = prompt_hooks if prompt_hooks is not None else existing_hooks
+    recent_clean = []
+    normalized_prompt_hooks = set()
+    for hook in prompt_hooks:
+        normalized = _normalize_hook(hook)
+        if hook and normalized and normalized not in normalized_prompt_hooks:
+            recent_clean.append(hook)
+            normalized_prompt_hooks.add(normalized)
+        if len(recent_clean) == 25:
+            break
     avoid = "\n".join(f"- {r}" for r in recent_clean) or "- (none yet)"
     guide = CATEGORY_INVENT_GUIDE.get(category, CATEGORY_INVENT_GUIDE["battle_cry"])
 
@@ -1402,25 +1665,71 @@ def invent_anthem(category: str, age_group: str, mood: str, recent: list,
         f"Do NOT reuse or closely echo any recently-used hook:\n{avoid}\n\n"
         "Output ONLY the new hook phrase — one short line, no quotes, no explanation."
     )
-    anthem_text = ""
-    for _ in range(3):
-        resp = call_mistral(prompt, system_msg=system_msg, api_key=api_key) or ""
+
+    rejection_feedback = ""
+    similarity_rejections = 0
+    for attempt in range(1, 4):
+        resp = call_mistral(
+            prompt + rejection_feedback,
+            system_msg=system_msg,
+            api_key=api_key,
+        ) or ""
         cand = resp.strip().splitlines()[0].strip() if resp.strip() else ""
         cand = re.sub(r'^[-•\d\.\)\s"\'\[]+', '', cand).strip().strip('"').strip("'").strip("[]").strip()
         if cand and 1 <= len(cand.split()) <= 8 and len(cand) <= 60:
-            anthem_text = cand
-            break
-        anthem_text = cand or anthem_text
-    if not anthem_text:
-        raise RuntimeError("invent_anthem: LLM returned no usable hook")
-
-    base = _slugify_anthem(anthem_text)
-    suffix = age_group.replace('-', '_')
-    slug, n = base, 2
-    while f"{slug}_{suffix}" in existing_on_disk:
-        slug = f"{base}_{n}"
-        n += 1
-    return anthem_text, slug
+            slug = _slugify_anthem(cand)
+            song_id = f"{slug}_{age_group.replace('-', '_')}"
+            if song_id in existing_on_disk:
+                similarity_rejections += 1
+                print(
+                    f"  Hook rejection {attempt}/3: decision=id_collision, "
+                    f"candidate={cand!r}, song_id={song_id!r}"
+                )
+                rejection_feedback = (
+                    f"\nPrevious candidate rejected because its song ID already "
+                    f"exists: {cand}. Invent a different subject and wording."
+                )
+                continue
+            decision, matches = _deterministic_hook_decision(cand, existing_hooks)
+            semantic_rejected = False
+            if decision == "accept":
+                closest_match = matches[0] if matches else ("(none)", 0.0, 0.0)
+                print(
+                    f"  Hook accepted: candidate={cand!r}, "
+                    f"closest={closest_match[0]!r}, "
+                    f"jaccard={closest_match[1]:.2f}, "
+                    f"sequence={closest_match[2]:.2f}, "
+                    f"semantic_result=not_run"
+                )
+                return cand, slug
+            if decision == "semantic":
+                semantic_rejected = _semantic_hook_is_similar(cand, matches, api_key)
+                if not semantic_rejected:
+                    closest_match = matches[0] if matches else ("(none)", 0.0, 0.0)
+                    print(
+                        f"  Hook accepted: candidate={cand!r}, "
+                        f"closest={closest_match[0]!r}, "
+                        f"jaccard={closest_match[1]:.2f}, "
+                        f"sequence={closest_match[2]:.2f}, "
+                        f"semantic_result={semantic_rejected}"
+                    )
+                    return cand, slug
+            similarity_rejections += 1
+            closest_match = matches[0] if matches else ("(none)", 0.0, 0.0)
+            closest = ", ".join(match[0] for match in matches[:3])
+            print(
+                f"  Hook rejection {attempt}/3: decision={decision}, "
+                f"candidate={cand!r}, closest={closest_match[0]!r}, "
+                f"jaccard={closest_match[1]:.2f}, sequence={closest_match[2]:.2f}, "
+                f"semantic_rejected={semantic_rejected}"
+            )
+            rejection_feedback = (
+                f"\nPrevious candidate rejected as too similar: {cand}. "
+                f"Closest hooks: {closest}. Invent a different subject and wording."
+            )
+    if similarity_rejections == 3:
+        raise RuntimeError("invent_anthem: three similarity rejections")
+    raise RuntimeError("invent_anthem: LLM returned no usable hook")
 
 
 def generate_scene(battle_cry: str, age_group: str, api_key: str,
@@ -1686,6 +1995,8 @@ def generate_silly_song(
         "battle_cry_id": cry_id,
         "battle_cry": battle_cry,
         "generation_method": "battlecry_v4",
+        "generation_status": "lyrics_only" if lyrics_only else "pending_audio",
+        "published": False,
     }
 
     # Save JSON (before audio/cover so we don't lose lyrics on failure)
@@ -1715,7 +2026,13 @@ def generate_silly_song(
         if audio_path.exists():
             check_audio_loudness(str(audio_path))
     else:
+        song["generation_status"] = "failed_audio"
+        with open(json_path, "w") as f:
+            json.dump(song, f, indent=2)
+        with open(output_json, "w") as f:
+            json.dump(song, f, indent=2)
         print(f"  ✗ Audio generation failed")
+        return None
 
     # ── STEP 6: Generate cover ──
     print(f"\n  Step 6: Generating cover via FLUX...")
@@ -1728,12 +2045,27 @@ def generate_silly_song(
     else:
         print(f"  ✗ Cover generation failed")
 
+    if not _auto_mirror(song_id):
+        song["generation_status"] = "failed_catalog"
+        with open(json_path, "w") as f:
+            json.dump(song, f, indent=2)
+        with open(output_json, "w") as f:
+            json.dump(song, f, indent=2)
+        print(f"  ✗ Catalog insertion failed")
+        return None
+
+    song["generation_status"] = "published"
+    song["published"] = True
+    song["published_at"] = date.today().isoformat()
+    with open(json_path, "w") as f:
+        json.dump(song, f, indent=2)
+    with open(output_json, "w") as f:
+        json.dump(song, f, indent=2)
     print(f"\n  ✓ Complete: {song_id}")
-    _auto_mirror(song_id)
     return song
 
 
-def _auto_mirror(song_id: str) -> None:
+def _auto_mirror(song_id: str) -> bool:
     """Append entry into seed_output/content.json (flat list). Replaces if id exists.
 
     Mirrors the pattern used by generate_funny_shorts.py — without this call,
@@ -1743,12 +2075,12 @@ def _auto_mirror(song_id: str) -> None:
     song_json = DATA_DIR / f"{song_id}.json"
     if not song_json.exists():
         print(f"  (no {song_json} — skipping mirror)")
-        return
+        return False
     song = json.loads(song_json.read_text())
     seed_content = BASE_DIR / "seed_output" / "content.json"
     if not seed_content.exists():
         print(f"  (no {seed_content} — skipping mirror)")
-        return
+        return False
     content = json.loads(seed_content.read_text())
     if isinstance(content, dict):
         items = content.setdefault("items", [])
@@ -1785,6 +2117,7 @@ def _auto_mirror(song_id: str) -> None:
         out = items
     seed_content.write_text(json.dumps(out, indent=2, ensure_ascii=False))
     print(f"  Mirrored into {seed_content}")
+    return True
 
 
 def main():
@@ -1880,21 +2213,11 @@ Examples:
         print(f"  Mode: {'lyrics only' if args.lyrics_only else 'full (lyrics + audio + cover)'}")
         print(f"{'='*60}")
 
-        # Pre-assign age groups: cycle through 2-5, 6-8, 9-12 to guarantee
-        # coverage. This prevents the diversity selector from picking the same
-        # age group twice while missing another entirely.
-        age_cycle = ["2-5", "6-8", "9-12"]
-        assigned_ages = [age_cycle[i % len(age_cycle)] for i in range(count)]
-        random.shuffle(assigned_ages)  # Shuffle so order varies
-        print(f"  Age rotation: {' → '.join(assigned_ages)}")
-
         # Build set of song IDs that already have JSON files on disk,
         # so we don't "generate" an existing song and count it as new.
-        existing_on_disk = set()
-        if DATA_DIR.exists():
-            for f in DATA_DIR.glob("*.json"):
-                existing_on_disk.add(f.stem)  # e.g. "not_sleepy_2_5"
+        existing_on_disk = _existing_song_ids_on_disk()
 
+        production_songs = list(existing_songs)
         results = []
         for i in range(count):
             try:
@@ -1902,20 +2225,26 @@ Examples:
                     print(f"\n  Waiting 35s for Mistral rate limit...")
                     time.sleep(35)
 
-                forced_age = assigned_ages[i]
+                latest = _latest_age_dates(existing_songs)
+                forced_age = select_next_age(existing_songs)
+                print(
+                    "  Age selection: "
+                    + ", ".join(f"{age}={latest[age] or 'never'}"
+                                for age in AGE_GROUPS)
+                    + f" -> {forced_age}"
+                )
                 song_mood = assigned_moods[i]
                 song_cat = assigned_cats[i]
 
                 # Generate-fresh: invent a NEW anthem hook within the rotated
                 # category (a repeatable format, not a finite menu), so silly
                 # songs never exhaust — mirrors the Hindi silly-song generator.
-                recent = ([s.get("title", "") for s in existing_songs[-40:]]
-                          + [s.get("anthem") or s.get("battle_cry", "")
-                             for s in existing_songs[-40:]]
-                          + [r.get("title", "") for r in results])
+                production_hooks = _existing_hooks_newest_first(production_songs)
+                existing_hooks = _comparison_hooks(production_songs, results)
                 anthem_text, anthem_slug = invent_anthem(
                     category=song_cat, age_group=forced_age, mood=song_mood,
-                    recent=recent, api_key=api_key, existing_on_disk=existing_on_disk,
+                    existing_hooks=existing_hooks, api_key=api_key,
+                    existing_on_disk=existing_on_disk, prompt_hooks=production_hooks,
                 )
                 style_prompt, instruments, tempo = build_style_prompt(
                     forced_age, existing_songs, mood=song_mood
@@ -1964,8 +2293,8 @@ Examples:
         else:
             print(f"  Generated 0/{count} songs — generation failed (see errors above).")
         print(f"{'='*60}\n")
-        if count and not results:
-            sys.exit(3)  # produced 0 of N requested — not a crash, but not OK
+        if len(results) < count:
+            sys.exit(3)
         return
 
     # ── Legacy modes: --test, --all, --cry ──
@@ -2029,6 +2358,8 @@ Examples:
     print(f"    - Does V3 make you laugh more than V1?")
     print(f"    - Are the rhymes driving the content (not the other way)?")
     print(f"{'='*60}\n")
+    if len(results) < len(songs_to_gen):
+        sys.exit(3)
 
 
 if __name__ == "__main__":

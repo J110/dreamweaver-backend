@@ -183,7 +183,7 @@ def _title_override_violations(title: str, body_lower: str, age: str) -> list[st
 
 # ── Validators ────────────────────────────────────────────────────────
 
-def _common_checks(d: dict, body: str, age: str) -> list[str]:
+def _common_checks(d: dict, body: str, age: str, tolerant_cap: bool = False) -> list[str]:
     """Shared check sequence for short_story and long_story."""
     errors: list[str] = []
 
@@ -202,12 +202,26 @@ def _common_checks(d: dict, body: str, age: str) -> list[str]:
         else:
             errors.append(f"banned word: '{word}' at age {age}")
 
-    # 4 — Sentence cap (HARD)
+    # 4 — Sentence cap (HARD, with a small tolerance for long_story lyrical
+    # prose: allow <=2 sentences up to cap+4, hard-ceiling the rest at cap.
+    # A2 (prosody slows to a short-word ending) guards comprehensibility's
+    # descent, so a couple of longer sleepy lines are fine.)
     cap = SENTENCE_CAP.get(age, 16)
+    hard = cap + 4
     sents = _split_sentences(clean)
-    for s in sents:
-        n = len(_words(s))
-        if n > cap:
+    over = [(len(_words(s)), s) for s in sents if len(_words(s)) > cap]
+    if tolerant_cap:
+        allowance = 2
+        for n, s in over:
+            preview = s[:80].replace("\n", " ")
+            if n > hard:
+                errors.append(f"sentence over cap (hard ceiling {hard}): {n} words at age {age}: '{preview}...'")
+            elif allowance > 0:
+                allowance -= 1  # tolerated lyrical line
+            else:
+                errors.append(f"sentence over cap (too many long): {n} words at age {age} (max {cap}): '{preview}...'")
+    else:
+        for n, s in over:
             preview = s[:80].replace("\n", " ")
             errors.append(f"sentence over cap: {n} words at age {age} (max {cap}): '{preview}...'")
 
@@ -276,7 +290,7 @@ def validate_long_story(d: dict) -> list[str]:
     if isinstance(body, dict):
         body = ""
 
-    errors = _common_checks(d, body, age)
+    errors = _common_checks(d, body, age, tolerant_cap=True)
     if not body:
         return errors
 

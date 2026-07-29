@@ -11,8 +11,9 @@ For each item, ffprobe every audio reference (audio_variants[].url or
 legacy audio_url/audio_file). If a claimed duration_seconds differs from
 the on-disk truth by more than DURATION_TOLERANCE_SEC, update it.
 
-For long stories with multiple variants, item-level duration_seconds is
-set to the median of corrected variant durations.
+Item-level duration_seconds is set to the int-rounded median of measured
+variant durations for every variant-bearing item (stories, lullabies, long
+stories alike) — it is the field the playlist API serves.
 
 Modes:
   --dry-run  (default)  Print what would change, write nothing
@@ -160,25 +161,15 @@ def correct_item_dict(item: dict, log: list) -> int:
             if disk:
                 actual = ffprobe_duration(disk)
                 if actual is not None:
-                    actual = round(actual, 2)
-                    claimed = item.get("duration_seconds")
-                    if claimed is None or abs(float(claimed) - actual) > DURATION_TOLERANCE_SEC:
-                        log.append(
-                            f"  FIX  {sid:28} [legacy        ] "
-                            f"claimed={claimed} → actual={actual}"
-                        )
-                        item["duration_seconds"] = actual
-                        changes += 1
-                    corrected_variant_durs.append(actual)
+                    corrected_variant_durs.append(round(actual, 2))
 
-    is_long = item.get("type") == "long_story" or str(item.get("length", "")).upper() == "LONG"
-    if is_long and corrected_variant_durs:
-        median_dur = round(statistics.median(corrected_variant_durs), 2)
+    if corrected_variant_durs:
+        median_dur = int(round(statistics.median(corrected_variant_durs)))
         old = item.get("duration_seconds")
         if old is None or abs(float(old) - median_dur) > DURATION_TOLERANCE_SEC:
             log.append(
-                f"  ITEM {sid:28} long_story duration_seconds "
-                f"{old} → {median_dur} (median of {len(corrected_variant_durs)} variants)"
+                f"  ITEM {sid:28} duration_seconds "
+                f"{old} → {median_dur} (median of {len(corrected_variant_durs)} measured)"
             )
             item["duration_seconds"] = median_dur
             changes += 1

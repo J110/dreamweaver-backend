@@ -1,17 +1,56 @@
 """User interaction endpoints for likes, saves, etc."""
 
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List
 
 from fastapi import APIRouter, HTTPException, Depends, status
 from pydantic import BaseModel
 
 from app.dependencies import get_current_user, get_db_client
-from app.utils.gating import is_premium, save_cap
+from app.utils.gating import is_premium, offline_allowed, save_cap
 from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
 router = APIRouter()
+
+
+class _ImmediateTransaction:
+    def get(self, target):
+        return target.get()
+
+    def set(self, document, data):
+        document.set(data)
+
+    def update(self, document, data):
+        document.update(data)
+
+    def delete(self, document):
+        document.delete()
+
+
+def _run_transaction(db_client, callback):
+    runner = getattr(db_client, "run_transaction", None)
+    if callable(runner):
+        return runner(callback)
+    transaction_factory = getattr(db_client, "transaction", None)
+    if callable(transaction_factory):
+        from firebase_admin import firestore
+        return firestore.transactional(callback)(transaction_factory())
+    lock = getattr(db_client, "_lock", None)
+    if lock is None:
+        return callback(_ImmediateTransaction())
+    with lock:
+        return callback(_ImmediateTransaction())
+
+
+def _saved_count_in_transaction(transaction, db_client, user_id):
+    query = (
+        db_client.collection("interactions")
+        .where("user_id", "==", user_id)
+        .where("type", "==", "save")
+    )
+    saves = transaction.get(query)
+    return len(saves)
 
 
 # Response Models
@@ -177,96 +216,95 @@ async def save_content(
     try:
         user_id = current_user["uid"]
 
-        # Get content
-        content_doc = db_client.collection("content").document(content_id).get()
-        if not content_doc.exists:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Content not found"
-            )
-
-        content_data = content_doc.to_dict()
-
         save_id = f"{user_id}_{content_id}_save"
-        already_saved = db_client.collection("interactions").document(save_id).get().exists
-
-        # Save cap (paywall). None = unlimited (flag off → today's behavior).
+        save_ref = db_client.collection("interactions").document(save_id)
+        content_ref = db_client.collection("content").document(content_id)
+        counter_ref = db_client.collection("user_save_counters").document(user_id)
         cap = save_cap(current_user)
-        current_count = None
-        if cap is not None:
-            saves = (
-                db_client.collection("interactions")
-                .where("user_id", "==", user_id)
-                .where("type", "==", "save")
-                .get()
-            )
-            current_count = len(saves)
-            # Past the cap, a NEW heart tap NEVER fails — it registers a
-            # like instead of a save. The cap is discovered on the
-            # favorites page, not as a failed tap. Re-saving an item the
-            # user already saved is always allowed (idempotent, no cap).
-            if not already_saved and current_count >= cap:
-                like_id = f"{user_id}_{content_id}_like"
-                if not db_client.collection("interactions").document(like_id).get().exists:
-                    db_client.collection("interactions").document(like_id).set({
-                        "id": like_id,
-                        "user_id": user_id,
-                        "content_id": content_id,
-                        "type": "like",
-                        "created_at": datetime.utcnow(),
-                    })
-                    likes = content_data.get("like_count", 0)
-                    db_client.collection("content").document(content_id).update({
-                        "like_count": likes + 1,
-                        "updated_at": datetime.utcnow(),
-                    })
-                logger.info(f"User {user_id} hit save cap ({cap}); liked {content_id} instead")
-                return InteractionResponse(
-                    success=True,
-                    data={
-                        "content_id": content_id,
-                        "saved": False,
-                        "liked": True,
-                        "cap_reached": True,
-                        "saved_count": current_count,
-                        "save_cap": cap,
-                    },
-                    message="Save cap reached — liked instead",
+        def save_in_transaction(transaction):
+            content_doc = transaction.get(content_ref)
+            if not content_doc.exists:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Content not found",
                 )
+            save_doc = transaction.get(save_ref)
+            counter_doc = transaction.get(counter_ref)
+            current_count = (
+                max(0, int((counter_doc.to_dict() or {}).get("saved_count", 0)))
+                if counter_doc.exists
+                else _saved_count_in_transaction(transaction, db_client, user_id)
+            )
+            already_saved = save_doc.exists
+            now = datetime.now(timezone.utc)
+            if not already_saved and cap is not None and current_count >= cap:
+                if not counter_doc.exists:
+                    transaction.set(counter_ref, {
+                        "user_id": user_id,
+                        "saved_count": current_count,
+                        "updated_at": now,
+                    })
+                return {
+                    "saved": False,
+                    "saved_count": current_count,
+                    "content_save_count": (content_doc.to_dict() or {}).get("save_count", 0),
+                }
+            content_save_count = max(0, int((content_doc.to_dict() or {}).get("save_count", 0)))
+            if not already_saved:
+                transaction.set(save_ref, {
+                    "id": save_id,
+                    "user_id": user_id,
+                    "content_id": content_id,
+                    "type": "save",
+                    "created_at": now,
+                })
+                current_count += 1
+                content_save_count += 1
+                transaction.update(content_ref, {
+                    "save_count": content_save_count,
+                    "updated_at": now,
+                })
+            if not counter_doc.exists or not already_saved:
+                transaction.set(counter_ref, {
+                    "user_id": user_id,
+                    "saved_count": current_count,
+                    "updated_at": now,
+                })
+            return {
+                "saved": True,
+                "saved_count": current_count,
+                "content_save_count": content_save_count,
+            }
 
-        # Normal save (under cap, re-save, or flag-off unlimited).
-        db_client.collection("interactions").document(save_id).set({
-            "id": save_id,
-            "user_id": user_id,
-            "content_id": content_id,
-            "type": "save",
-            "created_at": datetime.utcnow(),
-        })
-
-        # Increment save count only on a genuinely new save.
-        current_saves = content_data.get("save_count", 0)
-        if not already_saved:
-            db_client.collection("content").document(content_id).update({
-                "save_count": current_saves + 1,
-                "updated_at": datetime.utcnow(),
-            })
+        result = _run_transaction(db_client, save_in_transaction)
+        if not result["saved"]:
+            logger.info(f"User {user_id} hit save cap ({cap}) for {content_id}")
+            return InteractionResponse(
+                success=True,
+                data={
+                    "content_id": content_id,
+                    "saved": False,
+                    "liked": False,
+                    "cap_reached": True,
+                    "saved_count": result["saved_count"],
+                    "save_cap": cap,
+                    "offline_allowed": offline_allowed(current_user),
+                },
+                message="Save cap reached",
+            )
 
         logger.info(f"User {user_id} saved content {content_id}")
-
-        saved_count_after = None
-        if cap is not None:
-            saved_count_after = current_count + (0 if already_saved else 1)
-
         return InteractionResponse(
             success=True,
             data={
                 "content_id": content_id,
-                "save_count": current_saves + (0 if already_saved else 1),
+                "save_count": result["content_save_count"],
                 "saved": True,
                 "liked": False,
                 "cap_reached": False,
-                "saved_count": saved_count_after,
+                "saved_count": result["saved_count"] if cap is not None else None,
                 "save_cap": cap,
+                "offline_allowed": offline_allowed(current_user),
             },
             message="Content saved successfully"
         )
@@ -304,26 +342,43 @@ async def unsave_content(
     try:
         user_id = current_user["uid"]
         
-        # Get content
-        content_doc = db_client.collection("content").document(content_id).get()
-        if not content_doc.exists:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Content not found"
-            )
-        
-        content_data = content_doc.to_dict()
-        
-        # Delete interaction record
         interaction_id = f"{user_id}_{content_id}_save"
-        db_client.collection("interactions").document(interaction_id).delete()
-        
-        # Decrement save count
-        current_saves = max(0, content_data.get("save_count", 1) - 1)
-        db_client.collection("content").document(content_id).update({
-            "save_count": current_saves,
-            "updated_at": datetime.utcnow(),
-        })
+        save_ref = db_client.collection("interactions").document(interaction_id)
+        content_ref = db_client.collection("content").document(content_id)
+        counter_ref = db_client.collection("user_save_counters").document(user_id)
+
+        def unsave_in_transaction(transaction):
+            content_doc = transaction.get(content_ref)
+            if not content_doc.exists:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Content not found",
+                )
+            save_doc = transaction.get(save_ref)
+            counter_doc = transaction.get(counter_ref)
+            current_count = (
+                max(0, int((counter_doc.to_dict() or {}).get("saved_count", 0)))
+                if counter_doc.exists
+                else _saved_count_in_transaction(transaction, db_client, user_id)
+            )
+            content_save_count = max(0, int((content_doc.to_dict() or {}).get("save_count", 0)))
+            now = datetime.now(timezone.utc)
+            if save_doc.exists:
+                current_count = max(0, current_count - 1)
+                content_save_count = max(0, content_save_count - 1)
+                transaction.delete(save_ref)
+                transaction.update(content_ref, {
+                    "save_count": content_save_count,
+                    "updated_at": now,
+                })
+            transaction.set(counter_ref, {
+                "user_id": user_id,
+                "saved_count": current_count,
+                "updated_at": now,
+            })
+            return content_save_count
+
+        current_saves = _run_transaction(db_client, unsave_in_transaction)
         
         logger.info(f"User {user_id} unsaved content {content_id}")
         
@@ -428,9 +483,10 @@ async def get_user_saves(
                 "saved_content_ids": saved_ids,
                 "total": len(items),
                 # None when paywall off (unlimited). Favorites page shows the
-                # "n of cap saved — Premium unlocks 20" invitation off these.
+                # "n of cap saved — Premium unlocks 30" invitation off these.
                 "save_cap": save_cap(current_user),
                 "effective_premium": is_premium(current_user),
+                "offline_allowed": offline_allowed(current_user),
             },
             message="User saves retrieved successfully"
         )

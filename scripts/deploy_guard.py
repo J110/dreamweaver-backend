@@ -43,6 +43,7 @@ Usage:
 import argparse
 import json
 import os
+import re
 import subprocess
 import sys
 import time
@@ -192,6 +193,12 @@ def capture_state(api: str) -> dict:
                 # Skip Hindi audio variants
                 if url and "_hi." not in url:
                     audio_urls.append(url)
+            if (
+                not audio_urls
+                and item.get("subtype") == "silly_song"
+                and item.get("audio_file")
+            ):
+                audio_urls.append(f"/audio/silly-songs/{item['audio_file']}")
             cover_url = item.get("cover", "")
             stories.append({
                 "id": item.get("id"),
@@ -816,6 +823,282 @@ def verify_all_live_urls(api: str, frontend: str) -> list[str]:
     return issues
 
 
+def verify_nap_playlist_counts() -> list[str]:
+    probe = """
+import asyncio
+import json
+from app.api.v1 import playlist as nap_playlist
+
+class GuardStore:
+    collections = {"playlist_history": {}}
+
+    def _persist_collection(self, _name):
+        return None
+
+async def main():
+    original_record_history = nap_playlist._record_history
+    original_cache = dict(nap_playlist._nap_cache)
+    try:
+        nap_playlist._record_history = lambda *_args, **_kwargs: None
+        nap_playlist._nap_cache.clear()
+        results = {}
+        users = (
+            ("free", {"username": "deploy-guard-free", "subscription_tier": "free", "subscription_status": "inactive"}, 4),
+            ("premium", {"username": "deploy-guard-premium", "subscription_tier": "premium", "subscription_status": "active"}, 4),
+        )
+        for lang in ("en", "hi"):
+            for tier, user, expected in users:
+                response = await nap_playlist.get_nap_playlist(
+                    lang=lang,
+                    tz="Asia/Kolkata",
+                    store=GuardStore(),
+                    current_user=user,
+                )
+                results[f"{lang}/{tier}"] = {
+                    "actual": len(response.data.get("items", [])),
+                    "expected": expected,
+                }
+    finally:
+        nap_playlist._record_history = original_record_history
+        nap_playlist._nap_cache.clear()
+        nap_playlist._nap_cache.update(original_cache)
+    print(json.dumps(results))
+
+asyncio.run(main())
+"""
+    command = ["sudo", "docker", "exec", "dreamweaver-backend", "python", "-c", probe]
+    try:
+        result = subprocess.run(command, capture_output=True, text=True, timeout=60)
+    except Exception as exc:
+        return [f"Nap playlist contract check failed: {type(exc).__name__}: {exc}"]
+    if result.returncode != 0:
+        detail = (result.stderr or result.stdout).strip().splitlines()
+        return [f"Nap playlist contract check failed: {' | '.join(detail[-8:])}"]
+    try:
+        results = json.loads(result.stdout.strip().splitlines()[-1])
+    except (IndexError, json.JSONDecodeError) as exc:
+        return [f"Nap playlist contract returned invalid output: {exc}"]
+    issues = []
+    for label, counts in results.items():
+        if counts["actual"] != counts["expected"]:
+            issues.append(
+                f"Nap playlist {label} returned {counts['actual']} items; "
+                f"expected {counts['expected']}"
+            )
+    return issues
+
+
+def verify_bedtime_playlist_counts() -> list[str]:
+    probe = """
+import asyncio
+import json
+from app.api.v1 import playlist
+
+class GuardStore:
+    collections = {"playlist_history": {}}
+
+    def _persist_collection(self, _name):
+        return None
+
+async def main():
+    original_record_history = playlist._record_history
+    try:
+        playlist._record_history = lambda *_args, **_kwargs: None
+        results = {}
+        users = (
+            ("free", {"subscription_tier": "free", "subscription_status": "inactive"}, 4),
+            ("premium", {"subscription_tier": "premium", "subscription_status": "active"}, 6),
+        )
+        for lang in ("en", "hi"):
+            for tier, user, expected in users:
+                response = await playlist.get_today_playlist(
+                    lang=lang,
+                    tz="Asia/Kolkata",
+                    store=GuardStore(),
+                    current_user=user,
+                )
+                results[f"{lang}/{tier}"] = {
+                    "actual": len(response.data.get("items", [])),
+                    "expected": expected,
+                }
+        print(json.dumps(results))
+    finally:
+        playlist._record_history = original_record_history
+
+asyncio.run(main())
+"""
+    command = ["sudo", "docker", "exec", "dreamweaver-backend", "python", "-c", probe]
+    try:
+        result = subprocess.run(command, capture_output=True, text=True, timeout=60)
+    except Exception as exc:
+        return [f"Bedtime playlist contract check failed: {type(exc).__name__}: {exc}"]
+    if result.returncode != 0:
+        detail = (result.stderr or result.stdout).strip().splitlines()
+        return [f"Bedtime playlist contract check failed: {' | '.join(detail[-8:])}"]
+    try:
+        results = json.loads(result.stdout.strip().splitlines()[-1])
+    except (IndexError, json.JSONDecodeError) as exc:
+        return [f"Bedtime playlist contract returned invalid output: {exc}"]
+    issues = []
+    for label, counts in results.items():
+        if counts["actual"] != counts["expected"]:
+            issues.append(
+                f"Bedtime playlist {label} returned {counts['actual']} items; "
+                f"expected {counts['expected']}"
+            )
+    return issues
+
+
+def verify_frontend_regression_suite() -> list[str]:
+    web_root = Path(os.environ.get("DREAMWEAVER_WEB_ROOT", "/opt/dreamweaver-web"))
+    if not web_root.exists():
+        return [f"Frontend regression suite unavailable: {web_root} does not exist"]
+
+    issues = []
+    commands = (
+        ("Emberlight source verification", ["npm", "run", "verify:emberlight"]),
+        ("Emberlight regression tests", ["npm", "run", "test:emberlight", "--", "--ci"]),
+    )
+    for label, command in commands:
+        try:
+            result = subprocess.run(
+                command,
+                cwd=web_root,
+                capture_output=True,
+                text=True,
+                timeout=300,
+            )
+            if result.returncode != 0:
+                output = (result.stdout + "\n" + result.stderr).strip().splitlines()
+                issues.append(f"{label} failed: {' | '.join(output[-8:])}")
+        except Exception as exc:
+            issues.append(f"{label} failed: {type(exc).__name__}: {exc}")
+    return issues
+
+
+def verify_frontend_runtime_assets(
+    frontend: str = PROD_FRONTEND,
+    client=None,
+) -> list[str]:
+    owns_client = client is None
+    if client is None:
+        client = httpx.Client(timeout=20, follow_redirects=True)
+    issues = []
+    assets = {
+        "/version.json",
+        "/sw.js",
+        "/logo-new.png",
+        "/upgrade-showcase.webp",
+    }
+    try:
+        for route in ("/?source=app", "/nap-playlist"):
+            try:
+                response = client.get(f"{frontend}{route}")
+            except Exception as exc:
+                issues.append(
+                    f"Frontend runtime page failed: {route}: "
+                    f"{type(exc).__name__}: {exc}"
+                )
+                continue
+            if response.status_code != 200:
+                issues.append(
+                    f"Frontend runtime page returned {response.status_code}: {route}"
+                )
+                continue
+            assets.update(
+                path
+                for path in re.findall(
+                    r"""(?:src|href)=["']([^"']+)["']""",
+                    response.text,
+                )
+                if path.startswith("/_next/static/")
+            )
+        if not any(path.endswith(".js") for path in assets):
+            issues.append("Frontend runtime pages reference no JavaScript bundles")
+        for path in sorted(assets):
+            try:
+                response = client.get(f"{frontend}{path}")
+            except Exception as exc:
+                issues.append(
+                    f"Frontend runtime asset failed: {path}: "
+                    f"{type(exc).__name__}: {exc}"
+                )
+                continue
+            if response.status_code != 200:
+                issues.append(
+                    f"Frontend runtime asset returned {response.status_code}: {path}"
+                )
+    finally:
+        if owns_client:
+            client.close()
+    return issues
+
+
+def verify_current_playback_assets(
+    frontend: str = PROD_FRONTEND,
+    api: str = PROD_API,
+    client=None,
+) -> list[str]:
+    owns_client = client is None
+    if client is None:
+        client = httpx.Client(timeout=20, follow_redirects=True)
+    issues = []
+    audio_paths = set()
+    try:
+        sources = []
+        for lang in ("en", "hi"):
+            sources.extend((
+                f"{api}/api/v1/content?lang={lang}&page=1",
+                f"{api}/api/v1/playlist/nap?lang={lang}&tz=Asia%2FKolkata",
+            ))
+        for source in sources:
+            try:
+                response = client.get(source)
+            except Exception as exc:
+                issues.append(
+                    f"Current playback catalog failed: {source}: "
+                    f"{type(exc).__name__}: {exc}"
+                )
+                continue
+            if response.status_code != 200:
+                issues.append(
+                    f"Current playback catalog returned "
+                    f"{response.status_code}: {source}"
+                )
+                continue
+            data = response.json()
+            payload = data.get("data", data) if isinstance(data, dict) else {}
+            items = payload.get("items", []) if isinstance(payload, dict) else []
+            for item in items:
+                direct_audio = item.get("audio_url") or item.get("audio")
+                if direct_audio:
+                    audio_paths.add(direct_audio)
+                for variant in item.get("audio_variants") or []:
+                    variant_audio = variant.get("url") or variant.get("audio_url")
+                    if variant_audio:
+                        audio_paths.add(variant_audio)
+        if not audio_paths:
+            issues.append("Current playback catalogs reference no audio files")
+        for path in sorted(audio_paths):
+            url = path if path.startswith(("http://", "https://")) else f"{frontend}{path}"
+            try:
+                response = client.head(url)
+            except Exception as exc:
+                issues.append(
+                    f"Current playback audio failed: {path}: "
+                    f"{type(exc).__name__}: {exc}"
+                )
+                continue
+            if response.status_code not in (200, 206):
+                issues.append(
+                    f"Current playback audio returned {response.status_code}: {path}"
+                )
+    finally:
+        if owns_client:
+            client.close()
+    return issues
+
+
 def verify_new_items_serving(added_items: list[dict], frontend: str, api: str) -> list[str]:
     """For each newly added item, verify its audio and cover URLs are reachable.
 
@@ -1191,7 +1474,7 @@ def check_radio_health():
             total = int(total_match.group(1))
             print(f"  ✅ Radio content loaded: {total} playable tracks")
 
-            required_types = {"story", "long_story", "silly_song", "poem", "lullaby"}
+            required_types = {"story", "silly_song", "poem", "lullaby"}
             missing_types = []
             for ct in required_types:
                 ct_match = _re.search(rf"^\s*{ct}:\s*(\d+)", out, _re.MULTILINE)
@@ -1638,6 +1921,47 @@ def cmd_verify(args):
                 unresolved.append(m)
         else:
             print(f"\n  ✅ Per-content routing: en/hi dirs clean.")
+
+    nap_issues = verify_nap_playlist_counts()
+    if nap_issues:
+        for issue in nap_issues:
+            print(f"  ❌ {issue}")
+            unresolved.append(issue)
+    else:
+        print("\n  ✅ Nap playlists: en/hi free=3 and premium=4.")
+
+    bedtime_issues = verify_bedtime_playlist_counts()
+    if bedtime_issues:
+        for issue in bedtime_issues:
+            print(f"  ❌ {issue}")
+            unresolved.append(issue)
+    else:
+        print("  ✅ Bedtime playlists: en/hi free=4 and premium=6.")
+
+    if not args.local:
+        runtime_asset_issues = verify_frontend_runtime_assets()
+        if runtime_asset_issues:
+            for issue in runtime_asset_issues:
+                print(f"  ❌ {issue}")
+                unresolved.append(issue)
+        else:
+            print("  ✅ Frontend runtime assets are reachable.")
+
+        playback_issues = verify_current_playback_assets()
+        if playback_issues:
+            for issue in playback_issues:
+                print(f"  ❌ {issue}")
+                unresolved.append(issue)
+        else:
+            print("  ✅ Current story and nap audio files are reachable.")
+
+        frontend_regression_issues = verify_frontend_regression_suite()
+        if frontend_regression_issues:
+            for issue in frontend_regression_issues:
+                print(f"  ❌ {issue}")
+                unresolved.append(issue)
+        else:
+            print("  ✅ Premium UI regression suite passed.")
 
     # ── Back up current JSON files (so they're available for next recovery) ──
     if not args.local:

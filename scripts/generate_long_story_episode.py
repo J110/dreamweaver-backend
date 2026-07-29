@@ -453,11 +453,17 @@ COMPANION_TYPES = [
 
 CHARACTER_INSTRUCTIONS = {
     1: (
-        "This is a solo journey. The child protagonist talks:\n"
+        "This is a solo journey — EXACTLY ONE character: the child protagonist. "
+        "NO second character, companion, mentor, friend, or talking creature may "
+        "appear or speak. Do NOT invent a companion — the world settles around the "
+        "child ALONE.\n"
+        "The protagonist is the ONLY one with NAME: \"...\" dialogue lines. They talk:\n"
         "- To themselves: thinking out loud\n"
-        "- To the world around them: the trees, the wind, the moon\n"
+        "- To the world (trees, wind, moon, water) — but the world NEVER replies in "
+        "words and NEVER gets its own NAME: line; it answers only through movement, "
+        "light, or sound (e.g. the leaf just stirs, the wave just returns)\n"
         "- To the child listener: 1-2 moments of direct address\n\n"
-        "A solo character is NOT silent. Their voice is their company.\n"
+        "A solo character is NOT silent — their voice is their only company.\n"
         "The breathing mechanic is their tool — they use it alone."
     ),
     2: (
@@ -567,9 +573,17 @@ def call_mistral(prompt, max_tokens=4000, temperature=0.85, max_retries=5,
         messages.append({"role": "system", "content": system_prompt})
     messages.append({"role": "user", "content": prompt})
 
+    # Hard wall-clock backstop around the SDK call. A wedged Mistral call once
+    # hung the HI path 22min with the inner read-timeout never firing; the EN
+    # SDK path (client.chat.complete) has the SAME exposure and the max_retries
+    # loop can't help because a wedged call blocks INSIDE the SDK, never
+    # reaching the retry. Reuse the proven thread-based _hard_timeout so a stuck
+    # call is abandoned at 330s and control returns to this retry loop.
+    from _llm_timeout import _hard_timeout
     for attempt in range(max_retries):
         try:
-            response = client.chat.complete(
+            response = _hard_timeout(
+                client.chat.complete, 330,
                 model=MODEL,
                 messages=messages,
                 max_tokens=max_tokens,
@@ -598,6 +612,14 @@ LONG_STORY_EPISODE_PROMPT = """
 Write a bedtime story episode for ages {age_group}.
 Mood: {mood}
 
+{physiology_contract}
+
+{story_spec}
+LENGTH IS NON-NEGOTIABLE: this is a full-length long story regardless of
+shape. Arrival and pure_settling are NOT short — they reach the full word
+count through sensory detail, gentle repetition, and slow time, never by
+ending early.
+
 === THE WORLD ===
 Create a magical place based on this concept:
 {world_concept}
@@ -608,29 +630,49 @@ a child think "I want to go there."
 
 The world's connection to sleep: {world_sleep}
 
-=== THE MYSTERY ===
-Type: {mystery_setup}
+=== THE PULL (shape it per narrative_shape in the STORY SPEC) ===
+Give the child a gentle reason to stay — but SHAPE it to the
+narrative_shape above. Do NOT default to a quest/investigation:
+- investigate_resolve: something is softly wrong or missing; the
+  character wonders and follows it.
+- arrival: nothing is wrong — the child is still, and things come
+  TO them, one by one, each quieter than the last.
+- circular: open on an image; you will return to it, transformed.
+- nested: a character begins to tell a small story.
+- pure_settling: no mystery at all — only a slow arrival into the
+  place, growing quieter and quieter.
+Optional seed for shapes that use one: {mystery_setup}
 
-The child needs a REASON to keep listening. Something is
-wrong or missing or unknown. The character needs to find out.
+=== HOW IT LANDS (resolution_meaning in the STORY SPEC) ===
+The ending is peace — but the MEANING of that peace is the
+resolution_meaning above. Do NOT write "it was just resting /
+not lost, only sleeping" unless was_resting is the named one:
+{resolution_hint}
+The plot never fights sleep; it delivers the child to it.
 
-CRITICAL — THE RESOLUTION: {mystery_resolution}
-The answer to the mystery is ALWAYS rest, sleep, peace, quiet.
-The mystery delivers the child TO sleep. The plot doesn't
-fight the sleep goal — it serves it.
+=== BREATH (emergent from the world — NOT a narrator cue) ===
+Do NOT write a spoken narrator breathing instruction (a coaching
+cue that tells the child how to inhale and exhale). That style is
+BANNED — it is the old monotony. Instead, breath is the PHYSICS
+of this world:
+{breath_hint}
+The in-breath is brief; the out-breath is long and slow, and the
+world softens on the out-breath (A3). The child breathes because
+they are INSIDE a breathing world, not because they are told to.
+A gentle mechanic may anchor it: {breathing_description}
 
-=== THE BREATHING MECHANIC ===
-Include this in the story: {breathing_description}
-
-This object or ability appears in Phase 1 and is used
-throughout the story. The character must breathe slowly
-and calmly to make it work. Describe the breathing:
-"In through the nose, slow and deep... out through the mouth,
-soft as a whisper."
-
-The child listening will unconsciously mirror this.
-This is a sleep technique disguised as a story element.
-Include 2-3 breathing moments across the story.
+REQUIRED at each breath moment: write the breath as TWO short sentences
+(EACH under the sentence-word cap above), then the [BREATHE] tag on the
+next line. First a brief IN-breath sentence; then an OUT-breath sentence
+whose out-breath cue is followed by the slow/long words (wide, slow,
+unhurried) — the out-breath is the longer-FEELING, more-described half,
+but still under the cap. Weave it in the world's own terms (never a
+narrator "how to breathe" cue). Example — adapt to THIS world's physics:
+  "The lantern gathered small as the cave breathed in. Then, as the cave
+  breathed out, its glow spread wide and slow and unhurried."
+  [BREATHE]
+Do this 3-4 times, at least once late in the story. A bare [BREATHE] tag
+with no woven breath beside it does NOT count.
 
 === THE CHARACTER ===
 The main character is a {protagonist_label}: {protagonist_description}
@@ -756,8 +798,7 @@ want to be there. Each sentence ≤{sentence_cap} words.
 
 [PHASE_1] — {phase_1_words} words
 The character enters the world. Discovers the mystery.
-Gets the breathing mechanic. Meets companion(s).
-Dialogue between characters (tagged: NAME: "line").
+{cast_p1_beat}
 The breathing mechanic is used at least once.
 
 Simple words only. Nothing a {age_group} year old wouldn't
@@ -765,17 +806,15 @@ understand or use themselves.
 
 Ages {age_group} Phase 1 rules:
 - Maximum {sentence_cap} words per sentence
-- Dialogue between characters (short exchanges,
-  not monologues — 1-2 lines each, back and forth)
+{cast_dialogue_rule}
 - The mystery is discovered — the character finds
   something wrong/missing/strange
 - The breathing mechanic appears and is used once.
-  When the character uses it, wrap the breathing
-  description in [BREATHE_GUIDE] tags, then follow
-  with [BREATHE]:
-  [BREATHE_GUIDE]She breathed in, slow and deep.
-  Then out, soft as a whisper.[/BREATHE_GUIDE]
-  [BREATHE]
+  When breath first appears, show it through the world's
+  physics (see BREATH above) — the object/tide/light/creature
+  responds on the long out-breath. Do NOT use a spoken narrator
+  breathing cue. Place a [BREATHE] tag on its own line at that
+  moment (the wordless swell).
 - The repeated phrase appears naturally, spoken by
   the main character
 - Include [PAUSE: 800] tags at moments of discovery
@@ -788,6 +827,10 @@ SONG TRANSITION (at the end of Phase 1):
 The world itself starts producing music — the character
 hears it. Write 2-3 transition sentences.
 Do not announce "now here's a song." Let it emerge.
+ARC-CAP (A1): the song must be flat or DESCENDING in energy —
+no key-change lift, no tempo rise, no building crescendo. For
+arrival / pure_settling shapes it is a soft wordless hum rather
+than a performed song. It lowers arousal; it never raises it.
 
 Then output:
 [SONG_SEED: one sentence about what the song should be about]
@@ -798,15 +841,20 @@ It's quieter now. The mystery is beginning to resolve.
 Mark this: [POST_SONG]
 
 [PHASE_2] — {phase_2_words} words
-The mystery resolves. The answer is rest/sleep/peace.
-The character UNDERSTANDS — the things weren't lost,
-they were resting. The world wasn't broken, it was settling.
+The story settles toward peace. The character UNDERSTANDS —
+and the MEANING of that understanding is the resolution_meaning
+from the STORY SPEC (NOT "the things weren't lost, they were
+resting" unless was_resting is the named one): {resolution_hint}
 
 The breathing mechanic is used again — and now it's
 easier, because the character (and the child) are calmer.
 
-Companion characters fall asleep during this phase.
-The child watches them settle. This normalises sleep.
+If the story HAS companions, they settle to sleep during this phase and
+the character quietly notices — this normalises sleep. If the character
+is ALONE (solo cast), there is no one to watch: the WORLD settles around
+them instead (lights lower, sounds fade, the place itself grows sleepy).
+The dissolution must NOT always be "watch someone else fall asleep" —
+shape it to the cast.
 
 Shift from plot to sensation. What does the air feel like?
 What does the warmth feel like? Sentences get longer,
@@ -817,14 +865,13 @@ Ages {age_group} Phase 2 rules:
 - NO new plot events after the mystery resolves
 - Dialogue STOPS by the middle of Phase 2
   (characters are getting sleepy — they stop talking)
-- If there are other characters, they fall asleep
-  DURING Phase 2. The child watches them sleep.
-- The breathing mechanic works easily now — the character
-  barely has to try. Use [BREATHE_GUIDE] once more here,
-  followed by [BREATHE]:
-  [BREATHE_GUIDE]In through the nose, out through the mouth.
-  Slow. Steady.[/BREATHE_GUIDE]
-  [BREATHE]
+- If there are other characters, they settle to sleep during Phase 2 and
+  the character notices. If SOLO, the world settles instead — do not
+  invent a companion just to watch them sleep.
+- Breath comes easily now — shown again through the world's
+  physics (the out-breath long, the world softening on it),
+  never a spoken narrator breathing cue. Place a [BREATHE]
+  tag on its own line at that moment.
 - Sensory writing: air, light, ground, sounds far away,
   temperature, textures
 - The repeated phrase appears once, quieter:
@@ -847,23 +894,26 @@ Phase 3 is {phase_3_words} words. This is NOT short.
 It is MANY short sentences, not FEW short sentences.
 {phase_3_min_sentences}+ sentences of 3-5 words each.
 
-Write in waves of repetition: the same kinds of images
-described again and again. Warm. Still. Soft. Quiet.
-The child's brain receives wave after wave with nothing
-to hold onto.
+Dissolve using the phase3_texture from the STORY SPEC — do NOT
+always use the same staccato ladder: {phase3_hint}
 
-Start with 6-word sentences.
-By the middle, 4-word sentences.
-By the end, 2-3 word sentences.
-The final lines are single words or silence.
+Whatever the texture, the prose SHRINKS: start near 6-word
+sentences, reach 2-3 words by the end, final lines single words
+or silence. Arousal keeps falling; the ending dissolves into
+sleep — it never wakes (A4).
 
 Ages {age_group} Phase 3 rules:
 - NO characters speaking. They're all asleep.
 - NO dialogue, NO questions, NO exclamations
 - The writing mirrors what the child is physically
   feeling: warmth, stillness, heaviness, softness
-- The repeated phrase one final time, barely there:
-  [PHRASE]<your unique phrase here>[/PHRASE]
+- The repeated phrase: handle it PER THE phase3_texture above. It MUST
+  stay WHOLE inside a SINGLE [PHRASE] tag — NEVER split it word-by-word
+  across multiple [PHRASE] tags (e.g. [PHRASE]Just one[/PHRASE]
+  [PHRASE]more[/PHRASE] [PHRASE]try[/PHRASE] is BANNED; that shatter is
+  the same every story). Depending on the texture it appears once whole,
+  repeats whole as a fading refrain, or is absent — it is EXEMPT from the
+  single-word shrink and never fragmented.
 - Mark the final 3-4 lines: [WHISPER]...[/WHISPER]
 - The story doesn't end. It just stops.
   No moral. No conclusion. No "the end."
@@ -879,13 +929,13 @@ Total: {total_words} words (MINIMUM {total_min} words)
 
 These are NOT suggestions. The story MUST be this long.
 Count your words. If a phase is too short, add more
-sensory detail, more dialogue exchanges, more moments.
+sensory detail, more slow moments, more of the world responding.
 Do NOT use markdown formatting. No bold (**), no italic (*),
 no horizontal rules (---). Just plain text with the tags.
 
 Available tags:
 [PHRASE]...[/PHRASE], [PAUSE: ms], [WHISPER]...[/WHISPER],
-[SONG_SEED: ...], [BREATHE], [BREATHE_GUIDE]...[/BREATHE_GUIDE],
+[SONG_SEED: ...], [BREATHE],
 [CHARACTER: ...],
 [INTRO], [/INTRO], [PHASE_1], [/PHASE_1], [POST_SONG],
 [/POST_SONG], [PHASE_2], [/PHASE_2], [PHASE_3], [/PHASE_3]
@@ -894,23 +944,14 @@ Available tags:
 narration pauses and the background music swells. Use it at
 natural resting points — never mid-sentence.
 
-[BREATHE_GUIDE] wraps lines where the character uses the
-breathing mechanic. The narrator SLOWS DOWN and gets SOFTER,
-demonstrating the breath. Followed by silence where the child
-breathes along. Example:
-
-[BREATHE_GUIDE]She breathed in through her nose, slow and deep.
-Then out through her mouth, soft as a whisper.[/BREATHE_GUIDE]
-
-Use [BREATHE_GUIDE] 2-3 times across the story — once in
-Phase 1 when the breathing mechanic is first used, once in
-Phase 2 when it becomes easier. Always place a [BREATHE] tag
-immediately AFTER a [BREATHE_GUIDE] block.
+Breath is EMERGENT (see BREATH above): render it through the
+world's physics on the long out-breath, never a spoken narrator
+breathing cue. Mark each breath moment with a [BREATHE] tag on
+its own line — that is the wordless swell.
 
 === OUTPUT FORMAT ===
 
-[CHARACTER: Name1, personality, voice_style, gender]
-[CHARACTER: Name2, personality, voice_style, gender] (if applicable)
+{cast_character_example}
 
 [INTRO]
 ...narrator text...
@@ -988,6 +1029,34 @@ def build_long_story_prompt(params):
     else:
         char_instructions = char_template
 
+    # Solo must not be contradicted by the generic "meets companion(s)" + "dialogue
+    # between characters, back and forth" beats — that unconditional push made the
+    # model invent a companion for EVERY solo (the gate then rejected it -> 0 solo
+    # yield; two prompt-strengthenings had no effect because THIS was overriding
+    # them). Make the companion + back-and-forth beats cast-conditional.
+    if char_count == 1:
+        cast_p1_beat = ("Gets the breathing mechanic — ALONE. No companion appears; the "
+                        "world answers only in movement/light/sound (the leaf stirs, the "
+                        "wave returns), never in words and never with a NAME: line.")
+        cast_dialogue_rule = ("- The protagonist speaks ALONE — thinking aloud, or to the "
+                              "world (which never replies in words). No second character and "
+                              "no back-and-forth dialogue.")
+        # The output-format example is a STRUCTURAL prime — a 2-character example
+        # makes the model emit 2 characters regardless of prose instructions. Show
+        # EXACTLY ONE for solo.
+        cast_character_example = ("[CHARACTER: Name, personality, voice_style, gender]\n"
+                                  "(EXACTLY ONE character — SOLO story. Do NOT add a second "
+                                  "[CHARACTER:] block; no companion.)")
+    else:
+        cast_p1_beat = ('Gets the breathing mechanic. Meets companion(s).\n'
+                        'Dialogue between characters (tagged: NAME: "line").')
+        cast_dialogue_rule = ("- Dialogue between characters (short exchanges, not "
+                              "monologues — 1-2 lines each, back and forth)")
+        cast_character_example = ("[CHARACTER: Name1, personality, voice_style, gender]\n"
+                                  "[CHARACTER: Name2, personality, voice_style, gender]"
+                                  + (" (if applicable)" if char_count == 2 else
+                                     "\n[CHARACTER: Name3, personality, voice_style, gender]"))
+
     # Resolve protagonist description from the picked lead_character_type.
     # Falls back to "human" if a randomizer wasn't used (e.g. explicit-arg path).
     lead_type = params.get("lead_character_type", "human")
@@ -1031,10 +1100,34 @@ def build_long_story_prompt(params):
     from _english_validators import SENTENCE_CAP as _EN_SENTENCE_CAP
     sentence_cap = _EN_SENTENCE_CAP.get(age, 16)
 
+    # Layer-B axes (shared module). Fall back for the explicit-arg CLI path.
+    import _story_axes as SA
+    axes = {
+        "narrative_shape": params.get("narrative_shape", "investigate_resolve"),
+        "resolution_meaning": params.get("resolution_meaning", "was_resting"),
+        "emotional_texture": params.get("emotional_texture", "tender"),
+        "cast_structure": params.get("cast_structure", "mentor_pair"),
+        "phase3_texture": params.get("phase3_texture", "descending_length"),
+    }
+    axes["breath_expression"] = params.get(
+        "breath_expression",
+        SA.breath_family(world_type=params.get("world_type"), cast=axes["cast_structure"]),
+    )
+    physiology_contract = SA.PHYSIOLOGY_CONTRACT_EN
+    story_spec = SA.story_spec_block(axes, "en")
+    resolution_hint = SA.RESOLUTION_MEANINGS[axes["resolution_meaning"]]["en_hint"]
+    breath_hint = SA.BREATH_EXPRESSIONS[axes["breath_expression"]]["en_hint"]
+    phase3_hint = SA.PHASE3_TEXTURES[axes["phase3_texture"]]["en_hint"]
+
     return LONG_STORY_EPISODE_PROMPT.format(
         age_group=age,
         mood=params["mood"],
         sentence_cap=sentence_cap,
+        physiology_contract=physiology_contract,
+        story_spec=story_spec,
+        resolution_hint=resolution_hint,
+        breath_hint=breath_hint,
+        phase3_hint=phase3_hint,
         world_concept=params["world_concept"],
         world_sleep=params["world_sleep"],
         mystery_setup=params["mystery_setup"],
@@ -1050,6 +1143,9 @@ def build_long_story_prompt(params):
         example_name=example_name,
         character_count=char_count,
         character_instructions=char_instructions,
+        cast_p1_beat=cast_p1_beat,
+        cast_dialogue_rule=cast_dialogue_rule,
+        cast_character_example=cast_character_example,
         mood_energy=params["mood_energy"],
         repeated_phrase_feeling=params["repeated_phrase_feeling"],
         phase_1_words=f"{wc['phase_1'][0]}-{wc['phase_1'][1]}",
@@ -1109,9 +1205,15 @@ PHRASE_FIRST_WORD_STOPWORDS = {
 }
 
 
-def is_phrase_too_similar(new_phrase, existing_phrases, threshold=0.6):
+def is_phrase_too_similar(new_phrase, existing_phrases, threshold=0.72):
     """Return (too_similar, reason). Mirrors the short-story check so long +
     short catch cadence repetition with the same rule.
+
+    Threshold is 0.72 (raised from 0.6): short phrases sharing a stopword
+    opening ("just a little breath" vs "just a little longer" = 0.62) are NOT
+    real duplicates and were exhausting the retry budget. Genuine near-dups
+    (>=0.72) still reject, and the content-word first-word cadence check below
+    still catches shared meaningful openings.
     """
     from difflib import SequenceMatcher
     if not new_phrase:
@@ -1298,13 +1400,18 @@ def fix_untagged_dialogue(text, character_names):
     Leaves already-tagged lines (NAME: "...") untouched, including
     lines tagged with character types (OWL:, MOUSE:) rather than names.
     """
+    # Split inline dialogue tags onto their own line: "narration. NAME: "quote""
+    # becomes two lines, so the NAME: tag is recognized (not left dangling) and
+    # attribution isn't stolen by an addressee name inside the quote. This was
+    # the EN_6 bug: `... PIP: "They're resting, Kaiko."` got re-tagged KAIKO.
+    text = re.sub(r'(?<=[.!?…"\)])\s+(?=[A-Z][A-Za-z]+(?:\s+[A-Z][A-Za-z]+){0,2}\s*:\s*")', '\n', text)
     lines = text.split('\n')
     fixed = []
     names_lower = {n.lower(): n for n in character_names}
 
     # Detect any TAG: "..." pattern as already-tagged dialogue
     # Matches both character names (HOOT:) and type labels (OWL:, PIP:)
-    tagged_re = re.compile(r'^([A-Z][A-Za-z]+)\s*:\s*"')
+    tagged_re = re.compile(r'^([A-Z][A-Za-z]+(?:\s+[A-Z][A-Za-z]+){0,2})\s*:\s*"')
 
     last_speaker = None  # Track last speaker for unattributed quotes
 
@@ -1341,7 +1448,9 @@ def fix_untagged_dialogue(text, character_names):
             continue
 
         quote = match.group(1)
-        context = stripped.lower()
+        # Attribution context = text OUTSIDE the quote, so an addressee name
+        # inside the quote ("...Kaiko...") can't be mistaken for the speaker.
+        context = (stripped[:match.start()] + " " + stripped[match.end():]).lower()
 
         # Try to identify speaker from context
         speaker = None
@@ -2362,12 +2471,15 @@ PHRASE_FEELINGS = [
     "do_you_see", "right_here", "come_along", "one_more",
 ]
 
-# Diversity recency settings
+# Diversity recency settings. The new meaning-axis windows come from the
+# shared module (_story_axes) so EN + HI cannot drift apart.
+import _story_axes as _SA
 DIVERSITY_RECENCY = {
     "world_type": 5,
     "mystery_type": 4,
     "breathing_mechanic": 6,
     "repeated_phrase_feeling": 6,
+    **_SA.DIVERSITY_RECENCY_SHARED,
 }
 
 
@@ -2532,10 +2644,24 @@ def randomize_params(mood="curious", age_group=None):
     mentor_desc = random.choice(MENTOR_TYPES)
     companion_desc = random.choice(COMPANION_TYPES)
 
+    # NEW: Layer-B meaning axes from the shared module (same source as HI).
+    import _story_axes as SA
+    _b = SA.select_story_axes(existing, age_group, mood)
+    # breath_expression is now a tracked axis inside select_story_axes (no
+    # longer derived from world keywords).
+    # Cast drives the character count (solo must actually be solo).
+    character_count = SA.cast_count(_b["cast_structure"])
+
     return {
         "mood": mood,
         "age_group": age_group,
         "world_type": world_type,
+        "narrative_shape": _b["narrative_shape"],
+        "resolution_meaning": _b["resolution_meaning"],
+        "emotional_texture": _b["emotional_texture"],
+        "cast_structure": _b["cast_structure"],
+        "phase3_texture": _b["phase3_texture"],
+        "breath_expression": _b["breath_expression"],
         "world_concept": STORY_WORLDS[world_type]["concept"],
         "world_sleep": STORY_WORLDS[world_type]["sleep_connection"],
         "mystery_type": mystery_type,
@@ -2680,6 +2806,12 @@ def publish_episode(output_dir, params, metadata, duration_seconds):
         "world_type": world_type,
         "mystery_type": mystery_type,
         "breathing_mechanic": breathing_mechanic,
+        "narrative_shape": params.get("narrative_shape", ""),
+        "resolution_meaning": params.get("resolution_meaning", ""),
+        "emotional_texture": params.get("emotional_texture", ""),
+        "cast_structure": params.get("cast_structure", ""),
+        "phase3_texture": params.get("phase3_texture", ""),
+        "breath_expression": params.get("breath_expression", ""),
         "lead_character_type": lead_character_type,
         "name_culture": params.get("name_culture", ""),
         "characters": characters,
@@ -2735,6 +2867,13 @@ def main():
     parser.add_argument("--character-type", default=None,
                         choices=[t for t, _ in LEAD_CHARACTER_TYPES],
                         help="Lead character type (default: auto-rotate when --randomize, else weighted random)")
+    parser.add_argument("--narrative-shape", default=None, choices=list(_SA.NARRATIVE_SHAPES),
+                        help="Narrative shape (default: auto-select, age/mood-eligible)")
+    parser.add_argument("--resolution-meaning", default=None, choices=list(_SA.RESOLUTION_MEANINGS),
+                        help="Resolution meaning (default: auto-select)")
+    parser.add_argument("--emotional-texture", default=None, choices=list(_SA.EMOTIONAL_TEXTURES))
+    parser.add_argument("--cast-structure", default=None, choices=list(_SA.CAST_STRUCTURES))
+    parser.add_argument("--phase3-texture", default=None, choices=list(_SA.PHASE3_TEXTURES))
     parser.add_argument("--character-count", type=int, default=2, choices=[1, 2, 3])
     parser.add_argument("--output-dir", default=None)
     parser.add_argument("--dry-run", action="store_true", help="Print prompt only")
@@ -2753,6 +2892,25 @@ def main():
         # Allow --character-type to override the randomizer's pick
         if args.character_type:
             params["lead_character_type"] = args.character_type
+        # Allow explicit axis pins to override the randomizer (batch coverage)
+        for _k, _v in [("narrative_shape", args.narrative_shape),
+                       ("resolution_meaning", args.resolution_meaning),
+                       ("emotional_texture", args.emotional_texture),
+                       ("cast_structure", args.cast_structure),
+                       ("phase3_texture", args.phase3_texture)]:
+            if _v:
+                params[_k] = _v
+        # A pinned cast_structure MUST re-derive character_count — else the
+        # randomizer's count (e.g. 3) contradicts the pinned cast (solo), and the
+        # prompt tells the model to write 3 characters for a "solo" story (which
+        # the cast gate then rejects on every attempt). This was the real cause of
+        # EN-solo never filling — NOT model reluctance.
+        params["character_count"] = _SA.cast_count(params["cast_structure"])
+        params["breath_expression"] = _SA.breath_family(
+            world_type=params.get("world_type"), cast=params.get("cast_structure"))
+        print(f"  Axes: shape={params['narrative_shape']}, resolution={params['resolution_meaning']}, "
+              f"texture={params['emotional_texture']}, cast={params['cast_structure']}, "
+              f"phase3={params['phase3_texture']}, breath={params['breath_expression']}")
         print(f"  Randomized: age={params['age_group']}, world={params['world_type']}, mystery={params['mystery_type']}, "
               f"breathing={params['breathing_mechanic']}, lead={params['lead_character_type']}, "
               f"culture={params.get('name_culture','?')}, chars={params['character_count']}")
@@ -2794,7 +2952,15 @@ def main():
             "name_culture_hint": name_culture_hint,
             "recent_character_names": recent_names,
             "recent_phrases": recent_phrases,
+            "narrative_shape": args.narrative_shape or "investigate_resolve",
+            "resolution_meaning": args.resolution_meaning or "was_resting",
+            "emotional_texture": args.emotional_texture or "tender",
+            "cast_structure": args.cast_structure or "mentor_pair",
+            "phase3_texture": args.phase3_texture or "descending_length",
+            "breath_expression": _SA.breath_family(
+                world_type=world_type, cast=(args.cast_structure or "mentor_pair")),
         }
+        params["character_count"] = _SA.cast_count(args.cast_structure or "mentor_pair")
 
     output_dir = args.output_dir or str(BASE_DIR.parent / "output" / "long_story_test")
     os.makedirs(output_dir, exist_ok=True)
@@ -2871,10 +3037,28 @@ def main():
         # 2 attempts was insufficient once the catalog grew — daily runs started
         # losing their long story when Mistral produced two consecutive
         # repeated_phrase values that both collided with the recency blocklist.
-        MAX_GEN_ATTEMPTS = 4
+        MAX_GEN_ATTEMPTS = 6
+        # Text-gen wall-clock (cron-safety): bound total attempts by WALL TIME,
+        # not just count. The call-layer caps each Mistral call at 330s, but
+        # max_retries stacks them, so a wedged provider could still run long;
+        # this mirrors HI's STORY_WALL_CLOCK. Set higher than HI's 720 because
+        # this loop sleeps 31s between attempts (rate limit), so a LEGIT 6-attempt
+        # gen runs ~785s — 720 would kill slow-but-valid stories. 1200 bounds the
+        # WEDGE without that. Distinct env var so it can't collide with HI's.
+        EPISODE_TEXT_WALL_CLOCK = int(os.getenv("EPISODE_TEXT_WALL_CLOCK", "1200"))
+        _gen_t0 = time.time()
         parsed = None
         issues = []
         for gen_attempt in range(MAX_GEN_ATTEMPTS):
+            # Wall-clock check between attempts -> route to the graceful-skip path
+            # (issues has an ERROR -> post-loop FATAL sys.exit(1) BEFORE publish ->
+            # subprocess non-zero -> pipeline_run logs failure + continues). Same
+            # skip-and-continue semantics as HI; no half-written entry.
+            if time.time() - _gen_t0 > EPISODE_TEXT_WALL_CLOCK:
+                print(f"\n   TIMED-OUT: text-gen exceeded {EPISODE_TEXT_WALL_CLOCK}s after "
+                      f"{gen_attempt} attempts — skipping this episode (cron-safety, skip-and-continue)")
+                issues = ["ERROR: text-gen wall-clock timeout — skip-and-continue"]
+                break
             attempt_label = f" (attempt {gen_attempt + 1}/{MAX_GEN_ATTEMPTS})" if gen_attempt > 0 else ""
             print(f"1. Generating story text via Mistral{attempt_label}...")
 
@@ -2885,7 +3069,10 @@ def main():
                 if any("comprehensibility" in i for i in issues):
                     hints.append(
                         "SENTENCE LENGTH: split every long sentence so NO sentence "
-                        f"in any section exceeds the cap stated above. Count words."
+                        "in any section exceeds the cap stated above. Count words. "
+                        "When you split a sentence, KEEP every section tag ([INTRO], "
+                        "[PHASE_1], [PHASE_2], [PHASE_3], [SONG_SEED:], [WHISPER]) "
+                        "exactly where it was — do NOT drop or merge sections while fixing length."
                     )
                 if any("repeated_phrase" in i for i in issues):
                     hints.append(
@@ -2936,6 +3123,27 @@ def main():
             print("3. Validating...")
             issues = validate_story(parsed, params)
 
+            # Word-count floor — long stories must actually be long. Behavioral
+            # under-writing collapses them to ~1/3 target; force a retry.
+            _total_min = LONG_STORY_WORD_COUNTS[params["age_group"]]["total"][0]
+            _actual_wc = sum(len((parsed.get(s) or "").split())
+                             for s in ("intro", "phase_1", "post_song", "phase_2", "phase_3"))
+            if _actual_wc < int(0.85 * _total_min):
+                issues.append(
+                    f"ERROR: total word count {_actual_wc} is far below the required minimum "
+                    f"{_total_min}. Write the FULL length — make Phase 1 and Phase 2 substantially "
+                    f"longer with more sensory detail and slow moments.")
+
+            # Phrase-shatter guard: the repeated phrase must stay WHOLE, not be
+            # split word-by-word across [PHRASE] tags (a same-every-story ending
+            # monotony). >=2 single-word [PHRASE] tags = shatter.
+            _ptags = re.findall(r'\[PHRASE\](.*?)\[/PHRASE\]', raw_response, re.S)
+            if sum(1 for p in _ptags if len(p.split()) == 1) >= 2:
+                issues.append(
+                    "ERROR: the repeated phrase is shattered into single-word [PHRASE] "
+                    "fragments. Keep it WHOLE in ONE [PHRASE] tag and vary the ending per "
+                    "the phase3 texture — do not break it word-by-word.")
+
             # Phase 2.3 — comprehensibility validator (EN long_story).
             # Append major errors to the issues list; existing retry loop
             # picks them up. Warnings logged separately, don't block.
@@ -2956,6 +3164,28 @@ def main():
                 print(f"   ⚠ comprehensibility warning: {_w['detail'][:120]}")
             for _m in [e for e in _en_errors if e["severity"] == "major"][:5]:
                 issues.append(f"ERROR: comprehensibility — {_m['detail']}")
+
+            # Physiology gate (A1-A4) — the sleep guarantee, now ENFORCED at
+            # accept (was only post-hoc in the batch). A physiology-fail triggers
+            # regeneration, so no arousal-rising / breath-absent / non-dissolving
+            # story publishes. This is the wiring the whole redesign assumed.
+            import _physiology_validators as _PHYS
+            _phys_text = "\n".join(filter(None, [parsed.get(s) for s in
+                ("intro", "phase_1", "post_song", "phase_2", "phase_3")]))
+            for _pn, _po, _pr in _PHYS.validate_all(_phys_text)[1]:
+                if not _po:
+                    issues.append(f"ERROR: physiology {_pr}")
+            # Cast gate: solo = no second VOICE. The declared characters array
+            # misses an undeclared companion that still gets dialogue lines
+            # (the talking-moth hole), so count speaking entities in the actual
+            # story text via the shared helper.
+            # Use the module-level _SA (imported at top); a local `import ... as
+            # _SA` here would make _SA function-local and break the earlier
+            # _SA.cast_count reference in main() -> UnboundLocalError.
+            if params.get("cast_structure") == "solo":
+                _cv = _SA.solo_cast_violation(_phys_text, len(parsed.get("characters", [])))
+                if _cv:
+                    issues.append(f"ERROR: {_cv}")
 
             # Phrase-similarity check against recent catalog
             new_phrase = parsed.get("repeated_phrase") or ""
@@ -3068,6 +3298,12 @@ def main():
             "world_concept": params.get("world_concept", ""),
             "mystery_type": params.get("mystery_type", ""),
             "breathing_mechanic": params.get("breathing_mechanic", ""),
+            "narrative_shape": params.get("narrative_shape", ""),
+            "resolution_meaning": params.get("resolution_meaning", ""),
+            "emotional_texture": params.get("emotional_texture", ""),
+            "cast_structure": params.get("cast_structure", ""),
+            "phase3_texture": params.get("phase3_texture", ""),
+            "breath_expression": params.get("breath_expression", ""),
             "character_count": params["character_count"],
             "characters": parsed["characters"],
             "repeated_phrase": parsed["repeated_phrase"],

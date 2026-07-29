@@ -73,31 +73,33 @@ def safe_subscribe(endpoint, arguments, *, with_logs: bool = False,
     import fal_client
     last_err = None
     for i in range(attempts):
-        with ThreadPoolExecutor(max_workers=1) as pool:
-            fut = pool.submit(
+        pool = ThreadPoolExecutor(max_workers=1)
+        fut = pool.submit(
                 fal_client.subscribe, endpoint,
                 arguments=arguments, with_logs=with_logs,
                 start_timeout=start_timeout, client_timeout=client_timeout,
                 **extra,
+        )
+        try:
+            return fut.result(timeout=timeout)
+        except _FTimeoutError:
+            last_err = TimeoutError(
+                f"fal_client.subscribe exceeded {timeout}s "
+                f"(endpoint={endpoint}, attempt={i+1}/{attempts})"
             )
-            try:
-                return fut.result(timeout=timeout)
-            except _FTimeoutError:
-                last_err = TimeoutError(
-                    f"fal_client.subscribe exceeded {timeout}s "
-                    f"(endpoint={endpoint}, attempt={i+1}/{attempts})"
-                )
-                print(f"  WARN {last_err}", flush=True)
-                fut.cancel()
-            except Exception as e:
-                if is_balance_exhausted_response(e):
-                    raise FalBalanceExhausted(_balance_detail(e)) from e
-                last_err = e
-                print(
-                    f"  WARN fal_client.subscribe attempt {i+1}/{attempts} "
-                    f"failed: {type(e).__name__}: {e}",
-                    flush=True,
-                )
+            print(f"  WARN {last_err}", flush=True)
+            fut.cancel()
+        except Exception as e:
+            if is_balance_exhausted_response(e):
+                raise FalBalanceExhausted(_balance_detail(e)) from e
+            last_err = e
+            print(
+                f"  WARN fal_client.subscribe attempt {i+1}/{attempts} "
+                f"failed: {type(e).__name__}: {e}",
+                flush=True,
+            )
+        finally:
+            pool.shutdown(wait=False, cancel_futures=True)
         if i < attempts - 1:
             time.sleep(min(5 * (i + 1), 30))
     raise RuntimeError(

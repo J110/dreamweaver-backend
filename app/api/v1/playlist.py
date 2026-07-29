@@ -17,7 +17,7 @@ from typing import Optional
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from fastapi import APIRouter, Depends, Query
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError, field_validator
 
 from app.dependencies import get_db_client, get_optional_user
 from app.utils.gating import is_premium
@@ -25,6 +25,8 @@ from app.utils.backlog import should_lock_for_user
 from app.utils.logger import get_logger
 
 FREE_SLOTS = {"silly_song", "poem", "short_story", "lullaby"}
+BEDTIME_FREE_COUNT = 4
+BEDTIME_PREMIUM_COUNT = 6
 
 # Nap playlist: calming types only (exclude funny_short + long_story).
 # 4th slot (nap_lullaby_2) is premium-only — lullabies are the most nap-appropriate.
@@ -65,6 +67,16 @@ class PlaylistItem(BaseModel):
     duration_seconds: Optional[int] = None
     is_fallback: bool = False
     is_locked: bool = False
+
+    @field_validator("duration_seconds", mode="before")
+    @classmethod
+    def _coerce_duration(cls, v):
+        if v is None:
+            return None
+        try:
+            return int(round(float(v)))
+        except (TypeError, ValueError):
+            return None
 
 
 class PlaylistResponse(BaseModel):
@@ -278,17 +290,42 @@ async def get_today_playlist(
         cover_file, cover_url = _cover_info(item, cover_dir)
         if is_fallback:
             all_fresh = False
-        items.append(PlaylistItem(
-            slot=slot_name,
-            content_id=item.get("id"),
-            title=item.get("title") or item.get("title_en") or "",
-            audio_file=audio_file,
-            audio_url=audio_url,
-            cover_file=cover_file,
-            cover_url=cover_url,
-            duration_seconds=item.get("duration_seconds") or item.get("duration"),
-            is_fallback=is_fallback,
-        ))
+        try:
+            items.append(PlaylistItem(
+                slot=slot_name,
+                content_id=item.get("id"),
+                title=item.get("title") or item.get("title_en") or "",
+                audio_file=audio_file,
+                audio_url=audio_url,
+                cover_file=cover_file,
+                cover_url=cover_url,
+                duration_seconds=item.get("duration_seconds") or item.get("duration"),
+                is_fallback=is_fallback,
+            ))
+        except ValidationError:
+            logger.exception(
+                "playlist: malformed item %s in slot %s — skipping", item.get("id"), slot_name,
+            )
+            missing.append(slot_name)
+
+    target_count = BEDTIME_PREMIUM_COUNT if is_premium(current_user) else BEDTIME_FREE_COUNT
+    if items and len(items) < target_count:
+        existing = list(items)
+        filled_slots = {item.slot for item in items}
+        missing_slots = [slot[0] for slot in slots if slot[0] not in filled_slots]
+        for index, slot_name in enumerate(missing_slots):
+            if len(items) >= target_count:
+                break
+            items.append(existing[index % len(existing)].model_copy(update={
+                "slot": slot_name,
+                "is_fallback": True,
+            }))
+        slot_order = {slot[0]: index for index, slot in enumerate(slots)}
+        items.sort(key=lambda item: slot_order[item.slot])
+        all_fresh = False
+
+    filled_slots = {item.slot for item in items}
+    missing = [slot[0] for slot in slots if slot[0] not in filled_slots]
 
     _record_history(store, today, lang, [it.content_id for it in items], kind="bedtime")
 
@@ -499,18 +536,24 @@ async def get_nap_playlist(
         audio_file, audio_url = _audio_info(item, audio_dir)
         cover_file, cover_url = _cover_info(item, cover_dir)
         is_locked = allow_locked
-        items.append(PlaylistItem(
-            slot=slot_name,
-            content_id=cid,
-            title=item.get("title") or item.get("title_en") or "",
-            audio_file=audio_file,
-            audio_url=None if is_locked else audio_url,
-            cover_file=cover_file,
-            cover_url=cover_url,
-            duration_seconds=item.get("duration_seconds") or item.get("duration"),
-            is_fallback=is_fallback,
-            is_locked=is_locked,
-        ))
+        try:
+            items.append(PlaylistItem(
+                slot=slot_name,
+                content_id=cid,
+                title=item.get("title") or item.get("title_en") or "",
+                audio_file=audio_file,
+                audio_url=None if is_locked else audio_url,
+                cover_file=cover_file,
+                cover_url=cover_url,
+                duration_seconds=item.get("duration_seconds") or item.get("duration"),
+                is_fallback=is_fallback,
+                is_locked=is_locked,
+            ))
+        except ValidationError:
+            logger.exception(
+                "nap: malformed item %s in slot %s — skipping", cid, slot_name,
+            )
+            continue
 
     target_count = NAP_PREMIUM_COUNT
     if items and len(items) < target_count:
@@ -519,9 +562,12 @@ async def get_nap_playlist(
         for index, slot_name in enumerate(missing_slots):
             if len(items) >= target_count:
                 break
+            filler_locked = not premium and slot_name == "nap_lullaby_2"
             items.append(existing[index % len(existing)].model_copy(update={
                 "slot": slot_name,
                 "is_fallback": True,
+                "is_locked": filler_locked,
+                "audio_url": None if filler_locked else existing[index % len(existing)].audio_url,
             }))
 
     _record_nap_history(store, today, lang, username, placed_by_type)

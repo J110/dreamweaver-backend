@@ -30,6 +30,7 @@ from app.utils.credits import (
     premium_period_credit_fields,
     update_user_credit_state,
 )
+from app.utils.entitlements import compute_tier
 from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -70,6 +71,22 @@ def _open_billing_db() -> sqlite3.Connection:
     conn.execute(
         "CREATE INDEX IF NOT EXISTS idx_swh_received_at "
         "ON stripe_webhook_events(received_at)"
+    )
+    conn.execute(
+        """
+        CREATE TABLE IF NOT EXISTS revenuecat_webhook_events (
+            event_id TEXT PRIMARY KEY,
+            event_type TEXT NOT NULL,
+            received_at TEXT NOT NULL,
+            processed_at TEXT,
+            status TEXT NOT NULL DEFAULT 'received',
+            error TEXT
+        )
+        """
+    )
+    conn.execute(
+        "CREATE INDEX IF NOT EXISTS idx_rcwh_received_at "
+        "ON revenuecat_webhook_events(received_at)"
     )
     conn.commit()
     return conn
@@ -122,6 +139,24 @@ def _persist_user_update(db_client, uid: str, fields: dict) -> None:
         logger.warning("user record update failed uid=%s: %s", uid, e)
 
 
+def _apply_tier(db_client, uid: str, now: Optional[datetime] = None) -> None:
+    """Recompute subscription_tier from the entitlement projection and persist
+    on change. The ONLY writer of subscription_tier in the webhook path."""
+    try:
+        doc = db_client.collection("users").document(uid).get()
+    except Exception as e:
+        logger.warning("tier recompute read failed uid=%s: %s", uid, e)
+        return
+    if not doc.exists:
+        return
+    user = doc.to_dict() or {}
+    # Recompute from the freshly-read record (not the handler's `fields`) so
+    # apple/google/comp entitlements are honored — never narrow this to fields.
+    new_tier = compute_tier(user, now)
+    if user.get("subscription_tier") != new_tier:
+        _persist_user_update(db_client, uid, {"subscription_tier": new_tier})
+
+
 def _iso_from_ts(ts: Optional[int]) -> Optional[str]:
     if ts is None:
         return None
@@ -169,7 +204,6 @@ def _handle_sub_created(db_client, event) -> None:
     fields = {
         "stripe_subscription_id": sub.get("id"),
         "subscription_status": sub.get("status") or "active",
-        "subscription_tier": "premium",
         "current_period_end": period_end_iso,
         **premium_period_credit_fields(period_start_iso, period_end_iso),
     }
@@ -187,6 +221,7 @@ def _handle_sub_created(db_client, event) -> None:
         logger.info("billing_email fetch skipped: %s", e)
 
     _persist_user_update(db_client, user["uid"], fields)
+    _apply_tier(db_client, user["uid"])
 
     ph_emit(
         family_id,
@@ -218,20 +253,14 @@ def _handle_sub_updated(db_client, event) -> None:
         "current_period_end": _iso_from_ts(period_end_ts),
     }
 
-    if status_str in ("trialing", "active", "past_due"):
-        fields["subscription_tier"] = "premium"
-    elif status_str == "canceled":
-        # Don't downgrade tier here; deletion handler / period-end cron
-        # owns that.
-        pass
-    elif status_str in ("incomplete", "incomplete_expired", "unpaid"):
+    if status_str in ("incomplete", "incomplete_expired", "unpaid"):
         logger.warning(
-            "subscription.updated unusual status=%s sub=%s — treating as free",
+            "subscription.updated unusual status=%s sub=%s — tier will project to free",
             status_str, sub.get("id"),
         )
-        fields["subscription_tier"] = "free"
 
     _persist_user_update(db_client, user["uid"], fields)
+    _apply_tier(db_client, user["uid"])
 
     ph_emit(
         user.get("family_id") or "",
@@ -307,7 +336,7 @@ def _handle_invoice_failed(db_client, event) -> None:
 
 
 def _handle_invoice_paid(db_client, event) -> None:
-    """Apply a monthly grant for a validated advancing renewal period."""
+    """Renewal happy path. Fired on every successful subscription invoice."""
     invoice = event["data"]["object"]
     customer_id = invoice.get("customer")
     user = _find_user_by_customer(db_client, customer_id)
@@ -331,7 +360,6 @@ def _handle_invoice_paid(db_client, event) -> None:
         pass
 
     iso_end = _iso_from_ts(period_end_ts)
-    # Period start: line item period.start, fall back to invoice period_start.
     period_start_iso = None
     try:
         lines = (invoice.get("lines") or {}).get("data") or []
@@ -368,9 +396,11 @@ def _handle_invoice_paid(db_client, event) -> None:
     committed_fields = {"value": {}}
 
     def invoice_fields(current: dict) -> dict:
-        fields = {}
+        fields = {"subscription_status": "active"}
         applied["value"] = False
 
+        if iso_end:
+            fields["current_period_end"] = iso_end
         if customer_email and current.get("billing_email") != customer_email:
             fields["billing_email"] = customer_email
         if customer_email and not current.get("recovery_email"):
@@ -406,9 +436,6 @@ def _handle_invoice_paid(db_client, event) -> None:
         )
         if valid_renewal and advances_period and not duplicate_invoice:
             fields.update({
-                "subscription_status": "active",
-                "subscription_tier": "premium",
-                "current_period_end": iso_end,
                 **premium_period_credit_fields(period_start_iso, iso_end),
                 "credits_last_applied_invoice_id": invoice_id,
                 "credits_last_applied_period_start": period_start_iso,
@@ -422,6 +449,7 @@ def _handle_invoice_paid(db_client, event) -> None:
     update_user_credit_state(db_client, user["uid"], invoice_fields)
     if user["uid"] in _local_users:
         _local_users[user["uid"]].update(committed_fields["value"])
+    _apply_tier(db_client, user["uid"])
 
     if applied["value"]:
         ph_emit(
@@ -516,11 +544,11 @@ def _handle_charge_dispute(db_client, event) -> None:
         return
 
     fields = {
-        "subscription_tier": "free",
         "subscription_status": "disputed",
         "disputed_at": datetime.now(timezone.utc).isoformat(),
     }
     _persist_user_update(db_client, user["uid"], fields)
+    _apply_tier(db_client, user["uid"])
 
     logger.warning(
         "DISPUTE: customer=%s dispute=%s reason=%s amount=%s — premium revoked, "
