@@ -18,6 +18,7 @@ import os
 import threading
 import uuid
 import fcntl
+from contextlib import contextmanager
 from copy import deepcopy
 from datetime import datetime
 from pathlib import Path
@@ -135,8 +136,9 @@ class LocalStore:
         self._seed_content_path = self._seed_dir / "content.json"
         self._last_seed_mtime: float = 0.0
 
-        self._recover_transaction_journal()
-        self._load_data()
+        with self._file_lock():
+            self._recover_transaction_journal()
+            self._load_data()
         self._update_seed_mtime()
 
     def _load_data(self):
@@ -442,29 +444,35 @@ class LocalStore:
 
     def run_transaction(self, callback):
         with self._lock:
-            with open(self._lock_path, "a+") as lock_file:
-                fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX)
+            with self._file_lock():
+                self._recover_transaction_journal()
+                for name in self._persistent_collections:
+                    self._reload_persistent_collection(name)
+                snapshot = deepcopy(self.collections)
+                self._transaction_depth += 1
+                self._transaction_dirty = set()
                 try:
-                    for name in self._persistent_collections:
-                        self._reload_persistent_collection(name)
-                    snapshot = deepcopy(self.collections)
-                    self._transaction_depth += 1
-                    self._transaction_dirty = set()
-                    try:
-                        result = callback(None)
-                        self._commit_transaction(self._transaction_dirty)
-                        return result
-                    except Exception:
-                        for name, items in snapshot.items():
-                            current = self.collections.setdefault(name, {})
-                            current.clear()
-                            current.update(items)
-                        raise
-                    finally:
-                        self._transaction_depth -= 1
-                        self._transaction_dirty = set()
+                    result = callback(None)
+                    self._commit_transaction(self._transaction_dirty)
+                    return result
+                except Exception:
+                    for name, items in snapshot.items():
+                        current = self.collections.setdefault(name, {})
+                        current.clear()
+                        current.update(items)
+                    raise
                 finally:
-                    fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
+                    self._transaction_depth -= 1
+                    self._transaction_dirty = set()
+
+    @contextmanager
+    def _file_lock(self):
+        with open(self._lock_path, "a+") as lock_file:
+            fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX)
+            try:
+                yield
+            finally:
+                fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
 
     def _commit_transaction(self, dirty: set[str]) -> None:
         if not dirty:
@@ -490,12 +498,18 @@ class LocalStore:
         self._journal_path.unlink(missing_ok=True)
 
     def collection(self, name: str) -> "CollectionRef":
-        if name in self._persistent_collections and not self._transaction_depth:
-            with self._lock:
-                self._reload_persistent_collection(name)
+        self._refresh_persistent_collection(name)
         if name not in self.collections:
             self.collections[name] = {}
         return CollectionRef(self, name)
+
+    def _refresh_persistent_collection(self, name: str) -> None:
+        if name not in self._persistent_collections or self._transaction_depth:
+            return
+        with self._lock:
+            with self._file_lock():
+                self._recover_transaction_journal()
+                self._reload_persistent_collection(name)
 
 
 class CollectionRef:
@@ -534,6 +548,7 @@ class CollectionRef:
         return new_ref
 
     def get(self) -> list["DocumentSnapshot"]:
+        self._store._refresh_persistent_collection(self._name)
         results = list(self._data.values())
 
         # Apply filters
@@ -601,6 +616,7 @@ class DocumentRef:
         return self._id
 
     def get(self) -> "DocumentSnapshot":
+        self._store._refresh_persistent_collection(self._name)
         doc = self._data.get(self._id, None)
         return DocumentSnapshot(self._id, doc)
 

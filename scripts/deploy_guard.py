@@ -1500,20 +1500,10 @@ def verify_character_generation_contracts(api: str, snapshot: dict) -> list[str]
                 issues.append(CHARACTER_DEPLOY_CONTRACTS[3])
                 break
 
-        recovery_window = timedelta(seconds=60)
+        lease_seconds, recovery_seconds = configured_character_job_timeouts()
         now = datetime.now(timezone.utc)
         for job in snapshot.get("pending_character_jobs", []):
-            timestamp = job.get("lease_expires_at") or job.get("created_at")
-            if not timestamp:
-                issues.append(CHARACTER_DEPLOY_CONTRACTS[4])
-                break
-            try:
-                checked_at = datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
-                checked_at = checked_at if checked_at.tzinfo else checked_at.replace(tzinfo=timezone.utc)
-            except ValueError:
-                issues.append(CHARACTER_DEPLOY_CONTRACTS[4])
-                break
-            if checked_at + recovery_window < now:
+            if character_job_is_stale(job, now, lease_seconds, recovery_seconds):
                 issues.append(CHARACTER_DEPLOY_CONTRACTS[4])
                 break
     except httpx.HTTPError:
@@ -1521,6 +1511,32 @@ def verify_character_generation_contracts(api: str, snapshot: dict) -> list[str]
     finally:
         client.close()
     return issues
+
+
+def configured_character_job_timeouts() -> tuple[int, int]:
+    return (
+        int(os.getenv("CHARACTER_WORKER_LEASE_SECONDS", "300")),
+        int(os.getenv("CHARACTER_JOB_RECOVERY_WINDOW_SECONDS", "60")),
+    )
+
+
+def character_job_is_stale(
+    job: dict,
+    now: datetime,
+    lease_seconds: int,
+    recovery_seconds: int,
+) -> bool:
+    status = job.get("status")
+    timestamp = job.get("created_at") if status == "accepted" else job.get("lease_expires_at")
+    if not timestamp:
+        return True
+    try:
+        checked_at = datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
+        checked_at = checked_at if checked_at.tzinfo else checked_at.replace(tzinfo=timezone.utc)
+    except (TypeError, ValueError):
+        return True
+    window = recovery_seconds + (lease_seconds if status == "accepted" else 0)
+    return checked_at + timedelta(seconds=window) < now
 
 
 def check_radio_health():

@@ -59,6 +59,15 @@ class Settings:
         self.character_provider_poll_interval_seconds: float = float(
             os.getenv("CHARACTER_PROVIDER_POLL_INTERVAL_SECONDS", "2")
         )
+        self.character_worker_lease_seconds: int = int(
+            os.getenv("CHARACTER_WORKER_LEASE_SECONDS", "300")
+        )
+        self.character_job_recovery_window_seconds: int = int(
+            os.getenv("CHARACTER_JOB_RECOVERY_WINDOW_SECONDS", "60")
+        )
+        self.character_orphan_min_age_seconds: int = int(
+            os.getenv("CHARACTER_ORPHAN_MIN_AGE_SECONDS", "600")
+        )
 
         # Kokoro TTS (lightweight 82M model, runs on CPU)
         self.kokoro_lang_code: str = os.getenv("KOKORO_LANG_CODE", "a")  # 'a' = American English

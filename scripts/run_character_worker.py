@@ -18,6 +18,8 @@ def main() -> int:
             CharacterGenerator(),
             settings.character_media_dir,
             worker_id=socket.gethostname(),
+            lease_seconds=settings.character_worker_lease_seconds,
+            orphan_min_age_seconds=settings.character_orphan_min_age_seconds,
         )
     except Exception:
         return 1

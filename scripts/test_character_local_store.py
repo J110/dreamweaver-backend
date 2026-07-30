@@ -67,3 +67,30 @@ def test_local_store_recovers_a_journal_after_interrupted_commit(tmp_path, monke
 
     recovered = LocalStore(data_dir=tmp_path)
     assert recovered.collection("users").document("u1").get().to_dict()["credits_remaining"] == 2
+
+
+def test_local_store_same_instance_replays_pending_journal_before_transaction(tmp_path):
+    store = LocalStore(data_dir=tmp_path)
+    store.collection("users").document("u1").set({"uid": "u1", "credits_remaining": 3})
+    store._journal_path.write_text('{"collections":{"users":[{"uid":"u1","credits_remaining":2}]}}')
+    observed = []
+
+    def continue_transaction(_):
+        observed.append(store.collection("users").document("u1").get().to_dict()["credits_remaining"])
+        store.collection("users").document("u1").update({"credits_remaining": 1})
+
+    store.run_transaction(continue_transaction)
+
+    assert observed == [2]
+    assert store.collection("users").document("u1").get().to_dict()["credits_remaining"] == 1
+    assert not store._journal_path.exists()
+
+
+def test_local_store_replays_pending_journal_before_cached_document_read(tmp_path):
+    store = LocalStore(data_dir=tmp_path)
+    store.collection("users").document("u1").set({"uid": "u1", "credits_remaining": 3})
+    document = store.collection("users").document("u1")
+    store._journal_path.write_text('{"collections":{"users":[{"uid":"u1","credits_remaining":2}]}}')
+
+    assert document.get().to_dict()["credits_remaining"] == 2
+    assert not store._journal_path.exists()

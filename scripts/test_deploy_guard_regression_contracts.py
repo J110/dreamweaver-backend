@@ -1,4 +1,5 @@
 from pathlib import Path
+from datetime import datetime, timedelta, timezone
 
 from scripts import deploy_guard
 
@@ -197,3 +198,21 @@ def test_character_snapshot_loss_is_a_deploy_regression():
 
     assert "  ❌ REMOVED character: character-1" in changes["removed"]
     assert "  ❌ LOST character generation job: job-1" in changes["removed"]
+
+
+def test_accepted_job_uses_configured_lease_plus_recovery_window():
+    now = datetime.now(timezone.utc)
+    job = {"status": "accepted", "created_at": (now - timedelta(seconds=359)).isoformat()}
+
+    assert deploy_guard.character_job_is_stale(job, now, lease_seconds=300, recovery_seconds=60) is False
+    job["created_at"] = (now - timedelta(seconds=361)).isoformat()
+    assert deploy_guard.character_job_is_stale(job, now, lease_seconds=300, recovery_seconds=60) is True
+
+
+def test_generating_job_uses_its_lease_expiry_plus_recovery_window():
+    now = datetime.now(timezone.utc)
+    job = {"status": "generating", "lease_expires_at": (now - timedelta(seconds=59)).isoformat()}
+
+    assert deploy_guard.character_job_is_stale(job, now, lease_seconds=300, recovery_seconds=60) is False
+    job["lease_expires_at"] = (now - timedelta(seconds=61)).isoformat()
+    assert deploy_guard.character_job_is_stale(job, now, lease_seconds=300, recovery_seconds=60) is True

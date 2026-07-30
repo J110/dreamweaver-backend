@@ -146,7 +146,7 @@ class CharacterRepository:
                     active_edit_jobs.setdefault(target, set()).add(active_job_id)
             candidates = []
             for job_id, job_data in self._generation_jobs(transaction):
-                if job_data.get("kind") == "media_cleanup":
+                if job_data.get("kind") in {"media_cleanup", "orphan_media_cleanup"}:
                     continue
                 status = job_data.get("status")
                 expired = status == GenerationStatus.generating.value and self._lease_expired(
@@ -393,7 +393,7 @@ class CharacterRepository:
 
         def complete(transaction):
             cleanup = self._require_document(cleanup_ref, "not_found", transaction)
-            if cleanup.get("kind") != "media_cleanup":
+            if cleanup.get("kind") not in {"media_cleanup", "orphan_media_cleanup"}:
                 self._reject("not_found")
             self._require_current_lease(cleanup, lease_token, status="media_cleanup_generating")
             cleanup.update({
@@ -405,6 +405,43 @@ class CharacterRepository:
             self._write_set(transaction, cleanup_ref, cleanup)
 
         self._run_transaction(complete)
+
+    def claim_orphan_portrait(
+        self,
+        filename: str,
+        worker_id: str,
+        lease_seconds: int,
+        now: datetime | str | None = None,
+    ) -> dict | None:
+        claimed_at = self._coerce_time(now)
+        cleanup_id = f"orphan-{hashlib.sha256(filename.encode()).hexdigest()}"
+
+        def claim(transaction):
+            if filename in self._referenced_portrait_filenames(transaction):
+                return None
+            cleanup_ref = self._job_ref_by_id(cleanup_id)
+            existing = self._document_data(self._read(transaction, cleanup_ref))
+            if existing and (
+                existing.get("status") == "completed"
+                or (
+                    existing.get("status") == "media_cleanup_generating"
+                    and not self._lease_expired(existing.get("lease_expires_at"), claimed_at)
+                )
+            ):
+                return None
+            cleanup = {
+                "id": cleanup_id,
+                "kind": "orphan_media_cleanup",
+                "status": "media_cleanup_generating",
+                "portrait_filename": filename,
+                "lease_worker_id": worker_id,
+                "lease_token": uuid.uuid4().hex,
+                "lease_expires_at": (claimed_at + timedelta(seconds=lease_seconds)).isoformat(),
+            }
+            self._write_set(transaction, cleanup_ref, cleanup)
+            return cleanup
+
+        return self._run_transaction(claim)
 
     def delete_character(self, uid: str, character_id: str) -> None:
         def delete(transaction):
@@ -582,16 +619,23 @@ class CharacterRepository:
         return [(snapshot.id, snapshot.to_dict()) for snapshot in snapshots]
 
     def referenced_portrait_filenames(self) -> set[str]:
+        return self._run_transaction(self._referenced_portrait_filenames)
+
+    def _referenced_portrait_filenames(self, transaction=None) -> set[str]:
         filenames = set()
         collections = getattr(self.db_client, "collections", None)
         if isinstance(collections, dict):
             characters = collections.get("characters", {}).values()
         else:
-            characters = (snapshot.to_dict() for snapshot in self.db_client.collection("characters").stream())
+            collection = self.db_client.collection("characters")
+            try:
+                characters = (snapshot.to_dict() for snapshot in collection.stream(transaction=transaction))
+            except TypeError:
+                characters = (snapshot.to_dict() for snapshot in collection.stream())
         for character in characters:
             if character.get("portrait_filename"):
                 filenames.add(character["portrait_filename"])
-        for _, job in self._generation_jobs(None):
+        for _, job in self._generation_jobs(transaction):
             if (
                 job.get("status") in {GenerationStatus.accepted.value, GenerationStatus.generating.value}
                 and job.get("portrait_filename")

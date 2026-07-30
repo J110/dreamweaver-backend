@@ -1,4 +1,5 @@
 import os
+import time
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 from urllib.parse import urlparse
@@ -6,6 +7,10 @@ from urllib.parse import urlparse
 from app.config import get_settings
 from app.schemas.character_schema import CharacterInput, GenerationErrorCode
 from app.services.characters.generator import CharacterGenerationError
+
+
+class CompletionStateUnknown(RuntimeError):
+    pass
 
 
 class CharacterWorker:
@@ -16,12 +21,14 @@ class CharacterWorker:
         media_dir: str | Path,
         worker_id: str,
         lease_seconds: int = 300,
+        orphan_min_age_seconds: int = 600,
     ):
         self.repository = repository
         self.generator = generator
         self.media_dir = Path(media_dir)
         self.worker_id = worker_id
         self.lease_seconds = lease_seconds
+        self.orphan_min_age_seconds = orphan_min_age_seconds
 
     def run_once(self) -> bool:
         job = self.repository.claim_next_job(self.worker_id, self.lease_seconds)
@@ -50,6 +57,8 @@ class CharacterWorker:
                 job.lease_token,
                 portrait_filename=portrait_path.name,
             )
+        except CompletionStateUnknown:
+            return True
         except Exception as error:
             if portrait_path:
                 portrait_path.unlink(missing_ok=True)
@@ -63,15 +72,19 @@ class CharacterWorker:
         try:
             if not self.media_dir.exists():
                 return False
-            referenced = self.repository.referenced_portrait_filenames()
-            orphaned = [
-                path for path in self.media_dir.glob("*.webp")
-                if path.name not in referenced
-            ]
-            if not orphaned:
-                return False
-            orphaned[0].unlink(missing_ok=True)
-            return True
+            cutoff = time.time() - self.orphan_min_age_seconds
+            for path in sorted(self.media_dir.glob("*.webp")):
+                if path.stat().st_mtime > cutoff:
+                    continue
+                cleanup = self.repository.claim_orphan_portrait(
+                    path.name, self.worker_id, self.lease_seconds
+                )
+                if not cleanup:
+                    continue
+                path.unlink(missing_ok=True)
+                self.repository.complete_media_cleanup(cleanup["id"], cleanup["lease_token"])
+                return True
+            return False
         except Exception:
             return False
 
@@ -101,6 +114,11 @@ class CharacterWorker:
             temporary_path = Path(temporary.name)
         try:
             os.link(temporary_path, destination)
+            directory_descriptor = os.open(self.media_dir, os.O_RDONLY)
+            try:
+                os.fsync(directory_descriptor)
+            finally:
+                os.close(directory_descriptor)
         except FileExistsError as error:
             raise CharacterGenerationError("portrait_failed") from error
         finally:
@@ -120,23 +138,27 @@ class CharacterWorker:
                 job_id, profile, portrait_url, lease_token, portrait_filename=portrait_filename
             )
         except Exception as first_error:
-            if self._completion_recorded(job_id, portrait_filename):
+            completion_state = self._completion_state(job_id, portrait_filename)
+            if completion_state is True:
                 return None
             try:
                 return self.repository.complete_generation(
                     job_id, profile, portrait_url, lease_token, portrait_filename=portrait_filename
                 )
             except Exception:
-                if self._completion_recorded(job_id, portrait_filename):
+                completion_state = self._completion_state(job_id, portrait_filename)
+                if completion_state is True:
                     return None
+                if completion_state is None:
+                    raise CompletionStateUnknown() from first_error
                 raise first_error
 
-    def _completion_recorded(self, job_id: str, portrait_filename: str) -> bool:
+    def _completion_state(self, job_id: str, portrait_filename: str) -> bool | None:
         try:
             job = self.repository.generation_job(job_id)
             return job.status.value == "completed" and job.portrait_filename == portrait_filename
         except Exception:
-            return False
+            return None
 
     @staticmethod
     def _safe_error_code(error: Exception) -> str:
