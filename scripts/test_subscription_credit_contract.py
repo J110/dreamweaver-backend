@@ -83,6 +83,7 @@ def test_authenticated_new_user_receives_credit_schema_backfill(monkeypatch):
 
     assert user_data["credits_remaining"] == FREE_MONTHLY_CREDITS
     assert user_data["topup_credits_remaining"] == 0
+    assert user_data["credits_reserved"] == 0
     assert user_data["credits_period_start"] is None
     assert user_data["credits_period_end"] is None
 
@@ -125,6 +126,31 @@ class StoredDb:
     def collection(self, name):
         assert name == "users"
         return StoredCollection(self.store)
+
+
+def test_current_subscription_surfaces_reserved_and_spendable_credits(monkeypatch):
+    from app.api.v1 import subscriptions
+
+    user_data = {
+        "uid": "u1",
+        "subscription_tier": "free",
+        "credits_remaining": 3,
+        "topup_credits_remaining": 4,
+        "credits_reserved": 2,
+    }
+    monkeypatch.setattr(
+        subscriptions,
+        "refresh_credit_period",
+        lambda db, uid, data: data,
+    )
+
+    response = asyncio.run(subscriptions.get_current_subscription(
+        current_user={"uid": "u1"},
+        db_client=StoredDb({"u1": user_data}),
+    ))
+
+    assert response.data["credits_reserved"] == 2
+    assert response.data["credits_total"] == 5
 
 
 class BlockingDocument(StoredDocument):

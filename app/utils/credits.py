@@ -54,6 +54,9 @@ def release_credit_fields(user_data: dict, amount: int) -> dict:
 
 def debit_reserved_credit_fields(user_data: dict, amount: int) -> dict:
     amount = max(0, int(amount))
+    reserved = max(0, int(user_data.get("credits_reserved") or 0))
+    if reserved < amount:
+        raise ValueError("reserved_credit_missing")
     monthly = max(0, int(user_data.get("credits_remaining") or 0))
     topups = max(0, int(user_data.get("topup_credits_remaining") or 0))
     from_monthly = min(monthly, amount)
