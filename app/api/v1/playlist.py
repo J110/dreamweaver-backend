@@ -168,7 +168,14 @@ def _item_age(item: dict) -> Optional[str]:
     return None
 
 
-def _pick_slot(slot_def, lang: str, today: str, recent_excluded: set) -> tuple[Optional[dict], bool, str]:
+def _pick_slot(
+    slot_def,
+    lang: str,
+    today: str,
+    recent_excluded: set,
+    current_user: Optional[dict] = None,
+    allow_locked: bool = True,
+) -> tuple[Optional[dict], bool, str]:
     """Return (item, is_fallback, audio_dir, cover_dir) or (None, False, ...) if no candidate.
 
     Free-tier selection: lang-only filter. Age groups are pooled — if today's
@@ -185,6 +192,8 @@ def _pick_slot(slot_def, lang: str, today: str, recent_excluded: set) -> tuple[O
     def matches(it):
         item_lang = it.get("lang", "en")
         if item_lang != lang:
+            return False
+        if not allow_locked and should_lock_for_user(it, current_user):
             return False
         _, url = _audio_info(it, audio_dir)
         return url is not None
@@ -278,7 +287,12 @@ async def get_today_playlist(
 
     for slot_def in slots:
         item, is_fallback, audio_dir, cover_dir = _pick_slot(
-            slot_def, lang=lang, today=today, recent_excluded=recent_excluded,
+            slot_def,
+            lang=lang,
+            today=today,
+            recent_excluded=recent_excluded,
+            current_user=current_user,
+            allow_locked=False,
         )
         slot_name = slot_def[0]
         if item is None:

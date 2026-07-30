@@ -780,7 +780,7 @@ THIS SHORT'S CREATIVE PARAMETERS:
 - Comedic device: {comedic_device}
 - Emotional dynamic: {emotional_dynamic}
 - Setting: {setting}
-- Tone: {tone}
+- Tone: {tone} (creative direction only; do not write [{tone}])
 - Character age dynamic: {character_age_dynamic}
 - Required opening tag: {required_opening_tag}
   (use this exactly as your first tag — diversity enforcement)

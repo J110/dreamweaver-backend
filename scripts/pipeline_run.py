@@ -1609,6 +1609,31 @@ def step_clips(args, state: dict) -> bool:
     return True
 
 
+def _select_new_lullabies(
+    lullabies: list,
+    *,
+    before_ids: set,
+    language: str,
+    limit: int,
+) -> list:
+    selected = []
+    seen = set()
+    for lullaby in lullabies:
+        lullaby_id = lullaby.get("id")
+        if (
+            not lullaby_id
+            or lullaby_id in before_ids
+            or lullaby_id in seen
+            or lullaby.get("language", "en") != language
+        ):
+            continue
+        selected.append(lullaby)
+        seen.add(lullaby_id)
+        if len(selected) >= limit:
+            break
+    return selected
+
+
 def step_lullabies(args, state: dict) -> bool:
     """Step 6b: Generate lullaby audio via MiniMax Music on fal.ai.
 
@@ -1635,6 +1660,15 @@ def step_lullabies(args, state: dict) -> bool:
     effective_mood = args.mood or state.get("auto_mood", "calm")
     age = args.age or random.choice(["0-1", "2-5", "6-8"])
 
+    lullaby_index = BASE_DIR / "seed_output" / "lullabies" / "lullabies.json"
+    before_lullaby_ids = set()
+    if lullaby_index.exists():
+        before_lullaby_ids = {
+            lullaby.get("id")
+            for lullaby in json.loads(lullaby_index.read_text())
+            if lullaby.get("id")
+        }
+
     cmd = [
         sys.executable, str(SCRIPTS_DIR / "generate_lullaby.py"),
         "--mood", effective_mood,
@@ -1652,10 +1686,14 @@ def step_lullabies(args, state: dict) -> bool:
         logger.info("  Lullaby generation completed in %.0fs", elapsed)
 
         # Integrate lullabies into content.json (same flow as stories/poems)
-        lullaby_index = BASE_DIR / "seed_output" / "lullabies" / "lullabies.json"
         if lullaby_index.exists():
             import shutil as _shutil
-            lullabies = json.loads(lullaby_index.read_text())
+            lullabies = _select_new_lullabies(
+                json.loads(lullaby_index.read_text()),
+                before_ids=before_lullaby_ids,
+                language=args.lang,
+                limit=count,
+            )
             content_path = BASE_DIR / "seed_output" / "content.json"
             content = json.loads(content_path.read_text())
             existing_ids = {c["id"] for c in content}
@@ -1729,12 +1767,6 @@ def step_lullabies(args, state: dict) -> bool:
                     "mood": ll.get("mood", "calm"),
                     "lullaby_type": ll.get("lullaby_type", ""),
                 }
-                content.append(entry)
-                _write_per_content_file(entry)
-                existing_ids.add(lid)
-                lullaby_ids.append(lid)
-                added += 1
-
                 # Copy audio to standard audio/pre-gen/ directory
                 src_mp3 = BASE_DIR / "seed_output" / "lullabies" / ll.get("audio_file", "")
                 if src_mp3.exists():
@@ -1771,6 +1803,11 @@ def step_lullabies(args, state: dict) -> bool:
                 # Clean up temp JSON
                 temp_json.unlink(missing_ok=True)
 
+                content.append(entry)
+                _write_per_content_file(entry)
+                existing_ids.add(lid)
+                lullaby_ids.append(lid)
+                added += 1
                 logger.info("  Added lullaby to content.json: %s - %s", lid, entry["title"])
 
             if added > 0:

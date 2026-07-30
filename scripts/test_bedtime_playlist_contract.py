@@ -27,7 +27,7 @@ def test_bedtime_playlist_fills_every_tier_slot_from_available_content(
     user,
     expected_count,
 ):
-    def pick(slot_def, lang, today, recent_excluded):
+    def pick(slot_def, lang, today, recent_excluded, **_kwargs):
         if slot_def[0] != "short_story":
             return None, False, "audio", "covers"
         return (
@@ -63,6 +63,40 @@ def test_bedtime_playlist_fills_every_tier_slot_from_available_content(
     assert len(response.data["items"]) == expected_count
     assert all(item["audio_url"] for item in response.data["items"])
     assert response.data["missing_slots"] == []
+
+
+def test_bedtime_slot_skips_locked_fallback_when_unlocked_content_exists(monkeypatch):
+    items = [
+        {
+            "id": "locked-oldest",
+            "lang": "hi",
+            "created_at": "2026-01-01T00:00:00",
+            "audio_url": "/audio/locked.mp3",
+        },
+        {
+            "id": "unlocked-recent",
+            "lang": "hi",
+            "created_at": "2026-07-29T00:00:00",
+            "audio_url": "/audio/unlocked.mp3",
+        },
+    ]
+    monkeypatch.setattr(playlist, "_load_dir", lambda _dir: items)
+    monkeypatch.setattr(
+        playlist,
+        "should_lock_for_user",
+        lambda item, _user: item["id"] == "locked-oldest",
+    )
+
+    selected, _, _, _ = playlist._pick_slot(
+        playlist.SLOTS[0],
+        lang="hi",
+        today="2026-07-30",
+        recent_excluded=set(),
+        current_user={"subscription_tier": "free"},
+        allow_locked=False,
+    )
+
+    assert selected["id"] == "unlocked-recent"
 
 
 def test_bedtime_guard_reports_tier_count_mismatch(monkeypatch):
