@@ -254,6 +254,7 @@ CREDIT_FIELD_DEFAULTS = {
     "lifetime_free_remaining": 0,
     "credits_remaining": FREE_MONTHLY_CREDITS,
     "topup_credits_remaining": 0,
+    "credits_reserved": 0,
     "credits_period_start": None,
     "credits_period_end": None,
     "credits_frozen": False,

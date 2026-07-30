@@ -166,6 +166,7 @@ async def get_current_subscription(
                 "current_period_end": user_data.get("current_period_end"),
                 "credits_remaining": user_data.get("credits_remaining", 0),
                 "topup_credits_remaining": user_data.get("topup_credits_remaining", 0),
+                "credits_reserved": user_data.get("credits_reserved", 0),
                 "credits_period_end": user_data.get("credits_period_end"),
                 "credits_frozen": bool(user_data.get("credits_frozen")),
                 "credits_total": available_credit_total(user_data),

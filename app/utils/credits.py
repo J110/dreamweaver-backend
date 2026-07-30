@@ -36,7 +36,35 @@ def available_credit_total(user_data: dict) -> int:
         return 0
     monthly = max(0, int(user_data.get("credits_remaining") or 0))
     topups = max(0, int(user_data.get("topup_credits_remaining") or 0))
-    return monthly + topups
+    reserved = max(0, int(user_data.get("credits_reserved") or 0))
+    return max(0, monthly + topups - reserved)
+
+
+def reserve_credit_fields(user_data: dict, amount: int) -> dict:
+    amount = max(0, int(amount))
+    if available_credit_total(user_data) < amount:
+        raise ValueError("insufficient_credits")
+    return {"credits_reserved": max(0, int(user_data.get("credits_reserved") or 0)) + amount}
+
+
+def release_credit_fields(user_data: dict, amount: int) -> dict:
+    reserved = max(0, int(user_data.get("credits_reserved") or 0))
+    return {"credits_reserved": max(0, reserved - max(0, int(amount)))}
+
+
+def debit_reserved_credit_fields(user_data: dict, amount: int) -> dict:
+    amount = max(0, int(amount))
+    monthly = max(0, int(user_data.get("credits_remaining") or 0))
+    topups = max(0, int(user_data.get("topup_credits_remaining") or 0))
+    from_monthly = min(monthly, amount)
+    from_topups = amount - from_monthly
+    if topups < from_topups:
+        raise ValueError("reserved_credit_missing")
+    return {
+        "credits_remaining": monthly - from_monthly,
+        "topup_credits_remaining": topups - from_topups,
+        **release_credit_fields(user_data, amount),
+    }
 
 
 def premium_period_credit_fields(
