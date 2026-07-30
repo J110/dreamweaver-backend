@@ -785,6 +785,15 @@ def generate_audio(style_prompt: str, lyrics: str) -> tuple:
     return resp.content, audio_url
 
 
+def _prepare_replicate_lyrics(lyrics: str) -> str:
+    if len(lyrics) <= 600:
+        return lyrics
+    shortened = lyrics[:600]
+    if "\n" in shortened:
+        shortened = shortened.rsplit("\n", 1)[0]
+    return shortened.rstrip()
+
+
 def generate_audio_replicate(style_prompt: str, lyrics: str) -> tuple:
     """Fallback: generate audio via Replicate MiniMax Music 1.5."""
     try:
@@ -796,9 +805,13 @@ def generate_audio_replicate(style_prompt: str, lyrics: str) -> tuple:
     print(f"  Calling MiniMax Music 1.5 on Replicate (fallback)...")
     start = time.time()
 
+    replicate_lyrics = _prepare_replicate_lyrics(lyrics)
+    if replicate_lyrics != lyrics:
+        print(f"  Trimmed lyrics to {len(replicate_lyrics)} chars for Replicate")
+
     output = replicate.run(
         "minimax/music-1.5",
-        input={"prompt": style_prompt, "lyrics": lyrics},
+        input={"prompt": style_prompt, "lyrics": replicate_lyrics},
     )
     if not output:
         raise RuntimeError("No output from Replicate")
@@ -1050,7 +1063,8 @@ def main():
         dur = m.get("duration_seconds", "?")
         print(f"  [{m['lullaby_type']}] {m.get('title', '?')} — {dur}s")
     print(f"{'='*60}")
+    return 0 if len(results) == args.count else 1
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())
