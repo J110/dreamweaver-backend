@@ -43,7 +43,7 @@ class CharacterWorker:
                 f"{settings.public_api_base_url.rstrip('/')}"
                 f"/media/characters/{portrait_path.name}"
             )
-            self.repository.complete_generation(
+            self._complete_generation(
                 job.id,
                 profile.model_dump(mode="json"),
                 portrait_url,
@@ -58,6 +58,22 @@ class CharacterWorker:
             except Exception:
                 pass
         return True
+
+    def run_orphan_cleanup_once(self) -> bool:
+        try:
+            if not self.media_dir.exists():
+                return False
+            referenced = self.repository.referenced_portrait_filenames()
+            orphaned = [
+                path for path in self.media_dir.glob("*.webp")
+                if path.name not in referenced
+            ]
+            if not orphaned:
+                return False
+            orphaned[0].unlink(missing_ok=True)
+            return True
+        except Exception:
+            return False
 
     def run_cleanup_once(self) -> bool:
         cleanup = self.repository.claim_next_media_cleanup(self.worker_id, self.lease_seconds)
@@ -90,6 +106,37 @@ class CharacterWorker:
         finally:
             temporary_path.unlink(missing_ok=True)
         return destination
+
+    def _complete_generation(
+        self,
+        job_id: str,
+        profile: dict,
+        portrait_url: str,
+        lease_token: str,
+        portrait_filename: str,
+    ):
+        try:
+            return self.repository.complete_generation(
+                job_id, profile, portrait_url, lease_token, portrait_filename=portrait_filename
+            )
+        except Exception as first_error:
+            if self._completion_recorded(job_id, portrait_filename):
+                return None
+            try:
+                return self.repository.complete_generation(
+                    job_id, profile, portrait_url, lease_token, portrait_filename=portrait_filename
+                )
+            except Exception:
+                if self._completion_recorded(job_id, portrait_filename):
+                    return None
+                raise first_error
+
+    def _completion_recorded(self, job_id: str, portrait_filename: str) -> bool:
+        try:
+            job = self.repository.generation_job(job_id)
+            return job.status.value == "completed" and job.portrait_filename == portrait_filename
+        except Exception:
+            return False
 
     @staticmethod
     def _safe_error_code(error: Exception) -> str:

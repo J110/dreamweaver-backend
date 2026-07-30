@@ -119,3 +119,40 @@ def test_atomic_media_write_never_replaces_an_existing_portrait(tmp_path, fake_r
         worker._write_portrait_atomically(portrait.name, PORTRAIT_WEBP)
 
     assert portrait.read_bytes() == b"active"
+
+
+def test_worker_keeps_media_when_completion_committed_before_exception(tmp_path, fake_repo):
+    job = paid_job(fake_repo, "character-worker-ambiguous")
+
+    class CommitThenRaiseRepository:
+        def __init__(self, repository):
+            self.repository = repository
+
+        def __getattr__(self, name):
+            return getattr(self.repository, name)
+
+        def complete_generation(self, *args, **kwargs):
+            result = self.repository.complete_generation(*args, **kwargs)
+            raise RuntimeError("connection lost after commit")
+
+    worker = CharacterWorker(CommitThenRaiseRepository(fake_repo), FakeGenerator(), tmp_path, "worker")
+
+    assert worker.run_once() is True
+    completed = fake_repo.job(job.id)
+    assert completed["status"] == "completed"
+    assert (tmp_path / completed["portrait_filename"]).exists()
+
+
+def test_worker_reconciles_unreferenced_portrait_after_reclaim(tmp_path, fake_repo):
+    job = paid_job(fake_repo, "character-worker-orphan")
+    first = fake_repo.claim_next_job("first", 300)
+    orphan = tmp_path / first.portrait_filename
+    orphan.write_bytes(PORTRAIT_WEBP)
+    fake_repo.db.collection("character_generation_jobs").document(job.id).update({
+        "lease_expires_at": "2000-01-01T00:00:00+00:00",
+    })
+    fake_repo.claim_next_job("second", 300)
+    worker = CharacterWorker(fake_repo, FakeGenerator(), tmp_path, "worker")
+
+    assert worker.run_orphan_cleanup_once() is True
+    assert not orphan.exists()

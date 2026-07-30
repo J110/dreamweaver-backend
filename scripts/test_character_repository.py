@@ -159,6 +159,65 @@ def test_cleanup_completion_rejects_a_reclaimed_lease(fake_repo):
     fake_repo.complete_media_cleanup(second["id"], second["lease_token"])
 
 
+def test_successful_edit_enqueues_cleanup_for_the_prior_portrait(fake_repo, deterministic_profile):
+    character = fake_repo.seed_character("u1", slot_number=1, version=1)
+    fake_repo.db.collection("characters").document(character["id"]).update({
+        "portrait_filename": "old.webp",
+        "portrait_url": "/media/characters/old.webp",
+    })
+    request = edit_request(character, "character-generation-edit-cleanup")
+    request.quote_version = fake_repo.quote_version("u1")
+    job = fake_repo.accept_generation("u1", request, character["id"])
+    claim = fake_repo.claim_next_job("worker", 300)
+
+    fake_repo.complete_generation(
+        job.id,
+        deterministic_profile,
+        "/media/characters/new.webp",
+        claim.lease_token,
+        portrait_filename="new.webp",
+    )
+
+    cleanup = fake_repo.media_cleanup(f"cleanup-{job.id}")
+    assert cleanup["portrait_url"] == "/media/characters/old.webp"
+
+
+def test_expired_edit_reclaim_waits_for_another_active_edit(fake_repo):
+    character = fake_repo.seed_character("u1", slot_number=1, version=1)
+    fake_repo.db.collection("users").document("u1").update({"credits_remaining": 4})
+    for key in ("character-generation-edit-expired", "character-generation-edit-active"):
+        request = edit_request(character, key)
+        request.quote_version = fake_repo.quote_version("u1")
+        fake_repo.accept_generation("u1", request, character["id"])
+    jobs = list(fake_repo.db.collections["character_generation_jobs"].values())
+    jobs[0].update({"status": "generating", "lease_token": "old", "lease_expires_at": "2000-01-01T00:00:00+00:00"})
+    jobs[1].update({"status": "generating", "lease_token": "active", "lease_expires_at": "2999-01-01T00:00:00+00:00"})
+
+    assert fake_repo.claim_next_job("reclaimer", 300) is None
+
+
+def test_serial_edit_claims_use_the_completed_version_in_their_filename(fake_repo, deterministic_profile):
+    character = fake_repo.seed_character("u1", slot_number=1, version=1)
+    fake_repo.db.collection("users").document("u1").update({"credits_remaining": 4})
+    for key in ("character-generation-edit-serial-one", "character-generation-edit-serial-two"):
+        request = edit_request(character, key)
+        request.quote_version = fake_repo.quote_version("u1")
+        fake_repo.accept_generation("u1", request, character["id"])
+
+    first = fake_repo.claim_next_job("first", 300)
+    fake_repo.complete_generation(
+        first.id,
+        deterministic_profile,
+        "/media/characters/first.webp",
+        first.lease_token,
+        portrait_filename=first.portrait_filename,
+    )
+    second = fake_repo.claim_next_job("second", 300)
+
+    assert second.portrait_version == 3
+    assert second.portrait_filename.startswith(f"{character['id']}-v3-")
+
+
 def test_accept_rejects_stale_quote(fake_repo):
     fake_repo.accept_generation("u1", create_request("character-generation-first"))
 

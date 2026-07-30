@@ -70,7 +70,6 @@ class CharacterRecord(BaseModel):
     profile: dict
     portrait_url: str
     portrait_filename: str | None = None
-    portrait_version: int | None = None
 
 
 class GenerationJob(BaseModel):
@@ -86,6 +85,7 @@ class GenerationJob(BaseModel):
     target_character_id: str | None = None
     character_id: str | None = None
     portrait_filename: str | None = None
+    portrait_version: int | None = None
     error_code: GenerationErrorCode | None = None
     stage: str | None = None
     lease_worker_id: str | None = None

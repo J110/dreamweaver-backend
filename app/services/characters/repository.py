@@ -135,12 +135,15 @@ class CharacterRepository:
         lease_expires_at = (claimed_at + timedelta(seconds=lease_seconds)).isoformat()
 
         def claim(transaction):
-            active_edit_targets = {
-                data.get("target_character_id")
-                for _, data in self._generation_jobs(transaction)
-                if data.get("status") == GenerationStatus.generating.value
-                and not self._lease_expired(data.get("lease_expires_at"), claimed_at)
-            }
+            active_edit_jobs = {}
+            for active_job_id, data in self._generation_jobs(transaction):
+                target = data.get("target_character_id")
+                if (
+                    target
+                    and data.get("status") == GenerationStatus.generating.value
+                    and not self._lease_expired(data.get("lease_expires_at"), claimed_at)
+                ):
+                    active_edit_jobs.setdefault(target, set()).add(active_job_id)
             candidates = []
             for job_id, job_data in self._generation_jobs(transaction):
                 if job_data.get("kind") == "media_cleanup":
@@ -151,11 +154,7 @@ class CharacterRepository:
                 )
                 if (
                     (status == GenerationStatus.accepted.value or expired)
-                    and not (
-                        job_data.get("mode") == "edit"
-                        and job_data.get("target_character_id") in active_edit_targets
-                        and not expired
-                    )
+                    and not active_edit_jobs.get(job_data.get("target_character_id"), set()) - {job_id}
                 ):
                     candidates.append((job_id, job_data))
             if not candidates:
@@ -208,6 +207,11 @@ class CharacterRepository:
 
         return self._run_transaction(mark)
 
+    def generation_job(self, job_id: str) -> GenerationJob:
+        return GenerationJob.model_validate(
+            self._require_document(self._job_ref_by_id(job_id), "not_found")
+        )
+
     def complete_generation(
         self,
         job_id: str,
@@ -233,8 +237,12 @@ class CharacterRepository:
             counter = self._document_data(self._read(transaction, counter_ref)) or self._default_counter()
             character_id = job.character_id or job.target_character_id or uuid.uuid4().hex
             character_ref = self._character_ref(character_id)
+            previous_portrait_url = None
+            previous_portrait_filename = None
             if job.mode == "edit":
                 existing = self._require_document(character_ref, "not_found", transaction)
+                previous_portrait_url = existing.get("portrait_url")
+                previous_portrait_filename = existing.get("portrait_filename")
                 record = CharacterRecord(
                     id=character_id,
                     uid=job.uid,
@@ -256,6 +264,15 @@ class CharacterRepository:
                 )
 
             self._write_set(transaction, character_ref, record.model_dump())
+            if previous_portrait_url and previous_portrait_url != record.portrait_url:
+                self._write_set(transaction, self._job_ref_by_id(f"cleanup-{job.id}"), {
+                    "id": f"cleanup-{job.id}",
+                    "kind": "media_cleanup",
+                    "status": "media_cleanup_pending",
+                    "character_id": character_id,
+                    "portrait_url": previous_portrait_url,
+                    "portrait_filename": previous_portrait_filename,
+                })
             self._write_update(
                 transaction,
                 user_ref,
@@ -563,6 +580,24 @@ class CharacterRepository:
         except TypeError:
             snapshots = collection.stream()
         return [(snapshot.id, snapshot.to_dict()) for snapshot in snapshots]
+
+    def referenced_portrait_filenames(self) -> set[str]:
+        filenames = set()
+        collections = getattr(self.db_client, "collections", None)
+        if isinstance(collections, dict):
+            characters = collections.get("characters", {}).values()
+        else:
+            characters = (snapshot.to_dict() for snapshot in self.db_client.collection("characters").stream())
+        for character in characters:
+            if character.get("portrait_filename"):
+                filenames.add(character["portrait_filename"])
+        for _, job in self._generation_jobs(None):
+            if (
+                job.get("status") in {GenerationStatus.accepted.value, GenerationStatus.generating.value}
+                and job.get("portrait_filename")
+            ):
+                filenames.add(job["portrait_filename"])
+        return filenames
 
     @staticmethod
     def _coerce_time(value: datetime | str | None) -> datetime:

@@ -118,6 +118,7 @@ class LocalStore:
         self._data_dir = data_dir or Path(__file__).parent.parent.parent / "data"
         self._data_dir.mkdir(parents=True, exist_ok=True)
         self._lock_path = self._data_dir / ".local_store.lock"
+        self._journal_path = self._data_dir / ".local_store.transaction.json"
         self._persistent_collections = {
             "users",
             "interactions",
@@ -134,6 +135,7 @@ class LocalStore:
         self._seed_content_path = self._seed_dir / "content.json"
         self._last_seed_mtime: float = 0.0
 
+        self._recover_transaction_journal()
         self._load_data()
         self._update_seed_mtime()
 
@@ -411,6 +413,9 @@ class LocalStore:
         For all other collections, writes the collection snapshot atomically.
         """
         try:
+            if self._transaction_depth and collection_name in self._persistent_collections:
+                self._transaction_dirty.add(collection_name)
+                return
             if collection_name == "content" and doc_id is not None:
                 self._persist_content_item(doc_id)
             else:
@@ -422,15 +427,18 @@ class LocalStore:
         if name not in self._persistent_collections:
             return
         path = self._data_dir / f"{name}.json"
-        if not path.exists():
-            self.collections.setdefault(name, {})
-            return
-        with open(path) as file:
-            items = json.load(file)
-        self.collections[name] = {
+        if path.exists():
+            with open(path) as file:
+                items = json.load(file)
+        else:
+            items = []
+        refreshed = {
             item.get("id", item.get("uid", str(uuid.uuid4()))): item
             for item in items
         }
+        current = self.collections.setdefault(name, {})
+        current.clear()
+        current.update(refreshed)
 
     def run_transaction(self, callback):
         with self._lock:
@@ -441,17 +449,45 @@ class LocalStore:
                         self._reload_persistent_collection(name)
                     snapshot = deepcopy(self.collections)
                     self._transaction_depth += 1
+                    self._transaction_dirty = set()
                     try:
-                        return callback(None)
+                        result = callback(None)
+                        self._commit_transaction(self._transaction_dirty)
+                        return result
                     except Exception:
-                        self.collections = snapshot
-                        for name in self._persistent_collections:
-                            self._persist_collection(name)
+                        for name, items in snapshot.items():
+                            current = self.collections.setdefault(name, {})
+                            current.clear()
+                            current.update(items)
                         raise
                     finally:
                         self._transaction_depth -= 1
+                        self._transaction_dirty = set()
                 finally:
                     fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
+
+    def _commit_transaction(self, dirty: set[str]) -> None:
+        if not dirty:
+            return
+        payload = {
+            name: list(self.collections.get(name, {}).values())
+            for name in sorted(dirty)
+        }
+        _atomic_write_json(self._journal_path, {"collections": payload})
+        self._write_transaction_snapshots(payload)
+        self._journal_path.unlink(missing_ok=True)
+
+    def _write_transaction_snapshots(self, payload: dict[str, list[dict]]) -> None:
+        for name, items in payload.items():
+            _atomic_write_json(self._data_dir / f"{name}.json", items)
+
+    def _recover_transaction_journal(self) -> None:
+        if not self._journal_path.exists():
+            return
+        with open(self._journal_path) as file:
+            payload = json.load(file).get("collections", {})
+        self._write_transaction_snapshots(payload)
+        self._journal_path.unlink(missing_ok=True)
 
     def collection(self, name: str) -> "CollectionRef":
         if name in self._persistent_collections and not self._transaction_depth:

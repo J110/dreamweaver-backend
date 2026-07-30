@@ -35,7 +35,11 @@ def run_loop(worker, stopping: threading.Event, idle_seconds: int = 2) -> int:
         except Exception:
             did_cleanup = False
         try:
-            did_work = did_cleanup or worker.run_once()
+            did_orphan_cleanup = not did_cleanup and worker.run_orphan_cleanup_once()
+        except Exception:
+            did_orphan_cleanup = False
+        try:
+            did_work = did_cleanup or did_orphan_cleanup or worker.run_once()
         except Exception:
             did_work = False
         if not did_work:
