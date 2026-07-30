@@ -1,5 +1,6 @@
 import hashlib
 import uuid
+from copy import deepcopy
 
 from app.schemas.character_schema import (
     CharacterQuote,
@@ -90,12 +91,15 @@ class CharacterRepository:
                 self._reject("insufficient_credits")
             self._write_update(transaction, user_ref, reserved_fields)
 
-            reserved_slots = list(counter.get("reserved_slots", []))
+            reserved_slots = set(counter.get("reserved_slots", []))
+            slot_reservations = self._slot_reservations(counter)
             if mode == "create":
-                reserved_slots.append(slot_number)
+                reserved_slots.add(slot_number)
+                slot_reservations[str(slot_number)] = job_ref.id
             next_counter = {
                 "occupied_slots": sorted(set(counter.get("occupied_slots", []))),
-                "reserved_slots": sorted(set(reserved_slots)),
+                "reserved_slots": sorted(reserved_slots),
+                "slot_reservations": slot_reservations,
                 "revision": int(counter.get("revision", 0)) + 1,
             }
             self._write_set(transaction, counter_ref, next_counter)
@@ -108,6 +112,7 @@ class CharacterRepository:
                 idempotency_key=request.idempotency_key,
                 slot_number=slot_number,
                 reserved_credit_amount=credit_cost,
+                reserved_slot_number=slot_number if mode == "create" else None,
                 target_character_id=target_character_id,
                 inputs=request.inputs,
             )
@@ -167,12 +172,19 @@ class CharacterRepository:
                 debit_reserved_credit_fields(user, job.reserved_credit_amount),
             )
             reserved_slots = set(counter.get("reserved_slots", []))
-            reserved_slots.discard(job.slot_number)
+            slot_reservations = self._slot_reservations(counter)
+            if (
+                job.reserved_slot_number is not None
+                and slot_reservations.get(str(job.reserved_slot_number)) == job.id
+            ):
+                reserved_slots.discard(job.reserved_slot_number)
+                slot_reservations.pop(str(job.reserved_slot_number))
             occupied_slots = set(counter.get("occupied_slots", []))
             occupied_slots.add(job.slot_number)
             self._write_set(transaction, counter_ref, {
                 "occupied_slots": sorted(occupied_slots),
                 "reserved_slots": sorted(reserved_slots),
+                "slot_reservations": slot_reservations,
                 "revision": int(counter.get("revision", 0)) + 1,
             })
             job_data.update({
@@ -203,10 +215,17 @@ class CharacterRepository:
                 release_credit_fields(user, job.reserved_credit_amount),
             )
             reserved_slots = set(counter.get("reserved_slots", []))
-            reserved_slots.discard(job.slot_number)
+            slot_reservations = self._slot_reservations(counter)
+            if (
+                job.reserved_slot_number is not None
+                and slot_reservations.get(str(job.reserved_slot_number)) == job.id
+            ):
+                reserved_slots.discard(job.reserved_slot_number)
+                slot_reservations.pop(str(job.reserved_slot_number))
             self._write_set(transaction, counter_ref, {
                 "occupied_slots": sorted(set(counter.get("occupied_slots", []))),
                 "reserved_slots": sorted(reserved_slots),
+                "slot_reservations": slot_reservations,
                 "revision": int(counter.get("revision", 0)) + 1,
             })
             job_data.update({
@@ -232,6 +251,7 @@ class CharacterRepository:
             self._write_set(transaction, counter_ref, {
                 "occupied_slots": sorted(occupied_slots),
                 "reserved_slots": sorted(set(counter.get("reserved_slots", []))),
+                "slot_reservations": self._slot_reservations(counter),
                 "revision": int(counter.get("revision", 0)) + 1,
             })
             self._write_set(transaction, self._cleanup_ref(character_id), {
@@ -265,7 +285,9 @@ class CharacterRepository:
             self._reject("not_found")
         slot_number = lowest_free_slot(
             list(counter.get("occupied_slots", [])),
-            list(counter.get("reserved_slots", [])),
+            list(counter.get("reserved_slots", [])) + [
+                int(slot) for slot in self._slot_reservations(counter)
+            ],
         )
         if slot_number is None:
             self._reject("no_slots")
@@ -283,11 +305,25 @@ class CharacterRepository:
                 return firestore.transactional(callback)(transaction)
             except ImportError:
                 return callback(transaction)
+        lock = getattr(self.db_client, "_lock", None)
+        collections = getattr(self.db_client, "collections", None)
+        if lock is not None and isinstance(collections, dict):
+            with lock:
+                snapshot = deepcopy(collections)
+                try:
+                    return callback(None)
+                except Exception:
+                    collection_names = set(collections) | set(snapshot)
+                    collections.clear()
+                    collections.update(snapshot)
+                    persist = getattr(self.db_client, "_persist_collection", None)
+                    if callable(persist):
+                        for collection_name in collection_names:
+                            persist(collection_name)
+                    raise
         return callback(None)
 
     def _read(self, transaction, document_ref):
-        if transaction is not None and callable(getattr(transaction, "get", None)):
-            return transaction.get(document_ref)
         if transaction is not None:
             return document_ref.get(transaction=transaction)
         return document_ref.get()
@@ -309,7 +345,19 @@ class CharacterRepository:
 
     @staticmethod
     def _default_counter():
-        return {"occupied_slots": [], "reserved_slots": [], "revision": 0}
+        return {
+            "occupied_slots": [],
+            "reserved_slots": [],
+            "slot_reservations": {},
+            "revision": 0,
+        }
+
+    @staticmethod
+    def _slot_reservations(counter: dict) -> dict[str, str]:
+        return {
+            str(slot): job_id
+            for slot, job_id in (counter.get("slot_reservations") or {}).items()
+        }
 
     def _write_set(self, transaction, document_ref, data):
         if transaction is not None and callable(getattr(transaction, "set", None)):

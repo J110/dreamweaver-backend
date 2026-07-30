@@ -74,6 +74,7 @@ class GenerationJob(BaseModel):
     idempotency_key: str
     slot_number: int
     reserved_credit_amount: int
+    reserved_slot_number: int | None = None
     target_character_id: str | None = None
     character_id: str | None = None
     error_code: GenerationErrorCode | None = None

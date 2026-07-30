@@ -34,15 +34,21 @@ class FakeDocument:
         self.id = doc_id
 
     def get(self, transaction=None):
+        before_read = getattr(self.db, "_before_read", None)
+        if callable(before_read):
+            before_read(self.collection_name, self.id)
         return FakeSnapshot(self.id, self.db.collections[self.collection_name].get(self.id))
 
     def set(self, data):
+        self.db._before_write(self.collection_name, self.id)
         self.db.collections[self.collection_name][self.id] = deepcopy(data)
 
     def update(self, fields):
+        self.db._before_write(self.collection_name, self.id)
         self.db.collections[self.collection_name][self.id].update(deepcopy(fields))
 
     def delete(self):
+        self.db._before_write(self.collection_name, self.id)
         self.db.collections[self.collection_name].pop(self.id, None)
 
 
@@ -57,7 +63,7 @@ class FakeCollection:
 
 class FakeTransaction:
     def get(self, document):
-        return document.get(self)
+        yield document.get(self)
 
     def set(self, document, data):
         document.set(data)
@@ -78,6 +84,7 @@ class FakeFirestore:
             "users": {},
         }
         self._lock = threading.RLock()
+        self._failed_write = None
 
     def collection(self, name):
         self.collections.setdefault(name, {})
@@ -85,7 +92,58 @@ class FakeFirestore:
 
     def run_transaction(self, callback):
         with self._lock:
-            return callback(FakeTransaction())
+            snapshot = deepcopy(self.collections)
+            try:
+                return callback(FakeTransaction())
+            except Exception:
+                self.collections.clear()
+                self.collections.update(snapshot)
+                raise
+
+    def fail_next_write(self, collection, doc_id):
+        self._failed_write = (collection, doc_id)
+
+    def _before_write(self, collection, doc_id):
+        if self._failed_write == (collection, doc_id):
+            self._failed_write = None
+            raise RuntimeError("transaction_write_failed")
+
+
+class FakeLocalStore:
+    def __init__(self):
+        self.collections = {
+            "characters": {},
+            "character_generation_jobs": {},
+            "character_slot_counters": {},
+            "users": {},
+        }
+        self._lock = threading.RLock()
+        self._failed_write = None
+        self._read_barrier = None
+        self._read_target = None
+
+    def collection(self, name):
+        self.collections.setdefault(name, {})
+        return FakeCollection(self, name)
+
+    def fail_next_write(self, collection, doc_id):
+        self._failed_write = (collection, doc_id)
+
+    def _before_write(self, collection, doc_id):
+        if self._failed_write == (collection, doc_id):
+            self._failed_write = None
+            raise RuntimeError("transaction_write_failed")
+
+    def synchronize_reads_at(self, collection, doc_id):
+        self._read_target = (collection, doc_id)
+        self._read_barrier = threading.Barrier(2)
+
+    def _before_read(self, collection, doc_id):
+        if self._read_target == (collection, doc_id):
+            try:
+                self._read_barrier.wait(timeout=0.1)
+            except threading.BrokenBarrierError:
+                pass
 
 
 class FakeCharacterRepository(CharacterRepository):
@@ -104,14 +162,23 @@ class FakeCharacterRepository(CharacterRepository):
             f"cleanup-{character_id}"
         ).get().to_dict()
 
+    def counter(self, uid):
+        return self.db.collection("character_slot_counters").document(uid).get().to_dict()
 
-def seed_user(repo, uid="u1", credits_remaining=3, topup_credits_remaining=0):
+
+def seed_user(
+    repo,
+    uid="u1",
+    credits_remaining=3,
+    topup_credits_remaining=0,
+    credits_frozen=False,
+):
     user = {
         "uid": uid,
         "credits_remaining": credits_remaining,
         "topup_credits_remaining": topup_credits_remaining,
         "credits_reserved": 0,
-        "credits_frozen": False,
+        "credits_frozen": credits_frozen,
     }
     repo.db.collection("users").document(uid).set(user)
     return user
@@ -133,6 +200,7 @@ def seed_character(repo, uid="u1", slot_number=1, version=1):
         "occupied_slots": [],
         "reserved_slots": [],
         "revision": 0,
+        "slot_reservations": {},
     }
     counter["occupied_slots"] = sorted(set(counter["occupied_slots"] + [slot_number]))
     counter_ref.set(counter)
@@ -172,6 +240,19 @@ def edit_request(character, idempotency_key="character-generation-edit", quote_v
 class FakeGenerator:
     def generate(self, inputs):
         return deepcopy(DEFAULT_PROFILE), DEFAULT_PORTRAIT_URL
+
+
+@pytest.fixture
+def local_store_repo():
+    return local_store_repo_fixture()
+
+
+def local_store_repo_fixture():
+    db = FakeLocalStore()
+    repo = CharacterRepository(db)
+    repo.db = db
+    seed_user(repo)
+    return repo
 
 
 @pytest.fixture
