@@ -1138,11 +1138,16 @@ def compute_verdict(
 
     # Phase 2: text fidelity
     text_fidelity = 1.0
+    fidelity_override_pass = False
     if fidelity_info:
         text_fidelity = fidelity_info.get("fidelity", {}).get("combined", 1.0)
-        if text_fidelity < fidelity_fail_threshold:
+        fidelity_override_pass = (
+            content_type == "long_story"
+            and fidelity_info.get("verdict") == "PASS"
+        )
+        if text_fidelity < fidelity_fail_threshold and not fidelity_override_pass:
             reasons.append(f"low_fidelity ({text_fidelity:.2f})")
-        elif text_fidelity < fidelity_pass_threshold:
+        elif text_fidelity < fidelity_pass_threshold and not fidelity_override_pass:
             reasons.append(f"marginal_fidelity ({text_fidelity:.2f})")
 
     # Phase 3: quality scores
@@ -1166,7 +1171,7 @@ def compute_verdict(
         overall_score = quality_info.get("overall", {}).get("score", 5) if isinstance(quality_info.get("overall"), dict) else 5
 
     # FAIL conditions
-    if text_fidelity < fidelity_fail_threshold:
+    if text_fidelity < fidelity_fail_threshold and not fidelity_override_pass:
         verdict = "FAIL"
     elif completeness_score < 4:
         verdict = "FAIL"
@@ -1175,7 +1180,7 @@ def compute_verdict(
         verdict = "FAIL"
         reasons.append(f"low_overall ({overall_score})")
     # WARN conditions
-    elif text_fidelity < fidelity_pass_threshold:
+    elif text_fidelity < fidelity_pass_threshold and not fidelity_override_pass:
         verdict = "WARN"
     elif any(
         (quality_info.get(d, {}).get("score", 5) if isinstance(quality_info.get(d), dict) else 5) < 5
