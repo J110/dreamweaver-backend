@@ -56,6 +56,11 @@ def _atomic_write_json(path: Path, data, strip_subtype: bool = False) -> None:
         f.flush()
         os.fsync(f.fileno())
     os.replace(tmp, path)
+    directory_descriptor = os.open(path.parent, os.O_RDONLY)
+    try:
+        os.fsync(directory_descriptor)
+    finally:
+        os.close(directory_descriptor)
 
 
 # Per-content directory layout (spec §2c). Each tuple is:
@@ -425,6 +430,16 @@ class LocalStore:
         except Exception:
             pass  # Don't crash on write failure
 
+    def _mutate_persistent_document(self, collection_name: str, mutate) -> None:
+        def commit(_):
+            mutate(self.collections[collection_name])
+            self._persist(collection_name)
+
+        if self._transaction_depth:
+            commit(None)
+            return
+        self.run_transaction(commit)
+
     def _reload_persistent_collection(self, name: str) -> None:
         if name not in self._persistent_collections:
             return
@@ -596,10 +611,9 @@ class CollectionRef:
 
     def add(self, data: dict) -> "DocumentRef":
         doc_id = data.get("id", str(uuid.uuid4()))
-        data["id"] = doc_id
-        self._data[doc_id] = data
-        self._store._persist(self._name, doc_id)
-        return DocumentRef(self._store, self._data, self._name, doc_id)
+        document = DocumentRef(self._store, self._data, self._name, doc_id)
+        document.set(data)
+        return document
 
 
 class DocumentRef:
@@ -621,20 +635,38 @@ class DocumentRef:
         return DocumentSnapshot(self._id, doc)
 
     def set(self, data: dict, merge: bool = False):
-        if merge and self._id in self._data:
-            self._data[self._id].update(data)
-        else:
-            data["id"] = self._id
-            self._data[self._id] = data
+        def set_document(collection):
+            if merge and self._id in collection:
+                collection[self._id].update(data)
+            else:
+                data["id"] = self._id
+                collection[self._id] = data
+
+        if self._name in self._store._persistent_collections:
+            self._store._mutate_persistent_document(self._name, set_document)
+            return
+        set_document(self._data)
         self._store._persist(self._name, self._id)
 
     def update(self, data: dict):
-        if self._id in self._data:
-            self._data[self._id].update(data)
-            self._store._persist(self._name, self._id)
+        def update_document(collection):
+            if self._id in collection:
+                collection[self._id].update(data)
+
+        if self._name in self._store._persistent_collections:
+            self._store._mutate_persistent_document(self._name, update_document)
+            return
+        update_document(self._data)
+        self._store._persist(self._name, self._id)
 
     def delete(self):
-        self._data.pop(self._id, None)
+        def delete_document(collection):
+            collection.pop(self._id, None)
+
+        if self._name in self._store._persistent_collections:
+            self._store._mutate_persistent_document(self._name, delete_document)
+            return
+        delete_document(self._data)
         self._store._persist(self._name, self._id)
 
 

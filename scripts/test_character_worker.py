@@ -1,6 +1,7 @@
 from pathlib import Path
 import os
 import threading
+from tempfile import NamedTemporaryFile
 
 import pytest
 
@@ -137,6 +138,45 @@ def test_atomic_media_write_fsyncs_the_media_directory(tmp_path, fake_repo, monk
     worker._write_portrait_atomically("character-v1.webp", PORTRAIT_WEBP)
 
     assert len(fsync_calls) == 2
+
+
+@pytest.mark.parametrize("failure_stage", ["write", "flush", "fsync"])
+def test_atomic_media_write_removes_temporary_file_on_write_failure(
+    tmp_path, fake_repo, monkeypatch, failure_stage
+):
+    class WriteFailureTemporary:
+        def __init__(self, *args, **kwargs):
+            self.file = NamedTemporaryFile(*args, **kwargs)
+            self.name = self.file.name
+
+        def __enter__(self):
+            return self
+
+        def write(self, _data):
+            if failure_stage == "write":
+                raise OSError("disk full")
+            return self.file.write(_data)
+
+        def flush(self):
+            if failure_stage == "flush":
+                raise OSError("disk full")
+            return self.file.flush()
+
+        def fileno(self):
+            return self.file.fileno()
+
+        def __exit__(self, *args):
+            self.file.close()
+
+    monkeypatch.setattr("app.services.characters.worker.NamedTemporaryFile", WriteFailureTemporary)
+    if failure_stage == "fsync":
+        monkeypatch.setattr("app.services.characters.worker.os.fsync", lambda _fd: (_ for _ in ()).throw(OSError("disk full")))
+    worker = CharacterWorker(fake_repo, FakeGenerator(), tmp_path, "worker")
+
+    with pytest.raises(OSError, match="disk full"):
+        worker._write_portrait_atomically("character-v1.webp", PORTRAIT_WEBP)
+
+    assert list(tmp_path.glob(".character-v1.webp.*")) == []
 
 
 def test_worker_keeps_media_when_completion_committed_before_exception(tmp_path, fake_repo):

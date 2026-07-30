@@ -1,8 +1,12 @@
+import os
+import stat
+
 import pytest
 
+from app.api.v1.characters import _characters_for_user
 from app.services.characters.repository import CharacterRepository
-from app.services.local_store import LocalStore
-from scripts.character_test_helpers import create_request
+from app.services.local_store import LocalStore, _atomic_write_json
+from scripts.character_test_helpers import create_request, paid_create_request
 
 
 def test_local_store_reloads_character_jobs_across_instances(tmp_path):
@@ -94,3 +98,86 @@ def test_local_store_replays_pending_journal_before_cached_document_read(tmp_pat
 
     assert document.get().to_dict()["credits_remaining"] == 2
     assert not store._journal_path.exists()
+
+
+def test_stale_api_credit_update_preserves_worker_completion(tmp_path):
+    api_store = LocalStore(data_dir=tmp_path)
+    worker_store = LocalStore(data_dir=tmp_path)
+    api_repository = CharacterRepository(api_store)
+    worker_repository = CharacterRepository(worker_store)
+    api_store.collection("users").document("u1").set({
+        "uid": "u1",
+        "credits_remaining": 3,
+        "topup_credits_remaining": 0,
+        "credits_reserved": 0,
+        "credits_frozen": False,
+    })
+    api_store.collection("character_slot_counters").document("u1").set({
+        "occupied_slots": [1, 2, 3], "reserved_slots": [], "slot_reservations": {}, "revision": 0,
+    })
+    stale_user = api_store.collection("users").document("u1")
+    job = api_repository.accept_generation("u1", paid_create_request("local-store-credit-race"))
+    claimed = worker_repository.claim_next_job("worker", lease_seconds=300)
+
+    worker_repository.complete_generation(
+        claimed.id, {"name": "Lumi"}, "https://images.example.test/lumi.webp", claimed.lease_token
+    )
+    stale_user.update({"topup_credits_remaining": 4})
+
+    user = LocalStore(data_dir=tmp_path).collection("users").document("u1").get().to_dict()
+    assert user["credits_remaining"] == 1
+    assert user["credits_reserved"] == 0
+    assert user["topup_credits_remaining"] == 4
+    assert LocalStore(data_dir=tmp_path).collection("character_generation_jobs").document(job.id).get().to_dict()["status"] == "completed"
+
+
+def test_character_list_refreshes_completed_portrait_from_another_local_store(tmp_path):
+    api_store = LocalStore(data_dir=tmp_path)
+    worker_store = LocalStore(data_dir=tmp_path)
+    api_repository = CharacterRepository(api_store)
+    worker_repository = CharacterRepository(worker_store)
+    api_store.collection("users").document("u1").set({
+        "uid": "u1", "credits_remaining": 3, "topup_credits_remaining": 0,
+        "credits_reserved": 0, "credits_frozen": False,
+    })
+    job = api_repository.accept_generation("u1", create_request("local-store-list-refresh"))
+    claimed = worker_repository.claim_next_job("worker", lease_seconds=300)
+
+    worker_repository.complete_generation(
+        claimed.id, {"name": "Lumi"}, "https://images.example.test/lumi.webp", claimed.lease_token
+    )
+
+    assert [character["id"] for character in _characters_for_user(api_store, "u1")] == [job.character_id]
+
+
+def test_atomic_json_replace_fsyncs_file_before_parent_directory(tmp_path, monkeypatch):
+    fsync_targets = []
+    original_fsync = os.fsync
+
+    def track_fsync(file_descriptor):
+        mode = os.fstat(file_descriptor).st_mode
+        fsync_targets.append("directory" if stat.S_ISDIR(mode) else "file")
+        original_fsync(file_descriptor)
+
+    monkeypatch.setattr("app.services.local_store.os.fsync", track_fsync)
+
+    _atomic_write_json(tmp_path / "users.json", [{"uid": "u1"}])
+
+    assert fsync_targets == ["file", "directory"]
+
+
+def test_transaction_fsyncs_journal_and_snapshot_directories(tmp_path, monkeypatch):
+    store = LocalStore(data_dir=tmp_path)
+    store.collection("users").document("u1").set({"uid": "u1", "credits_remaining": 3})
+    directory_syncs = []
+    original_fsync = os.fsync
+
+    def track_fsync(file_descriptor):
+        if stat.S_ISDIR(os.fstat(file_descriptor).st_mode):
+            directory_syncs.append(file_descriptor)
+        original_fsync(file_descriptor)
+
+    monkeypatch.setattr("app.services.local_store.os.fsync", track_fsync)
+    store.run_transaction(lambda _: store.collection("users").document("u1").update({"credits_remaining": 2}))
+
+    assert len(directory_syncs) == 2

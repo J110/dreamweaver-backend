@@ -107,12 +107,13 @@ class CharacterWorker:
             raise CharacterGenerationError("portrait_failed")
         self.media_dir.mkdir(parents=True, exist_ok=True)
         destination = self.media_dir / filename
-        with NamedTemporaryFile(dir=self.media_dir, prefix=f".{filename}.", delete=False) as temporary:
-            temporary.write(portrait_bytes)
-            temporary.flush()
-            os.fsync(temporary.fileno())
-            temporary_path = Path(temporary.name)
+        temporary_path = None
         try:
+            with NamedTemporaryFile(dir=self.media_dir, prefix=f".{filename}.", delete=False) as temporary:
+                temporary_path = Path(temporary.name)
+                temporary.write(portrait_bytes)
+                temporary.flush()
+                os.fsync(temporary.fileno())
             os.link(temporary_path, destination)
             directory_descriptor = os.open(self.media_dir, os.O_RDONLY)
             try:
@@ -122,7 +123,8 @@ class CharacterWorker:
         except FileExistsError as error:
             raise CharacterGenerationError("portrait_failed") from error
         finally:
-            temporary_path.unlink(missing_ok=True)
+            if temporary_path:
+                temporary_path.unlink(missing_ok=True)
         return destination
 
     def _complete_generation(

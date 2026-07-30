@@ -48,14 +48,14 @@ def _document_data(db_client, collection_name: str, document_id: str):
 
 
 def _characters_for_user(db_client, uid: str) -> list[dict]:
-    collections = getattr(db_client, "collections", None)
-    if isinstance(collections, dict):
-        characters = collections.get("characters", {}).values()
+    collection = db_client.collection("characters")
+    if not callable(getattr(collection, "where", None)):
+        characters = getattr(db_client, "collections", {}).get("characters", {}).values()
         return sorted(
             [dict(character) for character in characters if character.get("uid") == uid],
             key=lambda character: character.get("slot_number", 0),
         )
-    snapshots = db_client.collection("characters").where("uid", "==", uid).get()
+    snapshots = collection.where("uid", "==", uid).get()
     return sorted(
         [snapshot.to_dict() for snapshot in snapshots],
         key=lambda character: character.get("slot_number", 0),
