@@ -51,6 +51,8 @@ class Settings:
         self.tts_cache_dir: str = os.getenv("TTS_CACHE_DIR", "./cache/tts")
         self.album_art_cache_dir: str = os.getenv("ALBUM_ART_CACHE_DIR", "./cache/album_art")
         self.background_music_dir: str = os.getenv("BACKGROUND_MUSIC_DIR", "./cache/background_music")
+        self.character_media_dir: str = os.getenv("CHARACTER_MEDIA_DIR", "data/character-media")
+        self.public_api_base_url: str = os.getenv("PUBLIC_API_BASE_URL", "http://localhost:8000")
 
         # Kokoro TTS (lightweight 82M model, runs on CPU)
         self.kokoro_lang_code: str = os.getenv("KOKORO_LANG_CODE", "a")  # 'a' = American English
