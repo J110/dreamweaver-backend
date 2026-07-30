@@ -133,6 +133,7 @@ async def lifespan(app: FastAPI):
         settings.tts_cache_dir,
         settings.album_art_cache_dir,
         settings.background_music_dir,
+        settings.character_media_dir,
     ]
 
     for cache_dir in cache_dirs:
@@ -229,6 +230,10 @@ app.mount("/audio/silly-songs", StaticFiles(directory=str(silly_songs_audio_dir)
 silly_songs_covers_dir = Path("public/covers/silly-songs")
 silly_songs_covers_dir.mkdir(parents=True, exist_ok=True)
 app.mount("/covers/silly-songs", StaticFiles(directory=str(silly_songs_covers_dir)), name="silly-songs-covers")
+
+character_media_dir = Path(settings.character_media_dir)
+character_media_dir.mkdir(parents=True, exist_ok=True)
+app.mount("/media/characters", StaticFiles(directory=str(character_media_dir)), name="character-media")
 
 @app.get(
     "/health",

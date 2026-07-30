@@ -1,5 +1,6 @@
 import threading
 from copy import deepcopy
+from datetime import datetime, timedelta, timezone
 
 import pytest
 
@@ -164,6 +165,32 @@ class FakeCharacterRepository(CharacterRepository):
 
     def counter(self, uid):
         return self.db.collection("character_slot_counters").document(uid).get().to_dict()
+
+    def job(self, job_id):
+        return self.db.collection("character_generation_jobs").document(job_id).get().to_dict()
+
+    def media_cleanup(self, cleanup_id):
+        return self.db.collection("character_generation_jobs").document(cleanup_id).get().to_dict()
+
+    def seed_expired_generating_job(self, job_id):
+        request = create_request("character-generation-expired", self.quote_version("u1"))
+        job = self.accept_generation("u1", request)
+        data = self.job(job.id)
+        data.update({
+            "id": job_id,
+            "status": "generating",
+            "lease_expires_at": (datetime.now(timezone.utc) - timedelta(minutes=1)).isoformat(),
+        })
+        self.db.collection("character_generation_jobs").document(job.id).delete()
+        self.db.collection("character_generation_jobs").document(job_id).set(data)
+
+    def seed_media_cleanup(self, cleanup_id, portrait_filename):
+        self.db.collection("character_generation_jobs").document(cleanup_id).set({
+            "id": cleanup_id,
+            "kind": "media_cleanup",
+            "status": "media_cleanup_pending",
+            "portrait_url": f"/media/characters/{portrait_filename}",
+        })
 
 
 def seed_user(

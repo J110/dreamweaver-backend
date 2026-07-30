@@ -168,3 +168,14 @@ def test_current_playback_guard_rejects_missing_audio():
 
 def test_verify_registers_current_playback_assets():
     assert "playback_issues = verify_current_playback_assets()" in SOURCE
+
+
+def test_character_worker_deploy_contract_cannot_be_removed():
+    assert '"GET /api/v1/characters without authentication returns 401"' in SOURCE
+    assert '"dreamweaver-character-worker is online"' in SOURCE
+    assert '"CHARACTER_MEDIA_DIR exists and is writable by the backend user"' in SOURCE
+    assert '"every stored portrait URL returns HTTP 200"' in SOURCE
+    assert '"no accepted/generating job is older than its lease plus recovery window"' in SOURCE
+    assert '"active_characters"' in SOURCE
+    assert '"pending_character_jobs"' in SOURCE
+    assert "character_guard_issues = verify_character_generation_contracts(api, after)" in SOURCE

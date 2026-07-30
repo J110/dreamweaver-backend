@@ -34,6 +34,7 @@ class GenerationRequest(BaseModel):
 
 class GenerationStatus(str, Enum):
     accepted = "accepted"
+    generating = "generating"
     completed = "completed"
     failed = "failed"
 
@@ -46,6 +47,11 @@ class GenerationErrorCode(str, Enum):
     not_found = "not_found"
     forbidden = "forbidden"
     portrait_failed = "portrait_failed"
+    unsafe_input = "unsafe_input"
+    unsafe_profile = "unsafe_profile"
+    invalid_profile = "invalid_profile"
+    profile_failed = "profile_failed"
+    profile_unavailable = "profile_unavailable"
 
 
 class CharacterQuote(BaseModel):
@@ -63,6 +69,7 @@ class CharacterRecord(BaseModel):
     version: int
     profile: dict
     portrait_url: str
+    portrait_filename: str | None = None
 
 
 class GenerationJob(BaseModel):
@@ -77,7 +84,12 @@ class GenerationJob(BaseModel):
     reserved_slot_number: int | None = None
     target_character_id: str | None = None
     character_id: str | None = None
+    portrait_filename: str | None = None
     error_code: GenerationErrorCode | None = None
+    stage: str | None = None
+    lease_worker_id: str | None = None
+    lease_expires_at: str | None = None
+    created_at: str | None = None
     inputs: CharacterInput
 
     def __getitem__(self, key):

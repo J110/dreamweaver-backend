@@ -47,7 +47,7 @@ import re
 import subprocess
 import sys
 import time
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import httpx
@@ -110,6 +110,14 @@ PER_CONTENT_DIR_PAIRS = {
     "poems": (BACKEND_DATA_POEMS, BACKEND_DATA_POEMS_HI),
 }
 
+CHARACTER_DEPLOY_CONTRACTS = (
+    "GET /api/v1/characters without authentication returns 401",
+    "dreamweaver-character-worker is online",
+    "CHARACTER_MEDIA_DIR exists and is writable by the backend user",
+    "every stored portrait URL returns HTTP 200",
+    "no accepted/generating job is older than its lease plus recovery window",
+)
+
 
 def get_api(use_local: bool = False) -> str:
     return LOCAL_API if use_local else PROD_API
@@ -163,6 +171,7 @@ def capture_state(api: str) -> dict:
         "captured_at": datetime.now().isoformat(),
         "api": api,
     }
+    state.update(capture_character_state())
 
     # 1. Stories (paginate — API max page_size=100), English only
     try:
@@ -1413,6 +1422,92 @@ def _ssh_run(cmd, timeout=30):
     return result.stdout.strip(), result.returncode
 
 
+def capture_character_state() -> dict:
+    command = (
+        "sudo docker exec dreamweaver-backend python3 -c "
+        "'import json; from app.dependencies import get_db_client; db = get_db_client(); "
+        "characters = [item.to_dict() for item in db.collection(\"characters\").stream()]; "
+        "jobs = [item.to_dict() for item in db.collection(\"character_generation_jobs\").stream() "
+        "if item.to_dict().get(\"status\") in {\"accepted\", \"generating\"}]; "
+        "print(json.dumps({\"active_characters\": characters, \"pending_character_jobs\": jobs}, default=str))'"
+    )
+    output, returncode = _ssh_run(command, timeout=30)
+    if returncode != 0:
+        return {
+            "active_characters": [],
+            "pending_character_jobs": [],
+            "character_snapshot_error": "unable to read character state",
+        }
+    try:
+        state = json.loads(output)
+        return {
+            "active_characters": state.get("active_characters", []),
+            "pending_character_jobs": state.get("pending_character_jobs", []),
+        }
+    except (TypeError, ValueError):
+        return {
+            "active_characters": [],
+            "pending_character_jobs": [],
+            "character_snapshot_error": "invalid character state",
+        }
+
+
+def verify_character_generation_contracts(api: str, snapshot: dict) -> list[str]:
+    issues = []
+    client = httpx.Client(timeout=30)
+    try:
+        response = client.get(f"{api}/api/v1/characters")
+        if response.status_code != 401:
+            issues.append(CHARACTER_DEPLOY_CONTRACTS[0])
+
+        _, worker_returncode = _ssh_run(
+            "systemctl is-active --quiet dreamweaver-character-worker"
+        )
+        if worker_returncode != 0:
+            issues.append(CHARACTER_DEPLOY_CONTRACTS[1])
+
+        _, media_returncode = _ssh_run(
+            "sudo docker exec dreamweaver-backend sh -c "
+            "'media=${CHARACTER_MEDIA_DIR:-data/character-media}; test -d \"$media\" && test -w \"$media\"'"
+        )
+        if media_returncode != 0:
+            issues.append(CHARACTER_DEPLOY_CONTRACTS[2])
+
+        if snapshot.get("character_snapshot_error"):
+            issues.append("character generation snapshot unavailable")
+        for character in snapshot.get("active_characters", []):
+            portrait_url = character.get("portrait_url")
+            if not portrait_url:
+                issues.append(CHARACTER_DEPLOY_CONTRACTS[3])
+                continue
+            url = portrait_url if portrait_url.startswith("http") else f"{api}{portrait_url}"
+            if client.get(url).status_code != 200:
+                issues.append(CHARACTER_DEPLOY_CONTRACTS[3])
+                break
+
+        recovery_window = timedelta(seconds=60)
+        now = datetime.now(timezone.utc)
+        for job in snapshot.get("pending_character_jobs", []):
+            timestamp = job.get("lease_expires_at") or job.get("created_at")
+            if not timestamp:
+                issues.append(CHARACTER_DEPLOY_CONTRACTS[4])
+                break
+            try:
+                checked_at = datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
+                checked_at = checked_at if checked_at.tzinfo else checked_at.replace(tzinfo=timezone.utc)
+            except ValueError:
+                issues.append(CHARACTER_DEPLOY_CONTRACTS[4])
+                break
+            if checked_at + recovery_window < now:
+                issues.append(CHARACTER_DEPLOY_CONTRACTS[4])
+                break
+    except httpx.HTTPError:
+        issues.append("character generation contract request failed")
+    finally:
+        client.close()
+    return issues
+
+
 def check_radio_health():
     """Check radio system health on the GCP server via SSH.
 
@@ -1907,6 +2002,11 @@ def cmd_verify(args):
         radio_issues = check_radio_health()
         if radio_issues:
             for msg in radio_issues:
+                unresolved.append(msg)
+
+        character_guard_issues = verify_character_generation_contracts(api, after)
+        if character_guard_issues:
+            for msg in character_guard_issues:
                 unresolved.append(msg)
 
     # ── Per-content dir routing sanity (hi-* in en dir, etc.) ──

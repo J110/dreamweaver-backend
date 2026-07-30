@@ -86,6 +86,17 @@ def test_delete_frees_slot_and_creates_media_cleanup_marker(fake_repo):
     assert fake_repo.cleanup_marker(character["id"])["character_id"] == character["id"]
 
 
+def test_claim_reclaims_an_expired_generation_lease(fake_repo):
+    job = fake_repo.accept_generation("u1", create_request("character-generation-lease"))
+
+    first = fake_repo.claim_next_job("first", lease_seconds=300, now="2026-07-30T00:00:00+00:00")
+    reclaimed = fake_repo.claim_next_job("second", lease_seconds=300, now="2026-07-30T00:06:00+00:00")
+
+    assert first.id == job.id
+    assert reclaimed.id == job.id
+    assert reclaimed.lease_worker_id == "second"
+
+
 def test_accept_rejects_stale_quote(fake_repo):
     fake_repo.accept_generation("u1", create_request("character-generation-first"))
 
