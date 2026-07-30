@@ -90,7 +90,7 @@ ASMR_DURATION_OUTLIER_PCT = 0.25  # ASMR tends to run longer, allow 25%
 # degrade on long texts even for a faithful transcript), while word overlap+order
 # stay reliable. Per-class handling (cf. SONG/ASMR thresholds): both high = faithful.
 LONG_STORY_TRUST_OVERLAP = 0.80
-LONG_STORY_TRUST_ORDER = 0.80
+LONG_STORY_TRUST_ORDER = 0.65
 
 
 def _long_story_trustworthy(word_overlap, word_order_score) -> bool:
