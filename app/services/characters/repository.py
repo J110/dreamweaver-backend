@@ -105,13 +105,6 @@ class CharacterRepository:
             }
             self._write_set(transaction, counter_ref, next_counter)
             character_id = target_character_id or uuid.uuid4().hex
-            portrait_version = 1
-            if target_character_id:
-                portrait_version = int(
-                    self._require_document(
-                        self._character_ref(target_character_id), "not_found", transaction
-                    ).get("version", 0)
-                ) + 1
             job = GenerationJob(
                 id=job_ref.id,
                 uid=uid,
@@ -124,7 +117,6 @@ class CharacterRepository:
                 reserved_slot_number=slot_number if mode == "create" else None,
                 target_character_id=target_character_id,
                 character_id=character_id,
-                portrait_filename=f"{character_id}-v{portrait_version}.webp",
                 created_at=datetime.now(timezone.utc).isoformat(),
                 inputs=request.inputs,
             )
@@ -143,6 +135,12 @@ class CharacterRepository:
         lease_expires_at = (claimed_at + timedelta(seconds=lease_seconds)).isoformat()
 
         def claim(transaction):
+            active_edit_targets = {
+                data.get("target_character_id")
+                for _, data in self._generation_jobs(transaction)
+                if data.get("status") == GenerationStatus.generating.value
+                and not self._lease_expired(data.get("lease_expires_at"), claimed_at)
+            }
             candidates = []
             for job_id, job_data in self._generation_jobs(transaction):
                 if job_data.get("kind") == "media_cleanup":
@@ -151,28 +149,59 @@ class CharacterRepository:
                 expired = status == GenerationStatus.generating.value and self._lease_expired(
                     job_data.get("lease_expires_at"), claimed_at
                 )
-                if status == GenerationStatus.accepted.value or expired:
+                if (
+                    (status == GenerationStatus.accepted.value or expired)
+                    and not (
+                        job_data.get("mode") == "edit"
+                        and job_data.get("target_character_id") in active_edit_targets
+                        and not expired
+                    )
+                ):
                     candidates.append((job_id, job_data))
             if not candidates:
                 return None
             job_id, job_data = sorted(candidates, key=lambda candidate: candidate[0])[0]
+            lease_token = uuid.uuid4().hex
+            portrait_version = 1
+            if job_data.get("mode") == "edit":
+                current = self._require_document(
+                    self._character_ref(job_data["target_character_id"]), "not_found", transaction
+                )
+                portrait_version = int(current.get("version", 0)) + 1
+            character_id = job_data["character_id"]
             job_data.update({
                 "status": GenerationStatus.generating.value,
                 "lease_worker_id": worker_id,
+                "lease_token": lease_token,
                 "lease_expires_at": lease_expires_at,
+                "portrait_version": portrait_version,
+                "portrait_filename": f"{character_id}-v{portrait_version}-{lease_token}.webp",
             })
             self._write_set(transaction, self._job_ref_by_id(job_id), job_data)
             return GenerationJob.model_validate(job_data)
 
         return self._run_transaction(claim)
 
-    def mark_stage(self, job_id: str, stage: str) -> GenerationJob:
+    def renew_lease(self, job_id: str, lease_token: str, lease_seconds: int) -> GenerationJob:
+        job_ref = self._job_ref_by_id(job_id)
+
+        def renew(transaction):
+            job_data = self._require_document(job_ref, "not_found", transaction)
+            self._require_current_lease(job_data, lease_token)
+            job_data["lease_expires_at"] = (
+                datetime.now(timezone.utc) + timedelta(seconds=lease_seconds)
+            ).isoformat()
+            self._write_set(transaction, job_ref, job_data)
+            return GenerationJob.model_validate(job_data)
+
+        return self._run_transaction(renew)
+
+    def mark_stage(self, job_id: str, lease_token: str, stage: str) -> GenerationJob:
         job_ref = self._job_ref_by_id(job_id)
 
         def mark(transaction):
             job_data = self._require_document(job_ref, "not_found", transaction)
-            if job_data.get("status") != GenerationStatus.generating.value:
-                self._reject("not_found")
+            self._require_current_lease(job_data, lease_token)
             job_data["stage"] = stage
             self._write_set(transaction, job_ref, job_data)
             return GenerationJob.model_validate(job_data)
@@ -184,6 +213,7 @@ class CharacterRepository:
         job_id: str,
         profile: dict,
         portrait_url: str,
+        lease_token: str,
         portrait_filename: str | None = None,
     ) -> CharacterRecord:
         job_ref = self._job_ref_by_id(job_id)
@@ -195,8 +225,7 @@ class CharacterRepository:
                 return CharacterRecord.model_validate(
                     self._require_document(self._character_ref(job.character_id), "not_found", transaction)
                 )
-            if job.status not in {GenerationStatus.accepted, GenerationStatus.generating}:
-                self._reject("not_found")
+            self._require_current_lease(job_data, lease_token)
 
             user_ref = self._user_ref(job.uid)
             user = self._require_document(user_ref, "not_found", transaction)
@@ -255,6 +284,7 @@ class CharacterRepository:
                 "error_code": None,
                 "stage": "completed",
                 "lease_worker_id": None,
+                "lease_token": None,
                 "lease_expires_at": None,
             })
             self._write_set(transaction, job_ref, job_data)
@@ -262,14 +292,15 @@ class CharacterRepository:
 
         return self._run_transaction(complete)
 
-    def fail_generation(self, job_id: str, error_code: str) -> GenerationJob:
+    def fail_generation(self, job_id: str, error_code: str, lease_token: str) -> GenerationJob:
         job_ref = self._job_ref_by_id(job_id)
 
         def fail(transaction):
             job_data = self._require_document(job_ref, "not_found", transaction)
             job = GenerationJob.model_validate(job_data)
-            if job.status not in {GenerationStatus.accepted, GenerationStatus.generating}:
+            if job.status in {GenerationStatus.completed, GenerationStatus.failed}:
                 return job
+            self._require_current_lease(job_data, lease_token)
             user_ref = self._user_ref(job.uid)
             user = self._require_document(user_ref, "not_found", transaction)
             counter_ref = self._counter_ref(job.uid)
@@ -298,6 +329,7 @@ class CharacterRepository:
                 "error_code": GenerationErrorCode(error_code).value,
                 "stage": "failed",
                 "lease_worker_id": None,
+                "lease_token": None,
                 "lease_expires_at": None,
             })
             self._write_set(transaction, job_ref, job_data)
@@ -331,6 +363,7 @@ class CharacterRepository:
             cleanup.update({
                 "status": "media_cleanup_generating",
                 "lease_worker_id": worker_id,
+                "lease_token": uuid.uuid4().hex,
                 "lease_expires_at": lease_expires_at,
             })
             self._write_set(transaction, self._job_ref_by_id(job_id), cleanup)
@@ -338,16 +371,18 @@ class CharacterRepository:
 
         return self._run_transaction(claim)
 
-    def complete_media_cleanup(self, cleanup_id: str) -> None:
+    def complete_media_cleanup(self, cleanup_id: str, lease_token: str) -> None:
         cleanup_ref = self._job_ref_by_id(cleanup_id)
 
         def complete(transaction):
             cleanup = self._require_document(cleanup_ref, "not_found", transaction)
             if cleanup.get("kind") != "media_cleanup":
                 self._reject("not_found")
+            self._require_current_lease(cleanup, lease_token, status="media_cleanup_generating")
             cleanup.update({
                 "status": "completed",
                 "lease_worker_id": None,
+                "lease_token": None,
                 "lease_expires_at": None,
             })
             self._write_set(transaction, cleanup_ref, cleanup)
@@ -542,3 +577,16 @@ class CharacterRepository:
         if not lease_expires_at:
             return True
         return cls._coerce_time(lease_expires_at) <= now
+
+    def _require_current_lease(
+        self,
+        record: dict,
+        lease_token: str,
+        status: str = GenerationStatus.generating.value,
+    ) -> None:
+        if (
+            record.get("status") != status
+            or record.get("lease_token") != lease_token
+            or self._lease_expired(record.get("lease_expires_at"), datetime.now(timezone.utc))
+        ):
+            self._reject("lease_lost")

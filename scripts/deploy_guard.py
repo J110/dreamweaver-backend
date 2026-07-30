@@ -1186,6 +1186,17 @@ def diff_states(before: dict, after: dict) -> dict:
     removed_items = []  # For JSON recovery
     added_items = []    # For serving verification
 
+    before_character_ids = {item.get("id") for item in before.get("active_characters", [])}
+    after_character_ids = {item.get("id") for item in after.get("active_characters", [])}
+    for character_id in sorted(before_character_ids - after_character_ids):
+        removed.append(f"  ❌ REMOVED character: {character_id}")
+
+    before_pending_jobs = {item.get("id") for item in before.get("pending_character_jobs", [])}
+    after_job_statuses = after.get("character_jobs", {})
+    for job_id in sorted(before_pending_jobs):
+        if job_id not in after_job_statuses:
+            removed.append(f"  ❌ LOST character generation job: {job_id}")
+
     # ── Stories ──
     before_ids = set(before.get("stories", {}).keys())
     after_ids = set(after.get("stories", {}).keys())
@@ -1427,15 +1438,17 @@ def capture_character_state() -> dict:
         "sudo docker exec dreamweaver-backend python3 -c "
         "'import json; from app.dependencies import get_db_client; db = get_db_client(); "
         "characters = [item.to_dict() for item in db.collection(\"characters\").stream()]; "
-        "jobs = [item.to_dict() for item in db.collection(\"character_generation_jobs\").stream() "
-        "if item.to_dict().get(\"status\") in {\"accepted\", \"generating\"}]; "
-        "print(json.dumps({\"active_characters\": characters, \"pending_character_jobs\": jobs}, default=str))'"
+        "all_jobs = [item.to_dict() for item in db.collection(\"character_generation_jobs\").stream()]; "
+        "jobs = [item for item in all_jobs if item.get(\"status\") in {\"accepted\", \"generating\"}]; "
+        "statuses = {item.get(\"id\"): item.get(\"status\") for item in all_jobs}; "
+        "print(json.dumps({\"active_characters\": characters, \"pending_character_jobs\": jobs, \"character_jobs\": statuses}, default=str))'"
     )
     output, returncode = _ssh_run(command, timeout=30)
     if returncode != 0:
         return {
             "active_characters": [],
             "pending_character_jobs": [],
+            "character_jobs": {},
             "character_snapshot_error": "unable to read character state",
         }
     try:
@@ -1443,11 +1456,13 @@ def capture_character_state() -> dict:
         return {
             "active_characters": state.get("active_characters", []),
             "pending_character_jobs": state.get("pending_character_jobs", []),
+            "character_jobs": state.get("character_jobs", {}),
         }
     except (TypeError, ValueError):
         return {
             "active_characters": [],
             "pending_character_jobs": [],
+            "character_jobs": {},
             "character_snapshot_error": "invalid character state",
         }
 

@@ -1,4 +1,5 @@
 import threading
+from datetime import datetime, timedelta, timezone
 
 import pytest
 
@@ -14,6 +15,10 @@ from scripts.character_test_helpers import (
     paid_create_request,
     seed_user,
 )
+
+
+def claim_generation(repo):
+    return repo.claim_next_job("test-worker", lease_seconds=300)
 
 
 def test_quote_uses_lowest_free_slot_and_slot_price(fake_repo):
@@ -55,7 +60,8 @@ def test_failed_edit_preserves_character_and_releases_credit(fake_repo):
         edit_request(original, idempotency_key="character-generation-edit"),
         target_character_id=original["id"],
     )
-    fake_repo.fail_generation(job["id"], "portrait_failed")
+    claimed = claim_generation(fake_repo)
+    fake_repo.fail_generation(job["id"], "portrait_failed", claimed.lease_token)
     assert fake_repo.character(original["id"])["version"] == 3
     assert fake_repo.user("u1")["credits_reserved"] == 0
 
@@ -67,8 +73,9 @@ def test_complete_debits_reservation_and_occupies_reserved_slot(
         fake_repo.seed_character("u1", slot_number=slot)
     job = fake_repo.accept_generation("u1", paid_create_request())
 
+    claimed = claim_generation(fake_repo)
     character = fake_repo.complete_generation(
-        job["id"], deterministic_profile, deterministic_portrait_url
+        job["id"], deterministic_profile, deterministic_portrait_url, claimed.lease_token
     )
 
     assert character.slot_number == 4
@@ -88,13 +95,68 @@ def test_delete_frees_slot_and_creates_media_cleanup_marker(fake_repo):
 
 def test_claim_reclaims_an_expired_generation_lease(fake_repo):
     job = fake_repo.accept_generation("u1", create_request("character-generation-lease"))
+    now = datetime.now(timezone.utc)
 
-    first = fake_repo.claim_next_job("first", lease_seconds=300, now="2026-07-30T00:00:00+00:00")
-    reclaimed = fake_repo.claim_next_job("second", lease_seconds=300, now="2026-07-30T00:06:00+00:00")
+    first = fake_repo.claim_next_job("first", lease_seconds=300, now=now)
+    reclaimed = fake_repo.claim_next_job("second", lease_seconds=300, now=now + timedelta(minutes=6))
 
     assert first.id == job.id
     assert reclaimed.id == job.id
     assert reclaimed.lease_worker_id == "second"
+
+
+def test_reclaimed_worker_cannot_mutate_a_newer_lease(fake_repo, deterministic_profile, deterministic_portrait_url):
+    job = fake_repo.accept_generation("u1", create_request("character-generation-fenced"))
+    now = datetime.now(timezone.utc)
+    first = fake_repo.claim_next_job("first", lease_seconds=300, now=now)
+    second = fake_repo.claim_next_job("second", lease_seconds=300, now=now + timedelta(minutes=6))
+
+    with pytest.raises(CharacterRepositoryError, match="lease_lost"):
+        fake_repo.mark_stage(job.id, first.lease_token, "saving")
+    with pytest.raises(CharacterRepositoryError, match="lease_lost"):
+        fake_repo.complete_generation(
+            job.id, deterministic_profile, deterministic_portrait_url, first.lease_token
+        )
+    with pytest.raises(CharacterRepositoryError, match="lease_lost"):
+        fake_repo.fail_generation(job.id, "portrait_failed", first.lease_token)
+
+    fake_repo.mark_stage(job.id, second.lease_token, "saving")
+
+
+def test_edit_claims_allocate_distinct_immutable_media_names(fake_repo):
+    character = fake_repo.seed_character("u1", slot_number=1, version=2)
+    fake_repo.db.collection("users").document("u1").update({"credits_remaining": 4})
+    first_request = edit_request(character, "character-generation-edit-first")
+    first_request.quote_version = fake_repo.quote_version("u1")
+    first_job = fake_repo.accept_generation(
+        "u1", first_request, character["id"]
+    )
+    second_request = edit_request(character, "character-generation-edit-second")
+    second_request.quote_version = fake_repo.quote_version("u1")
+    second_job = fake_repo.accept_generation(
+        "u1", second_request, character["id"]
+    )
+
+    first = fake_repo.claim_next_job("first", lease_seconds=300)
+    fake_repo.fail_generation(first.id, "portrait_failed", first.lease_token)
+    second = fake_repo.claim_next_job("second", lease_seconds=300)
+
+    assert {first.id, second.id} == {first_job.id, second_job.id}
+    assert first.portrait_filename != second.portrait_filename
+    assert character["id"] in first.portrait_filename
+    assert "-v3-" in first.portrait_filename
+
+
+def test_cleanup_completion_rejects_a_reclaimed_lease(fake_repo):
+    fake_repo.seed_media_cleanup("cleanup-fenced", "c1-v1.webp")
+    now = datetime.now(timezone.utc)
+    first = fake_repo.claim_next_media_cleanup("first", 300, now=now)
+    second = fake_repo.claim_next_media_cleanup("second", 300, now=now + timedelta(minutes=6))
+
+    with pytest.raises(CharacterRepositoryError, match="lease_lost"):
+        fake_repo.complete_media_cleanup(first["id"], first["lease_token"])
+
+    fake_repo.complete_media_cleanup(second["id"], second["lease_token"])
 
 
 def test_accept_rejects_stale_quote(fake_repo):
@@ -125,6 +187,7 @@ def test_failed_edit_cannot_release_another_jobs_reused_slot(fake_repo):
         edit_request(original, idempotency_key="character-generation-owned-edit"),
         target_character_id=original["id"],
     )
+    claimed_edit = claim_generation(fake_repo)
     fake_repo.delete_character("u1", original["id"])
     create_job = fake_repo.accept_generation(
         "u1",
@@ -134,7 +197,7 @@ def test_failed_edit_cannot_release_another_jobs_reused_slot(fake_repo):
         ),
     )
 
-    fake_repo.fail_generation(edit_job["id"], "portrait_failed")
+    fake_repo.fail_generation(edit_job["id"], "portrait_failed", claimed_edit.lease_token)
 
     assert 1 in fake_repo.counter("u1")["reserved_slots"]
     assert fake_repo.counter("u1")["slot_reservations"]["1"] == create_job["id"]
@@ -181,11 +244,12 @@ def test_completion_and_failure_replays_do_not_change_credit_twice(
     for slot in (1, 2, 3):
         fake_repo.seed_character("u1", slot_number=slot)
     completed_job = fake_repo.accept_generation("u1", paid_create_request())
+    completed_claim = claim_generation(fake_repo)
     completed = fake_repo.complete_generation(
-        completed_job["id"], deterministic_profile, deterministic_portrait_url
+        completed_job["id"], deterministic_profile, deterministic_portrait_url, completed_claim.lease_token
     )
     replayed = fake_repo.complete_generation(
-        completed_job["id"], deterministic_profile, deterministic_portrait_url
+        completed_job["id"], deterministic_profile, deterministic_portrait_url, completed_claim.lease_token
     )
     assert replayed.id == completed.id
     assert fake_repo.user("u1")["credits_remaining"] == 1
@@ -201,8 +265,9 @@ def test_completion_and_failure_replays_do_not_change_credit_twice(
             quote_version=fake_repo.quote_version("u1"),
         ),
     )
-    fake_repo.fail_generation(failed_job["id"], "portrait_failed")
-    fake_repo.fail_generation(failed_job["id"], "portrait_failed")
+    failed_claim = claim_generation(fake_repo)
+    fake_repo.fail_generation(failed_job["id"], "portrait_failed", failed_claim.lease_token)
+    fake_repo.fail_generation(failed_job["id"], "portrait_failed", failed_claim.lease_token)
     assert fake_repo.user("u1")["credits_reserved"] == 0
 
 

@@ -25,10 +25,21 @@ def main() -> int:
     stopping = threading.Event()
     signal.signal(signal.SIGTERM, lambda *_: stopping.set())
     signal.signal(signal.SIGINT, lambda *_: stopping.set())
+    return run_loop(worker, stopping)
+
+
+def run_loop(worker, stopping: threading.Event, idle_seconds: int = 2) -> int:
     while not stopping.is_set():
-        did_work = worker.run_cleanup_once() or worker.run_once()
+        try:
+            did_cleanup = worker.run_cleanup_once()
+        except Exception:
+            did_cleanup = False
+        try:
+            did_work = did_cleanup or worker.run_once()
+        except Exception:
+            did_work = False
         if not did_work:
-            stopping.wait(2)
+            stopping.wait(idle_seconds)
     return 0
 
 

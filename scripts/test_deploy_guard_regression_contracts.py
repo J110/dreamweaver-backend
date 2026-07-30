@@ -179,3 +179,21 @@ def test_character_worker_deploy_contract_cannot_be_removed():
     assert '"active_characters"' in SOURCE
     assert '"pending_character_jobs"' in SOURCE
     assert "character_guard_issues = verify_character_generation_contracts(api, after)" in SOURCE
+
+
+def test_character_snapshot_loss_is_a_deploy_regression():
+    changes = deploy_guard.diff_states(
+        {
+            "active_characters": [{"id": "character-1"}],
+            "pending_character_jobs": [{"id": "job-1"}],
+            "character_jobs": {"job-1": "accepted"},
+        },
+        {
+            "active_characters": [],
+            "pending_character_jobs": [],
+            "character_jobs": {},
+        },
+    )
+
+    assert "  ❌ REMOVED character: character-1" in changes["removed"]
+    assert "  ❌ LOST character generation job: job-1" in changes["removed"]

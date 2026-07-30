@@ -17,6 +17,8 @@ import logging
 import os
 import threading
 import uuid
+import fcntl
+from copy import deepcopy
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
@@ -107,13 +109,25 @@ def _content_target_dir(data_dir: Path, item: dict) -> Optional[Path]:
 class LocalStore:
     """File-backed data store that mimics Firestore operations."""
 
-    def __init__(self):
+    def __init__(self, data_dir: Path | None = None):
         self.collections: dict[str, dict[str, dict]] = {}
-        self._lock = threading.Lock()
+        self._lock = threading.RLock()
+        self._transaction_depth = 0
 
         # Persistent data directory
-        self._data_dir = Path(__file__).parent.parent.parent / "data"
+        self._data_dir = data_dir or Path(__file__).parent.parent.parent / "data"
         self._data_dir.mkdir(parents=True, exist_ok=True)
+        self._lock_path = self._data_dir / ".local_store.lock"
+        self._persistent_collections = {
+            "users",
+            "interactions",
+            "tokens",
+            "blog_posts",
+            "blog_comments",
+            "characters",
+            "character_generation_jobs",
+            "character_slot_counters",
+        }
 
         # Seed data tracking for hot-reload
         self._seed_dir = Path(__file__).parent.parent.parent / "seed_output"
@@ -156,17 +170,8 @@ class LocalStore:
                 self._persist_collection(coll_name)
 
         # ── Users, interactions, tokens, blog data: persistent only ─────────
-        for coll_name in ["users", "interactions", "tokens", "blog_posts", "blog_comments"]:
-            persistent_path = self._data_dir / f"{coll_name}.json"
-            if persistent_path.exists():
-                with open(persistent_path) as f:
-                    items = json.load(f)
-                    self.collections[coll_name] = {
-                        item.get("id", item.get("uid", str(uuid.uuid4()))): item
-                        for item in items
-                    }
-            elif coll_name not in self.collections:
-                self.collections[coll_name] = {}
+        for coll_name in self._persistent_collections:
+            self._reload_persistent_collection(coll_name)
 
     def _load_content(self) -> None:
         """Build the content collection from per-content files (spec §2c).
@@ -413,7 +418,45 @@ class LocalStore:
         except Exception:
             pass  # Don't crash on write failure
 
+    def _reload_persistent_collection(self, name: str) -> None:
+        if name not in self._persistent_collections:
+            return
+        path = self._data_dir / f"{name}.json"
+        if not path.exists():
+            self.collections.setdefault(name, {})
+            return
+        with open(path) as file:
+            items = json.load(file)
+        self.collections[name] = {
+            item.get("id", item.get("uid", str(uuid.uuid4()))): item
+            for item in items
+        }
+
+    def run_transaction(self, callback):
+        with self._lock:
+            with open(self._lock_path, "a+") as lock_file:
+                fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX)
+                try:
+                    for name in self._persistent_collections:
+                        self._reload_persistent_collection(name)
+                    snapshot = deepcopy(self.collections)
+                    self._transaction_depth += 1
+                    try:
+                        return callback(None)
+                    except Exception:
+                        self.collections = snapshot
+                        for name in self._persistent_collections:
+                            self._persist_collection(name)
+                        raise
+                    finally:
+                        self._transaction_depth -= 1
+                finally:
+                    fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
+
     def collection(self, name: str) -> "CollectionRef":
+        if name in self._persistent_collections and not self._transaction_depth:
+            with self._lock:
+                self._reload_persistent_collection(name)
         if name not in self.collections:
             self.collections[name] = {}
         return CollectionRef(self, name)

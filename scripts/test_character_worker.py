@@ -1,9 +1,13 @@
 from pathlib import Path
 
+import pytest
+
 from app.schemas.character_schema import CharacterInput
 from app.services.characters.generator import GeneratedProfile
+from app.services.characters.generator import CharacterGenerationError
 from app.services.characters.worker import CharacterWorker
 from scripts.character_test_helpers import fake_repo, paid_create_request
+from scripts.run_character_worker import run_loop
 
 
 GENERATED_PROFILE = GeneratedProfile(
@@ -78,3 +82,40 @@ def test_worker_removes_media_for_claimed_cleanup(tmp_path, fake_repo):
     assert worker.run_cleanup_once() is True
     assert not portrait.exists()
     assert fake_repo.media_cleanup("cleanup-1")["status"] == "completed"
+
+
+def test_runner_isolates_transient_cleanup_and_generation_failures():
+    class StoppingEvent:
+        def __init__(self):
+            self.set = False
+            self.waits = []
+
+        def is_set(self):
+            return self.set
+
+        def wait(self, seconds):
+            self.waits.append(seconds)
+            self.set = True
+
+    class FailingWorker:
+        def run_cleanup_once(self):
+            raise RuntimeError("temporary cleanup failure")
+
+        def run_once(self):
+            raise RuntimeError("temporary generation failure")
+
+    stopping = StoppingEvent()
+
+    assert run_loop(FailingWorker(), stopping) == 0
+    assert stopping.waits == [2]
+
+
+def test_atomic_media_write_never_replaces_an_existing_portrait(tmp_path, fake_repo):
+    worker = CharacterWorker(fake_repo, FakeGenerator(), tmp_path, "worker")
+    portrait = tmp_path / "character-v1-active.webp"
+    portrait.write_bytes(b"active")
+
+    with pytest.raises(CharacterGenerationError, match="portrait_failed"):
+        worker._write_portrait_atomically(portrait.name, PORTRAIT_WEBP)
+
+    assert portrait.read_bytes() == b"active"

@@ -70,6 +70,7 @@ class CharacterRecord(BaseModel):
     profile: dict
     portrait_url: str
     portrait_filename: str | None = None
+    portrait_version: int | None = None
 
 
 class GenerationJob(BaseModel):
@@ -88,6 +89,7 @@ class GenerationJob(BaseModel):
     error_code: GenerationErrorCode | None = None
     stage: str | None = None
     lease_worker_id: str | None = None
+    lease_token: str | None = None
     lease_expires_at: str | None = None
     created_at: str | None = None
     inputs: CharacterInput
