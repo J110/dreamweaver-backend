@@ -1479,7 +1479,11 @@ def verify_character_generation_contracts(api: str, snapshot: dict) -> list[str]
             "systemctl is-active --quiet dreamweaver-character-worker"
         )
         if worker_returncode != 0:
-            issues.append(CHARACTER_DEPLOY_CONTRACTS[1])
+            _, worker_returncode = _ssh_run(
+                "sudo pm2 describe dreamweaver-character-worker >/dev/null 2>&1"
+            )
+            if worker_returncode != 0:
+                issues.append(CHARACTER_DEPLOY_CONTRACTS[1])
 
         _, media_returncode = _ssh_run(
             "sudo docker exec dreamweaver-backend sh -c "

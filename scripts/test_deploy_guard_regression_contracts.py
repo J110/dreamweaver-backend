@@ -57,6 +57,9 @@ class FakeClient:
     def head(self, url, **_kwargs):
         return self.head_responses[url]
 
+    def close(self):
+        pass
+
 
 def test_frontend_runtime_guard_rejects_missing_bundle():
     frontend = "https://dreamvalley.app"
@@ -180,6 +183,30 @@ def test_character_worker_deploy_contract_cannot_be_removed():
     assert '"active_characters"' in SOURCE
     assert '"pending_character_jobs"' in SOURCE
     assert "character_guard_issues = verify_character_generation_contracts(api, after)" in SOURCE
+
+
+def test_character_worker_accepts_pm2_when_systemd_unit_is_absent(monkeypatch):
+    api = "https://api.dreamvalley.app"
+    client = FakeClient({
+        f"{api}/api/v1/characters": FakeResponse(401),
+    })
+    monkeypatch.setattr(deploy_guard.httpx, "Client", lambda **_kwargs: client)
+
+    def fake_ssh_run(command, timeout=120):
+        if command == "systemctl is-active --quiet dreamweaver-character-worker":
+            return "", 3
+        if "pm2 describe dreamweaver-character-worker" in command:
+            return "", 0
+        return "", 0
+
+    monkeypatch.setattr(deploy_guard, "_ssh_run", fake_ssh_run)
+
+    issues = deploy_guard.verify_character_generation_contracts(
+        api,
+        {"active_characters": [], "pending_character_jobs": []},
+    )
+
+    assert deploy_guard.CHARACTER_DEPLOY_CONTRACTS[1] not in issues
 
 
 def test_character_snapshot_loss_is_a_deploy_regression():
