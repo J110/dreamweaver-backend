@@ -1,7 +1,7 @@
 from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, model_validator
 
 from app.dependencies import get_current_user, get_db_client
 from app.schemas.character_schema import GenerationRequest
@@ -15,21 +15,28 @@ class QuoteRequest(BaseModel):
     mode: Literal["create", "edit"]
     target_character_id: str | None = None
 
+    @model_validator(mode="after")
+    def validate_target_character_id(self):
+        if self.mode == "create" and self.target_character_id is not None:
+            raise ValueError("create quotes cannot target a character")
+        if self.mode == "edit" and self.target_character_id is None:
+            raise ValueError("edit quotes require a target character")
+        return self
+
 
 def _repository(db_client):
     return CharacterRepository(db_client)
 
 
 def _raise_repository_error(error: CharacterRepositoryError):
-    code = str(error)
-    status_code = {
-        "not_found": 404,
-        "forbidden": 404,
-        "stale_quote": 409,
-        "no_slots": 409,
-        "insufficient_credits": 402,
-        "credits_frozen": 422,
-    }.get(code, 422)
+    status_code, code = {
+        "not_found": (404, "not_found"),
+        "forbidden": (404, "not_found"),
+        "stale_quote": (409, "stale_quote"),
+        "no_slots": (409, "no_slots"),
+        "insufficient_credits": (402, "insufficient_credits"),
+        "credits_frozen": (422, "credits_frozen"),
+    }.get(str(error), (422, "generation_failed"))
     raise HTTPException(status_code=status_code, detail={"code": code})
 
 
