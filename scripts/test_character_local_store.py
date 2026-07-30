@@ -1,5 +1,7 @@
+import fcntl
 import os
 import stat
+import threading
 
 import pytest
 
@@ -7,6 +9,68 @@ from app.api.v1.characters import _characters_for_user
 from app.services.characters.repository import CharacterRepository
 from app.services.local_store import LocalStore, _atomic_write_json
 from scripts.character_test_helpers import create_request, paid_create_request
+
+
+def legacy_local_store():
+    store = object.__new__(LocalStore)
+    store.collections = {"interactions": {}}
+    store._lock = threading.Lock()
+    store._persist = lambda *args: None
+    return store
+
+
+def test_legacy_local_store_uses_immediate_transactions():
+    store = legacy_local_store()
+    document = store.collection("interactions").document("save-1")
+
+    store.run_transaction(lambda transaction: transaction.set(document, {"type": "save"}))
+
+    assert document.get().to_dict() == {"id": "save-1", "type": "save"}
+
+
+@pytest.mark.parametrize("operation", ["collection", "transaction"])
+@pytest.mark.parametrize("marker", [
+    "_transaction_depth",
+    "_data_dir",
+    "_lock_path",
+    "_journal_path",
+    "_persistent_collections",
+    "_seed_dir",
+    "_seed_content_path",
+    "_last_seed_mtime",
+])
+def test_partial_persistent_local_store_state_fails_closed(marker, operation):
+    store = legacy_local_store()
+    setattr(store, marker, object())
+    callback_calls = []
+
+    with pytest.raises(RuntimeError, match="partially initialized"):
+        if operation == "collection":
+            store.collection("interactions")
+        else:
+            store.run_transaction(lambda transaction: callback_calls.append(transaction))
+
+    assert callback_calls == []
+
+
+def test_complete_persistent_local_store_uses_locked_journal_path(tmp_path, monkeypatch):
+    store = LocalStore(data_dir=tmp_path)
+    store.collection("users").document("u1").set({"uid": "u1", "credits_remaining": 3})
+    store._journal_path.write_text('{"collections":{"users":[{"uid":"u1","credits_remaining":2}]}}')
+    lock_operations = []
+
+    monkeypatch.setattr(
+        "app.services.local_store.fcntl.flock",
+        lambda _, operation: lock_operations.append(operation),
+    )
+
+    credits = store.run_transaction(
+        lambda _: store.collection("users").document("u1").get().to_dict()["credits_remaining"]
+    )
+
+    assert credits == 2
+    assert not store._journal_path.exists()
+    assert lock_operations == [fcntl.LOCK_EX, fcntl.LOCK_UN]
 
 
 def test_local_store_reloads_character_jobs_across_instances(tmp_path):

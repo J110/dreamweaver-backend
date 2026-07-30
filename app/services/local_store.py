@@ -82,6 +82,17 @@ PER_CONTENT_DIRS = [
     ("poems_hi",         "poem",        None,           "hi"),
 ]
 
+_PERSISTENT_STATE_MARKERS = (
+    "_transaction_depth",
+    "_data_dir",
+    "_lock_path",
+    "_journal_path",
+    "_persistent_collections",
+    "_seed_dir",
+    "_seed_content_path",
+    "_last_seed_mtime",
+)
+
 
 def _content_target_dir(data_dir: Path, item: dict) -> Optional[Path]:
     """Derive the per-content target directory for a content item.
@@ -471,8 +482,22 @@ class LocalStore:
         current.clear()
         current.update(refreshed)
 
+    def _uses_legacy_immediate_mode(self) -> bool:
+        present = [marker for marker in _PERSISTENT_STATE_MARKERS if hasattr(self, marker)]
+        if not present:
+            return True
+        missing = [marker for marker in _PERSISTENT_STATE_MARKERS if not hasattr(self, marker)]
+        if missing:
+            raise RuntimeError(
+                f"LocalStore persistent state is partially initialized; missing: {', '.join(missing)}"
+            )
+        return False
+
+    def _is_persistent_collection(self, name: str) -> bool:
+        return not self._uses_legacy_immediate_mode() and name in self._persistent_collections
+
     def run_transaction(self, callback):
-        if not hasattr(self, "_lock_path"):
+        if self._uses_legacy_immediate_mode():
             with self._lock:
                 return callback(_InMemoryTransaction())
         with self._lock:
@@ -536,9 +561,8 @@ class LocalStore:
         return CollectionRef(self, name)
 
     def _refresh_persistent_collection(self, name: str) -> None:
-        if not hasattr(self, "_persistent_collections"):
-            self._persistent_collections = set()
-            self._transaction_depth = 0
+        if self._uses_legacy_immediate_mode():
+            return
         if name not in self._persistent_collections or self._transaction_depth:
             return
         with self._lock:
@@ -662,7 +686,7 @@ class DocumentRef:
                 data["id"] = self._id
                 collection[self._id] = data
 
-        if self._name in self._store._persistent_collections:
+        if self._store._is_persistent_collection(self._name):
             self._store._mutate_persistent_document(self._name, set_document)
             return
         set_document(self._data)
@@ -673,7 +697,7 @@ class DocumentRef:
             if self._id in collection:
                 collection[self._id].update(data)
 
-        if self._name in self._store._persistent_collections:
+        if self._store._is_persistent_collection(self._name):
             self._store._mutate_persistent_document(self._name, update_document)
             return
         update_document(self._data)
@@ -683,7 +707,7 @@ class DocumentRef:
         def delete_document(collection):
             collection.pop(self._id, None)
 
-        if self._name in self._store._persistent_collections:
+        if self._store._is_persistent_collection(self._name):
             self._store._mutate_persistent_document(self._name, delete_document)
             return
         delete_document(self._data)
