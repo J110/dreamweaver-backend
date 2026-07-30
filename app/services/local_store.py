@@ -112,6 +112,20 @@ def _content_target_dir(data_dir: Path, item: dict) -> Optional[Path]:
     return None
 
 
+class _InMemoryTransaction:
+    def get(self, target):
+        return target.get()
+
+    def set(self, document, data):
+        document.set(data)
+
+    def update(self, document, data):
+        document.update(data)
+
+    def delete(self, document):
+        document.delete()
+
+
 class LocalStore:
     """File-backed data store that mimics Firestore operations."""
 
@@ -458,6 +472,9 @@ class LocalStore:
         current.update(refreshed)
 
     def run_transaction(self, callback):
+        if not hasattr(self, "_lock_path"):
+            with self._lock:
+                return callback(_InMemoryTransaction())
         with self._lock:
             with self._file_lock():
                 self._recover_transaction_journal()
@@ -519,6 +536,9 @@ class LocalStore:
         return CollectionRef(self, name)
 
     def _refresh_persistent_collection(self, name: str) -> None:
+        if not hasattr(self, "_persistent_collections"):
+            self._persistent_collections = set()
+            self._transaction_depth = 0
         if name not in self._persistent_collections or self._transaction_depth:
             return
         with self._lock:
