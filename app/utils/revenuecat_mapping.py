@@ -17,6 +17,62 @@ def _iso(ms: Optional[int]) -> Optional[str]:
         return None
 
 
+def move_native_entitlements(source: dict, destination: dict, store: Optional[str] = None):
+    source = dict(source or {})
+    destination = dict(destination or {})
+    if store:
+        mapped = _STORE.get(store)
+        keys = (mapped,) if mapped else ()
+    else:
+        keys = ("apple", "google")
+    for key in keys:
+        if key in source:
+            destination[key] = source.pop(key)
+    return source, destination
+
+
+def _parse_date(value: Optional[str]) -> Optional[datetime]:
+    if not value:
+        return None
+    try:
+        return datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except (TypeError, ValueError):
+        return None
+
+
+def customer_info_to_source(payload: dict, entitlement_id: str = "premium") -> Optional[dict]:
+    subscriber = payload.get("subscriber") if isinstance(payload, dict) else None
+    if not isinstance(subscriber, dict):
+        return None
+    entitlement = (subscriber.get("entitlements") or {}).get(entitlement_id)
+    if not isinstance(entitlement, dict):
+        return None
+    product_id = entitlement.get("product_identifier")
+    subscription = (subscriber.get("subscriptions") or {}).get(product_id) or {}
+    store = _STORE.get(str(subscription.get("store") or "").upper())
+    if store is None:
+        return None
+    expires = _parse_date(entitlement.get("expires_date"))
+    grace = _parse_date(entitlement.get("grace_period_expires_date"))
+    now = datetime.now(timezone.utc)
+    if grace and grace > now:
+        status = "grace"
+        effective_expires = grace
+    elif expires is None or expires > now:
+        status = "trialing" if str(subscription.get("period_type") or "").lower() == "trial" else "active"
+        effective_expires = expires
+    else:
+        status = "expired"
+        effective_expires = expires
+    return {
+        "store": store,
+        "status": status,
+        "expires": effective_expires.isoformat() if effective_expires else None,
+        "product_id": product_id,
+        "environment": "SANDBOX" if subscription.get("is_sandbox") else "PRODUCTION",
+    }
+
+
 def map_event_to_source(event: dict) -> Optional[dict]:
     if not isinstance(event, dict):
         return None
@@ -40,4 +96,4 @@ def map_event_to_source(event: dict) -> Optional[dict]:
     if etype == "REFUND":
         # actual refund: terminal. (REFUND_REVERSED is in _ACTIVE — a reversed refund re-grants.)
         return {"store": store, "status": "refunded", "expires": _iso(event.get("expiration_at_ms"))}
-    return None  # TEST, TRANSFER, etc. -> ignored
+    return None  # TEST, TRANSFER, etc. -> handled elsewhere or ignored
