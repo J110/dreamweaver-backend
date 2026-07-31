@@ -259,6 +259,53 @@ def test_malformed_moderation_and_groq_failure_return_safe_errors():
         unavailable.generate_profile(CharacterInput(surprise_name=True))
 
 
+def test_moderation_accepts_one_valid_fenced_result_among_explanatory_payload():
+    raw_moderation = """I decoded the input payload first.
+```json
+{"name": "Lumi", "surprise_name": true, "traits": []}
+```
+The moderation result is:
+```json
+{"allowed": true, "reason": "safe fictional character request"}
+```"""
+    text = SequenceTextClient([
+        raw_moderation,
+        PROFILE_JSON,
+        '{"allowed": true, "reason": "safe profile"}',
+    ])
+    generator = CharacterGenerator(text_client=text, image_client=FakeImageClient(PORTRAIT_PNG))
+
+    profile = generator.generate_profile(CharacterInput(surprise_name=True))
+
+    assert profile.name == "Lumi"
+
+
+def test_ambiguous_fenced_moderation_results_fail_closed():
+    raw_moderation = """```json
+{"allowed": true, "reason": "safe"}
+```
+```json
+{"allowed": false, "reason": "unsafe"}
+```"""
+    generator = CharacterGenerator(
+        text_client=SequenceTextClient([raw_moderation]),
+        image_client=FakeImageClient(PORTRAIT_PNG),
+    )
+
+    with pytest.raises(CharacterGenerationError, match="unsafe_input"):
+        generator.generate_profile(CharacterInput(surprise_name=True))
+
+
+def test_moderation_with_missing_fields_fails_closed():
+    generator = CharacterGenerator(
+        text_client=SequenceTextClient(['{"allowed": true}']),
+        image_client=FakeImageClient(PORTRAIT_PNG),
+    )
+
+    with pytest.raises(CharacterGenerationError, match="unsafe_input"):
+        generator.generate_profile(CharacterInput(surprise_name=True))
+
+
 def test_invalid_image_bytes_fall_through_to_next_provider(monkeypatch):
     client = CharacterImageClient()
     calls = []
