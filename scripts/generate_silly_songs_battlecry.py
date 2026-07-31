@@ -30,6 +30,7 @@ import json
 import os
 import random
 import re
+import shutil
 import sys
 import time
 from datetime import date
@@ -77,6 +78,13 @@ DATA_DIR = BASE_DIR / "data" / "silly_songs"
 AUDIO_DIR = BASE_DIR / "public" / "audio" / "silly-songs"
 COVERS_DIR = BASE_DIR / "public" / "covers" / "silly-songs"
 OUTPUT_DIR = BASE_DIR / "output" / "silly_songs_battlecry"
+AUDIO_STORE = Path("/opt/audio-store/silly-songs")
+COVER_STORE = Path("/opt/cover-store/silly-songs")
+
+TARGET_SILLY_SONG_SECONDS_MIN = 60
+TARGET_SILLY_SONG_SECONDS_MAX = 90
+MIN_SILLY_SONG_SECONDS = 50
+MAX_SILLY_SONG_SECONDS = 100
 
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 AUDIO_DIR.mkdir(parents=True, exist_ok=True)
@@ -434,8 +442,8 @@ to use a weird word or break a sentence into fragments,
 skip that rhyme and find one that flows.
 
 STRUCTURE:
-This song must be SHORT. The audio generator produces ~60
-seconds. Your lyrics must fit comfortably in that time with
+This song must target 60–90 seconds. Your lyrics must fit
+comfortably in that time with
 room for the melody to breathe.
 
 [verse 1] — 4 lines. {v1_guide}
@@ -1070,10 +1078,6 @@ def prepare_lyrics_for_minimax(lyrics: str, max_chars: int = 580) -> str:
 REPLICATE_MINIMAX_PREDICTIONS_URL = (
     "https://api.replicate.com/v1/models/minimax/music-1.5/predictions"
 )
-MIN_SILLY_SONG_SECONDS = 50
-MAX_SILLY_SONG_SECONDS = 100
-
-
 def _run_minimax_prediction(
     style: str,
     lyrics: str,
@@ -1168,6 +1172,19 @@ def _download_replicate_output(audio_url: str) -> httpx.Response:
     )
 
 
+def _persist_asset(source: Path, destination: Path) -> bool:
+    try:
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source, destination)
+        return (
+            destination.exists()
+            and destination.stat().st_size == source.stat().st_size
+        )
+    except OSError as exc:
+        print(f"    Backup failed: {exc}")
+        return False
+
+
 def generate_audio_minimax(song: dict, force: bool = False) -> bool:
     """Generate audio via MiniMax Music 1.5 on Replicate."""
     if replicate is None:
@@ -1179,7 +1196,7 @@ def generate_audio_minimax(song: dict, force: bool = False) -> bool:
 
     if audio_path.exists() and not force:
         print("    Audio exists, skipping")
-        return True
+        return _persist_asset(audio_path, AUDIO_STORE / audio_path.name)
     if force:
         song.pop("audio_file", None)
         song.pop("duration_seconds", None)
@@ -1226,6 +1243,9 @@ def generate_audio_minimax(song: dict, force: bool = False) -> bool:
                     f"{MIN_SILLY_SONG_SECONDS}-{MAX_SILLY_SONG_SECONDS}s"
                 )
 
+            if not _persist_asset(audio_path, AUDIO_STORE / audio_path.name):
+                return False
+
             song["duration_seconds"] = int(duration_s)
             song["audio_file"] = f"{song_id}.mp3"
             return True
@@ -1262,7 +1282,7 @@ def generate_cover_flux(song: dict, force: bool = False) -> bool:
 
     if cover_path.exists() and not force:
         print(f"    Cover exists, skipping")
-        return True
+        return _persist_asset(cover_path, COVER_STORE / cover_path.name)
 
     description = song.get("cover_description", "")
     if not description:
@@ -1292,6 +1312,8 @@ def generate_cover_flux(song: dict, force: bool = False) -> bool:
                 img.save(str(cover_path), format="WEBP", quality=85)
                 size_kb = cover_path.stat().st_size / 1024
                 print(f"    Saved: {cover_path.name} ({size_kb:.0f} KB)")
+                if not _persist_asset(cover_path, COVER_STORE / cover_path.name):
+                    return False
                 song["cover_file"] = f"{song_id}.webp"
                 song["cover"] = f"/covers/silly-songs/{song_id}.webp"
                 return True

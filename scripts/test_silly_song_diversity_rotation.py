@@ -1,6 +1,7 @@
 import json
 import sys
 from datetime import date
+from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
@@ -24,6 +25,7 @@ def _stub_minimax_audio(monkeypatch, tmp_path, durations):
             return FakeSegment(next(duration_iter))
 
     monkeypatch.setattr(generator, "AUDIO_DIR", tmp_path)
+    monkeypatch.setattr(generator, "AUDIO_STORE", tmp_path / "store", raising=False)
     monkeypatch.setattr(generator, "replicate", SimpleNamespace())
     monkeypatch.setattr(generator.time, "sleep", lambda *_: None)
     monkeypatch.setattr(
@@ -36,6 +38,93 @@ def _stub_minimax_audio(monkeypatch, tmp_path, durations):
         "pydub",
         SimpleNamespace(AudioSegment=FakeAudioSegment),
     )
+
+
+def test_generation_prompt_demands_preferred_duration():
+    assert "60–90 seconds" in generator.LYRICS_PROMPT_BASE
+
+
+def test_audio_is_backed_up_after_acceptance(monkeypatch, tmp_path):
+    audio_dir = tmp_path / "audio"
+    audio_store = tmp_path / "store"
+    audio_dir.mkdir()
+    _stub_minimax_audio(monkeypatch, audio_dir, [60])
+    monkeypatch.setattr(generator, "AUDIO_STORE", audio_store, raising=False)
+    monkeypatch.setattr(
+        generator,
+        "_run_minimax_prediction",
+        lambda *_: "https://replicate.delivery/song.mp3",
+    )
+    song = {
+        "id": "persisted_audio",
+        "lyrics": "[verse]\nA complete silly song",
+        "age_group": "9-12",
+        "style_prompt": "playful pop",
+    }
+
+    assert generator.generate_audio_minimax(song) is True
+    assert (audio_store / "persisted_audio.mp3").read_bytes() == (
+        audio_dir / "persisted_audio.mp3"
+    ).read_bytes()
+
+
+def test_audio_backup_failure_blocks_success(monkeypatch, tmp_path):
+    audio_dir = tmp_path / "audio"
+    audio_dir.mkdir()
+    _stub_minimax_audio(monkeypatch, audio_dir, [60, 60])
+    monkeypatch.setattr(
+        generator,
+        "_run_minimax_prediction",
+        lambda *_: "https://replicate.delivery/song.mp3",
+    )
+    monkeypatch.setattr(generator, "_persist_asset", lambda *_: False, raising=False)
+    song = {
+        "id": "unbacked_audio",
+        "lyrics": "[verse]\nA complete silly song",
+        "age_group": "9-12",
+        "style_prompt": "playful pop",
+    }
+
+    assert generator.generate_audio_minimax(song) is False
+    assert "audio_file" not in song
+
+
+def test_cover_is_backed_up_before_success(monkeypatch, tmp_path):
+    cover_dir = tmp_path / "covers"
+    cover_store = tmp_path / "store"
+    cover_dir.mkdir()
+
+    class FakeImage:
+        LANCZOS = object()
+
+        @staticmethod
+        def open(_):
+            return FakeImage()
+
+        def convert(self, _):
+            return self
+
+        def resize(self, *_):
+            return self
+
+        def save(self, path, **_):
+            Path(path).write_bytes(b"cover")
+
+    monkeypatch.setattr(generator, "Image", FakeImage)
+    monkeypatch.setattr(generator, "COVERS_DIR", cover_dir)
+    monkeypatch.setattr(generator, "COVER_STORE", cover_store, raising=False)
+    monkeypatch.setattr(
+        generator.httpx,
+        "get",
+        lambda *_args, **_kwargs: SimpleNamespace(
+            status_code=200,
+            content=b"x" * 2000,
+        ),
+    )
+    song = {"id": "persisted_cover", "cover_description": "a dancing child"}
+
+    assert generator.generate_cover_flux(song) is True
+    assert (cover_store / "persisted_cover.webp").read_bytes() == b"cover"
 
 
 @pytest.mark.parametrize(
