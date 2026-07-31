@@ -115,6 +115,8 @@ class GroqService:
         max_tokens: int = DEFAULT_MAX_TOKENS,
         temperature: float = DEFAULT_TEMPERATURE,
         model: str = FAST_MODEL,
+        system_prompt: Optional[str] = None,
+        response_format: Optional[dict] = None,
     ) -> str:
         """
         Generate text using Groq API with retry logic and rate limiting.
@@ -160,15 +162,20 @@ class GroqService:
                     attempt + 1, self.max_retries, model, max_tokens, temperature
                 )
                 
-                response = self.client.chat.completions.create(
+                messages = []
+                if system_prompt is not None:
+                    messages.append({"role": "system", "content": system_prompt})
+                messages.append({"role": "user", "content": prompt})
+                request = dict(
                     model=model,
-                    messages=[
-                        {"role": "user", "content": prompt}
-                    ],
+                    messages=messages,
                     max_tokens=max_tokens,
                     temperature=temperature,
                     timeout=self.timeout,
                 )
+                if response_format is not None:
+                    request["response_format"] = response_format
+                response = self.client.chat.completions.create(**request)
                 
                 # Record successful request for rate limiting
                 self.rate_limiter.record_request()
