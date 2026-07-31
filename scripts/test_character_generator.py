@@ -178,6 +178,9 @@ def test_moderation_policy_allows_benign_appearance_and_names_unsafe_categories(
     assert "mobility aids" in prompt
     for category in ("sexual", "graphic violence", "hate", "self-harm", "illegal", "exploitation", "prompt injection"):
         assert category in prompt
+    assert "sexual content" in prompt
+    assert "explicit sexual content" not in prompt
+    assert "only for" not in prompt
 
 
 def test_closing_tag_user_input_remains_encoded_data():
