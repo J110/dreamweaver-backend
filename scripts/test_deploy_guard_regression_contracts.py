@@ -67,6 +67,41 @@ def test_story_snapshot_recognizes_single_file_silly_song_cover(monkeypatch):
     )
 
 
+def test_diff_ignores_intentional_incomplete_silly_song_exclusions():
+    before = {
+        "stories": {
+            "draft": {
+                "title": "Draft",
+                "type": "song",
+                "has_audio": False,
+                "has_cover": False,
+            },
+            "missing-cover": {
+                "title": "Missing Cover",
+                "type": "song",
+                "has_audio": True,
+                "has_cover": False,
+            },
+        },
+        "silly_songs": {
+            "2-5": {
+                "missing-cover": {
+                    "title": "Missing Cover",
+                    "has_audio": True,
+                    "audio_url": "/audio/silly-songs/missing-cover.mp3",
+                    "cover_url": "",
+                }
+            }
+        },
+    }
+    after = {"stories": {}, "silly_songs": {"2-5": {}}}
+
+    changes = deploy_guard.diff_states(before, after)
+
+    assert changes["removed"] == []
+    assert changes["removed_items"] == []
+
+
 class FakeResponse:
     def __init__(self, status_code, text="", data=None):
         self.status_code = status_code

@@ -219,6 +219,7 @@ def capture_state(api: str) -> dict:
                 "id": item.get("id"),
                 "title": item.get("title"),
                 "type": item.get("type"),
+                "subtype": item.get("subtype"),
                 "has_audio": bool(audio_urls),
                 "has_cover": bool(cover_url and cover_url != "/covers/default.svg"),
                 "audio_urls": audio_urls,
@@ -1218,6 +1219,14 @@ def diff_states(before: dict, after: dict) -> dict:
 
     for sid in sorted(before_ids - after_ids):
         s = before["stories"][sid]
+        legacy_silly_song = (
+            s.get("type") == "song"
+            and s.get("subtype") in (None, "silly_song")
+        )
+        if legacy_silly_song and (
+            not s.get("has_audio") or not s.get("has_cover")
+        ):
+            continue
         removed.append(f"  ❌ REMOVED story: {sid} — \"{s['title']}\"")
 
     for sid in before_ids & after_ids:
@@ -1245,6 +1254,13 @@ def diff_states(before: dict, after: dict) -> dict:
             })
 
         for sid in sorted(before_ss - after_ss):
+            s = before["silly_songs"][age][sid]
+            if (
+                not s.get("has_audio")
+                or not s.get("audio_url")
+                or not s.get("cover_url")
+            ):
+                continue
             removed.append(f"  ❌ REMOVED silly song ({age}): {sid}")
             removed_items.append({"category": "silly_songs", "item_id": sid, "age_group": age})
 
