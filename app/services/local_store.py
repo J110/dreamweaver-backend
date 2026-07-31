@@ -24,6 +24,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
+from app.utils.content_completeness import is_complete_silly_song
+
 
 logger = logging.getLogger(__name__)
 
@@ -307,6 +309,12 @@ class LocalStore:
                 # drift between the two fields).
                 if "language" in entry:
                     entry["language"] = default_lang
+
+                if (
+                    default_subtype == "silly_song"
+                    and not is_complete_silly_song(entry)
+                ):
+                    continue
 
                 item_id = entry.get("id") or fp.stem
                 entry["id"] = item_id

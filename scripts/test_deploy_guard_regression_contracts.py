@@ -36,6 +36,37 @@ def test_story_snapshot_recognizes_single_file_silly_song_audio():
     assert 'f"/audio/silly-songs/{item[\'audio_file\']}"' in SOURCE
 
 
+def test_story_snapshot_recognizes_single_file_silly_song_cover(monkeypatch):
+    class CaptureClient:
+        def get(self, url, **_kwargs):
+            if url.endswith("/api/v1/content"):
+                return FakeResponse(200, data={
+                    "data": {
+                        "items": [{
+                            "id": "legacy-song",
+                            "title": "Legacy Song",
+                            "type": "song",
+                            "subtype": "silly_song",
+                            "lang": "en",
+                            "audio_file": "legacy-song.mp3",
+                            "cover_file": "legacy-song.webp",
+                        }],
+                        "pages": 1,
+                    }
+                })
+            return FakeResponse(200, data={"data": {"items": []}})
+
+    monkeypatch.setattr(deploy_guard.httpx, "Client", lambda **_kwargs: CaptureClient())
+    monkeypatch.setattr(deploy_guard, "capture_character_state", lambda: {})
+
+    state = deploy_guard.capture_state("https://api.example.test")
+
+    assert "stories_error" not in state, state.get("stories_error")
+    assert state["stories"]["legacy-song"]["cover_url"] == (
+        "/covers/silly-songs/legacy-song.webp"
+    )
+
+
 class FakeResponse:
     def __init__(self, status_code, text="", data=None):
         self.status_code = status_code

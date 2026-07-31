@@ -10,6 +10,7 @@ from pydantic import BaseModel
 
 from app.dependencies import admin_bypass, get_optional_user
 from app.utils.backlog import apply_premium_lock, filter_by_backlog, should_lock_for_user
+from app.utils.content_completeness import is_complete_silly_song
 from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -47,7 +48,8 @@ def _load_all_songs() -> list[dict]:
                 with open(f) as fh:
                     song = json.load(fh)
                     song.setdefault("id", f.stem)
-                    songs.append(song)
+                    if is_complete_silly_song(song):
+                        songs.append(song)
             except Exception as e:
                 logger.error(f"Failed to load silly song {f}: {e}")
     return songs

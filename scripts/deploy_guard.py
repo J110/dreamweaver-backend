@@ -209,6 +209,12 @@ def capture_state(api: str) -> dict:
             ):
                 audio_urls.append(f"/audio/silly-songs/{item['audio_file']}")
             cover_url = item.get("cover", "")
+            if (
+                not cover_url
+                and item.get("subtype") == "silly_song"
+                and item.get("cover_file")
+            ):
+                cover_url = f"/covers/silly-songs/{item['cover_file']}"
             stories.append({
                 "id": item.get("id"),
                 "title": item.get("title"),
