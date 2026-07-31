@@ -595,7 +595,7 @@ def step_generate(args, state: dict) -> bool:
 
     # Validate generation count — retry missing content types on partial failure
     # Long stories are handled by episode generator above, not content matrix
-    expected = args.count_stories + args.count_poems + args.count_lullabies + len(episode_ids)
+    expected = count_stories + count_poems + len(episode_ids)
     actual = len(new_ids)
     if actual < expected and not args.dry_run:
         logger.warning("  PARTIAL GENERATION: expected %d items but only got %d", expected, actual)
@@ -613,11 +613,11 @@ def step_generate(args, state: dict) -> bool:
                     pass
 
             missing_stories = max(
-                0, args.count_stories - generated_types.get("story", 0)
+                0, count_stories - generated_types.get("story", 0)
             )
             missing_long = 0
             missing_poems = max(
-                0, args.count_poems - generated_types.get("poem", 0)
+                0, count_poems - generated_types.get("poem", 0)
             )
             missing_lullabies = 0
             total_missing = missing_stories + missing_poems
@@ -668,6 +668,22 @@ def step_generate(args, state: dict) -> bool:
             state["generation_warning"] = f"Expected {expected}, got {actual}"
         else:
             logger.info("  All %d items generated successfully (with retry)", expected)
+
+    if new_ids and CONTENT_EXPANDED_PATH.exists():
+        try:
+            expanded = json.loads(CONTENT_EXPANDED_PATH.read_text())
+            final_items = [s for s in expanded if s["id"] in set(new_ids)]
+            state["generated_stories"] = sum(
+                1 for s in final_items if s.get("type") in {"story", "long_story"}
+            )
+            state["generated_poems"] = sum(
+                1 for s in final_items if s.get("type") == "poem"
+            )
+            state["generated_lullabies"] = sum(
+                1 for s in final_items if s.get("type") == "song"
+            )
+        except Exception:
+            pass
 
     # Validate: songs (lullabies) should never be generated for ages 6+
     if new_ids and CONTENT_EXPANDED_PATH.exists():
@@ -1910,7 +1926,7 @@ def step_before_bed(args, state: dict) -> bool:
     ok, stdout, stderr, elapsed = run_command(
         silly_cmd,
         "Before Bed: generate silly song",
-        timeout=600,  # song generation includes audio via Replicate
+        timeout=1500,
     )
     # the "•" title line is only printed when a song was actually generated
     for line in (stdout or "").split("\n"):

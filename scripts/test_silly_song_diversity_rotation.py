@@ -363,6 +363,55 @@ def test_similarity_exhaustion_never_starts_song_generation(monkeypatch, tmp_pat
     assert generated == []
 
 
+def test_fresh_cli_forced_age_reaches_generation(monkeypatch):
+    generated = []
+    monkeypatch.setenv("MISTRAL_API_KEY", "test-key")
+    monkeypatch.setattr(generator, "_load_existing_songs", lambda: [])
+    monkeypatch.setattr(generator, "_existing_song_ids_on_disk", lambda: set())
+    monkeypatch.setattr(
+        generator,
+        "select_next_age",
+        lambda _songs: (_ for _ in ()).throw(AssertionError("auto age selected")),
+    )
+    monkeypatch.setattr(
+        generator,
+        "invent_anthem",
+        lambda **_kwargs: ("Forced Age Song", "forced_age_song"),
+    )
+    monkeypatch.setattr(
+        generator,
+        "build_style_prompt",
+        lambda *_args, **_kwargs: ("style", "piano", 100),
+    )
+
+    def generate_silly_song(**kwargs):
+        generated.append(kwargs)
+        return {
+            "title": "Forced Age Song",
+            "age_group": kwargs["age_group"],
+            "instruments": "piano",
+        }
+
+    monkeypatch.setattr(generator, "generate_silly_song", generate_silly_song)
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "generate_silly_songs_battlecry.py",
+            "--fresh",
+            "--count",
+            "1",
+            "--age",
+            "9-12",
+            "--lyrics-only",
+        ],
+    )
+
+    generator.main()
+
+    assert generated[0]["age_group"] == "9-12"
+
+
 def _stub_song_generation(monkeypatch, tmp_path, audio_result):
     data_dir = tmp_path / "data"
     output_dir = tmp_path / "output"

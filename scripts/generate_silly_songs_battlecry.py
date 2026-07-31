@@ -2151,6 +2151,8 @@ Examples:
                         help="Diversity-tracked generation (auto-selects cry, instruments, tempo)")
     parser.add_argument("--count", type=int, default=3,
                         help="Number of songs to generate in --fresh mode (default: 3)")
+    parser.add_argument("--age", choices=AGE_GROUPS,
+                        help="Force an age group instead of rotating automatically")
     parser.add_argument("--cry", help="Generate a specific battle cry by ID")
     parser.add_argument("--lyrics-only", action="store_true",
                         help="Skip audio and cover generation")
@@ -2234,14 +2236,17 @@ Examples:
                     print(f"\n  Waiting 35s for Mistral rate limit...")
                     time.sleep(35)
 
-                latest = _latest_age_dates(existing_songs)
-                forced_age = select_next_age(existing_songs)
-                print(
-                    "  Age selection: "
-                    + ", ".join(f"{age}={latest[age] or 'never'}"
-                                for age in AGE_GROUPS)
-                    + f" -> {forced_age}"
-                )
+                forced_age = args.age or select_next_age(existing_songs)
+                if args.age:
+                    print(f"  Age selection: forced -> {forced_age}")
+                else:
+                    latest = _latest_age_dates(existing_songs)
+                    print(
+                        "  Age selection: "
+                        + ", ".join(f"{age}={latest[age] or 'never'}"
+                                    for age in AGE_GROUPS)
+                        + f" -> {forced_age}"
+                    )
                 song_mood = assigned_moods[i]
                 song_cat = assigned_cats[i]
 
@@ -2312,7 +2317,7 @@ Examples:
         if args.cry in BATTLE_CRIES:
             cry_data = BATTLE_CRIES[args.cry]
             # Use first eligible age group, or --age if provided
-            age = cry_data["ages"][0]
+            age = args.age or cry_data["ages"][0]
             songs_to_gen = [{"cry_id": args.cry, "cry": cry_data["cry"], "age": age}]
         else:
             songs_to_gen = [s for s in TEST_SONGS if s["cry_id"] == args.cry]
