@@ -548,6 +548,40 @@ def test_catalog_insertion_marks_metadata_published(monkeypatch, tmp_path):
     assert any(item["id"] == "published_hook_6_8" for item in catalog)
 
 
+def test_cover_failure_never_reaches_catalog(monkeypatch, tmp_path):
+    data_dir = _stub_song_generation(monkeypatch, tmp_path, audio_result=True)
+    seed_dir = tmp_path / "seed_output"
+    seed_dir.mkdir()
+    seed_content = seed_dir / "content.json"
+    seed_content.write_text("[]")
+    monkeypatch.setattr(
+        generator,
+        "generate_cover_flux",
+        lambda *args, **kwargs: False,
+    )
+
+    result = generator.generate_silly_song(
+        cry_id="failed_cover_hook",
+        battle_cry="Failed Cover Hook",
+        age_group="9-12",
+        api_key="test-key",
+        params={
+            "category": "celebration",
+            "mood": "wired",
+            "style_prompt": "style",
+            "instruments": "piano",
+            "tempo": 100,
+        },
+    )
+
+    record = json.loads((data_dir / "failed_cover_hook_9_12.json").read_text())
+    assert result is None
+    assert record["generation_status"] == "failed_cover"
+    assert record["published"] is False
+    assert "published_at" not in record
+    assert json.loads(seed_content.read_text()) == []
+
+
 def test_existing_hooks_are_newest_first_and_keep_yesterdays_title():
     songs = [
         {"created_at": f"2026-07-{day:02d}", "title": f"Song {day}"}

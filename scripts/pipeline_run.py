@@ -1926,7 +1926,7 @@ def step_before_bed(args, state: dict) -> bool:
     ok, stdout, stderr, elapsed = run_command(
         silly_cmd,
         "Before Bed: generate silly song",
-        timeout=1500,
+        timeout=2700,
     )
     # the "•" title line is only printed when a song was actually generated
     for line in (stdout or "").split("\n"):

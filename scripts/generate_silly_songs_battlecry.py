@@ -2052,7 +2052,13 @@ def generate_silly_song(
             json.dump(song, f, indent=2)
         print(f"  ✓ Cover generated")
     else:
+        song["generation_status"] = "failed_cover"
+        with open(json_path, "w") as f:
+            json.dump(song, f, indent=2)
+        with open(output_json, "w") as f:
+            json.dump(song, f, indent=2)
         print(f"  ✗ Cover generation failed")
+        return None
 
     if not _auto_mirror(song_id):
         song["generation_status"] = "failed_catalog"

@@ -30,7 +30,7 @@ def test_before_bed_passes_selected_age_to_silly_song(monkeypatch):
     )
     age_index = silly_cmd.index("--age")
     assert silly_cmd[age_index:age_index + 2] == ["--age", "9-12"]
-    assert silly_options["timeout"] >= 1300
+    assert silly_options["timeout"] >= 2400
 
 
 def test_content_generation_uses_two_retries_and_stops_after_success(
