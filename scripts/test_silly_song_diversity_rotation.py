@@ -1,10 +1,92 @@
 import json
 import sys
 from datetime import date
+from types import SimpleNamespace
 
 import pytest
 
 from scripts import generate_silly_songs_battlecry as generator
+
+
+def _stub_minimax_audio(monkeypatch, tmp_path, durations):
+    duration_iter = iter(durations)
+
+    class FakeSegment:
+        def __init__(self, duration_seconds):
+            self.duration_ms = int(duration_seconds * 1000)
+
+        def __len__(self):
+            return self.duration_ms
+
+    class FakeAudioSegment:
+        @staticmethod
+        def from_file(_path):
+            return FakeSegment(next(duration_iter))
+
+    monkeypatch.setattr(generator, "AUDIO_DIR", tmp_path)
+    monkeypatch.setattr(generator, "replicate", SimpleNamespace())
+    monkeypatch.setattr(generator.time, "sleep", lambda *_: None)
+    monkeypatch.setattr(
+        generator,
+        "_download_replicate_output",
+        lambda _url: SimpleNamespace(status_code=200, content=b"a" * 2000),
+    )
+    monkeypatch.setitem(
+        sys.modules,
+        "pydub",
+        SimpleNamespace(AudioSegment=FakeAudioSegment),
+    )
+
+
+@pytest.mark.parametrize(
+    ("duration_seconds", "expected"),
+    [(50, True), (52.9, True), (100, True), (49.9, False), (100.1, False)],
+)
+def test_minimax_accepts_flexible_duration_boundaries(
+    monkeypatch, tmp_path, duration_seconds, expected
+):
+    _stub_minimax_audio(monkeypatch, tmp_path, [duration_seconds, duration_seconds])
+    predictions = []
+    monkeypatch.setattr(
+        generator,
+        "_run_minimax_prediction",
+        lambda *_args: predictions.append("run") or "https://replicate.delivery/song.mp3",
+    )
+    song = {
+        "id": "duration_test",
+        "lyrics": "[verse]\nA complete silly song",
+        "age_group": "9-12",
+        "style_prompt": "playful pop",
+    }
+
+    assert generator.generate_audio_minimax(song) is expected
+    assert (tmp_path / "duration_test.mp3").exists() is expected
+    if duration_seconds == 52.9:
+        assert predictions == ["run"]
+
+
+def test_minimax_retries_one_failed_render(monkeypatch, tmp_path):
+    _stub_minimax_audio(monkeypatch, tmp_path, [60])
+    predictions = iter(
+        [RuntimeError("provider failed"), "https://replicate.delivery/song.mp3"]
+    )
+
+    def run_prediction(*_args):
+        result = next(predictions)
+        if isinstance(result, Exception):
+            raise result
+        return result
+
+    monkeypatch.setattr(generator, "_run_minimax_prediction", run_prediction)
+    song = {
+        "id": "retry_test",
+        "lyrics": "[verse]\nA complete silly song",
+        "age_group": "9-12",
+        "style_prompt": "playful pop",
+    }
+
+    assert generator.generate_audio_minimax(song) is True
+    assert (tmp_path / "retry_test.mp3").exists()
 
 
 def song(age, created_at):

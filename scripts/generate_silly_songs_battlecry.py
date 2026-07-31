@@ -1070,6 +1070,8 @@ def prepare_lyrics_for_minimax(lyrics: str, max_chars: int = 580) -> str:
 REPLICATE_MINIMAX_PREDICTIONS_URL = (
     "https://api.replicate.com/v1/models/minimax/music-1.5/predictions"
 )
+MIN_SILLY_SONG_SECONDS = 50
+MAX_SILLY_SONG_SECONDS = 100
 
 
 def _run_minimax_prediction(
@@ -1191,40 +1193,47 @@ def generate_audio_minimax(song: dict, force: bool = False) -> bool:
     print(f"    Lyrics: {len(lyrics)} chars -> {len(trimmed)} chars (trimmed for MiniMax)")
     print(f"    Style: {style[:80]}...")
 
-    try:
-        print("    Calling MiniMax Music 1.5 on Replicate...")
-        audio_url = _run_minimax_prediction(style, trimmed)
-        print("    Got audio URL, downloading...")
-        resp = _download_replicate_output(audio_url)
-        if resp.status_code != 200 or len(resp.content) < 1000:
-            raise RuntimeError(
-                f"Download failed ({resp.status_code}, {len(resp.content)} bytes)"
-            )
-
-        audio_path.write_bytes(resp.content)
-        print(f"    Saved: {audio_path.name} ({len(resp.content) / 1024:.0f} KB)")
-
+    for audio_attempt in range(1, 3):
         try:
-            from pydub import AudioSegment
-            seg = AudioSegment.from_file(str(audio_path))
-            duration_s = len(seg) / 1000.0
-        except Exception as e:
-            audio_path.unlink(missing_ok=True)
-            raise RuntimeError(f"Unable to validate audio duration: {e}") from e
-
-        print(f"    Duration: {duration_s:.1f}s")
-        if not 60 <= duration_s <= 90:
-            audio_path.unlink(missing_ok=True)
-            raise RuntimeError(
-                f"Duration {duration_s:.1f}s outside required 60-90s"
+            print(
+                f"    Calling MiniMax Music 1.5 on Replicate "
+                f"(attempt {audio_attempt}/2)..."
             )
+            audio_url = _run_minimax_prediction(style, trimmed)
+            print("    Got audio URL, downloading...")
+            resp = _download_replicate_output(audio_url)
+            if resp.status_code != 200 or len(resp.content) < 1000:
+                raise RuntimeError(
+                    f"Download failed ({resp.status_code}, {len(resp.content)} bytes)"
+                )
 
-        song["duration_seconds"] = int(duration_s)
-        song["audio_file"] = f"{song_id}.mp3"
-        return True
-    except Exception as e:
-        print(f"    ERROR: {e}")
-        return False
+            audio_path.write_bytes(resp.content)
+            print(f"    Saved: {audio_path.name} ({len(resp.content) / 1024:.0f} KB)")
+
+            try:
+                from pydub import AudioSegment
+                seg = AudioSegment.from_file(str(audio_path))
+                duration_s = len(seg) / 1000.0
+            except Exception as e:
+                audio_path.unlink(missing_ok=True)
+                raise RuntimeError(f"Unable to validate audio duration: {e}") from e
+
+            print(f"    Duration: {duration_s:.1f}s")
+            if not MIN_SILLY_SONG_SECONDS <= duration_s <= MAX_SILLY_SONG_SECONDS:
+                audio_path.unlink(missing_ok=True)
+                raise RuntimeError(
+                    f"Duration {duration_s:.1f}s outside required "
+                    f"{MIN_SILLY_SONG_SECONDS}-{MAX_SILLY_SONG_SECONDS}s"
+                )
+
+            song["duration_seconds"] = int(duration_s)
+            song["audio_file"] = f"{song_id}.mp3"
+            return True
+        except Exception as e:
+            print(f"    ERROR attempt {audio_attempt}/2: {e}")
+            if audio_attempt < 2:
+                time.sleep(10)
+    return False
 
 
 # ── Cover Generation (FLUX via Pollinations) ─────────────────────────
