@@ -238,6 +238,42 @@ def test_test_event_acked_no_write(env):
     assert db.users["u1"]["subscription_tier"] == "free"
 
 
+def test_transfer_moves_native_entitlement_to_destination_user(env):
+    client, db, seed = env
+    seed("old-user", {
+        "subscription_tier": "premium",
+        "entitlements": {
+            "apple": {
+                "status": "trialing",
+                "expires": "2099-01-01T00:00:00+00:00",
+                "store": "apple",
+                "product_id": "dv_monthly",
+            },
+            "comp": {"status": "active", "expires": None},
+        },
+    })
+    seed("new-user", {"subscription_tier": "free"})
+    body = {
+        "event": {
+            "id": "evt_transfer",
+            "type": "TRANSFER",
+            "transferred_from": ["$RCAnonymousID:old", "old-user"],
+            "transferred_to": ["$RCAnonymousID:new", "new-user"],
+            "store": "APP_STORE",
+            "environment": "SANDBOX",
+        }
+    }
+
+    r = _post(client, body)
+
+    assert r.status_code == 200
+    assert db.users["new-user"]["entitlements"]["apple"]["status"] == "trialing"
+    assert db.users["new-user"]["subscription_tier"] == "premium"
+    assert db.users["new-user"]["credits_remaining"] == 30
+    assert "apple" not in db.users["old-user"]["entitlements"]
+    assert db.users["old-user"]["entitlements"]["comp"]["status"] == "active"
+
+
 # ── 5. Full round-trip — write + projection + sibling preservation ──
 
 

@@ -10,7 +10,37 @@ from datetime import datetime, timezone
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
+import app.utils.revenuecat_mapping as rc_mapping
 from app.utils.revenuecat_mapping import map_event_to_source, _iso
+
+
+def test_customer_info_maps_active_premium_entitlement():
+    mapper = getattr(rc_mapping, "customer_info_to_source", None)
+    assert callable(mapper)
+    source = mapper({
+        "subscriber": {
+            "entitlements": {
+                "premium": {
+                    "product_identifier": "One",
+                    "expires_date": "2099-07-20T00:00:00Z",
+                },
+            },
+            "subscriptions": {
+                "One": {
+                    "store": "app_store",
+                    "is_sandbox": True,
+                    "period_type": "trial",
+                },
+            },
+        },
+    })
+    assert source == {
+        "store": "apple",
+        "status": "trialing",
+        "expires": "2099-07-20T00:00:00+00:00",
+        "product_id": "One",
+        "environment": "SANDBOX",
+    }
 from app.utils.entitlements import source_active, _parse_iso
 
 # Deterministic clock + epoch-millis fixtures straddling NOW.
@@ -136,6 +166,23 @@ def test_test_event_ignored():
 
 def test_transfer_event_ignored():
     assert map_event_to_source(_ev(type="TRANSFER")) is None
+
+
+def test_transfer_moves_only_native_store_entitlement():
+    assert hasattr(rc_mapping, "move_native_entitlements")
+    source, destination = rc_mapping.move_native_entitlements(
+        {
+            "apple": {"status": "trialing", "expires": "2099-01-01T00:00:00+00:00"},
+            "comp": {"status": "active", "expires": None},
+        },
+        {"stripe": {"status": "active", "expires": "2099-01-01T00:00:00+00:00"}},
+        "APP_STORE",
+    )
+
+    assert "apple" not in source
+    assert source["comp"]["status"] == "active"
+    assert destination["apple"]["status"] == "trialing"
+    assert destination["stripe"]["status"] == "active"
 
 
 def test_unknown_type_ignored():
