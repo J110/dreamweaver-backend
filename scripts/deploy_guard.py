@@ -52,6 +52,8 @@ from pathlib import Path
 
 import httpx
 
+from deploy_guard_models import AuditResult, Defect, ReasonCode
+from deploy_guard_recovery import recover_until_stable
 from deploy_guard_strict import (
     StrictGuardConfig,
     default_config,
@@ -2601,10 +2603,55 @@ def cmd_recover(args):
     print(f"\n  Recovery complete: {recovered} restored, {not_found} not in backup stores\n")
 
 
+def _strict_config(use_local=False):
+    config = default_config(BASE_DIR)
+    if not use_local:
+        return config
+    return StrictGuardConfig(
+        data_dir=config.data_dir,
+        placeholder_registry_path=config.placeholder_registry_path,
+        api_origin=LOCAL_API,
+        frontend_origin=LOCAL_FRONTEND,
+        admin_key=config.admin_key,
+        playlist_audit=config.playlist_audit,
+    )
+
+
+def _strict_audit_with_radio(config, include_radio=True):
+    result = run_strict_audit(config)
+    if not include_radio:
+        return result
+    defects = list(result.defects)
+    for message in check_radio_health():
+        reason = (
+            ReasonCode.RADIO_BROADCAST_OFFLINE
+            if message.startswith("YouTube broadcast is OFFLINE")
+            else ReasonCode.UNREACHABLE_ORIGIN
+        )
+        defects.append(Defect(reason, "radio", {"error": message}))
+    return AuditResult(defects)
+
+
+def cmd_preflight(args):
+    config = _strict_config(args.local)
+    if args.dry_run:
+        result = _strict_audit_with_radio(config, include_radio=not args.local)
+    else:
+        recovery = default_recovery_engine(BASE_DIR, config)
+        result = recover_until_stable(
+            lambda: _strict_audit_with_radio(config, include_radio=not args.local),
+            recovery.recover,
+            args.max_recovery_rounds,
+        )
+    print(render_verdict(result))
+    if result.blockers:
+        raise SystemExit(1)
+
+
 def cmd_transaction(args):
-    strict_config = default_config(BASE_DIR)
+    strict_config = _strict_config()
     recovery = default_recovery_engine(BASE_DIR, strict_config)
-    audit = lambda: run_strict_audit(strict_config)
+    audit = lambda: _strict_audit_with_radio(strict_config)
     try:
         release_id = subprocess.run(
             ["git", "rev-parse", "HEAD"],
@@ -2656,6 +2703,7 @@ Commands:
   audit      Compare live state against golden baseline
   recover    Recover missing files from backup stores
   invariants Check source code invariants (hard-won fixes)
+  preflight  Audit and auto-recover before a deployment
   transaction Run preflight, deploy, recovery, and mandatory rollback as one unit
 
 Examples:
@@ -2706,6 +2754,12 @@ Examples:
     inv.add_argument("--auto-recover", action="store_true",
                      help="Auto-restore broken files from last good git commit")
     inv.set_defaults(func=lambda a: (setattr(a, "auto_recover_invariants", a.auto_recover), cmd_invariants(a)))
+
+    preflight = sub.add_parser("preflight", help="Run strict user-facing preflight")
+    preflight.add_argument("--local", action="store_true")
+    preflight.add_argument("--dry-run", action="store_true")
+    preflight.add_argument("--max-recovery-rounds", type=int, default=3)
+    preflight.set_defaults(func=cmd_preflight)
 
     transaction = sub.add_parser("transaction", help="Run a guarded deployment transaction")
     transaction.add_argument("--deploy-script", required=True)

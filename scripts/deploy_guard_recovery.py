@@ -167,7 +167,13 @@ class RecoveryEngine:
         if not relative:
             return RecoveryResult(defect, False, "source record path unavailable")
         relative_path = Path(str(relative))
-        source = self.context.snapshot_root / "data" / relative_path
+        direct = self.context.snapshot_root / "data" / relative_path
+        candidates = [direct] if direct.is_file() else sorted(
+            self.context.snapshot_root.glob(f"*/data/{relative_path}"),
+            key=lambda path: path.stat().st_mtime,
+            reverse=True,
+        )
+        source = candidates[0] if candidates else direct
         target = self.context.data_dir / relative_path
         if not source.is_file():
             return RecoveryResult(defect, False, "source record absent from snapshot")

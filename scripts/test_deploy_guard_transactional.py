@@ -403,6 +403,84 @@ def test_transaction_rolls_back_when_deploy_hook_fails_after_mutation(tmp_path):
     assert __import__("json").loads(record.read_text())["title"] == "Before"
 
 
+def test_transaction_recovers_audio_placeholder_cover_and_source_canaries(tmp_path):
+    data_dir = tmp_path / "data"
+    story = write_record(data_dir, "stories", {
+        "id": "story-1",
+        "type": "story",
+        "title": "Story",
+        "audio": "/audio/story.mp3",
+        "cover": "/covers/story-1.svg",
+    })
+    second = write_record(data_dir, "stories", {
+        "id": "story-2",
+        "type": "story",
+        "title": "Second",
+        "audio": "/audio/second.mp3",
+        "cover": "/covers/story-2.svg",
+    })
+    audio_store = tmp_path / "audio-store"
+    audio = audio_store / "story.mp3"
+    audio.parent.mkdir()
+    audio.write_bytes(b"audio")
+
+    def generate_cover(source_path, cover_store):
+        generated = cover_store / "story-1.svg"
+        generated.parent.mkdir(parents=True, exist_ok=True)
+        generated.write_bytes(b"custom")
+        return "/covers/story-1.svg"
+
+    engine = RecoveryEngine(RecoveryContext(
+        data_dir=data_dir,
+        audio_store=audio_store,
+        cover_store=tmp_path / "cover-store",
+        search_roots=(),
+        snapshot_root=tmp_path / "snapshots",
+        cover_generator=generate_cover,
+    ))
+
+    def audit():
+        defects = []
+        if not audio.exists():
+            defects.append(Defect(ReasonCode.MISSING_AUDIO, "story-1", {
+                "asset_kind": "audio",
+                "filename": "story.mp3",
+                "canonical": "story.mp3",
+            }))
+        if story.exists() and __import__("json").loads(story.read_text()).get("cover") == "/covers/default.svg":
+            defects.append(Defect(ReasonCode.PLACEHOLDER_COVER, "story-1", {
+                "source_path": str(story),
+            }))
+        if not second.exists():
+            defects.append(Defect(ReasonCode.MISSING_SOURCE_RECORD, "story-2", {
+                "relative_path": str(second.relative_to(data_dir)),
+            }))
+        return AuditResult(defects)
+
+    def deploy(_snapshot):
+        audio.unlink()
+        record = __import__("json").loads(story.read_text())
+        record["cover"] = "/covers/default.svg"
+        story.write_text(__import__("json").dumps(record))
+        second.unlink()
+
+    verdict = run_transaction(TransactionConfig(
+        snapshot_parent=tmp_path / "snapshots",
+        data_dir=data_dir,
+        asset_roots=(("audio-store", audio_store),),
+        preflight_audit=audit,
+        postflight_audit=audit,
+        recover=engine.recover,
+        deploy_hook=deploy,
+        rollback_hook=lambda snapshot: None,
+    ))
+
+    assert verdict.deployment_succeeded is True
+    assert audio.read_bytes() == b"audio"
+    assert __import__("json").loads(story.read_text())["cover"] == "/covers/story-1.svg"
+    assert second.exists()
+
+
 def test_final_verdict_never_labels_blockers_pre_existing_or_informational():
     audit = AuditResult([
         Defect(ReasonCode.MISSING_AUDIO, "story-1", {"url": "/audio/missing.mp3"}),
@@ -427,3 +505,9 @@ def test_radio_issue_is_reported_outside_content_blockers():
 def test_transaction_command_requires_deploy_and_rollback_hooks():
     with __import__("pytest").raises(SystemExit):
         build_parser().parse_args(["transaction"])
+
+
+def test_preflight_supports_read_only_dry_run():
+    args = build_parser().parse_args(["preflight", "--dry-run"])
+
+    assert args.dry_run is True
