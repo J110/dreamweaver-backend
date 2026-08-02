@@ -8,7 +8,7 @@ import subprocess
 from typing import Callable
 from uuid import uuid4
 
-from deploy_guard_models import AuditResult, FinalVerdict
+from deploy_guard_models import AuditResult, Defect, FinalVerdict, ReasonCode
 from deploy_guard_recovery import recover_until_stable
 
 
@@ -146,6 +146,39 @@ def script_hook(path: Path) -> Callable[[TransactionSnapshot], None]:
     return run
 
 
+def _rollback(
+    config: TransactionConfig,
+    snapshot: TransactionSnapshot,
+) -> list[Defect]:
+    defects = []
+    try:
+        config.rollback_hook(snapshot)
+    except Exception as exc:
+        defects.append(Defect(
+            ReasonCode.INVALID_SOURCE_RECORD,
+            "deploy-rollback-hook",
+            {"error": f"{type(exc).__name__}: {exc}"},
+        ))
+    try:
+        snapshot.restore()
+    except Exception as exc:
+        defects.append(Defect(
+            ReasonCode.INVALID_SOURCE_RECORD,
+            "deploy-rollback-snapshot",
+            {"error": f"{type(exc).__name__}: {exc}"},
+        ))
+    if config.reload_callback is not None:
+        try:
+            config.reload_callback()
+        except Exception as exc:
+            defects.append(Defect(
+                ReasonCode.STALE_LIVE_STATE,
+                "deploy-rollback-reload",
+                {"error": f"{type(exc).__name__}: {exc}"},
+            ))
+    return defects
+
+
 def run_transaction(config: TransactionConfig) -> FinalVerdict:
     if config.rollback_hook is None:
         raise TransactionPreconditionError("production rollback hook is required")
@@ -159,7 +192,19 @@ def run_transaction(config: TransactionConfig) -> FinalVerdict:
             f"preflight has {len(preflight.blockers)} user-facing blocker(s)"
         )
     snapshot = capture_snapshot(config)
-    config.deploy_hook(snapshot)
+    try:
+        config.deploy_hook(snapshot)
+    except Exception:
+        rollback_defects = _rollback(config, snapshot)
+        rollback_audit = config.postflight_audit()
+        rollback_audit.defects.extend(rollback_defects)
+        return FinalVerdict(
+            deployment_succeeded=False,
+            app_healthy=not rollback_audit.blockers,
+            audit=rollback_audit,
+            rolled_back=True,
+            snapshot_id=snapshot.snapshot_id,
+        )
     postflight = recover_until_stable(
         config.postflight_audit,
         config.recover,
@@ -172,11 +217,9 @@ def run_transaction(config: TransactionConfig) -> FinalVerdict:
             audit=postflight,
             snapshot_id=snapshot.snapshot_id,
         )
-    config.rollback_hook(snapshot)
-    snapshot.restore()
-    if config.reload_callback is not None:
-        config.reload_callback()
+    rollback_defects = _rollback(config, snapshot)
     rollback_audit = config.postflight_audit()
+    rollback_audit.defects.extend(rollback_defects)
     return FinalVerdict(
         deployment_succeeded=False,
         app_healthy=not rollback_audit.blockers,

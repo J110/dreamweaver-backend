@@ -57,6 +57,8 @@ class RecoveryEngine:
                 ReasonCode.PLACEHOLDER_COVER,
                 ReasonCode.MISSING_CUSTOM_COVER,
             }:
+                if defect.reason is ReasonCode.PLACEHOLDER_COVER:
+                    return self._regenerate_cover(defect)
                 restored = self._restore_asset(defect, optional=True)
                 if restored.recovered:
                     return restored
@@ -64,11 +66,14 @@ class RecoveryEngine:
             if defect.reason is ReasonCode.WRONG_METADATA_PATH:
                 return self._repair_metadata(defect)
             if defect.reason is ReasonCode.MISSING_SOURCE_RECORD:
-                return self._restore_source_record(defect)
+                if defect.details.get("relative_path"):
+                    return self._restore_source_record(defect)
+                return self._reload(defect)
             if defect.reason in {
                 ReasonCode.STALE_LIVE_STATE,
                 ReasonCode.MISSING_LIVE_ITEM,
                 ReasonCode.PLAYLIST_SLOT_MISSING,
+                ReasonCode.UNREACHABLE_ORIGIN,
             }:
                 return self._reload(defect)
             return RecoveryResult(defect, False, "no safe recovery adapter")

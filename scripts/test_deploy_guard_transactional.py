@@ -23,6 +23,8 @@ from deploy_guard_transaction import (
     TransactionPreconditionError,
     run_transaction,
 )
+from deploy_guard_strict import render_verdict
+from deploy_guard import build_parser
 
 
 def write_record(data_dir, collection, record):
@@ -161,6 +163,7 @@ def test_audit_rejects_placeholder_by_path_and_hash():
 
     assert any(
         defect.reason is ReasonCode.PLACEHOLDER_COVER
+        and defect.details["source_path"].endswith("story-1.json")
         for defect in result.blockers
     )
 
@@ -187,6 +190,8 @@ def test_audit_checks_every_audio_candidate():
     assert any(
         defect.reason is ReasonCode.MISSING_AUDIO
         and defect.details["url"] == "/audio/broken.mp3"
+        and defect.details["asset_kind"] == "audio"
+        and defect.details["canonical"] == "broken.mp3"
         for defect in result.blockers
     )
 
@@ -202,6 +207,35 @@ def test_playlist_audit_rejects_missing_required_slot():
     result = audit_playlists(playlists, required, manifest_with("story-1"))
 
     assert result.blockers[0].reason is ReasonCode.PLAYLIST_SLOT_MISSING
+
+
+def test_playlist_audit_rejects_placeholder_and_broken_media():
+    playlists = {
+        ("nap", "en", "premium"): {
+            "items": [{
+                "slot": "story",
+                "content_id": "story-1",
+                "cover_url": "/covers/default.svg",
+                "audio_url": "/audio/missing.mp3",
+            }],
+        },
+    }
+    required = {("nap", "en", "premium"): {"story"}}
+    http = FakeHttp({"https://app/audio/missing.mp3": 404})
+
+    result = audit_playlists(
+        playlists,
+        required,
+        manifest_with("story-1"),
+        client=http,
+        frontend_origin="https://app",
+        placeholder_registry=PlaceholderRegistry(paths={"/covers/default.svg"}),
+    )
+
+    assert {defect.reason for defect in result.blockers} == {
+        ReasonCode.PLACEHOLDER_COVER,
+        ReasonCode.MISSING_AUDIO,
+    }
 
 
 def test_recovery_copies_misrouted_asset_to_canonical_store(tmp_path):
@@ -335,3 +369,61 @@ def test_transaction_refuses_dirty_preflight_or_missing_rollback_hook(tmp_path):
 
     with __import__("pytest").raises(TransactionPreconditionError):
         run_transaction(config)
+
+
+def test_transaction_rolls_back_when_deploy_hook_fails_after_mutation(tmp_path):
+    data_dir = tmp_path / "data"
+    record = write_record(data_dir, "stories", {
+        "id": "story-1",
+        "type": "story",
+        "title": "Before",
+        "audio": "/audio/story.mp3",
+        "cover": "/covers/story.svg",
+    })
+    rollback_calls = []
+
+    def deploy(_snapshot):
+        record.write_text('{"id":"story-1","title":"Broken"}')
+        raise RuntimeError("deploy failed")
+
+    verdict = run_transaction(TransactionConfig(
+        snapshot_parent=tmp_path / "snapshots",
+        data_dir=data_dir,
+        asset_roots=(),
+        preflight_audit=lambda: AuditResult(),
+        postflight_audit=lambda: AuditResult(),
+        recover=lambda defects: None,
+        deploy_hook=deploy,
+        rollback_hook=lambda snapshot: rollback_calls.append(snapshot.snapshot_id),
+    ))
+
+    assert verdict.deployment_succeeded is False
+    assert verdict.rolled_back is True
+    assert rollback_calls
+    assert __import__("json").loads(record.read_text())["title"] == "Before"
+
+
+def test_final_verdict_never_labels_blockers_pre_existing_or_informational():
+    audit = AuditResult([
+        Defect(ReasonCode.MISSING_AUDIO, "story-1", {"url": "/audio/missing.mp3"}),
+    ])
+
+    output = render_verdict(audit)
+
+    assert "pre-existing" not in output.lower()
+    assert "informational" not in output.lower()
+    assert "MISSING_AUDIO story-1" in output
+
+
+def test_radio_issue_is_reported_outside_content_blockers():
+    output = render_verdict(AuditResult([
+        Defect(ReasonCode.RADIO_BROADCAST_OFFLINE, "radio", {}),
+    ]))
+
+    assert "Content: HEALTHY" in output
+    assert "Radio broadcast: OFFLINE" in output
+
+
+def test_transaction_command_requires_deploy_and_rollback_hooks():
+    with __import__("pytest").raises(SystemExit):
+        build_parser().parse_args(["transaction"])
