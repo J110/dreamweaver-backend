@@ -108,6 +108,31 @@ def _write_per_content_file(item: dict) -> bool:
     return True
 
 
+def _append_unique(state: dict, key: str, value: str) -> None:
+    values = state.setdefault(key, [])
+    if value not in values:
+        values.append(value)
+
+
+def _finalize_lullaby_cover(
+    entry: dict,
+    state: dict,
+    cover_ok: bool,
+    writer=_write_per_content_file,
+) -> str:
+    lid = entry["id"]
+    if cover_ok:
+        path = f"/covers/{lid}.svg"
+        _append_unique(state, "covers_generated", lid)
+        _append_unique(state, "covers_flux", lid)
+    else:
+        path = f"/covers/lullabies/{lid}_cover.svg"
+        _append_unique(state, "covers_failed", lid)
+    entry["cover"] = path
+    writer(entry)
+    return path
+
+
 # ── Logging ──────────────────────────────────────────────────────────────
 LOG_DIR = BASE_DIR / "logs"
 LOG_DIR.mkdir(exist_ok=True)
@@ -1834,6 +1859,8 @@ def step_lullabies(args, state: dict) -> bool:
                     logger.info("  FLUX cover generated for %s (%.0fs)", lid, cover_elapsed)
                 else:
                     logger.warning("  FLUX cover failed for %s — placeholder cover used", lid)
+
+                _finalize_lullaby_cover(entry, state, cover_ok)
 
                 # Clean up temp JSON
                 temp_json.unlink(missing_ok=True)

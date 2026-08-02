@@ -94,20 +94,32 @@ def _build_state(results: dict, elapsed: float) -> dict:
     # threshold that masked single-type drops (HI analog of the EN reporting fix).
     expected_failed = [t for t in CONTENT_TYPES_ORDER
                        if results.get(t, {}).get("status") == "failed"]
+    cover_successes = [
+        r for r in successes
+        if r.get("id") and r.get("cover") not in (None, "", "/covers/default.svg")
+    ]
+    cover_failures = [
+        r for r in successes
+        if r.get("id") and r.get("cover") in (None, "", "/covers/default.svg")
+    ]
+    warnings = []
+    if expected_failed:
+        warnings.append("did not generate: " + ", ".join(expected_failed))
+    if cover_failures:
+        warnings.append(
+            "covers failed: " + ", ".join(r["id"] for r in cover_failures)
+        )
 
     state = {
         "status": "completed" if successes else "failed",
-        "generation_warning": (
-            "did not generate: " + ", ".join(expected_failed)
-            if expected_failed else ""
-        ),
+        "generation_warning": "; ".join(warnings),
         "lang": "hi",
         "generated_ids": [r["id"] for r in successes if r.get("id")],
         "qa_passed": [r["id"] for r in successes if r.get("id")],
         "qa_failed": [],
-        "covers_generated": [r["id"] for r in successes if r.get("id")],
-        "covers_failed": [],
-        "covers_flux": [r["id"] for r in successes if r.get("id")],
+        "covers_generated": [r["id"] for r in cover_successes],
+        "covers_failed": [r["id"] for r in cover_failures],
+        "covers_flux": [r["id"] for r in cover_successes],
         "covers_fallback": [],
         "elapsed_seconds": elapsed,
         "generated_stories": sum(
@@ -314,6 +326,7 @@ def main(only_types: list[str] | None = None) -> int:
                 "id": entry["id"],
                 "title": entry.get("title", ""),
                 "duration": entry.get("duration_seconds", 0),
+                "cover": entry.get("cover", ""),
             }
             # Reload local catalog so subsequent diversity samples
             # account for the just-generated piece.
