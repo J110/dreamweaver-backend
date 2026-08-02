@@ -33,6 +33,7 @@ from deploy_guard_transaction import (
 )
 from deploy_guard_strict import render_verdict
 from deploy_guard import build_parser
+from app.utils.content_completeness import is_complete_silly_song
 
 
 def write_record(data_dir, collection, record):
@@ -88,6 +89,13 @@ def live_item(item_id, **updates):
     }
     item.update(updates)
     return item
+
+
+def test_generated_custom_cover_is_complete_silly_song_media():
+    assert is_complete_silly_song({
+        "audio_file": "recovered.mp3",
+        "cover": "/covers/recovered.svg",
+    }) is True
 
 
 def test_only_radio_broadcast_is_non_blocking():

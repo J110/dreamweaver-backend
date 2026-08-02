@@ -41,3 +41,19 @@ def test_silly_song_loader_returns_only_complete_records(monkeypatch, tmp_path):
     monkeypatch.setattr(silly_songs, "DATA_DIRS", [bucket])
 
     assert [song["id"] for song in silly_songs._load_all_songs()] == ["complete"]
+
+
+def test_generated_cover_url_completes_silly_song(monkeypatch, tmp_path):
+    bucket = tmp_path / "silly_songs"
+    _write_song(
+        bucket,
+        "recovered",
+        audio_file="recovered.mp3",
+        cover="/covers/recovered.svg",
+    )
+    store = object.__new__(LocalStore)
+    store._data_dir = tmp_path
+    monkeypatch.setattr(silly_songs, "DATA_DIRS", [bucket])
+
+    assert "recovered" in store._walk_per_content()
+    assert [song["id"] for song in silly_songs._load_all_songs()] == ["recovered"]
