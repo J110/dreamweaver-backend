@@ -13,6 +13,11 @@ from deploy_guard_manifest import (
     ManifestResult,
     build_publishable_manifest,
 )
+from deploy_guard_recovery import (
+    RecoveryContext,
+    RecoveryEngine,
+    recover_until_stable,
+)
 
 
 def write_record(data_dir, collection, record):
@@ -192,3 +197,88 @@ def test_playlist_audit_rejects_missing_required_slot():
     result = audit_playlists(playlists, required, manifest_with("story-1"))
 
     assert result.blockers[0].reason is ReasonCode.PLAYLIST_SLOT_MISSING
+
+
+def test_recovery_copies_misrouted_asset_to_canonical_store(tmp_path):
+    seed_root = tmp_path / "seed"
+    source = seed_root / "poems_hi" / "poem.mp3"
+    source.parent.mkdir(parents=True)
+    source.write_bytes(b"audio")
+    context = RecoveryContext(
+        data_dir=tmp_path / "data",
+        audio_store=tmp_path / "audio-store",
+        cover_store=tmp_path / "cover-store",
+        search_roots=(seed_root,),
+        snapshot_root=tmp_path / "snapshot",
+    )
+    defect = Defect(
+        ReasonCode.MISROUTED_ASSET,
+        "poem",
+        {
+            "asset_kind": "audio",
+            "filename": "poem.mp3",
+            "canonical": "poems/poem.mp3",
+        },
+    )
+
+    result = RecoveryEngine(context).recover([defect])[0]
+
+    assert result.recovered is True
+    assert (context.audio_store / "poems" / "poem.mp3").read_bytes() == b"audio"
+
+
+def test_placeholder_recovery_regenerates_without_changing_record_fields(tmp_path):
+    data_dir = tmp_path / "data"
+    source = write_record(data_dir, "stories", {
+        "id": "story-1",
+        "type": "story",
+        "title": "Story",
+        "text": "Text",
+        "created_at": "2026-08-02",
+        "cover": "/covers/default.svg",
+        "cover_context": "Moonlit custom scene",
+    })
+
+    def generate_cover(source_path, cover_store):
+        target = cover_store / "story-1.svg"
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(b"custom")
+        return "/covers/story-1.svg"
+
+    context = RecoveryContext(
+        data_dir=data_dir,
+        audio_store=tmp_path / "audio-store",
+        cover_store=tmp_path / "cover-store",
+        search_roots=(),
+        snapshot_root=tmp_path / "snapshot",
+        cover_generator=generate_cover,
+    )
+    defect = Defect(
+        ReasonCode.PLACEHOLDER_COVER,
+        "story-1",
+        {"source_path": str(source)},
+    )
+
+    result = RecoveryEngine(context).recover([defect])[0]
+    after = __import__("json").loads(source.read_text())
+
+    assert result.recovered is True
+    assert after["id"] == "story-1"
+    assert after["created_at"] == "2026-08-02"
+    assert after["cover"] == "/covers/story-1.svg"
+
+
+def test_recover_until_stable_stops_when_audit_is_clean():
+    audits = iter([
+        AuditResult([Defect(ReasonCode.MISSING_AUDIO, "story-1", {})]),
+        AuditResult(),
+    ])
+    recovered = []
+
+    result = recover_until_stable(
+        lambda: next(audits),
+        lambda defects: recovered.extend(defects),
+    )
+
+    assert result.blockers == []
+    assert [defect.item_id for defect in recovered] == ["story-1"]
