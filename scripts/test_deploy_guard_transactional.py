@@ -113,6 +113,8 @@ def test_manifest_excludes_only_explicit_non_publishable_records(tmp_path):
         "type": "story",
         "title": "Live",
         "text": "Text",
+        "audio": "/audio/live.mp3",
+        "cover": "/covers/live.svg",
     })
     write_record(tmp_path, "stories", {
         "id": "draft",
@@ -165,6 +167,55 @@ def test_manifest_normalizes_single_file_poem_and_song_records(tmp_path):
     assert result.items["hi-song-1"].audio_candidates == (
         "/audio/silly-songs-hi/hi-song-1.mp3",
     )
+
+
+def test_manifest_accepts_funny_short_inputs_and_classifies_missing_media(tmp_path):
+    write_record(tmp_path, "funny_shorts", {
+        "id": "funny-1",
+        "title": "Funny",
+        "inputs": [{"voice": "A", "text": "Hello"}],
+        "audio_file": "funny-1.mp3",
+        "cover_file": "funny-1.webp",
+    })
+    incomplete = write_record(tmp_path, "silly_songs", {
+        "id": "song-incomplete",
+        "title": "Incomplete",
+        "lyrics": "La",
+    })
+
+    result = build_publishable_manifest(tmp_path)
+
+    assert "funny-1" in result.items
+    assert "song-incomplete" not in result.items
+    defect = next(d for d in result.defects if d.item_id == "song-incomplete")
+    assert defect.details["source_path"] == str(incomplete)
+    assert defect.details["recovery"] == "mark_incomplete"
+
+
+def test_recovery_marks_audio_less_source_incomplete_and_reloads(tmp_path):
+    source = write_record(tmp_path / "data", "silly_songs", {
+        "id": "song-incomplete",
+        "title": "Incomplete",
+        "lyrics": "La",
+    })
+    reloads = []
+    engine = RecoveryEngine(RecoveryContext(
+        data_dir=tmp_path / "data",
+        audio_store=tmp_path / "audio",
+        cover_store=tmp_path / "covers",
+        search_roots=(),
+        snapshot_root=tmp_path / "snapshot",
+        reload_callback=lambda: reloads.append(True),
+    ))
+
+    result = engine.recover([Defect(ReasonCode.INVALID_SOURCE_RECORD, "song-incomplete", {
+        "source_path": str(source),
+        "recovery": "mark_incomplete",
+    })])[0]
+
+    assert result.recovered is True
+    assert __import__("json").loads(source.read_text())["status"] == "incomplete"
+    assert reloads == [True]
 
 
 def test_audit_flags_missing_publishable_id():

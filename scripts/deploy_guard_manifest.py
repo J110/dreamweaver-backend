@@ -93,7 +93,7 @@ def _missing_fields(record: dict, content_type: str) -> list[str]:
         "story": ("text", "story_text", "content"),
         "long_story": ("text", "story_text", "content"),
         "poem": ("poem_text", "text", "content"),
-        "song": ("lyrics", "text", "song_text", "content"),
+        "song": ("lyrics", "text", "song_text", "content", "inputs"),
     }.get(content_type, ())
     if body_fields and not any(record.get(key) for key in body_fields):
         missing.append("content_body")
@@ -146,6 +146,32 @@ def build_publishable_manifest(data_dir: Path) -> ManifestResult:
                     },
                 ))
                 continue
+            audio_candidates = _audio_candidates(record, media_dir)
+            cover = str(
+                record.get("cover")
+                or (
+                    _media_path(str(record["cover_file"]), "covers", media_dir)
+                    if record.get("cover_file")
+                    else ""
+                )
+            )
+            if not audio_candidates:
+                result.defects.append(Defect(
+                    ReasonCode.INVALID_SOURCE_RECORD,
+                    item_id,
+                    {
+                        "source_path": str(source_path),
+                        "missing_fields": ["audio"],
+                        "recovery": "mark_incomplete",
+                    },
+                ))
+                continue
+            if not cover:
+                result.defects.append(Defect(
+                    ReasonCode.MISSING_CUSTOM_COVER,
+                    item_id,
+                    {"source_path": str(source_path)},
+                ))
             result.items[item_id] = ManifestItem(
                 id=item_id,
                 language=str(record.get("lang") or record.get("language") or inferred_language),
@@ -153,15 +179,8 @@ def build_publishable_manifest(data_dir: Path) -> ManifestResult:
                 subtype=subtype,
                 title=str(record.get("title") or ""),
                 source_path=source_path,
-                audio_candidates=_audio_candidates(record, media_dir),
-                cover=str(
-                    record.get("cover")
-                    or (
-                        _media_path(str(record["cover_file"]), "covers", media_dir)
-                        if record.get("cover_file")
-                        else ""
-                    )
-                ),
+                audio_candidates=audio_candidates,
+                cover=cover,
                 cover_context=str(record.get("cover_context") or ""),
                 tiers=_tiers(record),
                 created_at=str(record.get("created_at") or ""),

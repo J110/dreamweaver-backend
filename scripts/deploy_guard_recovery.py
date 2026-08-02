@@ -58,6 +58,11 @@ class RecoveryEngine:
 
     def _recover_one(self, defect: Defect) -> RecoveryResult:
         try:
+            if (
+                defect.reason is ReasonCode.INVALID_SOURCE_RECORD
+                and defect.details.get("recovery") == "mark_incomplete"
+            ):
+                return self._mark_incomplete(defect)
             if defect.reason in {
                 ReasonCode.MISROUTED_ASSET,
                 ReasonCode.MISSING_AUDIO,
@@ -228,6 +233,26 @@ class RecoveryEngine:
             return RecoveryResult(defect, False, "metadata repair details incomplete")
         _atomic_json_update(source_path, **{field: value})
         return RecoveryResult(defect, True, f"updated {field}")
+
+    def _mark_incomplete(self, defect: Defect) -> RecoveryResult:
+        source_path = Path(str(defect.details.get("source_path") or ""))
+        if not source_path.is_file():
+            return RecoveryResult(defect, False, "source record missing")
+        before = json.loads(source_path.read_text(encoding="utf-8"))
+        try:
+            _atomic_json_update(source_path, status="incomplete")
+            if self.context.reload_callback is None:
+                raise RuntimeError("reload callback unavailable")
+            self.context.reload_callback()
+        except Exception as exc:
+            _atomic_json_replace(source_path, before)
+            if self.context.reload_callback is not None:
+                try:
+                    self.context.reload_callback()
+                except Exception:
+                    pass
+            raise RuntimeError(f"incomplete classification reverted: {exc}") from exc
+        return RecoveryResult(defect, True, "marked incomplete source record")
 
     def _restore_source_record(self, defect: Defect) -> RecoveryResult:
         relative = defect.details.get("relative_path")
