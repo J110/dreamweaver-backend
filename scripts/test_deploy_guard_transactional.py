@@ -18,6 +18,11 @@ from deploy_guard_recovery import (
     RecoveryEngine,
     recover_until_stable,
 )
+from deploy_guard_transaction import (
+    TransactionConfig,
+    TransactionPreconditionError,
+    run_transaction,
+)
 
 
 def write_record(data_dir, collection, record):
@@ -282,3 +287,51 @@ def test_recover_until_stable_stops_when_audit_is_clean():
 
     assert result.blockers == []
     assert [defect.item_id for defect in recovered] == ["story-1"]
+
+
+def test_transaction_rolls_back_when_recovery_cannot_reach_zero(tmp_path):
+    calls = []
+    broken = AuditResult([
+        Defect(ReasonCode.MISSING_AUDIO, "story-1", {"url": "/audio/missing.mp3"}),
+    ])
+    postflight = iter([broken, broken, AuditResult()])
+    data_dir = tmp_path / "data"
+    data_dir.mkdir()
+    (data_dir / "content.json").write_text("[]")
+    config = TransactionConfig(
+        snapshot_parent=tmp_path / "snapshots",
+        data_dir=data_dir,
+        asset_roots=(),
+        preflight_audit=lambda: AuditResult(),
+        postflight_audit=lambda: next(postflight),
+        recover=lambda defects: calls.append(("recover", len(defects))),
+        deploy_hook=lambda snapshot: calls.append(("deploy", snapshot.snapshot_id)),
+        rollback_hook=lambda snapshot: calls.append(("rollback", snapshot.snapshot_id)),
+    )
+
+    verdict = run_transaction(config)
+
+    assert calls[0][0] == "deploy"
+    assert calls[-1][0] == "rollback"
+    assert verdict.deployment_succeeded is False
+    assert verdict.rolled_back is True
+    assert verdict.app_healthy is True
+
+
+def test_transaction_refuses_dirty_preflight_or_missing_rollback_hook(tmp_path):
+    data_dir = tmp_path / "data"
+    data_dir.mkdir()
+    broken = AuditResult([Defect(ReasonCode.MISSING_AUDIO, "story-1", {})])
+    config = TransactionConfig(
+        snapshot_parent=tmp_path / "snapshots",
+        data_dir=data_dir,
+        asset_roots=(),
+        preflight_audit=lambda: broken,
+        postflight_audit=lambda: broken,
+        recover=lambda defects: None,
+        deploy_hook=lambda snapshot: None,
+        rollback_hook=None,
+    )
+
+    with __import__("pytest").raises(TransactionPreconditionError):
+        run_transaction(config)
