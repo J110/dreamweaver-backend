@@ -40,6 +40,22 @@ def _full_url(origin: str, path: str) -> str:
     return f"{origin.rstrip('/')}/{path.lstrip('/')}"
 
 
+def _head_asset(client, path: str, *origins: str):
+    last_response = None
+    errors = []
+    for origin in dict.fromkeys(origin for origin in origins if origin):
+        url = _full_url(origin, path)
+        try:
+            response = client.head(url)
+        except Exception as exc:
+            errors.append(f"{url}: {exc}")
+            continue
+        last_response = response
+        if response.status_code in (200, 206):
+            return response, url, errors
+    return last_response, "", errors
+
+
 def _audio_candidates(item: dict) -> list[str]:
     values = []
     for key in ("audio_url", "audio"):
@@ -76,6 +92,7 @@ def audit_catalog(
     client,
     frontend_origin: str,
     placeholder_registry: PlaceholderRegistry | None = None,
+    api_origin: str = "",
 ) -> AuditResult:
     registry = placeholder_registry or PlaceholderRegistry(
         paths={"/covers/default.svg"},
@@ -102,7 +119,7 @@ def audit_catalog(
     for item_id in sorted(set(manifest.items) & set(live_by_id)):
         item = live_by_id[item_id]
         manifest_item = manifest.items[item_id]
-        cover = str(item.get("cover") or "")
+        cover = str(item.get("cover") or manifest_item.cover or "")
         if not cover:
             defects.append(_defect(
                 ReasonCode.MISSING_CUSTOM_COVER,
@@ -116,15 +133,15 @@ def audit_catalog(
                 **_asset_details(cover, "covers", manifest_item.source_path),
             ))
         else:
-            cover_url = _full_url(frontend_origin, cover)
-            try:
-                response = client.head(cover_url)
-            except Exception as exc:
+            response, cover_url, errors = _head_asset(
+                client, cover, frontend_origin, api_origin,
+            )
+            if response is None:
                 defects.append(_defect(
                     ReasonCode.UNREACHABLE_ORIGIN,
                     item_id,
                     url=cover,
-                    error=str(exc),
+                    error="; ".join(errors),
                 ))
             else:
                 if response.status_code not in (200, 206):
@@ -145,10 +162,14 @@ def audit_catalog(
                             error=str(exc),
                         ))
                     else:
-                        if (
-                            content_response.status_code in (200, 206)
-                            and registry.matches_content(content_response.content)
-                        ):
+                        if content_response.status_code not in (200, 206):
+                            defects.append(_defect(
+                                ReasonCode.UNREACHABLE_ORIGIN,
+                                item_id,
+                                url=cover,
+                                status=content_response.status_code,
+                            ))
+                        elif registry.matches_content(content_response.content):
                             defects.append(_defect(
                                 ReasonCode.PLACEHOLDER_COVER,
                                 item_id,
@@ -156,19 +177,22 @@ def audit_catalog(
                                 **_asset_details(cover, "covers", manifest_item.source_path),
                             ))
 
-        audio_urls = _audio_candidates(item)
+        audio_urls = list(dict.fromkeys([
+            *_audio_candidates(item),
+            *manifest_item.audio_candidates,
+        ]))
         if not audio_urls:
             defects.append(_defect(ReasonCode.MISSING_AUDIO, item_id))
         for audio_url in audio_urls:
-            full_audio_url = _full_url(frontend_origin, audio_url)
-            try:
-                response = client.head(full_audio_url)
-            except Exception as exc:
+            response, _resolved_url, errors = _head_asset(
+                client, audio_url, frontend_origin, api_origin,
+            )
+            if response is None:
                 defects.append(_defect(
                     ReasonCode.UNREACHABLE_ORIGIN,
                     item_id,
                     url=audio_url,
-                    error=str(exc),
+                    error="; ".join(errors),
                 ))
                 continue
             if response.status_code not in (200, 206):
@@ -188,6 +212,7 @@ def audit_playlists(
     client=None,
     frontend_origin: str = "",
     placeholder_registry: PlaceholderRegistry | None = None,
+    api_origin: str = "",
 ) -> AuditResult:
     defects = []
     registry = placeholder_registry or PlaceholderRegistry(
@@ -223,9 +248,23 @@ def audit_playlists(
         if client is None:
             continue
         for item in items:
+            slot = str(item.get("slot") or "")
+            playable = slot in expected_slots and not item.get("is_locked")
             item_id = str(item.get("content_id") or item.get("id") or "")
             manifest_item = manifest.items.get(item_id)
             source_path = manifest_item.source_path if manifest_item else Path("")
+            tier = surface[2]
+            if (
+                manifest_item
+                and tier not in manifest_item.tiers
+                and not item.get("is_locked")
+            ):
+                defects.append(_defect(
+                    ReasonCode.WRONG_METADATA_PATH,
+                    item_id,
+                    surface=surface,
+                    error=f"{tier} surface contains {manifest_item.tiers}-only item",
+                ))
             cover = str(item.get("cover_url") or item.get("cover") or "")
             if not cover:
                 defects.append(_defect(
@@ -242,15 +281,16 @@ def audit_playlists(
                     **_asset_details(cover, "covers", source_path),
                 ))
             else:
-                try:
-                    response = client.head(_full_url(frontend_origin, cover))
-                except Exception as exc:
+                response, cover_url, errors = _head_asset(
+                    client, cover, frontend_origin, api_origin,
+                )
+                if response is None:
                     defects.append(_defect(
                         ReasonCode.UNREACHABLE_ORIGIN,
                         item_id or "/".join(surface),
                         surface=surface,
                         url=cover,
-                        error=str(exc),
+                        error="; ".join(errors),
                     ))
                 else:
                     if response.status_code not in (200, 206):
@@ -261,24 +301,53 @@ def audit_playlists(
                             status=response.status_code,
                             **_asset_details(cover, "covers", source_path),
                         ))
+                    elif registry.sha256:
+                        try:
+                            content_response = client.get(cover_url)
+                        except Exception as exc:
+                            defects.append(_defect(
+                                ReasonCode.UNREACHABLE_ORIGIN,
+                                item_id or "/".join(surface),
+                                surface=surface,
+                                url=cover,
+                                error=str(exc),
+                            ))
+                        else:
+                            if content_response.status_code not in (200, 206):
+                                defects.append(_defect(
+                                    ReasonCode.UNREACHABLE_ORIGIN,
+                                    item_id or "/".join(surface),
+                                    surface=surface,
+                                    url=cover,
+                                    status=content_response.status_code,
+                                ))
+                            elif registry.matches_content(content_response.content):
+                                defects.append(_defect(
+                                    ReasonCode.PLACEHOLDER_COVER,
+                                    item_id or "/".join(surface),
+                                    surface=surface,
+                                    sha256=hashlib.sha256(content_response.content).hexdigest(),
+                                    **_asset_details(cover, "covers", source_path),
+                                ))
             audio_urls = _audio_candidates(item)
-            if not audio_urls:
+            if playable and not audio_urls:
                 defects.append(_defect(
                     ReasonCode.MISSING_AUDIO,
                     item_id or "/".join(surface),
                     surface=surface,
                     source_path=str(source_path),
                 ))
-            for audio_url in audio_urls:
-                try:
-                    response = client.head(_full_url(frontend_origin, audio_url))
-                except Exception as exc:
+            for audio_url in audio_urls if playable else []:
+                response, _resolved_url, errors = _head_asset(
+                    client, audio_url, frontend_origin, api_origin,
+                )
+                if response is None:
                     defects.append(_defect(
                         ReasonCode.UNREACHABLE_ORIGIN,
                         item_id or "/".join(surface),
                         surface=surface,
                         url=audio_url,
-                        error=str(exc),
+                        error="; ".join(errors),
                     ))
                 else:
                     if response.status_code not in (200, 206):

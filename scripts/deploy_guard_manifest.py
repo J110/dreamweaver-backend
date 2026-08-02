@@ -20,11 +20,19 @@ PER_CONTENT_DIRS = (
     "poems_hi",
 )
 NON_PUBLISHABLE = {"draft", "incomplete", "quarantined", "deleted"}
-REQUIRED_FIELDS = {
-    "story": {"id", "type", "title", "text"},
-    "long_story": {"id", "type", "title", "text"},
-    "poem": {"id", "type", "title", "text"},
-    "song": {"id", "type", "title"},
+DIRECTORY_INFO = {
+    "stories": ("story", "", "en", "stories"),
+    "stories_hi": ("story", "", "hi", "stories-hi"),
+    "long_stories": ("long_story", "", "en", "long-stories"),
+    "long_stories_hi": ("long_story", "", "hi", "long-stories-hi"),
+    "lullabies": ("song", "lullaby", "en", "lullabies"),
+    "lullabies_hi": ("song", "lullaby", "hi", "lullabies-hi"),
+    "silly_songs": ("song", "silly_song", "en", "silly-songs"),
+    "silly_songs_hi": ("song", "silly_song", "hi", "silly-songs-hi"),
+    "funny_shorts": ("song", "funny_short", "en", "funny-shorts"),
+    "funny_shorts_hi": ("song", "funny_short", "hi", "funny-shorts-hi"),
+    "poems": ("poem", "", "en", "poems"),
+    "poems_hi": ("poem", "", "hi", "poems-hi"),
 }
 
 
@@ -57,12 +65,21 @@ def is_publishable(record: dict) -> bool:
     return not record.get("is_draft") and state not in NON_PUBLISHABLE
 
 
-def _audio_candidates(record: dict) -> tuple[str, ...]:
+def _media_path(value: str, kind: str, media_dir: str) -> str:
+    if value.startswith(("/", "http://", "https://")):
+        return value
+    return f"/{kind}/{media_dir}/{value}"
+
+
+def _audio_candidates(record: dict, media_dir: str) -> tuple[str, ...]:
     candidates = []
     for key in ("audio_url", "audio"):
         value = record.get(key)
         if isinstance(value, str) and value:
-            candidates.append(value)
+            candidates.append(_media_path(value, "audio", media_dir))
+    audio_file = record.get("audio_file")
+    if not candidates and isinstance(audio_file, str) and audio_file:
+        candidates.append(_media_path(audio_file, "audio", media_dir))
     for variant in record.get("audio_variants") or []:
         value = variant.get("url") or variant.get("audio_url")
         if value:
@@ -70,9 +87,17 @@ def _audio_candidates(record: dict) -> tuple[str, ...]:
     return tuple(dict.fromkeys(candidates))
 
 
-def _required_fields(record: dict) -> set[str]:
-    content_type = str(record.get("type") or "")
-    return REQUIRED_FIELDS.get(content_type, {"id", "type", "title"})
+def _missing_fields(record: dict, content_type: str) -> list[str]:
+    missing = [key for key in ("id", "title") if not record.get(key)]
+    body_fields = {
+        "story": ("text", "story_text", "content"),
+        "long_story": ("text", "story_text", "content"),
+        "poem": ("poem_text", "text", "content"),
+        "song": ("lyrics", "text", "song_text", "content"),
+    }.get(content_type, ())
+    if body_fields and not any(record.get(key) for key in body_fields):
+        missing.append("content_body")
+    return missing
 
 
 def _tiers(record: dict) -> tuple[str, ...]:
@@ -85,6 +110,7 @@ def build_publishable_manifest(data_dir: Path) -> ManifestResult:
     result = ManifestResult()
     for directory in PER_CONTENT_DIRS:
         root = data_dir / directory
+        inferred_type, inferred_subtype, inferred_language, media_dir = DIRECTORY_INFO[directory]
         if not root.exists():
             continue
         for source_path in sorted(root.glob("*.json")):
@@ -99,9 +125,9 @@ def build_publishable_manifest(data_dir: Path) -> ManifestResult:
                 continue
             if not is_publishable(record):
                 continue
-            missing = sorted(
-                key for key in _required_fields(record) if not record.get(key)
-            )
+            content_type = str(record.get("type") or inferred_type)
+            subtype = str(record.get("subtype") or inferred_subtype)
+            missing = _missing_fields(record, content_type)
             if missing:
                 result.defects.append(Defect(
                     ReasonCode.INVALID_SOURCE_RECORD,
@@ -122,13 +148,20 @@ def build_publishable_manifest(data_dir: Path) -> ManifestResult:
                 continue
             result.items[item_id] = ManifestItem(
                 id=item_id,
-                language=str(record.get("lang") or record.get("language") or "en"),
-                content_type=str(record.get("type") or ""),
-                subtype=str(record.get("subtype") or ""),
+                language=str(record.get("lang") or record.get("language") or inferred_language),
+                content_type=content_type,
+                subtype=subtype,
                 title=str(record.get("title") or ""),
                 source_path=source_path,
-                audio_candidates=_audio_candidates(record),
-                cover=str(record.get("cover") or ""),
+                audio_candidates=_audio_candidates(record, media_dir),
+                cover=str(
+                    record.get("cover")
+                    or (
+                        _media_path(str(record["cover_file"]), "covers", media_dir)
+                        if record.get("cover_file")
+                        else ""
+                    )
+                ),
                 cover_context=str(record.get("cover_context") or ""),
                 tiers=_tiers(record),
                 created_at=str(record.get("created_at") or ""),

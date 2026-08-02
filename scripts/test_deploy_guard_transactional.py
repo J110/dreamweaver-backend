@@ -1,5 +1,6 @@
 from pathlib import Path
 from types import SimpleNamespace
+from dataclasses import replace
 import hashlib
 import sys
 
@@ -21,6 +22,7 @@ from deploy_guard_recovery import (
 from deploy_guard_transaction import (
     TransactionConfig,
     TransactionPreconditionError,
+    validate_hook,
     run_transaction,
 )
 from deploy_guard_strict import render_verdict
@@ -127,6 +129,36 @@ def test_manifest_flags_incomplete_unmarked_record(tmp_path):
     result = build_publishable_manifest(tmp_path)
 
     assert result.defects[0].reason is ReasonCode.INVALID_SOURCE_RECORD
+
+
+def test_manifest_normalizes_single_file_poem_and_song_records(tmp_path):
+    poem = write_record(tmp_path, "poems", {
+        "id": "poem-1",
+        "title": "Poem",
+        "content_type": "poem",
+        "poem_text": "Soft stars glow",
+        "audio_file": "poem-1.mp3",
+        "cover_file": "poem-1.webp",
+    })
+    song = write_record(tmp_path, "silly_songs_hi", {
+        "id": "hi-song-1",
+        "title": "Song",
+        "lyrics": "La la",
+        "audio_file": "hi-song-1.mp3",
+        "cover_file": "hi-song-1.webp",
+    })
+
+    result = build_publishable_manifest(tmp_path)
+
+    assert result.defects == []
+    assert result.items["poem-1"].source_path == poem
+    assert result.items["poem-1"].audio_candidates == ("/audio/poems/poem-1.mp3",)
+    assert result.items["poem-1"].cover == "/covers/poems/poem-1.webp"
+    assert result.items["hi-song-1"].source_path == song
+    assert result.items["hi-song-1"].language == "hi"
+    assert result.items["hi-song-1"].audio_candidates == (
+        "/audio/silly-songs-hi/hi-song-1.mp3",
+    )
 
 
 def test_audit_flags_missing_publishable_id():
@@ -511,3 +543,189 @@ def test_preflight_supports_read_only_dry_run():
     args = build_parser().parse_args(["preflight", "--dry-run"])
 
     assert args.dry_run is True
+
+
+def test_postflight_exception_always_rolls_back(tmp_path):
+    data_dir = tmp_path / "data"
+    record = write_record(data_dir, "stories", {
+        "id": "story-1", "title": "Before", "text": "Text",
+    })
+    audits = iter([AuditResult(), RuntimeError("origin failed"), AuditResult()])
+    rollbacks = []
+
+    def audit():
+        value = next(audits)
+        if isinstance(value, Exception):
+            raise value
+        return value
+
+    def deploy(_snapshot):
+        record.write_text('{"id":"story-1","title":"After"}')
+
+    verdict = run_transaction(TransactionConfig(
+        snapshot_parent=tmp_path / "snapshots",
+        data_dir=data_dir,
+        asset_roots=(),
+        preflight_audit=audit,
+        postflight_audit=audit,
+        recover=lambda defects: None,
+        deploy_hook=deploy,
+        rollback_hook=lambda snapshot: rollbacks.append(snapshot.snapshot_id),
+    ))
+
+    assert verdict.rolled_back is True
+    assert rollbacks
+    assert __import__("json").loads(record.read_text())["title"] == "Before"
+
+
+def test_failed_preflight_recovery_restores_partial_mutations(tmp_path):
+    data_dir = tmp_path / "data"
+    record = write_record(data_dir, "stories", {
+        "id": "story-1", "title": "Before", "text": "Text",
+    })
+    broken = AuditResult([Defect(ReasonCode.MISSING_AUDIO, "story-1", {})])
+
+    def recover(_defects):
+        record.write_text('{"id":"story-1","title":"Partially repaired"}')
+
+    with __import__("pytest").raises(TransactionPreconditionError):
+        run_transaction(TransactionConfig(
+            snapshot_parent=tmp_path / "snapshots",
+            data_dir=data_dir,
+            asset_roots=(),
+            preflight_audit=lambda: broken,
+            postflight_audit=lambda: AuditResult(),
+            recover=recover,
+            deploy_hook=lambda snapshot: None,
+            rollback_hook=lambda snapshot: None,
+        ))
+
+    assert __import__("json").loads(record.read_text())["title"] == "Before"
+
+
+def test_recovery_rejects_store_traversal(tmp_path):
+    outside = tmp_path / "outside.mp3"
+    source = tmp_path / "source" / "outside.mp3"
+    source.parent.mkdir()
+    source.write_bytes(b"audio")
+    engine = RecoveryEngine(RecoveryContext(
+        data_dir=tmp_path / "data",
+        audio_store=tmp_path / "audio-store",
+        cover_store=tmp_path / "cover-store",
+        search_roots=(source.parent,),
+        snapshot_root=tmp_path / "snapshots",
+    ))
+
+    result = engine.recover([Defect(ReasonCode.MISSING_AUDIO, "story-1", {
+        "asset_kind": "audio",
+        "filename": "outside.mp3",
+        "canonical": "../outside.mp3",
+    })])[0]
+
+    assert result.recovered is False
+    assert not outside.exists()
+
+
+def test_validate_hook_requires_absolute_path(tmp_path, monkeypatch):
+    hook = tmp_path / "hook"
+    hook.write_text("#!/bin/sh\n")
+    hook.chmod(0o755)
+    monkeypatch.chdir(tmp_path)
+
+    with __import__("pytest").raises(TransactionPreconditionError):
+        validate_hook(Path("hook"))
+
+
+def test_free_playlist_locked_teaser_does_not_require_audio():
+    playlists = {
+        ("nap", "en", "free"): {
+            "items": [
+                {"slot": "nap_story", "content_id": "story-1", "cover_url": "/covers/custom.svg", "audio_url": "/audio/story.mp3"},
+                {"slot": "nap_lullaby_2", "content_id": "story-1", "cover_url": "/covers/custom.svg", "is_locked": True},
+            ],
+        },
+    }
+    http = FakeHttp({
+        "https://app/covers/custom.svg": (200, b"custom"),
+        "https://app/audio/story.mp3": 200,
+    })
+
+    result = audit_playlists(
+        playlists,
+        {("nap", "en", "free"): {"nap_story"}},
+        manifest_with("story-1"),
+        client=http,
+        frontend_origin="https://app",
+    )
+
+    assert not any(defect.reason is ReasonCode.MISSING_AUDIO for defect in result.blockers)
+
+
+def test_catalog_accepts_asset_from_api_origin_and_blocks_failed_hash_get():
+    live = [live_item("story-1")]
+    dual_origin = FakeHttp({
+        "https://app/covers/custom.svg": 404,
+        "https://api/covers/custom.svg": (200, b"custom"),
+        "https://app/audio/story.mp3": 404,
+        "https://api/audio/story.mp3": 200,
+    })
+
+    clean = audit_catalog(
+        manifest_with("story-1"),
+        live,
+        dual_origin,
+        "https://app",
+        api_origin="https://api",
+    )
+
+    assert clean.blockers == []
+
+    class FailedHashGet(FakeHttp):
+        def get(self, url):
+            return SimpleNamespace(status_code=503, content=b"")
+
+    failed_hash = FailedHashGet({
+        "https://app/covers/custom.svg": 200,
+        "https://app/audio/story.mp3": 200,
+    })
+    result = audit_catalog(
+        manifest_with("story-1"),
+        live,
+        failed_hash,
+        "https://app",
+        PlaceholderRegistry(sha256={"expected"}),
+    )
+
+    assert any(defect.reason is ReasonCode.UNREACHABLE_ORIGIN for defect in result.blockers)
+
+
+def test_free_playlist_rejects_unlocked_premium_only_item():
+    manifest = manifest_with("story-1")
+    manifest.items["story-1"] = replace(
+        manifest.items["story-1"],
+        tiers=("premium",),
+    )
+    playlists = {
+        ("bedtime", "en", "free"): {
+            "items": [{
+                "slot": "story",
+                "content_id": "story-1",
+                "cover_url": "/covers/custom.svg",
+                "audio_url": "/audio/story.mp3",
+            }],
+        },
+    }
+    http = FakeHttp({
+        "https://app/covers/custom.svg": 200,
+        "https://app/audio/story.mp3": 200,
+    })
+
+    result = audit_playlists(
+        playlists,
+        {("bedtime", "en", "free"): {"story"}},
+        manifest,
+        client=http,
+        frontend_origin="https://app",
+    )
+
+    assert any(defect.reason is ReasonCode.WRONG_METADATA_PATH for defect in result.blockers)

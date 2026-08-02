@@ -87,6 +87,7 @@ def run_strict_audit(config: StrictGuardConfig, client=None) -> AuditResult:
             client,
             config.frontend_origin,
             registry,
+            api_origin=config.api_origin,
         )
         defects = list(catalog_audit.defects)
         if config.playlist_audit is None:
@@ -136,16 +137,20 @@ def render_verdict(audit: AuditResult) -> str:
 
 
 def internal_playlist_audit(manifest: ManifestResult) -> AuditResult:
-    import asyncio
+    import json
     import httpx
-    from app.api.v1 import playlist
+    probe = r'''
+import asyncio
+import json
+from app.api.v1 import playlist
 
-    class GuardStore:
-        collections = {"playlist_history": {}}
+class GuardStore:
+    def __init__(self):
+        self.collections = {"playlist_history": {}}
+    def _persist_collection(self, _name):
+        return None
 
-        def _persist_collection(self, _name):
-            return None
-
+async def main():
     users = {
         "free": {
             "uid": "deploy-guard-free",
@@ -162,47 +167,81 @@ def internal_playlist_audit(manifest: ManifestResult) -> AuditResult:
     }
     payloads = {}
     required = {}
-    original_record_history = playlist._record_history
-    original_record_nap_history = playlist._record_nap_history
-    original_nap_cache = dict(playlist._nap_cache)
+    original_history = playlist._record_history
+    original_nap_history = playlist._record_nap_history
+    original_cache = dict(playlist._nap_cache)
     try:
         playlist._record_history = lambda *_args, **_kwargs: None
         playlist._record_nap_history = lambda *_args, **_kwargs: None
         playlist._nap_cache.clear()
         for language in ("en", "hi"):
             for tier, user in users.items():
-                bedtime = asyncio.run(playlist.get_today_playlist(
-                    age="6-8",
-                    lang=language,
-                    tz="Asia/Kolkata",
-                    store=GuardStore(),
-                    current_user=user,
-                ))
-                nap = asyncio.run(playlist.get_nap_playlist(
-                    lang=language,
-                    tz="Asia/Kolkata",
-                    store=GuardStore(),
-                    current_user=user,
-                ))
-                bedtime_key = ("bedtime", language, tier)
-                nap_key = ("nap", language, tier)
+                bedtime = await playlist.get_today_playlist(
+                    age="6-8", lang=language, tz="Asia/Kolkata",
+                    store=GuardStore(), current_user=user,
+                )
+                nap = await playlist.get_nap_playlist(
+                    lang=language, tz="Asia/Kolkata",
+                    store=GuardStore(), current_user=user,
+                )
+                bedtime_key = f"bedtime|{language}|{tier}"
+                nap_key = f"nap|{language}|{tier}"
                 payloads[bedtime_key] = bedtime.data
                 payloads[nap_key] = nap.data
-                required[bedtime_key] = (
+                required[bedtime_key] = sorted(
                     {slot[0] for slot in playlist.SLOTS}
-                    if tier == "premium"
-                    else set(playlist.FREE_SLOTS)
+                    if tier == "premium" else set(playlist.FREE_SLOTS)
                 )
-                required[nap_key] = (
+                required[nap_key] = sorted(
                     {slot[0] for slot in playlist.NAP_SLOTS}
-                    if tier == "premium"
-                    else set(playlist.NAP_FREE_SLOTS)
+                    if tier == "premium" else set(playlist.NAP_FREE_SLOTS)
                 )
     finally:
-        playlist._record_history = original_record_history
-        playlist._record_nap_history = original_record_nap_history
+        playlist._record_history = original_history
+        playlist._record_nap_history = original_nap_history
         playlist._nap_cache.clear()
-        playlist._nap_cache.update(original_nap_cache)
+        playlist._nap_cache.update(original_cache)
+    print(json.dumps({"payloads": payloads, "required": required}))
+
+asyncio.run(main())
+'''
+    if Path("/opt/dreamweaver-backend").is_dir():
+        command = [
+            "sudo", "docker", "exec", "dreamweaver-backend",
+            "python", "-c", probe,
+        ]
+    else:
+        command = [sys.executable, "-c", probe]
+    result = subprocess.run(
+        command,
+        capture_output=True,
+        text=True,
+        timeout=120,
+        cwd=Path(__file__).resolve().parents[1],
+    )
+    if result.returncode != 0:
+        output = (result.stdout + "\n" + result.stderr).strip()
+        return AuditResult([Defect(
+            ReasonCode.PLAYLIST_SLOT_MISSING,
+            "all-playlists",
+            {"error": f"deployed playlist probe failed: {output[-2000:]}"},
+        )])
+    try:
+        raw = json.loads(result.stdout.strip().splitlines()[-1])
+        payloads = {
+            tuple(key.split("|")): value
+            for key, value in raw["payloads"].items()
+        }
+        required = {
+            tuple(key.split("|")): set(value)
+            for key, value in raw["required"].items()
+        }
+    except (IndexError, KeyError, TypeError, json.JSONDecodeError) as exc:
+        return AuditResult([Defect(
+            ReasonCode.PLAYLIST_SLOT_MISSING,
+            "all-playlists",
+            {"error": f"deployed playlist probe returned invalid output: {exc}"},
+        )])
     config = default_config(Path(__file__).resolve().parents[1], playlist_audit=None)
     registry = PlaceholderRegistry.from_file(config.placeholder_registry_path)
     with httpx.Client(timeout=20, follow_redirects=True) as client:
@@ -213,6 +252,7 @@ def internal_playlist_audit(manifest: ManifestResult) -> AuditResult:
             client=client,
             frontend_origin=config.frontend_origin,
             placeholder_registry=registry,
+            api_origin=config.api_origin,
         )
 
 

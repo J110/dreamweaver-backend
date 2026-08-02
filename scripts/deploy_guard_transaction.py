@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -25,10 +26,13 @@ class TransactionSnapshot:
     release_ids: dict[str, str] = field(default_factory=dict)
 
     def restore(self) -> None:
+        manifest = json.loads((self.root / "manifest.json").read_text(encoding="utf-8"))
+        _verify_inventory(self.root / "data", manifest["data_files"])
         _restore_tree(self.root / "data", self.data_dir)
         for name, target in self.asset_roots:
             source = self.root / "assets" / name
             if source.exists():
+                _verify_inventory(source, manifest["asset_files"][name])
                 _restore_tree(source, target)
 
 
@@ -61,18 +65,43 @@ def _restore_tree(source: Path, target: Path) -> None:
         for path in source.rglob("*")
         if path.is_file()
     }
-    for current in sorted(
-        (path for path in target.rglob("*") if path.is_file()),
-        reverse=True,
-    ):
-        if current.relative_to(target) not in expected:
-            current.unlink()
     for relative in expected:
         destination = target / relative
         destination.parent.mkdir(parents=True, exist_ok=True)
         temporary = destination.with_suffix(destination.suffix + ".rollback")
         shutil.copy2(source / relative, temporary)
         temporary.replace(destination)
+    for current in sorted(
+        (path for path in target.rglob("*") if path.is_file()),
+        reverse=True,
+    ):
+        if current.relative_to(target) not in expected:
+            current.unlink()
+
+
+def _inventory(root: Path) -> list[dict]:
+    entries = []
+    for path in sorted(item for item in root.rglob("*") if item.is_file()):
+        digest = hashlib.sha256()
+        size = 0
+        with path.open("rb") as handle:
+            for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+                size += len(chunk)
+                digest.update(chunk)
+        entries.append({
+            "path": str(path.relative_to(root)),
+            "size": size,
+            "sha256": digest.hexdigest(),
+        })
+    return entries
+
+
+def _verify_inventory(root: Path, expected: list[dict]) -> None:
+    actual = _inventory(root)
+    if actual != expected:
+        raise TransactionPreconditionError(
+            f"snapshot integrity verification failed: {root}"
+        )
 
 
 def capture_snapshot(config: TransactionConfig) -> TransactionSnapshot:
@@ -87,6 +116,8 @@ def capture_snapshot(config: TransactionConfig) -> TransactionSnapshot:
     partial.mkdir(parents=True)
     _copy_tree(config.data_dir, partial / "data")
     for name, source in config.asset_roots:
+        if not name or Path(name).name != name:
+            raise TransactionPreconditionError(f"invalid asset root name: {name}")
         _copy_tree(source, partial / "assets" / name)
     manifest = {
         "snapshot_id": snapshot_id,
@@ -97,6 +128,11 @@ def capture_snapshot(config: TransactionConfig) -> TransactionSnapshot:
             for name, path in config.asset_roots
         ],
         "release_ids": config.release_ids,
+        "data_files": _inventory(partial / "data"),
+        "asset_files": {
+            name: _inventory(partial / "assets" / name)
+            for name, _source in config.asset_roots
+        },
     }
     (partial / "manifest.json").write_text(
         json.dumps(manifest, indent=2, sort_keys=True),
@@ -113,6 +149,10 @@ def capture_snapshot(config: TransactionConfig) -> TransactionSnapshot:
 
 
 def validate_hook(path: Path) -> Path:
+    if not path.is_absolute():
+        raise TransactionPreconditionError(
+            f"transaction hook path must be absolute: {path}"
+        )
     resolved = path.resolve(strict=True)
     if not resolved.is_file() or not os.access(resolved, os.X_OK):
         raise TransactionPreconditionError(
@@ -179,46 +219,23 @@ def _rollback(
     return defects
 
 
-def run_transaction(config: TransactionConfig) -> FinalVerdict:
-    if config.rollback_hook is None:
-        raise TransactionPreconditionError("production rollback hook is required")
-    preflight = recover_until_stable(
-        config.preflight_audit,
-        config.recover,
-        config.max_recovery_rounds,
-    )
-    if preflight.blockers:
-        raise TransactionPreconditionError(
-            f"preflight has {len(preflight.blockers)} user-facing blocker(s)"
-        )
-    snapshot = capture_snapshot(config)
+def _audit_after_rollback(config: TransactionConfig) -> AuditResult:
     try:
-        config.deploy_hook(snapshot)
-    except Exception:
-        rollback_defects = _rollback(config, snapshot)
-        rollback_audit = config.postflight_audit()
-        rollback_audit.defects.extend(rollback_defects)
-        return FinalVerdict(
-            deployment_succeeded=False,
-            app_healthy=not rollback_audit.blockers,
-            audit=rollback_audit,
-            rolled_back=True,
-            snapshot_id=snapshot.snapshot_id,
-        )
-    postflight = recover_until_stable(
-        config.postflight_audit,
-        config.recover,
-        config.max_recovery_rounds,
-    )
-    if not postflight.blockers:
-        return FinalVerdict(
-            deployment_succeeded=True,
-            app_healthy=True,
-            audit=postflight,
-            snapshot_id=snapshot.snapshot_id,
-        )
+        return config.postflight_audit()
+    except Exception as exc:
+        return AuditResult([Defect(
+            ReasonCode.UNREACHABLE_ORIGIN,
+            "deploy-rollback-audit",
+            {"error": f"{type(exc).__name__}: {exc}"},
+        )])
+
+
+def _rollback_verdict(
+    config: TransactionConfig,
+    snapshot: TransactionSnapshot,
+) -> FinalVerdict:
     rollback_defects = _rollback(config, snapshot)
-    rollback_audit = config.postflight_audit()
+    rollback_audit = _audit_after_rollback(config)
     rollback_audit.defects.extend(rollback_defects)
     return FinalVerdict(
         deployment_succeeded=False,
@@ -227,3 +244,52 @@ def run_transaction(config: TransactionConfig) -> FinalVerdict:
         rolled_back=True,
         snapshot_id=snapshot.snapshot_id,
     )
+
+
+def run_transaction(config: TransactionConfig) -> FinalVerdict:
+    if config.rollback_hook is None:
+        raise TransactionPreconditionError("production rollback hook is required")
+    initial_preflight = config.preflight_audit()
+    if initial_preflight.blockers:
+        recovery_snapshot = capture_snapshot(config)
+        try:
+            preflight = recover_until_stable(
+                config.preflight_audit,
+                config.recover,
+                config.max_recovery_rounds,
+            )
+        except Exception as exc:
+            recovery_snapshot.restore()
+            if config.reload_callback is not None:
+                config.reload_callback()
+            raise TransactionPreconditionError(
+                f"preflight recovery failed: {type(exc).__name__}: {exc}"
+            ) from exc
+        if preflight.blockers:
+            recovery_snapshot.restore()
+            if config.reload_callback is not None:
+                config.reload_callback()
+            raise TransactionPreconditionError(
+                f"preflight has {len(preflight.blockers)} user-facing blocker(s)"
+            )
+    snapshot = capture_snapshot(config)
+    try:
+        config.deploy_hook(snapshot)
+    except Exception:
+        return _rollback_verdict(config, snapshot)
+    try:
+        postflight = recover_until_stable(
+            config.postflight_audit,
+            config.recover,
+            config.max_recovery_rounds,
+        )
+    except Exception:
+        return _rollback_verdict(config, snapshot)
+    if not postflight.blockers:
+        return FinalVerdict(
+            deployment_succeeded=True,
+            app_healthy=True,
+            audit=postflight,
+            snapshot_id=snapshot.snapshot_id,
+        )
+    return _rollback_verdict(config, snapshot)

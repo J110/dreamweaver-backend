@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import hashlib
 import json
 from pathlib import Path
 import shutil
@@ -94,12 +95,49 @@ class RecoveryEngine:
         )
         return tuple(dict.fromkeys(root for root in roots if root.exists()))
 
-    def _find_source(self, filename: str, target: Path) -> Path | None:
+    def _find_source(
+        self,
+        filename: str,
+        target: Path,
+        canonical: str,
+        expected_sha256: str = "",
+    ) -> Path | None:
         for root in self._search_roots():
+            candidates = []
             for candidate in root.rglob(filename):
                 if candidate.is_file() and candidate.resolve() != target.resolve():
-                    return candidate
+                    candidates.append(candidate)
+            exact = [
+                candidate for candidate in candidates
+                if candidate.as_posix().endswith(canonical)
+            ]
+            pool = exact or candidates
+            if expected_sha256:
+                pool = [
+                    candidate for candidate in pool
+                    if hashlib.sha256(candidate.read_bytes()).hexdigest() == expected_sha256
+                ]
+            if not pool:
+                continue
+            if exact:
+                return max(pool, key=lambda path: path.stat().st_mtime_ns)
+            by_hash = {}
+            for candidate in pool:
+                digest = hashlib.sha256(candidate.read_bytes()).hexdigest()
+                by_hash.setdefault(digest, []).append(candidate)
+            if len(by_hash) == 1:
+                return sorted(next(iter(by_hash.values())), key=lambda path: str(path))[0]
         return None
+
+    def _safe_target(self, store: Path, canonical: str) -> Path:
+        relative = Path(canonical.lstrip("/"))
+        if not canonical or relative.is_absolute() or ".." in relative.parts:
+            raise ValueError(f"unsafe canonical asset path: {canonical}")
+        store_root = store.resolve()
+        target = (store / relative).resolve()
+        if not target.is_relative_to(store_root):
+            raise ValueError(f"asset path escapes store: {canonical}")
+        return target
 
     def _restore_asset(
         self,
@@ -121,11 +159,15 @@ class RecoveryEngine:
             if asset_kind == "audio"
             else self.context.cover_store
         )
-        target = store / canonical.lstrip("/")
-        source = self._find_source(filename, target)
+        target = self._safe_target(store, canonical)
+        expected_sha256 = str(details.get("sha256") or "")
+        source = self._find_source(filename, target, canonical, expected_sha256)
         if source is None:
             return RecoveryResult(defect, False, "asset not found in recovery stores")
         _atomic_copy(source, target)
+        if expected_sha256 and hashlib.sha256(target.read_bytes()).hexdigest() != expected_sha256:
+            target.unlink(missing_ok=True)
+            return RecoveryResult(defect, False, "restored asset hash mismatch")
         return RecoveryResult(
             defect,
             True,
