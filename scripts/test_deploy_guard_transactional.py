@@ -7,7 +7,13 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).parent))
 
-from deploy_guard_models import AuditResult, Defect, ReasonCode, is_blocking
+from deploy_guard_models import (
+    AuditResult,
+    Defect,
+    ReasonCode,
+    RecoveryResult,
+    is_blocking,
+)
 from deploy_guard_audit import PlaceholderRegistry, audit_catalog, audit_playlists
 from deploy_guard_manifest import (
     ManifestItem,
@@ -766,6 +772,12 @@ def test_cover_recovery_reloads_and_reverts_metadata_when_reload_fails(tmp_path)
         (cover_store / "story-1.svg").write_bytes(b"custom")
         return "/covers/story-1.svg"
 
+    reloads = []
+
+    def fail_reload():
+        reloads.append(True)
+        raise RuntimeError("reload failed")
+
     engine = RecoveryEngine(RecoveryContext(
         data_dir=data_dir,
         audio_store=tmp_path / "audio",
@@ -773,7 +785,7 @@ def test_cover_recovery_reloads_and_reverts_metadata_when_reload_fails(tmp_path)
         search_roots=(),
         snapshot_root=tmp_path / "snapshot",
         cover_generator=generate,
-        reload_callback=lambda: (_ for _ in ()).throw(RuntimeError("reload failed")),
+        reload_callback=fail_reload,
     ))
 
     result = engine.recover([Defect(ReasonCode.PLACEHOLDER_COVER, "story-1", {
@@ -782,3 +794,16 @@ def test_cover_recovery_reloads_and_reverts_metadata_when_reload_fails(tmp_path)
 
     assert result.recovered is False
     assert __import__("json").loads(source.read_text())["cover"] == "/covers/default.svg"
+    assert len(reloads) == 2
+
+
+def test_failed_recovery_is_latched_when_next_audit_looks_clean():
+    defect = Defect(ReasonCode.PLACEHOLDER_COVER, "story-1", {})
+    audits = iter([AuditResult([defect]), AuditResult()])
+
+    result = recover_until_stable(
+        lambda: next(audits),
+        lambda defects: [RecoveryResult(defects[0], False, "reload timed out")],
+    )
+
+    assert result.blockers[0].reason is ReasonCode.STALE_LIVE_STATE

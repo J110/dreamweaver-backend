@@ -206,9 +206,18 @@ class RecoveryEngine:
             if self.context.reload_callback is None:
                 raise RuntimeError("reload callback unavailable after cover repair")
             self.context.reload_callback()
-        except Exception:
+        except Exception as exc:
             _atomic_json_replace(source_path, before)
-            raise
+            restore_error = ""
+            if self.context.reload_callback is not None:
+                try:
+                    self.context.reload_callback()
+                except Exception as restore_exc:
+                    restore_error = (
+                        f"; compensating reload failed: "
+                        f"{type(restore_exc).__name__}: {restore_exc}"
+                    )
+            raise RuntimeError(f"cover repair reverted: {exc}{restore_error}") from exc
         return RecoveryResult(defect, True, f"generated custom cover {cover_path}")
 
     def _repair_metadata(self, defect: Defect) -> RecoveryResult:
@@ -251,6 +260,7 @@ def recover_until_stable(
     max_rounds: int = 3,
 ) -> AuditResult:
     previous = None
+    latched_failures: dict[tuple[str, str], RecoveryResult] = {}
     for _round_number in range(1, max_rounds + 1):
         result = audit()
         signature = {
@@ -262,9 +272,46 @@ def recover_until_stable(
             for defect in result.blockers
         }
         if not signature:
+            if latched_failures:
+                result.defects.extend(
+                    Defect(
+                        ReasonCode.STALE_LIVE_STATE,
+                        item_id,
+                        {
+                            "failed_reason": reason,
+                            "error": failure.error or failure.action,
+                        },
+                    )
+                    for (reason, item_id), failure in latched_failures.items()
+                )
             return result
         if signature == previous:
             return result
-        recover(result.blockers)
+        recovery_results = recover(result.blockers)
+        if isinstance(recovery_results, list):
+            for recovery_result in recovery_results:
+                if not isinstance(recovery_result, RecoveryResult):
+                    continue
+                key = (
+                    recovery_result.defect.reason.value,
+                    recovery_result.defect.item_id,
+                )
+                if recovery_result.recovered:
+                    latched_failures.pop(key, None)
+                else:
+                    latched_failures[key] = recovery_result
         previous = signature
-    return audit()
+    result = audit()
+    if not result.blockers and latched_failures:
+        result.defects.extend(
+            Defect(
+                ReasonCode.STALE_LIVE_STATE,
+                item_id,
+                {
+                    "failed_reason": reason,
+                    "error": failure.error or failure.action,
+                },
+            )
+            for (reason, item_id), failure in latched_failures.items()
+        )
+    return result
