@@ -1,0 +1,11 @@
+{
+  "paths": [
+    "/covers/default.svg"
+  ],
+  "filename_patterns": [
+    "default.svg",
+    "placeholder.svg",
+    "placeholder.webp"
+  ],
+  "sha256": []
+}
