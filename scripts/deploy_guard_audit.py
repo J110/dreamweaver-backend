@@ -119,7 +119,10 @@ def audit_catalog(
     for item_id in sorted(set(manifest.items) & set(live_by_id)):
         item = live_by_id[item_id]
         manifest_item = manifest.items[item_id]
-        cover = str(item.get("cover") or manifest_item.cover or "")
+        cover = str(item.get("cover") or item.get("cover_url") or "")
+        cover_file = str(item.get("cover_file") or "")
+        if not cover and cover_file and Path(manifest_item.cover).name == cover_file:
+            cover = manifest_item.cover
         if not cover:
             defects.append(_defect(
                 ReasonCode.MISSING_CUSTOM_COVER,
@@ -177,10 +180,14 @@ def audit_catalog(
                                 **_asset_details(cover, "covers", manifest_item.source_path),
                             ))
 
-        audio_urls = list(dict.fromkeys([
-            *_audio_candidates(item),
-            *manifest_item.audio_candidates,
-        ]))
+        audio_urls = _audio_candidates(item)
+        audio_file = str(item.get("audio_file") or "")
+        if audio_file and not audio_urls:
+            audio_urls = [
+                candidate
+                for candidate in manifest_item.audio_candidates
+                if Path(urlparse(candidate).path).name == audio_file
+            ]
         if not audio_urls:
             defects.append(_defect(ReasonCode.MISSING_AUDIO, item_id))
         for audio_url in audio_urls:

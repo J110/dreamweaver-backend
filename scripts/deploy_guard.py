@@ -2677,6 +2677,9 @@ def cmd_transaction(args):
             deploy_hook=script_hook(Path(args.deploy_script)),
             rollback_hook=script_hook(Path(args.rollback_script)),
             reload_callback=recovery.context.reload_callback,
+            activate_snapshot=lambda snapshot: setattr(
+                recovery.context, "snapshot_root", snapshot.root,
+            ),
             release_ids={"backend": release_id},
             max_recovery_rounds=args.max_recovery_rounds,
         ))

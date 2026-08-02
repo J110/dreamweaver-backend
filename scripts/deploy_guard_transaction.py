@@ -47,6 +47,7 @@ class TransactionConfig:
     deploy_hook: Callable[[TransactionSnapshot], None]
     rollback_hook: Callable[[TransactionSnapshot], None] | None
     reload_callback: Callable[[], None] | None = None
+    activate_snapshot: Callable[[TransactionSnapshot], None] | None = None
     release_ids: dict[str, str] = field(default_factory=dict)
     max_recovery_rounds: int = 3
 
@@ -59,24 +60,26 @@ def _copy_tree(source: Path, target: Path) -> None:
 
 
 def _restore_tree(source: Path, target: Path) -> None:
-    target.mkdir(parents=True, exist_ok=True)
-    expected = {
-        path.relative_to(source)
-        for path in source.rglob("*")
-        if path.is_file()
-    }
-    for relative in expected:
-        destination = target / relative
-        destination.parent.mkdir(parents=True, exist_ok=True)
-        temporary = destination.with_suffix(destination.suffix + ".rollback")
-        shutil.copy2(source / relative, temporary)
-        temporary.replace(destination)
-    for current in sorted(
-        (path for path in target.rglob("*") if path.is_file()),
-        reverse=True,
-    ):
-        if current.relative_to(target) not in expected:
-            current.unlink()
+    target.parent.mkdir(parents=True, exist_ok=True)
+    stage = target.parent / f".{target.name}.restore-{uuid4().hex[:8]}"
+    previous = target.parent / f".{target.name}.previous-{uuid4().hex[:8]}"
+    _copy_tree(source, stage)
+    if _inventory(stage) != _inventory(source):
+        shutil.rmtree(stage, ignore_errors=True)
+        raise TransactionPreconditionError(f"staged restore verification failed: {target}")
+    moved_previous = False
+    try:
+        if target.exists():
+            target.replace(previous)
+            moved_previous = True
+        stage.replace(target)
+    except Exception:
+        if moved_previous and not target.exists() and previous.exists():
+            previous.replace(target)
+        shutil.rmtree(stage, ignore_errors=True)
+        raise
+    if moved_previous:
+        shutil.rmtree(previous, ignore_errors=True)
 
 
 def _inventory(root: Path) -> list[dict]:
@@ -192,19 +195,19 @@ def _rollback(
 ) -> list[Defect]:
     defects = []
     try:
-        config.rollback_hook(snapshot)
-    except Exception as exc:
-        defects.append(Defect(
-            ReasonCode.INVALID_SOURCE_RECORD,
-            "deploy-rollback-hook",
-            {"error": f"{type(exc).__name__}: {exc}"},
-        ))
-    try:
         snapshot.restore()
     except Exception as exc:
         defects.append(Defect(
             ReasonCode.INVALID_SOURCE_RECORD,
             "deploy-rollback-snapshot",
+            {"error": f"{type(exc).__name__}: {exc}"},
+        ))
+    try:
+        config.rollback_hook(snapshot)
+    except Exception as exc:
+        defects.append(Defect(
+            ReasonCode.INVALID_SOURCE_RECORD,
+            "deploy-rollback-hook",
             {"error": f"{type(exc).__name__}: {exc}"},
         ))
     if config.reload_callback is not None:
@@ -252,6 +255,8 @@ def run_transaction(config: TransactionConfig) -> FinalVerdict:
     initial_preflight = config.preflight_audit()
     if initial_preflight.blockers:
         recovery_snapshot = capture_snapshot(config)
+        if config.activate_snapshot is not None:
+            config.activate_snapshot(recovery_snapshot)
         try:
             preflight = recover_until_stable(
                 config.preflight_audit,
@@ -273,6 +278,8 @@ def run_transaction(config: TransactionConfig) -> FinalVerdict:
                 f"preflight has {len(preflight.blockers)} user-facing blocker(s)"
             )
     snapshot = capture_snapshot(config)
+    if config.activate_snapshot is not None:
+        config.activate_snapshot(snapshot)
     try:
         config.deploy_hook(snapshot)
     except Exception:

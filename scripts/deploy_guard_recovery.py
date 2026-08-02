@@ -40,6 +40,15 @@ def _atomic_json_update(path: Path, **fields) -> None:
     temporary.replace(path)
 
 
+def _atomic_json_replace(path: Path, record: dict) -> None:
+    temporary = path.with_suffix(".json.recovering")
+    temporary.write_text(
+        json.dumps(record, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+    temporary.replace(path)
+
+
 class RecoveryEngine:
     def __init__(self, context: RecoveryContext):
         self.context = context
@@ -182,17 +191,24 @@ class RecoveryEngine:
         if not source_path.exists():
             return RecoveryResult(defect, False, "cover source record missing")
         before = json.loads(source_path.read_text(encoding="utf-8"))
-        cover_path = self.context.cover_generator(
-            source_path,
-            self.context.cover_store,
-        )
-        if not cover_path or cover_path == "/covers/default.svg":
-            return RecoveryResult(defect, False, "cover generator returned placeholder")
-        _atomic_json_update(source_path, cover=cover_path)
-        after = json.loads(source_path.read_text(encoding="utf-8"))
-        for protected in ("id", "title", "description", "text", "created_at"):
-            if before.get(protected) != after.get(protected):
-                raise ValueError(f"cover recovery changed protected field {protected}")
+        try:
+            cover_path = self.context.cover_generator(
+                source_path,
+                self.context.cover_store,
+            )
+            if not cover_path or cover_path == "/covers/default.svg":
+                raise ValueError("cover generator returned placeholder")
+            _atomic_json_update(source_path, cover=cover_path)
+            after = json.loads(source_path.read_text(encoding="utf-8"))
+            for protected in ("id", "title", "description", "text", "created_at"):
+                if before.get(protected) != after.get(protected):
+                    raise ValueError(f"cover recovery changed protected field {protected}")
+            if self.context.reload_callback is None:
+                raise RuntimeError("reload callback unavailable after cover repair")
+            self.context.reload_callback()
+        except Exception:
+            _atomic_json_replace(source_path, before)
+            raise
         return RecoveryResult(defect, True, f"generated custom cover {cover_path}")
 
     def _repair_metadata(self, defect: Defect) -> RecoveryResult:

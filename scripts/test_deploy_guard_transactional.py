@@ -323,6 +323,7 @@ def test_placeholder_recovery_regenerates_without_changing_record_fields(tmp_pat
         search_roots=(),
         snapshot_root=tmp_path / "snapshot",
         cover_generator=generate_cover,
+        reload_callback=lambda: None,
     )
     defect = Defect(
         ReasonCode.PLACEHOLDER_COVER,
@@ -469,6 +470,7 @@ def test_transaction_recovers_audio_placeholder_cover_and_source_canaries(tmp_pa
         search_roots=(),
         snapshot_root=tmp_path / "snapshots",
         cover_generator=generate_cover,
+        reload_callback=lambda: None,
     ))
 
     def audit():
@@ -729,3 +731,54 @@ def test_free_playlist_rejects_unlocked_premium_only_item():
     )
 
     assert any(defect.reason is ReasonCode.WRONG_METADATA_PATH for defect in result.blockers)
+
+
+def test_catalog_does_not_substitute_source_media_for_missing_live_metadata():
+    http = FakeHttp({
+        "https://app/covers/custom.svg": 200,
+        "https://app/audio/story.mp3": 200,
+    })
+
+    result = audit_catalog(
+        manifest_with("story-1"),
+        [{"id": "story-1", "title": "Story"}],
+        http,
+        "https://app",
+    )
+
+    assert {defect.reason for defect in result.blockers} == {
+        ReasonCode.MISSING_CUSTOM_COVER,
+        ReasonCode.MISSING_AUDIO,
+    }
+
+
+def test_cover_recovery_reloads_and_reverts_metadata_when_reload_fails(tmp_path):
+    data_dir = tmp_path / "data"
+    source = write_record(data_dir, "stories", {
+        "id": "story-1",
+        "title": "Story",
+        "text": "Text",
+        "cover": "/covers/default.svg",
+    })
+
+    def generate(_source, cover_store):
+        cover_store.mkdir(parents=True, exist_ok=True)
+        (cover_store / "story-1.svg").write_bytes(b"custom")
+        return "/covers/story-1.svg"
+
+    engine = RecoveryEngine(RecoveryContext(
+        data_dir=data_dir,
+        audio_store=tmp_path / "audio",
+        cover_store=tmp_path / "covers",
+        search_roots=(),
+        snapshot_root=tmp_path / "snapshot",
+        cover_generator=generate,
+        reload_callback=lambda: (_ for _ in ()).throw(RuntimeError("reload failed")),
+    ))
+
+    result = engine.recover([Defect(ReasonCode.PLACEHOLDER_COVER, "story-1", {
+        "source_path": str(source),
+    })])[0]
+
+    assert result.recovered is False
+    assert __import__("json").loads(source.read_text())["cover"] == "/covers/default.svg"
