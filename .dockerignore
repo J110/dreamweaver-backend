@@ -1,0 +1,7 @@
+*
+!app
+!app/**
+!requirements.txt
+!.env.example
+!docker-entrypoint.sh
+!Dockerfile
