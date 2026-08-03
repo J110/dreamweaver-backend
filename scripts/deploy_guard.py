@@ -2038,6 +2038,11 @@ def cmd_verify(args):
             for msg in radio_issues:
                 if msg.startswith("YouTube broadcast is OFFLINE"):
                     print(f"  Radio broadcast: OFFLINE (non-blocking exemption)")
+                elif args.allow_radio_offline and (
+                    msg.startswith("Radio process NOT running")
+                    or msg.startswith("Radio missing content types")
+                ):
+                    print(f"  Radio runtime: PARKED (explicit non-blocking exemption: {msg})")
                 else:
                     current_policy_blockers.append(msg)
 
@@ -2681,6 +2686,11 @@ Examples:
 
     ver = sub.add_parser("verify", help="Compare against snapshot + auto-recover")
     add_common(ver)
+    ver.add_argument(
+        "--allow-radio-offline",
+        action="store_true",
+        help="Permit the intentionally parked radio process and empty radio runtime",
+    )
     ver.set_defaults(func=cmd_verify)
 
     chk = sub.add_parser("check", help="Quick health check")
