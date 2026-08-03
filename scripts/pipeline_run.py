@@ -2299,22 +2299,63 @@ def _deploy_guard_snapshot() -> dict | None:
         return None
 
 
-def _deploy_guard_verify(before: dict | None):
-    """Compare post-deploy state against pre-deploy snapshot."""
+def _deploy_guard_verify(before: dict | None) -> bool:
+    """Verify and recover post-deploy state against the baseline."""
     if before is None:
-        return
+        logger.error("  Deploy Guard: no baseline available")
+        return False
     try:
-        from scripts.deploy_guard import capture_state, diff_states
-        after = capture_state("http://localhost:8000")
-        changes = diff_states(before, after)
-        if not changes:
-            logger.info("  Deploy Guard: ✅ no unintended changes")
-        else:
-            logger.warning("  Deploy Guard: ⚠️ %d change(s) detected:", len(changes))
-            for c in changes:
-                logger.warning("    %s", c)
+        from scripts import deploy_guard
+
+        after = deploy_guard.capture_state("http://localhost:8000")
+        changes = deploy_guard.diff_states(before, after)
+        recovery_attempted = False
+
+        if changes["removed_items"]:
+            deploy_guard.recover_json_files(changes["removed_items"])
+            recovery_attempted = True
+
+        file_issues, recoverable = deploy_guard.verify_files(
+            after,
+            "http://localhost:3000",
+            "http://localhost:8000",
+        )
+        if recoverable:
+            deploy_guard.auto_recover(recoverable)
+            recovery_attempted = True
+
+        if recovery_attempted:
+            after = deploy_guard.capture_state("http://localhost:8000")
+            changes = deploy_guard.diff_states(before, after)
+            file_issues, _ = deploy_guard.verify_files(
+                after,
+                "http://localhost:3000",
+                "http://localhost:8000",
+            )
+
+        new_issues = deploy_guard.verify_new_items_serving(
+            changes["added_items"],
+            "http://localhost:3000",
+            "http://localhost:8000",
+        )
+        unresolved = changes["removed"] + changes["degraded"]
+        unresolved.extend(new_issues)
+        unresolved.extend(file_issues)
+
+        if unresolved:
+            logger.error(
+                "  Deploy Guard: %d unresolved issue(s)",
+                len(unresolved),
+            )
+            for issue in unresolved:
+                logger.error("    %s", issue)
+            return False
+
+        logger.info("  Deploy Guard: ✅ baseline and assets verified")
+        return True
     except Exception as e:
-        logger.warning("  Deploy Guard: verify failed (%s)", e)
+        logger.error("  Deploy Guard: verify failed (%s)", e)
+        return False
 
 
 def step_deploy_prod(args, state: dict) -> bool:
@@ -2453,16 +2494,18 @@ def step_deploy_prod(args, state: dict) -> bool:
             logger.error("  Backend restart also failed: %s", stderr)
 
     # Verify production state after deploy — flag unintended changes
+    guard_ok = False
     if backend_ok:
         import time as _time
         _time.sleep(3)  # Give backend a moment to finish loading
-        _deploy_guard_verify(guard_snapshot)
+        guard_ok = _deploy_guard_verify(guard_snapshot)
 
-    state["step_deploy_prod"] = "done" if (frontend_ok or backend_ok) else "failed"
+    deploy_ok = (frontend_ok or backend_ok) and guard_ok
+    state["step_deploy_prod"] = "done" if deploy_ok else "failed"
     state["deploy_prod_frontend"] = "ok" if frontend_ok else "failed"
     state["deploy_prod_backend"] = "ok" if backend_ok else "failed"
     save_state(state)
-    return frontend_ok or backend_ok
+    return deploy_ok
 
 
 # ═══════════════════════════════════════════════════════════════════════
