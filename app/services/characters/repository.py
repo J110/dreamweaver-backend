@@ -470,6 +470,66 @@ class CharacterRepository:
 
         self._run_transaction(delete)
 
+    def transfer_characters(self, source_uid: str, target_uid: str) -> int:
+        if not source_uid or not target_uid or source_uid == target_uid:
+            return 0
+
+        def transfer(transaction):
+            source_characters = self._characters_for_uid(source_uid, transaction)
+            if not source_characters:
+                return 0
+            target_characters = self._characters_for_uid(target_uid, transaction)
+            target_counter_ref = self._counter_ref(target_uid)
+            target_counter = (
+                self._document_data(self._read(transaction, target_counter_ref))
+                or self._default_counter()
+            )
+            occupied = set(target_counter.get("occupied_slots", []))
+            occupied.update(
+                int(character["slot_number"])
+                for _, character in target_characters
+                if character.get("slot_number") is not None
+            )
+            reserved = set(target_counter.get("reserved_slots", []))
+            slot_reservations = self._slot_reservations(target_counter)
+            reserved.update(int(slot) for slot in slot_reservations)
+            assignments = []
+            for character_id, character in sorted(
+                source_characters,
+                key=lambda item: (int(item[1].get("slot_number") or 0), item[0]),
+            ):
+                slot_number = lowest_free_slot(list(occupied), list(reserved))
+                if slot_number is None:
+                    self._reject("no_slots")
+                occupied.add(slot_number)
+                assignments.append((character_id, slot_number))
+            for character_id, slot_number in assignments:
+                self._write_update(
+                    transaction,
+                    self._character_ref(character_id),
+                    {"uid": target_uid, "slot_number": slot_number},
+                )
+            self._write_set(transaction, target_counter_ref, {
+                "occupied_slots": sorted(occupied),
+                "reserved_slots": sorted(set(target_counter.get("reserved_slots", []))),
+                "slot_reservations": slot_reservations,
+                "revision": int(target_counter.get("revision", 0)) + 1,
+            })
+            source_counter_ref = self._counter_ref(source_uid)
+            source_counter = (
+                self._document_data(self._read(transaction, source_counter_ref))
+                or self._default_counter()
+            )
+            self._write_set(transaction, source_counter_ref, {
+                "occupied_slots": [],
+                "reserved_slots": sorted(set(source_counter.get("reserved_slots", []))),
+                "slot_reservations": self._slot_reservations(source_counter),
+                "revision": int(source_counter.get("revision", 0)) + 1,
+            })
+            return len(assignments)
+
+        return self._run_transaction(transfer)
+
     def _slot_for_generation(
         self,
         uid: str,
@@ -616,6 +676,21 @@ class CharacterRepository:
             snapshots = collection.stream(transaction=transaction)
         except TypeError:
             snapshots = collection.stream()
+        return [(snapshot.id, snapshot.to_dict()) for snapshot in snapshots]
+
+    def _characters_for_uid(self, uid, transaction=None) -> list[tuple[str, dict]]:
+        collections = getattr(self.db_client, "collections", None)
+        if isinstance(collections, dict):
+            return [
+                (character_id, deepcopy(character))
+                for character_id, character in collections.get("characters", {}).items()
+                if character.get("uid") == uid
+            ]
+        query = self.db_client.collection("characters").where("uid", "==", uid)
+        try:
+            snapshots = query.stream(transaction=transaction)
+        except TypeError:
+            snapshots = query.stream()
         return [(snapshot.id, snapshot.to_dict()) for snapshot in snapshots]
 
     def referenced_portrait_filenames(self) -> set[str]:

@@ -161,6 +161,7 @@ class LocalStore:
             "characters",
             "character_generation_jobs",
             "character_slot_counters",
+            "account_handoffs",
         }
 
         # Seed data tracking for hot-reload

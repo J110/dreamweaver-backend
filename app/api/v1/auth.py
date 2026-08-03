@@ -16,14 +16,18 @@ Removed:
 Spec: docs/specs/auth-magic-link-v1.md
 """
 
+import hashlib
+import secrets
+from datetime import datetime, timedelta, timezone
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from pydantic import BaseModel, EmailStr, Field
 
-from app.dependencies import get_current_user
+from app.dependencies import get_current_user, get_db_client
 from app.services import magic_link as ml
 from app.services.analytics_posthog import emit_event as ph_emit
+from app.services.characters.repository import CharacterRepository, CharacterRepositoryError
 from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -52,6 +56,10 @@ class LoginUsernameBody(BaseModel):
     username: str = Field(min_length=1, max_length=64)
     child_age: Optional[int] = Field(default=None, ge=0, le=18)
     lang: Optional[str] = Field(default=None, pattern="^(en|hi)$")
+
+
+class ClaimHandoffBody(BaseModel):
+    handoff_token: str = Field(min_length=32, max_length=256)
 
 
 # ── New endpoints ────────────────────────────────────────────
@@ -111,18 +119,67 @@ async def poll(session_id: str = Query(..., min_length=8)) -> dict:
 
 
 @router.post("/logout")
-async def logout(current_user: dict = Depends(get_current_user)) -> dict:
+async def logout(
+    current_user: dict = Depends(get_current_user),
+    db_client=Depends(get_db_client),
+) -> dict:
     """Revoke the current bearer token.
 
     Sets revoked_at on the tokens row. Subsequent requests with this token
     return 401 from local_verify_token's revocation check.
     """
     token = current_user.get("_token", "")
+    handoff_token = None
+    try:
+        handoff_token = secrets.token_urlsafe(32)
+        handoff_id = hashlib.sha256(handoff_token.encode()).hexdigest()
+        now = datetime.now(timezone.utc)
+        db_client.collection("account_handoffs").document(handoff_id).set({
+            "id": handoff_id,
+            "source_uid": current_user["uid"],
+            "created_at": now.isoformat(),
+            "expires_at": (now + timedelta(days=7)).isoformat(),
+        })
+    except Exception as exc:
+        handoff_token = None
+        logger.warning("logout handoff creation failed uid=%s: %s", current_user.get("uid"), exc)
     family_id = current_user.get("family_id", "")
     revoked = ml.revoke_token(token, reason="logout")
     if revoked:
         ph_emit(family_id, "auth_logout", {})
-    return {"success": revoked}
+    return {"success": revoked, "handoff_token": handoff_token}
+
+
+@router.post("/claim-handoff")
+async def claim_handoff(
+    body: ClaimHandoffBody,
+    current_user: dict = Depends(get_current_user),
+    db_client=Depends(get_db_client),
+) -> dict:
+    handoff_id = hashlib.sha256(body.handoff_token.encode()).hexdigest()
+    handoff_ref = db_client.collection("account_handoffs").document(handoff_id)
+    snapshot = handoff_ref.get()
+    handoff = snapshot.to_dict() if getattr(snapshot, "exists", False) else None
+    if not handoff:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="handoff_not_found")
+    try:
+        expires_at = datetime.fromisoformat(str(handoff["expires_at"]).replace("Z", "+00:00"))
+    except (KeyError, TypeError, ValueError):
+        handoff_ref.delete()
+        raise HTTPException(status_code=status.HTTP_410_GONE, detail="handoff_expired")
+    if expires_at <= datetime.now(timezone.utc):
+        handoff_ref.delete()
+        raise HTTPException(status_code=status.HTTP_410_GONE, detail="handoff_expired")
+    source_uid = handoff.get("source_uid")
+    target_uid = current_user["uid"]
+    try:
+        transferred = CharacterRepository(db_client).transfer_characters(source_uid, target_uid)
+    except CharacterRepositoryError as exc:
+        if str(exc) == "no_slots":
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="no_character_slots")
+        raise
+    handoff_ref.delete()
+    return {"success": True, "characters_transferred": transferred}
 
 
 @router.post("/claim_existing")

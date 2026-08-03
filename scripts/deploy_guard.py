@@ -181,6 +181,11 @@ def capture_state(api: str) -> dict:
         os.getenv("ADMIN_API_KEY", "").strip()
         or _load_admin_key_from_env_file()
     )
+    if api.rstrip("/") == PROD_API and not admin_key:
+        raise RuntimeError(
+            "ADMIN_API_KEY is required for production capture; "
+            "anonymous responses redact premium audio"
+        )
     headers = {"X-Admin-Key": admin_key} if admin_key else {}
     client = httpx.Client(timeout=30, headers=headers)
     state = {
@@ -1336,44 +1341,6 @@ def diff_states(before: dict, after: dict) -> dict:
     }
 
 
-def merge_golden(golden: dict, current: dict) -> dict:
-    """Merge current state INTO golden baseline.
-
-    Rules:
-    - New stories/items in current are ADDED to golden (growing content).
-    - Items in golden but MISSING from current are KEPT (they should still exist).
-    - If an item exists in both, golden keeps the version with MORE data
-      (e.g., if golden has audio but current doesn't, keep golden's version).
-    """
-    merged = json.loads(json.dumps(golden))  # deep copy
-    merged["captured_at"] = current.get("captured_at", merged.get("captured_at"))
-
-    # Stories: union of both, prefer version with more data
-    for sid, s in current.get("stories", {}).items():
-        if sid not in merged.get("stories", {}):
-            merged.setdefault("stories", {})[sid] = s
-        else:
-            existing = merged["stories"][sid]
-            # Keep the one with audio if the other lost it
-            if s.get("has_audio") and not existing.get("has_audio"):
-                merged["stories"][sid] = s
-            # Keep the one with cover if the other lost it
-            if s.get("has_cover") and not existing.get("has_cover"):
-                existing["has_cover"] = True
-                existing["cover_url"] = s["cover_url"]
-
-    merged["story_count"] = len(merged.get("stories", {}))
-
-    # Silly songs & poems: same union logic
-    for category in ["silly_songs", "poems"]:
-        for age in ["2-5", "6-8", "9-12"]:
-            current_items = current.get(category, {}).get(age, {})
-            for item_id, item in current_items.items():
-                merged.setdefault(category, {}).setdefault(age, {})[item_id] = item
-
-    return merged
-
-
 def print_state_summary(state: dict, label: str = "Current"):
     """Print a compact summary of state (English only)."""
     stories = state.get("stories", {})
@@ -2039,24 +2006,6 @@ def cmd_verify(args):
                 unresolved.append(msg)
         print(f"{'='*60}")
 
-    # ── Update golden baseline: merge new content ──
-    if golden:
-        merged = merge_golden(golden, after)
-        save_json(GOLDEN_PATH, merged)
-        new_stories = len(merged.get("stories", {})) - len(golden.get("stories", {}))
-        # Count new silly songs + poems
-        new_other = 0
-        for cat in ["silly_songs", "poems"]:
-            for age in ["2-5", "6-8", "9-12"]:
-                new_other += len(merged.get(cat, {}).get(age, {})) - len(golden.get(cat, {}).get(age, {}))
-        total_new = new_stories + new_other
-        if total_new > 0:
-            print(f"\n  📌 Golden baseline updated: +{total_new} new item(s) added")
-    else:
-        # First run — create golden from current state
-        save_json(GOLDEN_PATH, after)
-        print(f"\n  📌 Golden baseline created with {len(after.get('stories', {}))} stories")
-
     # ── Run invariant checks with auto-recovery ──
     print("\n  Running content invariant checks...")
     class InvariantArgs:
@@ -2275,21 +2224,14 @@ def cmd_check(args):
 
 
 def cmd_seal(args):
-    """Seal current state as the golden baseline."""
+    """Explicitly replace the golden baseline with current live state."""
     api = get_api(args.local)
     print(f"Capturing live state from {api}...")
     state = capture_state(api)
 
-    existing = load_json(GOLDEN_PATH)
-    if existing:
-        merged = merge_golden(existing, state)
-        save_json(GOLDEN_PATH, merged)
-        print_state_summary(merged, "Golden Baseline (updated)")
-        print(f"\n  📌 Golden baseline updated (merged {len(merged.get('stories', {}))} stories)")
-    else:
-        save_json(GOLDEN_PATH, state)
-        print_state_summary(state, "Golden Baseline (new)")
-        print(f"\n  📌 Golden baseline created with {len(state.get('stories', {}))} stories")
+    save_json(GOLDEN_PATH, state)
+    print_state_summary(state, "Golden Baseline (replaced)")
+    print(f"\n  📌 Golden baseline replaced with {len(state.get('stories', {}))} live content items")
 
     print(f"  Saved to: {GOLDEN_PATH}\n")
 
@@ -2362,12 +2304,6 @@ def cmd_audit(args):
         json_recovered, json_failed = recover_json_files(changes["removed_items"])
         if json_recovered > 0:
             print(f"\n  ♻️  Recovered {json_recovered} JSON data file(s)")
-
-    # Merge new content into golden
-    if changes["added"]:
-        merged = merge_golden(golden, current)
-        save_json(GOLDEN_PATH, merged)
-        print(f"\n  📌 Golden baseline updated: +{len(changes['added'])} new item(s)")
 
     print()
 
