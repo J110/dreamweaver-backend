@@ -300,12 +300,19 @@ def capture_state(api: str) -> dict:
                 data = resp.json()
                 items = data.get("data", {}).get("items", [])
                 for item in items:
+                    cover_url = item.get("cover") or (
+                        f"/covers/poems/{item['cover_file']}"
+                        if item.get("cover_file") else ""
+                    )
                     bucket[item["id"]] = {
                         "title": item.get("title"),
                         "lang": lang,
                         "has_audio": bool(item.get("audio_file")),
                         "audio_url": f"/audio/poems/{item['audio_file']}" if item.get("audio_file") else "",
-                        "cover_url": f"/covers/poems/{item['cover_file']}" if item.get("cover_file") else "",
+                        "has_cover": bool(
+                            cover_url and cover_url != "/covers/default.svg"
+                        ),
+                        "cover_url": cover_url,
                     }
             except Exception:
                 pass
@@ -337,6 +344,8 @@ def verify_files(state: dict, frontend: str, api: str) -> tuple[list[str], list[
             filename = s["cover_url"].split("/")[-1]
             urls_to_check.append((frontend, s["cover_url"], f"story cover: {sid}",
                                   {"type": "story_cover", "url_path": s["cover_url"], "filename": filename}))
+        else:
+            issues.append(f"  MISSING COVER METADATA: story cover: {sid}")
 
     # Silly songs — served by backend API
     for age, items in state.get("silly_songs", {}).items():
@@ -345,10 +354,19 @@ def verify_files(state: dict, frontend: str, api: str) -> tuple[list[str], list[
                 filename = s["audio_url"].split("/")[-1]
                 urls_to_check.append((api, s["audio_url"], f"silly song audio ({age}): {sid}",
                                       {"type": "silly_song_audio", "url_path": s["audio_url"], "filename": filename}))
-            if s.get("cover_url"):
+            if s.get("has_cover") and s.get("cover_url"):
                 filename = s["cover_url"].split("/")[-1]
                 urls_to_check.append((frontend, s["cover_url"], f"silly song cover ({age}): {sid}",
                                       {"type": "silly_song_cover", "url_path": s["cover_url"], "filename": filename}))
+            else:
+                issues.append(f"  MISSING COVER METADATA: silly song cover ({age}): {sid}")
+                recoverable.append({
+                    "type": "silly_song_cover_metadata",
+                    "filename": sid,
+                    "item_id": sid,
+                    "lang": s.get("lang", "en"),
+                    "category": "silly_songs",
+                })
 
     # Poems — audio served by backend API, covers by frontend nginx
     for age, items in state.get("poems", {}).items():
@@ -357,10 +375,19 @@ def verify_files(state: dict, frontend: str, api: str) -> tuple[list[str], list[
                 filename = p["audio_url"].split("/")[-1]
                 urls_to_check.append((api, p["audio_url"], f"poem audio ({age}): {pid}",
                                       {"type": "poem_audio", "url_path": p["audio_url"], "filename": filename}))
-            if p.get("cover_url"):
+            if p.get("has_cover") and p.get("cover_url"):
                 filename = p["cover_url"].split("/")[-1]
                 urls_to_check.append((frontend, p["cover_url"], f"poem cover ({age}): {pid}",
                                       {"type": "poem_cover", "url_path": p["cover_url"], "filename": filename}))
+            else:
+                issues.append(f"  MISSING COVER METADATA: poem cover ({age}): {pid}")
+                recoverable.append({
+                    "type": "poem_cover_metadata",
+                    "filename": pid,
+                    "item_id": pid,
+                    "lang": p.get("lang", "en"),
+                    "category": "poems",
+                })
 
     if not urls_to_check:
         return issues, recoverable
@@ -390,6 +417,73 @@ def verify_files(state: dict, frontend: str, api: str) -> tuple[list[str], list[
     return issues, recoverable
 
 
+def _cover_metadata_recovery_command(item: dict) -> str:
+    import base64
+
+    category = item["category"]
+    content_id = item["item_id"]
+    lang = item.get("lang", "en")
+    bucket = f"{category}_hi" if lang == "hi" else category
+    data_dir = {
+        "silly_songs": BACKEND_DATA_SILLY_HI if lang == "hi" else BACKEND_DATA_SILLY,
+        "poems": BACKEND_DATA_POEMS_HI if lang == "hi" else BACKEND_DATA_POEMS,
+    }[category]
+    cover_dir = "silly-songs" if category == "silly_songs" else "poems"
+    helper = f"""
+import json, os, shutil
+content_id = {content_id!r}
+json_path = os.path.join({data_dir!r}, content_id + '.json')
+backup_path = os.path.join({JSON_STORE!r}, {bucket!r}, content_id + '.json')
+served_dir = os.path.join({COVER_STORE!r}, {cover_dir!r})
+os.makedirs(served_dir, exist_ok=True)
+if not os.path.isfile(json_path):
+    print('NOT_IN_STORE:', content_id)
+    raise SystemExit(0)
+with open(json_path) as handle:
+    data = json.load(handle)
+filename = data.get('cover_file')
+if not filename and os.path.isfile(backup_path):
+    try:
+        with open(backup_path) as handle:
+            filename = json.load(handle).get('cover_file')
+    except Exception:
+        filename = None
+extensions = ('.webp', '.svg', '.png', '.jpg', '.jpeg')
+candidates = []
+if filename:
+    candidates.extend((
+        os.path.join(served_dir, filename),
+        os.path.join({COVER_STORE!r}, filename),
+        os.path.join({COVER_STORE!r}, {cover_dir!r} + '--' + filename),
+    ))
+for extension in extensions:
+    candidates.extend((
+        os.path.join(served_dir, content_id + extension),
+        os.path.join({COVER_STORE!r}, content_id + extension),
+        os.path.join({COVER_STORE!r}, {cover_dir!r} + '--' + content_id + extension),
+    ))
+source = next((path for path in candidates if os.path.isfile(path)), None)
+if not source:
+    print('NOT_IN_STORE:', content_id)
+    raise SystemExit(0)
+filename = filename or os.path.basename(source).removeprefix({cover_dir!r} + '--')
+destination = os.path.join(served_dir, filename)
+if os.path.realpath(source) != os.path.realpath(destination):
+    shutil.copyfile(source, destination)
+data['cover_file'] = filename
+temp_path = json_path + '.deploy-guard.tmp'
+with open(temp_path, 'w') as handle:
+    json.dump(data, handle, indent=2, ensure_ascii=False)
+    handle.write('\\n')
+os.replace(temp_path, json_path)
+os.makedirs(os.path.dirname(backup_path), exist_ok=True)
+shutil.copyfile(json_path, backup_path)
+print('RECOVERED:', content_id)
+"""
+    encoded = base64.b64encode(helper.encode()).decode()
+    return f"echo {encoded} | base64 -d | python3"
+
+
 def auto_recover(recoverable: list[dict], dry_run: bool = False) -> tuple[int, int]:
     """Attempt to recover missing files from backup stores on the GCP VM.
 
@@ -408,9 +502,11 @@ def auto_recover(recoverable: list[dict], dry_run: bool = False) -> tuple[int, i
     recover_commands = []
     for item in recoverable:
         ftype = item["type"]
-        filename = item["filename"]
+        filename = item.get("filename", "")
 
-        if ftype == "story_audio":
+        if ftype in ("silly_song_cover_metadata", "poem_cover_metadata"):
+            recover_commands.append(_cover_metadata_recovery_command(item))
+        elif ftype == "story_audio":
             # Audio served from frontend /audio/pre-gen/
             recover_commands.append(
                 f'if [ -f "{AUDIO_STORE_PREGEN}/{filename}" ]; then '
@@ -431,21 +527,28 @@ def auto_recover(recoverable: list[dict], dry_run: bool = False) -> tuple[int, i
                 f'else echo "NOT_IN_STORE: {filename}"; fi'
             )
         elif ftype == "silly_song_cover":
-            # Silly song covers: store may use "silly-songs--{name}" naming
             store_name = f"silly-songs--{filename}"
             recover_commands.append(
+                f'mkdir -p "{COVER_STORE}/silly-songs"; '
                 f'if [ -f "{COVER_STORE}/{store_name}" ]; then '
-                f'cp "{COVER_STORE}/{store_name}" "{BACKEND_COVERS_SILLY}/{filename}" && echo "RECOVERED: {filename}"; '
+                f'cp "{COVER_STORE}/{store_name}" "{COVER_STORE}/silly-songs/{filename}" && echo "RECOVERED: {filename}"; '
                 f'elif [ -f "{COVER_STORE}/{filename}" ]; then '
-                f'cp "{COVER_STORE}/{filename}" "{BACKEND_COVERS_SILLY}/{filename}" && echo "RECOVERED: {filename}"; '
+                f'cp "{COVER_STORE}/{filename}" "{COVER_STORE}/silly-songs/{filename}" && echo "RECOVERED: {filename}"; '
                 f'else echo "NOT_IN_STORE: {filename}"; fi'
             )
         elif ftype == "poem_audio":
             # Poem audio: no dedicated store, will fall through to git restore
             recover_commands.append(f'echo "NOT_IN_STORE: {filename}"')
         elif ftype == "poem_cover":
-            # Poem covers: no dedicated store, will fall through to git restore
-            recover_commands.append(f'echo "NOT_IN_STORE: {filename}"')
+            store_name = f"poems--{filename}"
+            recover_commands.append(
+                f'mkdir -p "{COVER_STORE}/poems"; '
+                f'if [ -f "{COVER_STORE}/{store_name}" ]; then '
+                f'cp "{COVER_STORE}/{store_name}" "{COVER_STORE}/poems/{filename}" && echo "RECOVERED: {filename}"; '
+                f'elif [ -f "{COVER_STORE}/{filename}" ]; then '
+                f'cp "{COVER_STORE}/{filename}" "{COVER_STORE}/poems/{filename}" && echo "RECOVERED: {filename}"; '
+                f'else echo "NOT_IN_STORE: {filename}"; fi'
+            )
 
     if not recover_commands:
         return 0, 0
@@ -462,10 +565,8 @@ def auto_recover(recoverable: list[dict], dry_run: bool = False) -> tuple[int, i
     not_found_files = []  # Track which files need git restore
 
     try:
-        result = subprocess.run(
-            SSH_CMD + [full_script],
-            capture_output=True, text=True, timeout=120
-        )
+        command = ["bash", "-c", full_script] if ON_PROD_VM else SSH_CMD + [full_script]
+        result = subprocess.run(command, capture_output=True, text=True, timeout=120)
         output = result.stdout.strip()
         if output:
             for line in output.split("\n"):
@@ -1330,6 +1431,8 @@ def diff_states(before: dict, after: dict) -> dict:
             a = after["poems"][age][pid]
             if b.get("has_audio") and not a.get("has_audio"):
                 degraded.append(f"  ❌ LOST AUDIO poem ({age}): {pid}")
+            if b.get("has_cover") and not a.get("has_cover"):
+                degraded.append(f"  ❌ LOST COVER poem ({age}): {pid}")
 
     return {
         "added": added,
@@ -1364,16 +1467,20 @@ def print_state_summary(state: dict, label: str = "Current"):
         items = state.get("silly_songs", {}).get(age, {})
         count = len(items)
         with_audio = sum(1 for d in items.values() if d.get("has_audio"))
-        status = "✅" if with_audio == count else f"❌ {count - with_audio} without audio"
-        print(f"    {age}: {count} songs, {with_audio} with audio {status}")
+        with_cover = sum(1 for d in items.values() if d.get("has_cover"))
+        audio_status = "✅" if with_audio == count else f"❌ {count - with_audio} without audio"
+        cover_status = "✅" if with_cover == count else f"❌ {count - with_cover} without covers"
+        print(f"    {age}: {count} songs, {with_audio} with audio {audio_status}, {with_cover} with covers {cover_status}")
 
     print(f"\n  POEMS")
     for age in ["2-5", "6-8", "9-12"]:
         items = state.get("poems", {}).get(age, {})
         count = len(items)
         with_audio = sum(1 for d in items.values() if d.get("has_audio"))
-        status = "✅" if with_audio == count else f"❌ {count - with_audio} without audio"
-        print(f"    {age}: {count} poems, {with_audio} with audio {status}")
+        with_cover = sum(1 for d in items.values() if d.get("has_cover"))
+        audio_status = "✅" if with_audio == count else f"❌ {count - with_audio} without audio"
+        cover_status = "✅" if with_cover == count else f"❌ {count - with_cover} without covers"
+        print(f"    {age}: {count} poems, {with_audio} with audio {audio_status}, {with_cover} with covers {cover_status}")
 
 
 def save_json(path: Path, state: dict):
@@ -1992,6 +2099,7 @@ def cmd_verify(args):
                 # (gen-feec_monika.mp3, 2026-05-29) instead of blocking. Re-run
                 # the file check and block on ANY remaining missing/broken file.
                 print("  Re-checking files after recovery attempt...")
+                after = capture_state(api)
                 file_issues2, _ = verify_files(after, frontend, api)
                 if len(file_issues2) == 0:
                     print("  ✅ All files now reachable!")
@@ -2187,6 +2295,8 @@ def cmd_check(args):
         for sid, s in items.items():
             if not s.get("has_audio"):
                 issues.append(f"  ❌ Silly song without audio ({age}): {sid}")
+            if not s.get("has_cover"):
+                issues.append(f"  ❌ Silly song without cover ({age}): {sid}")
 
     # Check poems (expect >=0 per group, but if any exist they must have audio)
     for age in ["2-5", "6-8", "9-12"]:
@@ -2194,6 +2304,8 @@ def cmd_check(args):
         for pid, p in items.items():
             if not p.get("has_audio"):
                 issues.append(f"  ❌ Poem without audio ({age}): {pid}")
+            if not p.get("has_cover"):
+                issues.append(f"  ❌ Poem without cover ({age}): {pid}")
 
     print(f"\n{'='*60}")
     if not issues:
