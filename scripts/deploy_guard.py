@@ -271,9 +271,10 @@ def capture_state(api: str) -> dict:
                 data = resp.json()
                 items = data.get("data", {}).get("items", [])
                 for item in items:
-                    cover_url = item.get("cover") or (
-                        f"/covers/silly-songs/{item['cover_file']}"
-                        if item.get("cover_file") else ""
+                    cover_file = item.get("cover_file")
+                    cover_url = (
+                        f"/covers/silly-songs/{cover_file}"
+                        if cover_file else item.get("cover", "")
                     )
                     bucket[item["id"]] = {
                         "title": item.get("title"),
@@ -281,8 +282,9 @@ def capture_state(api: str) -> dict:
                         "has_audio": bool(item.get("audio_file")),
                         "audio_url": f"/audio/silly-songs/{item['audio_file']}" if item.get("audio_file") else "",
                         "has_cover": bool(
-                            cover_url and cover_url != "/covers/default.svg"
+                            cover_file and cover_url != "/covers/default.svg"
                         ),
+                        "cover_file": cover_file or "",
                         "cover_url": cover_url,
                     }
             except Exception:
@@ -300,9 +302,10 @@ def capture_state(api: str) -> dict:
                 data = resp.json()
                 items = data.get("data", {}).get("items", [])
                 for item in items:
-                    cover_url = item.get("cover") or (
-                        f"/covers/poems/{item['cover_file']}"
-                        if item.get("cover_file") else ""
+                    cover_file = item.get("cover_file")
+                    cover_url = (
+                        f"/covers/poems/{cover_file}"
+                        if cover_file else item.get("cover", "")
                     )
                     bucket[item["id"]] = {
                         "title": item.get("title"),
@@ -310,8 +313,9 @@ def capture_state(api: str) -> dict:
                         "has_audio": bool(item.get("audio_file")),
                         "audio_url": f"/audio/poems/{item['audio_file']}" if item.get("audio_file") else "",
                         "has_cover": bool(
-                            cover_url and cover_url != "/covers/default.svg"
+                            cover_file and cover_url != "/covers/default.svg"
                         ),
+                        "cover_file": cover_file or "",
                         "cover_url": cover_url,
                     }
             except Exception:
@@ -471,6 +475,7 @@ destination = os.path.join(served_dir, filename)
 if os.path.realpath(source) != os.path.realpath(destination):
     shutil.copyfile(source, destination)
 data['cover_file'] = filename
+data['cover'] = '/covers/' + {cover_dir!r} + '/' + filename
 temp_path = json_path + '.deploy-guard.tmp'
 with open(temp_path, 'w') as handle:
     json.dump(data, handle, indent=2, ensure_ascii=False)
