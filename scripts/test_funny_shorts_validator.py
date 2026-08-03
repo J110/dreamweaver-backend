@@ -7,7 +7,42 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import _funny_shorts_common as funny_shorts_common
 from _funny_shorts_common import validate_funny_short
+
+
+def test_validator_retry_prompt_includes_candidate_and_exact_errors():
+    candidate = {
+        "title": "Test",
+        "inputs": [{"voice": "A", "text": "Bahut lambi line"}],
+    }
+    errors = [
+        "Line 0: too many words",
+        "Line 0: missing Devanagari in 'text_deva' (TTS engine input)",
+    ]
+
+    prompt = funny_shorts_common.build_validator_retry_prompt(
+        "BASE CONTRACT",
+        candidate,
+        errors,
+    )
+
+    assert "BASE CONTRACT" in prompt
+    assert "Line 0: too many words" in prompt
+    assert "missing Devanagari" in prompt
+    assert '"title": "Test"' in prompt
+    assert "complete corrected JSON object" in prompt
+
+
+def test_validator_retry_prompt_does_not_relax_validator_limits():
+    prompt = funny_shorts_common.build_validator_retry_prompt(
+        "HI hard ceiling: 800",
+        {},
+        ["Too long: 801 chars"],
+    )
+
+    assert "HI hard ceiling: 800" in prompt
+    assert "Do not remove or relax any requirement" in prompt
 
 # ────────────────────────────────────────────────────────────────────────
 #  Task 1 — structural + tag whitelist

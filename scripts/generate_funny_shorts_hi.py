@@ -41,6 +41,7 @@ from _funny_shorts_common import (  # noqa: E402
     _detect_closing_pattern,
     _extract_first_tag,
     build_prompt,
+    build_validator_retry_prompt,
     frame_dialogue_with_stings,
     render_dialogue_v3,
     repair_devanagari,
@@ -246,12 +247,13 @@ def main() -> int:
 
     script = None
     last_errors: list[str] = []
+    attempt_prompt = prompt
     for attempt in range(5):
         if attempt > 0:
             time.sleep(35)
         print(f"Mistral attempt {attempt + 1}...")
         try:
-            candidate = request_mistral_script(prompt)
+            candidate = request_mistral_script(attempt_prompt)
         except Exception as e:
             print(f"  Mistral request failed: {e}")
             continue
@@ -282,9 +284,10 @@ def main() -> int:
             script = candidate
             break
         print(f"  validation failed: {last_errors}")
+        attempt_prompt = build_validator_retry_prompt(prompt, candidate, last_errors)
 
     if script is None:
-        print(f"ERROR: failed validation after 3 attempts: {last_errors}", file=sys.stderr)
+        print(f"ERROR: failed validation after 5 attempts: {last_errors}", file=sys.stderr)
         return 1
 
     print(f"\n✓ Validated. Title: {script['title']} ({script.get('title_en','-')})")

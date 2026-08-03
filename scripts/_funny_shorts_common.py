@@ -7,6 +7,7 @@ See:
 from __future__ import annotations
 
 import copy
+import json
 import re
 from typing import Callable, Iterable
 
@@ -371,6 +372,25 @@ def validate_funny_short(
 _DEVA_ERROR_RE = re.compile(
     r"^Line (\d+): missing Devanagari in 'text_deva'"
 )
+
+
+def build_validator_retry_prompt(
+    base_prompt: str,
+    candidate: dict,
+    errors: list[str],
+) -> str:
+    error_lines = "\n".join(f"- {error}" for error in errors)
+    rejected = json.dumps(candidate, ensure_ascii=False, indent=2)
+    return (
+        f"{base_prompt}\n\n"
+        "The previous candidate failed the validator. Correct that candidate "
+        "using the exact failures below.\n"
+        f"{error_lines}\n\n"
+        "Rejected candidate:\n"
+        f"{rejected}\n\n"
+        "Return one complete corrected JSON object. Do not remove or relax "
+        "any requirement."
+    )
 
 
 def _build_devanagari_repair_prompt(lines_to_convert: list[tuple[int, str]]) -> str:
