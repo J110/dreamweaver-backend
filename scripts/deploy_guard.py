@@ -266,12 +266,19 @@ def capture_state(api: str) -> dict:
                 data = resp.json()
                 items = data.get("data", {}).get("items", [])
                 for item in items:
+                    cover_url = item.get("cover") or (
+                        f"/covers/silly-songs/{item['cover_file']}"
+                        if item.get("cover_file") else ""
+                    )
                     bucket[item["id"]] = {
                         "title": item.get("title"),
                         "lang": lang,
                         "has_audio": bool(item.get("audio_file")),
                         "audio_url": f"/audio/silly-songs/{item['audio_file']}" if item.get("audio_file") else "",
-                        "cover_url": f"/covers/silly-songs/{item['cover_file']}" if item.get("cover_file") else "",
+                        "has_cover": bool(
+                            cover_url and cover_url != "/covers/default.svg"
+                        ),
+                        "cover_url": cover_url,
                     }
             except Exception:
                 pass
@@ -1187,6 +1194,8 @@ def verify_new_items_serving(added_items: list[dict], frontend: str, api: str) -
                     issues.append(f"  ❌ NEW {label} — cover NOT serving ({resp.status_code}): {cover_url}")
             except Exception as e:
                 issues.append(f"  ❌ NEW {label} — cover unreachable: {cover_url} ({e})")
+        else:
+            issues.append(f"  ⚠️  NEW {label} — no cover URL")
 
     return issues
 
@@ -1285,6 +1294,8 @@ def diff_states(before: dict, after: dict) -> dict:
             a = after["silly_songs"][age][sid]
             if b.get("has_audio") and not a.get("has_audio"):
                 degraded.append(f"  ❌ LOST AUDIO silly song ({age}): {sid}")
+            if b.get("has_cover") and not a.get("has_cover"):
+                degraded.append(f"  ❌ LOST COVER silly song ({age}): {sid}")
             # Detect content updates (title change)
             if b.get("title") != a.get("title"):
                 updated.append(f"  ✏️  UPDATED silly song ({age}): {sid} — \"{b.get('title')}\" → \"{a.get('title')}\"")
