@@ -14,6 +14,18 @@ logger = get_logger(__name__)
 router = APIRouter()
 
 
+def _interaction_created_at(interaction):
+    created_at = (interaction.to_dict() or {}).get("created_at")
+    if isinstance(created_at, datetime):
+        return created_at.timestamp()
+    if isinstance(created_at, str):
+        try:
+            return datetime.fromisoformat(created_at.replace("Z", "+00:00")).timestamp()
+        except ValueError:
+            return 0
+    return 0
+
+
 class _ImmediateTransaction:
     def get(self, target):
         return target.get()
@@ -468,6 +480,7 @@ async def get_user_saves(
 
         # Get all save interactions for user
         interactions = db_client.collection("interactions").where("user_id", "==", user_id).where("type", "==", "save").get()
+        interactions = sorted(interactions, key=_interaction_created_at, reverse=True)
 
         saved_ids = [interaction.to_dict().get("content_id") for interaction in interactions]
 
