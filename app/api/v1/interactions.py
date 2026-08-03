@@ -31,7 +31,11 @@ class _ImmediateTransaction:
 def _run_transaction(db_client, callback):
     runner = getattr(db_client, "run_transaction", None)
     if callable(runner):
-        return runner(callback)
+        return runner(
+            lambda transaction: callback(
+                transaction if transaction is not None else _ImmediateTransaction()
+            )
+        )
     transaction_factory = getattr(db_client, "transaction", None)
     if callable(transaction_factory):
         from firebase_admin import firestore
