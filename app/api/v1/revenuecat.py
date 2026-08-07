@@ -27,9 +27,37 @@ from app.dependencies import get_current_user, get_db_client
 from app.utils.revenuecat_mapping import customer_info_to_source, map_event_to_source, move_native_entitlements
 from app.utils.credits import premium_period_credit_fields, update_user_credit_state
 from app.utils.logger import get_logger
+from app.services.subscription_accounts import sync_subscription_account_from_user
 
 logger = get_logger(__name__)
 router = APIRouter()
+
+
+def _fetch_customer_info(app_user_id: str) -> dict:
+    api_key = os.getenv("REVENUECAT_PUBLIC_API_KEY")
+    if not api_key:
+        raise RuntimeError("REVENUECAT_PUBLIC_API_KEY missing")
+    with httpx.Client(timeout=10.0) as client:
+        response = client.get(
+            f"https://api.revenuecat.com/v1/subscribers/{quote(app_user_id, safe='')}",
+            headers={"Authorization": f"Bearer {api_key}", "Accept": "application/json"},
+        )
+        response.raise_for_status()
+        return response.json()
+
+
+def _replace_native_source(db_client, uid: str, user: dict, source: dict | None) -> None:
+    entitlements = dict(user.get("entitlements") or {})
+    if source:
+        entitlements[source["store"]] = {
+            **source,
+            "updated_at": datetime.now(timezone.utc).isoformat(),
+        }
+    else:
+        entitlements.pop("apple", None)
+        entitlements.pop("google", None)
+    _persist_user_update(db_client, uid, {"entitlements": entitlements})
+    _apply_native_tier_and_credits(db_client, uid, source)
 
 
 def _apply_native_tier_and_credits(
@@ -38,6 +66,7 @@ def _apply_native_tier_and_credits(
     source: dict | None,
 ) -> None:
     _apply_tier(db_client, uid)
+    sync_subscription_account_from_user(db_client, uid)
     if not source or source.get("status") not in {"active", "trialing", "grace"}:
         return
     period_key = ":".join(
@@ -254,8 +283,14 @@ def _process_transfer(db_client, event: dict) -> None:
         item for item in _existing_users(db_client, event.get("transferred_from"))
         if item[0] not in destination_ids
     ]
-    if not destinations or not sources:
-        logger.warning("revenuecat transfer has no known source or destination user — ack-only")
+    if not destinations:
+        logger.warning("revenuecat transfer has no known destination user — ack-only")
+        return
+
+    if not sources:
+        for uid, user in destinations:
+            payload = _fetch_customer_info(uid)
+            _replace_native_source(db_client, uid, user, customer_info_to_source(payload))
         return
 
     store = event.get("store")
@@ -278,3 +313,4 @@ def _process_transfer(db_client, event: dict) -> None:
         )
         _persist_user_update(db_client, uid, {"entitlements": entitlements})
         _apply_tier(db_client, uid)
+        sync_subscription_account_from_user(db_client, uid)

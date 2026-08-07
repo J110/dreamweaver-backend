@@ -26,6 +26,7 @@ from app.services.stripe_client import (
     verify_webhook,
 )
 from app.services.analytics_posthog import emit_event as ph_emit
+from app.services.subscription_accounts import normalize_email
 from app.utils.credits import (
     premium_period_credit_fields,
     update_user_credit_state,
@@ -214,9 +215,11 @@ def _handle_sub_created(db_client, event) -> None:
         stripe = _get_client()
         if stripe is not None:
             cust = stripe.Customer.retrieve(customer_id)
-            email = cust.get("email") if cust else None
+            email = normalize_email(cust.get("email") if cust else None)
             if email:
                 fields["billing_email"] = email
+                if not user.get("recovery_email"):
+                    fields["recovery_email"] = email
     except Exception as e:
         logger.info("billing_email fetch skipped: %s", e)
 
@@ -581,8 +584,32 @@ def _handle_checkout_session_completed(db_client, event) -> None:
     mode = session.get("mode")
     metadata = session.get("metadata") or {}
 
+    if mode == "subscription":
+        customer_id = session.get("customer")
+        user = _find_user_by_customer(db_client, customer_id)
+        if not user:
+            logger.warning(
+                "subscription checkout: no user found for customer=%s session=%s",
+                customer_id, session.get("id"),
+            )
+            return
+        details = session.get("customer_details") or {}
+        email = normalize_email(details.get("email") or session.get("customer_email"))
+        if not email:
+            try:
+                from app.services.stripe_client import _get_client
+                stripe = _get_client()
+                customer = stripe.Customer.retrieve(customer_id) if stripe else None
+                email = normalize_email(customer.get("email") if customer else None)
+            except Exception as exc:
+                logger.info("subscription checkout email fetch skipped: %s", exc)
+        if email:
+            fields = {"billing_email": email}
+            if not user.get("recovery_email"):
+                fields["recovery_email"] = email
+            _persist_user_update(db_client, user["uid"], fields)
+        return
     if mode != "payment":
-        # Subscription-mode session — handled elsewhere. Ack and return.
         return
     if metadata.get("kind") != "topup":
         # Some other one-time payment we didn't initiate. Log and skip.

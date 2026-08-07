@@ -162,6 +162,9 @@ class LocalStore:
             "character_generation_jobs",
             "character_slot_counters",
             "account_handoffs",
+            "apple_auth_sessions",
+            "subscription_accounts",
+            "push_devices",
         }
 
         # Seed data tracking for hot-reload

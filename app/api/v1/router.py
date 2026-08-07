@@ -24,6 +24,8 @@ from .revenuecat import router as revenuecat_router
 from .playlist import router as playlist_router
 from .restore import router as restore_router
 from .characters import router as characters_router
+from .apple_auth import router as apple_auth_router
+from .push_devices import router as push_router
 
 # Main v1 router
 router = APIRouter(prefix="/api/v1")
@@ -51,5 +53,7 @@ router.include_router(revenuecat_router, prefix="/billing/revenuecat", tags=["Re
 router.include_router(playlist_router, prefix="/playlist", tags=["Playlist"])
 router.include_router(restore_router, prefix="/auth/restore", tags=["Auth Restore"])
 router.include_router(characters_router, prefix="/characters", tags=["Characters"])
+router.include_router(apple_auth_router, prefix="/auth/apple", tags=["Apple Auth"])
+router.include_router(push_router, prefix="/push", tags=["Push Notifications"])
 
 __all__ = ["router"]
