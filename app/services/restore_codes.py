@@ -92,31 +92,40 @@ def _new_salt() -> str:
 
 
 def _lookup_user_by_recovery_email(email_lc: str) -> Optional[dict]:
-    """Find user by recovery_email (primary) then billing_email (fallback).
-
-    Match is on the lowercase comparison; storage is already lowercased on
-    capture (webhook + backfill both normalize). The billing_email fallback
-    handles users with a billing_email but no recovery_email yet — should
-    be empty after the one-time backfill, but kept as defense-in-depth.
-    """
     if not email_lc:
         return None
     # Force a load so a cold worker sees existing users (mirrors
     # _find_user_by_customer in billing.py).
     from app.dependencies import _load_persisted_tokens, _local_users
     _load_persisted_tokens()
+    matches = []
     for uid, user in _local_users.items():
-        re_ = (user.get("recovery_email") or "").lower()
-        if re_ and re_ == email_lc:
+        values = {
+            (user.get("recovery_email") or "").strip().lower(),
+            (user.get("billing_email") or "").strip().lower(),
+        }
+        if user.get("email_verified"):
+            values.add((user.get("email") or "").strip().lower())
+        if email_lc in values:
             data = {**user}
             data.setdefault("uid", uid)
-            return data
-    for uid, user in _local_users.items():
-        be_ = (user.get("billing_email") or "").lower()
-        if be_ and be_ == email_lc:
-            data = {**user}
-            data.setdefault("uid", uid)
-            return data
+            matches.append(data)
+    if not matches:
+        return None
+    if len(matches) == 1:
+        return matches[0]
+    account_ids = {row.get("subscription_account_id") for row in matches}
+    account_ids.discard(None)
+    if len(account_ids) == 1:
+        account_id = next(iter(account_ids))
+        from app.services.local_store import get_local_store
+        account = get_local_store().collection("subscription_accounts").document(account_id).get()
+        if account.exists:
+            primary_uid = (account.to_dict() or {}).get("primary_uid")
+            for row in matches:
+                if row["uid"] == primary_uid:
+                    return row
+    logger.error("ambiguous restore email match email=%s count=%d", email_lc, len(matches))
     return None
 
 

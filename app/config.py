@@ -34,6 +34,20 @@ class Settings:
         # API Keys
         self.groq_api_key: str = os.getenv("GROQ_API_KEY", "")
         self.firebase_credentials_path: str = os.getenv("FIREBASE_CREDENTIALS_PATH", "")
+        self.push_notifications_enabled: bool = os.getenv(
+            "PUSH_NOTIFICATIONS_ENABLED", "false"
+        ).lower() in ("true", "1", "yes")
+        self.firebase_push_project_id: str = os.getenv(
+            "FIREBASE_PUSH_PROJECT_ID", ""
+        ).strip()
+        self.firebase_push_credentials_path: str = os.getenv(
+            "FIREBASE_PUSH_CREDENTIALS_PATH", ""
+        ).strip()
+        self.apple_client_ids: List[str] = [
+            value.strip()
+            for value in os.getenv("APPLE_CLIENT_IDS", "").split(",")
+            if value.strip()
+        ]
 
         # Firebase
         self.storage_bucket: str = os.getenv("STORAGE_BUCKET", "")
