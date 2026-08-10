@@ -363,6 +363,10 @@ def get_mp3_duration(filepath: Path) -> float:
         return 0.0
 
 
+def is_usable_audio_file(filepath: Path) -> bool:
+    return filepath.is_file() and filepath.stat().st_size > 1024 and get_mp3_duration(filepath) >= 1.0
+
+
 # ═════════════════════════════════════════════════════════════════════════
 # Text parsing
 # ═════════════════════════════════════════════════════════════════════════
@@ -1392,7 +1396,7 @@ def generate_song_variant(
     story_id = story["id"]
     title = story["title"]
 
-    if output_path.exists() and not force:
+    if is_usable_audio_file(output_path) and not force:
         logger.info("  Skipping %s (exists)", output_path.name)
         duration = get_mp3_duration(output_path)
         return {
@@ -1957,7 +1961,7 @@ def generate_story_variant(
     content_type = story.get("type", "story")
     title = story["title"]
 
-    if output_path.exists() and not force:
+    if is_usable_audio_file(output_path) and not force:
         logger.info("  Skipping %s (exists)", output_path.name)
         duration = get_mp3_duration(output_path)
         return {
@@ -2200,7 +2204,7 @@ def generate_v2_story_variant(
     title = story.get("title", "")
     mood = story.get("mood", "calm") or "calm"
 
-    if output_path.exists() and not force:
+    if is_usable_audio_file(output_path) and not force:
         logger.info("  Skipping %s (exists)", output_path.name)
         duration = get_mp3_duration(output_path)
         return {
@@ -2321,7 +2325,7 @@ def main():
                 "story": story,
                 "voice": voice,
                 "output_path": output_path,
-                "exists": output_path.exists(),
+                "exists": is_usable_audio_file(output_path),
                 "is_v2": is_v2,
             })
 
