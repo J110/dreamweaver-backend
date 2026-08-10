@@ -751,6 +751,20 @@ def step_generate(args, state: dict) -> bool:
     return True
 
 
+def _audio_file_usable(path: Path) -> bool:
+    if not path.is_file() or path.stat().st_size <= 1024:
+        return False
+    try:
+        probe = subprocess.run(
+            ["ffprobe", "-v", "error", "-show_entries", "format=duration",
+             "-of", "default=nk=1:nw=1", str(path)],
+            capture_output=True, text=True, timeout=30,
+        )
+        return probe.returncode == 0 and float(probe.stdout.strip() or 0) >= 1.0
+    except (OSError, subprocess.TimeoutExpired, ValueError):
+        return False
+
+
 def _find_incomplete_content() -> list:
     """Find content.json stories that are missing audio, covers, or musicalBrief.
 
@@ -784,7 +798,9 @@ def _find_incomplete_content() -> list:
     web_audio_dir = WEB_DIR / "public" / "audio" / "pre-gen"
     disk_audio_files = set()
     if web_audio_dir.exists():
-        disk_audio_files = {f.name for f in web_audio_dir.glob("*.mp3")}
+        disk_audio_files = {
+            f.name for f in web_audio_dir.glob("*.mp3") if _audio_file_usable(f)
+        }
 
     seed_modified = False
     incomplete = []
