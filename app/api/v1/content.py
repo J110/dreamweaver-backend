@@ -9,6 +9,10 @@ from pydantic import BaseModel
 from app.dependencies import admin_bypass, get_db_client, get_optional_user
 from app.utils.backlog import apply_premium_lock, filter_by_backlog
 from app.utils.logger import get_logger
+from app.services.content_generation.content_access import (
+    content_snapshot_for_user,
+    generated_content_for_user,
+)
 
 logger = get_logger(__name__)
 router = APIRouter()
@@ -70,6 +74,8 @@ async def list_content(
         # Get all content
         content_docs = db_client.collection("content").get()
         items = [doc.to_dict() for doc in content_docs if doc.exists]
+        if current_user:
+            items.extend(generated_content_for_user(db_client, current_user["uid"]))
 
         # Filter by language
         if lang:
@@ -153,7 +159,8 @@ async def get_content(
         HTTPException: If content not found
     """
     try:
-        content_doc = db_client.collection("content").document(content_id).get()
+        uid = current_user["uid"] if current_user else None
+        content_doc = content_snapshot_for_user(db_client, content_id, uid)
         
         if not content_doc.exists:
             raise HTTPException(
@@ -183,9 +190,14 @@ async def get_content(
         else:
             content_data["is_saved"] = False
 
+        visible_content = (
+            content_data
+            if content_data.get("source") == "user_generation"
+            else apply_premium_lock(content_data, current_user)
+        )
         return ContentResponse(
             success=True,
-            data=apply_premium_lock(content_data, current_user),
+            data=visible_content,
             message="Content retrieved successfully"
         )
         

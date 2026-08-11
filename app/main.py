@@ -235,6 +235,14 @@ character_media_dir = Path(settings.character_media_dir)
 character_media_dir.mkdir(parents=True, exist_ok=True)
 app.mount("/media/characters", StaticFiles(directory=str(character_media_dir)), name="character-media")
 
+generated_content_media_dir = Path(settings.content_generation_media_dir)
+generated_content_media_dir.mkdir(parents=True, exist_ok=True)
+app.mount(
+    "/media/generated",
+    StaticFiles(directory=str(generated_content_media_dir)),
+    name="generated-content-media",
+)
+
 @app.get(
     "/health",
     status_code=status.HTTP_200_OK,

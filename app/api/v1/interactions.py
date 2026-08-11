@@ -9,6 +9,10 @@ from pydantic import BaseModel
 from app.dependencies import get_current_user, get_db_client
 from app.utils.gating import is_premium, offline_allowed, save_cap
 from app.utils.logger import get_logger
+from app.services.content_generation.content_access import (
+    content_ref_for_user,
+    content_snapshot_for_user,
+)
 
 logger = get_logger(__name__)
 router = APIRouter()
@@ -101,7 +105,8 @@ async def like_content(
         user_id = current_user["uid"]
         
         # Get content
-        content_doc = db_client.collection("content").document(content_id).get()
+        content_ref = content_ref_for_user(db_client, content_id, user_id)
+        content_doc = content_ref.get()
         if not content_doc.exists:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -124,7 +129,7 @@ async def like_content(
         
         # Increment like count
         current_likes = content_data.get("like_count", 0)
-        db_client.collection("content").document(content_id).update({
+        content_ref.update({
             "like_count": current_likes + 1,
             "updated_at": datetime.utcnow(),
         })
@@ -171,7 +176,8 @@ async def unlike_content(
         user_id = current_user["uid"]
         
         # Get content
-        content_doc = db_client.collection("content").document(content_id).get()
+        content_ref = content_ref_for_user(db_client, content_id, user_id)
+        content_doc = content_ref.get()
         if not content_doc.exists:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -186,7 +192,7 @@ async def unlike_content(
         
         # Decrement like count
         current_likes = max(0, content_data.get("like_count", 1) - 1)
-        db_client.collection("content").document(content_id).update({
+        content_ref.update({
             "like_count": current_likes,
             "updated_at": datetime.utcnow(),
         })
@@ -234,7 +240,7 @@ async def save_content(
 
         save_id = f"{user_id}_{content_id}_save"
         save_ref = db_client.collection("interactions").document(save_id)
-        content_ref = db_client.collection("content").document(content_id)
+        content_ref = content_ref_for_user(db_client, content_id, user_id)
         counter_ref = db_client.collection("user_save_counters").document(user_id)
         cap = save_cap(current_user)
         def save_in_transaction(transaction):
@@ -360,7 +366,7 @@ async def unsave_content(
         
         interaction_id = f"{user_id}_{content_id}_save"
         save_ref = db_client.collection("interactions").document(interaction_id)
-        content_ref = db_client.collection("content").document(content_id)
+        content_ref = content_ref_for_user(db_client, content_id, user_id)
         counter_ref = db_client.collection("user_save_counters").document(user_id)
 
         def unsave_in_transaction(transaction):
@@ -440,7 +446,7 @@ async def get_user_likes(
         # Fetch full content objects for each liked ID
         items = []
         for cid in liked_ids:
-            content_doc = db_client.collection("content").document(cid).get()
+            content_doc = content_snapshot_for_user(db_client, cid, user_id)
             if content_doc.exists:
                 content_data = content_doc.to_dict()
                 content_data["is_liked"] = True
@@ -487,7 +493,7 @@ async def get_user_saves(
         # Fetch full content objects for each saved ID
         items = []
         for cid in saved_ids:
-            content_doc = db_client.collection("content").document(cid).get()
+            content_doc = content_snapshot_for_user(db_client, cid, user_id)
             if content_doc.exists:
                 content_data = content_doc.to_dict()
                 content_data["is_saved"] = True

@@ -66,6 +66,12 @@ class Settings:
         self.album_art_cache_dir: str = os.getenv("ALBUM_ART_CACHE_DIR", "./cache/album_art")
         self.background_music_dir: str = os.getenv("BACKGROUND_MUSIC_DIR", "./cache/background_music")
         self.character_media_dir: str = os.getenv("CHARACTER_MEDIA_DIR", "data/character-media")
+        self.content_generation_media_dir: str = os.getenv(
+            "CONTENT_GENERATION_MEDIA_DIR", "data/generated-content-media"
+        )
+        self.content_generation_worker_lease_seconds: int = int(
+            os.getenv("CONTENT_GENERATION_WORKER_LEASE_SECONDS", "600")
+        )
         self.public_api_base_url: str = os.getenv("PUBLIC_API_BASE_URL", "http://localhost:8000")
         self.character_provider_poll_timeout_seconds: float = float(
             os.getenv("CHARACTER_PROVIDER_POLL_TIMEOUT_SECONDS", "120")
