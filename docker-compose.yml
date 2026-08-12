@@ -40,6 +40,8 @@ services:
     user: "1001:1002"
     env_file:
       - .env
+    environment:
+      PYTHONPATH: /app
     volumes:
       - ./cache:/app/cache
       - ./firebase-credentials.json:/app/firebase-credentials.json:ro
