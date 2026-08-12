@@ -39,6 +39,7 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 # Copy application code
 COPY app/ ./app/
+COPY scripts/run_content_generation_worker.py ./scripts/run_content_generation_worker.py
 COPY .env.example ./.env.example
 COPY docker-entrypoint.sh ./docker-entrypoint.sh
 

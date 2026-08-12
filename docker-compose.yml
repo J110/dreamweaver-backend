@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   backend:
+    image: dreamweaver-backend-app
     build:
       context: .
       dockerfile: Dockerfile
@@ -30,6 +31,31 @@ services:
       timeout: 10s
       retries: 3
       start_period: 5s
+    networks:
+      - dreamweaver-network
+
+  content-worker:
+    image: dreamweaver-backend-app
+    container_name: dreamweaver-content-worker
+    user: "1001:1002"
+    env_file:
+      - .env
+    volumes:
+      - ./cache:/app/cache
+      - ./firebase-credentials.json:/app/firebase-credentials.json:ro
+      - ./seed_output:/app/seed_output:ro
+      - ./data:/app/data
+      - ./audio:/app/audio:ro
+      - ./clips:/app/clips
+      - ./public:/app/public
+      - /opt/dreamweaver-web/public:/opt/dreamweaver-web/public:ro
+      - /opt/audio-store:/opt/audio-store
+      - /opt/cover-store:/opt/cover-store
+    command: ["python", "scripts/run_content_generation_worker.py"]
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
     networks:
       - dreamweaver-network
 
