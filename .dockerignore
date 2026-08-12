@@ -5,3 +5,4 @@
 !.env.example
 !docker-entrypoint.sh
 !Dockerfile
+!scripts/run_content_generation_worker.py
