@@ -6,7 +6,7 @@ from typing import Dict, List, Optional
 from fastapi import APIRouter, HTTPException, Depends, status, Query
 from pydantic import BaseModel
 
-from app.dependencies import admin_bypass, get_db_client, get_optional_user
+from app.dependencies import admin_bypass, get_current_user, get_db_client, get_optional_user
 from app.utils.backlog import apply_premium_lock, filter_by_backlog
 from app.utils.logger import get_logger
 from app.services.content_generation.content_access import (
@@ -170,6 +170,16 @@ async def get_content(
         
         content_data = content_doc.to_dict()
 
+        if content_data.get("is_publicly_shared") and not current_user:
+            for private_field in (
+                "owner_uid",
+                "author_id",
+                "generation_job_id",
+                "character_id",
+                "character_snapshot",
+            ):
+                content_data.pop(private_field, None)
+
         # Increment view count — response only, no persistence.
         # Per content.json refactor spec §2g.2, view_count is ephemeral
         # analytics state. The previous .update() call was the hottest write
@@ -209,3 +219,30 @@ async def get_content(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to get content: {str(e)}"
         )
+
+
+@router.post("/{content_id}/share", response_model=ContentResponse)
+async def share_content(
+    content_id: str,
+    db_client=Depends(get_db_client),
+    current_user: dict = Depends(get_current_user),
+) -> ContentResponse:
+    generated_ref = db_client.collection("generated_content").document(content_id)
+    generated = generated_ref.get()
+    if generated.exists:
+        generated_data = generated.to_dict() or {}
+        if generated_data.get("owner_uid") != current_user["uid"]:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Content not found")
+        generated_ref.update({
+            "is_publicly_shared": True,
+            "visibility": "unlisted",
+            "shared_at": datetime.utcnow().isoformat(),
+        })
+    elif not db_client.collection("content").document(content_id).get().exists:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Content not found")
+
+    return ContentResponse(
+        success=True,
+        data={"share_url": f"https://dreamvalley.app/player/{content_id}"},
+        message="Share link created successfully",
+    )

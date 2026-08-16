@@ -4,8 +4,12 @@ def content_ref_for_user(db_client, content_id: str, uid: str | None):
         return public_ref
     generated_ref = db_client.collection("generated_content").document(content_id)
     generated = generated_ref.get()
-    if generated.exists and uid and (generated.to_dict() or {}).get("owner_uid") == uid:
-        return generated_ref
+    if generated.exists:
+        generated_data = generated.to_dict() or {}
+        if generated_data.get("is_publicly_shared"):
+            return generated_ref
+        if uid and generated_data.get("owner_uid") == uid:
+            return generated_ref
     return public_ref
 
 
@@ -19,4 +23,3 @@ def generated_content_for_user(db_client, uid: str) -> list[dict]:
         values = db_client.collections.get("generated_content", {}).values()
         return [dict(item) for item in values if item.get("owner_uid") == uid]
     return [snapshot.to_dict() for snapshot in collection.where("owner_uid", "==", uid).get()]
-
