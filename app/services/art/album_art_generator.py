@@ -263,14 +263,16 @@ class AlbumArtGenerator:
                 return output.read()
             except ImportError:
                 logger.warning("cairosvg not available, using PIL fallback")
-                # Fallback: Create placeholder image using PIL
                 img = Image.new("RGB", (size, size), color=(20, 20, 40))
-                return self._create_fallback_art(img, size).tobytes()
+                output = BytesIO()
+                self._create_fallback_art(img, size).save(output, format="PNG")
+                return output.getvalue()
         except Exception as e:
             logger.error(f"Error converting SVG to PNG: {e}")
-            # Create simple fallback image
             img = Image.new("RGB", (size, size), color=(30, 30, 60))
-            return self._create_fallback_art(img, size).tobytes()
+            output = BytesIO()
+            self._create_fallback_art(img, size).save(output, format="PNG")
+            return output.getvalue()
     
     def _create_fallback_art(self, img: Image.Image, size: int) -> Image.Image:
         """Create a simple fallback album art using PIL.

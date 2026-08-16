@@ -76,7 +76,8 @@ Return JSON only with title, description, text, and a short lowercase theme.
             raise ContentGenerationError("writing_failed") from error
 
     def synthesize(self, text: str, voice_id: str | None, mood: str | None, lang: str) -> bytes:
-        resolved_voice = VOICE_MAP.get(voice_id or "", voice_id or "luna")
+        normalized_voice = (voice_id or "").removesuffix("_hi")
+        resolved_voice = VOICE_MAP.get(normalized_voice, normalized_voice or "luna")
         tone = "energetic" if mood in {"adventurous", "funny"} else "calm"
         temporary_path = None
         try:
@@ -97,13 +98,15 @@ Return JSON only with title, description, text, and a short lowercase theme.
 
     def generate_cover(self, generated: GeneratedText, content_type: str) -> bytes:
         try:
-            return self.art.generate(
+            cover = self.art.generate(
                 generated.text,
                 generated.theme,
                 content_type=content_type.lower(),
                 title=generated.title,
                 size=600,
             )
+            if not cover.startswith(b"\x89PNG\r\n\x1a\n"):
+                raise ValueError("cover generator returned invalid PNG data")
+            return cover
         except Exception as error:
             raise ContentGenerationError("cover_failed") from error
-
