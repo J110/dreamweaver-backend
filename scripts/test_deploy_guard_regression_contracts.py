@@ -1,10 +1,10 @@
 from pathlib import Path
 from datetime import datetime, timedelta, timezone
 
-from scripts import deploy_guard
+from scripts import data_integrity_guard as deploy_guard
 
 
-SOURCE = (Path(__file__).parent / "deploy_guard.py").read_text()
+SOURCE = (Path(__file__).parent / "data_integrity_guard.py").read_text()
 
 
 def test_verify_registers_nap_playlist_contract():

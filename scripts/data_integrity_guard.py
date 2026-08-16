@@ -1,0 +1,2862 @@
+#!/usr/bin/env python3
+"""
+Data Integrity Guard v3 — protect production state before, during, and after deploys.
+
+Features:
+  1. Persistent golden snapshot — baseline of known-good state that survives
+     across deploys. New content is merged in; nothing is lost.
+  2. Pre/post deploy diffing — catches unintended regressions.
+  3. English-only reporting — Hindi stories are excluded from all counts,
+     diffs, and file checks (they're invisible to users).
+  4. Auto-recovery — missing files are restored from backup stores
+     (/opt/cover-store, /opt/audio-store) automatically.
+  5. JSON data file protection — backs up and restores JSON data files
+     (silly_songs/*.json, poems/*.json) so accidental deletions
+     are auto-recovered from /opt/json-store/.
+  6. Golden baseline enforcement — verify compares against golden, not just
+     snapshot. Items in golden that disappear are auto-recovered.
+  7. New item serving check — for each ADDED item, verifies audio + cover
+     URLs are reachable before declaring the deploy successful.
+  8. Change tracking — detects and reports updated items (same ID, different
+     content), not just additions and removals.
+
+Usage:
+    # BEFORE deploy: capture current live state + back up JSON data files
+    python3 scripts/data_integrity_guard.py snapshot
+
+    # AFTER deploy: verify + auto-recover anything broken
+    python3 scripts/data_integrity_guard.py verify
+
+    # Quick health check (no snapshot needed)
+    python3 scripts/data_integrity_guard.py check
+
+    # Update golden baseline (run after verifying a good deploy)
+    python3 scripts/data_integrity_guard.py seal
+
+    # Verify against golden baseline (detects drift from known-good)
+    python3 scripts/data_integrity_guard.py audit
+
+    # Recover missing files without full verify
+    python3 scripts/data_integrity_guard.py recover
+"""
+
+import argparse
+import json
+import os
+import re
+import subprocess
+import sys
+import time
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
+
+import httpx
+
+from deploy_guard_models import AuditResult, Defect, ReasonCode
+from deploy_guard_recovery import recover_until_stable
+from deploy_guard_strict import (
+    StrictGuardConfig,
+    default_config,
+    default_recovery_engine,
+    render_verdict,
+    run_strict_audit,
+    strict_verify,
+)
+from deploy_guard_transaction import (
+    TransactionConfig,
+    run_transaction,
+    script_hook,
+)
+
+BASE_DIR = Path(__file__).resolve().parents[1]
+SNAPSHOT_PATH = BASE_DIR / "data" / "deploy_snapshot.json"
+GOLDEN_PATH = BASE_DIR / "data" / "deploy_golden.json"
+
+# Production API
+PROD_API = "https://api.dreamvalley.app"
+LOCAL_API = "http://localhost:8000"
+
+# Frontend (nginx serves /covers/ and /audio/)
+PROD_FRONTEND = "https://dreamvalley.app"
+LOCAL_FRONTEND = "http://localhost:3000"
+
+# GCP VM SSH command prefix
+# Try to find gcloud in common locations
+_GCLOUD = "gcloud"
+for _path in ["/opt/homebrew/bin/gcloud", "/usr/local/bin/gcloud", "/usr/bin/gcloud"]:
+    if os.path.exists(_path):
+        _GCLOUD = _path
+        break
+
+SSH_CMD = [_GCLOUD, "compute", "ssh", "dreamvalley-prod",
+           "--project=strong-harbor-472607-n4", "--zone=asia-south1-c",
+           "--command"]
+
+# When deploy_guard runs on the prod VM itself, gcloud SSH from VM→VM
+# fails (default service account lacks SSH scopes). Detect and run
+# radio checks as local subprocesses in that case.
+ON_PROD_VM = os.path.isdir("/opt/dreamweaver-backend") and (
+    os.environ.get("HOSTNAME", "").startswith("dreamvalley-prod")
+    or os.path.realpath(os.path.dirname(os.path.abspath(__file__))).startswith(
+        "/opt/dreamweaver-backend"
+    )
+)
+
+# Backup stores on the GCP VM
+COVER_STORE = "/opt/cover-store"
+AUDIO_STORE_PREGEN = "/opt/audio-store/pre-gen"
+AUDIO_STORE_SILLY = "/opt/audio-store/silly-songs"
+JSON_STORE = "/opt/json-store"  # JSON data file backups
+
+# Serve paths on the GCP VM
+FRONTEND_COVERS = "/opt/dreamweaver-web/public/covers"
+FRONTEND_AUDIO = "/opt/dreamweaver-web/public/audio/pre-gen"
+BACKEND_COVERS_SILLY = "/opt/dreamweaver-backend/public/covers/silly-songs"
+BACKEND_AUDIO_SILLY = "/opt/dreamweaver-backend/public/audio/silly-songs"
+BACKEND_AUDIO_POEMS = "/opt/dreamweaver-backend/public/audio/poems"
+BACKEND_COVERS_POEMS = "/opt/dreamweaver-backend/public/covers/poems"
+BACKEND_DATA_SILLY = "/opt/dreamweaver-backend/data/silly_songs"
+BACKEND_DATA_POEMS = "/opt/dreamweaver-backend/data/poems"
+BACKEND_DATA_SILLY_HI = "/opt/dreamweaver-backend/data/silly_songs_hi"
+BACKEND_DATA_POEMS_HI = "/opt/dreamweaver-backend/data/poems_hi"
+
+# Per-content dirs grouped by content kind; each kind has (en_dir, hi_dir).
+PER_CONTENT_DIR_PAIRS = {
+    "silly_songs": (BACKEND_DATA_SILLY, BACKEND_DATA_SILLY_HI),
+    "poems": (BACKEND_DATA_POEMS, BACKEND_DATA_POEMS_HI),
+}
+
+CHARACTER_DEPLOY_CONTRACTS = (
+    "GET /api/v1/characters without authentication returns 401",
+    "dreamweaver-character-worker is online",
+    "CHARACTER_MEDIA_DIR exists and is writable by the backend user",
+    "every stored portrait URL returns HTTP 200",
+    "no accepted/generating job is older than its lease plus recovery window",
+)
+
+
+def get_api(use_local: bool = False) -> str:
+    return LOCAL_API if use_local else PROD_API
+
+
+def get_frontend(use_local: bool = False) -> str:
+    return LOCAL_FRONTEND if use_local else PROD_FRONTEND
+
+
+def _load_admin_key_from_env_file() -> str:
+    """Self-contained .env reader. deploy_guard is typically invoked
+    without env-sourcing (`python3 scripts/data_integrity_guard.py verify`),
+    so os.environ may lack ADMIN_API_KEY. Parse .env directly.
+    """
+    env_path = BASE_DIR / ".env"
+    if not env_path.exists():
+        return ""
+    try:
+        for line in env_path.read_text().splitlines():
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            if "=" not in line:
+                continue
+            k, _, v = line.partition("=")
+            if k.strip() == "ADMIN_API_KEY":
+                return v.strip().strip('"').strip("'")
+    except Exception:
+        pass
+    return ""
+
+
+def capture_state(api: str) -> dict:
+    """Capture full production state from API, English content only.
+
+    Phase 0 step 1.4e: list endpoints now apply backlog gating per tier
+    (Free 3d / Premium 30d). deploy_guard probes anonymously, which would
+    clip ~all-but-recent items. We pass X-Admin-Key (matches
+    ADMIN_API_KEY env on prod) to bypass the gate and see the full
+    catalog. ADMIN_API_KEY is read from /opt/dreamweaver-backend/.env at
+    runtime — when missing (e.g. local dev), the header is empty and the
+    gate applies normally (degraded but non-blocking).
+    """
+    admin_key = (
+        os.getenv("ADMIN_API_KEY", "").strip()
+        or _load_admin_key_from_env_file()
+    )
+    if api.rstrip("/") == PROD_API and not admin_key:
+        raise RuntimeError(
+            "ADMIN_API_KEY is required for production capture; "
+            "anonymous responses redact premium audio"
+        )
+    headers = {"X-Admin-Key": admin_key} if admin_key else {}
+    client = httpx.Client(timeout=30, headers=headers)
+    state = {
+        "captured_at": datetime.now().isoformat(),
+        "api": api,
+    }
+    state.update(capture_character_state())
+
+    # 1. Stories (paginate — API max page_size=100), English only
+    try:
+        all_items = []
+        page = 1
+        while True:
+            resp = client.get(f"{api}/api/v1/content",
+                              params={"page_size": 100, "page": page, "lang": "en"})
+            data = resp.json()
+            page_data = data.get("data", data) if isinstance(data, dict) else data
+            items = page_data.get("items", []) if isinstance(page_data, dict) else page_data
+            all_items.extend(items)
+            total_pages = page_data.get("pages", 1) if isinstance(page_data, dict) else 1
+            if page >= total_pages:
+                break
+            page += 1
+
+        stories = []
+        for item in all_items:
+            lang = item.get("lang", "en")
+            if lang != "en":
+                continue  # Skip non-English stories entirely
+            if item.get("type") == "poem" or item.get("subtype") == "funny_short":
+                continue  # Poem content type removed — skip to prevent accidental restoration
+            audio_urls = []
+            for av in (item.get("audio_variants") or []):
+                url = av.get("url", "")
+                # Skip Hindi audio variants
+                if url and "_hi." not in url:
+                    audio_urls.append(url)
+            if (
+                not audio_urls
+                and item.get("subtype") == "silly_song"
+                and item.get("audio_file")
+            ):
+                audio_urls.append(f"/audio/silly-songs/{item['audio_file']}")
+            cover_url = item.get("cover", "")
+            if (
+                not cover_url
+                and item.get("subtype") == "silly_song"
+                and item.get("cover_file")
+            ):
+                cover_url = f"/covers/silly-songs/{item['cover_file']}"
+            stories.append({
+                "id": item.get("id"),
+                "title": item.get("title"),
+                "type": item.get("type"),
+                "subtype": item.get("subtype"),
+                "has_audio": bool(audio_urls),
+                "has_cover": bool(cover_url and cover_url != "/covers/default.svg"),
+                "audio_urls": audio_urls,
+                "cover_url": cover_url if cover_url != "/covers/default.svg" else "",
+                "mood": item.get("mood"),
+            })
+        state["stories"] = {s["id"]: s for s in stories}
+        state["story_count"] = len(stories)
+    except Exception as e:
+        state["stories"] = {}
+        state["story_count"] = 0
+        state["stories_error"] = str(e)
+
+    # The /silly-songs, /lullabies, /poems endpoints all default to lang=en when
+    # no lang param is given, so we must call once per language to cover Hindi
+    # variants. Without this loop, broken Hindi covers/audio go unflagged
+    # (Apr 28 2026: missed hi-question-6-8-ad89 entirely).
+    LANGS = ["en", "hi"]
+
+    # 2. Silly songs (per age group × lang)
+    state["silly_songs"] = {}
+    for age in ["2-5", "6-8", "9-12"]:
+        bucket = {}
+        for lang in LANGS:
+            try:
+                resp = client.get(f"{api}/api/v1/silly-songs",
+                                  params={"age_group": age, "lang": lang})
+                data = resp.json()
+                items = data.get("data", {}).get("items", [])
+                for item in items:
+                    cover_file = item.get("cover_file")
+                    cover_url = (
+                        f"/covers/silly-songs/{cover_file}"
+                        if cover_file else item.get("cover", "")
+                    )
+                    bucket[item["id"]] = {
+                        "title": item.get("title"),
+                        "lang": lang,
+                        "has_audio": bool(item.get("audio_file")),
+                        "audio_url": f"/audio/silly-songs/{item['audio_file']}" if item.get("audio_file") else "",
+                        "has_cover": bool(
+                            cover_file and cover_url != "/covers/default.svg"
+                        ),
+                        "cover_file": cover_file or "",
+                        "cover_url": cover_url,
+                    }
+            except Exception:
+                pass
+        state["silly_songs"][age] = bucket
+
+    # 3. Poems (per age group × lang)
+    state["poems"] = {}
+    for age in ["2-5", "6-8", "9-12"]:
+        bucket = {}
+        for lang in LANGS:
+            try:
+                resp = client.get(f"{api}/api/v1/poems",
+                                  params={"age_group": age, "lang": lang})
+                data = resp.json()
+                items = data.get("data", {}).get("items", [])
+                for item in items:
+                    cover_file = item.get("cover_file")
+                    cover_url = (
+                        f"/covers/poems/{cover_file}"
+                        if cover_file else item.get("cover", "")
+                    )
+                    bucket[item["id"]] = {
+                        "title": item.get("title"),
+                        "lang": lang,
+                        "has_audio": bool(item.get("audio_file")),
+                        "audio_url": f"/audio/poems/{item['audio_file']}" if item.get("audio_file") else "",
+                        "has_cover": bool(
+                            cover_file and cover_url != "/covers/default.svg"
+                        ),
+                        "cover_file": cover_file or "",
+                        "cover_url": cover_url,
+                    }
+            except Exception:
+                pass
+        state["poems"][age] = bucket
+
+    return state
+
+
+def verify_files(state: dict, frontend: str, api: str) -> tuple[list[str], list[dict]]:
+    """HEAD-check all audio and cover URLs. Returns (issues, recoverable_items).
+
+    Each recoverable_item is a dict with keys:
+      type: 'story_audio' | 'story_cover' | 'silly_song_audio' | 'silly_song_cover'
+      url_path: the URL path that's missing
+      filename: the filename to look for in backup stores
+    """
+    issues = []
+    recoverable = []
+    urls_to_check = []  # (base_url, url_path, label, recovery_info)
+
+    # Stories — served by nginx (frontend)
+    for sid, s in state.get("stories", {}).items():
+        for url in s.get("audio_urls", []):
+            if url:
+                filename = url.split("/")[-1]
+                urls_to_check.append((frontend, url, f"story audio: {sid}",
+                                      {"type": "story_audio", "url_path": url, "filename": filename}))
+        if s.get("cover_url"):
+            filename = s["cover_url"].split("/")[-1]
+            urls_to_check.append((frontend, s["cover_url"], f"story cover: {sid}",
+                                  {"type": "story_cover", "url_path": s["cover_url"], "filename": filename}))
+        else:
+            issues.append(f"  MISSING COVER METADATA: story cover: {sid}")
+
+    # Silly songs — served by backend API
+    for age, items in state.get("silly_songs", {}).items():
+        for sid, s in items.items():
+            if s.get("audio_url"):
+                filename = s["audio_url"].split("/")[-1]
+                urls_to_check.append((api, s["audio_url"], f"silly song audio ({age}): {sid}",
+                                      {"type": "silly_song_audio", "url_path": s["audio_url"], "filename": filename}))
+            if s.get("has_cover") and s.get("cover_url"):
+                filename = s["cover_url"].split("/")[-1]
+                urls_to_check.append((frontend, s["cover_url"], f"silly song cover ({age}): {sid}",
+                                      {"type": "silly_song_cover", "url_path": s["cover_url"], "filename": filename}))
+            else:
+                issues.append(f"  MISSING COVER METADATA: silly song cover ({age}): {sid}")
+                recoverable.append({
+                    "type": "silly_song_cover_metadata",
+                    "filename": sid,
+                    "item_id": sid,
+                    "lang": s.get("lang", "en"),
+                    "category": "silly_songs",
+                })
+
+    # Poems — audio served by backend API, covers by frontend nginx
+    for age, items in state.get("poems", {}).items():
+        for pid, p in items.items():
+            if p.get("audio_url"):
+                filename = p["audio_url"].split("/")[-1]
+                urls_to_check.append((api, p["audio_url"], f"poem audio ({age}): {pid}",
+                                      {"type": "poem_audio", "url_path": p["audio_url"], "filename": filename}))
+            if p.get("has_cover") and p.get("cover_url"):
+                filename = p["cover_url"].split("/")[-1]
+                urls_to_check.append((frontend, p["cover_url"], f"poem cover ({age}): {pid}",
+                                      {"type": "poem_cover", "url_path": p["cover_url"], "filename": filename}))
+            else:
+                issues.append(f"  MISSING COVER METADATA: poem cover ({age}): {pid}")
+                recoverable.append({
+                    "type": "poem_cover_metadata",
+                    "filename": pid,
+                    "item_id": pid,
+                    "lang": p.get("lang", "en"),
+                    "category": "poems",
+                })
+
+    if not urls_to_check:
+        return issues, recoverable
+
+    print(f"\n  Checking {len(urls_to_check)} file URLs via HEAD requests...")
+
+    ok = 0
+    failed = 0
+    client = httpx.Client(timeout=10, follow_redirects=True)
+    for base_url, url_path, label, recovery_info in urls_to_check:
+        full_url = f"{base_url}{url_path}"
+        try:
+            resp = client.head(full_url)
+            if resp.status_code == 200:
+                ok += 1
+            else:
+                failed += 1
+                issues.append(f"  MISSING ({resp.status_code}): {url_path} — {label}")
+                recoverable.append(recovery_info)
+        except Exception as e:
+            failed += 1
+            issues.append(f"  UNREACHABLE: {url_path} — {label} ({e})")
+            recoverable.append(recovery_info)
+
+    print(f"  Results: {ok} reachable, {failed} missing/broken")
+
+    return issues, recoverable
+
+
+def _cover_metadata_recovery_command(item: dict) -> str:
+    import base64
+
+    category = item["category"]
+    content_id = item["item_id"]
+    lang = item.get("lang", "en")
+    bucket = f"{category}_hi" if lang == "hi" else category
+    data_dir = {
+        "silly_songs": BACKEND_DATA_SILLY_HI if lang == "hi" else BACKEND_DATA_SILLY,
+        "poems": BACKEND_DATA_POEMS_HI if lang == "hi" else BACKEND_DATA_POEMS,
+    }[category]
+    cover_dir = "silly-songs" if category == "silly_songs" else "poems"
+    helper = f"""
+import json, os, shutil
+content_id = {content_id!r}
+json_path = os.path.join({data_dir!r}, content_id + '.json')
+backup_path = os.path.join({JSON_STORE!r}, {bucket!r}, content_id + '.json')
+served_dir = os.path.join({COVER_STORE!r}, {cover_dir!r})
+os.makedirs(served_dir, exist_ok=True)
+if not os.path.isfile(json_path):
+    print('NOT_IN_STORE:', content_id)
+    raise SystemExit(0)
+with open(json_path) as handle:
+    data = json.load(handle)
+filename = data.get('cover_file')
+if not filename and os.path.isfile(backup_path):
+    try:
+        with open(backup_path) as handle:
+            filename = json.load(handle).get('cover_file')
+    except Exception:
+        filename = None
+extensions = ('.webp', '.svg', '.png', '.jpg', '.jpeg')
+candidates = []
+if filename:
+    candidates.extend((
+        os.path.join(served_dir, filename),
+        os.path.join({COVER_STORE!r}, filename),
+        os.path.join({COVER_STORE!r}, {cover_dir!r} + '--' + filename),
+    ))
+for extension in extensions:
+    candidates.extend((
+        os.path.join(served_dir, content_id + extension),
+        os.path.join({COVER_STORE!r}, content_id + extension),
+        os.path.join({COVER_STORE!r}, {cover_dir!r} + '--' + content_id + extension),
+    ))
+source = next((path for path in candidates if os.path.isfile(path)), None)
+if not source:
+    print('NOT_IN_STORE:', content_id)
+    raise SystemExit(0)
+filename = filename or os.path.basename(source).removeprefix({cover_dir!r} + '--')
+destination = os.path.join(served_dir, filename)
+if os.path.realpath(source) != os.path.realpath(destination):
+    shutil.copyfile(source, destination)
+data['cover_file'] = filename
+data['cover'] = '/covers/' + {cover_dir!r} + '/' + filename
+temp_path = json_path + '.deploy-guard.tmp'
+with open(temp_path, 'w') as handle:
+    json.dump(data, handle, indent=2, ensure_ascii=False)
+    handle.write('\\n')
+os.replace(temp_path, json_path)
+os.makedirs(os.path.dirname(backup_path), exist_ok=True)
+shutil.copyfile(json_path, backup_path)
+print('RECOVERED:', content_id)
+"""
+    encoded = base64.b64encode(helper.encode()).decode()
+    return f"echo {encoded} | base64 -d | python3"
+
+
+def auto_recover(recoverable: list[dict], dry_run: bool = False) -> tuple[int, int]:
+    """Attempt to recover missing files from backup stores on the GCP VM.
+
+    Recovery chain (tries each in order):
+      1. Backup store (/opt/cover-store, /opt/audio-store)
+      2. git restore (for files tracked in git that were deleted from disk)
+
+    Returns (recovered_count, failed_count).
+    """
+    if not recoverable:
+        return 0, 0
+
+    print(f"\n  {'[DRY RUN] ' if dry_run else ''}Auto-recovering {len(recoverable)} missing file(s)...")
+
+    # Build a shell script that checks backup stores and copies files
+    recover_commands = []
+    for item in recoverable:
+        ftype = item["type"]
+        filename = item.get("filename", "")
+
+        if ftype in ("silly_song_cover_metadata", "poem_cover_metadata"):
+            recover_commands.append(_cover_metadata_recovery_command(item))
+        elif ftype == "story_audio":
+            # Audio served from frontend /audio/pre-gen/
+            recover_commands.append(
+                f'if [ -f "{AUDIO_STORE_PREGEN}/{filename}" ]; then '
+                f'cp "{AUDIO_STORE_PREGEN}/{filename}" "{FRONTEND_AUDIO}/{filename}" && echo "RECOVERED: {filename}"; '
+                f'else echo "NOT_IN_STORE: {filename}"; fi'
+            )
+        elif ftype == "story_cover":
+            # Covers served from frontend /covers/
+            recover_commands.append(
+                f'if [ -f "{COVER_STORE}/{filename}" ]; then '
+                f'cp "{COVER_STORE}/{filename}" "{FRONTEND_COVERS}/{filename}" && echo "RECOVERED: {filename}"; '
+                f'else echo "NOT_IN_STORE: {filename}"; fi'
+            )
+        elif ftype == "silly_song_audio":
+            recover_commands.append(
+                f'if [ -f "{AUDIO_STORE_SILLY}/{filename}" ]; then '
+                f'cp "{AUDIO_STORE_SILLY}/{filename}" "{BACKEND_AUDIO_SILLY}/{filename}" && echo "RECOVERED: {filename}"; '
+                f'else echo "NOT_IN_STORE: {filename}"; fi'
+            )
+        elif ftype == "silly_song_cover":
+            store_name = f"silly-songs--{filename}"
+            recover_commands.append(
+                f'mkdir -p "{COVER_STORE}/silly-songs"; '
+                f'if [ -f "{COVER_STORE}/{store_name}" ]; then '
+                f'cp "{COVER_STORE}/{store_name}" "{COVER_STORE}/silly-songs/{filename}" && echo "RECOVERED: {filename}"; '
+                f'elif [ -f "{COVER_STORE}/{filename}" ]; then '
+                f'cp "{COVER_STORE}/{filename}" "{COVER_STORE}/silly-songs/{filename}" && echo "RECOVERED: {filename}"; '
+                f'else echo "NOT_IN_STORE: {filename}"; fi'
+            )
+        elif ftype == "poem_audio":
+            # Poem audio: no dedicated store, will fall through to git restore
+            recover_commands.append(f'echo "NOT_IN_STORE: {filename}"')
+        elif ftype == "poem_cover":
+            store_name = f"poems--{filename}"
+            recover_commands.append(
+                f'mkdir -p "{COVER_STORE}/poems"; '
+                f'if [ -f "{COVER_STORE}/{store_name}" ]; then '
+                f'cp "{COVER_STORE}/{store_name}" "{COVER_STORE}/poems/{filename}" && echo "RECOVERED: {filename}"; '
+                f'elif [ -f "{COVER_STORE}/{filename}" ]; then '
+                f'cp "{COVER_STORE}/{filename}" "{COVER_STORE}/poems/{filename}" && echo "RECOVERED: {filename}"; '
+                f'else echo "NOT_IN_STORE: {filename}"; fi'
+            )
+
+    if not recover_commands:
+        return 0, 0
+
+    if dry_run:
+        for cmd in recover_commands:
+            print(f"    Would run: {cmd[:100]}...")
+        return 0, 0
+
+    # Phase 1: Try backup stores
+    full_script = " && ".join(recover_commands)
+    recovered = 0
+    not_found = 0
+    not_found_files = []  # Track which files need git restore
+
+    try:
+        command = ["bash", "-c", full_script] if ON_PROD_VM else SSH_CMD + [full_script]
+        result = subprocess.run(command, capture_output=True, text=True, timeout=120)
+        output = result.stdout.strip()
+        if output:
+            for line in output.split("\n"):
+                line = line.strip()
+                if line.startswith("RECOVERED:"):
+                    recovered += 1
+                    print(f"    ✅ {line}")
+                elif line.startswith("NOT_IN_STORE:"):
+                    not_found += 1
+                    fname = line.split("NOT_IN_STORE:")[-1].strip()
+                    not_found_files.append(fname)
+                    print(f"    ⚠️  {line} — will try git restore")
+        if result.returncode != 0 and result.stderr:
+            print(f"    SSH error: {result.stderr[:200]}")
+    except subprocess.TimeoutExpired:
+        print("    SSH timed out during recovery")
+    except Exception as e:
+        print(f"    Recovery error: {e}")
+
+    # Phase 2: git restore for files not in backup stores
+    if not_found_files:
+        print(f"\n  Attempting git restore for {len(not_found_files)} file(s)...")
+        git_recovered = _git_restore_recover(not_found_files, recoverable)
+        recovered += git_recovered
+        not_found -= git_recovered
+
+    # Phase 3: Back up any recovered files to the store for next time
+    if recovered > 0:
+        _backup_to_store(recoverable)
+
+    return recovered, not_found
+
+
+def _git_restore_recover(filenames: list[str], recoverable: list[dict]) -> int:
+    """Try git restore on the backend and frontend repos for missing files.
+
+    Files tracked in git that were deleted from disk can be restored this way.
+    Returns count of successfully recovered files.
+    """
+    # Map filenames to their recovery info for determining which repo to restore from
+    file_types = {}
+    for item in recoverable:
+        file_types[item["filename"]] = item["type"]
+
+    # Group by repo
+    backend_paths = []
+    frontend_paths = []
+    for fname in filenames:
+        ftype = file_types.get(fname, "")
+        if ftype in ("silly_song_cover", "silly_song_audio",
+                     "poem_cover", "poem_audio"):
+            # These are in the backend repo
+            if "cover" in ftype:
+                subdir = "silly-songs" if "silly" in ftype else "poems"
+                backend_paths.append(f"public/covers/{subdir}/{fname}")
+            else:
+                subdir = "silly-songs" if "silly" in ftype else "poems"
+                backend_paths.append(f"public/audio/{subdir}/{fname}")
+        elif ftype in ("story_audio",):
+            frontend_paths.append(f"public/audio/pre-gen/{fname}")
+        elif ftype in ("story_cover",):
+            frontend_paths.append(f"public/covers/{fname}")
+
+    git_recovered = 0
+
+    # Restore from backend repo
+    if backend_paths:
+        paths_str = " ".join(f'"{p}"' for p in backend_paths)
+        cmd = f'cd /opt/dreamweaver-backend && git restore {paths_str} 2>&1 && echo "GIT_RESTORE_OK"'
+        try:
+            result = subprocess.run(
+                SSH_CMD + [cmd], capture_output=True, text=True, timeout=60
+            )
+            if "GIT_RESTORE_OK" in result.stdout:
+                # Verify which files were actually restored
+                for path in backend_paths:
+                    check_cmd = f'[ -f "/opt/dreamweaver-backend/{path}" ] && echo "EXISTS"'
+                    check = subprocess.run(
+                        SSH_CMD + [check_cmd], capture_output=True, text=True, timeout=15
+                    )
+                    if "EXISTS" in check.stdout:
+                        git_recovered += 1
+                        fname = path.split("/")[-1]
+                        print(f"    ✅ RECOVERED (git restore): {fname}")
+            elif result.stderr:
+                print(f"    git restore (backend) error: {result.stderr[:200]}")
+        except Exception as e:
+            print(f"    git restore (backend) failed: {e}")
+
+    # Restore from frontend repo
+    if frontend_paths:
+        paths_str = " ".join(f'"{p}"' for p in frontend_paths)
+        cmd = f'cd /opt/dreamweaver-web && git restore {paths_str} 2>&1 && echo "GIT_RESTORE_OK"'
+        try:
+            result = subprocess.run(
+                SSH_CMD + [cmd], capture_output=True, text=True, timeout=60
+            )
+            if "GIT_RESTORE_OK" in result.stdout:
+                for path in frontend_paths:
+                    check_cmd = f'[ -f "/opt/dreamweaver-web/{path}" ] && echo "EXISTS"'
+                    check = subprocess.run(
+                        SSH_CMD + [check_cmd], capture_output=True, text=True, timeout=15
+                    )
+                    if "EXISTS" in check.stdout:
+                        git_recovered += 1
+                        fname = path.split("/")[-1]
+                        print(f"    ✅ RECOVERED (git restore): {fname}")
+            elif result.stderr:
+                print(f"    git restore (frontend) error: {result.stderr[:200]}")
+        except Exception as e:
+            print(f"    git restore (frontend) failed: {e}")
+
+    return git_recovered
+
+
+def _backup_to_store(recoverable: list[dict]):
+    """After recovery, back up restored files to the backup store so they're available next time."""
+    backup_cmds = []
+    for item in recoverable:
+        ftype = item["type"]
+        filename = item["filename"]
+
+        if ftype == "story_cover":
+            backup_cmds.append(
+                f'[ -f "{FRONTEND_COVERS}/{filename}" ] && '
+                f'cp "{FRONTEND_COVERS}/{filename}" "{COVER_STORE}/{filename}" 2>/dev/null'
+            )
+        elif ftype == "silly_song_cover":
+            store_name = f"silly-songs--{filename}"
+            backup_cmds.append(
+                f'[ -f "{BACKEND_COVERS_SILLY}/{filename}" ] && '
+                f'cp "{BACKEND_COVERS_SILLY}/{filename}" "{COVER_STORE}/{store_name}" 2>/dev/null'
+            )
+        elif ftype == "story_audio":
+            backup_cmds.append(
+                f'[ -f "{FRONTEND_AUDIO}/{filename}" ] && '
+                f'cp "{FRONTEND_AUDIO}/{filename}" "{AUDIO_STORE_PREGEN}/{filename}" 2>/dev/null'
+            )
+        elif ftype == "silly_song_audio":
+            backup_cmds.append(
+                f'[ -f "{BACKEND_AUDIO_SILLY}/{filename}" ] && '
+                f'cp "{BACKEND_AUDIO_SILLY}/{filename}" "{AUDIO_STORE_SILLY}/{filename}" 2>/dev/null'
+            )
+        # Poems: no dedicated store yet — rely on git restore
+
+    if backup_cmds:
+        script = " ; ".join(backup_cmds)
+        try:
+            subprocess.run(SSH_CMD + [script], capture_output=True, text=True, timeout=60)
+        except Exception:
+            pass  # Best-effort — don't fail recovery over backup
+
+
+def backup_json_files():
+    """Back up all JSON data files (silly_songs, poems) to /opt/json-store/.
+
+    Called during snapshot to ensure we have a copy of every JSON before deploy.
+
+    Lang-aware (companion to fc7af04 restore-side fix): each file is routed
+    to the {cat} or {cat}_hi backup dir based on its `lang` field, not its
+    source dir. A misrouted Hindi file in data/silly_songs/ would otherwise
+    be faithfully preserved into json-store/silly_songs/, and `recover` would
+    perpetuate the misroute.
+    """
+    # Python helper runs on the prod VM (direct or via SSH). Walks each
+    # source dir, reads lang per file, copies to the correct backup dir.
+    # Base64-wrap to avoid shell-quoting issues with multi-line source.
+    import base64
+    helper = f"""
+import json, os, shutil
+STORE = {JSON_STORE!r}
+pairs = [
+    ({BACKEND_DATA_SILLY!r}, 'silly_songs'),
+    ({BACKEND_DATA_POEMS!r}, 'poems'),
+    ({BACKEND_DATA_SILLY_HI!r}, 'silly_songs'),
+    ({BACKEND_DATA_POEMS_HI!r}, 'poems'),
+]
+for _, c in pairs:
+    for s in ('', '_hi'):
+        os.makedirs(os.path.join(STORE, c + s), exist_ok=True)
+n = 0
+for src, cat in pairs:
+    if not os.path.isdir(src):
+        continue
+    for name in os.listdir(src):
+        if not name.endswith('.json'):
+            continue
+        path = os.path.join(src, name)
+        try:
+            with open(path) as f:
+                data = json.load(f)
+        except Exception:
+            continue
+        lang = (data.get('lang') or data.get('language') or '').lower()
+        target_cat = cat + ('_hi' if lang == 'hi' else '')
+        shutil.copyfile(path, os.path.join(STORE, target_cat, name))
+        n += 1
+print('JSON_BACKUP_OK', n)
+"""
+    encoded = base64.b64encode(helper.encode()).decode()
+    script = f"echo {encoded} | base64 -d | python3"
+    _runner = (
+        (lambda c, **kw: subprocess.run(["bash", "-c", c], **kw))
+        if ON_PROD_VM
+        else (lambda c, **kw: subprocess.run(SSH_CMD + [c], **kw))
+    )
+    try:
+        result = _runner(script, capture_output=True, text=True, timeout=30)
+        if "JSON_BACKUP_OK" in result.stdout:
+            # Count backed-up files (en + hi for each kind)
+            count_cmd = (
+                f'ls "{JSON_STORE}/silly_songs/"*.json 2>/dev/null | wc -l; '
+                f'ls "{JSON_STORE}/poems/"*.json 2>/dev/null | wc -l; '
+                f'ls "{JSON_STORE}/silly_songs_hi/"*.json 2>/dev/null | wc -l; '
+                f'ls "{JSON_STORE}/poems_hi/"*.json 2>/dev/null | wc -l'
+            )
+            count_result = _runner(count_cmd, capture_output=True, text=True, timeout=15)
+            counts = count_result.stdout.strip().split("\n")
+            silly = int(counts[0].strip()) if len(counts) > 0 else 0
+            poems_count = int(counts[1].strip()) if len(counts) > 1 else 0
+            silly_hi = int(counts[2].strip()) if len(counts) > 2 else 0
+            poems_hi = int(counts[3].strip()) if len(counts) > 3 else 0
+            print(
+                f"  📦 JSON backup: {silly} silly songs ({silly_hi} hi), "
+                f"{poems_count} poems ({poems_hi} hi) → {JSON_STORE}/"
+            )
+            return True
+        else:
+            print(f"  ⚠️  JSON backup may have failed: {result.stderr[:200]}")
+            return False
+    except Exception as e:
+        print(f"  ⚠️  JSON backup error: {e}")
+        return False
+
+
+def recover_json_files(missing_items: list[dict]) -> tuple[int, int]:
+    """Restore missing JSON data files from /opt/json-store/.
+
+    Each item in missing_items should have:
+      category: 'silly_songs' | 'poems'
+      item_id: the ID of the item
+      age_group: the age group (for logging)
+
+    Returns (recovered_count, failed_count).
+    """
+    if not missing_items:
+        return 0, 0
+
+    print(f"\n  🔧 Recovering {len(missing_items)} missing JSON data file(s)...")
+
+    recover_cmds = []
+    for item in missing_items:
+        cat = item["category"]
+        item_id = item["item_id"]
+        # Lang-aware routing: items with hi- prefix live in the _hi store and dir,
+        # never the English ones. Prevents the misroute-then-perpetual-restore loop
+        # that produced duplicate (id, lang=hi) API rows in 2026-05.
+        is_hi = item_id.startswith("hi-")
+        en_dir, hi_dir = PER_CONTENT_DIR_PAIRS[cat]
+        store_dir = f"{JSON_STORE}/{cat}_hi" if is_hi else f"{JSON_STORE}/{cat}"
+        data_dir = hi_dir if is_hi else en_dir
+
+        # Try exact match first, then glob for ID prefix
+        recover_cmds.append(
+            f'if [ -f "{store_dir}/{item_id}.json" ]; then '
+            f'cp "{store_dir}/{item_id}.json" "{data_dir}/{item_id}.json" && echo "RECOVERED_JSON:{item_id}"; '
+            f'else echo "NO_BACKUP:{item_id}"; fi'
+        )
+
+    script = " && ".join(recover_cmds)
+    recovered = 0
+    failed = 0
+
+    try:
+        result = subprocess.run(
+            SSH_CMD + [script], capture_output=True, text=True, timeout=60
+        )
+        for line in result.stdout.strip().split("\n"):
+            line = line.strip()
+            if line.startswith("RECOVERED_JSON:"):
+                recovered += 1
+                item_id = line.split(":")[-1]
+                print(f"    ✅ Restored JSON: {item_id}.json")
+            elif line.startswith("NO_BACKUP:"):
+                failed += 1
+                item_id = line.split(":")[-1]
+                print(f"    ❌ No backup found: {item_id}.json")
+    except Exception as e:
+        print(f"    Recovery error: {e}")
+        failed = len(missing_items)
+
+    return recovered, failed
+
+
+def verify_all_live_urls(api: str, frontend: str) -> list[str]:
+    """HEAD-check every cover and audio URL for every item in the live API,
+    across all languages and subtypes.
+
+    Independent of snapshot/golden state — operates on whatever the API serves
+    right now. Catches user-visible 404s that the snapshot-diff path can miss
+    (e.g., pre-existing broken files, items in language buckets the snapshot
+    doesn't capture, items added after snapshot but before verify).
+
+    This is the canonical "are users actually seeing working content" gate.
+    Added 2026-04-28 after 7 HI covers slipped through verify because
+    capture_state() only fetched lang=en.
+    """
+    issues = []
+    client = httpx.Client(timeout=10, follow_redirects=True)
+
+    # Pull every item across both languages, paginated
+    all_items = []
+    for lang in ("en", "hi"):
+        page = 1
+        while True:
+            try:
+                resp = client.get(
+                    f"{api}/api/v1/content",
+                    params={"page_size": 100, "page": page, "lang": lang},
+                )
+                data = resp.json()
+                page_data = data.get("data", data) if isinstance(data, dict) else data
+                items = page_data.get("items", []) if isinstance(page_data, dict) else page_data
+                if not items:
+                    break
+                all_items.extend(it for it in items if isinstance(it, dict))
+                if len(items) < 100:
+                    break
+                page += 1
+            except Exception as e:
+                issues.append(f"  ❌ Failed to fetch lang={lang} page {page}: {e}")
+                break
+
+    if not all_items:
+        return issues
+
+    print(f"\n  🔍 HEAD-checking cover + audio for {len(all_items)} live items (all langs, all subtypes)...")
+
+    def head_check_either(label: str, path: str):
+        """Try frontend first, then backend. Accept 200 from either.
+
+        Different content categories serve from different bases (e.g., funny
+        shorts audio is backend-served, lullaby audio is frontend-served, and
+        the routing has changed historically). Trying both eliminates false
+        positives from a brittle category→base mapping.
+        """
+        if not path:
+            return None
+        if not path.startswith("/"):
+            # Absolute URL — just check it as-is
+            try:
+                resp = client.head(path)
+                if resp.status_code == 200:
+                    return None
+                return f"  ❌ {label} ({resp.status_code}): {path}"
+            except Exception as e:
+                return f"  ❌ {label} UNREACHABLE: {path} ({type(e).__name__})"
+        # Relative path — try frontend, then backend
+        for base in (frontend, api):
+            try:
+                resp = client.head(f"{base}{path}")
+                if resp.status_code == 200:
+                    return None
+            except Exception:
+                continue
+        # If we reach here, neither base served it — re-issue against frontend
+        # to capture the status code for the error message
+        try:
+            resp = client.head(f"{frontend}{path}")
+            return f"  ❌ {label} ({resp.status_code} on both fe+be): {path}"
+        except Exception as e:
+            return f"  ❌ {label} UNREACHABLE on both fe+be: {path} ({type(e).__name__})"
+
+    ok = 0
+    failed_issues = []
+    for item in all_items:
+        item_id = item.get("id", "?")
+        item_type = item.get("type", "?")
+        item_subtype = item.get("subtype") or ""
+        item_lang = item.get("lang", "?")
+        label = f"{item_id} [{item_type}{('/'+item_subtype) if item_subtype else ''}/{item_lang}]"
+
+        cover_path = item.get("cover") or item.get("cover_url")
+        cover_issue = head_check_either(f"COVER {label}", cover_path)
+        if cover_issue:
+            failed_issues.append(cover_issue)
+        elif cover_path:
+            ok += 1
+
+        audio_path = item.get("audio_url") or item.get("audio")
+        audio_issue = head_check_either(f"AUDIO {label}", audio_path)
+        if audio_issue:
+            failed_issues.append(audio_issue)
+        elif audio_path:
+            ok += 1
+
+    print(f"  Results: {ok} URLs OK, {len(failed_issues)} broken")
+    issues.extend(failed_issues)
+    return issues
+
+
+def verify_nap_playlist_counts() -> list[str]:
+    probe = """
+import asyncio
+import json
+from app.api.v1 import playlist as nap_playlist
+
+class GuardStore:
+    collections = {"playlist_history": {}}
+
+    def _persist_collection(self, _name):
+        return None
+
+async def main():
+    original_record_history = nap_playlist._record_history
+    original_cache = dict(nap_playlist._nap_cache)
+    try:
+        nap_playlist._record_history = lambda *_args, **_kwargs: None
+        nap_playlist._nap_cache.clear()
+        results = {}
+        users = (
+            ("free", {"username": "deploy-guard-free", "subscription_tier": "free", "subscription_status": "inactive"}, 4),
+            ("premium", {"username": "deploy-guard-premium", "subscription_tier": "premium", "subscription_status": "active"}, 4),
+        )
+        for lang in ("en", "hi"):
+            for tier, user, expected in users:
+                response = await nap_playlist.get_nap_playlist(
+                    lang=lang,
+                    tz="Asia/Kolkata",
+                    store=GuardStore(),
+                    current_user=user,
+                )
+                results[f"{lang}/{tier}"] = {
+                    "actual": len(response.data.get("items", [])),
+                    "expected": expected,
+                }
+    finally:
+        nap_playlist._record_history = original_record_history
+        nap_playlist._nap_cache.clear()
+        nap_playlist._nap_cache.update(original_cache)
+    print(json.dumps(results))
+
+asyncio.run(main())
+"""
+    command = ["sudo", "docker", "exec", "dreamweaver-backend", "python", "-c", probe]
+    try:
+        result = subprocess.run(command, capture_output=True, text=True, timeout=60)
+    except Exception as exc:
+        return [f"Nap playlist contract check failed: {type(exc).__name__}: {exc}"]
+    if result.returncode != 0:
+        detail = (result.stderr or result.stdout).strip().splitlines()
+        return [f"Nap playlist contract check failed: {' | '.join(detail[-8:])}"]
+    try:
+        results = json.loads(result.stdout.strip().splitlines()[-1])
+    except (IndexError, json.JSONDecodeError) as exc:
+        return [f"Nap playlist contract returned invalid output: {exc}"]
+    issues = []
+    for label, counts in results.items():
+        if counts["actual"] != counts["expected"]:
+            issues.append(
+                f"Nap playlist {label} returned {counts['actual']} items; "
+                f"expected {counts['expected']}"
+            )
+    return issues
+
+
+def verify_bedtime_playlist_counts() -> list[str]:
+    probe = """
+import asyncio
+import json
+from app.api.v1 import playlist
+
+class GuardStore:
+    collections = {"playlist_history": {}}
+
+    def _persist_collection(self, _name):
+        return None
+
+async def main():
+    original_record_history = playlist._record_history
+    try:
+        playlist._record_history = lambda *_args, **_kwargs: None
+        results = {}
+        users = (
+            ("free", {"subscription_tier": "free", "subscription_status": "inactive"}, 4),
+            ("premium", {"subscription_tier": "premium", "subscription_status": "active"}, 6),
+        )
+        for lang in ("en", "hi"):
+            for tier, user, expected in users:
+                response = await playlist.get_today_playlist(
+                    lang=lang,
+                    tz="Asia/Kolkata",
+                    store=GuardStore(),
+                    current_user=user,
+                )
+                results[f"{lang}/{tier}"] = {
+                    "actual": len(response.data.get("items", [])),
+                    "expected": expected,
+                }
+        print(json.dumps(results))
+    finally:
+        playlist._record_history = original_record_history
+
+asyncio.run(main())
+"""
+    command = ["sudo", "docker", "exec", "dreamweaver-backend", "python", "-c", probe]
+    try:
+        result = subprocess.run(command, capture_output=True, text=True, timeout=60)
+    except Exception as exc:
+        return [f"Bedtime playlist contract check failed: {type(exc).__name__}: {exc}"]
+    if result.returncode != 0:
+        detail = (result.stderr or result.stdout).strip().splitlines()
+        return [f"Bedtime playlist contract check failed: {' | '.join(detail[-8:])}"]
+    try:
+        results = json.loads(result.stdout.strip().splitlines()[-1])
+    except (IndexError, json.JSONDecodeError) as exc:
+        return [f"Bedtime playlist contract returned invalid output: {exc}"]
+    issues = []
+    for label, counts in results.items():
+        if counts["actual"] != counts["expected"]:
+            issues.append(
+                f"Bedtime playlist {label} returned {counts['actual']} items; "
+                f"expected {counts['expected']}"
+            )
+    return issues
+
+
+def verify_frontend_regression_suite() -> list[str]:
+    web_root = Path(os.environ.get("DREAMWEAVER_WEB_ROOT", "/opt/dreamweaver-web"))
+    if not web_root.exists():
+        return [f"Frontend regression suite unavailable: {web_root} does not exist"]
+
+    issues = []
+    commands = (
+        ("Emberlight source verification", ["npm", "run", "verify:emberlight"]),
+        ("Emberlight regression tests", ["npm", "run", "test:emberlight", "--", "--ci"]),
+    )
+    for label, command in commands:
+        try:
+            result = subprocess.run(
+                command,
+                cwd=web_root,
+                capture_output=True,
+                text=True,
+                timeout=300,
+            )
+            if result.returncode != 0:
+                output = (result.stdout + "\n" + result.stderr).strip().splitlines()
+                issues.append(f"{label} failed: {' | '.join(output[-8:])}")
+        except Exception as exc:
+            issues.append(f"{label} failed: {type(exc).__name__}: {exc}")
+    return issues
+
+
+def verify_frontend_runtime_assets(
+    frontend: str = PROD_FRONTEND,
+    client=None,
+) -> list[str]:
+    owns_client = client is None
+    if client is None:
+        client = httpx.Client(timeout=20, follow_redirects=True)
+    issues = []
+    assets = {
+        "/version.json",
+        "/sw.js",
+        "/logo-new.png",
+        "/upgrade-showcase.webp",
+    }
+    try:
+        for route in ("/?source=app", "/nap-playlist"):
+            try:
+                response = client.get(f"{frontend}{route}")
+            except Exception as exc:
+                issues.append(
+                    f"Frontend runtime page failed: {route}: "
+                    f"{type(exc).__name__}: {exc}"
+                )
+                continue
+            if response.status_code != 200:
+                issues.append(
+                    f"Frontend runtime page returned {response.status_code}: {route}"
+                )
+                continue
+            assets.update(
+                path
+                for path in re.findall(
+                    r"""(?:src|href)=["']([^"']+)["']""",
+                    response.text,
+                )
+                if path.startswith("/_next/static/")
+            )
+        if not any(path.endswith(".js") for path in assets):
+            issues.append("Frontend runtime pages reference no JavaScript bundles")
+        for path in sorted(assets):
+            try:
+                response = client.get(f"{frontend}{path}")
+            except Exception as exc:
+                issues.append(
+                    f"Frontend runtime asset failed: {path}: "
+                    f"{type(exc).__name__}: {exc}"
+                )
+                continue
+            if response.status_code != 200:
+                issues.append(
+                    f"Frontend runtime asset returned {response.status_code}: {path}"
+                )
+    finally:
+        if owns_client:
+            client.close()
+    return issues
+
+
+def verify_current_playback_assets(
+    frontend: str = PROD_FRONTEND,
+    api: str = PROD_API,
+    client=None,
+) -> list[str]:
+    owns_client = client is None
+    if client is None:
+        client = httpx.Client(timeout=20, follow_redirects=True)
+    issues = []
+    audio_paths = set()
+    try:
+        sources = []
+        for lang in ("en", "hi"):
+            sources.extend((
+                f"{api}/api/v1/content?lang={lang}&page=1",
+                f"{api}/api/v1/playlist/nap?lang={lang}&tz=Asia%2FKolkata",
+            ))
+        for source in sources:
+            try:
+                response = client.get(source)
+            except Exception as exc:
+                issues.append(
+                    f"Current playback catalog failed: {source}: "
+                    f"{type(exc).__name__}: {exc}"
+                )
+                continue
+            if response.status_code != 200:
+                issues.append(
+                    f"Current playback catalog returned "
+                    f"{response.status_code}: {source}"
+                )
+                continue
+            data = response.json()
+            payload = data.get("data", data) if isinstance(data, dict) else {}
+            items = payload.get("items", []) if isinstance(payload, dict) else []
+            for item in items:
+                direct_audio = item.get("audio_url") or item.get("audio")
+                if direct_audio:
+                    audio_paths.add(direct_audio)
+                for variant in item.get("audio_variants") or []:
+                    variant_audio = variant.get("url") or variant.get("audio_url")
+                    if variant_audio:
+                        audio_paths.add(variant_audio)
+        if not audio_paths:
+            issues.append("Current playback catalogs reference no audio files")
+        for path in sorted(audio_paths):
+            url = path if path.startswith(("http://", "https://")) else f"{frontend}{path}"
+            try:
+                response = client.head(url)
+            except Exception as exc:
+                issues.append(
+                    f"Current playback audio failed: {path}: "
+                    f"{type(exc).__name__}: {exc}"
+                )
+                continue
+            if response.status_code not in (200, 206):
+                issues.append(
+                    f"Current playback audio returned {response.status_code}: {path}"
+                )
+    finally:
+        if owns_client:
+            client.close()
+    return issues
+
+
+def verify_new_items_serving(added_items: list[dict], frontend: str, api: str) -> list[str]:
+    """For each newly added item, verify its audio and cover URLs are reachable.
+
+    Each item in added_items should have:
+      category: 'story' | 'silly_song' | 'poem'
+      item_id: the ID
+      age_group: (for silly_songs/poems)
+      audio_url: URL path to check
+      cover_url: URL path to check
+
+    Returns list of issues found.
+    """
+    if not added_items:
+        return []
+
+    print(f"\n  🔍 Verifying {len(added_items)} new item(s) are fully serving...")
+
+    issues = []
+    client = httpx.Client(timeout=10, follow_redirects=True)
+
+    for item in added_items:
+        cat = item["category"]
+        item_id = item["item_id"]
+        label = f"{cat} ({item.get('age_group', '')}): {item_id}" if item.get("age_group") else f"{cat}: {item_id}"
+
+        # Determine base URL based on category
+        audio_base = api if cat in ("silly_song", "poem") else frontend
+        cover_base = frontend
+
+        # Check audio
+        audio_url = item.get("audio_url", "")
+        if audio_url:
+            full = f"{audio_base}{audio_url}"
+            try:
+                resp = client.head(full)
+                if resp.status_code == 200:
+                    print(f"    ✅ {label} — audio serving")
+                else:
+                    issues.append(f"  ❌ NEW {label} — audio NOT serving ({resp.status_code}): {audio_url}")
+            except Exception as e:
+                issues.append(f"  ❌ NEW {label} — audio unreachable: {audio_url} ({e})")
+        else:
+            issues.append(f"  ⚠️  NEW {label} — no audio URL")
+
+        # Check cover
+        cover_url = item.get("cover_url", "")
+        if cover_url:
+            full = f"{cover_base}{cover_url}"
+            try:
+                resp = client.head(full)
+                if resp.status_code == 200:
+                    print(f"    ✅ {label} — cover serving")
+                else:
+                    issues.append(f"  ❌ NEW {label} — cover NOT serving ({resp.status_code}): {cover_url}")
+            except Exception as e:
+                issues.append(f"  ❌ NEW {label} — cover unreachable: {cover_url} ({e})")
+        else:
+            issues.append(f"  ⚠️  NEW {label} — no cover URL")
+
+    return issues
+
+
+def diff_states(before: dict, after: dict) -> dict:
+    """Compare two states and return structured change report.
+
+    Returns dict with keys:
+      added: list of change strings (new items)
+      removed: list of change strings (missing items, regressions)
+      updated: list of change strings (same ID, content changed)
+      degraded: list of change strings (lost audio/cover)
+      removed_items: list of dicts for auto-recovery {category, item_id, age_group}
+      added_items: list of dicts for serving check {category, item_id, age_group, audio_url, cover_url}
+    """
+    added = []
+    removed = []
+    updated = []
+    degraded = []
+    removed_items = []  # For JSON recovery
+    added_items = []    # For serving verification
+
+    before_character_ids = {item.get("id") for item in before.get("active_characters", [])}
+    after_character_ids = {item.get("id") for item in after.get("active_characters", [])}
+    for character_id in sorted(before_character_ids - after_character_ids):
+        removed.append(f"  ❌ REMOVED character: {character_id}")
+
+    before_pending_jobs = {item.get("id") for item in before.get("pending_character_jobs", [])}
+    after_job_statuses = after.get("character_jobs", {})
+    for job_id in sorted(before_pending_jobs):
+        if job_id not in after_job_statuses:
+            removed.append(f"  ❌ LOST character generation job: {job_id}")
+
+    # ── Stories ──
+    before_ids = set(before.get("stories", {}).keys())
+    after_ids = set(after.get("stories", {}).keys())
+
+    for sid in sorted(after_ids - before_ids):
+        s = after["stories"][sid]
+        added.append(f"  ADDED story: {sid} — \"{s['title']}\"")
+        added_items.append({
+            "category": "story", "item_id": sid,
+            "audio_url": (s.get("audio_urls") or [""])[0],
+            "cover_url": s.get("cover_url", ""),
+        })
+
+    for sid in sorted(before_ids - after_ids):
+        s = before["stories"][sid]
+        legacy_silly_song = (
+            s.get("type") == "song"
+            and s.get("subtype") in (None, "silly_song")
+        )
+        if legacy_silly_song and (
+            not s.get("has_audio") or not s.get("has_cover")
+        ):
+            continue
+        removed.append(f"  ❌ REMOVED story: {sid} — \"{s['title']}\"")
+
+    for sid in before_ids & after_ids:
+        b, a = before["stories"][sid], after["stories"][sid]
+        if b.get("has_audio") and not a.get("has_audio"):
+            degraded.append(f"  ❌ LOST AUDIO: {sid} — \"{a['title']}\"")
+        if b.get("has_cover") and not a.get("has_cover"):
+            degraded.append(f"  ❌ LOST COVER: {sid} — \"{a['title']}\"")
+        # Detect title changes (content update)
+        if b.get("title") != a.get("title"):
+            updated.append(f"  ✏️  UPDATED story: {sid} — title \"{b['title']}\" → \"{a['title']}\"")
+
+    # ── Silly songs per age group ──
+    for age in ["2-5", "6-8", "9-12"]:
+        before_ss = set(before.get("silly_songs", {}).get(age, {}).keys())
+        after_ss = set(after.get("silly_songs", {}).get(age, {}).keys())
+
+        for sid in sorted(after_ss - before_ss):
+            s = after["silly_songs"][age][sid]
+            added.append(f"  ADDED silly song ({age}): {sid}")
+            added_items.append({
+                "category": "silly_song", "item_id": sid, "age_group": age,
+                "audio_url": s.get("audio_url", ""),
+                "cover_url": s.get("cover_url", ""),
+            })
+
+        for sid in sorted(before_ss - after_ss):
+            s = before["silly_songs"][age][sid]
+            if (
+                not s.get("has_audio")
+                or not s.get("audio_url")
+                or not s.get("cover_url")
+            ):
+                continue
+            removed.append(f"  ❌ REMOVED silly song ({age}): {sid}")
+            removed_items.append({"category": "silly_songs", "item_id": sid, "age_group": age})
+
+        for sid in before_ss & after_ss:
+            b = before["silly_songs"][age][sid]
+            a = after["silly_songs"][age][sid]
+            if b.get("has_audio") and not a.get("has_audio"):
+                degraded.append(f"  ❌ LOST AUDIO silly song ({age}): {sid}")
+            if b.get("has_cover") and not a.get("has_cover"):
+                degraded.append(f"  ❌ LOST COVER silly song ({age}): {sid}")
+            # Detect content updates (title change)
+            if b.get("title") != a.get("title"):
+                updated.append(f"  ✏️  UPDATED silly song ({age}): {sid} — \"{b.get('title')}\" → \"{a.get('title')}\"")
+            elif b.get("audio_url") != a.get("audio_url") and a.get("audio_url"):
+                updated.append(f"  ✏️  UPDATED silly song ({age}): {sid} — new audio")
+
+    # ── Poems per age group ──
+    for age in ["2-5", "6-8", "9-12"]:
+        before_poems = set(before.get("poems", {}).get(age, {}).keys())
+        after_poems = set(after.get("poems", {}).get(age, {}).keys())
+
+        for pid in sorted(after_poems - before_poems):
+            p = after["poems"][age][pid]
+            added.append(f"  ADDED poem ({age}): {pid}")
+            added_items.append({
+                "category": "poem", "item_id": pid, "age_group": age,
+                "audio_url": p.get("audio_url", ""),
+                "cover_url": p.get("cover_url", ""),
+            })
+
+        for pid in sorted(before_poems - after_poems):
+            removed.append(f"  ❌ REMOVED poem ({age}): {pid}")
+            removed_items.append({"category": "poems", "item_id": pid, "age_group": age})
+
+        for pid in before_poems & after_poems:
+            b = before["poems"][age][pid]
+            a = after["poems"][age][pid]
+            if b.get("has_audio") and not a.get("has_audio"):
+                degraded.append(f"  ❌ LOST AUDIO poem ({age}): {pid}")
+            if b.get("has_cover") and not a.get("has_cover"):
+                degraded.append(f"  ❌ LOST COVER poem ({age}): {pid}")
+
+    return {
+        "added": added,
+        "removed": removed,
+        "updated": updated,
+        "degraded": degraded,
+        "removed_items": removed_items,
+        "added_items": added_items,
+    }
+
+
+def print_state_summary(state: dict, label: str = "Current"):
+    """Print a compact summary of state (English only)."""
+    stories = state.get("stories", {})
+
+    print(f"\n{'='*60}")
+    print(f"  {label}")
+    print(f"  Captured: {state.get('captured_at', '?')}")
+    print(f"{'='*60}")
+
+    print(f"\n  STORIES")
+    print(f"    Total: {len(stories)} stories")
+    with_audio = sum(1 for s in stories.values() if s.get("has_audio"))
+    with_cover = sum(1 for s in stories.values() if s.get("has_cover"))
+    no_audio = len(stories) - with_audio
+    no_cover = len(stories) - with_cover
+    print(f"    Audio: {with_audio} with audio{f', ❌ {no_audio} WITHOUT' if no_audio else ' ✅'}")
+    print(f"    Covers: {with_cover} with covers{f', ❌ {no_cover} WITHOUT' if no_cover else ' ✅'}")
+
+    print(f"\n  SILLY SONGS")
+    for age in ["2-5", "6-8", "9-12"]:
+        items = state.get("silly_songs", {}).get(age, {})
+        count = len(items)
+        with_audio = sum(1 for d in items.values() if d.get("has_audio"))
+        with_cover = sum(1 for d in items.values() if d.get("has_cover"))
+        audio_status = "✅" if with_audio == count else f"❌ {count - with_audio} without audio"
+        cover_status = "✅" if with_cover == count else f"❌ {count - with_cover} without covers"
+        print(f"    {age}: {count} songs, {with_audio} with audio {audio_status}, {with_cover} with covers {cover_status}")
+
+    print(f"\n  POEMS")
+    for age in ["2-5", "6-8", "9-12"]:
+        items = state.get("poems", {}).get(age, {})
+        count = len(items)
+        with_audio = sum(1 for d in items.values() if d.get("has_audio"))
+        with_cover = sum(1 for d in items.values() if d.get("has_cover"))
+        audio_status = "✅" if with_audio == count else f"❌ {count - with_audio} without audio"
+        cover_status = "✅" if with_cover == count else f"❌ {count - with_cover} without covers"
+        print(f"    {age}: {count} poems, {with_audio} with audio {audio_status}, {with_cover} with covers {cover_status}")
+
+
+def save_json(path: Path, state: dict):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(state, indent=2))
+
+
+def load_json(path: Path) -> dict:
+    if not path.exists():
+        return {}
+    return json.loads(path.read_text())
+
+
+# ────────────────────────────────────────────────────────────
+# Commands
+# ────────────────────────────────────────────────────────────
+
+def _report_paywall_flags():
+    """Print current paywall flag state from .env — called by both snapshot
+    and verify so flag drift is immediately visible in every deploy output."""
+    env_path = Path(__file__).resolve().parents[1] / ".env"
+    flags = {}
+    try:
+        for line in env_path.read_text().splitlines():
+            for key in ("PAYWALL_ENABLED", "PAYWALL_TEST_FAMILY_IDS", "PAYWALL_NATIVE_ENABLED"):
+                if line.startswith(f"{key}="):
+                    flags[key] = line.split("=", 1)[1].strip()
+    except Exception:
+        pass
+    enabled = flags.get("PAYWALL_ENABLED", "?")
+    test_ids = flags.get("PAYWALL_TEST_FAMILY_IDS", "")
+    native = flags.get("PAYWALL_NATIVE_ENABLED", "?")
+    status = "LIVE" if enabled == "true" else ("DARK" if enabled == "false" else "?")
+    scope = f"scoped to {test_ids}" if test_ids else "all web users"
+    print(f"\n  {'🟢' if status == 'LIVE' else '⚫'} Paywall: {status} ({scope}, native={'dormant' if native == 'false' else native})")
+
+
+def cmd_snapshot(args):
+    """Capture and save pre-deploy state + back up JSON data files."""
+    api = get_api(args.local)
+    print(f"Capturing live state from {api}...")
+    state = capture_state(api)
+    save_json(SNAPSHOT_PATH, state)
+    print_state_summary(state, "Snapshot Saved (pre-deploy)")
+    print(f"\n  Saved to: {SNAPSHOT_PATH}")
+
+    # Back up JSON data files so we can recover if they're deleted during deploy
+    if not args.local:
+        print()
+        backup_json_files()
+
+    _report_paywall_flags()
+    print(f"\n  ✅ Run your deploy now, then run: python3 scripts/data_integrity_guard.py verify\n")
+
+
+def _ssh_run(cmd, timeout=30):
+    """Run a command on the GCP server. Returns (stdout, returncode).
+
+    If deploy_guard is already running on the prod VM, execute locally via
+    `bash -c` instead of `gcloud compute ssh` (which fails from VM→VM because
+    the VM's default service account lacks SSH scopes).
+    """
+    if ON_PROD_VM:
+        result = subprocess.run(
+            ["bash", "-c", cmd],
+            capture_output=True, text=True, timeout=timeout,
+        )
+    else:
+        result = subprocess.run(
+            SSH_CMD + [cmd],
+            capture_output=True, text=True, timeout=timeout,
+        )
+    return result.stdout.strip(), result.returncode
+
+
+def capture_character_state() -> dict:
+    command = (
+        "sudo docker exec dreamweaver-backend python3 -c "
+        "'import json; from app.dependencies import get_db_client; db = get_db_client(); "
+        "characters = [item.to_dict() for item in db.collection(\"characters\").stream()]; "
+        "all_jobs = [item.to_dict() for item in db.collection(\"character_generation_jobs\").stream()]; "
+        "jobs = [item for item in all_jobs if item.get(\"status\") in {\"accepted\", \"generating\"}]; "
+        "statuses = {item.get(\"id\"): item.get(\"status\") for item in all_jobs}; "
+        "print(json.dumps({\"active_characters\": characters, \"pending_character_jobs\": jobs, \"character_jobs\": statuses}, default=str))'"
+    )
+    output, returncode = _ssh_run(command, timeout=30)
+    if returncode != 0:
+        return {
+            "active_characters": [],
+            "pending_character_jobs": [],
+            "character_jobs": {},
+            "character_snapshot_error": "unable to read character state",
+        }
+    try:
+        state = json.loads(output)
+        return {
+            "active_characters": state.get("active_characters", []),
+            "pending_character_jobs": state.get("pending_character_jobs", []),
+            "character_jobs": state.get("character_jobs", {}),
+        }
+    except (TypeError, ValueError):
+        return {
+            "active_characters": [],
+            "pending_character_jobs": [],
+            "character_jobs": {},
+            "character_snapshot_error": "invalid character state",
+        }
+
+
+def verify_character_generation_contracts(api: str, snapshot: dict) -> list[str]:
+    issues = []
+    client = httpx.Client(timeout=30)
+    try:
+        response = client.get(f"{api}/api/v1/characters")
+        if response.status_code != 401:
+            issues.append(CHARACTER_DEPLOY_CONTRACTS[0])
+
+        _, worker_returncode = _ssh_run(
+            "systemctl is-active --quiet dreamweaver-character-worker"
+        )
+        if worker_returncode != 0:
+            _, worker_returncode = _ssh_run(
+                "sudo pm2 describe dreamweaver-character-worker >/dev/null 2>&1"
+            )
+            if worker_returncode != 0:
+                issues.append(CHARACTER_DEPLOY_CONTRACTS[1])
+
+        _, media_returncode = _ssh_run(
+            "sudo docker exec dreamweaver-backend sh -c "
+            "'media=${CHARACTER_MEDIA_DIR:-data/character-media}; test -d \"$media\" && test -w \"$media\"'"
+        )
+        if media_returncode != 0:
+            issues.append(CHARACTER_DEPLOY_CONTRACTS[2])
+
+        if snapshot.get("character_snapshot_error"):
+            issues.append("character generation snapshot unavailable")
+        for character in snapshot.get("active_characters", []):
+            portrait_url = character.get("portrait_url")
+            if not portrait_url:
+                issues.append(CHARACTER_DEPLOY_CONTRACTS[3])
+                continue
+            url = portrait_url if portrait_url.startswith("http") else f"{api}{portrait_url}"
+            if client.get(url).status_code != 200:
+                issues.append(CHARACTER_DEPLOY_CONTRACTS[3])
+                break
+
+        lease_seconds, recovery_seconds = configured_character_job_timeouts()
+        now = datetime.now(timezone.utc)
+        for job in snapshot.get("pending_character_jobs", []):
+            if character_job_is_stale(job, now, lease_seconds, recovery_seconds):
+                issues.append(CHARACTER_DEPLOY_CONTRACTS[4])
+                break
+    except httpx.HTTPError:
+        issues.append("character generation contract request failed")
+    finally:
+        client.close()
+    return issues
+
+
+def configured_character_job_timeouts() -> tuple[int, int]:
+    return (
+        int(os.getenv("CHARACTER_WORKER_LEASE_SECONDS", "300")),
+        int(os.getenv("CHARACTER_JOB_RECOVERY_WINDOW_SECONDS", "60")),
+    )
+
+
+def character_job_is_stale(
+    job: dict,
+    now: datetime,
+    lease_seconds: int,
+    recovery_seconds: int,
+) -> bool:
+    status = job.get("status")
+    timestamp = job.get("created_at") if status == "accepted" else job.get("lease_expires_at")
+    if not timestamp:
+        return True
+    try:
+        checked_at = datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
+        checked_at = checked_at if checked_at.tzinfo else checked_at.replace(tzinfo=timezone.utc)
+    except (TypeError, ValueError):
+        return True
+    window = recovery_seconds + (lease_seconds if status == "accepted" else 0)
+    return checked_at + timedelta(seconds=window) < now
+
+
+def check_radio_health():
+    """Check radio system health on the GCP server via SSH.
+
+    All checks run remotely because the radio process lives on the server.
+    Returns a list of issue strings (empty = all healthy).
+    """
+    issues = []
+
+    print(f"\n{'='*60}")
+    print("  RADIO HEALTH CHECK")
+    print(f"{'='*60}\n")
+
+    # 1. Radio process alive? (check on server via SSH)
+    try:
+        out, rc = _ssh_run("pgrep -f radio_controller.py")
+        if rc == 0 and out:
+            pids = out.split("\n")
+            print(f"  ✅ Radio process running (PID: {', '.join(pids)})")
+        else:
+            msg = "Radio process NOT running (radio_controller.py not found)"
+            print(f"  ❌ {msg}")
+            issues.append(msg)
+    except Exception as e:
+        msg = f"Could not check radio process: {e}"
+        print(f"  ❌ {msg}")
+        issues.append(msg)
+
+    # 2. Radio state file intact? (check on server via SSH)
+    try:
+        out, rc = _ssh_run(
+            "python3 -c \""
+            "import json; "
+            "d = json.load(open('/opt/dreamweaver-backend/radio/radio_state.json')); "
+            "print(len(d.get('play_history', [])), d.get('flow_index', 0))"
+            "\""
+        )
+        if rc == 0 and out:
+            parts = out.split()
+            played, flow_idx = parts[0], parts[1]
+            print(f"  ✅ Radio state file OK (history: {played} tracks, flow index: {flow_idx})")
+        else:
+            msg = "Radio state file missing or corrupt"
+            print(f"  ❌ {msg}")
+            issues.append(msg)
+    except Exception as e:
+        msg = f"Could not check radio state: {e}"
+        print(f"  ❌ {msg}")
+        issues.append(msg)
+
+    # 3. Content availability — run radio's --list-content on the server
+    try:
+        out, rc = _ssh_run(
+            "cd /opt/dreamweaver-backend && python3 scripts/radio_controller.py --list-content 2>&1",
+            timeout=45,
+        )
+        import re as _re
+        total_match = _re.search(r"Total playable tracks:\s*(\d+)", out)
+        if total_match:
+            total = int(total_match.group(1))
+            print(f"  ✅ Radio content loaded: {total} playable tracks")
+
+            required_types = {"story", "silly_song", "poem", "lullaby"}
+            missing_types = []
+            for ct in required_types:
+                ct_match = _re.search(rf"^\s*{ct}:\s*(\d+)", out, _re.MULTILINE)
+                if ct_match:
+                    if int(ct_match.group(1)) == 0:
+                        missing_types.append(ct)
+                else:
+                    missing_types.append(ct)
+
+            if missing_types:
+                msg = f"Radio missing content types: {', '.join(sorted(missing_types))}"
+                print(f"  ❌ {msg}")
+                issues.append(msg)
+            else:
+                print(f"  ✅ All content types available for radio")
+        elif rc != 0:
+            msg = f"Radio content check failed (exit {rc})"
+            print(f"  ❌ {msg}")
+            issues.append(msg)
+        else:
+            print(f"  ⚠️  Could not parse radio content output")
+    except subprocess.TimeoutExpired:
+        msg = "Radio content check timed out (API may be down)"
+        print(f"  ❌ {msg}")
+        issues.append(msg)
+    except Exception as e:
+        msg = f"Radio content check error: {e}"
+        print(f"  ❌ {msg}")
+        issues.append(msg)
+
+    # 4. Audio parity — check on server that backend audio is mirrored to web public
+    try:
+        out, rc = _ssh_run(
+            "for d in silly-songs poems lullabies; do "
+            "  b=/opt/dreamweaver-backend/public/audio/$d; "
+            "  w=/opt/dreamweaver-web/public/audio/$d; "
+            "  if [ -d \"$b\" ]; then "
+            "    bc=$(ls \"$b\"/*.mp3 2>/dev/null | wc -l); "
+            "    wc=$(ls \"$w\"/*.mp3 2>/dev/null | wc -l); "
+            "    missing=$(comm -23 <(ls \"$b\"/*.mp3 2>/dev/null | xargs -n1 basename | sort) "
+            "                       <(ls \"$w\"/*.mp3 2>/dev/null | xargs -n1 basename | sort) | wc -l); "
+            "    echo \"$d:$bc:$wc:$missing\"; "
+            "  fi; "
+            "done"
+        )
+        if rc == 0 and out:
+            for line in out.strip().split("\n"):
+                parts = line.strip().split(":")
+                if len(parts) == 4:
+                    subdir, bc, wc, missing = parts[0], parts[1], parts[2], int(parts[3])
+                    if missing > 0:
+                        # Auto-fix via SSH
+                        _ssh_run(
+                            f"for f in $(comm -23 "
+                            f"<(ls /opt/dreamweaver-backend/public/audio/{subdir}/*.mp3 2>/dev/null | xargs -n1 basename | sort) "
+                            f"<(ls /opt/dreamweaver-web/public/audio/{subdir}/*.mp3 2>/dev/null | xargs -n1 basename | sort)); do "
+                            f"cp /opt/dreamweaver-backend/public/audio/{subdir}/$f /opt/dreamweaver-web/public/audio/{subdir}/; done",
+                            timeout=30,
+                        )
+                        print(f"  ✅ {subdir}: auto-synced {missing} audio file(s) to web public")
+                    else:
+                        print(f"  ✅ {subdir}: audio parity OK ({bc.strip()} files)")
+    except Exception as e:
+        msg = f"Audio parity check error: {e}"
+        print(f"  ❌ {msg}")
+        issues.append(msg)
+
+    # 5. Recent log file exists and has activity? (check on server)
+    try:
+        out, rc = _ssh_run(
+            "ls -t /opt/dreamweaver-backend/radio/logs/radio_*.log 2>/dev/null | head -1 | "
+            "xargs -I{} python3 -c \""
+            "import os, time; "
+            "p='{}'; "
+            "age_h = (time.time() - os.path.getmtime(p)) / 3600; "
+            "print(f'{os.path.basename(p)} {age_h:.1f}')\""
+        )
+        if rc == 0 and out:
+            parts = out.split()
+            log_name, age_hours = parts[0], float(parts[1])
+            if age_hours < 24:
+                print(f"  ✅ Radio log active: {log_name} ({age_hours:.1f}h ago)")
+            else:
+                msg = f"Radio log stale: {log_name} last modified {age_hours:.0f}h ago"
+                print(f"  ❌ {msg}")
+                issues.append(msg)
+        else:
+            print(f"  ⚠️  No radio log files found on server")
+    except Exception as e:
+        msg = f"Could not check radio logs: {e}"
+        print(f"  ❌ {msg}")
+        issues.append(msg)
+
+    # 6. End-to-end: is YouTube actually broadcasting the live stream?
+    # The checks above only verify our side — ffmpeg can happily push RTMP
+    # frames into a dead stream key while YouTube shows the channel offline
+    # (happens when YouTube ends the live broadcast due to health issues,
+    # bitrate drops, or the 12-hour broadcast cap).
+    #
+    # Signal used: /live URL canonical redirect.
+    #   Live    → canonical lands on https://www.youtube.com/watch?v=<id>
+    #   Offline → canonical lands on https://www.youtube.com/channel/<id>
+    try:
+        probe_path = "/tmp/_dg_yt_probe.py"
+        probe_body = (
+            "import urllib.request, re, sys\n"
+            "try:\n"
+            "    req = urllib.request.Request("
+            "'https://www.youtube.com/@DreamValleyStories/live', "
+            "headers={'User-Agent':'Mozilla/5.0'})\n"
+            "    body = urllib.request.urlopen(req, timeout=20).read().decode('utf-8','ignore')\n"
+            "    m = re.search(r'<link rel=\"canonical\" href=\"([^\"]+)\"', body)\n"
+            "    canonical = m.group(1) if m else ''\n"
+            "    if '/watch?v=' in canonical:\n"
+            "        print('LIVE')\n"
+            "    elif '/channel/' in canonical or '/@' in canonical:\n"
+            "        print('OFFLINE')\n"
+            "    else:\n"
+            "        print('UNKNOWN:' + canonical[:80])\n"
+            "except Exception as e:\n"
+            "    print('ERROR:' + type(e).__name__)\n"
+        )
+        # Write probe to disk once then run — keeps quoting simple.
+        with open(probe_path, "w") as _f:
+            _f.write(probe_body)
+        out, rc = _ssh_run(f"python3 {probe_path}", timeout=30)
+        if rc == 0 and out.strip() == "LIVE":
+            print(f"  ✅ YouTube broadcast is LIVE (@DreamValleyStories)")
+        elif rc == 0 and out.strip() == "OFFLINE":
+            msg = ("YouTube broadcast is OFFLINE — ffmpeg may still be pushing "
+                   "into a dead stream key. Restart radio (see runbook) to reconnect.")
+            print(f"  ❌ {msg}")
+            issues.append(msg)
+        else:
+            print(f"  ⚠️  Could not determine YouTube live status (rc={rc}, out={out[:80]!r})")
+    except Exception as e:
+        # Network check is advisory — don't fail the whole guard on a flaky DNS.
+        print(f"  ⚠️  YouTube liveness probe failed: {e}")
+
+    print(f"\n{'='*60}")
+    if not issues:
+        print(f"  ✅ Radio health: all checks passed.")
+    else:
+        print(f"  ❌ Radio health: {len(issues)} issue(s) found")
+    print(f"{'='*60}")
+
+    return issues
+
+
+def check_misrouted_per_content_files() -> list[str]:
+    """Flag per-content files whose `lang` field disagrees with their dir's lang.
+
+    The invariant is: a file in `data/<kind>_hi/` must have `lang=='hi'`; a file
+    in the matching English dir must have `lang in {None, '', 'en'}`. Mismatches
+    yield duplicate (id, lang) API rows because the loader keys on (source dir,
+    id) — see commit fc7af04 for context.
+
+    The check intentionally trusts the file's `lang` field, not the id prefix:
+    legitimate Hindi items can use ids like `exph-…` (experimental pipeline),
+    so a pure prefix rule produces false positives.
+    """
+    issues: list[str] = []
+    if not ON_PROD_VM:
+        # Local runs don't see prod's data tree; skip rather than warn.
+        return issues
+
+    data_root = Path("/opt/dreamweaver-backend/data")
+    pairs = (
+        ("stories", "stories_hi"),
+        ("long_stories", "long_stories_hi"),
+        ("lullabies", "lullabies_hi"),
+        ("silly_songs", "silly_songs_hi"),
+        ("funny_shorts", "funny_shorts_hi"),
+        ("poems", "poems_hi"),
+    )
+
+    def _lang(path: Path) -> "str | None":
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            return None
+        return (data.get("lang") or data.get("language") or "").lower() or None
+
+    for en_name, hi_name in pairs:
+        en_dir = data_root / en_name
+        hi_dir = data_root / hi_name
+        if en_dir.is_dir():
+            for p in en_dir.glob("*.json"):
+                if _lang(p) == "hi":
+                    issues.append(
+                        f"misrouted Hindi file in English dir: "
+                        f"{p.relative_to(data_root.parent)}"
+                    )
+        if hi_dir.is_dir():
+            for p in hi_dir.glob("*.json"):
+                lang = _lang(p)
+                if lang and lang != "hi":
+                    issues.append(
+                        f"misrouted non-Hindi file in Hindi dir: "
+                        f"{p.relative_to(data_root.parent)} (lang={lang!r})"
+                    )
+    return issues
+
+
+def cmd_verify(args):
+    """Compare current state against snapshot AND golden, check files, auto-recover.
+
+    POLICY: Every warning is a BLOCKER. If ANY issue remains unresolved after
+    auto-recovery, verify exits non-zero. No "pre-existing" or "informational"
+    exceptions — if deploy guard reports it, it must be fixed before deploy is complete.
+    """
+    unresolved = []  # Collects legacy diagnostics during recovery attempts
+    current_policy_blockers = []
+
+    before = load_json(SNAPSHOT_PATH)
+    if not before:
+        print("⚠️  No snapshot found. Using golden baseline as reference.")
+
+    golden = load_json(GOLDEN_PATH)
+
+    api = get_api(args.local)
+    frontend = get_frontend(args.local)
+    print(f"Capturing live state from {api}...")
+    after = capture_state(api)
+
+    # Use snapshot if available, otherwise golden, otherwise just show current
+    reference = before or golden or {}
+    ref_label = "BEFORE (pre-deploy snapshot)" if before else "GOLDEN BASELINE (reference)"
+
+    if reference:
+        print_state_summary(reference, ref_label)
+    print_state_summary(after, "AFTER (current live)")
+
+    # ── Diff against snapshot ──
+    if reference:
+        changes = diff_states(reference, after)
+
+        print(f"\n{'='*60}")
+        has_issues = False
+
+        if changes["added"]:
+            print(f"  ✅ {len(changes['added'])} new item(s) added:")
+            for c in changes["added"]:
+                print(c)
+
+        if changes["updated"]:
+            print(f"\n  ✏️  {len(changes['updated'])} item(s) updated:")
+            for c in changes["updated"]:
+                print(c)
+
+        if changes["removed"]:
+            has_issues = True
+            print(f"\n  ❌ {len(changes['removed'])} REMOVAL(S) DETECTED:")
+            for c in changes["removed"]:
+                print(c)
+
+        if changes["degraded"]:
+            has_issues = True
+            print(f"\n  ❌ {len(changes['degraded'])} DEGRADATION(S) DETECTED:")
+            for c in changes["degraded"]:
+                print(c)
+
+        if not changes["added"] and not changes["removed"] and not changes["updated"] and not changes["degraded"]:
+            print("  ✅ NO CHANGES — content is identical.")
+
+        print(f"{'='*60}")
+
+        # ── Auto-recover removed items (JSON data files) ──
+        if changes["removed_items"] and not args.no_recover and not args.local:
+            json_recovered, json_failed = recover_json_files(changes["removed_items"])
+            if json_recovered > 0:
+                print(f"\n  ♻️  Recovered {json_recovered} JSON data file(s). Re-capturing state...")
+                # Reload the API to trigger it to pick up restored files
+                after = capture_state(api)
+                # Re-diff to confirm recovery
+                changes2 = diff_states(reference, after)
+                still_removed = len(changes2["removed"])
+                if still_removed == 0:
+                    print("  ✅ All removed items restored!")
+                else:
+                    msg = f"{still_removed} item(s) still missing after JSON recovery"
+                    print(f"  ❌ {msg}")
+                    unresolved.append(msg)
+
+        # ── Verify new items are fully serving ──
+        if changes["added_items"] and not args.skip_files:
+            new_issues = verify_new_items_serving(changes["added_items"], frontend, api)
+            if new_issues:
+                print(f"\n{'='*60}")
+                msg = f"{len(new_issues)} new item(s) NOT fully serving"
+                print(f"  ❌ {msg}:")
+                for issue in new_issues:
+                    print(issue)
+                unresolved.append(msg)
+                print(f"{'='*60}")
+            else:
+                print(f"\n  ✅ All new items fully serving (audio + cover reachable).")
+
+    # ── Also diff against golden baseline (if golden exists and is different from reference) ──
+    if golden and before and golden != before:
+        golden_changes = diff_states(golden, after)
+        golden_removed = golden_changes["removed"]
+        if golden_removed:
+            print(f"\n{'='*60}")
+            print(f"  ❌ {len(golden_removed)} item(s) missing vs GOLDEN BASELINE:")
+            for c in golden_removed:
+                print(c)
+
+            # Auto-recover from JSON store
+            if golden_changes["removed_items"] and not args.no_recover and not args.local:
+                json_recovered, _ = recover_json_files(golden_changes["removed_items"])
+                if json_recovered > 0:
+                    print(f"  ♻️  Recovered {json_recovered} JSON(s) from golden baseline check.")
+                    after = capture_state(api)
+                    # Re-check if items are still missing
+                    golden_changes2 = diff_states(golden, after)
+                    still_missing = len(golden_changes2["removed"])
+                    if still_missing > 0:
+                        msg = f"{still_missing} item(s) still missing vs golden baseline after recovery"
+                        print(f"  ❌ {msg}")
+                        unresolved.append(msg)
+                else:
+                    msg = f"{len(golden_removed)} item(s) missing vs golden baseline — recovery found nothing"
+                    unresolved.append(msg)
+            elif golden_changes["removed_items"]:
+                msg = f"{len(golden_removed)} item(s) missing vs golden baseline"
+                unresolved.append(msg)
+            print(f"{'='*60}")
+
+    # ── Comprehensive live-URL reachability check (all langs, all subtypes) ──
+    # This catches issues independent of snapshot — the canonical "what users
+    # see right now is actually serving" gate. Added after 7 HI covers slipped
+    # through because the snapshot only captured lang=en.
+    if not args.skip_files:
+        live_issues = verify_all_live_urls(api, frontend)
+        print(f"\n{'='*60}")
+        if not live_issues:
+            print("  ✅ All live cover + audio URLs reachable across both languages.")
+        else:
+            msg = f"{len(live_issues)} live URL(s) broken (cover or audio 404)"
+            print(f"  ❌ {msg}:")
+            for issue in live_issues[:30]:  # cap at 30 to keep output readable
+                print(issue)
+            if len(live_issues) > 30:
+                print(f"  ... and {len(live_issues) - 30} more")
+            unresolved.append(msg)
+        print(f"{'='*60}")
+
+    # ── File reachability check ──
+    if not args.skip_files:
+        file_issues, recoverable = verify_files(after, frontend, api)
+        print(f"\n{'='*60}")
+        if not file_issues:
+            print("  ✅ All files reachable.")
+        else:
+            print(f"  ❌ {len(file_issues)} file(s) missing or broken:")
+            print()
+            for issue in file_issues:
+                print(issue)
+
+            # Auto-recover, then HARD-block on anything still missing.
+            if recoverable and not args.no_recover and not args.dry_run:
+                recovered, not_found = auto_recover(recoverable, dry_run=args.dry_run)
+                print(f"\n  Recovery: {recovered} restored, {not_found} not in backup stores")
+                # AUTHORITATIVE re-check — never trust the (recovered, not_found)
+                # counts alone. auto_recover returns (0,0) when its recovery step
+                # no-ops (e.g. SSH-to-self when verify runs ON the VM), which
+                # previously dropped a genuinely missing file
+                # (gen-feec_monika.mp3, 2026-05-29) instead of blocking. Re-run
+                # the file check and block on ANY remaining missing/broken file.
+                print("  Re-checking files after recovery attempt...")
+                after = capture_state(api)
+                file_issues2, _ = verify_files(after, frontend, api)
+                if len(file_issues2) == 0:
+                    print("  ✅ All files now reachable!")
+                else:
+                    msg = f"{len(file_issues2)} file(s) still missing/broken after recovery attempt"
+                    print(f"  ❌ {msg}")
+                    for i2 in file_issues2:
+                        print(i2)
+                    unresolved.append(msg)
+            else:
+                msg = f"{len(file_issues)} file(s) missing or broken (no recovery available)"
+                unresolved.append(msg)
+        print(f"{'='*60}")
+
+    # ── Run invariant checks with auto-recovery ──
+    print("\n  Running content invariant checks...")
+    class InvariantArgs:
+        auto_recover_invariants = True
+    invariants_ok = True
+    try:
+        cmd_invariants(InvariantArgs())
+    except SystemExit as e:
+        if e.code != 0:
+            invariants_ok = False
+            msg = "Content invariant checks FAILED after auto-recovery"
+            print(f"  ❌ {msg}")
+            unresolved.append(msg)
+
+    # ── Also track removals and degradations from diff ──
+    if reference:
+        if changes.get("removed"):
+            # Check if they were recovered above — if not, they're still an issue
+            if not (changes.get("removed_items") and not args.no_recover and not args.local):
+                msg = f"{len(changes['removed'])} content removal(s) detected"
+                unresolved.append(msg)
+        if changes.get("degraded"):
+            msg = f"{len(changes['degraded'])} content degradation(s) detected"
+            unresolved.append(msg)
+
+    # ── Radio health checks ──
+    if not args.local:
+        radio_issues = check_radio_health()
+        if radio_issues:
+            for msg in radio_issues:
+                if msg.startswith("YouTube broadcast is OFFLINE"):
+                    print(f"  Radio broadcast: OFFLINE (non-blocking exemption)")
+                elif args.allow_radio_offline and (
+                    msg.startswith("Radio process NOT running")
+                    or msg.startswith("Radio missing content types")
+                ):
+                    print(f"  Radio runtime: PARKED (explicit non-blocking exemption: {msg})")
+                else:
+                    current_policy_blockers.append(msg)
+
+        character_guard_issues = verify_character_generation_contracts(api, after)
+        if character_guard_issues:
+            for msg in character_guard_issues:
+                unresolved.append(msg)
+
+    # ── Per-content dir routing sanity (hi-* in en dir, etc.) ──
+    if not args.local:
+        misrouted = check_misrouted_per_content_files()
+        if misrouted:
+            print(f"\n{'='*60}")
+            print(f"  ❌ Per-content routing: {len(misrouted)} misrouted file(s)")
+            for m in misrouted:
+                print(f"    ⚠️  {m}")
+            for m in misrouted:
+                current_policy_blockers.append(m)
+        else:
+            print(f"\n  ✅ Per-content routing: en/hi dirs clean.")
+
+    nap_issues = verify_nap_playlist_counts()
+    if nap_issues:
+        for issue in nap_issues:
+            print(f"  ❌ {issue}")
+            unresolved.append(issue)
+    else:
+        print("\n  ✅ Nap playlists: en/hi free=3 and premium=4.")
+
+    bedtime_issues = verify_bedtime_playlist_counts()
+    if bedtime_issues:
+        for issue in bedtime_issues:
+            print(f"  ❌ {issue}")
+            unresolved.append(issue)
+    else:
+        print("  ✅ Bedtime playlists: en/hi free=4 and premium=6.")
+
+    if not args.local:
+        runtime_asset_issues = verify_frontend_runtime_assets()
+        if runtime_asset_issues:
+            for issue in runtime_asset_issues:
+                print(f"  ❌ {issue}")
+                unresolved.append(issue)
+        else:
+            print("  ✅ Frontend runtime assets are reachable.")
+
+        playback_issues = verify_current_playback_assets()
+        if playback_issues:
+            for issue in playback_issues:
+                print(f"  ❌ {issue}")
+                unresolved.append(issue)
+        else:
+            print("  ✅ Current story and nap audio files are reachable.")
+
+        frontend_regression_issues = verify_frontend_regression_suite()
+        if frontend_regression_issues:
+            for issue in frontend_regression_issues:
+                print(f"  ❌ {issue}")
+                unresolved.append(issue)
+        else:
+            print("  ✅ Premium UI regression suite passed.")
+
+    # ── Back up current JSON files (so they're available for next recovery) ──
+    if not args.local:
+        backup_json_files()
+
+    # ── Paywall flag state (always visible — catches drift) ──
+    _report_paywall_flags()
+
+    strict_config = default_config(BASE_DIR)
+    if args.local:
+        strict_config = StrictGuardConfig(
+            data_dir=strict_config.data_dir,
+            placeholder_registry_path=strict_config.placeholder_registry_path,
+            api_origin=LOCAL_API,
+            frontend_origin=LOCAL_FRONTEND,
+            admin_key=strict_config.admin_key,
+            playlist_audit=strict_config.playlist_audit,
+        )
+    try:
+        if args.no_recover or args.dry_run:
+            strict_result = run_strict_audit(strict_config)
+        else:
+            strict_engine = default_recovery_engine(BASE_DIR, strict_config)
+            strict_result = strict_verify(strict_config, strict_engine.recover)
+        unresolved = current_policy_blockers + [
+            f"{defect.reason.value} {defect.item_id}: {defect.details}"
+            for defect in strict_result.blockers
+        ]
+    except Exception as exc:
+        unresolved = current_policy_blockers + [
+            f"strict user-facing audit failed: {type(exc).__name__}: {exc}"
+        ]
+
+    # ── FINAL VERDICT ──
+    print()
+    if unresolved:
+        print(f"{'='*60}")
+        print(f"  🚫 DEPLOY BLOCKED — {len(unresolved)} unresolved issue(s):")
+        print()
+        for i, issue in enumerate(unresolved, 1):
+            print(f"    {i}. {issue}")
+        print()
+        print(f"  Fix ALL issues above and re-run: python3 scripts/data_integrity_guard.py verify")
+        print(f"  Deploy is NOT complete until verify exits cleanly.")
+        print(f"{'='*60}")
+        print()
+        sys.exit(1)
+    else:
+        print(f"{'='*60}")
+        print(f"  ✅ DEPLOY VERIFIED — all checks passed, zero issues.")
+        print(f"{'='*60}")
+        print()
+
+
+def cmd_check(args):
+    """Quick health check without a prior snapshot."""
+    api = get_api(args.local)
+    frontend = get_frontend(args.local)
+    print(f"Checking live state from {api}...")
+    state = capture_state(api)
+    print_state_summary(state, "Live Production State")
+
+    issues = []
+
+    # Check stories without audio
+    no_audio = [s for s in state.get("stories", {}).values() if not s.get("has_audio")]
+    if no_audio:
+        issues.append(f"  ❌ {len(no_audio)} stories without audio")
+
+    # Check stories without covers
+    no_cover = [s for s in state.get("stories", {}).values() if not s.get("has_cover")]
+    if no_cover:
+        issues.append(f"  ❌ {len(no_cover)} stories without covers")
+
+    # Check silly songs counts (expect >=1 per group)
+    for age in ["2-5", "6-8", "9-12"]:
+        items = state.get("silly_songs", {}).get(age, {})
+        count = len(items)
+        if count < 1:
+            issues.append(f"  ⚠️  Silly songs ({age}): expected ≥1, got {count}")
+        for sid, s in items.items():
+            if not s.get("has_audio"):
+                issues.append(f"  ❌ Silly song without audio ({age}): {sid}")
+            if not s.get("has_cover"):
+                issues.append(f"  ❌ Silly song without cover ({age}): {sid}")
+
+    # Check poems (expect >=0 per group, but if any exist they must have audio)
+    for age in ["2-5", "6-8", "9-12"]:
+        items = state.get("poems", {}).get(age, {})
+        for pid, p in items.items():
+            if not p.get("has_audio"):
+                issues.append(f"  ❌ Poem without audio ({age}): {pid}")
+            if not p.get("has_cover"):
+                issues.append(f"  ❌ Poem without cover ({age}): {pid}")
+
+    print(f"\n{'='*60}")
+    if not issues:
+        print("  ✅ All health checks passed.")
+    else:
+        print(f"  ⚠️  {len(issues)} issue(s) found:")
+        print()
+        for issue in issues:
+            print(issue)
+    print(f"{'='*60}")
+
+    # File reachability + auto-recover
+    if not args.skip_files:
+        file_issues, recoverable = verify_files(state, frontend, api)
+        print(f"\n{'='*60}")
+        if not file_issues:
+            print("  ✅ All files reachable.")
+        else:
+            print(f"  ⚠️  {len(file_issues)} file(s) missing or broken:")
+            print()
+            for issue in file_issues:
+                print(issue)
+
+            if recoverable and not args.no_recover:
+                recovered, not_found = auto_recover(recoverable, dry_run=args.dry_run)
+                print(f"\n  Recovery: {recovered} restored, {not_found} not in backup stores")
+        print(f"{'='*60}")
+        issues.extend(file_issues)
+
+    print()
+    if issues:
+        sys.exit(1)
+
+
+def cmd_seal(args):
+    """Explicitly replace the golden baseline with current live state."""
+    api = get_api(args.local)
+    print(f"Capturing live state from {api}...")
+    state = capture_state(api)
+
+    save_json(GOLDEN_PATH, state)
+    print_state_summary(state, "Golden Baseline (replaced)")
+    print(f"\n  📌 Golden baseline replaced with {len(state.get('stories', {}))} live content items")
+
+    print(f"  Saved to: {GOLDEN_PATH}\n")
+
+
+def cmd_audit(args):
+    """Compare current live state against the golden baseline.
+
+    Detects content that existed in golden but is now missing (drift).
+    """
+    golden = load_json(GOLDEN_PATH)
+    if not golden:
+        print("❌ No golden baseline. Run 'seal' first to create one.")
+        sys.exit(1)
+
+    api = get_api(args.local)
+    frontend = get_frontend(args.local)
+    print(f"Auditing live state against golden baseline...")
+    current = capture_state(api)
+
+    print_state_summary(golden, "Golden Baseline")
+    print_state_summary(current, "Current Live")
+
+    changes = diff_states(golden, current)
+
+    print(f"\n{'='*60}")
+    all_empty = not any([changes["added"], changes["removed"], changes["updated"], changes["degraded"]])
+
+    if all_empty:
+        print("  ✅ Live state matches golden baseline perfectly.")
+    else:
+        if changes["added"]:
+            print(f"  ✅ {len(changes['added'])} new item(s) since baseline (will be added to golden):")
+            for c in changes["added"]:
+                print(c)
+        if changes["updated"]:
+            print(f"\n  ✏️  {len(changes['updated'])} item(s) updated:")
+            for c in changes["updated"]:
+                print(c)
+        if changes["removed"]:
+            print(f"\n  ❌ {len(changes['removed'])} REMOVAL(S) vs golden baseline:")
+            for c in changes["removed"]:
+                print(c)
+        if changes["degraded"]:
+            print(f"\n  ❌ {len(changes['degraded'])} DEGRADATION(S) vs golden baseline:")
+            for c in changes["degraded"]:
+                print(c)
+        if changes["removed"] or changes["degraded"]:
+            print(f"\n  These items existed in the golden baseline but are now missing or degraded.")
+            print(f"  Run 'verify' or 'recover' to attempt auto-recovery.")
+    print(f"{'='*60}")
+
+    # File check + auto-recover
+    if not args.skip_files:
+        file_issues, recoverable = verify_files(current, frontend, api)
+        print(f"\n{'='*60}")
+        if not file_issues:
+            print("  ✅ All files reachable.")
+        else:
+            print(f"  ⚠️  {len(file_issues)} file(s) missing:")
+            for issue in file_issues:
+                print(issue)
+
+            if recoverable and not args.no_recover:
+                recovered, not_found = auto_recover(recoverable, dry_run=args.dry_run)
+                print(f"\n  Recovery: {recovered} restored, {not_found} not in backup stores")
+        print(f"{'='*60}")
+
+    # Auto-recover removed items from JSON store
+    if changes["removed_items"] and not args.no_recover and not getattr(args, 'local', False):
+        json_recovered, json_failed = recover_json_files(changes["removed_items"])
+        if json_recovered > 0:
+            print(f"\n  ♻️  Recovered {json_recovered} JSON data file(s)")
+
+    print()
+
+
+def cmd_invariants(args):
+    """Verify content generation invariants haven't regressed.
+
+    Reads data/content_invariants.json and checks the actual source code
+    to ensure critical rules are still enforced. These are hard-won fixes
+    that must not silently regress when code is modified.
+
+    With --auto-recover (default in verify), restores files from last known-good
+    git commit if invariants are broken.
+    """
+    import re as _re
+
+    invariants_path = BASE_DIR / "data" / "content_invariants.json"
+    if not invariants_path.exists():
+        print("❌ No content_invariants.json found.")
+        sys.exit(1)
+
+    invariants = json.loads(invariants_path.read_text())
+    passed = 0
+    failed = 0
+    failures = []  # (name, file_path) tuples for auto-recovery
+    auto_recover = getattr(args, "auto_recover_invariants", False)
+
+    def check(name, condition, detail="", source_file=""):
+        nonlocal passed, failed
+        if condition:
+            passed += 1
+            print(f"  ✅ {name}")
+        else:
+            failed += 1
+            failures.append((name, source_file))
+            print(f"  ❌ {name}{f' — {detail}' if detail else ''}")
+
+    print(f"\n{'='*60}")
+    print("  CONTENT INVARIANT CHECKS")
+    print(f"{'='*60}\n")
+
+    # ── V2 Short Stories ──────────────────────────────────────
+    print("  V2 Short Stories:")
+    gen_audio_path = BASE_DIR / "scripts" / "generate_audio.py"
+    gen_audio = gen_audio_path.read_text()
+    check(
+        "No hook in audio (hook=None)",
+        "hook=None" in gen_audio or "hook = None" in gen_audio,
+        "generate_audio.py must pass hook=None to assemble_v2_audio",
+        source_file="scripts/generate_audio.py",
+    )
+
+    gen_matrix_path = BASE_DIR / "scripts" / "generate_content_matrix.py"
+    gen_matrix = gen_matrix_path.read_text()
+    check(
+        "No example phrase in prompt",
+        "[PHRASE]Not yet" not in gen_matrix and "[PHRASE]not yet" not in gen_matrix,
+        "V2_STORY_PROMPT still contains example phrase — LLM will anchor on it",
+        source_file="scripts/generate_content_matrix.py",
+    )
+    check(
+        "Phrase similarity check exists",
+        "is_phrase_too_similar" in gen_matrix,
+        "generate_content_matrix.py missing is_phrase_too_similar function",
+        source_file="scripts/generate_content_matrix.py",
+    )
+    check(
+        "Recent phrases tracked",
+        "recent_phrases" in gen_matrix,
+        "generate_content_matrix.py not tracking recent_phrases",
+        source_file="scripts/generate_content_matrix.py",
+    )
+
+    # ── Lullabies 0-1 ────────────────────────────────────────
+    print("\n  Lullabies (0-1 age group):")
+    gen_lullaby_path = BASE_DIR / "scripts" / "generate_lullaby.py"
+    gen_lullaby = gen_lullaby_path.read_text()
+    check(
+        "Infant system prompt exists",
+        "LYRICS_SYSTEM_PROMPT_INFANT" in gen_lullaby,
+        "generate_lullaby.py missing LYRICS_SYSTEM_PROMPT_INFANT",
+        source_file="scripts/generate_lullaby.py",
+    )
+    check(
+        "Infant structure instructions exist",
+        "STRUCTURE_INSTRUCTIONS_INFANT" in gen_lullaby,
+        "generate_lullaby.py missing STRUCTURE_INSTRUCTIONS_INFANT dict",
+        source_file="scripts/generate_lullaby.py",
+    )
+    check(
+        "Infant prompt used for 0-1",
+        'is_infant = (age == "0-1")' in gen_lullaby or "is_infant = (age == '0-1')" in gen_lullaby,
+        "generate_lullaby.py not detecting 0-1 age group",
+        source_file="scripts/generate_lullaby.py",
+    )
+    check(
+        "No signature words for 0-1",
+        'sig_text = ""' in gen_lullaby,
+        "generate_lullaby.py may still pass signature openings for 0-1",
+        source_file="scripts/generate_lullaby.py",
+    )
+
+    # ── Silly Songs ──────────────────────────────────────────
+    print("\n  Silly Songs:")
+    gen_silly_path = BASE_DIR / "scripts" / "generate_silly_songs_battlecry.py"
+    if gen_silly_path.exists():
+        gen_silly = gen_silly_path.read_text()
+        check(
+            "Scene generation (Step 0) exists",
+            "def generate_scene" in gen_silly and "SCENE_PROMPT" in gen_silly,
+            "generate_silly_songs_battlecry.py missing scene anchoring (Step 0)",
+            source_file="scripts/generate_silly_songs_battlecry.py",
+        )
+        check(
+            "Scene validation exists",
+            "def validate_scene" in gen_silly and "vague_phrases" in gen_silly,
+            "generate_silly_songs_battlecry.py missing validate_scene",
+            source_file="scripts/generate_silly_songs_battlecry.py",
+        )
+        check(
+            "Chorus consistency check",
+            "chorus_inconsistent" in gen_silly or "CHORUS CONSISTENCY" in gen_silly
+            or "chorus_consistency" in gen_silly,
+            "Validation must check non-final choruses are identical",
+            source_file="scripts/generate_silly_songs_battlecry.py",
+        )
+        check(
+            "Energetic style (no calm/bedtime language)",
+            ("impossible to sit still" in gen_silly or "punchy beat" in gen_silly
+             or "bouncy beat" in gen_silly or "groovy beat" in gen_silly
+             or "cool beat" in gen_silly),
+            "Style prompt must be energetic — silly songs are NOT sleep content",
+            source_file="scripts/generate_silly_songs_battlecry.py",
+        )
+        # Ensure no calm language in the actual style prompt builder (not comments)
+        # Extract just the build_style_prompt function body
+        style_fn_match = _re.search(
+            r'def build_style_prompt.*?(?=\ndef |\nclass |\Z)',
+            gen_silly, _re.DOTALL
+        )
+        style_fn = style_fn_match.group(0) if style_fn_match else ""
+        calm_terms = ["soft and gentle", "cozy sleepy", "warm and drowsy", "lullaby", "soothing"]
+        has_calm = any(t in style_fn.lower() for t in calm_terms)
+        check(
+            "No calm/sleep language in style prompts",
+            not has_calm,
+            f"Found calm language in build_style_prompt — silly songs are NOT sleep content",
+            source_file="scripts/generate_silly_songs_battlecry.py",
+        )
+        check(
+            "Retry-with-feedback includes scene",
+            "def retry_with_feedback" in gen_silly and "scene" in gen_silly.split("def retry_with_feedback")[1][:500],
+            "retry_with_feedback must use scene context for targeted fixes",
+            source_file="scripts/generate_silly_songs_battlecry.py",
+        )
+        check(
+            "Batch diversity check",
+            "def validate_batch_diversity" in gen_silly,
+            "Missing validate_batch_diversity — prevents duplicate battle cries in same run",
+            source_file="scripts/generate_silly_songs_battlecry.py",
+        )
+        # Check tempo ranges are energetic (not calm)
+        tempo_match = _re.search(r'"2-5":\s*\((\d+),\s*(\d+)\)', gen_silly)
+        if tempo_match:
+            low = int(tempo_match.group(1))
+            check(
+                "Tempo range is energetic (2-5 low >= 110)",
+                low >= 110,
+                f"Current 2-5 low tempo: {low} BPM — too slow for silly songs",
+                source_file="scripts/generate_silly_songs_battlecry.py",
+            )
+        check(
+            "Cover prompt is purely visual (no text mentions)",
+            "COVER_PROMPT_TEMPLATE" in gen_silly
+            and "text" not in gen_silly.split("COVER_PROMPT_TEMPLATE")[1][:300].lower(),
+            "Cover prompt must never mention text/words/letters",
+            source_file="scripts/generate_silly_songs_battlecry.py",
+        )
+    else:
+        check("Silly songs script exists", False, "scripts/generate_silly_songs_battlecry.py not found")
+
+    print(f"\n{'='*60}")
+    if failed == 0:
+        print(f"  ✅ All {passed} invariant checks passed.")
+    else:
+        print(f"  ❌ {failed} INVARIANT(S) BROKEN (of {passed + failed} total):")
+        for name, _ in failures:
+            print(f"    • {name}")
+
+        # Auto-recovery: restore broken files from last known-good git commit
+        if auto_recover:
+            broken_files = list(set(f for _, f in failures if f))
+            if broken_files:
+                print(f"\n  🔧 Auto-recovery: restoring {len(broken_files)} file(s) from last good commit...")
+                for rel_path in broken_files:
+                    try:
+                        result = subprocess.run(
+                            ["git", "checkout", "HEAD", "--", rel_path],
+                            capture_output=True, text=True, cwd=str(BASE_DIR),
+                        )
+                        if result.returncode == 0:
+                            print(f"    ✅ Restored: {rel_path}")
+                        else:
+                            print(f"    ❌ Failed to restore {rel_path}: {result.stderr.strip()}")
+                    except Exception as e:
+                        print(f"    ❌ Recovery error for {rel_path}: {e}")
+
+                # Re-check after recovery
+                print("\n  Re-checking invariants after recovery...")
+                # Recursive call without auto-recover to just verify
+                class FakeArgs:
+                    auto_recover_invariants = False
+                recheck_args = FakeArgs()
+                try:
+                    cmd_invariants(recheck_args)
+                    print("  ✅ Auto-recovery successful — all invariants restored.")
+                    return  # exit successfully
+                except SystemExit:
+                    print("  ❌ Auto-recovery FAILED — manual intervention needed.")
+        else:
+            print(f"\n  Run with --auto-recover or as part of 'verify' for auto-recovery.")
+
+        print(f"\n  These are hard-won fixes. Investigate before deploying.")
+    print(f"{'='*60}\n")
+
+    if failed > 0:
+        sys.exit(1)
+
+
+def cmd_recover(args):
+    """Recover missing files without running a full verify."""
+    api = get_api(args.local)
+    frontend = get_frontend(args.local)
+    print(f"Checking file reachability from {frontend}...")
+    state = capture_state(api)
+    file_issues, recoverable = verify_files(state, frontend, api)
+
+    if not file_issues:
+        print(f"\n  ✅ All files reachable. Nothing to recover.\n")
+        return
+
+    print(f"\n  {len(file_issues)} file(s) missing. Attempting recovery...")
+    recovered, not_found = auto_recover(recoverable, dry_run=args.dry_run)
+    print(f"\n  Recovery complete: {recovered} restored, {not_found} not in backup stores\n")
+
+
+def _strict_config(use_local=False):
+    config = default_config(BASE_DIR)
+    if not use_local:
+        return config
+    return StrictGuardConfig(
+        data_dir=config.data_dir,
+        placeholder_registry_path=config.placeholder_registry_path,
+        api_origin=LOCAL_API,
+        frontend_origin=LOCAL_FRONTEND,
+        admin_key=config.admin_key,
+        playlist_audit=config.playlist_audit,
+    )
+
+
+def _strict_audit_with_radio(config, include_radio=True):
+    result = run_strict_audit(config)
+    if not include_radio:
+        return result
+    defects = list(result.defects)
+    for message in check_radio_health():
+        reason = (
+            ReasonCode.RADIO_BROADCAST_OFFLINE
+            if message.startswith("YouTube broadcast is OFFLINE")
+            else ReasonCode.UNREACHABLE_ORIGIN
+        )
+        defects.append(Defect(reason, "radio", {"error": message}))
+    return AuditResult(defects)
+
+
+def cmd_preflight(args):
+    config = _strict_config(args.local)
+    if args.dry_run:
+        result = _strict_audit_with_radio(config, include_radio=not args.local)
+    else:
+        recovery = default_recovery_engine(BASE_DIR, config)
+        result = recover_until_stable(
+            lambda: _strict_audit_with_radio(config, include_radio=not args.local),
+            recovery.recover,
+            args.max_recovery_rounds,
+        )
+    print(render_verdict(result))
+    if result.blockers:
+        raise SystemExit(1)
+
+
+def cmd_transaction(args):
+    strict_config = _strict_config()
+    recovery = default_recovery_engine(BASE_DIR, strict_config)
+    audit = lambda: _strict_audit_with_radio(strict_config)
+    try:
+        release_id = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            cwd=BASE_DIR,
+            capture_output=True,
+            text=True,
+            check=True,
+        ).stdout.strip()
+        verdict = run_transaction(TransactionConfig(
+            snapshot_parent=Path(args.snapshot_dir),
+            data_dir=BASE_DIR / "data",
+            asset_roots=tuple(
+                (name, path)
+                for name, path in (
+                    ("audio-store", recovery.context.audio_store),
+                    ("cover-store", recovery.context.cover_store),
+                )
+                if path.exists()
+            ),
+            preflight_audit=audit,
+            postflight_audit=audit,
+            recover=recovery.recover,
+            deploy_hook=script_hook(Path(args.deploy_script)),
+            rollback_hook=script_hook(Path(args.rollback_script)),
+            reload_callback=recovery.context.reload_callback,
+            activate_snapshot=lambda snapshot: setattr(
+                recovery.context, "snapshot_root", snapshot.root,
+            ),
+            release_ids={"backend": release_id},
+            max_recovery_rounds=args.max_recovery_rounds,
+        ))
+    except Exception as exc:
+        print(f"Content: BLOCKED\nUnresolved user-facing defects: 1\n- TRANSACTION: {exc}")
+        raise SystemExit(1) from exc
+    print(render_verdict(verdict.audit))
+    if verdict.rolled_back:
+        print(f"Deployment: ROLLED BACK ({verdict.snapshot_id})")
+    if not verdict.deployment_succeeded or not verdict.app_healthy:
+        raise SystemExit(1)
+
+
+def build_parser():
+    parser = argparse.ArgumentParser(
+        description="Deploy Guard v2 — protect production state during deploys",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Commands:
+  snapshot   Capture pre-deploy state (run BEFORE deploying)
+  verify     Compare against snapshot + auto-recover (run AFTER deploying)
+  check      Quick health check (no snapshot needed)
+  seal       Save current state as golden baseline
+  audit      Compare live state against golden baseline
+  recover    Recover missing files from backup stores
+  invariants Check source code invariants (hard-won fixes)
+  preflight  Audit and auto-recover before a deployment
+  transaction Run preflight, deploy, recovery, and mandatory rollback as one unit
+
+Examples:
+  python3 scripts/data_integrity_guard.py snapshot
+  python3 scripts/data_integrity_guard.py verify
+  python3 scripts/data_integrity_guard.py check
+  python3 scripts/data_integrity_guard.py seal
+  python3 scripts/data_integrity_guard.py audit
+  python3 scripts/data_integrity_guard.py recover --dry-run
+  python3 scripts/data_integrity_guard.py invariants --auto-recover
+        """,
+    )
+    sub = parser.add_subparsers(dest="command", required=True)
+
+    # Common args
+    def add_common(p):
+        p.add_argument("--local", action="store_true", help="Use localhost instead of production")
+        p.add_argument("--skip-files", action="store_true", help="Skip file reachability checks")
+        p.add_argument("--no-recover", action="store_true", help="Disable auto-recovery")
+        p.add_argument("--dry-run", action="store_true", help="Show what recovery would do without doing it")
+
+    snap = sub.add_parser("snapshot", help="Capture pre-deploy state")
+    snap.add_argument("--local", action="store_true")
+    snap.set_defaults(func=cmd_snapshot)
+
+    ver = sub.add_parser("verify", help="Compare against snapshot + auto-recover")
+    add_common(ver)
+    ver.add_argument(
+        "--allow-radio-offline",
+        action="store_true",
+        help="Permit the intentionally parked radio process and empty radio runtime",
+    )
+    ver.set_defaults(func=cmd_verify)
+
+    chk = sub.add_parser("check", help="Quick health check")
+    add_common(chk)
+    chk.set_defaults(func=cmd_check)
+
+    seal = sub.add_parser("seal", help="Save current state as golden baseline")
+    seal.add_argument("--local", action="store_true")
+    seal.set_defaults(func=cmd_seal)
+
+    audit = sub.add_parser("audit", help="Compare live vs golden baseline")
+    add_common(audit)
+    audit.set_defaults(func=cmd_audit)
+
+    rec = sub.add_parser("recover", help="Recover missing files from backup stores")
+    rec.add_argument("--local", action="store_true")
+    rec.add_argument("--dry-run", action="store_true", help="Show what would be recovered")
+    rec.set_defaults(func=cmd_recover)
+
+    inv = sub.add_parser("invariants", help="Check source code invariants (hard-won fixes)")
+    inv.add_argument("--auto-recover", action="store_true",
+                     help="Auto-restore broken files from last good git commit")
+    inv.set_defaults(func=lambda a: (setattr(a, "auto_recover_invariants", a.auto_recover), cmd_invariants(a)))
+
+    preflight = sub.add_parser("preflight", help="Run strict user-facing preflight")
+    preflight.add_argument("--local", action="store_true")
+    preflight.add_argument("--dry-run", action="store_true")
+    preflight.add_argument("--max-recovery-rounds", type=int, default=3)
+    preflight.set_defaults(func=cmd_preflight)
+
+    transaction = sub.add_parser("transaction", help="Run a guarded deployment transaction")
+    transaction.add_argument("--deploy-script", required=True)
+    transaction.add_argument("--rollback-script", required=True)
+    transaction.add_argument(
+        "--snapshot-dir",
+        default=os.environ.get("DEPLOY_GUARD_SNAPSHOT_DIR", "/opt/deploy-guard-snapshots"),
+    )
+    transaction.add_argument("--max-recovery-rounds", type=int, default=3)
+    transaction.set_defaults(func=cmd_transaction)
+
+    return parser
+
+
+def main():
+    parser = build_parser()
+
+    args = parser.parse_args()
+    args.func(args)
+
+
+if __name__ == "__main__":
+    main()
