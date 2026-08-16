@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field, ValidationError
 from app.api.v1.audio import _edge_tts_synthesize
 from app.config import get_settings
 from app.services.ai.groq_service import GroqService
-from app.services.art.album_art_generator import AlbumArtGenerator
+from app.services.art.illustrated_cover_generator import IllustratedCoverGenerator
 
 
 VOICE_MAP = {
@@ -36,7 +36,7 @@ class ContentGenerator:
     def __init__(self, groq=None, art=None):
         settings = get_settings()
         self.groq = groq or GroqService(settings.groq_api_key)
-        self.art = art or AlbumArtGenerator()
+        self.art = art or IllustratedCoverGenerator()
 
     def generate_text(self, job) -> GeneratedText:
         inputs = job.inputs
@@ -99,11 +99,11 @@ Return JSON only with title, description, text, and a short lowercase theme.
     def generate_cover(self, generated: GeneratedText, content_type: str) -> bytes:
         try:
             cover = self.art.generate(
-                generated.text,
-                generated.theme,
-                content_type=content_type.lower(),
                 title=generated.title,
-                size=600,
+                description=generated.description,
+                story_text=generated.text,
+                theme=generated.theme,
+                content_type=content_type.lower(),
             )
             if not cover.startswith(b"\x89PNG\r\n\x1a\n"):
                 raise ValueError("cover generator returned invalid PNG data")
