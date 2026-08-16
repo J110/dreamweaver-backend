@@ -341,19 +341,11 @@ class AlbumArtGenerator:
         """
         width, height = img.size
         
-        # Create vignette mask
-        mask = Image.new("L", (width, height), 255)
+        mask = Image.new("L", (width, height), 100)
         mask_draw = ImageDraw.Draw(mask)
-        
-        # Draw circles from center outward
-        for i in range(max(width, height) // 2, 0, -20):
-            mask_draw.ellipse(
-                [width // 2 - i, height // 2 - i, width // 2 + i, height // 2 + i],
-                fill=255 - (i // (max(width, height) // 4)) * 50
-            )
-        
-        # Apply Gaussian blur to smooth vignette
-        mask = mask.filter(ImageFilter.GaussianBlur(radius=40))
+        inset = max(1, int(min(width, height) * 0.12))
+        mask_draw.ellipse([inset, inset, width - inset, height - inset], fill=0)
+        mask = mask.filter(ImageFilter.GaussianBlur(radius=max(1, int(min(width, height) * 0.14))))
         
         # Create overlay
         overlay = Image.new("RGB", (width, height), (0, 0, 0))
