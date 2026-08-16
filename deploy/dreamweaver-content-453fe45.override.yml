@@ -1,0 +1,31 @@
+services:
+  backend:
+    image: dreamweaver-backend:content-453fe45
+  content-worker:
+    image: dreamweaver-backend:content-453fe45
+    container_name: dreamweaver-content-worker
+    user: "1001:1002"
+    env_file:
+      - .env
+    environment:
+      PYTHONPATH: /app
+    volumes:
+      - ./cache:/app/cache
+      - ./firebase-credentials.json:/app/firebase-credentials.json:ro
+      - ./firebase-push-credentials.json:/app/firebase-push-credentials.json:ro
+      - ./seed_output:/app/seed_output
+      - ./data:/app/data
+      - ./audio:/app/audio:ro
+      - ./clips:/app/clips
+      - ./public:/app/public
+      - /opt/dreamweaver-web/public:/opt/dreamweaver-web/public:ro
+      - /opt/audio-store:/opt/audio-store
+      - /opt/cover-store:/opt/cover-store
+      - /opt/character-media:/opt/character-media
+    command: ["python", "scripts/run_content_generation_worker.py"]
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - dreamweaver-network
