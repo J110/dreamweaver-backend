@@ -43,7 +43,7 @@ class ContentGenerator:
                 "safe ending. Do not write verse, rhyming couplets, or song sections."
             ),
             "poem": (
-                "Write the entire poem in 8-16 non-empty lines and 40-100 words total. Use 3-8 words per line and keep a steady "
+                "Write the entire poem in 8-16 non-empty lines and 30-100 words total. Use no more than 8 words per line and keep a steady "
                 "spoken rhythm. Prefer rhyming couplets. Focus on one image, feeling, list, question-chain, sound-play, "
                 "or a tiny event; do not tell a multi-scene story. No dialogue, chapter-like plot, verse labels, or chorus. "
                 "Keep the complete poem under 500 characters."
@@ -95,14 +95,12 @@ Return JSON only with title, description, text, and a short lowercase theme.
         lines = [line.strip() for line in generated.text.splitlines() if line.strip()]
         if not 8 <= len(lines) <= 16:
             raise ValueError(f"poem must contain 8-16 non-empty lines, received {len(lines)}")
-        line_lengths = [len(line.split()) for line in lines]
-        if min(line_lengths) < 3 or max(line_lengths) > 8:
-            raise ValueError(
-                f"poem lines must contain 3-8 words, received {min(line_lengths)}-{max(line_lengths)}"
-            )
         word_count = len(generated.text.split())
-        if not 40 <= word_count <= 100:
-            raise ValueError(f"poem must contain 40-100 words, received {word_count}")
+        if not 30 <= word_count <= 100:
+            raise ValueError(f"poem must contain 30-100 words, received {word_count}")
+        longest = max(len(line.split()) for line in lines)
+        if longest > 8:
+            raise ValueError(f"poem lines must contain at most 8 words, received {longest}")
         if len(generated.text) > 500:
             raise ValueError(f"poem must contain at most 500 characters, received {len(generated.text)}")
 
