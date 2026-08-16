@@ -25,9 +25,10 @@ class ContentGenerationWorker:
             generated = self.generator.generate_text(job)
             self.repository.renew_lease(job.id, job.lease_token, self.lease_seconds)
             self.repository.mark_stage(job.id, job.lease_token, "narrating")
+            selected_voice = job.inputs.get("voice_id") or "female_1"
             audio = self.generator.synthesize(
                 generated.text,
-                job.inputs.get("voice_id"),
+                selected_voice,
                 job.inputs.get("mood"),
                 job.profile_snapshot.get("lang", "en"),
             )
@@ -57,7 +58,8 @@ class ContentGenerationWorker:
                 "theme": generated.theme,
                 "character_id": job.inputs.get("character_id"),
                 "character_snapshot": job.character_snapshot,
-                "voice_id": job.inputs.get("voice_id") or "auto",
+                "voice_id": selected_voice,
+                "tts_engine": "elevenlabs_multilingual_v2",
                 "music_type": job.inputs.get("mood") or "calm",
                 "audio_file": audio_name,
                 "audio_url": f"{base}/media/generated/{audio_name}",
@@ -102,4 +104,3 @@ class ContentGenerationWorker:
         }:
             return code
         return ContentGenerationErrorCode.generation_failed.value
-

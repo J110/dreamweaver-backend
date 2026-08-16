@@ -1,24 +1,12 @@
-import asyncio
 import json
-from pathlib import Path
-from tempfile import NamedTemporaryFile
+from io import BytesIO
 
 from pydantic import BaseModel, Field, ValidationError
 
-from app.api.v1.audio import _edge_tts_synthesize
 from app.config import get_settings
 from app.services.ai.groq_service import GroqService
 from app.services.art.illustrated_cover_generator import IllustratedCoverGenerator
-
-
-VOICE_MAP = {
-    "female_1": "luna",
-    "female_2": "whisper",
-    "female_3": "aria",
-    "female_4": "melody",
-    "male_2": "atlas",
-    "asmr": "whisper",
-}
+from scripts._elevenlabs_common import tts_eleven_raw
 
 
 class ContentGenerationError(RuntimeError):
@@ -76,15 +64,20 @@ Return JSON only with title, description, text, and a short lowercase theme.
             raise ContentGenerationError("writing_failed") from error
 
     def synthesize(self, text: str, voice_id: str | None, mood: str | None, lang: str) -> bytes:
-        normalized_voice = (voice_id or "").removesuffix("_hi")
-        resolved_voice = VOICE_MAP.get(normalized_voice, normalized_voice or "luna")
-        tone = "energetic" if mood in {"adventurous", "funny"} else "calm"
-        temporary_path = None
+        resolved_voice = (voice_id or "female_1").removesuffix("_hi")
+        energetic = mood in {"adventurous", "funny", "wired", "curious"}
         try:
-            with NamedTemporaryFile(suffix=".mp3", delete=False) as temporary:
-                temporary_path = Path(temporary.name)
-            asyncio.run(_edge_tts_synthesize(text, resolved_voice, tone, temporary_path, lang=lang))
-            audio = temporary_path.read_bytes()
+            narration = tts_eleven_raw(
+                text,
+                resolved_voice,
+                stability=0.45 if energetic else 0.55,
+                similarity_boost=0.75,
+                style=0.30 if energetic else 0.20,
+                speed=0.92 if energetic else 0.85,
+            )
+            output = BytesIO()
+            narration.export(output, format="mp3", bitrate="128k")
+            audio = output.getvalue()
             if not audio:
                 raise ContentGenerationError("narration_failed")
             return audio
@@ -92,9 +85,6 @@ Return JSON only with title, description, text, and a short lowercase theme.
             raise
         except Exception as error:
             raise ContentGenerationError("narration_failed") from error
-        finally:
-            if temporary_path:
-                temporary_path.unlink(missing_ok=True)
 
     def generate_cover(self, generated: GeneratedText, content_type: str) -> bytes:
         try:
