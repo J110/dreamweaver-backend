@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field, ValidationError
 from app.config import get_settings
 from app.services.ai.groq_service import GroqService
 from app.services.art.illustrated_cover_generator import IllustratedCoverGenerator
+from app.services.content_generation.minimax_audio import generate_minimax_audio
 from scripts._elevenlabs_common import tts_eleven_raw
 
 
@@ -44,7 +45,8 @@ class ContentGenerator:
             "poem": (
                 "Write the entire poem in 8-16 non-empty lines. Use no more than 8 words per line and keep a steady "
                 "spoken rhythm. Prefer rhyming couplets. Focus on one image, feeling, list, question-chain, sound-play, "
-                "or a tiny event; do not tell a multi-scene story. No dialogue, chapter-like plot, verse labels, or chorus."
+                "or a tiny event; do not tell a multi-scene story. No dialogue, chapter-like plot, verse labels, or chorus. "
+                "Keep the complete poem under 500 characters."
             ),
             "song": (
                 "Write 4-6 short verses plus one repeatable chorus. Label sections [verse] and [chorus], and repeat "
@@ -96,8 +98,22 @@ Return JSON only with title, description, text, and a short lowercase theme.
         longest = max(len(line.split()) for line in lines)
         if longest > 8:
             raise ValueError(f"poem lines must contain at most 8 words, received {longest}")
+        if len(generated.text) > 500:
+            raise ValueError(f"poem must contain at most 500 characters, received {len(generated.text)}")
 
-    def synthesize(self, text: str, voice_id: str | None, mood: str | None, lang: str) -> bytes:
+    def synthesize(
+        self,
+        text: str,
+        voice_id: str | None,
+        mood: str | None,
+        lang: str,
+        content_type: str = "STORY",
+    ) -> bytes:
+        if content_type in {"POEM", "SONG"}:
+            try:
+                return generate_minimax_audio(text, mood, content_type)
+            except Exception as error:
+                raise ContentGenerationError("narration_failed") from error
         resolved_voice = (voice_id or "female_1").removesuffix("_hi")
         energetic = mood in {"adventurous", "funny", "wired", "curious"}
         try:

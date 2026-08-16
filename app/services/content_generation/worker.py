@@ -31,6 +31,7 @@ class ContentGenerationWorker:
                 selected_voice,
                 job.inputs.get("mood"),
                 job.profile_snapshot.get("lang", "en"),
+                job.inputs["content_type"],
             )
             self.repository.renew_lease(job.id, job.lease_token, self.lease_seconds)
             self.repository.mark_stage(job.id, job.lease_token, "composing")
@@ -58,8 +59,12 @@ class ContentGenerationWorker:
                 "theme": generated.theme,
                 "character_id": job.inputs.get("character_id"),
                 "character_snapshot": job.character_snapshot,
-                "voice_id": selected_voice,
-                "tts_engine": "elevenlabs_multilingual_v2",
+                "voice_id": selected_voice if job.inputs["content_type"] == "STORY" else "minimax",
+                "tts_engine": (
+                    "elevenlabs_multilingual_v2"
+                    if job.inputs["content_type"] == "STORY"
+                    else "minimax-music-v2-fal"
+                ),
                 "music_type": job.inputs.get("mood") or "calm",
                 "audio_file": audio_name,
                 "audio_url": f"{base}/media/generated/{audio_name}",
