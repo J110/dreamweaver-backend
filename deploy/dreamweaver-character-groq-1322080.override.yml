@@ -28,6 +28,7 @@ services:
     environment:
       PYTHONPATH: /app
     volumes:
+      - ./.worktrees/groq-models-00d983d/scripts:/app/scripts:ro
       - ./cache:/app/cache
       - ./firebase-credentials.json:/app/firebase-credentials.json:ro
       - ./firebase-push-credentials.json:/app/firebase-push-credentials.json:ro
