@@ -49,8 +49,8 @@ class ContentGenerator:
                 "Keep the complete poem under 500 characters."
             ),
             "song": (
-                "Write 4-6 short verses plus one repeatable chorus. Label sections [verse] and [chorus], and repeat "
-                "the exact chorus at least twice."
+                "Write 3-4 very short verses plus one repeatable chorus. Label sections [verse] and [chorus], repeat "
+                "the exact chorus at least twice, and keep the complete song under 500 characters including labels."
             ),
         }[content_type]
         prompt = f"""
@@ -90,6 +90,10 @@ Return JSON only with title, description, text, and a short lowercase theme.
         raise ContentGenerationError("writing_failed") from last_error
 
     def _validate_structure(self, generated: GeneratedText, content_type: str) -> None:
+        if content_type == "song":
+            if len(generated.text) > 500:
+                raise ValueError(f"song must contain at most 500 characters, received {len(generated.text)}")
+            return
         if content_type != "poem":
             return
         lines = [line.strip() for line in generated.text.splitlines() if line.strip()]
