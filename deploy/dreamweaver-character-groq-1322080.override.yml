@@ -1,6 +1,6 @@
 services:
   backend:
-    image: dreamweaver-backend:groq-models-00d983d
+    image: dreamweaver-backend:content-song-503c446
     env_file:
       - .env
     environment:
@@ -20,7 +20,7 @@ services:
       - /opt/cover-store:/opt/cover-store
       - /opt/character-media:/opt/character-media
   content-worker:
-    image: dreamweaver-backend:groq-models-00d983d
+    image: dreamweaver-backend:content-song-503c446
     container_name: dreamweaver-content-worker
     user: "1001:1002"
     env_file:
@@ -28,7 +28,7 @@ services:
     environment:
       PYTHONPATH: /app
     volumes:
-      - ./.worktrees/groq-models-00d983d/scripts:/app/scripts:ro
+      - ./.worktrees/content-song-503c446/scripts:/app/scripts:ro
       - ./cache:/app/cache
       - ./firebase-credentials.json:/app/firebase-credentials.json:ro
       - ./firebase-push-credentials.json:/app/firebase-push-credentials.json:ro
