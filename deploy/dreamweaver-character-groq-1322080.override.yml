@@ -1,12 +1,10 @@
 services:
   backend:
-    image: dreamweaver-backend:character-groq-1322080
+    image: dreamweaver-backend:groq-models-00d983d
     env_file:
       - .env
     environment:
       PYTHONPATH: /app
-      FIREBASE_CREDENTIALS_PATH: /app/firebase-credentials.json
-      FIREBASE_PUSH_CREDENTIALS_PATH: /app/firebase-push-credentials.json
     volumes:
       - ./scripts:/app/scripts:ro
       - ./cache:/app/cache
@@ -22,7 +20,7 @@ services:
       - /opt/cover-store:/opt/cover-store
       - /opt/character-media:/opt/character-media
   content-worker:
-    image: dreamweaver-backend:content-a24ded6
+    image: dreamweaver-backend:groq-models-00d983d
     container_name: dreamweaver-content-worker
     user: "1001:1002"
     env_file:
@@ -30,7 +28,6 @@ services:
     environment:
       PYTHONPATH: /app
     volumes:
-      - ./scripts:/app/scripts:ro
       - ./cache:/app/cache
       - ./firebase-credentials.json:/app/firebase-credentials.json:ro
       - ./firebase-push-credentials.json:/app/firebase-push-credentials.json:ro
