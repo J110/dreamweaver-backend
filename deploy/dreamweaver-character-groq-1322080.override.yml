@@ -1,6 +1,12 @@
 services:
   backend:
     image: dreamweaver-backend:character-groq-1322080
+    env_file:
+      - .env
+    environment:
+      PYTHONPATH: /app
+      FIREBASE_CREDENTIALS_PATH: /app/firebase-credentials.json
+      FIREBASE_PUSH_CREDENTIALS_PATH: /app/firebase-push-credentials.json
     volumes:
       - ./scripts:/app/scripts:ro
       - ./cache:/app/cache

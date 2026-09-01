@@ -52,7 +52,11 @@ def get_db_client(settings: Settings = Depends(get_settings)):
         _db_client = get_local_store()
         logger.info("Using LocalStore (in-memory) database")
     else:
-        from firebase_admin import firestore
+        import firebase_admin
+        from firebase_admin import credentials, firestore
+        if not firebase_admin._apps:
+            cred = credentials.Certificate(get_settings().firebase_credentials_path)
+            firebase_admin.initialize_app(cred)
         _db_client = firestore.client()
         logger.info("Using Firestore database")
 
