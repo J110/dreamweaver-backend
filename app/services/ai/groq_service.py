@@ -72,7 +72,7 @@ class GroqService:
     
     # Available models
     FAST_MODEL = "openai/gpt-oss-20b"
-    QUALITY_MODEL = "llama-3.3-70b-versatile"
+    QUALITY_MODEL = "qwen/qwen3.8-27b"
     AVAILABLE_MODELS = [FAST_MODEL, QUALITY_MODEL]
     
     # Default parameters
