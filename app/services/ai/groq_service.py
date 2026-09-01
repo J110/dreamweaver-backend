@@ -71,7 +71,7 @@ class GroqService:
     """Service for text generation using Groq API."""
     
     # Available models
-    FAST_MODEL = "llama-3.1-8b-instant"
+    FAST_MODEL = "openai/gpt-oss-20b"
     QUALITY_MODEL = "llama-3.3-70b-versatile"
     AVAILABLE_MODELS = [FAST_MODEL, QUALITY_MODEL]
     
